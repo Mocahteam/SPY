@@ -26,6 +26,7 @@ public class ApplyScriptSystem : FSystem {
 						case Direction.Dir.North:
 							go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
 							go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z + 1;
+							go.GetComponent<MeshRenderer>().material.SetColor("_OutlineColor", Color.red);
 							break;
 						case Direction.Dir.South:
 							go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
