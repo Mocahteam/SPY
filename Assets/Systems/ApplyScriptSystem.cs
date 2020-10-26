@@ -3,8 +3,9 @@ using FYFY;
 using System.Collections.Generic;
 public class ApplyScriptSystem : FSystem {
 
-	private float cooldown = 0;
+	private float cooldown = 2;
 	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)));
+	private Family entityGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(Entity)));
 	private bool initialized = false;
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
@@ -36,20 +37,28 @@ public class ApplyScriptSystem : FSystem {
 				case Action.ActionType.Forward:
 					switch (go.GetComponent<Direction>().direction){
 						case Direction.Dir.North:
-							go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
-							go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z + 1;
+							if(!checkObstacle(go.GetComponent<Position>().x,go.GetComponent<Position>().z + 1)){
+								go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
+								go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z + 1;
+							}
 							break;
 						case Direction.Dir.South:
-							go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
-							go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z - 1;
+							if(!checkObstacle(go.GetComponent<Position>().x,go.GetComponent<Position>().z - 1)){
+								go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
+								go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z - 1;
+							}
 							break;
 						case Direction.Dir.East:
-							go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x + 1;
-							go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z;
+							if(!checkObstacle(go.GetComponent<Position>().x + 1,go.GetComponent<Position>().z)){
+								go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x + 1;
+								go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z;
+							}
 							break;
 						case Direction.Dir.West:
-							go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x - 1;
-							go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z;
+							if(!checkObstacle(go.GetComponent<Position>().x - 1,go.GetComponent<Position>().z)){
+								go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x - 1;
+								go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z;
+							}
 							break;
 					}
 					break;
@@ -141,6 +150,14 @@ public class ApplyScriptSystem : FSystem {
 		return go.GetComponent<Script>().currentAction >= go.GetComponent<Script>().actions.Count;
 	}
 
+
+	private bool checkObstacle(int x, int z){
+		foreach( GameObject go in entityGO){
+			if(go.GetComponent<Position>().x == x && go.GetComponent<Position>().z == z && go.GetComponent<Entity>().type == Entity.Type.Wall)
+				return true;
+		}
+		return false;
+	}
 	private void initializeTest(){
 		foreach( GameObject go in controllableGO){
 			go.GetComponent<Script>().actions = new List<Action>();
