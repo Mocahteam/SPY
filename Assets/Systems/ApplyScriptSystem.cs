@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using FYFY;
-
+using System.Collections.Generic;
 public class ApplyScriptSystem : FSystem {
 
 	private float cooldown = 0;
 	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)));
+	private bool initialized = false;
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 	protected override void onPause(int currentFrame) {
@@ -17,16 +18,26 @@ public class ApplyScriptSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
+
+		if(!initialized){
+			initializeTest();
+			initialized=true;
+		}
+
 		if(cooldown <= 0){
+		cooldown = 2;
 		foreach( GameObject go in controllableGO){
-			cooldown = 1;
-			switch (go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]){
-				case Script.Actions.Forward:
+
+			if(endOfScript(go))
+				break;
+			Action action = getCurrentAction(go);
+			
+			switch (action.actionType){
+				case Action.ActionType.Forward:
 					switch (go.GetComponent<Direction>().direction){
 						case Direction.Dir.North:
 							go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
 							go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z + 1;
-							go.GetComponent<MeshRenderer>().material.SetColor("_OutlineColor", Color.red);
 							break;
 						case Direction.Dir.South:
 							go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
@@ -43,7 +54,7 @@ public class ApplyScriptSystem : FSystem {
 					}
 					break;
 
-				case Script.Actions.TurnLeft:
+				case Action.ActionType.TurnLeft:
 					switch (go.GetComponent<Direction>().direction){
 						case Direction.Dir.North:
 							go.GetComponent<Direction>().direction = Direction.Dir.West;
@@ -60,7 +71,7 @@ public class ApplyScriptSystem : FSystem {
 					}
 					break;
 
-				case Script.Actions.TurnRight:
+				case Action.ActionType.TurnRight:
 					switch (go.GetComponent<Direction>().direction){
 						case Direction.Dir.North:
 							go.GetComponent<Direction>().direction = Direction.Dir.East;
@@ -77,13 +88,73 @@ public class ApplyScriptSystem : FSystem {
 					}
 					break;
 			}
-			go.GetComponent<Script>().currentAction++;
-			if(go.GetComponent<Script>().currentAction >= go.GetComponent<Script>().actions.Count)
-			go.GetComponent<Script>().currentAction = 0;
+			incrementActionScript(go.GetComponent<Script>());
 		}
 		}
 		else
 			cooldown -= Time.deltaTime;
 
 	}
+
+	private Action getCurrentAction(GameObject go) {
+		Action action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]; 
+		//end when a pure action is found
+		while(!(action.actionType == Action.ActionType.Forward || action.actionType == Action.ActionType.TurnLeft || action.actionType == Action.ActionType.TurnRight)){
+			//Case For
+			if(action.actionType == Action.ActionType.For){
+				action = action.actions[action.currentAction];
+			}
+		}
+
+		return action;
+	}
+
+	private void incrementActionScript(Script script){
+		if(incrementAction(script.actions[script.currentAction]))
+			script.currentAction++;
+
+	}
+	private bool incrementAction(Action act){
+		if(act.actionType == Action.ActionType.Forward || act.actionType == Action.ActionType.TurnLeft || act.actionType == Action.ActionType.TurnRight)
+			return true;
+		//Case For
+		else if(act.actionType == Action.ActionType.For){
+			if(incrementAction(act.actions[act.currentAction]))
+				act.currentAction++;
+
+			if(act.currentAction >= act.actions.Count){
+				act.currentAction = 0;
+				act.currentFor++;
+				//End of for
+				if(act.currentFor >= act.nbFor){
+					act.currentAction = 0;
+					act.currentFor++;
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+
+	private bool endOfScript(GameObject go){
+		return go.GetComponent<Script>().currentAction >= go.GetComponent<Script>().actions.Count;
+	}
+
+	private void initializeTest(){
+		foreach( GameObject go in controllableGO){
+			go.GetComponent<Script>().actions = new List<Action>();
+			go.GetComponent<Script>().actions.Add(new Action());
+			go.GetComponent<Script>().currentAction = 0;
+			Debug.Log(go.GetComponent<Script>().actions.Count);
+			go.GetComponent<Script>().actions[0].actions = new List<Action>();
+			go.GetComponent<Script>().actions[0].actions.Add(new Action());
+			go.GetComponent<Script>().actions[0].actions[0].actionType = Action.ActionType.Forward;
+			go.GetComponent<Script>().actions[0].actionType = Action.ActionType.For;
+			go.GetComponent<Script>().actions[0].nbFor = 3;
+			go.GetComponent<Script>().actions[0].currentAction = 0;
+		}
+	}
 }
+
+
