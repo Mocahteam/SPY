@@ -160,39 +160,48 @@ public class ApplyScriptSystem : FSystem {
 		}
 		return false;
 	}
+
+	public void addAction(Script script, Action actionToAdd){
+		if(script.actions == null)
+			script.actions = new List<Action>();
+
+		script.actions.Add(actionToAdd);
+	}
+
+	public void addAction(Action action, Action actionToAdd){
+		if(action.actions == null)
+			action.actions = new List<Action>();
+
+		action.actions.Add(actionToAdd);
+	}
+
+	public Action createAction(Action.ActionType type, int nbFor = 0){
+		Action action = new Action();
+		action.actionType = type;
+		action.currentAction = 0;
+		action.currentFor = 0;
+		action.nbFor = nbFor;
+
+		if(type == Action.ActionType.For || type == Action.ActionType.If || type == Action.ActionType.IfElse || type == Action.ActionType.While)
+			action.actions = new List<Action>();
+
+		return action;
+	}
+
+	public void resetScript(Script script){
+		script.actions = new List<Action>();
+		script.currentAction = 0;
+	}
+
+
 	private void initializeTest(){
 		foreach( GameObject go in controllableGO){
-			go.GetComponent<Script>().actions = new List<Action>();
-			go.GetComponent<Script>().currentAction = 0;
 
-			/*//For Forward*3
-			go.GetComponent<Script>().actions.Add(new Action());
-			go.GetComponent<Script>().actions[0].actions = new List<Action>();
-			go.GetComponent<Script>().actions[0].actions.Add(new Action());
-			go.GetComponent<Script>().actions[0].actions[0].actionType = Action.ActionType.Forward;
-			go.GetComponent<Script>().actions[0].actionType = Action.ActionType.For;
-			go.GetComponent<Script>().actions[0].nbFor = 3;
-			go.GetComponent<Script>().actions[0].currentAction = 0;
-
-			//For Turn*2
-			go.GetComponent<Script>().actions.Add(new Action());
-			go.GetComponent<Script>().actions[1].actions = new List<Action>();
-			go.GetComponent<Script>().actions[1].actions.Add(new Action());
-			go.GetComponent<Script>().actions[1].actions[0].actionType = Action.ActionType.TurnRight;
-			go.GetComponent<Script>().actions[1].actionType = Action.ActionType.For;
-			go.GetComponent<Script>().actions[1].nbFor = 2;
-			go.GetComponent<Script>().actions[1].currentAction = 0;*/
-
-			//For Forward + Turn
-			go.GetComponent<Script>().actions.Add(new Action());
-			go.GetComponent<Script>().actions[0].actions = new List<Action>();
-			go.GetComponent<Script>().actions[0].actions.Add(new Action());
-			go.GetComponent<Script>().actions[0].actions[0].actionType = Action.ActionType.Forward;
-			go.GetComponent<Script>().actions[0].actions.Add(new Action());
-			go.GetComponent<Script>().actions[0].actions[1].actionType = Action.ActionType.TurnLeft;
-			go.GetComponent<Script>().actions[0].actionType = Action.ActionType.For;
-			go.GetComponent<Script>().actions[0].nbFor = 4;
-			go.GetComponent<Script>().actions[0].currentAction = 0;
+			resetScript(go.GetComponent<Script>());
+			Action forTurnForward = createAction(Action.ActionType.For, 4);
+			addAction(forTurnForward, createAction(Action.ActionType.Forward));
+			addAction(forTurnForward, createAction(Action.ActionType.TurnLeft));
+			addAction(go.GetComponent<Script>(), forTurnForward);
 		}
 	}
 }
