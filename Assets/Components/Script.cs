@@ -7,4 +7,5 @@ public class Script : MonoBehaviour {
 	public List<Action> actions;
 
 	public int currentAction;
+	public bool repeat;
 }
