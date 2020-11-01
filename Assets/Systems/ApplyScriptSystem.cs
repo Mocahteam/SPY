@@ -1,11 +1,18 @@
 ﻿using UnityEngine;
 using FYFY;
 using System.Collections.Generic;
+using UnityEngine.UI;
 public class ApplyScriptSystem : FSystem {
 
 	private float cooldown = 2;
 	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)));
 	private Family entityGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(Entity)));
+	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
+	private GameObject scriptComposer;
+
+	public ApplyScriptSystem(){
+		scriptComposer = GameObject.Find("ScriptContainer");
+	} 
 	private bool initialized = false;
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
@@ -198,10 +205,52 @@ public class ApplyScriptSystem : FSystem {
 		foreach( GameObject go in controllableGO){
 
 			resetScript(go.GetComponent<Script>());
-			Action forTurnForward = createAction(Action.ActionType.For, 4);
-			addAction(forTurnForward, createAction(Action.ActionType.Forward));
-			addAction(forTurnForward, createAction(Action.ActionType.TurnLeft));
-			addAction(go.GetComponent<Script>(), forTurnForward);
+			//Action forTurnForward = createAction(Action.ActionType.For, 4);
+			//addAction(forTurnForward, createAction(Action.ActionType.Forward));
+			//addAction(forTurnForward, createAction(Action.ActionType.TurnLeft));
+			//addAction(go.GetComponent<Script>(), forTurnForward);
+		}
+	}
+
+	public void applyScriptToPlayer(){
+		foreach( GameObject go in playerGO){
+			resetScript(go.GetComponent<Script>());
+			go.GetComponent<Script>().actions = ScriptContainerToActionList();
+		}
+	}
+
+	private List<Action> ScriptContainerToActionList(){
+		List<Action> l = new List<Action>();
+
+		for(int i = 0; i< scriptComposer.transform.childCount; i++){
+			GameObject child = scriptComposer.transform.GetChild(i).gameObject;
+			if(child.GetComponent<UIActionType>().type == Action.ActionType.For){
+				Action forAct = createAction(child.GetComponent<UIActionType>().type);
+				forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<InputField>().text);
+				ContainerToActionList(forAct, child);
+				l.Add(forAct);
+
+			}
+			else{
+				l.Add(createAction(child.GetComponent<UIActionType>().type));
+			}
+		}
+		return l;
+	}
+
+	private void ContainerToActionList(Action act, GameObject obj){
+
+		for(int i = 1; i < obj.transform.childCount; i++){
+			GameObject child = obj.transform.GetChild(i).gameObject;
+			if(child.GetComponent<UIActionType>().type == Action.ActionType.For){
+				Action forAct = createAction(child.GetComponent<UIActionType>().type);
+				forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<InputField>().text);
+				ContainerToActionList(forAct, child);
+				addAction(act, forAct);
+			}
+			else{
+				addAction(act, createAction(child.GetComponent<UIActionType>().type));
+			}
 		}
 	}
 }

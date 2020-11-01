@@ -9,4 +9,9 @@ public class DragDropSystem_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
+	public void resetScript()
+	{
+		MainLoop.callAppropriateSystemMethod ("DragDropSystem", "resetScript", null);
+	}
+
 }

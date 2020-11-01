@@ -14,4 +14,9 @@ public class ApplyScriptSystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("ApplyScriptSystem", "resetScript", script);
 	}
 
+	public void applyScriptToPlayer()
+	{
+		MainLoop.callAppropriateSystemMethod ("ApplyScriptSystem", "applyScriptToPlayer", null);
+	}
+
 }
