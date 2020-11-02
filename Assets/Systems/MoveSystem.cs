@@ -25,6 +25,24 @@ public class MoveSystem : FSystem {
 					go.GetComponent<Position>().z = go.GetComponent<MoveTarget>().z;
 				}
 			}
+
+			Quaternion target = Quaternion.Euler(0, 0, 0);
+
+			switch(go.GetComponent<Direction>().direction){
+				case Direction.Dir.East:
+					target = Quaternion.Euler(0, 0, 0);
+					break;
+				case Direction.Dir.North:
+					target = Quaternion.Euler(0, -90, 0);
+					break;
+				case Direction.Dir.South:
+					target = Quaternion.Euler(0, 90, 0);
+					break;
+				case Direction.Dir.West:
+					target = Quaternion.Euler(0, 180, 0);
+					break;
+			}
+			go.transform.rotation = Quaternion.Slerp(go.transform.rotation, target, 2*Time.deltaTime);
 		}
 	}
 }
