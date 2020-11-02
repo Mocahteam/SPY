@@ -12,6 +12,10 @@ public class DragDropSystem : FSystem {
 	private Family ContainersGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
 	private Family ContnainerRefreshGO = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)));
 	private GameObject itemDragged;
+	private GameData gameData;
+	public DragDropSystem(){
+		gameData = GameObject.Find("GameData").GetComponent<GameData>();
+	}
 	protected override void onPause(int currentFrame) {
 	}
 
@@ -22,6 +26,16 @@ public class DragDropSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
+
+		if(gameData.scriptRunning){
+			gameData.ButtonExec.GetComponent<Button>().interactable = false;
+			gameData.ButtonReset.GetComponent<Button>().interactable = false;
+		}
+		else{
+			gameData.ButtonExec.GetComponent<Button>().interactable = true;
+			gameData.ButtonReset.GetComponent<Button>().interactable = true;
+		}
+
 		foreach( GameObject go in PointedGO){
 			if(Input.GetMouseButtonDown(0)){
 				itemDragged = Object.Instantiate<GameObject>(go.GetComponent<ElementToDrag>().actionPrefab, go.transform);
@@ -30,9 +44,6 @@ public class DragDropSystem : FSystem {
 				break;
 			}
 		}
-
-		
-
 
 		if(itemDragged != null){
 			itemDragged.transform.position = Input.mousePosition;
