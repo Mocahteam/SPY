@@ -46,66 +46,15 @@ public class ApplyScriptSystem : FSystem {
 					
 					switch (action.actionType){
 						case Action.ActionType.Forward:
-							switch (go.GetComponent<Direction>().direction){
-								case Direction.Dir.North:
-									if(!checkObstacle(go.GetComponent<Position>().x,go.GetComponent<Position>().z + 1)){
-										go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
-										go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z + 1;
-									}
-									break;
-								case Direction.Dir.South:
-									if(!checkObstacle(go.GetComponent<Position>().x,go.GetComponent<Position>().z - 1)){
-										go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
-										go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z - 1;
-									}
-									break;
-								case Direction.Dir.East:
-									if(!checkObstacle(go.GetComponent<Position>().x + 1,go.GetComponent<Position>().z)){
-										go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x + 1;
-										go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z;
-									}
-									break;
-								case Direction.Dir.West:
-									if(!checkObstacle(go.GetComponent<Position>().x - 1,go.GetComponent<Position>().z)){
-										go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x - 1;
-										go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z;
-									}
-									break;
-							}
+							ApplyForward(go);
 							break;
 
 						case Action.ActionType.TurnLeft:
-							switch (go.GetComponent<Direction>().direction){
-								case Direction.Dir.North:
-									go.GetComponent<Direction>().direction = Direction.Dir.West;
-									break;
-								case Direction.Dir.South:
-									go.GetComponent<Direction>().direction = Direction.Dir.East;
-									break;
-								case Direction.Dir.East:
-									go.GetComponent<Direction>().direction = Direction.Dir.North;
-									break;
-								case Direction.Dir.West:
-									go.GetComponent<Direction>().direction = Direction.Dir.South;
-									break;
-							}
+							ApplyTurnLeft(go);
 							break;
 
 						case Action.ActionType.TurnRight:
-							switch (go.GetComponent<Direction>().direction){
-								case Direction.Dir.North:
-									go.GetComponent<Direction>().direction = Direction.Dir.East;
-									break;
-								case Direction.Dir.South:
-									go.GetComponent<Direction>().direction = Direction.Dir.West;
-									break;
-								case Direction.Dir.East:
-									go.GetComponent<Direction>().direction = Direction.Dir.South;
-									break;
-								case Direction.Dir.West:
-									go.GetComponent<Direction>().direction = Direction.Dir.North;
-									break;
-							}
+							ApplyTurnRight(go);
 							break;
 					}
 					incrementActionScript(go.GetComponent<Script>());
@@ -123,6 +72,69 @@ public class ApplyScriptSystem : FSystem {
 				cooldown -= Time.deltaTime;
 		}
 
+	}
+
+	private void ApplyForward(GameObject go){
+		switch (go.GetComponent<Direction>().direction){
+			case Direction.Dir.North:
+				if(!checkObstacle(go.GetComponent<Position>().x,go.GetComponent<Position>().z + 1)){
+					go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
+					go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z + 1;
+				}
+				break;
+			case Direction.Dir.South:
+				if(!checkObstacle(go.GetComponent<Position>().x,go.GetComponent<Position>().z - 1)){
+					go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
+					go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z - 1;
+				}
+				break;
+			case Direction.Dir.East:
+				if(!checkObstacle(go.GetComponent<Position>().x + 1,go.GetComponent<Position>().z)){
+					go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x + 1;
+					go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z;
+				}
+				break;
+			case Direction.Dir.West:
+				if(!checkObstacle(go.GetComponent<Position>().x - 1,go.GetComponent<Position>().z)){
+					go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x - 1;
+					go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z;
+				}
+				break;
+		}
+	}
+
+	private void ApplyTurnLeft(GameObject go){
+		switch (go.GetComponent<Direction>().direction){
+			case Direction.Dir.North:
+				go.GetComponent<Direction>().direction = Direction.Dir.West;
+				break;
+			case Direction.Dir.South:
+				go.GetComponent<Direction>().direction = Direction.Dir.East;
+				break;
+			case Direction.Dir.East:
+				go.GetComponent<Direction>().direction = Direction.Dir.North;
+				break;
+			case Direction.Dir.West:
+				go.GetComponent<Direction>().direction = Direction.Dir.South;
+				break;
+		}
+	}
+
+	private void ApplyTurnRight(GameObject go){
+		switch (go.GetComponent<Direction>().direction){
+			case Direction.Dir.North:
+				go.GetComponent<Direction>().direction = Direction.Dir.East;
+				break;
+			case Direction.Dir.South:
+				go.GetComponent<Direction>().direction = Direction.Dir.West;
+				break;
+			case Direction.Dir.East:
+				go.GetComponent<Direction>().direction = Direction.Dir.South;
+				break;
+			case Direction.Dir.West:
+				go.GetComponent<Direction>().direction = Direction.Dir.North;
+				break;
+		}
 	}
 
 	private Action getCurrentAction(GameObject go) {
