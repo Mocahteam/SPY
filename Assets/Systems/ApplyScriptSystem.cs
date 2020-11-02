@@ -247,8 +247,8 @@ public class ApplyScriptSystem : FSystem {
 			if(child.GetComponent<UIActionType>().type == Action.ActionType.For){
 				Action forAct = createAction(child.GetComponent<UIActionType>().type);
 				forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<InputField>().text);
-				ContainerToActionList(forAct, child);
-				l.Add(forAct);
+				if(forAct.nbFor > 0 && child.transform.childCount > 1 && ContainerToActionList(forAct, child))
+					l.Add(forAct);
 
 			}
 			else{
@@ -258,20 +258,25 @@ public class ApplyScriptSystem : FSystem {
 		return l;
 	}
 
-	private void ContainerToActionList(Action act, GameObject obj){
+	private bool ContainerToActionList(Action act, GameObject obj){
 
+		bool nonEmpty = false;
 		for(int i = 1; i < obj.transform.childCount; i++){
 			GameObject child = obj.transform.GetChild(i).gameObject;
 			if(child.GetComponent<UIActionType>().type == Action.ActionType.For){
 				Action forAct = createAction(child.GetComponent<UIActionType>().type);
 				forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<InputField>().text);
-				ContainerToActionList(forAct, child);
-				addAction(act, forAct);
+				if(forAct.nbFor > 0 && child.transform.childCount > 1 && ContainerToActionList(forAct, child)){
+					addAction(act, forAct);
+					nonEmpty = true;
+				}
 			}
 			else{
 				addAction(act, createAction(child.GetComponent<UIActionType>().type));
+				nonEmpty = true;
 			}
 		}
+		return nonEmpty;
 	}
 }
 
