@@ -6,4 +6,7 @@ public class GameData : MonoBehaviour {
 
 	public GameObject ButtonExec;
 	public GameObject ButtonReset;
+
+	public GameObject CasePrefab;
+	public GameObject WallPrefab;
 }

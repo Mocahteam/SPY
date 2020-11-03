@@ -233,12 +233,7 @@ public class ApplyScriptSystem : FSystem {
 
 	private void initializeTest(){
 		foreach( GameObject go in controllableGO){
-
 			resetScript(go.GetComponent<Script>());
-			//Action forTurnForward = createAction(Action.ActionType.For, 4);
-			//addAction(forTurnForward, createAction(Action.ActionType.Forward));
-			//addAction(forTurnForward, createAction(Action.ActionType.TurnLeft));
-			//addAction(go.GetComponent<Script>(), forTurnForward);
 		}
 	}
 
