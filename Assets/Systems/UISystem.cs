@@ -3,7 +3,7 @@ using FYFY;
 using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
 
-public class DragDropSystem : FSystem {
+public class UISystem : FSystem {
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 	private GameObject actionContainer;
@@ -13,7 +13,7 @@ public class DragDropSystem : FSystem {
 	private Family ContnainerRefreshGO = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)));
 	private GameObject itemDragged;
 	private GameData gameData;
-	public DragDropSystem(){
+	public UISystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 	}
 	protected override void onPause(int currentFrame) {

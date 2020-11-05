@@ -2,16 +2,11 @@ using UnityEngine;
 using FYFY;
 
 [ExecuteInEditMode]
-public class UISystem_wrapper : MonoBehaviour
+public class LevelGeneratorSystem_wrapper : MonoBehaviour
 {
 	private void Start()
 	{
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
-	}
-
-	public void resetScript()
-	{
-		MainLoop.callAppropriateSystemMethod ("UISystem", "resetScript", null);
 	}
 
 }

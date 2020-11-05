@@ -763,7 +763,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 727289480}
-        m_TargetAssemblyTypeName: 
+        m_TargetAssemblyTypeName: ApplyScriptSystem_wrapper, Assembly-CSharp
         m_MethodName: applyScriptToPlayer
         m_Mode: 1
         m_Arguments:
@@ -5251,7 +5251,10 @@ GameObject:
   - component: {fileID: 727289479}
   - component: {fileID: 727289480}
   - component: {fileID: 727289481}
+  - component: {fileID: 727289483}
   - component: {fileID: 727289482}
+  - component: {fileID: 727289484}
+  - component: {fileID: 727289485}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -5297,9 +5300,21 @@ MonoBehaviour:
       PublicKeyToken=null
     _typeFullName: CameraSystem
     _pause: 0
-  - _typeAssemblyQualifiedName: DragDropSystem, Assembly-CSharp, Version=0.0.0.0,
+  - _typeAssemblyQualifiedName: HighLightSystem, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-    _typeFullName: DragDropSystem
+    _typeFullName: HighLightSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: UISystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    _typeFullName: UISystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: CheckEventsSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: CheckEventsSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: LevelGeneratorSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: LevelGeneratorSystem
     _pause: 0
   _lateUpdateSystemDescriptions: []
   _forceUpdateInspector: 0
@@ -5374,7 +5389,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 727289475}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce219623fd11f964bb3c69bb63c7f640, type: 3}
+  m_Script: {fileID: 11500000, guid: e2b99b2b8b7c1e84c864f9738c5cadde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &727289483
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 727289475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad72a101f2a34a743af3a93b2bc90278, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &727289484
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 727289475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ff2a24d302609c419fceb8cd5edf3c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &727289485
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 727289475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c65a003bba01884a8770bff2a78a328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &728168345
@@ -8302,7 +8353,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 727289482}
-        m_TargetAssemblyTypeName: 
+        m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: resetScript
         m_Mode: 1
         m_Arguments:
@@ -11590,6 +11641,8 @@ GameObject:
   - component: {fileID: 1825700367}
   - component: {fileID: 1825700366}
   - component: {fileID: 1825700365}
+  - component: {fileID: 1825700369}
+  - component: {fileID: 1825700370}
   m_Layer: 0
   m_Name: Spawn
   m_TagString: Spawn
@@ -11688,6 +11741,31 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1825700363}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1825700369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1825700363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5ecee827e938ff4d8c85bd60f661122, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basecolor: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &1825700370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1825700363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -53623643, guid: e160884b7e39b8e479dc90c5b7dcec1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1827810753 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6592150674149379877, guid: d95b7150b03a41b45be0c429720941da,
@@ -12215,7 +12293,7 @@ GameObject:
   - component: {fileID: 2013838793}
   m_Layer: 0
   m_Name: Exit
-  m_TagString: Spawn
+  m_TagString: Exit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

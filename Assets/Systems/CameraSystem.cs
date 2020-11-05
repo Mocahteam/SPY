@@ -17,8 +17,8 @@ public class CameraSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		foreach( GameObject go in controllableGO){
-			go.transform.position = go.transform.position + new Vector3(0,0,Input.GetAxis("Vertical")* go.GetComponent<Camera>().cameraSpeed * Time.deltaTime);
-			go.transform.position = go.transform.position + new Vector3(Input.GetAxis("Horizontal")* go.GetComponent<Camera>().cameraSpeed * Time.deltaTime,0,0);
+			go.transform.position = go.transform.position + new Vector3(0,0,Input.GetAxis("Horizontal")* go.GetComponent<Camera>().cameraSpeed * Time.deltaTime);
+			go.transform.position = go.transform.position + new Vector3(-Input.GetAxis("Vertical")* go.GetComponent<Camera>().cameraSpeed * Time.deltaTime,0,0);
 			
 		}
 		

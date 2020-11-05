@@ -9,4 +9,8 @@ public class GameData : MonoBehaviour {
 
 	public GameObject CasePrefab;
 	public GameObject WallPrefab;
+	public GameObject Level;
+	public GameObject SpawnPrefab;
+	public GameObject ExitPrefab;
+	public GameObject PlayerPrefab;
 }
