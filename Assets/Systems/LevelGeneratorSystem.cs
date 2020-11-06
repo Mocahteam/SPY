@@ -43,7 +43,16 @@ public class LevelGeneratorSystem : FSystem {
 
 		generateMap();
 
-		createPlayer(1,1, Direction.Dir.North);
+		createEntity(1,1, Direction.Dir.North,0);
+
+		Action forAct = ActionManipulator.createAction(Action.ActionType.For,4);
+		ActionManipulator.addAction(forAct,ActionManipulator.createAction(Action.ActionType.Forward));
+		ActionManipulator.addAction(forAct,ActionManipulator.createAction(Action.ActionType.TurnLeft));
+		List<Action> script = new List<Action> {forAct};
+		createEntity(5,6,Direction.Dir.West,1, script, true);
+		
+
+
 	}
 
 	private void generateMap(){
@@ -70,14 +79,31 @@ public class LevelGeneratorSystem : FSystem {
 		}
 	}
 
-	private void createPlayer(int i, int j, Direction.Dir direction){
-		GameObject player = Object.Instantiate<GameObject>(gameData.PlayerPrefab, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
-		player.GetComponent<Position>().x = i;
-		player.GetComponent<Position>().z = j;
-		player.GetComponent<Direction>().direction = direction;
-		player.GetComponent<MoveTarget>().x = i;
-		player.GetComponent<MoveTarget>().z = j;
-		GameObjectManager.bind(player);
+	private void createEntity(int i, int j, Direction.Dir direction, int type, List<Action> script = null, bool repeat = false){
+		GameObject entity = null;
+		switch(type){
+			case 0:
+				entity = Object.Instantiate<GameObject>(gameData.PlayerPrefab, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+				break;
+			case 1:
+				entity = Object.Instantiate<GameObject>(gameData.EnemyPrefab, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+				break;
+		}
+		
+		entity.GetComponent<Position>().x = i;
+		entity.GetComponent<Position>().z = j;
+		entity.GetComponent<Direction>().direction = direction;
+		entity.GetComponent<MoveTarget>().x = i;
+		entity.GetComponent<MoveTarget>().z = j;
+
+		ActionManipulator.resetScript(entity.GetComponent<Script>());
+		if(script != null){
+			entity.GetComponent<Script>().actions = script;
+		}
+
+		entity.GetComponent<Script>().repeat = repeat;
+
+		GameObjectManager.bind(entity);
 	}
 
 	private void createSpawnExit(int i, int j, bool type){

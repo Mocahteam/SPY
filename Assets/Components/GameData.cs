@@ -13,4 +13,5 @@ public class GameData : MonoBehaviour {
 	public GameObject SpawnPrefab;
 	public GameObject ExitPrefab;
 	public GameObject PlayerPrefab;
+	public GameObject EnemyPrefab;
 }
