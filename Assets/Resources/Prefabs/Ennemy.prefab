@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 7706397491141018346}
   - component: {fileID: 7706397491141018357}
   - component: {fileID: 7706397491141018359}
+  - component: {fileID: 1280175436188376073}
+  - component: {fileID: 7428025348019549729}
   m_Layer: 0
   m_Name: Ennemy
   m_TagString: Ennemy
@@ -141,6 +143,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction: 0
+--- !u!114 &1280175436188376073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7706397491141018353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5ecee827e938ff4d8c85bd60f661122, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basecolor: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &7428025348019549729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7706397491141018353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -53623643, guid: e160884b7e39b8e479dc90c5b7dcec1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7706397492090534070
 GameObject:
   m_ObjectHideFlags: 0

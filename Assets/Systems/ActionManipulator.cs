@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using FYFY;
+using FYFY_plugins.PointerManager;
 
 public abstract class ActionManipulator
 {
@@ -128,5 +130,44 @@ public abstract class ActionManipulator
 			}
 		}
 		return nonEmpty;
+	}
+
+	public static void ScriptToContainer(Script script, GameObject container){
+
+		foreach(Action action in script.actions){
+			(ActionToContainer(action)).transform.SetParent(container.transform);
+		}
+
+		LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)container.transform );
+
+	}
+
+	private static GameObject ActionToContainer(Action action){
+		GameObject obj =  null;;
+		switch(action.actionType){
+			case Action.ActionType.Forward:
+				obj = Object.Instantiate (Resources.Load ("Prefabs/ForwardActionBloc")) as GameObject;
+				break;
+			case Action.ActionType.TurnLeft:
+				obj = Object.Instantiate (Resources.Load ("Prefabs/TurnLeftActionBloc Variant")) as GameObject;
+				break;
+			case Action.ActionType.TurnRight:
+				obj = Object.Instantiate (Resources.Load ("Prefabs/TurnRightActionBloc Variant")) as GameObject;
+				break;
+			case Action.ActionType.Wait:
+				obj = Object.Instantiate (Resources.Load ("Prefabs/WaitActionBloc Variant")) as GameObject;
+				break;
+			case Action.ActionType.For:
+				obj = Object.Instantiate (Resources.Load ("Prefabs/ForBloc")) as GameObject;
+				obj.transform.GetChild(0).GetChild(1).GetComponent<InputField>().text = action.nbFor.ToString();
+				obj.transform.GetChild(0).GetChild(1).GetComponent<InputField>().interactable = false;
+				Object.Destroy(obj.GetComponent<PointerSensitive>());
+				Object.Destroy(obj.GetComponent<UITypeContainer>());
+				foreach(Action act in action.actions){
+					ActionToContainer(act).transform.SetParent(obj.transform);
+				}
+				break;
+		}
+		return obj;
 	}
 }
