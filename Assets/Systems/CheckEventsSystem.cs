@@ -4,6 +4,7 @@ using FYFY;
 public class CheckEventsSystem : FSystem {
 
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
+	private Family noPlayerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new NoneOfTags("Player"));
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
 
 	// Use this to update member variables when system pause. 
@@ -25,6 +26,15 @@ public class CheckEventsSystem : FSystem {
 				if(player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().z == exit.GetComponent<Position>().z){
 					//end level
 					Debug.Log("Fin du niveau");
+				}
+			}
+		}
+
+		foreach( GameObject player in playerGO){
+			foreach( GameObject noPlayer in noPlayerGO){
+				if(player.GetComponent<Position>().x == noPlayer.GetComponent<Position>().x && player.GetComponent<Position>().z == noPlayer.GetComponent<Position>().z){
+					//end level
+					Debug.Log("Repéré !");
 				}
 			}
 		}

@@ -55,15 +55,11 @@ public class UISystem : FSystem {
 				priority = go;
 			
 		}
-		//if(priority != null)
-			//Debug.Log(priority.GetComponent<UITypeContainer>().type);
 
 
 		if(Input.GetMouseButtonUp(0)){
 			if(priority != null && itemDragged != null){
-				//Object.Instantiate(itemDragged, priority.transform);
 				itemDragged.transform.SetParent(priority.transform);
-				//GameObjectManager.bind(itemDragged);
 				if(itemDragged.GetComponent<UITypeContainer>() != null){
 					itemDragged.GetComponent<Image>().raycastTarget = true;
 					itemDragged.GetComponent<UITypeContainer>().layer = priority.GetComponent<UITypeContainer>().layer + 1;
@@ -82,16 +78,10 @@ public class UISystem : FSystem {
 	}
 
 	private void refreshUI(){
-		//Canvas.ForceUpdateCanvases();
 		foreach( GameObject go in ContnainerRefreshGO){
-			go.GetComponent<VerticalLayoutGroup>().enabled = false;
+			LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)go.transform );
 		}
-
-		Canvas.ForceUpdateCanvases();
-
-		foreach( GameObject go in ContnainerRefreshGO){
-			go.GetComponent<VerticalLayoutGroup>().enabled = true;
-		}
+		
 	}
 
 	public void resetScript(){

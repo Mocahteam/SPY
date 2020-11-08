@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 public class ApplyScriptSystem : FSystem {
 
-	private float cooldown = 2;
+	private float cooldown = 1f;
 	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)));
 	private Family entityGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(Entity)));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
 	private GameObject scriptComposer;
 	private GameData gameData;
+	private float scriptCooldown = 0.5f;
 
 	public ApplyScriptSystem(){
 		scriptComposer = GameObject.Find("ScriptContainer");
@@ -30,7 +31,7 @@ public class ApplyScriptSystem : FSystem {
 
 		if(gameData.scriptRunning){
 			if(cooldown <= 0){
-				cooldown = 2;
+				cooldown = scriptCooldown;
 				foreach( GameObject go in controllableGO){
 					
 
@@ -51,6 +52,8 @@ public class ApplyScriptSystem : FSystem {
 
 						case Action.ActionType.TurnRight:
 							ApplyTurnRight(go);
+							break;
+						case Action.ActionType.Wait:
 							break;
 					}
 					ActionManipulator.incrementActionScript(go.GetComponent<Script>());
@@ -73,26 +76,26 @@ public class ApplyScriptSystem : FSystem {
 		switch (go.GetComponent<Direction>().direction){
 			case Direction.Dir.North:
 				if(!checkObstacle(go.GetComponent<Position>().x,go.GetComponent<Position>().z + 1)){
-					go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
-					go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z + 1;
+					go.GetComponent<Position>().x = go.GetComponent<Position>().x;
+					go.GetComponent<Position>().z = go.GetComponent<Position>().z + 1;
 				}
 				break;
 			case Direction.Dir.South:
 				if(!checkObstacle(go.GetComponent<Position>().x,go.GetComponent<Position>().z - 1)){
-					go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x;
-					go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z - 1;
+					go.GetComponent<Position>().x = go.GetComponent<Position>().x;
+					go.GetComponent<Position>().z = go.GetComponent<Position>().z - 1;
 				}
 				break;
 			case Direction.Dir.East:
 				if(!checkObstacle(go.GetComponent<Position>().x + 1,go.GetComponent<Position>().z)){
-					go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x + 1;
-					go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z;
+					go.GetComponent<Position>().x = go.GetComponent<Position>().x + 1;
+					go.GetComponent<Position>().z = go.GetComponent<Position>().z;
 				}
 				break;
 			case Direction.Dir.West:
 				if(!checkObstacle(go.GetComponent<Position>().x - 1,go.GetComponent<Position>().z)){
-					go.GetComponent<MoveTarget>().x = go.GetComponent<Position>().x - 1;
-					go.GetComponent<MoveTarget>().z = go.GetComponent<Position>().z;
+					go.GetComponent<Position>().x = go.GetComponent<Position>().x - 1;
+					go.GetComponent<Position>().z = go.GetComponent<Position>().z;
 				}
 				break;
 		}

@@ -48,7 +48,8 @@ public abstract class ActionManipulator
     public static Action getCurrentAction(GameObject go) {
 		Action action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]; 
 		//end when a pure action is found
-		while(!(action.actionType == Action.ActionType.Forward || action.actionType == Action.ActionType.TurnLeft || action.actionType == Action.ActionType.TurnRight)){
+		while(!(action.actionType == Action.ActionType.Forward || action.actionType == Action.ActionType.TurnLeft || action.actionType == Action.ActionType.TurnRight
+				|| action.actionType == Action.ActionType.Wait)){
 			//Case For
 			if(action.actionType == Action.ActionType.For){
 				action = action.actions[action.currentAction];
@@ -66,7 +67,8 @@ public abstract class ActionManipulator
 	}
 
     public static bool incrementAction(Action act){
-		if(act.actionType == Action.ActionType.Forward || act.actionType == Action.ActionType.TurnLeft || act.actionType == Action.ActionType.TurnRight)
+		if(act.actionType == Action.ActionType.Forward || act.actionType == Action.ActionType.TurnLeft || act.actionType == Action.ActionType.TurnRight
+			|| act.actionType == Action.ActionType.Wait)
 			return true;
 		//Case For
 		else if(act.actionType == Action.ActionType.For){

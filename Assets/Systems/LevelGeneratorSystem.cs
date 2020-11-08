@@ -93,8 +93,6 @@ public class LevelGeneratorSystem : FSystem {
 		entity.GetComponent<Position>().x = i;
 		entity.GetComponent<Position>().z = j;
 		entity.GetComponent<Direction>().direction = direction;
-		entity.GetComponent<MoveTarget>().x = i;
-		entity.GetComponent<MoveTarget>().z = j;
 
 		ActionManipulator.resetScript(entity.GetComponent<Script>());
 		if(script != null){
