@@ -5571,7 +5571,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa34589ea8e04f4bb1f63a311504d5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scriptRunning: 0
   ButtonExec: {fileID: 109499238}
   ButtonReset: {fileID: 1324069018}
   CasePrefab: {fileID: 9157685522785862460, guid: d8b86bf11d6316f439d36b197173508e,
@@ -5587,6 +5586,9 @@ MonoBehaviour:
     type: 3}
   EnemyPrefab: {fileID: 7706397491141018353, guid: 0039e3bf35b5b3d41b2cc63913cd264a,
     type: 3}
+  step: 0
+  checkStep: 0
+  nbStep: 0
 --- !u!4 &708165118 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5938326883108450776, guid: d8b86bf11d6316f439d36b197173508e,
@@ -5698,6 +5700,7 @@ GameObject:
   - component: {fileID: 727289482}
   - component: {fileID: 727289484}
   - component: {fileID: 727289485}
+  - component: {fileID: 727289486}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -5759,7 +5762,11 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     _typeFullName: LevelGeneratorSystem
     _pause: 0
-  _lateUpdateSystemDescriptions: []
+  _lateUpdateSystemDescriptions:
+  - _typeAssemblyQualifiedName: StepSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    _typeFullName: StepSystem
+    _pause: 0
   _forceUpdateInspector: 0
   _loadingState: 0
   _specialGameObjects:
@@ -5869,6 +5876,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9c65a003bba01884a8770bff2a78a328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &727289486
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 727289475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea4da55ccaf1aa249b3952a241127b28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &728168345
