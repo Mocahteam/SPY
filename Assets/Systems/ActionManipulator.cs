@@ -92,6 +92,28 @@ public abstract class ActionManipulator
 		return false;
 	}
 
+	public static int getNbStep(Script script){
+		int nb = 0;
+		foreach(Action act in script.actions){
+			nb += getNbStep(act);
+		}
+
+		return nb;
+	}
+
+	public static int getNbStep(Action action){
+		if(action.actionType == Action.ActionType.For){
+			int nb = 0;
+			foreach(Action act in action.actions){
+				nb += getNbStep(act) * action.nbFor;
+			}
+			return nb;
+		}
+		else
+			return 1;
+	}
+
+
     public static List<Action> ScriptContainerToActionList(GameObject scriptComposer){
 		List<Action> l = new List<Action>();
 
@@ -133,38 +155,59 @@ public abstract class ActionManipulator
 	}
 
 	public static void ScriptToContainer(Script script, GameObject container){
-
+		int i = 0;
 		foreach(Action action in script.actions){
-			(ActionToContainer(action)).transform.SetParent(container.transform);
+			if(i == script.currentAction)
+				ActionToContainer(action, true).transform.SetParent(container.transform);
+			else
+				ActionToContainer(action, false).transform.SetParent(container.transform);
+			i++;
 		}
 
 		LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)container.transform );
 
 	}
 
-	private static GameObject ActionToContainer(Action action){
+	private static GameObject ActionToContainer(Action action, bool nextAction){
 		GameObject obj =  null;;
 		switch(action.actionType){
 			case Action.ActionType.Forward:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/ForwardActionBloc")) as GameObject;
+				if(nextAction){
+					obj.GetComponent<Image>().color = Color.yellow;
+				}
 				break;
 			case Action.ActionType.TurnLeft:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/TurnLeftActionBloc Variant")) as GameObject;
+				if(nextAction){
+					obj.GetComponent<Image>().color = Color.yellow;
+				}
 				break;
 			case Action.ActionType.TurnRight:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/TurnRightActionBloc Variant")) as GameObject;
+				if(nextAction){
+					obj.GetComponent<Image>().color = Color.yellow;
+				}
 				break;
 			case Action.ActionType.Wait:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/WaitActionBloc Variant")) as GameObject;
+				if(nextAction){
+					obj.GetComponent<Image>().color = Color.yellow;
+				}
 				break;
 			case Action.ActionType.For:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/ForBloc")) as GameObject;
-				obj.transform.GetChild(0).GetChild(1).GetComponent<InputField>().text = action.nbFor.ToString();
+				obj.transform.GetChild(0).GetChild(1).GetComponent<InputField>().text = action.currentFor.ToString() + " / " + action.nbFor.ToString();
 				obj.transform.GetChild(0).GetChild(1).GetComponent<InputField>().interactable = false;
 				Object.Destroy(obj.GetComponent<PointerSensitive>());
 				Object.Destroy(obj.GetComponent<UITypeContainer>());
+				int i = 0;
 				foreach(Action act in action.actions){
-					ActionToContainer(act).transform.SetParent(obj.transform);
+					if(i == action.currentAction && nextAction)
+						ActionToContainer(act, true).transform.SetParent(obj.transform);
+					else
+						ActionToContainer(act, false).transform.SetParent(obj.transform);
+					i++;
 				}
 				break;
 		}

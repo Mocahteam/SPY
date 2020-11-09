@@ -10,7 +10,7 @@ public class UISystem : FSystem {
 	private Family PointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ElementToDrag)));
 
 	private Family ContainersGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
-	private Family ContnainerRefreshGO = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)));
+	private Family ContainerRefreshGO = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)));
 	private GameObject itemDragged;
 	private GameData gameData;
 	public UISystem(){
@@ -27,7 +27,7 @@ public class UISystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 
-		if(gameData.scriptRunning){
+		if(gameData.nbStep>0){
 			gameData.ButtonExec.GetComponent<Button>().interactable = false;
 			gameData.ButtonReset.GetComponent<Button>().interactable = false;
 		}
@@ -78,7 +78,7 @@ public class UISystem : FSystem {
 	}
 
 	private void refreshUI(){
-		foreach( GameObject go in ContnainerRefreshGO){
+		foreach( GameObject go in ContainerRefreshGO){
 			LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)go.transform );
 		}
 		

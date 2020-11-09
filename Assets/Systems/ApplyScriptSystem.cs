@@ -4,13 +4,11 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 public class ApplyScriptSystem : FSystem {
 
-	private float cooldown = 1f;
 	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)));
 	private Family entityGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(Entity)));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
 	private GameObject scriptComposer;
 	private GameData gameData;
-	private float scriptCooldown = 0.5f;
 
 	public ApplyScriptSystem(){
 		scriptComposer = GameObject.Find("ScriptContainer");
@@ -29,45 +27,37 @@ public class ApplyScriptSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 
-		if(gameData.scriptRunning){
-			if(cooldown <= 0){
-				cooldown = scriptCooldown;
-				foreach( GameObject go in controllableGO){
-					
-
-					if(ActionManipulator.endOfScript(go)){
-						break;
-					}
-					Action action = ActionManipulator.getCurrentAction(go);
-					
-					
-					switch (action.actionType){
-						case Action.ActionType.Forward:
-							ApplyForward(go);
-							break;
-
-						case Action.ActionType.TurnLeft:
-							ApplyTurnLeft(go);
-							break;
-
-						case Action.ActionType.TurnRight:
-							ApplyTurnRight(go);
-							break;
-						case Action.ActionType.Wait:
-							break;
-					}
-					ActionManipulator.incrementActionScript(go.GetComponent<Script>());
+		if(gameData.step){
+			foreach( GameObject go in controllableGO){
+				
+				if(ActionManipulator.endOfScript(go)){
+					break;
 				}
+				Action action = ActionManipulator.getCurrentAction(go);
+				
+				switch (action.actionType){
+					case Action.ActionType.Forward:
+						ApplyForward(go);
+						break;
 
-				foreach( GameObject go in playerGO){
-					if(ActionManipulator.endOfScript(go)){
-						gameData.scriptRunning = false;
-						ActionManipulator.restartScript(go.GetComponent<Script>());
-					}
+					case Action.ActionType.TurnLeft:
+						ApplyTurnLeft(go);
+						break;
+
+					case Action.ActionType.TurnRight:
+						ApplyTurnRight(go);
+						break;
+					case Action.ActionType.Wait:
+						break;
+				}
+				ActionManipulator.incrementActionScript(go.GetComponent<Script>());
+			}
+
+			foreach( GameObject go in playerGO){
+				if(ActionManipulator.endOfScript(go)){
+					ActionManipulator.restartScript(go.GetComponent<Script>());
 				}
 			}
-			else
-				cooldown -= Time.deltaTime;
 		}
 
 	}
@@ -148,9 +138,8 @@ public class ApplyScriptSystem : FSystem {
 		foreach( GameObject go in playerGO){
 			ActionManipulator.resetScript(go.GetComponent<Script>());
 			go.GetComponent<Script>().actions = ActionManipulator.ScriptContainerToActionList(scriptComposer);
+			gameData.nbStep = ActionManipulator.getNbStep(go.GetComponent<Script>());
 		}
-
-		gameData.scriptRunning = true;
 	}
 
 	

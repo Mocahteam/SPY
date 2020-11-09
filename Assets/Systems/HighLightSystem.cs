@@ -32,7 +32,7 @@ public class HighLightSystem : FSystem {
 				GameObject.Destroy(child.gameObject);
 			}
 
-			ActionManipulator.ScriptToContainer(highLightedItem.GetComponent<Script>(), EnemyScriptContainer);	
+			ActionManipulator.ScriptToContainer(highLightedItem.GetComponent<Script>(), EnemyScriptContainer);
 		}
 
 	}
