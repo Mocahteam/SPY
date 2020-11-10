@@ -1,0 +1,9 @@
+﻿using UnityEngine;
+
+public class DetectRange : MonoBehaviour {
+	// Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
+
+	public int range;
+	public enum Type {Line, Cone, Around};
+	public Type type;
+}

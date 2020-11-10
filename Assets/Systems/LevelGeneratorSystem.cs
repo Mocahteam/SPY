@@ -83,10 +83,10 @@ public class LevelGeneratorSystem : FSystem {
 		GameObject entity = null;
 		switch(type){
 			case 0:
-				entity = Object.Instantiate<GameObject>(gameData.PlayerPrefab, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Player") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				break;
 			case 1:
-				entity = Object.Instantiate<GameObject>(gameData.EnemyPrefab, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Ennemy") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				break;
 		}
 		
@@ -107,9 +107,9 @@ public class LevelGeneratorSystem : FSystem {
 	private void createSpawnExit(int i, int j, bool type){
 		GameObject spawnExit;
 		if(type)
-			spawnExit = Object.Instantiate<GameObject>(gameData.SpawnPrefab, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+			spawnExit = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Spawn") as GameObject, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 		else
-			spawnExit = Object.Instantiate<GameObject>(gameData.ExitPrefab, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+			spawnExit = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Exit") as GameObject, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 
 		spawnExit.GetComponent<Position>().x = i;
 		spawnExit.GetComponent<Position>().z = j;
@@ -117,12 +117,12 @@ public class LevelGeneratorSystem : FSystem {
 	}
 
 	private void createCell(int i, int j){
-		GameObject cell = Object.Instantiate<GameObject>(gameData.CasePrefab, gameData.Level.transform.position + new Vector3(i*3,0,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+		GameObject cell = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Cell") as GameObject, gameData.Level.transform.position + new Vector3(i*3,0,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 		GameObjectManager.bind(cell);
 	}
 
 	private void createWall(int i, int j){
-		GameObject wall = Object.Instantiate<GameObject>(gameData.WallPrefab, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+		GameObject wall = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Wall") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 		wall.GetComponent<Position>().x = i;
 		wall.GetComponent<Position>().z = j;
 		GameObjectManager.bind(wall);

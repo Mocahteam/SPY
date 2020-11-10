@@ -5,15 +5,10 @@ public class GameData : MonoBehaviour {
 
 	public GameObject ButtonExec;
 	public GameObject ButtonReset;
-
-	public GameObject CasePrefab;
-	public GameObject WallPrefab;
 	public GameObject Level;
-	public GameObject SpawnPrefab;
-	public GameObject ExitPrefab;
-	public GameObject PlayerPrefab;
-	public GameObject EnemyPrefab;
 	public bool step;
 	public bool checkStep;
-	public int nbStep = 0;
+	public bool generateStep;
+	public int nbStep;
+	public bool initialize;
 }

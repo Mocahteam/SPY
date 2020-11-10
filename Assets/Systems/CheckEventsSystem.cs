@@ -6,6 +6,7 @@ public class CheckEventsSystem : FSystem {
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
 	private Family noPlayerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new NoneOfTags("Player"));
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
+	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector)));
 	private GameData gameData;
 
 	public CheckEventsSystem(){
@@ -43,8 +44,15 @@ public class CheckEventsSystem : FSystem {
 						Debug.Log("Repéré !");
 					}
 				}
-			}
-		}
 
+				foreach(GameObject detector in detectorGO){
+					if(player.GetComponent<Position>().x == detector.GetComponent<Position>().x && player.GetComponent<Position>().z == detector.GetComponent<Position>().z){
+						//end level
+						Debug.Log("Repéré !");
+					}
+				}
+			}
+
+		}
 	}
 }

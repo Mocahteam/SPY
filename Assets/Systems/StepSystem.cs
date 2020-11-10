@@ -11,6 +11,9 @@ public class StepSystem : FSystem {
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.step = false;
 		gameData.checkStep = false;
+		gameData.generateStep = false;
+		gameData.nbStep = 0;
+		gameData.initialize = true;
 		timeStepCpt = timeStep;
 	} 
 
@@ -28,15 +31,23 @@ public class StepSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 
+		if(gameData.initialize){
+			gameData.initialize = false;
+		}
+
 		if(gameData.nbStep > 0){
 			if(gameData.checkStep){
 				timeStepCpt = timeStep;
 				gameData.checkStep = false;
 				gameData.nbStep--;
 			}
+			else if(gameData.generateStep){
+				gameData.generateStep = false;
+				gameData.checkStep = true;
+			}
 			else if(gameData.step){
 				gameData.step = false;
-				gameData.checkStep = true;
+				gameData.generateStep = true;
 			}
 			else if(timeStepCpt <= 0){
 				gameData.step = true;
