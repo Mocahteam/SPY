@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class GameData : MonoBehaviour {
 	// Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
@@ -11,4 +12,8 @@ public class GameData : MonoBehaviour {
 	public bool generateStep;
 	public int nbStep;
 	public bool initialize;
+	public List<string> levelList;
+	public int levelToLoad;
+
+	public int endLevel;
 }

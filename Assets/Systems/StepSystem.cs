@@ -15,6 +15,7 @@ public class StepSystem : FSystem {
 		gameData.nbStep = 0;
 		gameData.initialize = true;
 		timeStepCpt = timeStep;
+		gameData.endLevel = 0;
 	} 
 
 	// Use this to update member variables when system pause. 
@@ -35,7 +36,7 @@ public class StepSystem : FSystem {
 			gameData.initialize = false;
 		}
 
-		if(gameData.nbStep > 0){
+		if(gameData.nbStep > 0 && gameData.endLevel == 0){
 			if(gameData.checkStep){
 				timeStepCpt = timeStep;
 				gameData.checkStep = false;
@@ -55,6 +56,11 @@ public class StepSystem : FSystem {
 			else{
 				timeStepCpt -= Time.deltaTime;
 			}
+		}
+		else{
+			gameData.step = false;
+			gameData.checkStep = false;
+			gameData.generateStep = false;
 		}
 	}
 }

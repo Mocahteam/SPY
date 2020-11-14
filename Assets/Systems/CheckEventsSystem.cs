@@ -26,13 +26,17 @@ public class CheckEventsSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		if(gameData.checkStep){
-
 			//Check if the player is on the end of the level
+			int nbEnd = 0;
 			foreach( GameObject player in playerGO){
 				foreach( GameObject exit in exitGO){
 					if(player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().z == exit.GetComponent<Position>().z){
+						nbEnd++;
 						//end level
-						Debug.Log("Fin du niveau");
+						if(nbEnd >= playerGO.Count){
+							Debug.Log("Fin du niveau");
+							gameData.endLevel = 2;
+						}
 					}
 				}
 			}
@@ -42,6 +46,7 @@ public class CheckEventsSystem : FSystem {
 					if(player.GetComponent<Position>().x == noPlayer.GetComponent<Position>().x && player.GetComponent<Position>().z == noPlayer.GetComponent<Position>().z){
 						//end level
 						Debug.Log("Repéré !");
+						gameData.endLevel = 1;
 					}
 				}
 
@@ -49,6 +54,7 @@ public class CheckEventsSystem : FSystem {
 					if(player.GetComponent<Position>().x == detector.GetComponent<Position>().x && player.GetComponent<Position>().z == detector.GetComponent<Position>().z){
 						//end level
 						Debug.Log("Repéré !");
+						gameData.endLevel = 1;
 					}
 				}
 			}

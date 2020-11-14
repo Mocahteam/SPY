@@ -13,7 +13,11 @@ public class LevelGeneratorSystem : FSystem {
 
 	public LevelGeneratorSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		generateLevel1();
+		gameData.Level = GameObject.Find("Level");
+		if(gameData.levelToLoad == 0)
+			generateLevel1();
+		else if(gameData.levelToLoad == 1)
+			generateLevel2();
 	}
 	protected override void onPause(int currentFrame) {
 	}
@@ -32,7 +36,7 @@ public class LevelGeneratorSystem : FSystem {
 	private void generateLevel1(){
 		eraseMap();
 		map = new List<List<int>> {new List<int>{1,1,1,1,1,1,1,1,1,1},
-									new List<int>{1,2,1,0,0,0,0,0,0,1},
+									new List<int>{1,2,0,0,0,0,0,0,0,1},
 									new List<int>{1,0,1,0,1,0,0,0,0,1},
 									new List<int>{1,0,1,0,1,0,0,1,0,1},
 									new List<int>{1,0,0,0,1,0,0,0,0,1},
@@ -53,6 +57,24 @@ public class LevelGeneratorSystem : FSystem {
 		
 
 
+	}
+
+	private void generateLevel2(){
+		eraseMap();
+		map = new List<List<int>> {new List<int>{1,1,1,1,1,1,1,1,1,1},
+									new List<int>{1,3,1,0,0,0,0,0,0,1},
+									new List<int>{1,0,0,1,1,1,1,0,0,1},
+									new List<int>{1,1,0,1,3,0,1,1,0,1},
+									new List<int>{1,0,0,1,1,0,1,0,0,1},
+									new List<int>{1,0,1,1,1,0,1,0,0,1},
+									new List<int>{1,0,1,0,0,0,1,1,0,1},
+									new List<int>{1,2,1,2,1,1,1,1,0,1},
+									new List<int>{1,1,1,1,1,1,1,1,1,1}};
+
+		generateMap();
+
+		createEntity(7,1, Direction.Dir.West,0);
+		createEntity(7,3, Direction.Dir.West,0);
 	}
 
 	private void generateMap(){
@@ -134,5 +156,23 @@ public class LevelGeneratorSystem : FSystem {
 			GameObjectManager.unbind(go.gameObject);
 			Object.Destroy(go.gameObject);
 		}
+	}
+
+	public void reloadScene(){
+		gameData.step = false;
+		gameData.checkStep = false;
+		gameData.generateStep = false;
+		gameData.nbStep = 0;
+		gameData.endLevel = 0;
+		GameObjectManager.loadScene("MainScene");
+	}
+
+	public void returnToTitleScreen(){
+		GameObjectManager.loadScene("TitleScreen");
+	}
+
+	public void nextLevel(){
+		gameData.levelToLoad++;
+		reloadScene();
 	}
 }

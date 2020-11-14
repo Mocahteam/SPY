@@ -13,8 +13,13 @@ public class UISystem : FSystem {
 	private Family ContainerRefreshGO = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)));
 	private GameObject itemDragged;
 	private GameData gameData;
+	private GameObject endPanel;
 	public UISystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
+		gameData.ButtonExec = GameObject.Find("ExecuteButton");
+		gameData.ButtonReset = GameObject.Find("ResetButton");
+		endPanel = GameObject.Find("EndPanel");
+		endPanel.SetActive(false);
 	}
 	protected override void onPause(int currentFrame) {
 	}
@@ -26,6 +31,20 @@ public class UISystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
+
+		//Activate EndPanel
+		if(gameData.endLevel != 0 && !endPanel.activeSelf){
+			endPanel.SetActive(true);
+			switch(gameData.endLevel){
+				case 1:
+					endPanel.transform.GetChild(0).GetComponent<Text>().text = "Vous avez été repéré !";
+					endPanel.transform.GetChild(3).gameObject.SetActive(false);
+					break;
+				case 2:
+					endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !";
+					break;
+			}
+		}
 
 		if(gameData.nbStep>0){
 			gameData.ButtonExec.GetComponent<Button>().interactable = false;
