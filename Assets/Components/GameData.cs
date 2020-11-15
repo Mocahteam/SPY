@@ -14,7 +14,7 @@ public class GameData : MonoBehaviour {
 	public bool initialize;
 	public List<string> levelList;
 	public int levelToLoad;
-	public string dialogMessage;
+	public List<string> dialogMessage;
 
 	public int endLevel;
 }

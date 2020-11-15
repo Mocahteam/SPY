@@ -2,6 +2,7 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class UISystem : FSystem {
 	// Use this to update member variables when system pause. 
@@ -15,6 +16,7 @@ public class UISystem : FSystem {
 	private GameData gameData;
 	private GameObject endPanel;
 	private GameObject dialogPanel;
+	private int nDialog = 0;
 
 	public UISystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
@@ -51,8 +53,8 @@ public class UISystem : FSystem {
 		}
 
 		//Activate DialogPanel if there is a message
-		if(gameData.dialogMessage != ""){
-			showDialogPanel(gameData.dialogMessage);
+		if(gameData.dialogMessage.Count > 0 && !dialogPanel.activeSelf){
+			showDialogPanel();
 		}
 
 		//Desactivate Execute & ResetButton if there is a script running
@@ -137,13 +139,36 @@ public class UISystem : FSystem {
 		Object.Destroy(go.gameObject);
 	}
 
-	public void showDialogPanel(string text){
+	public void showDialogPanel(){
 		dialogPanel.SetActive(true);
-		dialogPanel.transform.GetChild(0).GetComponent<Text>().text = text;
+		nDialog = 0;
+		dialogPanel.transform.GetChild(0).GetComponent<Text>().text = gameData.dialogMessage[0];
+		if(gameData.dialogMessage.Count > 1){
+			dialogPanel.transform.GetChild(1).gameObject.SetActive(false);
+			dialogPanel.transform.GetChild(2).gameObject.SetActive(true);
+		}
+		else{
+			dialogPanel.transform.GetChild(1).gameObject.SetActive(true);
+			dialogPanel.transform.GetChild(2).gameObject.SetActive(false);
+		}
+	}
+
+	public void nextDialog(){
+		nDialog++;
+		dialogPanel.transform.GetChild(0).GetComponent<Text>().text = gameData.dialogMessage[nDialog];
+		if(nDialog + 1 < gameData.dialogMessage.Count){
+			dialogPanel.transform.GetChild(1).gameObject.SetActive(false);
+			dialogPanel.transform.GetChild(2).gameObject.SetActive(true);
+		}
+		else{
+			dialogPanel.transform.GetChild(1).gameObject.SetActive(true);
+			dialogPanel.transform.GetChild(2).gameObject.SetActive(false);
+		}
 	}
 
 	public void closeDialogPanel(){
-		gameData.dialogMessage = "";
+		nDialog = 0;
+		gameData.dialogMessage = new List<string>();;
 		dialogPanel.SetActive(false);
 	}
 }

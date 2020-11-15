@@ -32,7 +32,52 @@ public class LevelGeneratorSystem : FSystem {
 	protected override void onProcess(int familiesUpdateCount) {
 	}
 
+	
 	private void generateLevel1(){
+		eraseMap();
+		map = new List<List<int>> {new List<int>{1,1,1,1,1},
+									new List<int>{1,0,0,0,1},
+									new List<int>{1,0,1,0,1},
+									new List<int>{1,2,1,3,1},
+									new List<int>{1,1,1,1,1}};
+		generateMap();
+		
+		createEntity(3,1, Direction.Dir.West,0);
+
+		gameData.dialogMessage.Add("Bienvenu dans Spy !\n Votre objectif est de vous échapper en atteignant la sortie (cercle bleu)");
+		gameData.dialogMessage.Add("Pour cela vous devez donner des ordres à votre agent en faisant glisser les actions en bas de l'écran jusqu'en haut à droite de la fenêtre de script");
+		gameData.dialogMessage.Add("Vous pouvez aussi cliquer sur 'Reset' pour vider la fenêtre de script et en écrire un nouveau.");
+		gameData.dialogMessage.Add("Vous pouvez déplacer la caméra avec ZQSD ou les fleches directionnelles");
+		gameData.dialogMessage.Add("Essayez donc d'avancer 2 fois puis de tourner à droite pour commencer, cliquez ensuite sur 'Executer'. Essayez ensuite de terminer cette mission.");
+	}
+
+	private void generateLevel2(){
+		eraseMap();
+		map = new List<List<int>> {new List<int>{1,1,1},
+									new List<int>{1,3,1},
+									new List<int>{1,0,1},
+									new List<int>{1,0,1},
+									new List<int>{1,0,1},
+									new List<int>{1,0,1},
+									new List<int>{1,0,1},
+									new List<int>{1,0,1},
+									new List<int>{1,0,1},
+									new List<int>{1,0,1},
+									new List<int>{1,0,1},
+									new List<int>{1,0,1},
+									new List<int>{1,0,1},
+									new List<int>{1,2,1},
+									new List<int>{1,1,1}};
+		generateMap();
+		
+		createEntity(13,1, Direction.Dir.West,0);
+
+		gameData.dialogMessage.Add("La sortie est au bout de ce couloir !");
+		gameData.dialogMessage.Add("Evitons de de saturer la ligne de communication en donnant un ordre plus efficace");
+		gameData.dialogMessage.Add("Utilise l'action 'For', tu pourras y mettre d'autres actions dans cet ordre qui seront répétés le nombre de fois indiqué !\nMet y l'action Avancer et règle le For sur 12.");
+	}
+
+	private void generateLevel3(){
 		eraseMap();
 		map = new List<List<int>> {new List<int>{1,1,1,1,1,1,1,1,1,1},
 									new List<int>{1,2,0,0,0,0,0,0,0,1},
@@ -54,13 +99,10 @@ public class LevelGeneratorSystem : FSystem {
 		List<Action> script = new List<Action> {forAct};
 		createEntity(5,6,Direction.Dir.West,1, script, true);
 
-		gameData.dialogMessage = "Bienvenu !";
-		
-
-
 	}
 
-	private void generateLevel2(){
+
+	/*
 		eraseMap();
 		map = new List<List<int>> {new List<int>{1,1,1,1,1,1,1,1,1,1},
 									new List<int>{1,3,1,0,0,0,0,0,0,1},
@@ -76,7 +118,7 @@ public class LevelGeneratorSystem : FSystem {
 
 		createEntity(7,1, Direction.Dir.West,0);
 		createEntity(7,3, Direction.Dir.West,0);
-	}
+	*/
 
 	private void generateMap(){
 		for(int i = 0; i< map.Count; i++){
