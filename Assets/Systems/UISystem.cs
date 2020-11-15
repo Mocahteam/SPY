@@ -14,12 +14,16 @@ public class UISystem : FSystem {
 	private GameObject itemDragged;
 	private GameData gameData;
 	private GameObject endPanel;
+	private GameObject dialogPanel;
+
 	public UISystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.ButtonExec = GameObject.Find("ExecuteButton");
 		gameData.ButtonReset = GameObject.Find("ResetButton");
 		endPanel = GameObject.Find("EndPanel");
 		endPanel.SetActive(false);
+		dialogPanel = GameObject.Find("DialogPanel");
+		dialogPanel.SetActive(false);
 	}
 	protected override void onPause(int currentFrame) {
 	}
@@ -46,6 +50,12 @@ public class UISystem : FSystem {
 			}
 		}
 
+		//Activate DialogPanel if there is a message
+		if(gameData.dialogMessage != ""){
+			showDialogPanel(gameData.dialogMessage);
+		}
+
+		//Desactivate Execute & ResetButton if there is a script running
 		if(gameData.nbStep>0){
 			gameData.ButtonExec.GetComponent<Button>().interactable = false;
 			gameData.ButtonReset.GetComponent<Button>().interactable = false;
@@ -55,6 +65,7 @@ public class UISystem : FSystem {
 			gameData.ButtonReset.GetComponent<Button>().interactable = true;
 		}
 
+		//Drag
 		foreach( GameObject go in PointedGO){
 			if(Input.GetMouseButtonDown(0)){
 				itemDragged = Object.Instantiate<GameObject>(go.GetComponent<ElementToDrag>().actionPrefab, go.transform);
@@ -68,6 +79,7 @@ public class UISystem : FSystem {
 			itemDragged.transform.position = Input.mousePosition;
 		}
 
+		//Find the container with the last layer 
 		GameObject priority = null;
 		foreach( GameObject go in ContainersGO){
 			if(priority == null || priority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer)
@@ -75,7 +87,7 @@ public class UISystem : FSystem {
 			
 		}
 
-
+		//Drop
 		if(Input.GetMouseButtonUp(0)){
 			if(priority != null && itemDragged != null){
 				itemDragged.transform.SetParent(priority.transform);
@@ -96,6 +108,7 @@ public class UISystem : FSystem {
 		}
 	}
 
+	//Refresh Containers size
 	private void refreshUI(){
 		foreach( GameObject go in ContainerRefreshGO){
 			LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)go.transform );
@@ -103,6 +116,7 @@ public class UISystem : FSystem {
 		
 	}
 
+	//Empty the script window
 	public void resetScript(){
 		GameObject go = GameObject.Find("ScriptContainer");
 		for(int i = 0; i < go.transform.childCount; i++){
@@ -111,6 +125,7 @@ public class UISystem : FSystem {
 		refreshUI();
 	}
 
+	//Recursive script destroyer
 	private void destroyScript(Transform go){
 		if(go.gameObject.GetComponent<UITypeContainer>() != null){
 			for(int i = 0; i < go.childCount; i++){
@@ -120,5 +135,15 @@ public class UISystem : FSystem {
 		go.transform.DetachChildren();
 		GameObjectManager.unbind(go.gameObject);
 		Object.Destroy(go.gameObject);
+	}
+
+	public void showDialogPanel(string text){
+		dialogPanel.SetActive(true);
+		dialogPanel.transform.GetChild(0).GetComponent<Text>().text = text;
+	}
+
+	public void closeDialogPanel(){
+		gameData.dialogMessage = "";
+		dialogPanel.SetActive(false);
 	}
 }

@@ -24,17 +24,19 @@ public class DetectorGeneratorSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 
+		
 		if(gameData.generateStep || gameData.initialize){
-			//Destroy
+			//Destroy detection cells
 			foreach( GameObject detector in detectorGO){
 				GameObjectManager.unbind(detector);
 				Object.Destroy(detector);
 			}
 
 			bool stop = false;
-			//Generate
+			//Generate detection cells
 			foreach( GameObject detect in detectRangeGO){
 				switch(detect.GetComponent<DetectRange>().type){
+					//Line type
 					case DetectRange.Type.Line:
 						switch(detect.GetComponent<Direction>().direction){
 							case Direction.Dir.North:

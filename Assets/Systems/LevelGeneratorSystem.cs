@@ -30,7 +30,6 @@ public class LevelGeneratorSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-
 	}
 
 	private void generateLevel1(){
@@ -54,6 +53,8 @@ public class LevelGeneratorSystem : FSystem {
 		ActionManipulator.addAction(forAct,ActionManipulator.createAction(Action.ActionType.TurnLeft));
 		List<Action> script = new List<Action> {forAct};
 		createEntity(5,6,Direction.Dir.West,1, script, true);
+
+		gameData.dialogMessage = "Bienvenu !";
 		
 
 

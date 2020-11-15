@@ -14,4 +14,14 @@ public class UISystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("UISystem", "resetScript", null);
 	}
 
+	public void showDialogPanel(System.String text)
+	{
+		MainLoop.callAppropriateSystemMethod ("UISystem", "showDialogPanel", text);
+	}
+
+	public void closeDialogPanel()
+	{
+		MainLoop.callAppropriateSystemMethod ("UISystem", "closeDialogPanel", null);
+	}
+
 }

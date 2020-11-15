@@ -32,24 +32,30 @@ public class StepSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 
+		//Used for some initalization needed after constructors
 		if(gameData.initialize){
 			gameData.initialize = false;
 		}
 
+		//Organize each steps
 		if(gameData.nbStep > 0 && gameData.endLevel == 0){
+			//End the step & set the timer before next step (if nbstep > 0)
 			if(gameData.checkStep){
 				timeStepCpt = timeStep;
 				gameData.checkStep = false;
 				gameData.nbStep--;
 			}
+			//activate checkStep (ex checkEvent)
 			else if(gameData.generateStep){
 				gameData.generateStep = false;
 				gameData.checkStep = true;
 			}
+			//activate generateStep (ex detectorGenerator)
 			else if(gameData.step){
 				gameData.step = false;
 				gameData.generateStep = true;
 			}
+			//activate step (ex applyScript)
 			else if(timeStepCpt <= 0){
 				gameData.step = true;
 			}

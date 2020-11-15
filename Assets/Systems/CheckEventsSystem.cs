@@ -41,7 +41,9 @@ public class CheckEventsSystem : FSystem {
 				}
 			}
 
+			
 			foreach( GameObject player in playerGO){
+				//Check if the player collide with a non-player
 				foreach( GameObject noPlayer in noPlayerGO){
 					if(player.GetComponent<Position>().x == noPlayer.GetComponent<Position>().x && player.GetComponent<Position>().z == noPlayer.GetComponent<Position>().z){
 						//end level
@@ -50,6 +52,7 @@ public class CheckEventsSystem : FSystem {
 					}
 				}
 
+				//Check if the player collide with a detection cell
 				foreach(GameObject detector in detectorGO){
 					if(player.GetComponent<Position>().x == detector.GetComponent<Position>().x && player.GetComponent<Position>().z == detector.GetComponent<Position>().z){
 						//end level

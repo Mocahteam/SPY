@@ -27,6 +27,8 @@ public class HighLightSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
+		
+		//If click on highlighted item and item has a script, then show script in the 2nd script window
 		if(highLightedItem && Input.GetMouseButtonDown(0) && highLightedItem.GetComponent<Script>()){
 			foreach (Transform child in EnemyScriptContainer.transform) {
 				GameObject.Destroy(child.gameObject);

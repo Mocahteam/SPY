@@ -34,19 +34,36 @@ public abstract class ActionManipulator
 		return action;
 	}
 
+	//Empty the script
 	public static void resetScript(Script script){
 		script.actions = new List<Action>();
 		script.currentAction = 0;
 	}
 
+	//restart the script to 0
     public static void restartScript(Script script){
 		script.currentAction = 0;
+		foreach(Action act in script.actions){
+			restartScript(act);
+		}
 	}
 
+	public static void restartScript(Action action){
+		action.currentAction = 0;
+		action.currentFor = 0;
+		if(action.actions != null){
+			foreach(Action act in action.actions){
+				restartScript(act);
+			}
+		}
+	}
+
+	//Return true if the script is at the end
     public static bool endOfScript(GameObject go){
 		return go.GetComponent<Script>().currentAction >= go.GetComponent<Script>().actions.Count;
 	}
 
+	//Return the current action
     public static Action getCurrentAction(GameObject go) {
 		Action action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]; 
 		//end when a pure action is found
@@ -61,6 +78,7 @@ public abstract class ActionManipulator
 		return action;
 	}
 
+	//increment the iterator of the action script
 	public static void incrementActionScript(Script script){
 		if(incrementAction(script.actions[script.currentAction]))
 			script.currentAction++;
@@ -92,6 +110,7 @@ public abstract class ActionManipulator
 		return false;
 	}
 
+	//Return the lenght of the script
 	public static int getNbStep(Script script){
 		int nb = 0;
 		foreach(Action act in script.actions){
@@ -114,6 +133,7 @@ public abstract class ActionManipulator
 	}
 
 
+	//Convert the UI script in a usable script
     public static List<Action> ScriptContainerToActionList(GameObject scriptComposer){
 		List<Action> l = new List<Action>();
 
@@ -154,6 +174,7 @@ public abstract class ActionManipulator
 		return nonEmpty;
 	}
 
+	//Show the script in the container
 	public static void ScriptToContainer(Script script, GameObject container){
 		int i = 0;
 		foreach(Action action in script.actions){
