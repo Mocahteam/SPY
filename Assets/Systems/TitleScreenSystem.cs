@@ -29,6 +29,14 @@ public class TitleScreenSystem : FSystem {
 		button.transform.GetChild(0).GetComponent<Text>().text = "Level 2";
 		button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(1);});
 
+		button = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Button") as GameObject, cList.transform);
+		button.transform.GetChild(0).GetComponent<Text>().text = "Level 3";
+		button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(2);});
+
+		button = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Button") as GameObject, cList.transform);
+		button.transform.GetChild(0).GetComponent<Text>().text = "Level 4";
+		button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(3);});
+
 		campagneMenu.SetActive(false);
 
 	}

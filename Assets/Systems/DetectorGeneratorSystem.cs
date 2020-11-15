@@ -38,6 +38,13 @@ public class DetectorGeneratorSystem : FSystem {
 				switch(detect.GetComponent<DetectRange>().type){
 					//Line type
 					case DetectRange.Type.Line:
+						if(detect.GetComponent<DetectRange>().selfRange){
+							GameObject obj = Object.Instantiate (Resources.Load ("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(detect.GetComponent<Position>().x*3,1.5f,detect.GetComponent<Position>().z*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+							obj.GetComponent<Position>().x = detect.GetComponent<Position>().x;
+							obj.GetComponent<Position>().z = detect.GetComponent<Position>().z;
+							obj.GetComponent<Detector>().owner = detect;
+							GameObjectManager.bind(obj);
+						}
 						switch(detect.GetComponent<Direction>().direction){
 							case Direction.Dir.North:
 								stop = false;

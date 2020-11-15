@@ -44,13 +44,13 @@ public class CheckEventsSystem : FSystem {
 			
 			foreach( GameObject player in playerGO){
 				//Check if the player collide with a non-player
-				foreach( GameObject noPlayer in noPlayerGO){
+				/*foreach( GameObject noPlayer in noPlayerGO){
 					if(player.GetComponent<Position>().x == noPlayer.GetComponent<Position>().x && player.GetComponent<Position>().z == noPlayer.GetComponent<Position>().z){
 						//end level
 						Debug.Log("Repéré !");
 						gameData.endLevel = 1;
 					}
-				}
+				}*/
 
 				//Check if the player collide with a detection cell
 				foreach(GameObject detector in detectorGO){

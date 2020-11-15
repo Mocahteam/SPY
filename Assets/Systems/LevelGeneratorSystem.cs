@@ -14,10 +14,21 @@ public class LevelGeneratorSystem : FSystem {
 	public LevelGeneratorSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.Level = GameObject.Find("Level");
-		if(gameData.levelToLoad == 0)
-			generateLevel1();
-		else if(gameData.levelToLoad == 1)
-			generateLevel2();
+
+		switch(gameData.levelToLoad){
+			case 0:
+				generateLevel1();
+				break;
+			case 1:
+				generateLevel2();
+				break;
+			case 2:
+				generateLevel3();
+				break;
+			case 3:
+				generateLevel4();
+				break;
+		}
 	}
 	protected override void onPause(int currentFrame) {
 	}
@@ -43,6 +54,8 @@ public class LevelGeneratorSystem : FSystem {
 		generateMap();
 		
 		createEntity(3,1, Direction.Dir.West,0);
+
+		
 
 		gameData.dialogMessage.Add("Bienvenu dans Spy !\n Votre objectif est de vous échapper en atteignant la sortie (cercle bleu)");
 		gameData.dialogMessage.Add("Pour cela vous devez donner des ordres à votre agent en faisant glisser les actions en bas de l'écran jusqu'en haut à droite de la fenêtre de script");
@@ -79,25 +92,51 @@ public class LevelGeneratorSystem : FSystem {
 
 	private void generateLevel3(){
 		eraseMap();
-		map = new List<List<int>> {new List<int>{1,1,1,1,1,1,1,1,1,1},
-									new List<int>{1,2,0,0,0,0,0,0,0,1},
-									new List<int>{1,0,1,0,1,0,0,0,0,1},
-									new List<int>{1,0,1,0,1,0,0,1,0,1},
-									new List<int>{1,0,0,0,1,0,0,0,0,1},
-									new List<int>{1,0,1,1,1,0,0,0,0,1},
-									new List<int>{1,0,0,0,1,0,0,1,0,1},
-									new List<int>{1,0,1,0,1,0,0,1,3,1},
-									new List<int>{1,1,1,1,1,1,1,1,1,1}};
-
+		map = new List<List<int>> {new List<int>{1,1,1,1,1,1,1},
+									new List<int>{1,1,1,3,1,1,1},
+									new List<int>{1,1,0,0,0,1,1},
+									new List<int>{1,0,0,0,0,1,1},
+									new List<int>{1,1,0,0,0,1,1},
+									new List<int>{1,1,0,0,0,0,1},
+									new List<int>{1,1,0,0,0,1,1},
+									new List<int>{1,1,1,2,1,1,1},
+									new List<int>{1,1,1,1,1,1,1}};
 		generateMap();
+		
+		createEntity(7,3, Direction.Dir.West,0);
 
-		createEntity(1,1, Direction.Dir.North,0);
+		createEntity(3,1, Direction.Dir.North,2);
+		createEntity(5,5, Direction.Dir.South,2);
 
-		Action forAct = ActionManipulator.createAction(Action.ActionType.For,4);
-		ActionManipulator.addAction(forAct,ActionManipulator.createAction(Action.ActionType.Forward));
-		ActionManipulator.addAction(forAct,ActionManipulator.createAction(Action.ActionType.TurnLeft));
-		List<Action> script = new List<Action> {forAct};
-		createEntity(5,6,Direction.Dir.West,1, script, true);
+		gameData.dialogMessage.Add("Attention il y a des caméras de sécurité ici, tu peux voir leur champ de vision en rouge. Faufile toi sans te faire repérer.");
+
+	}
+
+	private void generateLevel4(){
+		eraseMap();
+		map = new List<List<int>> {new List<int>{1,1,1,1,1},
+									new List<int>{1,0,0,3,1},
+									new List<int>{1,0,1,1,1},
+									new List<int>{1,2,1,1,1},
+									new List<int>{1,1,1,1,1}};
+		generateMap();
+		
+		createEntity(3,1, Direction.Dir.West,0);
+
+		List<Action> script = new List<Action>();
+
+		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
+		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
+		script.Add(ActionManipulator.createAction(Action.ActionType.TurnLeft));
+		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
+		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
+		script.Add(ActionManipulator.createAction(Action.ActionType.TurnRight));
+
+		GameObject camera = createEntity(1,1, Direction.Dir.East,2, script, true);
+		camera.GetComponent<DetectRange>().range = 1;
+
+		gameData.dialogMessage.Add("Attention il y a une caméra devant toi ! Par chance son champ de détection est très petit, mais elle te bloque tout de même le passage.");
+		gameData.dialogMessage.Add("Il semblerait que cette caméra a une IA, clique dessus pour analyser son comportement pour y trouver une faille et passer. De plus ce modèle de caméra ne semble pas voir en dessous d'elle même.");
 
 	}
 
@@ -118,6 +157,29 @@ public class LevelGeneratorSystem : FSystem {
 
 		createEntity(7,1, Direction.Dir.West,0);
 		createEntity(7,3, Direction.Dir.West,0);
+
+		//////////////////////
+
+		eraseMap();
+		map = new List<List<int>> {new List<int>{1,1,1,1,1,1,1,1,1,1},
+									new List<int>{1,2,0,0,0,0,0,0,0,1},
+									new List<int>{1,0,1,0,1,0,0,0,0,1},
+									new List<int>{1,0,1,0,1,0,0,1,0,1},
+									new List<int>{1,0,0,0,1,0,0,0,0,1},
+									new List<int>{1,0,1,1,1,0,0,0,0,1},
+									new List<int>{1,0,0,0,1,0,0,1,0,1},
+									new List<int>{1,0,1,0,1,0,0,1,3,1},
+									new List<int>{1,1,1,1,1,1,1,1,1,1}};
+
+		generateMap();
+
+		createEntity(1,1, Direction.Dir.North,0);
+
+		Action forAct = ActionManipulator.createAction(Action.ActionType.For,4);
+		ActionManipulator.addAction(forAct,ActionManipulator.createAction(Action.ActionType.Forward));
+		ActionManipulator.addAction(forAct,ActionManipulator.createAction(Action.ActionType.TurnLeft));
+		List<Action> script = new List<Action> {forAct};
+		createEntity(5,6,Direction.Dir.West,1, script, true);
 	*/
 
 	private void generateMap(){
@@ -144,7 +206,7 @@ public class LevelGeneratorSystem : FSystem {
 		}
 	}
 
-	private void createEntity(int i, int j, Direction.Dir direction, int type, List<Action> script = null, bool repeat = false){
+	private GameObject createEntity(int i, int j, Direction.Dir direction, int type, List<Action> script = null, bool repeat = false){
 		GameObject entity = null;
 		switch(type){
 			case 0:
@@ -152,6 +214,9 @@ public class LevelGeneratorSystem : FSystem {
 				break;
 			case 1:
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Ennemy") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+				break;
+			case 2:
+				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/SecurityCamera") as GameObject, gameData.Level.transform.position + new Vector3(i*3,5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				break;
 		}
 		
@@ -167,6 +232,8 @@ public class LevelGeneratorSystem : FSystem {
 		entity.GetComponent<Script>().repeat = repeat;
 
 		GameObjectManager.bind(entity);
+
+		return entity;
 	}
 
 	private void createSpawnExit(int i, int j, bool type){
