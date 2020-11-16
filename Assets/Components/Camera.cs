@@ -15,4 +15,18 @@ public class Camera : MonoBehaviour {
     public bool ReverseDrag = true; 
     public Vector3 DragOrigin;
     public Vector3 Move;
+
+    // Orbit
+    public float xDeg = 0.0f;
+    public float yDeg = 0.0f;
+    public float xSpeed = 200.0f;
+    public float ySpeed = 200.0f;
+    public int yMinLimit = -80;
+    public int yMaxLimit = 80;
+    public float zoomDampening = 5.0f;
+    public Quaternion currentRotation;
+    public Quaternion desiredRotation;
+    public Quaternion rotation;
+
+    public float dragSpeed = 100f;
 }
