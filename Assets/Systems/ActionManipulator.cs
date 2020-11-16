@@ -175,13 +175,13 @@ public abstract class ActionManipulator
 	}
 
 	//Show the script in the container
-	public static void ScriptToContainer(Script script, GameObject container){
+	public static void ScriptToContainer(Script script, GameObject container, bool sensitive = false){
 		int i = 0;
 		foreach(Action action in script.actions){
 			if(i == script.currentAction)
-				ActionToContainer(action, true).transform.SetParent(container.transform);
+				ActionToContainer(action, true).transform.SetParent(container.transform, sensitive);
 			else
-				ActionToContainer(action, false).transform.SetParent(container.transform);
+				ActionToContainer(action, false).transform.SetParent(container.transform, sensitive);
 			i++;
 		}
 
@@ -189,7 +189,7 @@ public abstract class ActionManipulator
 
 	}
 
-	private static GameObject ActionToContainer(Action action, bool nextAction){
+	private static GameObject ActionToContainer(Action action, bool nextAction, bool sensitive = false){
 		GameObject obj =  null;;
 		switch(action.actionType){
 			case Action.ActionType.Forward:
@@ -220,7 +220,6 @@ public abstract class ActionManipulator
 				obj = Object.Instantiate (Resources.Load ("Prefabs/ForBloc")) as GameObject;
 				obj.transform.GetChild(0).GetChild(1).GetComponent<InputField>().text = action.currentFor.ToString() + " / " + action.nbFor.ToString();
 				obj.transform.GetChild(0).GetChild(1).GetComponent<InputField>().interactable = false;
-				Object.Destroy(obj.GetComponent<PointerSensitive>());
 				Object.Destroy(obj.GetComponent<UITypeContainer>());
 				int i = 0;
 				foreach(Action act in action.actions){
@@ -232,6 +231,7 @@ public abstract class ActionManipulator
 				}
 				break;
 		}
+		Object.Destroy(obj.GetComponent<PointerSensitive>());
 		return obj;
 	}
 }

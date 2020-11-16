@@ -9,10 +9,12 @@ public class UISystem : FSystem {
 	// Advice: avoid to update your families inside this function.
 	private GameObject actionContainer;
 	private Family PointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ElementToDrag)));
+	private Family UIScriptPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType)));
 
 	private Family ContainersGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
 	private Family ContainerRefreshGO = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)));
 	private GameObject itemDragged;
+	private GameObject positionBar;
 	private GameData gameData;
 	private GameObject endPanel;
 	private GameObject dialogPanel;
@@ -22,6 +24,8 @@ public class UISystem : FSystem {
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.ButtonExec = GameObject.Find("ExecuteButton");
 		gameData.ButtonReset = GameObject.Find("ResetButton");
+		positionBar = GameObject.Find("PositionBar");
+		positionBar.SetActive(false);
 		endPanel = GameObject.Find("EndPanel");
 		endPanel.SetActive(false);
 		dialogPanel = GameObject.Find("DialogPanel");
@@ -89,10 +93,48 @@ public class UISystem : FSystem {
 			
 		}
 
+		//PositionBar positioning
+		if(priority && itemDragged){
+			int start = 0;
+			if(priority.GetComponent<UITypeContainer>().type == UITypeContainer.Type.For){
+				start++;
+			}
+
+			positionBar.SetActive(true);
+			positionBar.transform.SetParent(priority.transform);
+			positionBar.transform.SetSiblingIndex(priority.transform.childCount-1);
+			for(int i = start; i < priority.transform.childCount; i++){
+				if(priority.transform.GetChild(i).gameObject != positionBar && Input.mousePosition.y > priority.transform.GetChild(i).position.y){
+					positionBar.transform.SetSiblingIndex(i);
+					break;
+				}
+			}
+		}
+		else{
+			positionBar.transform.SetParent(GameObject.Find("PlayerScript").transform);
+			positionBar.SetActive(false);
+		}
+
+		if(!itemDragged && Input.GetMouseButtonUp(1)){
+			priority = null;
+			foreach(GameObject go in UIScriptPointedGO){
+				if(!priority|| !go.GetComponent<UITypeContainer>() || priority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer){
+					priority = go;
+				}
+				
+			}
+			if(priority){
+				destroyScript(priority.transform);
+			}
+			priority = null;
+		}
+
 		//Drop
 		if(Input.GetMouseButtonUp(0)){
 			if(priority != null && itemDragged != null){
 				itemDragged.transform.SetParent(priority.transform);
+				itemDragged.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
+				itemDragged.GetComponent<Image>().raycastTarget = true;
 				if(itemDragged.GetComponent<UITypeContainer>() != null){
 					itemDragged.GetComponent<Image>().raycastTarget = true;
 					itemDragged.GetComponent<UITypeContainer>().layer = priority.GetComponent<UITypeContainer>().layer + 1;
@@ -106,7 +148,6 @@ public class UISystem : FSystem {
 				
 			}
 			itemDragged = null;
-			
 		}
 	}
 

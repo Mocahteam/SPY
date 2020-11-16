@@ -59,7 +59,7 @@ public class LevelGeneratorSystem : FSystem {
 
 		gameData.dialogMessage.Add("Bienvenu dans Spy !\n Votre objectif est de vous échapper en atteignant la sortie (cercle bleu)");
 		gameData.dialogMessage.Add("Pour cela vous devez donner des ordres à votre agent en faisant glisser les actions en bas de l'écran jusqu'en haut à droite de la fenêtre de script");
-		gameData.dialogMessage.Add("Vous pouvez aussi cliquer sur 'Reset' pour vider la fenêtre de script et en écrire un nouveau.");
+		gameData.dialogMessage.Add("Vous pouvez utiliser le clique droit sur une action du script pour la supprimer, le bouton 'Reset' vous permet de vider la fenêtre de script d'un seul coup.");
 		gameData.dialogMessage.Add("Vous pouvez déplacer la caméra avec ZQSD ou les fleches directionnelles");
 		gameData.dialogMessage.Add("Essayez donc d'avancer 2 fois puis de tourner à droite pour commencer, cliquez ensuite sur 'Executer'. Essayez ensuite de terminer cette mission.");
 	}
