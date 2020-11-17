@@ -52,6 +52,10 @@ public class UISystem : FSystem {
 					break;
 				case 2:
 					endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !";
+					//End
+					if(gameData.levelToLoad >= 4){
+						endPanel.transform.GetChild(3).gameObject.SetActive(false);
+					}
 					break;
 			}
 		}

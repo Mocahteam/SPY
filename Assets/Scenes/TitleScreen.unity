@@ -428,6 +428,8 @@ MonoBehaviour:
   initialize: 0
   levelList: []
   levelToLoad: 0
+  dialogMessage: []
+  endLevel: 0
 --- !u!4 &352146425
 Transform:
   m_ObjectHideFlags: 0
@@ -1427,7 +1429,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 8
   m_Viewport: {fileID: 252554670}
   m_HorizontalScrollbar: {fileID: 798940768}
   m_VerticalScrollbar: {fileID: 712035505}
@@ -1635,7 +1637,7 @@ MonoBehaviour:
     m_Left: 0
     m_Right: 0
     m_Top: 10
-    m_Bottom: 0
+    m_Bottom: 10
   m_ChildAlignment: 1
   m_Spacing: 20
   m_ChildForceExpandWidth: 1
