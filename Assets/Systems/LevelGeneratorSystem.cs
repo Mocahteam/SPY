@@ -28,6 +28,9 @@ public class LevelGeneratorSystem : FSystem {
 			case 3:
 				generateLevel4();
 				break;
+			case 4:
+				generateLevel5();
+				break;
 		}
 	}
 	protected override void onPause(int currentFrame) {
@@ -139,6 +142,27 @@ public class LevelGeneratorSystem : FSystem {
 		gameData.dialogMessage.Add("Il semblerait que cette caméra a une IA, clique dessus pour analyser son comportement pour y trouver une faille et passer. De plus ce modèle de caméra ne semble pas voir en dessous d'elle même.");
 
 	}
+
+	private void generateLevel5(){
+		eraseMap();
+		map = new List<List<int>> {new List<int>{1,1,1,1,1,1,1},
+									new List<int>{1,0,3,1,0,3,1},
+									new List<int>{1,0,1,1,0,1,1},
+									new List<int>{1,0,1,1,0,0,1},
+									new List<int>{1,0,1,1,1,0,1},
+									new List<int>{1,0,0,1,0,0,1},
+									new List<int>{1,1,0,1,0,1,1},
+									new List<int>{1,1,2,1,2,1,1},
+									new List<int>{1,1,1,1,1,1,1}};
+		generateMap();
+		
+		createEntity(7,2, Direction.Dir.West,0);
+		createEntity(7,4, Direction.Dir.West,0);
+
+		gameData.dialogMessage.Add("Dans cette mission vous avez deux agents que vous devez diriger vers la sortie. Malheureusement nous ne pouvons pas nous permettre d'utiliser plusieurs communications, ils recevront donc les même ordres.");
+		gameData.dialogMessage.Add("Pour cela utilisez les particularités du terrain pour ammener les deux agents à la sortie.");
+	}
+
 
 
 	/*
