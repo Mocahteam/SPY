@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using FYFY;
+using FYFY_plugins.PointerManager;
 
 public class CameraSystem : FSystem {
 	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(CameraComponent)));
+
+	private Family UIGO = FamilyManager.getFamily(new AnyOfComponents(typeof(UIActionType), typeof(UITypeContainer), typeof(ElementToDrag)),
+													new AllOfComponents(typeof(PointerOver)));
 
 	public CameraSystem()
 	{
@@ -75,7 +79,7 @@ public class CameraSystem : FSystem {
                 go.transform.Translate(-Input.GetAxisRaw("Mouse X") * Time.deltaTime * go.GetComponent<CameraComponent>().dragSpeed, -Input.GetAxisRaw("Mouse Y") * Time.deltaTime * go.GetComponent<CameraComponent>().dragSpeed, 0);
             }
 	        // Déplacement de type orbite
-	        else if (Input.GetMouseButton(1))
+	        else if (Input.GetMouseButton(1) && UIGO.Count <= 0)
 	        {
 	        	Cursor.lockState = CursorLockMode.Locked;
 	        	Cursor.visible = false;
