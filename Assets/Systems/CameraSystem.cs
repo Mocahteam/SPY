@@ -50,6 +50,8 @@ public class CameraSystem : FSystem {
 
 			go.transform.position = go.transform.position + new Vector3(0,0,Input.GetAxis("Horizontal")* go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime);
 			go.transform.position = go.transform.position + new Vector3(-Input.GetAxis("Vertical")* go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime,0,0);
+
+			/* ---------------------------------------------------------------------------------------
 			//Cursor.lockState = CursorLockMode.None;
 	        //Cursor.visible = true;
 			// Zoom
@@ -103,6 +105,9 @@ public class CameraSystem : FSystem {
 	        	Cursor.lockState = CursorLockMode.None;
 	        	Cursor.visible = true;
 	    	}
+
+			//------------------------------------------------------------------------------------
+			*/
 	        
 
 	        /*
