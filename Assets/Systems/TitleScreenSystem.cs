@@ -56,6 +56,9 @@ public class TitleScreenSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
+		if(Input.GetButtonDown("Cancel")){
+			Application.Quit();
+		}
 	}
 
 	public void showCampagneMenu(){

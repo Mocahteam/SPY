@@ -32,6 +32,11 @@ public class StepSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 
+
+		if(Input.GetButtonDown("Cancel")){
+			Application.Quit();
+		}
+
 		//Used for some initalization needed after constructors
 		if(gameData.initialize){
 			gameData.initialize = false;
