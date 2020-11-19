@@ -19,4 +19,6 @@ public class CameraComponent : MonoBehaviour {
     public float lookSpeedH = 5f;
     public float lookSpeedV = 5f;
         
+    // Déplacements relatifs à la caméra
+    public Vector3 movementRotation;
 }
