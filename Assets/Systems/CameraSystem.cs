@@ -19,11 +19,8 @@ public class CameraSystem : FSystem {
 
 	private void onGOEnter(GameObject go)
 	{
-		go.GetComponent<CameraComponent>().currentRotation = go.transform.rotation;
-	    go.GetComponent<CameraComponent>().desiredRotation = go.transform.rotation;
-	    go.GetComponent<CameraComponent>().rotation = go.transform.rotation;
-	    go.GetComponent<CameraComponent>().xDeg = Vector3.Angle(Vector3.right, go.transform.right );
-	    go.GetComponent<CameraComponent>().yDeg = Vector3.Angle(Vector3.up, go.transform.up );
+        go.GetComponent<CameraComponent>().orbitH = go.GetComponent<CameraComponent>().transform.eulerAngles.y;
+        go.GetComponent<CameraComponent>().orbitV = go.GetComponent<CameraComponent>().transform.eulerAngles.x;
 	}
 
 	// Use this to update member variables when system pause. 
@@ -40,21 +37,12 @@ public class CameraSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		foreach( GameObject go in controllableGO){
-			/*
-			go.GetComponent<CameraComponent>().currentRotation = go.transform.rotation;
-        	go.GetComponent<CameraComponent>().desiredRotation = go.transform.rotation;
-        	go.GetComponent<CameraComponent>().rotation = go.transform.rotation;
-        	go.GetComponent<CameraComponent>().xDeg = Vector3.Angle(Vector3.right, go.transform.right );
-        	go.GetComponent<CameraComponent>().yDeg = Vector3.Angle(Vector3.up, go.transform.up );
-			*/
-
 			go.transform.position = go.transform.position + new Vector3(0,0,Input.GetAxis("Horizontal")* go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime);
 			go.transform.position = go.transform.position + new Vector3(-Input.GetAxis("Vertical")* go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime,0,0);
 
-			/* ---------------------------------------------------------------------------------------
-			//Cursor.lockState = CursorLockMode.None;
-	        //Cursor.visible = true;
-			// Zoom
+			//------------------------------------------------------------------------------------
+
+			// Zoom avec la molette
 			if(Input.GetAxis("Mouse ScrollWheel") < 0)
 	        {
 	            if(go.GetComponent<CameraComponent>().ScrollCount >= go.GetComponent<CameraComponent>().ScrollWheelminPush && go.GetComponent<CameraComponent>().ScrollCount < go.GetComponent<CameraComponent>().ScrollWheelLimit)
@@ -63,7 +51,6 @@ public class CameraSystem : FSystem {
 	                go.GetComponent<CameraComponent>().ScrollCount++;
 	            }
 	        }
- 
 	        if(Input.GetAxis("Mouse ScrollWheel") > 0)
 	        {
 	            if(go.GetComponent<CameraComponent>().ScrollCount > go.GetComponent<CameraComponent>().ScrollWheelminPush && go.GetComponent<CameraComponent>().ScrollCount <= go.GetComponent<CameraComponent>().ScrollWheelLimit)
@@ -80,26 +67,13 @@ public class CameraSystem : FSystem {
 	        	Cursor.visible = false;
                 go.transform.Translate(-Input.GetAxisRaw("Mouse X") * Time.deltaTime * go.GetComponent<CameraComponent>().dragSpeed, -Input.GetAxisRaw("Mouse Y") * Time.deltaTime * go.GetComponent<CameraComponent>().dragSpeed, 0);
             }
-	        // Déplacement de type orbite
-	        else if (Input.GetMouseButton(1) && UIGO.Count <= 0)
-	        {
-	        	Cursor.lockState = CursorLockMode.Locked;
-	        	Cursor.visible = false;
-	        	
-	            go.GetComponent<CameraComponent>().xDeg += Input.GetAxis("Mouse X") * go.GetComponent<CameraComponent>().xSpeed * 0.02f;
-	            go.GetComponent<CameraComponent>().yDeg -= Input.GetAxis("Mouse Y") * go.GetComponent<CameraComponent>().ySpeed * 0.02f;
-	 
-	            ////////OrbitAngle
-	 
-	            //Clamp the vertical axis for the orbit
-	            go.GetComponent<CameraComponent>().yDeg = ClampAngle(go.GetComponent<CameraComponent>().yDeg, go.GetComponent<CameraComponent>().yMinLimit, go.GetComponent<CameraComponent>().yMaxLimit);
-	            // set camera rotation 
-	            go.GetComponent<CameraComponent>().desiredRotation = Quaternion.Euler(go.GetComponent<CameraComponent>().yDeg, go.GetComponent<CameraComponent>().xDeg, 0);
-	            go.GetComponent<CameraComponent>().currentRotation = go.transform.rotation;
-	 
-	            go.GetComponent<CameraComponent>().rotation = Quaternion.Lerp(go.GetComponent<CameraComponent>().currentRotation, go.GetComponent<CameraComponent>().desiredRotation, Time.deltaTime * go.GetComponent<CameraComponent>().zoomDampening);
-	            go.transform.rotation = go.GetComponent<CameraComponent>().rotation;
-	        }
+            // Déplacement de type orbite
+            else if (Input.GetMouseButton(1))
+            {
+            	go.GetComponent<CameraComponent>().orbitH += go.GetComponent<CameraComponent>().lookSpeedH * Input.GetAxis("Mouse X");
+                go.GetComponent<CameraComponent>().orbitV -= go.GetComponent<CameraComponent>().lookSpeedV * Input.GetAxis("Mouse Y");
+                go.GetComponent<CameraComponent>().transform.eulerAngles = new Vector3(go.GetComponent<CameraComponent>().orbitV, go.GetComponent<CameraComponent>().orbitH, 0f);
+            }
 	        else
 	        {
 	        	Cursor.lockState = CursorLockMode.None;
@@ -107,32 +81,6 @@ public class CameraSystem : FSystem {
 	    	}
 
 			//------------------------------------------------------------------------------------
-			*/
-	        
-
-	        /*
-	        // Déplacement clic droit
-	        if(Input.GetMouseButtonDown(1))
-	        {
-	            go.GetComponent<Camera>().DragOrigin = Input.mousePosition;
-	            //return;
-	        }
- 
-	        if(!Input.GetMouseButton(1)) return;
-	 
-	        if(go.GetComponent<Camera>().ReverseDrag)
-	        {
-	            Vector3 pos = UnityEngine.Camera.main.ScreenToViewportPoint(Input.mousePosition - go.GetComponent<Camera>().DragOrigin);
-	            go.GetComponent<Camera>().Move = new Vector3(pos.x * go.GetComponent<Camera>().DragSpeed, 0, pos.y * go.GetComponent<Camera>().DragSpeed);
-	        }
-	        else
-	        {
-	            Vector3 pos = UnityEngine.Camera.main.ScreenToViewportPoint(Input.mousePosition - go.GetComponent<Camera>().DragOrigin);
-	            go.GetComponent<Camera>().Move = new Vector3(pos.x * -go.GetComponent<Camera>().DragSpeed, 0, pos.y * -go.GetComponent<Camera>().DragSpeed);
-	        }
-	 
-	        go.transform.Translate(go.GetComponent<Camera>().Move, Space.World);
-	        */
 		}
 		
 	}
