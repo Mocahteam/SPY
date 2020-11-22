@@ -10,11 +10,17 @@ public class HighLightSystem : FSystem {
 
 	private GameObject highLightedItem;
 	private GameObject EnemyScriptContainer;
+
+	private GameObject scriptInWindow;
+
+	private GameData gameData;
 	
 	public HighLightSystem(){
 		highlightedGO.addEntryCallback(highLightItem);
 		highlightedGO.addExitCallback(unHighLightItem);
 		highLightedItem = null;
+		scriptInWindow = null;
+		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		EnemyScriptContainer = GameObject.Find("EnemyScript").transform.GetChild(0).transform.GetChild(0).gameObject;	
 	}
 	protected override void onPause(int currentFrame) {
@@ -27,13 +33,21 @@ public class HighLightSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
+
+		//Change the higlighted action every step
+		if(gameData.step && scriptInWindow){
+			foreach (Transform child in EnemyScriptContainer.transform) {
+				GameObject.Destroy(child.gameObject);
+			}
+			ActionManipulator.ScriptToContainer(scriptInWindow.GetComponent<Script>(), EnemyScriptContainer);
+		}
 		
 		//If click on highlighted item and item has a script, then show script in the 2nd script window
 		if(highLightedItem && Input.GetMouseButtonDown(0) && highLightedItem.GetComponent<Script>()){
 			foreach (Transform child in EnemyScriptContainer.transform) {
 				GameObject.Destroy(child.gameObject);
 			}
-
+			scriptInWindow =  highLightedItem;
 			ActionManipulator.ScriptToContainer(highLightedItem.GetComponent<Script>(), EnemyScriptContainer);
 		}
 

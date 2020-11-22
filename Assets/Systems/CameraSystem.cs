@@ -56,27 +56,9 @@ public class CameraSystem : FSystem {
         	//go.transform.position += Movement * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
 
 			//go.transform.position += -transform.right * Time.deltaTime * go.GetComponent<CameraComponent>().cameraSpeed;
-
-			if (Input.GetKey(KeyCode.D))
-	        {
-	            go.transform.position += go.transform.right * Time.deltaTime * go.GetComponent<CameraComponent>().cameraSpeed;;
-	        }
-        	if (Input.GetKey(KeyCode.Q))
-	        {
-	            go.transform.position += -go.transform.right * Time.deltaTime * go.GetComponent<CameraComponent>().cameraSpeed;
-	        }
-	        
-	        // Autre type de déplacement...
-	        if (Input.GetKey(KeyCode.S))
-	        {
-	            go.transform.position += -go.transform.forward * Time.deltaTime * go.GetComponent<CameraComponent>().cameraSpeed;
-	            //go.transform.position += Vector3.right * Time.deltaTime * go.GetComponent<CameraComponent>().cameraSpeed;	            
-	        }
-	        if (Input.GetKey(KeyCode.Z))
-	        {
-	            go.transform.position += go.transform.forward * Time.deltaTime * go.GetComponent<CameraComponent>().cameraSpeed;
-	            //go.transform.position += Vector3.left * Time.deltaTime * go.GetComponent<CameraComponent>().cameraSpeed;
-	        }
+			
+			go.transform.position += new Vector3(go.transform.forward.x + go.transform.up.x, 0, go.transform.forward.z + go.transform.up.z ) * Input.GetAxis("Vertical") * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
+			go.transform.position += new Vector3(go.transform.right.x, 0, go.transform.right.z ) * Input.GetAxis("Horizontal") * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
 	        
 
 			//------------------------------------------------------------------------------------
