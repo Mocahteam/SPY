@@ -38,29 +38,40 @@ public class CameraSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-		foreach( GameObject go in controllableGO){
-			//go.transform.position = go.transform.position + new Vector3(0,0,Input.GetAxis("Horizontal")* go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime);
-			//go.transform.position = go.transform.position + new Vector3(-Input.GetAxis("Vertical")* go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime,0,0);
-			//go.transform.position = go.transform.position + new Vector3(0,0,Input.GetAxis("Horizontal")* go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime);
-			//go.transform.position = go.transform.position + new Vector3(-Input.GetAxis("Vertical")* go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime,0,0);
-			//go.transform.Translate(0,Input.GetAxis("Horizontal") * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime,0);
-			//go.transform.Translate(0,-Input.GetAxis("Vertical") * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime,0);
-			//go.GetComponent<CameraComponent>().movementRotation = Camera.main.transform.rotation * movementRotation;
-			//go.transform.Rotate(Quaternion.Euler(0, go.transform.eulerAngles.y, 0), Space.Self);
+		foreach( GameObject go in controllableGO ){
 			
-			//go.transform.Translate(Vector3.forward*go.GetComponent<CameraComponent>().cameraSpeed*Time.deltaTime);
-			//go.transform.position += go.transform.forward*go.GetComponent<CameraComponent>().cameraSpeed*Time.deltaTime;
+			/*
+			Debug.Log(Input.GetAxis("Horizontal"));
+			if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+			{
+				if (go.GetComponent<CameraComponent>().limiteCount >= go.GetComponent<CameraComponent>().limiteMin && go.GetComponent<CameraComponent>().limiteCount < go.GetComponent<CameraComponent>().limiteMax)
+				{
+					go.transform.position += new Vector3(go.transform.forward.x + go.transform.up.x, 0, go.transform.forward.z + go.transform.up.z ) * Input.GetAxis("Vertical") * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
+					go.transform.position += new Vector3(go.transform.right.x, 0, go.transform.right.z ) * Input.GetAxis("Horizontal") * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
+		        	go.GetComponent<CameraComponent>().limiteCount++;
+		        }
+		    }
+		    */
 
-			//Vector3 Movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-
-        	//go.transform.position += Movement * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
-
-			//go.transform.position += -transform.right * Time.deltaTime * go.GetComponent<CameraComponent>().cameraSpeed;
-			
-			go.transform.position += new Vector3(go.transform.forward.x + go.transform.up.x, 0, go.transform.forward.z + go.transform.up.z ) * Input.GetAxis("Vertical") * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
+		    // gauche droite
+		    go.transform.position += new Vector3(go.transform.forward.x + go.transform.up.x, 0, go.transform.forward.z + go.transform.up.z ) * Input.GetAxis("Vertical") * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
+			// avance recule
 			go.transform.position += new Vector3(go.transform.right.x, 0, go.transform.right.z ) * Input.GetAxis("Horizontal") * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
-	        
-
+			Debug.Log("x = " + go.transform.position.x);
+			Debug.Log("y = " + go.transform.position.y);
+			Debug.Log("z = " + go.transform.position.z);
+			
+			go.transform.position = new Vector3(
+			   Mathf.Clamp(Camera.main.transform.position.x, go.GetComponent<CameraComponent>().MIN_X, go.GetComponent<CameraComponent>().MAX_X),
+			   Mathf.Clamp(Camera.main.transform.position.y, go.GetComponent<CameraComponent>().MIN_Y, go.GetComponent<CameraComponent>().MAX_Y),
+			   Mathf.Clamp(Camera.main.transform.position.z, go.GetComponent<CameraComponent>().MIN_Z, go.GetComponent<CameraComponent>().MAX_Z));
+			
+			/*   
+			go.transform.position = new Vector3(
+			   Mathf.Clamp(go.transform.position.x, go.GetComponent<CameraComponent>().farLeft.position.x, go.GetComponent<CameraComponent>().farRight.position.x),
+			   Mathf.Clamp(go.transform.position.y, go.GetComponent<CameraComponent>().farLeft.position.y, go.GetComponent<CameraComponent>().farRight.position.y),
+			   Mathf.Clamp(go.transform.position.z, go.GetComponent<CameraComponent>().farLeft.position.z, go.GetComponent<CameraComponent>().farRight.position.z));
+			*/
 			//------------------------------------------------------------------------------------
 
 			// Déplacement avec la molette comme dans l'éditeur

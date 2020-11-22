@@ -20,5 +20,16 @@ public class CameraComponent : MonoBehaviour {
     public float lookSpeedV = 5f;
         
     // Déplacements relatifs à la caméra
-    public Vector3 movementRotation;
+    //public Vector3 movementRotation;
+    public int limiteCount = 10;
+    public int limiteMax = 30;
+    public int limiteMin = 0;
+    public float MIN_X = -100f;
+    public float MAX_X = -20f;
+    public float MIN_Y = -20f;
+    public float MAX_Y = 60f;
+    public float MIN_Z = -20f;
+    public float MAX_Z = 40f;
+    public Transform farLeft;  // End of screen Left
+    public Transform farRight;  //End of Screen Right
 }
