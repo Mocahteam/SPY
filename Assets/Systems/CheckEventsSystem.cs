@@ -4,8 +4,10 @@ using FYFY;
 public class CheckEventsSystem : FSystem {
 
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
+	private Family scriptedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)));
 	private Family noPlayerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new NoneOfTags("Player"));
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
+	private Family entityGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(Entity)));
 	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector)));
 	private GameData gameData;
 
@@ -41,7 +43,84 @@ public class CheckEventsSystem : FSystem {
 				}
 			}
 
+			//Check if If actions are valid
+			int nbStepToAdd = 0;
+			foreach( GameObject scripted in scriptedGO){
+				int nbStepPlayer = 0;
+				ActionManipulator.invalidAllIf(scripted.GetComponent<Script>());
+				Action nextIf = ActionManipulator.getCurrentIf(scripted);
+
+				while(nextIf != null && !ActionManipulator.endOfScript(scripted)){
+					//Check if ok
+					bool ifok = false;
+					Vector2 vec = new Vector2();
+					switch(ActionManipulator.getDirection(scripted.GetComponent<Direction>().direction,nextIf.ifDirection)){
+						case Direction.Dir.North:
+							vec = new Vector2(0,1);
+							break;
+						case Direction.Dir.South:
+							vec = new Vector2(0,-1);
+							break;
+						case Direction.Dir.East:
+							vec = new Vector2(1,0);
+							break;
+						case Direction.Dir.West:
+							vec = new Vector2(-1,0);
+							break;
+					}
+
+					switch(nextIf.ifEntityType){
+						case 0:
+							for(int i = 1; i <= nextIf.range; i++){
+								foreach( GameObject go in entityGO){
+									if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
+									 && go.GetComponent<Entity>().type == Entity.Type.Wall){
+										ifok = true;
+									}
+								}
+							}
+							break;
+						case 1:
+							for(int i = 1; i <= nextIf.range; i++){
+								foreach( GameObject go in scriptedGO){
+									if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
+									 && go.tag == "Ennemy"){
+										ifok = true;
+									}
+								}
+							}
+							break;
+						case 2:
+							for(int i = 1; i <= nextIf.range; i++){
+								foreach( GameObject go in scriptedGO){
+									if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
+									 && go.tag == "Player"){
+										ifok = true;
+									}
+								}
+							}
+							break;
+					}
+
+					if(ifok){
+						nextIf.ifValid = true;
+						if(scripted.tag == "Player")
+							nbStepPlayer += ActionManipulator.getNbStep(nextIf, true);
+					}
+					else{
+						nextIf.currentAction = nextIf.actions.Count-1;
+						ActionManipulator.incrementActionScript(scripted.GetComponent<Script>());
+					}
+					nextIf = ActionManipulator.getCurrentIf(scripted);
+				}
+
+				if(nbStepPlayer > nbStepToAdd){
+					nbStepToAdd = nbStepPlayer;
+				}
+			}
+			gameData.nbStep += nbStepToAdd;
 			
+
 			foreach( GameObject player in playerGO){
 				//Check if the player collide with a non-player
 				/*foreach( GameObject noPlayer in noPlayerGO){
@@ -64,4 +143,5 @@ public class CheckEventsSystem : FSystem {
 
 		}
 	}
+
 }

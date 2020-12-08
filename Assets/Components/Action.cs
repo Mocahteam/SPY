@@ -2,9 +2,15 @@
 public class Action {
 	public int currentAction;
 	public List<Action> actions;
-	public enum ActionType {Forward, TurnLeft, TurnRight, Wait, If, IfElse, For, While};
+	public enum ActionType {Forward, TurnLeft, TurnRight, Wait, If, IfElse, For, While, Detect};
 	public ActionType actionType;  
 
 	public int currentFor;
 	public int nbFor;
+
+	//If Attributs
+	public int ifDirection;
+	public int ifEntityType;
+	public int range;
+	public bool ifValid;
 }

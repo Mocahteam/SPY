@@ -27,6 +27,10 @@ public abstract class ActionManipulator
 		action.currentAction = 0;
 		action.currentFor = 0;
 		action.nbFor = nbFor;
+		action.ifValid = false;
+		action.ifDirection = 0;
+		action.ifEntityType = 0;
+		action.range = 0;
 
 		if(type == Action.ActionType.For || type == Action.ActionType.If || type == Action.ActionType.IfElse || type == Action.ActionType.While)
 			action.actions = new List<Action>();
@@ -69,13 +73,38 @@ public abstract class ActionManipulator
 		//end when a pure action is found
 		while(!(action.actionType == Action.ActionType.Forward || action.actionType == Action.ActionType.TurnLeft || action.actionType == Action.ActionType.TurnRight
 				|| action.actionType == Action.ActionType.Wait)){
-			//Case For
-			if(action.actionType == Action.ActionType.For){
+			//Case For / If
+			if(action.actionType == Action.ActionType.For || action.actionType == Action.ActionType.If){
 				action = action.actions[action.currentAction];
 			}
 		}
 
 		return action;
+	}
+
+	public static Action getCurrentIf(GameObject go){
+		if(go.GetComponent<Script>().currentAction >= go.GetComponent<Script>().actions.Count){
+			return null;
+		}
+		Action action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]; 
+		//end when a pure action is found
+		while(!(action.actionType == Action.ActionType.Forward || action.actionType == Action.ActionType.TurnLeft || action.actionType == Action.ActionType.TurnRight
+				|| action.actionType == Action.ActionType.Wait)){
+			//Case For / If
+			if(action.actionType == Action.ActionType.For){
+				action = action.actions[action.currentAction];
+			}
+			if(action.actionType == Action.ActionType.If){
+				if(action.currentAction == 0 && !action.ifValid){
+					return action;
+				}
+				else{
+					action = action.actions[action.currentAction];
+				}
+			}
+		}
+
+		return null;
 	}
 
 	//increment the iterator of the action script
@@ -106,6 +135,15 @@ public abstract class ActionManipulator
 				}
 			}
 		}
+		else if(act.actionType == Action.ActionType.If){
+			if(incrementAction(act.actions[act.currentAction]))
+				act.currentAction++;
+			
+			if(act.currentAction >= act.actions.Count){
+				act.currentAction = 0;
+				return true;
+			}
+		}
 		
 		return false;
 	}
@@ -120,11 +158,21 @@ public abstract class ActionManipulator
 		return nb;
 	}
 
-	public static int getNbStep(Action action){
+	public static int getNbStep(Action action, bool ignoreIf = false){
 		if(action.actionType == Action.ActionType.For){
 			int nb = 0;
 			foreach(Action act in action.actions){
 				nb += getNbStep(act) * action.nbFor;
+			}
+			return nb;
+		}
+		else if(action.actionType == Action.ActionType.If && !ignoreIf){
+			return 0;
+		}
+		else if(action.actionType == Action.ActionType.If && ignoreIf){
+			int nb = 0;
+			foreach(Action act in action.actions){
+				nb += getNbStep(act);
 			}
 			return nb;
 		}
@@ -146,6 +194,15 @@ public abstract class ActionManipulator
 					l.Add(forAct);
 
 			}
+			if(child.GetComponent<UIActionType>().type == Action.ActionType.If){
+				Action IfAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
+				IfAct.ifEntityType = child.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<Dropdown>().value;
+				IfAct.ifDirection = child.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<Dropdown>().value;
+				IfAct.range = int.Parse(child.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<InputField>().text);
+				if(child.transform.childCount > 1 && ContainerToActionList(IfAct, child))
+					l.Add(IfAct);
+
+			}
 			else{
 				l.Add(ActionManipulator.createAction(child.GetComponent<UIActionType>().type));
 			}
@@ -163,6 +220,17 @@ public abstract class ActionManipulator
 				forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<InputField>().text);
 				if(forAct.nbFor > 0 && child.transform.childCount > 1 && ContainerToActionList(forAct, child)){
 					ActionManipulator.addAction(act, forAct);
+					nonEmpty = true;
+				}
+			}
+			if(child.GetComponent<UIActionType>().type == Action.ActionType.If){
+				Action IfAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
+				IfAct.ifEntityType = child.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<Dropdown>().value;
+				IfAct.ifDirection = child.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<Dropdown>().value;
+				IfAct.range = int.Parse(child.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<InputField>().text);
+				IfAct.ifValid = false;
+				if(child.transform.childCount > 1 && ContainerToActionList(IfAct, child)){
+					ActionManipulator.addAction(act, IfAct);
 					nonEmpty = true;
 				}
 			}
@@ -190,7 +258,7 @@ public abstract class ActionManipulator
 	}
 
 	private static GameObject ActionToContainer(Action action, bool nextAction, bool sensitive = false){
-		GameObject obj =  null;;
+		GameObject obj =  null;
 		switch(action.actionType){
 			case Action.ActionType.Forward:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/ForwardActionBloc")) as GameObject;
@@ -233,5 +301,72 @@ public abstract class ActionManipulator
 		}
 		Object.Destroy(obj.GetComponent<PointerSensitive>());
 		return obj;
+	}
+
+
+	//0 Forward, 1 Backward, 2 Left, 3 Right
+	public static Direction.Dir getDirection(Direction.Dir dirEntity, int relativeDir){
+		if(relativeDir == 0)
+			return dirEntity;
+		switch(dirEntity){
+			case Direction.Dir.North:
+				switch(relativeDir){
+					case 1:
+						return Direction.Dir.South;
+					case 2:
+						return Direction.Dir.West;
+					case 3:
+						return Direction.Dir.East;
+				}
+				break;
+			case Direction.Dir.West:
+				switch(relativeDir){
+					case 1:
+						return Direction.Dir.East;
+					case 2:
+						return Direction.Dir.South;
+					case 3:
+						return Direction.Dir.North;
+				}
+				break;
+			case Direction.Dir.East:
+				switch(relativeDir){
+					case 1:
+						return Direction.Dir.West;
+					case 2:
+						return Direction.Dir.North;
+					case 3:
+						return Direction.Dir.South;
+				}
+				break;
+			case Direction.Dir.South:
+				switch(relativeDir){
+					case 1:
+						return Direction.Dir.North;
+					case 2:
+						return Direction.Dir.East;
+					case 3:
+						return Direction.Dir.West;
+				}
+				break;
+		}
+		return dirEntity;
+	}
+
+	public static void invalidAllIf(Script script){
+		foreach(Action act in script.actions){
+			if(act.actionType == Action.ActionType.If)
+				act.ifValid = false;
+			invalidAllIf(act);
+		}
+	}
+	public static void invalidAllIf(Action action){
+		if(action.actions != null){
+			foreach(Action act in action.actions){
+				if(act.actionType == Action.ActionType.If)
+					act.ifValid = false;
+				invalidAllIf(act);
+			}
+		}
 	}
 }

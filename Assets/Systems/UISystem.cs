@@ -100,7 +100,7 @@ public class UISystem : FSystem {
 		//PositionBar positioning
 		if(priority && itemDragged){
 			int start = 0;
-			if(priority.GetComponent<UITypeContainer>().type == UITypeContainer.Type.For){
+			if(priority.GetComponent<UITypeContainer>().type != UITypeContainer.Type.Script){
 				start++;
 			}
 
@@ -119,6 +119,7 @@ public class UISystem : FSystem {
 			positionBar.SetActive(false);
 		}
 
+		//Delete
 		if(!itemDragged && Input.GetMouseButtonUp(1)){
 			priority = null;
 			foreach(GameObject go in UIScriptPointedGO){
@@ -146,6 +147,10 @@ public class UISystem : FSystem {
 				refreshUI();
 			}
 			else if( itemDragged != null){
+				
+				for(int i = 0; i < itemDragged.transform.childCount;i++){
+					Object.Destroy(itemDragged.transform.GetChild(i).gameObject);
+				}
 				itemDragged.transform.DetachChildren();
 				GameObjectManager.unbind(itemDragged);
 				Object.Destroy(itemDragged);
@@ -178,6 +183,9 @@ public class UISystem : FSystem {
 			for(int i = 0; i < go.childCount; i++){
 				destroyScript(go.GetChild(i));
 			}
+		}
+		for(int i = 0; i < go.transform.childCount;i++){
+			Object.Destroy(go.transform.GetChild(i).gameObject);
 		}
 		go.transform.DetachChildren();
 		GameObjectManager.unbind(go.gameObject);
