@@ -375,4 +375,30 @@ public abstract class ActionManipulator
 			}
 		}
 	}
+
+
+	public static void updateActionBlocLimit(GameData gameData, Action.ActionType type, int nb){
+		switch(type){
+			case Action.ActionType.Forward:
+				gameData.actionBlocLimit[0] += nb;
+				break;
+			case Action.ActionType.TurnLeft:
+				gameData.actionBlocLimit[1] += nb;
+				break;
+			case Action.ActionType.TurnRight:
+				gameData.actionBlocLimit[2] += nb;
+				break;
+			case Action.ActionType.Wait:
+				gameData.actionBlocLimit[3] += nb;
+				break;
+			case Action.ActionType.For:
+				gameData.actionBlocLimit[4] += nb;
+				break;
+			case Action.ActionType.If:
+				gameData.actionBlocLimit[5] += nb;
+				break;
+			default:
+				break;
+		}
+	}
 }

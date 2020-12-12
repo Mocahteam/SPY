@@ -14,6 +14,11 @@ public class UISystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("UISystem", "resetScript", null);
 	}
 
+	public void resetScriptNoRefund()
+	{
+		MainLoop.callAppropriateSystemMethod ("UISystem", "resetScriptNoRefund", null);
+	}
+
 	public void showDialogPanel()
 	{
 		MainLoop.callAppropriateSystemMethod ("UISystem", "showDialogPanel", null);

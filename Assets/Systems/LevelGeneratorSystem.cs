@@ -65,6 +65,8 @@ public class LevelGeneratorSystem : FSystem {
 		gameData.dialogMessage.Add("Vous pouvez utiliser le clique droit sur une action du script pour la supprimer, le bouton 'Reset' vous permet de vider la fenêtre de script d'un seul coup.");
 		gameData.dialogMessage.Add("Vous pouvez déplacer la caméra avec ZQSD ou les fleches directionnelles");
 		gameData.dialogMessage.Add("Essayez donc d'avancer 2 fois puis de tourner à droite pour commencer, cliquez ensuite sur 'Executer'. Essayez ensuite de terminer cette mission.");
+
+		gameData.actionBlocLimit = new List<int>() {-1,-1,-1,-1,-1,-1};
 	}
 
 	private void generateLevel2(){
@@ -87,11 +89,13 @@ public class LevelGeneratorSystem : FSystem {
 									new List<int>{1,1,1}};
 		generateMap();
 		
-		createEntity(13,1, Direction.Dir.West,0);
+		createEntity(14,1, Direction.Dir.West,0);
 
 		gameData.dialogMessage.Add("La sortie est au bout de ce couloir !");
 		gameData.dialogMessage.Add("Evitons de de saturer la ligne de communication en donnant un ordre plus efficace");
 		gameData.dialogMessage.Add("Utilise l'action 'For', tu pourras y mettre d'autres actions dans cet ordre qui seront répétés le nombre de fois indiqué !\nMet y l'action Avancer et règle le For sur 12.");
+
+		gameData.actionBlocLimit = new List<int>() {1,-1,-1,-1,-1,-1};
 	}
 
 	private void generateLevel3(){
@@ -113,6 +117,8 @@ public class LevelGeneratorSystem : FSystem {
 		createEntity(5,5, Direction.Dir.South,2);
 
 		gameData.dialogMessage.Add("Attention il y a des caméras de sécurité ici, tu peux voir leur champ de vision en rouge. Faufile toi sans te faire repérer.");
+
+		gameData.actionBlocLimit = new List<int>() {-1,-1,-1,-1,-1,-1};
 
 	}
 
@@ -142,6 +148,7 @@ public class LevelGeneratorSystem : FSystem {
 		gameData.dialogMessage.Add("Attention il y a une caméra devant toi ! Par chance son champ de détection est très petit, mais elle te bloque tout de même le passage.");
 		gameData.dialogMessage.Add("Il semblerait que cette caméra a une IA, clique dessus pour analyser son comportement pour y trouver une faille et passer. De plus ce modèle de caméra ne semble pas voir en dessous d'elle même.");
 
+		gameData.actionBlocLimit = new List<int>() {-1,-1,-1,-1,-1,-1};
 	}
 
 	private void generateLevel5(){
@@ -162,6 +169,8 @@ public class LevelGeneratorSystem : FSystem {
 
 		gameData.dialogMessage.Add("Dans cette mission vous avez deux agents que vous devez diriger vers la sortie. Malheureusement nous ne pouvons pas nous permettre d'utiliser plusieurs communications, ils recevront donc les même ordres.");
 		gameData.dialogMessage.Add("Pour cela utilisez les particularités du terrain pour ammener les deux agents à la sortie.");
+
+		gameData.actionBlocLimit = new List<int>() {-1,-1,-1,-1,-1,-1};
 	}
 
 

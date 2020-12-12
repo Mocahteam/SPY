@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using FYFY;
 using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
@@ -20,6 +20,8 @@ public class UISystem : FSystem {
 	private GameObject dialogPanel;
 	private int nDialog = 0;
 
+	private List<GameObject> limitTexts;
+
 	public UISystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.ButtonExec = GameObject.Find("ExecuteButton");
@@ -30,6 +32,15 @@ public class UISystem : FSystem {
 		endPanel.SetActive(false);
 		dialogPanel = GameObject.Find("DialogPanel");
 		dialogPanel.SetActive(false);
+
+		//LimitTexts
+		limitTexts = new List<GameObject>();
+		limitTexts.Add(GameObject.Find("ForwardLimit"));
+		limitTexts.Add(GameObject.Find("TurnLeftLimit"));
+		limitTexts.Add(GameObject.Find("TurnRightLimit"));
+		limitTexts.Add(GameObject.Find("WaitLimit"));
+		limitTexts.Add(GameObject.Find("ForLimit"));
+		limitTexts.Add(GameObject.Find("IfLimit"));
 	}
 	protected override void onPause(int currentFrame) {
 	}
@@ -74,6 +85,24 @@ public class UISystem : FSystem {
 			gameData.ButtonExec.GetComponent<Button>().interactable = true;
 			gameData.ButtonReset.GetComponent<Button>().interactable = true;
 		}
+
+		//Update LimitText
+		for(int i = 0; i < limitTexts.Count; i++){
+			if(gameData.actionBlocLimit[i] >= 0){
+				limitTexts[i].GetComponent<Text>().text = gameData.actionBlocLimit[i].ToString();
+				//desactivate actionBlocs
+				if(gameData.actionBlocLimit[i] == 0){
+					limitTexts[i].transform.parent.GetComponent<Image>().raycastTarget = false;
+				}
+				else{
+					limitTexts[i].transform.parent.GetComponent<Image>().raycastTarget = true;
+				}
+			}
+		}
+
+
+
+
 
 		//Drag
 		foreach( GameObject go in PointedGO){
@@ -129,17 +158,22 @@ public class UISystem : FSystem {
 				
 			}
 			if(priority){
-				destroyScript(priority.transform);
+				destroyScript(priority.transform, true);
 			}
 			priority = null;
 		}
 
 		//Drop
 		if(Input.GetMouseButtonUp(0)){
+			//Drop in script
 			if(priority != null && itemDragged != null){
 				itemDragged.transform.SetParent(priority.transform);
 				itemDragged.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
 				itemDragged.GetComponent<Image>().raycastTarget = true;
+
+				//update limit bloc
+				ActionManipulator.updateActionBlocLimit(gameData,itemDragged.GetComponent<UIActionType>().type, -1);
+
 				if(itemDragged.GetComponent<UITypeContainer>() != null){
 					itemDragged.GetComponent<Image>().raycastTarget = true;
 					itemDragged.GetComponent<UITypeContainer>().layer = priority.GetComponent<UITypeContainer>().layer + 1;
@@ -172,13 +206,26 @@ public class UISystem : FSystem {
 	public void resetScript(){
 		GameObject go = GameObject.Find("ScriptContainer");
 		for(int i = 0; i < go.transform.childCount; i++){
+			destroyScript(go.transform.GetChild(i), true);
+		}
+		refreshUI();
+	}
+
+	public void resetScriptNoRefund(){
+		GameObject go = GameObject.Find("ScriptContainer");
+		for(int i = 0; i < go.transform.childCount; i++){
 			destroyScript(go.transform.GetChild(i));
 		}
 		refreshUI();
 	}
 
 	//Recursive script destroyer
-	private void destroyScript(Transform go){
+	private void destroyScript(Transform go, bool refund = false){
+		//refund blocActionLimit
+		if(refund && go.gameObject.GetComponent<UIActionType>() != null){
+			ActionManipulator.updateActionBlocLimit(gameData, go.gameObject.GetComponent<UIActionType>().type, 1);
+		}
+		
 		if(go.gameObject.GetComponent<UITypeContainer>() != null){
 			for(int i = 0; i < go.childCount; i++){
 				destroyScript(go.GetChild(i));

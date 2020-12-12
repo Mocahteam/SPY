@@ -15,6 +15,6 @@ public class GameData : MonoBehaviour {
 	public List<string> levelList;
 	public int levelToLoad;
 	public List<string> dialogMessage;
-
+	public List<int> actionBlocLimit;
 	public int endLevel;
 }

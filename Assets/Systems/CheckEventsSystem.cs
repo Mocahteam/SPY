@@ -27,12 +27,12 @@ public class CheckEventsSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-		if(gameData.checkStep && gameData.nbStep == 1){
+		if(gameData.checkStep){
 			//Check if the player is on the end of the level
 			int nbEnd = 0;
 			foreach( GameObject player in playerGO){
 				foreach( GameObject exit in exitGO){
-					if(player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().z == exit.GetComponent<Position>().z){
+					if(gameData.nbStep == 1 && player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().z == exit.GetComponent<Position>().z){
 						nbEnd++;
 						//end level
 						if(nbEnd >= playerGO.Count){
