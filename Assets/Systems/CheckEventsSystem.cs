@@ -27,7 +27,7 @@ public class CheckEventsSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-		if(gameData.checkStep){
+		if(gameData.checkStep && gameData.nbStep == 1){
 			//Check if the player is on the end of the level
 			int nbEnd = 0;
 			foreach( GameObject player in playerGO){

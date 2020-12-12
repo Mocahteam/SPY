@@ -83,7 +83,7 @@ public abstract class ActionManipulator
 	}
 
 	public static Action getCurrentIf(GameObject go){
-		if(go.GetComponent<Script>().currentAction >= go.GetComponent<Script>().actions.Count){
+		if(go.GetComponent<Script>().actions == null || go.GetComponent<Script>().currentAction >= go.GetComponent<Script>().actions.Count){
 			return null;
 		}
 		Action action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]; 
@@ -92,6 +92,9 @@ public abstract class ActionManipulator
 				|| action.actionType == Action.ActionType.Wait)){
 			//Case For / If
 			if(action.actionType == Action.ActionType.For){
+				if(action.currentAction >= action.actions.Count){
+					return null;
+				}
 				action = action.actions[action.currentAction];
 			}
 			if(action.actionType == Action.ActionType.If){
@@ -99,6 +102,9 @@ public abstract class ActionManipulator
 					return action;
 				}
 				else{
+					if(action.currentAction >= action.actions.Count){
+						return null;
+					}
 					action = action.actions[action.currentAction];
 				}
 			}

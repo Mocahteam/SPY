@@ -70,6 +70,7 @@ public class LevelGeneratorSystem : FSystem {
 	private void generateLevel2(){
 		eraseMap();
 		map = new List<List<int>> {new List<int>{1,1,1},
+									new List<int>{1,0,1},
 									new List<int>{1,3,1},
 									new List<int>{1,0,1},
 									new List<int>{1,0,1},
