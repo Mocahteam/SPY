@@ -62,7 +62,7 @@ public class UISystem : FSystem {
 					endPanel.transform.GetChild(3).gameObject.SetActive(false);
 					break;
 				case 2:
-					endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !";
+					endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !\n Nombre d'instructions: "+ gameData.totalActionBloc + "\nNombre d'étape: " + gameData.totalStep;
 					//End
 					if(gameData.levelToLoad >= 4){
 						endPanel.transform.GetChild(3).gameObject.SetActive(false);
@@ -224,6 +224,9 @@ public class UISystem : FSystem {
 		//refund blocActionLimit
 		if(refund && go.gameObject.GetComponent<UIActionType>() != null){
 			ActionManipulator.updateActionBlocLimit(gameData, go.gameObject.GetComponent<UIActionType>().type, 1);
+		}
+		else if(go.gameObject.GetComponent<UIActionType>() != null){
+			gameData.totalActionBloc++;
 		}
 		
 		if(go.gameObject.GetComponent<UITypeContainer>() != null){

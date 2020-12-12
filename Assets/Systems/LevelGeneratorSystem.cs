@@ -308,6 +308,8 @@ public class LevelGeneratorSystem : FSystem {
 		gameData.generateStep = false;
 		gameData.nbStep = 0;
 		gameData.endLevel = 0;
+		gameData.totalActionBloc = 0;
+		gameData.totalStep = 0;
 		GameObjectManager.loadScene("MainScene");
 	}
 

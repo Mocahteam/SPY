@@ -59,6 +59,7 @@ public class StepSystem : FSystem {
 			else if(gameData.step){
 				gameData.step = false;
 				gameData.generateStep = true;
+				gameData.totalStep++;
 			}
 			//activate step (ex applyScript)
 			else if(timeStepCpt <= 0){
