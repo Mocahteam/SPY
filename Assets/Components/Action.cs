@@ -13,4 +13,5 @@ public class Action {
 	public int ifEntityType;
 	public int range;
 	public bool ifValid;
+	public bool ifNot;
 }

@@ -78,8 +78,6 @@ public abstract class ActionManipulator
 				action = action.actions[action.currentAction];
 			}
 		}
-
-		Debug.Log(action.actionType);
 		return action;
 	}
 
@@ -206,6 +204,8 @@ public abstract class ActionManipulator
 				IfAct.ifEntityType = child.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<Dropdown>().value;
 				IfAct.ifDirection = child.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<Dropdown>().value;
 				IfAct.range = int.Parse(child.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<InputField>().text);
+				IfAct.ifValid = false;
+				IfAct.ifNot = (child.transform.GetChild(0).GetChild(2).GetComponent<Dropdown>().value == 1);
 				if(child.transform.childCount > 1 && ContainerToActionList(IfAct, child))
 					l.Add(IfAct);
 
@@ -235,6 +235,7 @@ public abstract class ActionManipulator
 				IfAct.ifEntityType = child.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<Dropdown>().value;
 				IfAct.ifDirection = child.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<Dropdown>().value;
 				IfAct.range = int.Parse(child.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<InputField>().text);
+				IfAct.ifNot = (child.transform.GetChild(0).GetChild(2).GetComponent<Dropdown>().value == 1);
 				IfAct.ifValid = false;
 				if(child.transform.childCount > 1 && ContainerToActionList(IfAct, child)){
 					ActionManipulator.addAction(act, IfAct);
@@ -320,6 +321,11 @@ public abstract class ActionManipulator
 				obj.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<Dropdown>().interactable = false;
 				obj.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<InputField>().text = action.range.ToString();
 				obj.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<InputField>().interactable = false;
+				if(action.ifNot)
+					obj.transform.GetChild(0).GetChild(2).GetComponent<Dropdown>().value = 0;
+				else
+					obj.transform.GetChild(0).GetChild(2).GetComponent<Dropdown>().value = 1;
+				obj.transform.GetChild(0).GetChild(2).GetComponent<Dropdown>().interactable = false;
 				Object.Destroy(obj.GetComponent<UITypeContainer>());
 				i = 0;
 				foreach(Action act in action.actions){

@@ -61,7 +61,7 @@ public class CheckEventsSystem : FSystem {
 
 				while(nextIf != null && !ActionManipulator.endOfScript(scripted)){
 					//Check if ok
-					bool ifok = false;
+					bool ifok = nextIf.ifNot;
 					Vector2 vec = new Vector2();
 					switch(ActionManipulator.getDirection(scripted.GetComponent<Direction>().direction,nextIf.ifDirection)){
 						case Direction.Dir.North:
@@ -84,7 +84,7 @@ public class CheckEventsSystem : FSystem {
 								foreach( GameObject go in entityGO){
 									if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
 									 && go.GetComponent<Entity>().type == Entity.Type.Wall){
-										ifok = true;
+										ifok = !nextIf.ifNot;
 									}
 								}
 							}
@@ -94,7 +94,7 @@ public class CheckEventsSystem : FSystem {
 								foreach( GameObject go in scriptedGO){
 									if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
 									 && go.tag == "Ennemy"){
-										ifok = true;
+										ifok = !nextIf.ifNot;
 									}
 								}
 							}
@@ -104,7 +104,7 @@ public class CheckEventsSystem : FSystem {
 								foreach( GameObject go in scriptedGO){
 									if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
 									 && go.tag == "Player"){
-										ifok = true;
+										ifok = !nextIf.ifNot;
 									}
 								}
 							}
