@@ -7,6 +7,7 @@ public class ApplyScriptSystem : FSystem {
 	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)));
 	private Family entityGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(Entity)));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
+	private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
 	private GameObject scriptComposer;
 	private GameData gameData;
 
@@ -48,6 +49,13 @@ public class ApplyScriptSystem : FSystem {
 						ApplyTurnRight(go);
 						break;
 					case Action.ActionType.Wait:
+						break;
+					case Action.ActionType.Activate:
+						foreach( GameObject actGo in activableGO){
+							if(actGo.GetComponent<Position>().x == go.GetComponent<Position>().x && actGo.GetComponent<Position>().z == go.GetComponent<Position>().z){
+								actGo.GetComponent<Activable>().isActivated = true;
+							}
+						}
 						break;
 				}
 				ActionManipulator.incrementActionScript(go.GetComponent<Script>());
@@ -142,85 +150,87 @@ public class ApplyScriptSystem : FSystem {
 		}
 
 		//Check if If actions are valid
-			int nbStepToAdd = 0;
-			foreach( GameObject scripted in controllableGO){
-				int nbStepPlayer = 0;
-				ActionManipulator.invalidAllIf(scripted.GetComponent<Script>());
-				Action nextIf = ActionManipulator.getCurrentIf(scripted);
+		int nbStepToAdd = 0;
+		foreach( GameObject scripted in controllableGO){
+			int nbStepPlayer = 0;
+			ActionManipulator.invalidAllIf(scripted.GetComponent<Script>());
+			Action nextIf = ActionManipulator.getCurrentIf(scripted);
 
-				while(nextIf != null && !ActionManipulator.endOfScript(scripted)){
-					//Check if ok
-					bool ifok = false;
-					Vector2 vec = new Vector2();
-					switch(ActionManipulator.getDirection(scripted.GetComponent<Direction>().direction,nextIf.ifDirection)){
-						case Direction.Dir.North:
-							vec = new Vector2(0,1);
-							break;
-						case Direction.Dir.South:
-							vec = new Vector2(0,-1);
-							break;
-						case Direction.Dir.East:
-							vec = new Vector2(1,0);
-							break;
-						case Direction.Dir.West:
-							vec = new Vector2(-1,0);
-							break;
-					}
+			while(nextIf != null && !ActionManipulator.endOfScript(scripted)){
+				//Check if ok
+				bool ifok = false;
+				Vector2 vec = new Vector2();
+				switch(ActionManipulator.getDirection(scripted.GetComponent<Direction>().direction,nextIf.ifDirection)){
+					case Direction.Dir.North:
+						vec = new Vector2(0,1);
+						break;
+					case Direction.Dir.South:
+						vec = new Vector2(0,-1);
+						break;
+					case Direction.Dir.East:
+						vec = new Vector2(1,0);
+						break;
+					case Direction.Dir.West:
+						vec = new Vector2(-1,0);
+						break;
+				}
 
-					switch(nextIf.ifEntityType){
-						case 0:
-							for(int i = 1; i <= nextIf.range; i++){
-								foreach( GameObject go in entityGO){
-									if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
-									 && go.GetComponent<Entity>().type == Entity.Type.Wall){
-										ifok = true;
-									}
+				switch(nextIf.ifEntityType){
+					case 0:
+						for(int i = 1; i <= nextIf.range; i++){
+							foreach( GameObject go in entityGO){
+								if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
+									&& go.GetComponent<Entity>().type == Entity.Type.Wall){
+									ifok = true;
 								}
 							}
-							break;
-						case 1:
-							for(int i = 1; i <= nextIf.range; i++){
-								foreach( GameObject go in controllableGO){
-									if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
-									 && go.tag == "Ennemy"){
-										ifok = true;
-									}
-								}
-							}
-							break;
-						case 2:
-							for(int i = 1; i <= nextIf.range; i++){
-								foreach( GameObject go in controllableGO){
-									if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
-									 && go.tag == "Player"){
-										ifok = true;
-									}
-								}
-							}
-							break;
-					}
-
-					if(ifok){
-						nextIf.ifValid = true;
-						if(scripted.tag == "Player"){
-							nbStepPlayer += ActionManipulator.getNbStep(nextIf, true);
 						}
-					}
-					else{
-						nextIf.currentAction = nextIf.actions.Count-1;
-						ActionManipulator.incrementActionScript(scripted.GetComponent<Script>());
-					}
-					nextIf = ActionManipulator.getCurrentIf(scripted);
+						break;
+					case 1:
+						for(int i = 1; i <= nextIf.range; i++){
+							foreach( GameObject go in controllableGO){
+								if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
+									&& go.tag == "Ennemy"){
+									ifok = true;
+								}
+							}
+						}
+						break;
+					case 2:
+						for(int i = 1; i <= nextIf.range; i++){
+							foreach( GameObject go in controllableGO){
+								if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
+									&& go.tag == "Player"){
+									ifok = true;
+								}
+							}
+						}
+						break;
 				}
 
-				if(nbStepPlayer > nbStepToAdd){
-					nbStepToAdd = nbStepPlayer;
+				if(ifok){
+					nextIf.ifValid = true;
+					if(scripted.tag == "Player"){
+						nbStepPlayer += ActionManipulator.getNbStep(nextIf, true);
+					}
 				}
+				else{
+					nextIf.currentAction = nextIf.actions.Count-1;
+					ActionManipulator.incrementActionScript(scripted.GetComponent<Script>());
+				}
+				nextIf = ActionManipulator.getCurrentIf(scripted);
 			}
-			gameData.nbStep += nbStepToAdd;
-	}
 
-	
+			if(nbStepPlayer > nbStepToAdd){
+				nbStepToAdd = nbStepPlayer;
+			}
+		}
+		gameData.nbStep += nbStepToAdd;
+
+		if(gameData.nbStep > 0){
+			gameData.totalExecute++;
+		}
+	}
 }
 
 

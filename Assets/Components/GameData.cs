@@ -20,4 +20,5 @@ public class GameData : MonoBehaviour {
 
 	public int totalStep;
 	public int totalActionBloc;
+	public int totalExecute;
 }

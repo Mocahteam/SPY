@@ -9,6 +9,8 @@ public class CheckEventsSystem : FSystem {
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
 	private Family entityGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(Entity)));
 	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector)));
+	private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
+	private Family activationSlotGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot)));
 	private GameData gameData;
 
 	public CheckEventsSystem(){
@@ -40,6 +42,13 @@ public class CheckEventsSystem : FSystem {
 							gameData.endLevel = 2;
 						}
 					}
+				}
+			}
+
+			//Check Activations
+			foreach(GameObject activable in activableGO){
+				if(activable.GetComponent<Activable>().isActivated && !activable.GetComponent<Activable>().isFullyActivated){
+					activate(activable);
 				}
 			}
 
@@ -140,8 +149,22 @@ public class CheckEventsSystem : FSystem {
 					}
 				}
 			}
-
 		}
 	}
 
+	private void activate(GameObject go){
+		go.GetComponent<Activable>().isFullyActivated = true;
+		foreach(int id in go.GetComponent<Activable>().slotID){
+			foreach(GameObject slotGo in activationSlotGO){
+				if(slotGo.GetComponent<ActivationSlot>().slotID == id){
+					switch(slotGo.GetComponent<ActivationSlot>().type){
+						case ActivationSlot.ActivationType.Destroy:
+							GameObjectManager.unbind(slotGo);
+							Object.Destroy(slotGo);
+							break;
+					}
+				}
+			}
+		}
+	}
 }

@@ -93,7 +93,7 @@ public class LevelGeneratorSystem : FSystem {
 
 		gameData.dialogMessage.Add("La sortie est au bout de ce couloir !");
 		gameData.dialogMessage.Add("Evitons de de saturer la ligne de communication en donnant un ordre plus efficace");
-		gameData.dialogMessage.Add("Utilise l'action 'For', tu pourras y mettre d'autres actions dans cet ordre qui seront répétés le nombre de fois indiqué !\nMet y l'action Avancer et règle le For sur 12.");
+		gameData.dialogMessage.Add("Utilise l'action 'For', tu pourras y mettre d'autres actions dans cet ordre qui seront répétés le nombre de fois indiqué !\nMet y l'action Avancer et règle le pour arriver sur la sortie.");
 
 		gameData.actionBlocLimit = new List<int>() {1,-1,-1,-1,-1,-1};
 	}
@@ -270,6 +270,28 @@ public class LevelGeneratorSystem : FSystem {
 		return entity;
 	}
 
+	private void createDoor(int i, int j, bool orientation, int slotID){
+		GameObject door = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Door") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+		if(!orientation){
+			door.transform.rotation = Quaternion.Euler(0,90,0);
+		}
+
+		door.GetComponent<ActivationSlot>().slotID = slotID;
+		door.GetComponent<Position>().x = i;
+		door.GetComponent<Position>().z = j;
+		GameObjectManager.bind(door);
+	}
+
+	private void createActivable(int i, int j, List<int> slotIDs){
+		GameObject activable = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/ActivableButton") as GameObject, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+		activable.GetComponent<Activable>().slotID = slotIDs;
+		activable.GetComponent<Activable>().isActivated = false;
+		activable.GetComponent<Activable>().isFullyActivated = false;
+		activable.GetComponent<Position>().x = i;
+		activable.GetComponent<Position>().z = j;
+		GameObjectManager.bind(activable);
+	}
+
 	private void createSpawnExit(int i, int j, bool type){
 		GameObject spawnExit;
 		if(type)
@@ -310,6 +332,7 @@ public class LevelGeneratorSystem : FSystem {
 		gameData.endLevel = 0;
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
+		gameData.totalExecute = 0;
 		GameObjectManager.loadScene("MainScene");
 	}
 

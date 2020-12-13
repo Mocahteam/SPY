@@ -72,13 +72,14 @@ public abstract class ActionManipulator
 		Action action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]; 
 		//end when a pure action is found
 		while(!(action.actionType == Action.ActionType.Forward || action.actionType == Action.ActionType.TurnLeft || action.actionType == Action.ActionType.TurnRight
-				|| action.actionType == Action.ActionType.Wait)){
+				|| action.actionType == Action.ActionType.Wait || action.actionType == Action.ActionType.Activate)){
 			//Case For / If
 			if(action.actionType == Action.ActionType.For || action.actionType == Action.ActionType.If){
 				action = action.actions[action.currentAction];
 			}
 		}
 
+		Debug.Log(action.actionType);
 		return action;
 	}
 
@@ -89,7 +90,7 @@ public abstract class ActionManipulator
 		Action action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]; 
 		//end when a pure action is found
 		while(!(action.actionType == Action.ActionType.Forward || action.actionType == Action.ActionType.TurnLeft || action.actionType == Action.ActionType.TurnRight
-				|| action.actionType == Action.ActionType.Wait)){
+				|| action.actionType == Action.ActionType.Wait || action.actionType == Action.ActionType.Activate)){
 			//Case For / If
 			if(action.actionType == Action.ActionType.For){
 				if(action.currentAction >= action.actions.Count){
@@ -123,7 +124,7 @@ public abstract class ActionManipulator
 
     public static bool incrementAction(Action act){
 		if(act.actionType == Action.ActionType.Forward || act.actionType == Action.ActionType.TurnLeft || act.actionType == Action.ActionType.TurnRight
-			|| act.actionType == Action.ActionType.Wait)
+			|| act.actionType == Action.ActionType.Wait || act.actionType == Action.ActionType.Activate)
 			return true;
 		//Case For
 		else if(act.actionType == Action.ActionType.For){
@@ -265,6 +266,7 @@ public abstract class ActionManipulator
 
 	private static GameObject ActionToContainer(Action action, bool nextAction, bool sensitive = false){
 		GameObject obj =  null;
+		int i = 0;
 		switch(action.actionType){
 			case Action.ActionType.Forward:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/ForwardActionBloc")) as GameObject;
@@ -290,12 +292,36 @@ public abstract class ActionManipulator
 					obj.GetComponent<Image>().color = Color.yellow;
 				}
 				break;
+			case Action.ActionType.Activate:
+				obj = Object.Instantiate (Resources.Load ("Prefabs/ActivateActionBloc Variant")) as GameObject;
+				if(nextAction){
+					obj.GetComponent<Image>().color = Color.yellow;
+				}
+				break;
 			case Action.ActionType.For:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/ForBloc")) as GameObject;
 				obj.transform.GetChild(0).GetChild(1).GetComponent<InputField>().text = action.currentFor.ToString() + " / " + action.nbFor.ToString();
 				obj.transform.GetChild(0).GetChild(1).GetComponent<InputField>().interactable = false;
 				Object.Destroy(obj.GetComponent<UITypeContainer>());
-				int i = 0;
+				i = 0;
+				foreach(Action act in action.actions){
+					if(i == action.currentAction && nextAction)
+						ActionToContainer(act, true).transform.SetParent(obj.transform);
+					else
+						ActionToContainer(act, false).transform.SetParent(obj.transform);
+					i++;
+				}
+				break;
+			case Action.ActionType.If:
+				obj = Object.Instantiate (Resources.Load ("Prefabs/IfDetectBloc")) as GameObject;
+				obj.transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<Dropdown>().value = action.ifEntityType;
+				obj.transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<Dropdown>().interactable = false;
+				obj.transform.GetChild(0).GetChild(0).GetChild(2).GetComponent<Dropdown>().value = action.ifDirection;
+				obj.transform.GetChild(0).GetChild(0).GetChild(2).GetComponent<Dropdown>().interactable = false;
+				obj.transform.GetChild(0).GetChild(0).GetChild(3).GetComponent<InputField>().text = action.range.ToString();
+				obj.transform.GetChild(0).GetChild(0).GetChild(3).GetComponent<InputField>().interactable = false;
+				Object.Destroy(obj.GetComponent<UITypeContainer>());
+				i = 0;
 				foreach(Action act in action.actions){
 					if(i == action.currentAction && nextAction)
 						ActionToContainer(act, true).transform.SetParent(obj.transform);
