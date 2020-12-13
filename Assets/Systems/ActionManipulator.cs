@@ -201,7 +201,7 @@ public abstract class ActionManipulator
 					l.Add(forAct);
 
 			}
-			if(child.GetComponent<UIActionType>().type == Action.ActionType.If){
+			else if(child.GetComponent<UIActionType>().type == Action.ActionType.If){
 				Action IfAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
 				IfAct.ifEntityType = child.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<Dropdown>().value;
 				IfAct.ifDirection = child.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<Dropdown>().value;
@@ -230,7 +230,7 @@ public abstract class ActionManipulator
 					nonEmpty = true;
 				}
 			}
-			if(child.GetComponent<UIActionType>().type == Action.ActionType.If){
+			else if(child.GetComponent<UIActionType>().type == Action.ActionType.If){
 				Action IfAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
 				IfAct.ifEntityType = child.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<Dropdown>().value;
 				IfAct.ifDirection = child.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<Dropdown>().value;
@@ -314,12 +314,12 @@ public abstract class ActionManipulator
 				break;
 			case Action.ActionType.If:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/IfDetectBloc")) as GameObject;
-				obj.transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<Dropdown>().value = action.ifEntityType;
-				obj.transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<Dropdown>().interactable = false;
-				obj.transform.GetChild(0).GetChild(0).GetChild(2).GetComponent<Dropdown>().value = action.ifDirection;
-				obj.transform.GetChild(0).GetChild(0).GetChild(2).GetComponent<Dropdown>().interactable = false;
-				obj.transform.GetChild(0).GetChild(0).GetChild(3).GetComponent<InputField>().text = action.range.ToString();
-				obj.transform.GetChild(0).GetChild(0).GetChild(3).GetComponent<InputField>().interactable = false;
+				obj.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<Dropdown>().value = action.ifEntityType;
+				obj.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<Dropdown>().interactable = false;
+				obj.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<Dropdown>().value = action.ifDirection;
+				obj.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<Dropdown>().interactable = false;
+				obj.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<InputField>().text = action.range.ToString();
+				obj.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<InputField>().interactable = false;
 				Object.Destroy(obj.GetComponent<UITypeContainer>());
 				i = 0;
 				foreach(Action act in action.actions){

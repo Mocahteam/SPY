@@ -6806,6 +6806,10 @@ MonoBehaviour:
       PublicKeyToken=null
     _typeFullName: CameraSystem
     _pause: 0
+  - _typeAssemblyQualifiedName: CheckEventsSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: CheckEventsSystem
+    _pause: 0
   - _typeAssemblyQualifiedName: HighLightSystem, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: HighLightSystem
@@ -6813,10 +6817,6 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: UISystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     _typeFullName: UISystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: CheckEventsSystem, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: CheckEventsSystem
     _pause: 0
   - _typeAssemblyQualifiedName: LevelGeneratorSystem, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -8560,7 +8560,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 983595704}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 64.715, y: -90, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
@@ -8927,8 +8927,8 @@ Transform:
   m_LocalPosition: {x: -73, y: 2.8930144, z: -2.330947}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1701787405}
   - {fileID: 963194228}
+  - {fileID: 1701787405}
   - {fileID: 589886024}
   - {fileID: 1783281289}
   - {fileID: 1676076913}
@@ -9044,6 +9044,7 @@ Transform:
   - {fileID: 382758126}
   - {fileID: 1787600889}
   - {fileID: 1838544308}
+  - {fileID: 1482890830}
   - {fileID: 484866253}
   - {fileID: 1857463611}
   - {fileID: 1768585455}
@@ -9054,7 +9055,6 @@ Transform:
   - {fileID: 865326779}
   - {fileID: 1308256577}
   - {fileID: 1012572599}
-  - {fileID: 1482890830}
   - {fileID: 717330412}
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -12249,7 +12249,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 983595704}
-  m_RootOrder: 127
+  m_RootOrder: 117
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!108 &1482890831
 Light:
