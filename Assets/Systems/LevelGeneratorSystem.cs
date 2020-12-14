@@ -55,7 +55,8 @@ public class LevelGeneratorSystem : FSystem {
 									new List<int>{1,2,1,3,1},
 									new List<int>{1,1,1,1,1}};
 		generateMap();
-		
+
+		createCoin(1,1);
 		createEntity(3,1, Direction.Dir.West,0);
 
 		
@@ -304,6 +305,13 @@ public class LevelGeneratorSystem : FSystem {
 		GameObjectManager.bind(spawnExit);
 	}
 
+	private void createCoin(int i, int j){
+		GameObject coin = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Coin") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(90,0,0), gameData.Level.transform);
+		coin.GetComponent<Position>().x = i;
+		coin.GetComponent<Position>().z = j;
+		GameObjectManager.bind(coin);
+	}
+
 	private void createCell(int i, int j){
 		GameObject cell = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Cell") as GameObject, gameData.Level.transform.position + new Vector3(i*3,0,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 		GameObjectManager.bind(cell);
@@ -333,6 +341,7 @@ public class LevelGeneratorSystem : FSystem {
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
+		gameData.totalCoin = 0;
 		GameObjectManager.loadScene("MainScene");
 	}
 
