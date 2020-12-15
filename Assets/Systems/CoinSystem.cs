@@ -39,7 +39,6 @@ public class CoinSystem : FSystem {
 
 		//Rotation of the coin
 		foreach(GameObject coin in coinGO){
-			Debug.Log("rotate");
 			coin.transform.Rotate(Vector3.forward * Time.deltaTime * speed);
 		}
 	}

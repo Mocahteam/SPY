@@ -55,13 +55,34 @@ public class HighLightSystem : FSystem {
 
 	public void highLightItem(GameObject go){
 		highLightedItem = go;
-		go.GetComponent<HighLight>().basecolor = go.GetComponent<Renderer>().material.color;
-		go.GetComponent<Renderer>().material.color = Color.yellow;
+
+		if(go.GetComponent<Renderer>()){
+			go.GetComponent<HighLight>().basecolor = go.GetComponent<Renderer>().material.color;
+			go.GetComponent<Renderer>().material.color = Color.yellow;
+		}
+		else if(go.transform.childCount > 0 && go.transform.GetChild(0).GetComponent<Renderer>()){
+			go.GetComponent<HighLight>().basecolor = go.transform.GetChild(0).GetComponent<Renderer>().material.color;
+			go.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.yellow;
+		}
+		else if(go.transform.childCount > 0 && go.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>()){
+			go.GetComponent<HighLight>().basecolor = go.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material.color;
+			go.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material.color = Color.yellow;
+		}
 	}
 
 	public void unHighLightItem(int id){
-		if(highlightedGO != null)
-			highLightedItem.GetComponent<Renderer>().material.color = highLightedItem.GetComponent<HighLight>().basecolor;
+		if(highLightedItem != null){
+			if(highLightedItem.GetComponent<Renderer>()){
+				highLightedItem.GetComponent<Renderer>().material.color = highLightedItem.GetComponent<HighLight>().basecolor;
+			}
+			else if(highLightedItem.transform.childCount > 0 && highLightedItem.transform.GetChild(0).GetComponent<Renderer>()){
+				highLightedItem.transform.GetChild(0).GetComponent<Renderer>().material.color = highLightedItem.GetComponent<HighLight>().basecolor;
+			}
+			else if(highLightedItem.transform.childCount > 0 && highLightedItem.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>()){
+				highLightedItem.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material.color = highLightedItem.GetComponent<HighLight>().basecolor;
+			}
+		}
+			
 		highLightedItem = null;
 	}
 }

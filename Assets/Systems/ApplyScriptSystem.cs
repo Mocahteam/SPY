@@ -31,34 +31,33 @@ public class ApplyScriptSystem : FSystem {
 		if(gameData.step){
 			foreach( GameObject go in controllableGO){
 				
-				if(ActionManipulator.endOfScript(go)){
-					break;
-				}
-				Action action = ActionManipulator.getCurrentAction(go);
-				
-				switch (action.actionType){
-					case Action.ActionType.Forward:
-						ApplyForward(go);
-						break;
+				if(!ActionManipulator.endOfScript(go)){
+					Action action = ActionManipulator.getCurrentAction(go);
+					
+					switch (action.actionType){
+						case Action.ActionType.Forward:
+							ApplyForward(go);
+							break;
 
-					case Action.ActionType.TurnLeft:
-						ApplyTurnLeft(go);
-						break;
+						case Action.ActionType.TurnLeft:
+							ApplyTurnLeft(go);
+							break;
 
-					case Action.ActionType.TurnRight:
-						ApplyTurnRight(go);
-						break;
-					case Action.ActionType.Wait:
-						break;
-					case Action.ActionType.Activate:
-						foreach( GameObject actGo in activableGO){
-							if(actGo.GetComponent<Position>().x == go.GetComponent<Position>().x && actGo.GetComponent<Position>().z == go.GetComponent<Position>().z){
-								actGo.GetComponent<Activable>().isActivated = true;
+						case Action.ActionType.TurnRight:
+							ApplyTurnRight(go);
+							break;
+						case Action.ActionType.Wait:
+							break;
+						case Action.ActionType.Activate:
+							foreach( GameObject actGo in activableGO){
+								if(actGo.GetComponent<Position>().x == go.GetComponent<Position>().x && actGo.GetComponent<Position>().z == go.GetComponent<Position>().z){
+									actGo.GetComponent<Activable>().isActivated = true;
+								}
 							}
-						}
-						break;
+							break;
+					}
+					ActionManipulator.incrementActionScript(go.GetComponent<Script>());
 				}
-				ActionManipulator.incrementActionScript(go.GetComponent<Script>());
 			}
 
 			/*foreach( GameObject go in playerGO){

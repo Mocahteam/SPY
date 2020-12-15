@@ -7,5 +7,6 @@ public class Activable : MonoBehaviour {
 	public bool isActivated;
 	public bool isFullyActivated;
 	public List<int> slotID;
+	public int side;
 
 }

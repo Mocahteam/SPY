@@ -2,11 +2,13 @@
 using FYFY;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.IO;
 
 public class TitleScreenSystem : FSystem {
 	private GameData gameData;
 	private GameObject campagneMenu;
 	private GameObject campagneButton;
+
 
 	public TitleScreenSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
@@ -15,13 +17,9 @@ public class TitleScreenSystem : FSystem {
 		campagneButton = GameObject.Find("Campagne");
 		GameObjectManager.dontDestroyOnLoadAndRebind(GameObject.Find("GameData"));
 
-		//Level to Load
-		gameData.levelList.Add("Level 1");
-		gameData.levelList.Add("Level 2");
-
 		GameObject cList = GameObject.Find("CampagneList");
 
-		GameObject button = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Button") as GameObject, cList.transform);
+		/*GameObject button = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Button") as GameObject, cList.transform);
 		button.transform.GetChild(0).GetComponent<Text>().text = "Level 1";
 		button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(0);});
 
@@ -39,9 +37,18 @@ public class TitleScreenSystem : FSystem {
 
 		button = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Button") as GameObject, cList.transform);
 		button.transform.GetChild(0).GetComponent<Text>().text = "Level 5";
-		button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(4);});
+		button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(4);});*/
 
 		campagneMenu.SetActive(false);
+		gameData.levelList = new List<string>(Directory.GetFiles(@"Assets\Levels\Campagne","*.xml"));
+
+		for(int i = 0; i < gameData.levelList.Count; i++){
+			GameObject button = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Button") as GameObject, cList.transform);
+			string[] texts = gameData.levelList[i].Split('\\');
+			button.transform.GetChild(0).GetComponent<Text>().text = texts[texts.Length-1].Split('.')[0];
+			int indice = i;
+			button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(indice);});
+		}
 
 	}
 	// Use this to update member variables when system pause. 
