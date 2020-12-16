@@ -21,7 +21,8 @@ public class LevelGeneratorSystem : FSystem {
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.Level = GameObject.Find("Level");
 
-		XmlToLevel(gameData.levelList[gameData.levelToLoad]);
+		//XmlToLevel(gameData.levelList[gameData.levelToLoad]);
+		generateLevel6();
 
 	}
 	protected override void onPause(int currentFrame) {
@@ -35,8 +36,8 @@ public class LevelGeneratorSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-		//if(gameData.initialize)
-		//	levelToXML("Assets/Levels/level5");
+		if(gameData.initialize)
+			levelToXML("Assets/Levels/Campagne/Level 8");
 	}
 
 	
@@ -213,25 +214,46 @@ public class LevelGeneratorSystem : FSystem {
 
 	private void generateLevel6(){
 		eraseMap();
-		map = new List<List<int>> {new List<int>{1,1,1,1,1},
-									new List<int>{1,0,0,3,1},
-									new List<int>{1,0,1,1,1},
-									new List<int>{1,2,1,1,1},
-									new List<int>{1,1,1,1,1}};
+		map = new List<List<int>> {new List<int>{1,1,1,1,1,1,1,1},
+									new List<int>{1,2,0,0,0,0,0,1},
+									new List<int>{1,1,1,1,0,1,0,1},
+									new List<int>{1,1,1,1,0,1,0,1},
+									new List<int>{1,1,1,1,0,0,0,1},
+									new List<int>{1,1,1,1,0,1,0,1},
+									new List<int>{1,1,1,1,0,0,0,1},
+									new List<int>{1,1,1,1,1,1,3,1},
+									new List<int>{1,1,1,1,1,1,1,1}};
 		generateMap();
 		
-		createEntity(3,1, Direction.Dir.West,0);
+		createEntity(1,1, Direction.Dir.North,0);
+
+		createCoin(1,6);
 
 		List<Action> script = new List<Action>();
 
-		GameObject camera = createEntity(1,1, Direction.Dir.East,2, script, true);
-		camera.GetComponent<DetectRange>().range = 1;
+		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
+		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
+		script.Add(ActionManipulator.createAction(Action.ActionType.TurnLeft));
+		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
+		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
+		script.Add(ActionManipulator.createAction(Action.ActionType.TurnLeft));
+		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
+		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
+		script.Add(ActionManipulator.createAction(Action.ActionType.TurnRight));
+		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
+		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
+		script.Add(ActionManipulator.createAction(Action.ActionType.TurnRight));
+		
 
-		gameData.dialogMessage.Add("Attention il y a une caméra devant toi ! Par chance son champ de détection est très petit, mais elle te bloque tout de même le passage.");
-		gameData.dialogMessage.Add("Il semblerait que cette caméra a une IA, clique dessus pour analyser son comportement pour y trouver une faille et passer. De plus ce modèle de caméra ne semble pas voir en dessous d'elle même.");
+		GameObject camera = createEntity(4,6, Direction.Dir.West,2, script, true);
+		camera.GetComponent<DetectRange>().range = 3;
+
+		//gameData.dialogMessage.Add("Attention il y a une caméra devant toi ! Par chance son champ de détection est très petit, mais elle te bloque tout de même le passage.");
+		//gameData.dialogMessage.Add("Il semblerait que cette caméra a une IA, clique dessus pour analyser son comportement pour y trouver une faille et passer. De plus ce modèle de caméra ne semble pas voir en dessous d'elle même.");
 
 		gameData.actionBlocLimit = new List<int>() {-1,-1,-1,-1,-1,-1};
 	}
+
 
 	private void generateMap(){
 		for(int i = 0; i< map.Count; i++){
@@ -289,7 +311,7 @@ public class LevelGeneratorSystem : FSystem {
 
 	private void createDoor(int i, int j, Direction.Dir orientation, int slotID){
 		GameObject door = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Door") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
-		if(orientation == Direction.Dir.North || orientation == Direction.Dir.South){
+		if(orientation == Direction.Dir.West || orientation == Direction.Dir.East){
 			door.transform.rotation = Quaternion.Euler(0,90,0);
 		}
 
