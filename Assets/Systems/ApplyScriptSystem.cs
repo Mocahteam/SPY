@@ -51,6 +51,7 @@ public class ApplyScriptSystem : FSystem {
 						case Action.ActionType.Activate:
 							foreach( GameObject actGo in activableGO){
 								if(actGo.GetComponent<Position>().x == go.GetComponent<Position>().x && actGo.GetComponent<Position>().z == go.GetComponent<Position>().z){
+									actGo.GetComponent<AudioSource>().Play();
 									actGo.GetComponent<Activable>().isActivated = true;
 								}
 							}

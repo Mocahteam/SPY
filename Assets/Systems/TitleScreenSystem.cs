@@ -8,6 +8,7 @@ public class TitleScreenSystem : FSystem {
 	private GameData gameData;
 	private GameObject campagneMenu;
 	private GameObject campagneButton;
+	private GameObject quitButton;
 
 
 	public TitleScreenSystem(){
@@ -15,6 +16,7 @@ public class TitleScreenSystem : FSystem {
 		gameData.levelList = new List<string>();
 		campagneMenu = GameObject.Find("CampagneMenu");
 		campagneButton = GameObject.Find("Campagne");
+		quitButton = GameObject.Find("Quitter");
 		GameObjectManager.dontDestroyOnLoadAndRebind(GameObject.Find("GameData"));
 
 		GameObject cList = GameObject.Find("CampagneList");
@@ -50,6 +52,8 @@ public class TitleScreenSystem : FSystem {
 			button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(indice);});
 		}
 
+		cList.transform.GetChild(0).SetSiblingIndex(cList.transform.childCount-1);
+
 	}
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
@@ -71,10 +75,21 @@ public class TitleScreenSystem : FSystem {
 	public void showCampagneMenu(){
 		campagneMenu.SetActive(true);
 		campagneButton.SetActive(false);
+		quitButton.SetActive(false);
 	}
 
 	public void launchLevel(int level){
 		gameData.levelToLoad = level;
 		GameObjectManager.loadScene("MainScene");
+	}
+
+	public void backFromCampagneMenu(){
+		campagneMenu.SetActive(false);
+		campagneButton.SetActive(true);
+		quitButton.SetActive(true);
+	}
+
+	public void quitGame(){
+		Application.Quit();
 	}
 }

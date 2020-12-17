@@ -19,4 +19,14 @@ public class TitleScreenSystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("TitleScreenSystem", "launchLevel", level);
 	}
 
+	public void backFromCampagneMenu()
+	{
+		MainLoop.callAppropriateSystemMethod ("TitleScreenSystem", "backFromCampagneMenu", null);
+	}
+
+	public void quitGame()
+	{
+		MainLoop.callAppropriateSystemMethod ("TitleScreenSystem", "quitGame", null);
+	}
+
 }

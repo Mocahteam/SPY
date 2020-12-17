@@ -24,4 +24,14 @@ public class LevelGeneratorSystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("LevelGeneratorSystem", "nextLevel", null);
 	}
 
+	public void levelToXML(System.String fileName)
+	{
+		MainLoop.callAppropriateSystemMethod ("LevelGeneratorSystem", "levelToXML", fileName);
+	}
+
+	public void XmlToLevel(System.String fileName)
+	{
+		MainLoop.callAppropriateSystemMethod ("LevelGeneratorSystem", "XmlToLevel", fileName);
+	}
+
 }

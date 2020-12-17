@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using FYFY;
+using System.Collections;
 
 public class CoinSystem : FSystem {
 	// Use this to update member variables when system pause. 
@@ -30,8 +31,9 @@ public class CoinSystem : FSystem {
 				foreach(GameObject coin in coinGO){
 					if(player.GetComponent<Position>().x == coin.GetComponent<Position>().x &&  player.GetComponent<Position>().z == coin.GetComponent<Position>().z){
 						gameData.totalCoin++;
-						GameObjectManager.unbind(coin);
-						Object.Destroy(coin);
+						coin.GetComponent<AudioSource>().Play();
+						MainLoop.instance.StartCoroutine(coinDestroy(coin));
+
 					}
 				}
 			}
@@ -41,5 +43,15 @@ public class CoinSystem : FSystem {
 		foreach(GameObject coin in coinGO){
 			coin.transform.Rotate(Vector3.forward * Time.deltaTime * speed);
 		}
+	}
+
+	private IEnumerator coinDestroy(GameObject go){
+
+		go.GetComponent<ParticleSystem>().Play();
+		go.GetComponent<Renderer>().enabled = false;
+
+		yield return new WaitForSeconds(1f);
+		GameObjectManager.unbind(go);
+		Object.Destroy(go);
 	}
 }

@@ -48,6 +48,7 @@ public class HighLightSystem : FSystem {
 				GameObject.Destroy(child.gameObject);
 			}
 			scriptInWindow =  highLightedItem;
+			GameObject.Find("EnemyScript").GetComponent<AudioSource>().Play();
 			ActionManipulator.ScriptToContainer(highLightedItem.GetComponent<Script>(), EnemyScriptContainer);
 		}
 

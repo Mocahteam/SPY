@@ -113,7 +113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 31.9, y: -16.7}
+  m_AnchoredPosition: {x: 33.5, y: -16.7}
   m_SizeDelta: {x: 60, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1283163350168461582
@@ -204,7 +204,7 @@ MonoBehaviour:
     m_Options:
     - m_Text: 
       m_Image: {fileID: 0}
-    - m_Text: Not
+    - m_Text: Non
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
@@ -785,7 +785,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 20
+    m_Left: 0
     m_Right: 0
     m_Top: 10
     m_Bottom: 30
@@ -845,7 +845,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8113208, g: 0.34717256, b: 0.08036668, a: 0.09411765}
+  m_Color: {r: 0, g: 0.09575987, b: 1, a: 0.19607843}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1001,8 +1001,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 5, y: -23.6}
-  m_SizeDelta: {x: 10, y: 30}
+  m_AnchoredPosition: {x: 7.4, y: -23.6}
+  m_SizeDelta: {x: 15, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4857904995372577951
 CanvasRenderer:
@@ -1045,7 +1045,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: If
+  m_Text: Si
 --- !u!1 &6239786272072531323
 GameObject:
   m_ObjectHideFlags: 0
@@ -1398,6 +1398,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4857904995366243992}
     m_Modifications:
+    - target: {fileID: 77582416439839338, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
+        type: 3}
+      propertyPath: m_Text
+      value: Mur/Porte
+      objectReference: {fileID: 0}
     - target: {fileID: 2436889212633244998, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1503,10 +1508,60 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5252481936398682562, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_Text
+      value: Mur/Porte
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252481936398682562, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_Text
+      value: Ennemi
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252481936398682562, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_Text
+      value: "Alli\xE9"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5708102109705971386, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_Text
+      value: Devant
+      objectReference: {fileID: 0}
+    - target: {fileID: 5708102109705971386, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_Text
+      value: "Derri\xE8re"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5708102109705971386, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_Text
+      value: Gauche
+      objectReference: {fileID: 0}
+    - target: {fileID: 5708102109705971386, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_Text
+      value: Droite
+      objectReference: {fileID: 0}
+    - target: {fileID: 6167254689517859172, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 3.4
+      objectReference: {fileID: 0}
     - target: {fileID: 7285083576296870323, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
         type: 3}
       propertyPath: m_Name
       value: DetectBloc
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476827564474058885, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
+        type: 3}
+      propertyPath: m_Text
+      value: Devant
+      objectReference: {fileID: 0}
+    - target: {fileID: 9110321832263686664, guid: 2ba7cc2ae5be5084aadcdde21a4e2169,
+        type: 3}
+      propertyPath: m_Text
+      value: Detection
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ba7cc2ae5be5084aadcdde21a4e2169, type: 3}

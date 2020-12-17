@@ -21,8 +21,8 @@ public class LevelGeneratorSystem : FSystem {
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.Level = GameObject.Find("Level");
 
-		//XmlToLevel(gameData.levelList[gameData.levelToLoad]);
-		generateLevel6();
+		XmlToLevel(gameData.levelList[gameData.levelToLoad]);
+		//generateLevel6();
 
 	}
 	protected override void onPause(int currentFrame) {
@@ -36,8 +36,8 @@ public class LevelGeneratorSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-		if(gameData.initialize)
-			levelToXML("Assets/Levels/Campagne/Level 8");
+		//if(gameData.initialize)
+			//levelToXML("Assets/Levels/Campagne/Level 8");
 	}
 
 	

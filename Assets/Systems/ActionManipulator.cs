@@ -423,11 +423,14 @@ public abstract class ActionManipulator
 			case Action.ActionType.Wait:
 				gameData.actionBlocLimit[3] += nb;
 				break;
-			case Action.ActionType.For:
+			case Action.ActionType.Activate:
 				gameData.actionBlocLimit[4] += nb;
 				break;
-			case Action.ActionType.If:
+			case Action.ActionType.For:
 				gameData.actionBlocLimit[5] += nb;
+				break;
+			case Action.ActionType.If:
+				gameData.actionBlocLimit[6] += nb;
 				break;
 			default:
 				break;

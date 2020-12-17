@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using FYFY;
+using System.Collections;
 
 public class CheckEventsSystem : FSystem {
 
@@ -159,12 +160,23 @@ public class CheckEventsSystem : FSystem {
 				if(slotGo.GetComponent<ActivationSlot>().slotID == id){
 					switch(slotGo.GetComponent<ActivationSlot>().type){
 						case ActivationSlot.ActivationType.Destroy:
-							GameObjectManager.unbind(slotGo);
-							Object.Destroy(slotGo);
+							MainLoop.instance.StartCoroutine(doorDestroy(slotGo));
 							break;
 					}
 				}
 			}
 		}
+	}
+
+	private IEnumerator doorDestroy(GameObject go){
+
+		yield return new WaitForSeconds(0.3f);
+
+		go.GetComponent<Renderer>().enabled = false;
+		go.GetComponent<AudioSource>().Play();
+		
+		yield return new WaitForSeconds(0.5f);
+		GameObjectManager.unbind(go);
+		Object.Destroy(go);
 	}
 }

@@ -39,6 +39,7 @@ public class UISystem : FSystem {
 		limitTexts.Add(GameObject.Find("TurnLeftLimit"));
 		limitTexts.Add(GameObject.Find("TurnRightLimit"));
 		limitTexts.Add(GameObject.Find("WaitLimit"));
+		limitTexts.Add(GameObject.Find("ActivateLimit"));
 		limitTexts.Add(GameObject.Find("ForLimit"));
 		limitTexts.Add(GameObject.Find("IfLimit"));
 	}
@@ -60,11 +61,18 @@ public class UISystem : FSystem {
 				case 1:
 					endPanel.transform.GetChild(0).GetComponent<Text>().text = "Vous avez été repéré !";
 					endPanel.transform.GetChild(3).gameObject.SetActive(false);
+					endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
+					endPanel.GetComponent<AudioSource>().loop = true;
+					endPanel.GetComponent<AudioSource>().Play();
 					break;
 				case 2:
-					endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !\n Nombre d'instructions: "+ gameData.totalActionBloc + "\nNombre d'étape: " + gameData.totalStep;
+					endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !\n Nombre d'instructions: "+ 
+					gameData.totalActionBloc + "\nNombre d'étape: " + gameData.totalStep +"\nPièces récoltées:" + gameData.totalCoin;
+					endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
+					endPanel.GetComponent<AudioSource>().loop = false;
+					endPanel.GetComponent<AudioSource>().Play();
 					//End
-					if(gameData.levelToLoad >= 4){
+					if(gameData.levelToLoad >= gameData.levelList.Count - 1){
 						endPanel.transform.GetChild(3).gameObject.SetActive(false);
 					}
 					break;
@@ -88,6 +96,8 @@ public class UISystem : FSystem {
 
 		//Update LimitText
 		for(int i = 0; i < limitTexts.Count; i++){
+			Debug.Log(limitTexts.Count);
+			Debug.Log(gameData.actionBlocLimit.Count);
 			if(gameData.actionBlocLimit[i] >= 0){
 				limitTexts[i].GetComponent<Text>().text = gameData.actionBlocLimit[i].ToString();
 				//desactivate actionBlocs
@@ -163,6 +173,7 @@ public class UISystem : FSystem {
 			priority = null;
 		}
 
+
 		//Drop
 		if(Input.GetMouseButtonUp(0)){
 			//Drop in script
@@ -178,6 +189,7 @@ public class UISystem : FSystem {
 					itemDragged.GetComponent<Image>().raycastTarget = true;
 					itemDragged.GetComponent<UITypeContainer>().layer = priority.GetComponent<UITypeContainer>().layer + 1;
 				}
+				GameObject.Find("PlayerScript").GetComponent<AudioSource>().Play();
 				refreshUI();
 			}
 			else if( itemDragged != null){
@@ -216,6 +228,7 @@ public class UISystem : FSystem {
 		for(int i = 0; i < go.transform.childCount; i++){
 			destroyScript(go.transform.GetChild(i));
 		}
+		gameData.ButtonExec.GetComponent<AudioSource>().Play();
 		refreshUI();
 	}
 

@@ -3,18 +3,24 @@ using FYFY;
 using FYFY_plugins.PointerManager;
 
 public class CameraSystem : FSystem {
-	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(CameraComponent)));
+	private Family cameraGO = FamilyManager.getFamily(new AllOfComponents(typeof(CameraComponent)));
 
 	private Family UIGO = FamilyManager.getFamily(new AnyOfComponents(typeof(UIActionType), typeof(UITypeContainer), typeof(ElementToDrag)),
 													new AllOfComponents(typeof(PointerOver)));
 
+	private Family playerGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Script)), new AnyOfTags("Player"));
+	private GameData gameData;
+
 	public CameraSystem()
 	{
-		foreach( GameObject go in controllableGO)
+		gameData = GameObject.Find("GameData").GetComponent<GameData>();
+
+		foreach( GameObject go in cameraGO)
 		{
 			onGOEnter(go);
 	    }
-	    controllableGO.addEntryCallback(onGOEnter);
+	    cameraGO.addEntryCallback(onGOEnter);
+
 	}
 
 	private void onGOEnter(GameObject go)
@@ -44,7 +50,14 @@ public class CameraSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-		foreach( GameObject go in controllableGO ){
+
+		if(gameData.initialize){
+			foreach(GameObject player in playerGO){
+				setCameraOnGO(player);
+			}
+		}
+
+		foreach( GameObject go in cameraGO ){
 			
 			/*
 			// Pour placer la caméra derrière un agent
@@ -155,5 +168,11 @@ public class CameraSystem : FSystem {
 	    	}
 			//------------------------------------------------------------------------------------
 		}		
+	}
+
+	public void setCameraOnGO(GameObject go){
+		foreach(GameObject camera in cameraGO){
+			camera.transform.position = new Vector3(go.transform.position.x +5, camera.transform.position.y, go.transform.position.z);
+		}
 	}
 }
