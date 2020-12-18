@@ -66,8 +66,10 @@ public class UISystem : FSystem {
 					endPanel.GetComponent<AudioSource>().Play();
 					break;
 				case 2:
-					endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !\n Nombre d'instructions: "+ 
-					gameData.totalActionBloc + "\nNombre d'étape: " + gameData.totalStep +"\nPièces récoltées:" + gameData.totalCoin;
+					//endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !\n Nombre d'instructions: "+ 
+					//gameData.totalActionBloc + "\nNombre d'étape: " + gameData.totalStep +"\nPièces récoltées:" + gameData.totalCoin;
+
+					endPanel.transform.GetChild(0).GetComponent<Text>().text =  "Bravo vous avez gagné !\nScore: " + (10000/(gameData.totalActionBloc+1) + 5000/(gameData.totalStep+1) + 6000/(gameData.totalExecute+1) + 5000 * gameData.totalCoin);
 					endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
 					endPanel.GetComponent<AudioSource>().loop = false;
 					endPanel.GetComponent<AudioSource>().Play();
@@ -99,7 +101,7 @@ public class UISystem : FSystem {
 			Debug.Log(limitTexts.Count);
 			Debug.Log(gameData.actionBlocLimit.Count);
 			if(gameData.actionBlocLimit[i] >= 0){
-				limitTexts[i].GetComponent<Text>().text = gameData.actionBlocLimit[i].ToString();
+				limitTexts[i].GetComponent<Text>().text = "Reste\n" + gameData.actionBlocLimit[i].ToString();
 				//desactivate actionBlocs
 				if(gameData.actionBlocLimit[i] == 0){
 					limitTexts[i].transform.parent.GetComponent<Image>().raycastTarget = false;

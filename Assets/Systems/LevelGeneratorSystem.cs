@@ -37,7 +37,7 @@ public class LevelGeneratorSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		//if(gameData.initialize)
-			//levelToXML("Assets/Levels/Campagne/Level 8");
+			//levelToXML("Assets/Levels/Campagne/Level test");
 	}
 
 	
@@ -215,43 +215,23 @@ public class LevelGeneratorSystem : FSystem {
 	private void generateLevel6(){
 		eraseMap();
 		map = new List<List<int>> {new List<int>{1,1,1,1,1,1,1,1},
-									new List<int>{1,2,0,0,0,0,0,1},
-									new List<int>{1,1,1,1,0,1,0,1},
-									new List<int>{1,1,1,1,0,1,0,1},
-									new List<int>{1,1,1,1,0,0,0,1},
-									new List<int>{1,1,1,1,0,1,0,1},
-									new List<int>{1,1,1,1,0,0,0,1},
+									new List<int>{1,0,0,0,0,0,0,1},
+									new List<int>{1,0,1,1,1,1,0,1},
+									new List<int>{1,0,1,2,0,1,0,1},
+									new List<int>{1,0,1,1,0,1,0,1},
+									new List<int>{1,0,0,0,0,1,0,1},
 									new List<int>{1,1,1,1,1,1,3,1},
 									new List<int>{1,1,1,1,1,1,1,1}};
 		generateMap();
 		
-		createEntity(1,1, Direction.Dir.North,0);
+		createEntity(3,3, Direction.Dir.North,0);
 
-		createCoin(1,6);
-
-		List<Action> script = new List<Action>();
-
-		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
-		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
-		script.Add(ActionManipulator.createAction(Action.ActionType.TurnLeft));
-		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
-		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
-		script.Add(ActionManipulator.createAction(Action.ActionType.TurnLeft));
-		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
-		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
-		script.Add(ActionManipulator.createAction(Action.ActionType.TurnRight));
-		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
-		script.Add(ActionManipulator.createAction(Action.ActionType.Wait));
-		script.Add(ActionManipulator.createAction(Action.ActionType.TurnRight));
-		
-
-		GameObject camera = createEntity(4,6, Direction.Dir.West,2, script, true);
-		camera.GetComponent<DetectRange>().range = 3;
+		//createCoin(1,6);
 
 		//gameData.dialogMessage.Add("Attention il y a une caméra devant toi ! Par chance son champ de détection est très petit, mais elle te bloque tout de même le passage.");
 		//gameData.dialogMessage.Add("Il semblerait que cette caméra a une IA, clique dessus pour analyser son comportement pour y trouver une faille et passer. De plus ce modèle de caméra ne semble pas voir en dessous d'elle même.");
 
-		gameData.actionBlocLimit = new List<int>() {-1,-1,-1,-1,-1,-1};
+		gameData.actionBlocLimit = new List<int>() {1, 0, 1, 0, 0, 1, 1};
 	}
 
 

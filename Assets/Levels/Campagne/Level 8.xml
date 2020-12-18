@@ -5,95 +5,55 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
     </line>
     <line>
-      <row value="1" />
-      <row value="2" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
       <row value="1" />
       <row value="3" />
       <row value="1" />
     </line>
     <line>
       <row value="1" />
+      <row value="0" />
       <row value="1" />
+    </line>
+    <line>
       <row value="1" />
+      <row value="0" />
       <row value="1" />
+    </line>
+    <line>
       <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="2" />
+      <row value="1" />
+    </line>
+    <line>
       <row value="1" />
       <row value="1" />
       <row value="1" />
     </line>
   </map>
   <actionBlocLimit>
-    <limit limit="-1" />
+    <limit limit="1" />
     <limit limit="-1" />
     <limit limit="-1" />
     <limit limit="-1" />
@@ -101,22 +61,13 @@
     <limit limit="-1" />
     <limit limit="-1" />
   </actionBlocLimit>
-  <coin posX="1" posZ="6" />
-  <player posX="1" posZ="1" direction="0" />
-  <ennemy posX="4" posZ="6" direction="3" range="3" selfRange="False" typeRange="0">
-    <script repeat="True">
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="1" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="1" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="2" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="2" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-    </script>
-  </ennemy>
+  <activable posX="6" posZ="1" side="1">
+    <slot slot="0" />
+  </activable>
+  <activable posX="3" posZ="1" side="1">
+    <slot slot="1" />
+  </activable>
+  <door posX="5" posZ="1" slot="0" direction="2" />
+  <door posX="2" posZ="1" slot="1" direction="2" />
+  <player posX="8" posZ="1" direction="3" />
 </level>
