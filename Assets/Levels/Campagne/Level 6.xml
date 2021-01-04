@@ -5,17 +5,14 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
     </line>
     <line>
       <row value="1" />
       <row value="0" />
-      <row value="3" />
       <row value="1" />
-      <row value="0" />
+    </line>
+    <line>
+      <row value="1" />
       <row value="3" />
       <row value="1" />
     </line>
@@ -23,17 +20,9 @@
       <row value="1" />
       <row value="0" />
       <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
     </line>
     <line>
       <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
       <row value="0" />
       <row value="1" />
     </line>
@@ -41,7 +30,8 @@
       <row value="1" />
       <row value="0" />
       <row value="1" />
-      <row value="1" />
+    </line>
+    <line>
       <row value="1" />
       <row value="0" />
       <row value="1" />
@@ -49,51 +39,60 @@
     <line>
       <row value="1" />
       <row value="0" />
-      <row value="0" />
       <row value="1" />
-      <row value="0" />
+    </line>
+    <line>
+      <row value="1" />
       <row value="0" />
       <row value="1" />
     </line>
     <line>
       <row value="1" />
-      <row value="1" />
       <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
       <row value="1" />
     </line>
     <line>
       <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
       <row value="1" />
       <row value="2" />
       <row value="1" />
-      <row value="2" />
-      <row value="1" />
-      <row value="1" />
     </line>
     <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
       <row value="1" />
       <row value="1" />
       <row value="1" />
     </line>
   </map>
-  <dialogs dialog="Dans cette mission vous avez deux agents que vous devez diriger vers la sortie. Malheureusement nous ne pouvons pas nous permettre d'utiliser plusieurs communications, ils recevront donc les même ordres." />
-  <dialogs dialog="Pour cela utilisez les particularités du terrain et ce que vous avez appris de vos précédentes missions pour ammener les deux agents à la sortie." />
+  <dialogs dialog="La sortie est au bout de ce couloir !" />
+  <dialogs dialog="Evitons de de saturer la ligne de communication en donnant un ordre plus efficace, le nombre d'ordres disponible est limité par la valeur indiqué au dessus des ordres." />
+  <dialogs dialog="Utilise l'action 'Boucle', tu pourras y mettre d'autres actions dans cet ordre qui seront répétés le nombre de fois indiqué !&#xA;Attention tu dois t'arrêter pile sur la sortie." />
   <actionBlocLimit>
     <limit limit="1" />
-    <limit limit="1" />
-    <limit limit="1" />
+    <limit limit="-1" />
+    <limit limit="-1" />
     <limit limit="-1" />
     <limit limit="-1" />
     <limit limit="-1" />
     <limit limit="-1" />
   </actionBlocLimit>
-  <player posX="7" posZ="2" direction="3" />
-  <player posX="7" posZ="4" direction="3" />
+  <player posX="14" posZ="1" direction="3" />
 </level>

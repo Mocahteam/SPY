@@ -9,80 +9,71 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
-      <row value="1" />
     </line>
     <line>
       <row value="1" />
-      <row value="2" />
       <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
+      <row value="3" />
       <row value="1" />
       <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
       <row value="3" />
       <row value="1" />
     </line>
     <line>
       <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="2" />
+      <row value="1" />
+      <row value="2" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
       <row value="1" />
       <row value="1" />
       <row value="1" />
@@ -92,32 +83,17 @@
       <row value="1" />
     </line>
   </map>
-  <dialogs dialog="Cette salle ne devrait pas vous poser de problèmes maintenant que vous êtes un expert. Cependant il y a une pièce à récupèrer, ce n'est pas obligatoire mais elle pourrait vous donner un meilleur score !" />
+  <dialogs dialog="Dans cette mission vous avez deux agents que vous devez diriger vers la sortie. Malheureusement nous ne pouvons pas nous permettre d'utiliser plusieurs communications, ils recevront donc les même ordres." />
+  <dialogs dialog="Pour cela utilisez les particularités du terrain et ce que vous avez appris de vos précédentes missions pour ammener les deux agents à la sortie." />
   <actionBlocLimit>
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
+    <limit limit="1" />
+    <limit limit="1" />
+    <limit limit="1" />
     <limit limit="-1" />
     <limit limit="-1" />
     <limit limit="-1" />
     <limit limit="-1" />
   </actionBlocLimit>
-  <coin posX="1" posZ="6" />
-  <player posX="1" posZ="1" direction="0" />
-  <ennemy posX="4" posZ="6" direction="3" range="3" selfRange="False" typeRange="0">
-    <script repeat="True">
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="1" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="1" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="2" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="2" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-    </script>
-  </ennemy>
+  <player posX="7" posZ="2" direction="3" />
+  <player posX="7" posZ="4" direction="3" />
 </level>

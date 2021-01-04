@@ -9,6 +9,7 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
+      <row value="1" />
     </line>
     <line>
       <row value="1" />
@@ -16,28 +17,62 @@
       <row value="0" />
       <row value="0" />
       <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="2" />
+      <row value="0" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
       <row value="3" />
       <row value="1" />
     </line>
     <line>
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="2" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
       <row value="1" />
       <row value="1" />
       <row value="1" />
@@ -47,20 +82,16 @@
       <row value="1" />
     </line>
   </map>
-  <dialogs dialog="La sortie est bloqué par un champ de force, il devrait y avoir un moyen de le désactiver..." />
-  <dialogs dialog="Regardez là bas, il y a un terminal. Essayez donc de l'activer." />
+   <dialogs dialog="Pour venir à bout de cette salle tu devrais essayer d'utiliser l'action 'Si', elle permet d'effectuer certains ordres lorsque certaines conditions sont remplies." />
+   <dialogs dialog="Tu pourrais tourner si un mur se présente devant toi par exemple." />
   <actionBlocLimit>
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
+    <limit limit="1" />
+    <limit limit="0" />
+    <limit limit="1" />
+    <limit limit="0" />
+    <limit limit="0" />
+    <limit limit="1" />
+    <limit limit="1" />
   </actionBlocLimit>
-  <activable posX="1" posZ="1" side="1">
-    <slot slot="0" />
-  </activable>
-  <door posX="1" posZ="4" slot="0" direction="1" />
-  <player posX="3" posZ="3" direction="3" />
+  <player posX="3" posZ="3" direction="0" />
 </level>

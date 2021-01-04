@@ -5,88 +5,52 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
     </line>
     <line>
       <row value="1" />
       <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
       <row value="3" />
       <row value="1" />
     </line>
     <line>
       <row value="1" />
+      <row value="1" />
+      <row value="1" />
       <row value="0" />
+      <row value="1" />
+      <row value="1" />
       <row value="1" />
     </line>
     <line>
       <row value="1" />
-      <row value="0" />
       <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
       <row value="1" />
       <row value="2" />
       <row value="1" />
+      <row value="1" />
+      <row value="1" />
     </line>
     <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
       <row value="1" />
       <row value="1" />
       <row value="1" />
     </line>
   </map>
-  <dialogs dialog="La sortie est au bout de ce couloir !" />
-  <dialogs dialog="Evitons de de saturer la ligne de communication en donnant un ordre plus efficace, le nombre d'ordres disponible est limité par la valeur indiqué au dessus des ordres." />
-  <dialogs dialog="Utilise l'action 'Boucle', tu pourras y mettre d'autres actions dans cet ordre qui seront répétés le nombre de fois indiqué !&#xA;Attention tu dois t'arrêter pile sur la sortie." />
+  <dialogs dialog="La sortie est bloqué par un champ de force, il devrait y avoir un moyen de le désactiver..." />
+  <dialogs dialog="Regardez là bas, il y a un terminal. Essayez donc de l'activer." />
   <actionBlocLimit>
-    <limit limit="1" />
+    <limit limit="-1" />
     <limit limit="-1" />
     <limit limit="-1" />
     <limit limit="-1" />
@@ -94,5 +58,9 @@
     <limit limit="-1" />
     <limit limit="-1" />
   </actionBlocLimit>
-  <player posX="14" posZ="1" direction="3" />
+  <activable posX="1" posZ="1" side="1">
+    <slot slot="0" />
+  </activable>
+  <door posX="1" posZ="4" slot="0" direction="1" />
+  <player posX="3" posZ="3" direction="3" />
 </level>

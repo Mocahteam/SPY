@@ -7,66 +7,22 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
     </line>
     <line>
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
+      <row value="0" />
+      <row value="0" />
       <row value="3" />
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
     </line>
     <line>
       <row value="1" />
       <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
+      <row value="1" />
       <row value="1" />
       <row value="1" />
     </line>
     <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
       <row value="1" />
       <row value="2" />
       <row value="1" />
@@ -79,11 +35,10 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
     </line>
   </map>
-  <dialogs dialog="Attention il y a des caméras de sécurité ici, tu peux voir leur champ de vision en rouge. Faufile toi sans te faire repérer." />
+  <dialogs dialog="Attention il y a une caméra devant toi ! Par chance son champ de détection est très petit, mais elle te bloque tout de même le passage." />
+  <dialogs dialog="Il semblerait que cette caméra a un comportement, clique dessus pour analyser son comportement pour y trouver une faille et passer. De plus ce modèle de caméra ne semble pas voir en dessous d'elle même." />
   <actionBlocLimit>
     <limit limit="-1" />
     <limit limit="-1" />
@@ -93,11 +48,15 @@
     <limit limit="-1" />
     <limit limit="-1" />
   </actionBlocLimit>
-  <player posX="7" posZ="3" direction="3" />
-  <ennemy posX="3" posZ="1" direction="0" range="2" selfRange="False" typeRange="0">
-    <script repeat="False" />
-  </ennemy>
-  <ennemy posX="5" posZ="5" direction="1" range="2" selfRange="False" typeRange="0">
-    <script repeat="False" />
+  <player posX="3" posZ="1" direction="3" />
+  <ennemy posX="1" posZ="1" direction="2" range="1" selfRange="False" typeRange="0">
+    <script repeat="True">
+      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+      <action actionType="1" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+      <action actionType="2" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+    </script>
   </ennemy>
 </level>

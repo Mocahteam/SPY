@@ -7,17 +7,6 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="3" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
       <row value="1" />
       <row value="1" />
       <row value="1" />
@@ -25,8 +14,61 @@
     <line>
       <row value="1" />
       <row value="2" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
       <row value="1" />
       <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
       <row value="1" />
     </line>
     <line>
@@ -35,10 +77,22 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
+      <row value="1" />
+      <row value="3" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
     </line>
   </map>
-  <dialogs dialog="Attention il y a une caméra devant toi ! Par chance son champ de détection est très petit, mais elle te bloque tout de même le passage." />
-  <dialogs dialog="Il semblerait que cette caméra a un comportement, clique dessus pour analyser son comportement pour y trouver une faille et passer. De plus ce modèle de caméra ne semble pas voir en dessous d'elle même." />
+  <dialogs dialog="Cette salle ne devrait pas vous poser de problèmes maintenant que vous êtes un expert. Cependant il y a une pièce à récupèrer, ce n'est pas obligatoire mais elle pourrait vous donner un meilleur score !" />
   <actionBlocLimit>
     <limit limit="-1" />
     <limit limit="-1" />
@@ -48,12 +102,19 @@
     <limit limit="-1" />
     <limit limit="-1" />
   </actionBlocLimit>
-  <player posX="3" posZ="1" direction="3" />
-  <ennemy posX="1" posZ="1" direction="2" range="1" selfRange="False" typeRange="0">
+  <coin posX="1" posZ="6" />
+  <player posX="1" posZ="1" direction="0" />
+  <ennemy posX="4" posZ="6" direction="3" range="3" selfRange="False" typeRange="0">
     <script repeat="True">
       <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
       <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
       <action actionType="1" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+      <action actionType="1" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+      <action actionType="2" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
       <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
       <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
       <action actionType="2" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />

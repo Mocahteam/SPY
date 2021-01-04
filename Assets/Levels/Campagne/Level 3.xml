@@ -9,70 +9,71 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
-      <row value="1" />
     </line>
     <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="2" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
       <row value="1" />
       <row value="1" />
       <row value="1" />
       <row value="3" />
       <row value="1" />
+      <row value="1" />
+      <row value="1" />
     </line>
     <line>
       <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="2" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
       <row value="1" />
       <row value="1" />
       <row value="1" />
@@ -82,16 +83,21 @@
       <row value="1" />
     </line>
   </map>
-   <dialogs dialog="Pour venir à bout de cette salle tu devrais essayer d'utiliser l'action 'Si', elle permet d'effectuer certains ordres lorsque certaines conditions sont remplies." />
-   <dialogs dialog="Tu pourrais tourner si un mur se présente devant toi par exemple." />
+  <dialogs dialog="Attention il y a des caméras de sécurité ici, tu peux voir leur champ de vision en rouge. Faufile toi sans te faire repérer." />
   <actionBlocLimit>
-    <limit limit="1" />
-    <limit limit="0" />
-    <limit limit="1" />
-    <limit limit="0" />
-    <limit limit="0" />
-    <limit limit="1" />
-    <limit limit="1" />
+    <limit limit="-1" />
+    <limit limit="-1" />
+    <limit limit="-1" />
+    <limit limit="-1" />
+    <limit limit="-1" />
+    <limit limit="-1" />
+    <limit limit="-1" />
   </actionBlocLimit>
-  <player posX="3" posZ="3" direction="0" />
+  <player posX="7" posZ="3" direction="3" />
+  <ennemy posX="3" posZ="1" direction="0" range="2" selfRange="False" typeRange="0">
+    <script repeat="False" />
+  </ennemy>
+  <ennemy posX="5" posZ="5" direction="1" range="2" selfRange="False" typeRange="0">
+    <script repeat="False" />
+  </ennemy>
 </level>
