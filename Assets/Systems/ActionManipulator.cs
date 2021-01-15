@@ -321,7 +321,7 @@ public abstract class ActionManipulator
 				obj.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<Dropdown>().interactable = false;
 				obj.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<InputField>().text = action.range.ToString();
 				obj.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<InputField>().interactable = false;
-				if(action.ifNot)
+				if(!action.ifNot)
 					obj.transform.GetChild(0).GetChild(2).GetComponent<Dropdown>().value = 0;
 				else
 					obj.transform.GetChild(0).GetChild(2).GetComponent<Dropdown>().value = 1;

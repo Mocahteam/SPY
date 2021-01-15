@@ -98,8 +98,6 @@ public class UISystem : FSystem {
 
 		//Update LimitText
 		for(int i = 0; i < limitTexts.Count; i++){
-			Debug.Log(limitTexts.Count);
-			Debug.Log(gameData.actionBlocLimit.Count);
 			if(gameData.actionBlocLimit[i] >= 0){
 				limitTexts[i].GetComponent<Text>().text = "Reste\n" + gameData.actionBlocLimit[i].ToString();
 				//desactivate actionBlocs
