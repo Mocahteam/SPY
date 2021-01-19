@@ -8,7 +8,7 @@ public class CheckEventsSystem : FSystem {
 	private Family scriptedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)));
 	private Family noPlayerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new NoneOfTags("Player"));
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
-	private Family entityGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(Entity)));
+	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector)));
 	private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
 	private Family activationSlotGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot)));
@@ -82,9 +82,8 @@ public class CheckEventsSystem : FSystem {
 					switch(nextIf.ifEntityType){
 						case 0:
 							for(int i = 1; i <= nextIf.range; i++){
-								foreach( GameObject go in entityGO){
-									if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
-									 && go.GetComponent<Entity>().type == Entity.Type.Wall){
+								foreach( GameObject go in wallGO){
+									if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
 										ifok = !nextIf.ifNot;
 									}
 								}

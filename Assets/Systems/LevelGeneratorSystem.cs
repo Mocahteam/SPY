@@ -8,7 +8,7 @@ public class LevelGeneratorSystem : FSystem {
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(HighLight)));
 	private Family coinGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position)), new AnyOfTags("Coin"));
 	private Family activableGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Activable)));
-	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Entity)));
+	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot)), new AnyOfTags("Wall"));
 	private Family playerGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Script)), new AnyOfTags("Player"));
 	private Family ennemyGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Script)), new NoneOfTags("Player"));
 	private List<List<int>> map;

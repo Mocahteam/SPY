@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class ApplyScriptSystem : FSystem {
 
 	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)));
-	private Family entityGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(Entity)));
+	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
 	private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
 	private GameObject scriptComposer;
@@ -135,8 +135,8 @@ public class ApplyScriptSystem : FSystem {
 
 
 	private bool checkObstacle(int x, int z){
-		foreach( GameObject go in entityGO){
-			if(go.GetComponent<Position>().x == x && go.GetComponent<Position>().z == z && go.GetComponent<Entity>().type == Entity.Type.Wall)
+		foreach( GameObject go in wallGO){
+			if(go.GetComponent<Position>().x == x && go.GetComponent<Position>().z == z)
 				return true;
 		}
 		return false;
@@ -178,9 +178,8 @@ public class ApplyScriptSystem : FSystem {
 				switch(nextIf.ifEntityType){
 					case 0:
 						for(int i = 1; i <= nextIf.range; i++){
-							foreach( GameObject go in entityGO){
-								if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i
-									&& go.GetComponent<Entity>().type == Entity.Type.Wall){
+							foreach( GameObject go in wallGO){
+								if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
 									ifok = !nextIf.ifNot;
 								}
 							}

@@ -5,7 +5,7 @@ public class DetectorGeneratorSystem : FSystem {
 
 	private Family detectRangeGO = FamilyManager.getFamily(new AnyOfComponents(typeof(DetectRange)));
 	private Family detectorGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Detector)));
-	private Family entityGO = FamilyManager.getFamily(new AllOfComponents(typeof(Entity)));
+	private Family entityGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private GameData gameData;
 
 	// Use this to update member variables when system pause. 
@@ -52,7 +52,7 @@ public class DetectorGeneratorSystem : FSystem {
 									int x = detect.GetComponent<Position>().x;
 									int z = detect.GetComponent<Position>().z + i + 1;
 									foreach(GameObject wall in entityGO){
-										if(wall.GetComponent<Entity>().type == Entity.Type.Wall && wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z){
+										if(wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z){
 											stop = true;
 										}
 									}
@@ -74,7 +74,7 @@ public class DetectorGeneratorSystem : FSystem {
 									int x = detect.GetComponent<Position>().x - i - 1;
 									int z = detect.GetComponent<Position>().z;
 									foreach(GameObject wall in entityGO){
-										if(wall.GetComponent<Entity>().type == Entity.Type.Wall && wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z){
+										if(wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z){
 											stop = true;
 										}
 									}
@@ -96,7 +96,7 @@ public class DetectorGeneratorSystem : FSystem {
 									int x = detect.GetComponent<Position>().x;
 									int z = detect.GetComponent<Position>().z - i - 1;
 									foreach(GameObject wall in entityGO){
-										if(wall.GetComponent<Entity>().type == Entity.Type.Wall && wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z){
+										if(wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z){
 											stop = true;
 										}
 									}
@@ -118,7 +118,7 @@ public class DetectorGeneratorSystem : FSystem {
 									int x = detect.GetComponent<Position>().x + i + 1;
 									int z = detect.GetComponent<Position>().z;
 									foreach(GameObject wall in entityGO){
-										if(wall.GetComponent<Entity>().type == Entity.Type.Wall && wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z){
+										if(wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z){
 											stop = true;
 										}
 									}
