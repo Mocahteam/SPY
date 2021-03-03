@@ -35,7 +35,7 @@ public class HighLightSystem : FSystem {
 	protected override void onProcess(int familiesUpdateCount) {
 
 		//Change the higlighted action every step
-		if(gameData.checkStep && scriptInWindow){
+		if(gameData.step && scriptInWindow){
 			foreach (Transform child in EnemyScriptContainer.transform) {
 				GameObject.Destroy(child.gameObject);
 			}
