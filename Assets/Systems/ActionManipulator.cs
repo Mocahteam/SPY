@@ -437,3 +437,4 @@ public abstract class ActionManipulator
 		}
 	}
 }
+ 
