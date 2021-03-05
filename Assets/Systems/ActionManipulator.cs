@@ -307,7 +307,7 @@ public abstract class ActionManipulator
 				break;
 			case Action.ActionType.For:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/ForBloc")) as GameObject;
-				obj.transform.GetChild(0).GetChild(1).GetComponent<InputField>().text = action.currentFor.ToString() + " / " + action.nbFor.ToString();
+				obj.transform.GetChild(0).GetChild(1).GetComponent<InputField>().text = (action.currentFor +1).ToString() + " / " + action.nbFor.ToString();
 				obj.transform.GetChild(0).GetChild(1).GetComponent<InputField>().interactable = false;
 				Object.Destroy(obj.GetComponent<UITypeContainer>());
 				i = 0;
