@@ -72,7 +72,7 @@ public abstract class ActionManipulator
 		Action action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]; 
 		//end when a pure action is found
 		while(!(action.actionType == Action.ActionType.Forward || action.actionType == Action.ActionType.TurnLeft || action.actionType == Action.ActionType.TurnRight
-				|| action.actionType == Action.ActionType.Wait || action.actionType == Action.ActionType.Activate)){
+				|| action.actionType == Action.ActionType.Wait || action.actionType == Action.ActionType.Activate || action.actionType == Action.ActionType.TurnBack)){
 			//Case For / If
 			if(action.actionType == Action.ActionType.For || action.actionType == Action.ActionType.If){
 				action = action.actions[action.currentAction];
@@ -88,7 +88,7 @@ public abstract class ActionManipulator
 		Action action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]; 
 		//end when a pure action is found
 		while(!(action.actionType == Action.ActionType.Forward || action.actionType == Action.ActionType.TurnLeft || action.actionType == Action.ActionType.TurnRight
-				|| action.actionType == Action.ActionType.Wait || action.actionType == Action.ActionType.Activate)){
+				|| action.actionType == Action.ActionType.Wait || action.actionType == Action.ActionType.Activate || action.actionType == Action.ActionType.TurnBack)){
 			//Case For / If
 			if(action.actionType == Action.ActionType.For){
 				if(action.currentAction >= action.actions.Count){
@@ -122,7 +122,7 @@ public abstract class ActionManipulator
 
     public static bool incrementAction(Action act){
 		if(act.actionType == Action.ActionType.Forward || act.actionType == Action.ActionType.TurnLeft || act.actionType == Action.ActionType.TurnRight
-			|| act.actionType == Action.ActionType.Wait || act.actionType == Action.ActionType.Activate)
+			|| act.actionType == Action.ActionType.Wait || act.actionType == Action.ActionType.Activate || act.actionType == Action.ActionType.TurnBack)
 			return true;
 		//Case For
 		else if(act.actionType == Action.ActionType.For){
@@ -287,6 +287,12 @@ public abstract class ActionManipulator
 					obj.GetComponent<Image>().color = Color.yellow;
 				}
 				break;
+			case Action.ActionType.TurnBack:
+				obj = Object.Instantiate (Resources.Load ("Prefabs/TurnBackActionBloc Variant")) as GameObject;
+				if(nextAction){
+					obj.GetComponent<Image>().color = Color.yellow;
+				}
+				break;
 			case Action.ActionType.Wait:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/WaitActionBloc Variant")) as GameObject;
 				if(nextAction){
@@ -432,9 +438,11 @@ public abstract class ActionManipulator
 			case Action.ActionType.If:
 				gameData.actionBlocLimit[6] += nb;
 				break;
+			case Action.ActionType.TurnBack:
+				gameData.actionBlocLimit[7] += nb;
+				break;
 			default:
 				break;
 		}
 	}
 }
- 

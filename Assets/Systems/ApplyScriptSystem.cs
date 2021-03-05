@@ -46,6 +46,9 @@ public class ApplyScriptSystem : FSystem {
 						case Action.ActionType.TurnRight:
 							ApplyTurnRight(go);
 							break;
+						case Action.ActionType.TurnBack:
+							ApplyTurnBack(go);
+							break;
 						case Action.ActionType.Wait:
 							break;
 						case Action.ActionType.Activate:
@@ -129,6 +132,23 @@ public class ApplyScriptSystem : FSystem {
 				break;
 			case Direction.Dir.West:
 				go.GetComponent<Direction>().direction = Direction.Dir.North;
+				break;
+		}
+	}
+
+	private void ApplyTurnBack(GameObject go){
+		switch (go.GetComponent<Direction>().direction){
+			case Direction.Dir.North:
+				go.GetComponent<Direction>().direction = Direction.Dir.South;
+				break;
+			case Direction.Dir.South:
+				go.GetComponent<Direction>().direction = Direction.Dir.North;
+				break;
+			case Direction.Dir.East:
+				go.GetComponent<Direction>().direction = Direction.Dir.West;
+				break;
+			case Direction.Dir.West:
+				go.GetComponent<Direction>().direction = Direction.Dir.East;
 				break;
 		}
 	}

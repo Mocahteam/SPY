@@ -42,6 +42,7 @@ public class UISystem : FSystem {
 		limitTexts.Add(GameObject.Find("ActivateLimit"));
 		limitTexts.Add(GameObject.Find("ForLimit"));
 		limitTexts.Add(GameObject.Find("IfLimit"));
+		limitTexts.Add(GameObject.Find("TurnBackLimit"));
 	}
 	protected override void onPause(int currentFrame) {
 	}

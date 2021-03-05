@@ -5,7 +5,7 @@ public class StepSystem : FSystem {
 
 
 	private float timeStepCpt;
-	private float timeStep = 1f;
+	private float timeStep = 1.5f;
 	private GameData gameData;
 	public StepSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();

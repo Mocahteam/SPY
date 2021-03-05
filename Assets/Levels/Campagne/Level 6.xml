@@ -83,10 +83,11 @@
     </line>
   </map>
   <dialogs dialog="La sortie est au bout de ce couloir !" />
-  <dialogs dialog="Evitons de de saturer la ligne de communication en donnant un ordre plus efficace, le nombre d'ordres disponible est limité par la valeur indiqué au dessus des ordres." />
-  <dialogs dialog="Utilise l'action 'Boucle', tu pourras y mettre d'autres actions dans cet ordre qui seront répétés le nombre de fois indiqué !&#xA;Attention tu dois t'arrêter pile sur la sortie." />
+  <dialogs dialog="Evitons de saturer la ligne de communication en donnant un ordre plus efficace ! Le nombre d'ordres disponible est limité par la valeur indiquée au dessus des ordres." />
+  <dialogs dialog="Utilise l'action 'Boucle', tu pourras y mettre d'autres actions dans cet ordre qui seront répétées le nombre de fois indiqué !&#xA;Attention, tu dois t'arrêter pile sur la sortie." />
   <actionBlocLimit>
     <limit limit="1" />
+    <limit limit="-1" />
     <limit limit="-1" />
     <limit limit="-1" />
     <limit limit="-1" />
