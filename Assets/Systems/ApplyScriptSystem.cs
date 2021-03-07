@@ -8,69 +8,53 @@ public class ApplyScriptSystem : FSystem {
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
 	private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
-	private GameObject scriptComposer;
+    private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+    private GameObject scriptComposer;
 	private GameData gameData;
 
 	public ApplyScriptSystem(){
 		scriptComposer = GameObject.Find("ScriptContainer");
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-	} 
-	// Use this to update member variables when system pause. 
-	// Advice: avoid to update your families inside this function.
-	protected override void onPause(int currentFrame) {
-	}
-
-	// Use this to update member variables when system resume.
-	// Advice: avoid to update your families inside this function.
-	protected override void onResume(int currentFrame){
-	}
+        newStep_f.addEntryCallback(onNewStep);
+    } 
 
 	// Use to process your families.
-	protected override void onProcess(int familiesUpdateCount) {
+	private void onNewStep(GameObject unused) {
 
-		if(gameData.step){
-			foreach( GameObject go in controllableGO){
+        foreach ( GameObject go in controllableGO){
 				
-				if(!ActionManipulator.endOfScript(go)){
-					Action action = ActionManipulator.getCurrentAction(go);
+			if(!ActionManipulator.endOfScript(go)){
+				Action action = ActionManipulator.getCurrentAction(go);
 					
-					switch (action.actionType){
-						case Action.ActionType.Forward:
-							ApplyForward(go);
-							break;
+				switch (action.actionType){
+					case Action.ActionType.Forward:
+						ApplyForward(go);
+						break;
 
-						case Action.ActionType.TurnLeft:
-							ApplyTurnLeft(go);
-							break;
+					case Action.ActionType.TurnLeft:
+						ApplyTurnLeft(go);
+						break;
 
-						case Action.ActionType.TurnRight:
-							ApplyTurnRight(go);
-							break;
-						case Action.ActionType.TurnBack:
-							ApplyTurnBack(go);
-							break;
-						case Action.ActionType.Wait:
-							break;
-						case Action.ActionType.Activate:
-							foreach( GameObject actGo in activableGO){
-								if(actGo.GetComponent<Position>().x == go.GetComponent<Position>().x && actGo.GetComponent<Position>().z == go.GetComponent<Position>().z){
-									actGo.GetComponent<AudioSource>().Play();
-									actGo.GetComponent<Activable>().isActivated = true;
-								}
+					case Action.ActionType.TurnRight:
+						ApplyTurnRight(go);
+						break;
+					case Action.ActionType.TurnBack:
+						ApplyTurnBack(go);
+						break;
+					case Action.ActionType.Wait:
+						break;
+					case Action.ActionType.Activate:
+						foreach( GameObject actGo in activableGO){
+							if(actGo.GetComponent<Position>().x == go.GetComponent<Position>().x && actGo.GetComponent<Position>().z == go.GetComponent<Position>().z){
+								actGo.GetComponent<AudioSource>().Play();
+								actGo.GetComponent<Activable>().isActivated = true;
 							}
-							break;
-					}
-					ActionManipulator.incrementActionScript(go.GetComponent<Script>());
+						}
+						break;
 				}
+				ActionManipulator.incrementActionScript(go.GetComponent<Script>());
 			}
-
-			/*foreach( GameObject go in playerGO){
-				if(ActionManipulator.endOfScript(go)){
-					ActionManipulator.restartScript(go.GetComponent<Script>());
-				}
-			}*/
 		}
-
 	}
 
 	private void ApplyForward(GameObject go){
@@ -152,7 +136,6 @@ public class ApplyScriptSystem : FSystem {
 				break;
 		}
 	}
-
 
 	private bool checkObstacle(int x, int z){
 		foreach( GameObject go in wallGO){

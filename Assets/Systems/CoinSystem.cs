@@ -8,37 +8,33 @@ public class CoinSystem : FSystem {
 
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
 	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Coin"));
-	private float speed = 20f;
+    private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+    private float speed = 20f;
 	private GameData gameData;
 
 	public CoinSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-	}
-	protected override void onPause(int currentFrame) {
-	}
+        newStep_f.addEntryCallback(onNewStep);
+    }
 
-	// Use this to update member variables when system resume.
-	// Advice: avoid to update your families inside this function.
-	protected override void onResume(int currentFrame){
-	}
+    private void onNewStep(GameObject unused)
+    {
+        foreach (GameObject player in playerGO)
+        {
+            foreach (GameObject coin in coinGO)
+            {
+                if (player.GetComponent<Position>().x == coin.GetComponent<Position>().x && player.GetComponent<Position>().z == coin.GetComponent<Position>().z)
+                {
+                    gameData.totalCoin++;
+                    coin.GetComponent<AudioSource>().Play();
+                    MainLoop.instance.StartCoroutine(coinDestroy(coin));
+                }
+            }
+        }
+    }
 
-	// Use to process your families.
-	protected override void onProcess(int familiesUpdateCount) {
-
-		//Check if recolted
-		if(gameData.checkStep){
-			foreach(GameObject player in playerGO){
-				foreach(GameObject coin in coinGO){
-					if(player.GetComponent<Position>().x == coin.GetComponent<Position>().x &&  player.GetComponent<Position>().z == coin.GetComponent<Position>().z){
-						gameData.totalCoin++;
-						coin.GetComponent<AudioSource>().Play();
-						MainLoop.instance.StartCoroutine(coinDestroy(coin));
-
-					}
-				}
-			}
-		}
-
+    // Use to process your families.
+    protected override void onProcess(int familiesUpdateCount) {
 		//Rotation of the coin
 		foreach(GameObject coin in coinGO){
 			coin.transform.Rotate(Vector3.forward * Time.deltaTime * speed);

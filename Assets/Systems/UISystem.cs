@@ -13,10 +13,11 @@ public class UISystem : FSystem {
 
 	private Family ContainersGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
 	private Family ContainerRefreshGO = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)));
-	private GameObject itemDragged;
+    private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF));
+
+    private GameObject itemDragged;
 	private GameObject positionBar;
 	private GameData gameData;
-	private GameObject endPanel;
 	private GameObject dialogPanel;
 	private int nDialog = 0;
 
@@ -28,7 +29,7 @@ public class UISystem : FSystem {
 		gameData.ButtonReset = GameObject.Find("ResetButton");
 		positionBar = GameObject.Find("PositionBar");
 		positionBar.SetActive(false);
-		endPanel = GameObject.Find("EndPanel");
+        GameObject endPanel = GameObject.Find("EndPanel");
 		endPanel.SetActive(false);
 		dialogPanel = GameObject.Find("DialogPanel");
 		dialogPanel.SetActive(false);
@@ -43,44 +44,42 @@ public class UISystem : FSystem {
 		limitTexts.Add(GameObject.Find("ForLimit"));
 		limitTexts.Add(GameObject.Find("IfLimit"));
 		limitTexts.Add(GameObject.Find("TurnBackLimit"));
-	}
-	protected override void onPause(int currentFrame) {
-	}
 
-	// Use this to update member variables when system resume.
-	// Advice: avoid to update your families inside this function.
-	protected override void onResume(int currentFrame){
-	}
+        requireEndPanel.addEntryCallback(displayEndPanel);
+
+    }
+
+    private void displayEndPanel(GameObject endPanel)
+    {
+        GameObjectManager.setGameObjectState(endPanel, true);
+        switch (endPanel.GetComponent<NewEnd>().endType)
+        {
+            case 1:
+                endPanel.transform.GetChild(0).GetComponent<Text>().text = "Vous avez été repéré !";
+                GameObjectManager.setGameObjectState(endPanel.transform.GetChild(3).gameObject, false);
+                endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
+                endPanel.GetComponent<AudioSource>().loop = true;
+                endPanel.GetComponent<AudioSource>().Play();
+                break;
+            case 2:
+                //endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !\n Nombre d'instructions: "+ 
+                //gameData.totalActionBloc + "\nNombre d'étape: " + gameData.totalStep +"\nPièces récoltées:" + gameData.totalCoin;
+
+                endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !\nScore: " + (10000 / (gameData.totalActionBloc + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
+                endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
+                endPanel.GetComponent<AudioSource>().loop = false;
+                endPanel.GetComponent<AudioSource>().Play();
+                //End
+                if (gameData.levelToLoad >= gameData.levelList.Count - 1)
+                {
+                    GameObjectManager.setGameObjectState(endPanel.transform.GetChild(3).gameObject, false);
+                }
+                break;
+        }
+    }
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-
-		//Activate EndPanel
-		if(gameData.endLevel != 0 && !endPanel.activeSelf){
-			endPanel.SetActive(true);
-			switch(gameData.endLevel){
-				case 1:
-					endPanel.transform.GetChild(0).GetComponent<Text>().text = "Vous avez été repéré !";
-					endPanel.transform.GetChild(3).gameObject.SetActive(false);
-					endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
-					endPanel.GetComponent<AudioSource>().loop = true;
-					endPanel.GetComponent<AudioSource>().Play();
-					break;
-				case 2:
-					//endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !\n Nombre d'instructions: "+ 
-					//gameData.totalActionBloc + "\nNombre d'étape: " + gameData.totalStep +"\nPièces récoltées:" + gameData.totalCoin;
-
-					endPanel.transform.GetChild(0).GetComponent<Text>().text =  "Bravo vous avez gagné !\nScore: " + (10000/(gameData.totalActionBloc+1) + 5000/(gameData.totalStep+1) + 6000/(gameData.totalExecute+1) + 5000 * gameData.totalCoin);
-					endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
-					endPanel.GetComponent<AudioSource>().loop = false;
-					endPanel.GetComponent<AudioSource>().Play();
-					//End
-					if(gameData.levelToLoad >= gameData.levelList.Count - 1){
-						endPanel.transform.GetChild(3).gameObject.SetActive(false);
-					}
-					break;
-			}
-		}
 
 		//Activate DialogPanel if there is a message
 		if(gameData.dialogMessage.Count > 0 && !dialogPanel.activeSelf){

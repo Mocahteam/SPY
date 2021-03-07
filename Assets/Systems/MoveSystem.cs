@@ -5,46 +5,37 @@ public class MoveSystem : FSystem {
 
 	private float turnSpeed = 150f;
 	private float moveSpeed = 7f;
-	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new NoneOfLayers(8));
+	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(Direction), typeof(Animator), typeof(AudioSource)));
 	private GameData gameData;
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 	public MoveSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-	}
-	protected override void onPause(int currentFrame) {
-	}
 
-	// Use this to update member variables when system resume.
-	// Advice: avoid to update your families inside this function.
-	protected override void onResume(int currentFrame){
-	}
+        foreach (GameObject go in controllableGO)
+        {
+            switch (go.GetComponent<Direction>().direction)
+            {
+                case Direction.Dir.East:
+                    go.transform.rotation = Quaternion.Euler(0, 90, 0);
+                    break;
+                case Direction.Dir.North:
+                    go.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    break;
+                case Direction.Dir.South:
+                    go.transform.rotation = Quaternion.Euler(0, 180, 0);
+                    break;
+                case Direction.Dir.West:
+                    go.transform.rotation = Quaternion.Euler(0, -90, 0);
+                    break;
+            }
+        }
+    }
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 
-		if(gameData.initialize){
-		}
-
-
 		foreach( GameObject go in controllableGO){
-
-			if(gameData.initialize){
-				switch(go.GetComponent<Direction>().direction){
-				case Direction.Dir.East:
-					go.transform.rotation = Quaternion.Euler(0, 90, 0);
-					break;
-				case Direction.Dir.North:
-					go.transform.rotation = Quaternion.Euler(0, 0, 0);
-					break;
-				case Direction.Dir.South:
-					go.transform.rotation = Quaternion.Euler(0, 180, 0);
-					break;
-				case Direction.Dir.West:
-					go.transform.rotation = Quaternion.Euler(0, -90, 0);
-					break;
-				}
-			}
 
 			bool isMoving = false;
 

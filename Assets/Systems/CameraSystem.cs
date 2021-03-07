@@ -21,7 +21,12 @@ public class CameraSystem : FSystem {
 	    }
 	    cameraGO.addEntryCallback(onGOEnter);
 
-	}
+        foreach (GameObject player in playerGO)
+        {
+            setCameraOnGO(player);
+        }
+
+    }
 
 	private void onGOEnter(GameObject go)
 	{
@@ -50,12 +55,6 @@ public class CameraSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-
-		if(gameData.initialize){
-			foreach(GameObject player in playerGO){
-				setCameraOnGO(player);
-			}
-		}
 
 		foreach( GameObject go in cameraGO ){
 			

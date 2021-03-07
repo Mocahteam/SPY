@@ -25,20 +25,6 @@ public class LevelGeneratorSystem : FSystem {
 		//generateLevel6();
 
 	}
-	protected override void onPause(int currentFrame) {
-	}
-
-	// Use this to update member variables when system resume.
-	// Advice: avoid to update your families inside this function.
-	protected override void onResume(int currentFrame){
-		
-	}
-
-	// Use to process your families.
-	protected override void onProcess(int familiesUpdateCount) {
-		//if(gameData.initialize)
-			//levelToXML("Assets/Levels/Campagne/Level test");
-	}
 
 	
 	private void generateLevel1(){
@@ -368,11 +354,7 @@ public class LevelGeneratorSystem : FSystem {
 	}
 
 	public void reloadScene(){
-		gameData.step = false;
-		gameData.checkStep = false;
-		gameData.generateStep = false;
 		gameData.nbStep = 0;
-		gameData.endLevel = 0;
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
@@ -382,11 +364,7 @@ public class LevelGeneratorSystem : FSystem {
 	}
 
 	public void returnToTitleScreen(){
-		gameData.step = false;
-		gameData.checkStep = false;
-		gameData.generateStep = false;
 		gameData.nbStep = 0;
-		gameData.endLevel = 0;
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
@@ -596,11 +574,7 @@ public class LevelGeneratorSystem : FSystem {
 
 	public void XmlToLevel(string fileName){
 
-		gameData.step = false;
-		gameData.checkStep = false;
-		gameData.generateStep = false;
 		gameData.nbStep = 0;
-		gameData.endLevel = 0;
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
@@ -651,6 +625,7 @@ public class LevelGeneratorSystem : FSystem {
 
 		eraseMap();
 		generateMap();
+        GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
 	}
 
 	private void readXMLMap(XmlNode mapNode){
