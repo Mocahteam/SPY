@@ -3,6 +3,7 @@ using FYFY;
 using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using TMPro;
 
 public class UISystem : FSystem {
 	// Use this to update member variables when system pause. 
@@ -55,7 +56,7 @@ public class UISystem : FSystem {
         switch (endPanel.GetComponent<NewEnd>().endType)
         {
             case 1:
-                endPanel.transform.GetChild(0).GetComponent<Text>().text = "Vous avez été repéré !";
+                endPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Vous avez été repéré !";
                 GameObjectManager.setGameObjectState(endPanel.transform.GetChild(3).gameObject, false);
                 endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
                 endPanel.GetComponent<AudioSource>().loop = true;
@@ -65,7 +66,7 @@ public class UISystem : FSystem {
                 //endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !\n Nombre d'instructions: "+ 
                 //gameData.totalActionBloc + "\nNombre d'étape: " + gameData.totalStep +"\nPièces récoltées:" + gameData.totalCoin;
 
-                endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !\nScore: " + (10000 / (gameData.totalActionBloc + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
+                endPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Bravo vous avez gagné !\nScore: " + (10000 / (gameData.totalActionBloc + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
                 endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
                 endPanel.GetComponent<AudioSource>().loop = false;
                 endPanel.GetComponent<AudioSource>().Play();
@@ -99,7 +100,7 @@ public class UISystem : FSystem {
 		//Update LimitText
 		for(int i = 0; i < limitTexts.Count; i++){
 			if(gameData.actionBlocLimit[i] >= 0){
-				limitTexts[i].GetComponent<Text>().text = "Reste\n" + gameData.actionBlocLimit[i].ToString();
+				limitTexts[i].GetComponent<TextMeshProUGUI>().text = "Reste\n" + gameData.actionBlocLimit[i].ToString();
 				//desactivate actionBlocs
 				if(gameData.actionBlocLimit[i] == 0){
 					limitTexts[i].transform.parent.GetComponent<Image>().raycastTarget = false;
@@ -258,7 +259,7 @@ public class UISystem : FSystem {
 	public void showDialogPanel(){
 		dialogPanel.SetActive(true);
 		nDialog = 0;
-		dialogPanel.transform.GetChild(0).GetComponent<Text>().text = gameData.dialogMessage[0];
+		dialogPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[0];
 		if(gameData.dialogMessage.Count > 1){
 			dialogPanel.transform.GetChild(1).gameObject.SetActive(false);
 			dialogPanel.transform.GetChild(2).gameObject.SetActive(true);
@@ -271,7 +272,7 @@ public class UISystem : FSystem {
 
 	public void nextDialog(){
 		nDialog++;
-		dialogPanel.transform.GetChild(0).GetComponent<Text>().text = gameData.dialogMessage[nDialog];
+		dialogPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog];
 		if(nDialog + 1 < gameData.dialogMessage.Count){
 			dialogPanel.transform.GetChild(1).gameObject.SetActive(false);
 			dialogPanel.transform.GetChild(2).gameObject.SetActive(true);

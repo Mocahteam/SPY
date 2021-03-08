@@ -3,7 +3,7 @@ using FYFY;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.IO;
-
+using TMPro;
 public class TitleScreenSystem : FSystem {
 	private GameData gameData;
 	private GameObject campagneMenu;
@@ -47,7 +47,7 @@ public class TitleScreenSystem : FSystem {
 		for(int i = 0; i < gameData.levelList.Count; i++){
 			GameObject button = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Button") as GameObject, cList.transform);
 			string[] texts = gameData.levelList[i].Split('\\');
-			button.transform.GetChild(0).GetComponent<Text>().text = texts[texts.Length-1].Split('.')[0];
+			button.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = texts[texts.Length-1].Split('.')[0];
 			int indice = i;
 			button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(indice);});
 		}
