@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using FYFY;
 using System.Collections;
-
+using FYFY_plugins.TriggerManager;
 public class CheckEventsSystem : FSystem {
 
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
@@ -9,18 +9,21 @@ public class CheckEventsSystem : FSystem {
 	private Family noPlayerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new NoneOfTags("Player"));
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
-	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector)));
 	private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
 	private Family activationSlotGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+    private Family endpanel_f = FamilyManager.getFamily(new AnyOfTags("endpanel"));
+
+    private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
     private GameData gameData;
     private GameObject endPanel;
 
     public CheckEventsSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-        endPanel = GameObject.Find("EndPanel");
+        endPanel = endpanel_f.First();
         GameObjectManager.setGameObjectState(endPanel, false);
         newStep_f.addEntryCallback(onNewStep);
+        robotcollision_f.addEntryCallback(onNewCollision);
     }
 
     private void onNewStep(GameObject unused)
@@ -145,22 +148,20 @@ public class CheckEventsSystem : FSystem {
         }
         gameData.nbStep += nbStepToAdd;
 
+    }
 
-        foreach (GameObject player in playerGO)
-        {
-
+    private void onNewCollision(GameObject robot){
+        Triggered3D trigger = robot.GetComponent<Triggered3D>();
+        foreach(GameObject target in trigger.Targets){
             //Check if the player collide with a detection cell
-            foreach (GameObject detector in detectorGO)
-            {
-                if (player.GetComponent<Position>().x == detector.GetComponent<Position>().x && player.GetComponent<Position>().z == detector.GetComponent<Position>().z)
-                {
-                    //end level
-                    Debug.Log("Repéré !");
-                    GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Detected });
-                }
+            if (target.GetComponent<Detector>() != null){
+                //end level
+                Debug.Log("Repéré !");
+                GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Detected });
             }
         }
     }
+
 
 	private void activate(GameObject go){
 		go.GetComponent<Activable>().isFullyActivated = true;
