@@ -11,19 +11,45 @@ public class LevelGeneratorSystem : FSystem {
 	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot)), new AnyOfTags("Wall"));
 	private Family playerGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Script)), new AnyOfTags("Player"));
 	private Family ennemyGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Script)), new NoneOfTags("Player"));
+	private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)),new AnyOfTags("ScriptConstructor"));
 	private List<List<int>> map;
 	private GameData gameData;
+
+	private bool historyIsInScript = false;
 
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 
 	public LevelGeneratorSystem(){
+		Debug.Log("level constructor");
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.Level = GameObject.Find("Level");
 
 		XmlToLevel(gameData.levelList[gameData.levelToLoad]);
+		gameData.currentLevelBlocLimits = gameData.actionBlocLimit;
 		//generateLevel6();
 
+	}
+
+	// Use to process your families.
+	protected override void onProcess(int familiesUpdateCount) {
+		if (historyIsInScript == false){
+			Debug.Log("on process");
+			Debug.Log("actionsHistory.count = "+gameData.actionsHistory.Count);
+			//get back history in player script
+			/*
+			Script scriptActions = new Script();
+			scriptActions.actions = gameData.actionsHistory;
+			scriptActions.currentAction = -1;
+			scriptActions.repeat = false;
+			*/
+			GameObject scriptComposer = playerScript.First();
+			ActionManipulator.DisplayActionsInContainer(gameData.actionsHistory, scriptComposer);
+			//remove from history
+			gameData.actionsHistory.Clear();
+			//history added to script ok
+			historyIsInScript = true;
+			}
 	}
 
 	
@@ -222,6 +248,11 @@ public class LevelGeneratorSystem : FSystem {
 
 
 	private void generateMap(){
+		if (gameData.actionsHistory == null){
+			gameData.actionsHistory = new List<Action>();
+			Debug.Log("new history");
+		}
+
 		for(int i = 0; i< map.Count; i++){
 			for(int j = 0; j < map[i].Count; j++){
 				switch (map[i][j]){
@@ -361,6 +392,45 @@ public class LevelGeneratorSystem : FSystem {
 		gameData.totalCoin = 0;
 		gameData.dialogMessage = new List<string>();
 		GameObjectManager.loadScene("MainScene");
+		Debug.Log("reload");
+	}
+
+	public void retry(){
+		gameData.nbStep = 0;
+		gameData.totalActionBloc = 0;
+		gameData.totalStep = 0;
+		gameData.totalExecute = 0;
+		gameData.totalCoin = 0;
+		
+		gameData.dialogMessage = new List<string>();
+		/*
+		List<Action> l = new List<Action>();
+		GameObject scriptComposer = GameObject.Find("ScriptContainer");
+		l = ActionManipulator.ScriptContainerToActionList(scriptComposer);
+		*/
+		GameObjectManager.loadScene("MainScene");
+		/*
+		//get back actions from history
+		Script scriptActions = new Script();
+		scriptActions.actions = gameData.actionsHistory;
+		scriptActions.currentAction = -1;
+		scriptActions.repeat = false;
+		GameObject scriptComposer = playerScript.First();
+		ActionManipulator.DisplayActionsInContainer(gameData.actionsHistory, scriptComposer);
+		*/
+		//playerGO.First().GetComponent<Script>().actions = gameData.actionsHistory;
+		//ActionManipulator.ScriptToContainer(scriptActions, scriptComposer);	
+		/*
+		Script scriptActions = new Script();
+		scriptActions.actions = l;
+		scriptActions.currentAction = 0;
+		scriptActions.repeat = false;
+		ActionManipulator.ScriptToContainer(scriptActions, scriptComposer);
+		*/
+
+		//GameObject endpanel = GameObject.Find("EndPanel");
+		//GameObjectManager.removeComponent<NewEnd>(endpanel);
+		//endpanel.SetActive(false);
 	}
 
 	public void returnToTitleScreen(){
@@ -376,6 +446,7 @@ public class LevelGeneratorSystem : FSystem {
 	public void nextLevel(){
 		gameData.levelToLoad++;
 		reloadScene();
+		gameData.actionsHistory.Clear();
 	}
 
 	public void levelToXML(string fileName){

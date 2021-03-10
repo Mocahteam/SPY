@@ -17,4 +17,7 @@ public class GameData : MonoBehaviour {
 	public int totalActionBloc;
 	public int totalExecute;
 	public int totalCoin;
+	public List<Action> actionsHistory; //all actions made in the level, displayed at the end
+
+	public List<int> currentLevelBlocLimits;
 }

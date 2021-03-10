@@ -14,6 +14,11 @@ public class LevelGeneratorSystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("LevelGeneratorSystem", "reloadScene", null);
 	}
 
+	public void retry()
+	{
+		MainLoop.callAppropriateSystemMethod ("LevelGeneratorSystem", "retry", null);
+	}
+
 	public void returnToTitleScreen()
 	{
 		MainLoop.callAppropriateSystemMethod ("LevelGeneratorSystem", "returnToTitleScreen", null);

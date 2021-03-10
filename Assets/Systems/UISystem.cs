@@ -180,9 +180,10 @@ public class UISystem : FSystem {
 			//Drop in script
 			if(priority != null && itemDragged != null){
 				itemDragged.transform.SetParent(priority.transform);
+				itemDragged.transform.localScale = new Vector3(1,1,1);
 				itemDragged.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
 				itemDragged.GetComponent<Image>().raycastTarget = true;
-
+				
 				//update limit bloc
 				ActionManipulator.updateActionBlocLimit(gameData,itemDragged.GetComponent<UIActionType>().type, -1);
 
@@ -226,6 +227,17 @@ public class UISystem : FSystem {
 
 	public void resetScriptNoRefund(){
 		GameObject go = GameObject.Find("ScriptContainer");
+		
+		//add actions to history before destroy
+		List<Action> lastActions = new List<Action>();
+		lastActions = ActionManipulator.ScriptContainerToActionList(go);
+		foreach(Action action in lastActions){
+			Debug.Log(lastActions);
+			Debug.Log(gameData.actionsHistory);
+			gameData.actionsHistory.Add(action);
+		}
+
+		//destroy script
 		for(int i = 0; i < go.transform.childCount; i++){
 			destroyScript(go.transform.GetChild(i));
 		}

@@ -7,7 +7,7 @@ using FYFY_plugins.PointerManager;
 using TMPro;
 public abstract class ActionManipulator
 {
-   public static void addAction(Script script, Action actionToAdd){
+   	public static void addAction(Script script, Action actionToAdd){
 		if(script.actions == null)
 			script.actions = new List<Action>();
 
@@ -232,6 +232,7 @@ public abstract class ActionManipulator
 			}
 			else if(child.GetComponent<UIActionType>().type == Action.ActionType.If){
 				Action IfAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
+				//IfAct.ifEntityType = child.transform.FindChild("DropdownEntityType").GetComponent<TMP_Dropdown>().value;
 				IfAct.ifEntityType = child.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<TMP_Dropdown>().value;
 				IfAct.ifDirection = child.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<TMP_Dropdown>().value;
 				IfAct.range = int.Parse(child.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<TMP_InputField>().text);
@@ -263,6 +264,30 @@ public abstract class ActionManipulator
 
 		LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)container.transform );
 
+	}
+
+	public static void updateLimitFromActions(GameData gameData, Action action){
+		updateActionBlocLimit(gameData, action.actionType, -1);
+		if(action.actionType == Action.ActionType.For ||action.actionType == Action.ActionType.If){
+			foreach(Action act in action.actions){
+				//check children
+				updateLimitFromActions(gameData, act);
+			}
+			
+		}
+	}
+
+	public static void DisplayActionsInContainer(List<Action> actions, GameObject container){
+		if(actions != null){
+			foreach(Action action in actions){
+				GameObject go = ActionToContainer(action, false);
+				GameObjectManager.bind(go);
+				go.transform.SetParent(container.transform, false);
+				GameData gameData = GameObject.Find("GameData").GetComponent<GameData>();
+				updateLimitFromActions(gameData, action);
+
+			}
+		}
 	}
 
 	private static GameObject ActionToContainer(Action action, bool nextAction, bool sensitive = false){
@@ -343,7 +368,7 @@ public abstract class ActionManipulator
 				}
 				break;
 		}
-		Object.Destroy(obj.GetComponent<PointerSensitive>());
+		//Object.Destroy(obj.GetComponent<PointerSensitive>());
 		return obj;
 	}
 
