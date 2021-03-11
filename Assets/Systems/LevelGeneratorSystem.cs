@@ -21,7 +21,7 @@ public class LevelGeneratorSystem : FSystem {
 	// Advice: avoid to update your families inside this function.
 
 	public LevelGeneratorSystem(){
-		Debug.Log("level constructor");
+		//Debug.Log("level constructor");
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.Level = GameObject.Find("Level");
 
@@ -34,7 +34,7 @@ public class LevelGeneratorSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		if (historyIsInScript == false){
-			Debug.Log("on process");
+			//Debug.Log("on process");
 			Debug.Log("actionsHistory.count = "+gameData.actionsHistory.Count);
 			//get back history in player script
 			/*

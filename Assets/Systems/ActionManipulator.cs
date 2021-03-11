@@ -278,19 +278,17 @@ public abstract class ActionManipulator
 	}
 
 	public static void DisplayActionsInContainer(List<Action> actions, GameObject container){
-		if(actions != null){
-			foreach(Action action in actions){
-				GameObject go = ActionToContainer(action, false);
-				GameObjectManager.bind(go);
-				go.transform.SetParent(container.transform, false);
-				GameData gameData = GameObject.Find("GameData").GetComponent<GameData>();
-				updateLimitFromActions(gameData, action);
+		foreach(Action action in actions){
+			GameObject go = ActionToContainer(action, false, false, true);
+			GameObjectManager.bind(go);
+			go.transform.SetParent(container.transform, false);
+			GameData gameData = GameObject.Find("GameData").GetComponent<GameData>();
+			updateLimitFromActions(gameData, action);
 
-			}
 		}
 	}
 
-	private static GameObject ActionToContainer(Action action, bool nextAction, bool sensitive = false){
+	private static GameObject ActionToContainer(Action action, bool nextAction, bool sensitive = false, bool isExecutableScriptDisplay = false){
 		GameObject obj =  null;
 		int i = 0;
 		switch(action.actionType){
@@ -332,43 +330,66 @@ public abstract class ActionManipulator
 				break;
 			case Action.ActionType.For:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/ForBloc")) as GameObject;
-				obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (action.currentFor +1).ToString() + " / " + action.nbFor.ToString();
-				obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = false;
-				Object.Destroy(obj.GetComponent<UITypeContainer>());
+				if(isExecutableScriptDisplay){ //executable for loop display
+					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = action.nbFor.ToString();
+					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = true;
+				}
+				else{ //execution script display
+					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (action.currentFor +1).ToString() + " / " + action.nbFor.ToString();
+					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = false;
+					Object.Destroy(obj.GetComponent<UITypeContainer>());
+				}
+				
 				i = 0;
 				foreach(Action act in action.actions){
 					if(i == action.currentAction && nextAction)
-						ActionToContainer(act, true).transform.SetParent(obj.transform);
+						ActionToContainer(act, true, sensitive, isExecutableScriptDisplay).transform.SetParent(obj.transform);
 					else
-						ActionToContainer(act, false).transform.SetParent(obj.transform);
+						ActionToContainer(act, false, sensitive, isExecutableScriptDisplay).transform.SetParent(obj.transform);
 					i++;
 				}
 				break;
 			case Action.ActionType.If:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/IfDetectBloc")) as GameObject;
 				obj.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<TMP_Dropdown>().value = action.ifEntityType;
-				obj.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<TMP_Dropdown>().interactable = false;
+				
 				obj.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<TMP_Dropdown>().value = action.ifDirection;
-				obj.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<TMP_Dropdown>().interactable = false;
+
 				obj.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<TMP_InputField>().text = action.range.ToString();
-				obj.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<TMP_InputField>().interactable = false;
 				if(!action.ifNot)
 					obj.transform.GetChild(0).GetChild(2).GetComponent<TMP_Dropdown>().value = 0;
 				else
 					obj.transform.GetChild(0).GetChild(2).GetComponent<TMP_Dropdown>().value = 1;
-				obj.transform.GetChild(0).GetChild(2).GetComponent<TMP_Dropdown>().interactable = false;
-				Object.Destroy(obj.GetComponent<UITypeContainer>());
+				
+				if(isExecutableScriptDisplay){ //executable if display
+					
+					obj.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<TMP_Dropdown>().interactable = true;
+					obj.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<TMP_Dropdown>().interactable = true;
+					obj.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<TMP_InputField>().interactable = true;
+					obj.transform.GetChild(0).GetChild(2).GetComponent<TMP_Dropdown>().interactable = true;
+				}
+				else{ //execution script display
+					
+					obj.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<TMP_Dropdown>().interactable = false;
+					obj.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<TMP_Dropdown>().interactable = false;
+					obj.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<TMP_InputField>().interactable = false;
+					obj.transform.GetChild(0).GetChild(2).GetComponent<TMP_Dropdown>().interactable = false;
+					Object.Destroy(obj.GetComponent<UITypeContainer>());
+				}
+				
 				i = 0;
 				foreach(Action act in action.actions){
 					if(i == action.currentAction && nextAction)
-						ActionToContainer(act, true).transform.SetParent(obj.transform);
+						ActionToContainer(act, true, sensitive, isExecutableScriptDisplay).transform.SetParent(obj.transform);
 					else
-						ActionToContainer(act, false).transform.SetParent(obj.transform);
+						ActionToContainer(act, false, sensitive, isExecutableScriptDisplay).transform.SetParent(obj.transform);
 					i++;
 				}
 				break;
 		}
-		//Object.Destroy(obj.GetComponent<PointerSensitive>());
+		if(!isExecutableScriptDisplay){ //execution script display
+			Object.Destroy(obj.GetComponent<PointerSensitive>());	
+		}	
 		return obj;
 	}
 

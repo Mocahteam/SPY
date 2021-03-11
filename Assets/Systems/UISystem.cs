@@ -15,7 +15,7 @@ public class UISystem : FSystem {
 	private Family ContainersGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
 	private Family ContainerRefreshGO = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)));
     private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF));
-
+	private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)),new AnyOfTags("ScriptConstructor"));
     private GameObject itemDragged;
 	private GameObject positionBar;
 	private GameData gameData;
@@ -183,7 +183,7 @@ public class UISystem : FSystem {
 				itemDragged.transform.localScale = new Vector3(1,1,1);
 				itemDragged.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
 				itemDragged.GetComponent<Image>().raycastTarget = true;
-				
+
 				//update limit bloc
 				ActionManipulator.updateActionBlocLimit(gameData,itemDragged.GetComponent<UIActionType>().type, -1);
 
@@ -226,14 +226,12 @@ public class UISystem : FSystem {
 	}
 
 	public void resetScriptNoRefund(){
-		GameObject go = GameObject.Find("ScriptContainer");
-		
+		//GameObject go = GameObject.Find("ScriptContainer");
+		GameObject go = playerScript.First();
 		//add actions to history before destroy
 		List<Action> lastActions = new List<Action>();
 		lastActions = ActionManipulator.ScriptContainerToActionList(go);
 		foreach(Action action in lastActions){
-			Debug.Log(lastActions);
-			Debug.Log(gameData.actionsHistory);
 			gameData.actionsHistory.Add(action);
 		}
 
