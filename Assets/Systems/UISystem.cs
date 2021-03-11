@@ -226,7 +226,6 @@ public class UISystem : FSystem {
 	}
 
 	public void resetScriptNoRefund(){
-		//GameObject go = GameObject.Find("ScriptContainer");
 		GameObject go = playerScript.First();
 		//add actions to history before destroy
 		List<Action> lastActions = new List<Action>();
