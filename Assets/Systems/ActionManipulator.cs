@@ -232,12 +232,11 @@ public abstract class ActionManipulator
 			}
 			else if(child.GetComponent<UIActionType>().type == Action.ActionType.If){
 				Action IfAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
-				//IfAct.ifEntityType = child.transform.FindChild("DropdownEntityType").GetComponent<TMP_Dropdown>().value;
-				IfAct.ifEntityType = child.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<TMP_Dropdown>().value;
-				IfAct.ifDirection = child.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<TMP_Dropdown>().value;
-				IfAct.range = int.Parse(child.transform.GetChild(0).GetChild(1).GetChild(3).GetComponent<TMP_InputField>().text);
-				IfAct.ifNot = (child.transform.GetChild(0).GetChild(2).GetComponent<TMP_Dropdown>().value == 1);
+				IfAct.ifEntityType = child.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value;
+				IfAct.ifDirection = child.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value;
+				IfAct.range = int.Parse(child.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text);
 				IfAct.ifValid = false;
+				IfAct.ifNot = (child.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1);
 				if(child.transform.childCount > 1 && ContainerToActionList(IfAct, child)){
 					ActionManipulator.addAction(act, IfAct);
 					nonEmpty = true;
@@ -351,7 +350,7 @@ public abstract class ActionManipulator
 				break;
 			case Action.ActionType.If:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/IfDetectBloc")) as GameObject;
-				
+
 				obj.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value = action.ifEntityType;
 				obj.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value = action.ifDirection;
 				obj.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text = action.range.ToString();

@@ -96,10 +96,12 @@ public class UISystem : FSystem {
 			gameData.ButtonExec.GetComponent<Button>().interactable = true;
 			gameData.ButtonReset.GetComponent<Button>().interactable = true;
 		}
-
+		bool isActive;
 		//Update LimitText
 		for(int i = 0; i < limitTexts.Count; i++){
 			if(gameData.actionBlocLimit[i] >= 0){
+				isActive = gameData.actionBlocLimit[i] == 0 ? false : true;
+				limitTexts[i].transform.parent.gameObject.SetActive(isActive);
 				limitTexts[i].GetComponent<TextMeshProUGUI>().text = "Reste\n" + gameData.actionBlocLimit[i].ToString();
 				//desactivate actionBlocs
 				if(gameData.actionBlocLimit[i] == 0){
@@ -109,6 +111,7 @@ public class UISystem : FSystem {
 					limitTexts[i].transform.parent.GetComponent<Image>().raycastTarget = true;
 				}
 			}
+
 		}
 
 
