@@ -7,7 +7,7 @@ public class StepSystem : FSystem {
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
 
     private float timeStepCpt;
-	private float timeStep = 1.5f;
+	private static float timeStep = 1.5f;
 	private GameData gameData;
 	public StepSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
@@ -39,4 +39,7 @@ public class StepSystem : FSystem {
                 timeStepCpt -= Time.deltaTime;
 		}
 	}
+    public static float getTimeStep(){
+        return timeStep;
+    }
 }

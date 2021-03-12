@@ -5,8 +5,12 @@ using UnityEngine.UI;
 using FYFY;
 using FYFY_plugins.PointerManager;
 using TMPro;
+using System.Linq;
+using System.Threading.Tasks;
+
 public abstract class ActionManipulator
 {
+	private static Color baseColor;
    	public static void addAction(Script script, Action actionToAdd){
 		if(script.actions == null)
 			script.actions = new List<Action>();
@@ -250,12 +254,33 @@ public abstract class ActionManipulator
 		return nonEmpty;
 	}
 
+	public static GameObject getLastGameObjectOf (GameObject gameObject, Action.ActionType type){
+		if(gameObject != null && (type == Action.ActionType.For ||type == Action.ActionType.If)){
+			gameObject = gameObject.transform.GetChild(gameObject.transform.childCount-1).gameObject;
+			return getLastGameObjectOf(gameObject, gameObject.GetComponent<UIActionType>().type);
+		}
+		return gameObject;		
+	}
+	async static Task removeLastHighLight(GameObject gameObject, Action action){
+		await Task.Delay((int)StepSystem.getTimeStep()*1000);		
+		if(gameObject != null)
+			gameObject = getLastGameObjectOf(gameObject, action.actionType);
+		if(gameObject != null)
+			gameObject.GetComponent<Image>().color = baseColor;
+	}
+
 	//Show the script in the container
-	public static void ScriptToContainer(Script script, GameObject container, bool sensitive = false){
+	public async static void ScriptToContainer(Script script, GameObject container, bool sensitive = false){
 		int i = 0;
+		GameObject obj;
 		foreach(Action action in script.actions){
-			if(i == script.currentAction)
-				ActionToContainer(action, true).transform.SetParent(container.transform, sensitive);
+			if(i == script.currentAction){
+				obj = ActionToContainer(action,true);
+				obj.transform.SetParent(container.transform, sensitive);
+				if(action == script.actions.Last()){ // action = last action & next action
+					await removeLastHighLight(obj, action);
+				}
+			}
 			else
 				ActionToContainer(action, false).transform.SetParent(container.transform, sensitive);
 			i++;
@@ -294,36 +319,42 @@ public abstract class ActionManipulator
 			case Action.ActionType.Forward:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/ForwardActionBloc")) as GameObject;
 				if(nextAction){
+					baseColor = obj.GetComponent<Image>().color;
 					obj.GetComponent<Image>().color = Color.yellow;
 				}
 				break;
 			case Action.ActionType.TurnLeft:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/TurnLeftActionBloc Variant")) as GameObject;
 				if(nextAction){
+					baseColor = obj.GetComponent<Image>().color;
 					obj.GetComponent<Image>().color = Color.yellow;
 				}
 				break;
 			case Action.ActionType.TurnRight:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/TurnRightActionBloc Variant")) as GameObject;
 				if(nextAction){
+					baseColor = obj.GetComponent<Image>().color;
 					obj.GetComponent<Image>().color = Color.yellow;
 				}
 				break;
 			case Action.ActionType.TurnBack:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/TurnBackActionBloc Variant")) as GameObject;
 				if(nextAction){
+					baseColor = obj.GetComponent<Image>().color;
 					obj.GetComponent<Image>().color = Color.yellow;
 				}
 				break;
 			case Action.ActionType.Wait:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/WaitActionBloc Variant")) as GameObject;
 				if(nextAction){
+					baseColor = obj.GetComponent<Image>().color;
 					obj.GetComponent<Image>().color = Color.yellow;
 				}
 				break;
 			case Action.ActionType.Activate:
 				obj = Object.Instantiate (Resources.Load ("Prefabs/ActivateActionBloc Variant")) as GameObject;
 				if(nextAction){
+					baseColor = obj.GetComponent<Image>().color;
 					obj.GetComponent<Image>().color = Color.yellow;
 				}
 				break;
