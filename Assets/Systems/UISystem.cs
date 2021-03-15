@@ -14,8 +14,9 @@ public class UISystem : FSystem {
 
 	private Family ContainersGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
 	private Family ContainerRefreshGO = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)));
-    private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF));
-	private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)),new AnyOfTags("ScriptConstructor"));
+    private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF));
+    private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+    private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)),new AnyOfTags("ScriptConstructor"));
     private GameObject itemDragged;
 	private GameObject positionBar;
 	private GameData gameData;
@@ -47,12 +48,17 @@ public class UISystem : FSystem {
 		limitTexts.Add(GameObject.Find("TurnBackLimit"));
 
         requireEndPanel.addEntryCallback(displayEndPanel);
+        displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
 
     }
 
     private void displayEndPanel(GameObject endPanel)
     {
         GameObjectManager.setGameObjectState(endPanel, true);
+    }
+
+    private void onDisplayedEndPanel (GameObject endPanel)
+    { 
         switch (endPanel.GetComponent<NewEnd>().endType)
         {
             case 1:
