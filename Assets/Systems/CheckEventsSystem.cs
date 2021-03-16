@@ -2,17 +2,17 @@
 using FYFY;
 using System.Collections;
 using FYFY_plugins.TriggerManager;
+using UnityEngine.UI;
 public class CheckEventsSystem : FSystem {
 
-	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
-	private Family scriptedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)));
-	private Family noPlayerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new NoneOfTags("Player"));
-	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
-	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
-	private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
-	private Family activationSlotGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot)));
+	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position),typeof(HighLight),typeof(Direction), typeof(Animator), typeof(AudioSource), typeof(TriggerSensitive3D), typeof(CapsuleCollider)), new AnyOfTags("Player"));
+	private Family scriptedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script), typeof(Position), typeof(Direction), typeof(HighLight)));
+	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(MeshRenderer), typeof(MeshFilter), typeof(AudioSource)), new AnyOfTags("Exit"));
+	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(BoxCollider), typeof(MeshRenderer)), new AnyOfTags("Wall"));
+	private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position), typeof(MeshRenderer), typeof(AudioSource)));
+	private Family activationSlotGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position),typeof(Direction), typeof(BoxCollider)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
-    private Family endpanel_f = FamilyManager.getFamily(new AnyOfTags("endpanel"));
+    private Family endpanel_f = FamilyManager.getFamily(new AllOfComponents(typeof(Image), typeof(AudioSource)), new AnyOfTags("endpanel"));
 
     private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
     private GameData gameData;

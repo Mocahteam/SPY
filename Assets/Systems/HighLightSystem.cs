@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using FYFY;
 using FYFY_plugins.PointerManager;
+using UnityEngine.UI;
 
 public class HighLightSystem : FSystem {
 	// Use this to update member variables when system pause. 
@@ -8,6 +9,8 @@ public class HighLightSystem : FSystem {
 
 	private Family highlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(HighLight), typeof(PointerOver)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+
+	private Family enemyScriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image)), new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
 
     private GameObject highLightedItem;
 	private GameObject EnemyScriptContainer;
@@ -23,7 +26,7 @@ public class HighLightSystem : FSystem {
         highLightedItem = null;
 		scriptInWindow = null;
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		EnemyScriptContainer = GameObject.Find("EnemyScript").transform.GetChild(0).transform.GetChild(0).gameObject;
+		EnemyScriptContainer = enemyScriptContainer_f.First();
 	}
 	
     private void onNewStep(GameObject unused)

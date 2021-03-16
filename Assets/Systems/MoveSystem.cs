@@ -1,18 +1,19 @@
 ﻿using UnityEngine;
 using FYFY;
+using FYFY_plugins.TriggerManager;
 
 public class MoveSystem : FSystem {
 
 	private float turnSpeed = 150f;
 	private float moveSpeed = 7f;
-	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(Direction), typeof(Animator), typeof(AudioSource)));
+	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position),typeof(HighLight),typeof(Direction), typeof(Animator), typeof(AudioSource), typeof(TriggerSensitive3D), typeof(CapsuleCollider)), new AnyOfTags("Player"));
 	private GameData gameData;
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 	public MoveSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 
-        foreach (GameObject go in controllableGO)
+        foreach (GameObject go in playerGO)
         {
             switch (go.GetComponent<Direction>().direction)
             {
@@ -35,7 +36,7 @@ public class MoveSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 
-		foreach( GameObject go in controllableGO){
+		foreach( GameObject go in playerGO){
 
 			bool isMoving = false;
 

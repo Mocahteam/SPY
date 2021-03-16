@@ -9,14 +9,12 @@ public class UISystem : FSystem {
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 	private GameObject actionContainer;
-	private Family PointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ElementToDrag)));
-	private Family UIScriptPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType)));
-
-	private Family ContainersGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
-	private Family ContainerRefreshGO = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)));
+	private Family panelPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ElementToDrag), typeof(Image)));
+	private Family playerScriptPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType), typeof(Image)));
+	private Family playerScriptPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image)), new AnyOfTags("ScriptConstructor"));
     private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF));
     private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-    private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)),new AnyOfTags("ScriptConstructor"));
+	private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image), typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
     private GameObject itemDragged;
 	private GameObject positionBar;
 	private GameData gameData;
@@ -125,7 +123,7 @@ public class UISystem : FSystem {
 
 
 		//Drag
-		foreach( GameObject go in PointedGO){
+		foreach( GameObject go in panelPointedGO){
 			if(Input.GetMouseButtonDown(0)){
 				itemDragged = Object.Instantiate<GameObject>(go.GetComponent<ElementToDrag>().actionPrefab, go.transform);
 				GameObjectManager.bind(itemDragged);
@@ -140,7 +138,7 @@ public class UISystem : FSystem {
 
 		//Find the container with the last layer 
 		GameObject priority = null;
-		foreach( GameObject go in ContainersGO){
+		foreach( GameObject go in playerScriptPointed){
 			if(priority == null || priority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer)
 				priority = go;
 			
@@ -171,7 +169,7 @@ public class UISystem : FSystem {
 		//Delete
 		if(!itemDragged && Input.GetMouseButtonUp(1)){
 			priority = null;
-			foreach(GameObject go in UIScriptPointedGO){
+			foreach(GameObject go in playerScriptPointedGO){
 				if(!priority|| !go.GetComponent<UITypeContainer>() || priority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer){
 					priority = go;
 				}
@@ -219,7 +217,7 @@ public class UISystem : FSystem {
 
 	//Refresh Containers size
 	private void refreshUI(){
-		foreach( GameObject go in ContainerRefreshGO){
+		foreach( GameObject go in playerScript){
 			LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)go.transform );
 		}
 		

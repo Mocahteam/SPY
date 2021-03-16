@@ -2,16 +2,18 @@
 using FYFY;
 using System.Collections.Generic;
 using System.Xml;
+using FYFY_plugins.TriggerManager;
+using UnityEngine.UI;
 
 public class LevelGeneratorSystem : FSystem {
 
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(HighLight)));
-	private Family coinGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position)), new AnyOfTags("Coin"));
-	private Family activableGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Activable)));
-	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot)), new AnyOfTags("Wall"));
-	private Family playerGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Script)), new AnyOfTags("Player"));
-	private Family ennemyGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Script)), new NoneOfTags("Player"));
-	private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)),new AnyOfTags("ScriptConstructor"));
+	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(MeshRenderer), typeof(CapsuleCollider), typeof(AudioSource)), new AnyOfTags("Coin"));
+	private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(MeshRenderer), typeof(AudioSource), typeof(MeshFilter)));
+	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Direction)), new AnyOfTags("Wall"));
+	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position),typeof(HighLight),typeof(Direction), typeof(Animator), typeof(AudioSource), typeof(TriggerSensitive3D), typeof(CapsuleCollider)), new AnyOfTags("Player"));
+	private Family ennemyGO = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Script), typeof(Direction), typeof(Position), typeof(HighLight), typeof(AudioSource)), new AnyOfTags("Drone"));
+	private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image), typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
 	private List<List<int>> map;
 	private GameData gameData;
 

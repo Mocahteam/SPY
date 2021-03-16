@@ -2,18 +2,18 @@
 using FYFY;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using FYFY_plugins.TriggerManager;
 public class ApplyScriptSystem : FSystem {
 
-	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)));
-	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
-	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
-	private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
+	private Family controllableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position),typeof(HighLight),typeof(Direction), typeof(AudioSource)));
+	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(BoxCollider), typeof(MeshRenderer)), new AnyOfTags("Wall"));
+	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position),typeof(HighLight),typeof(Direction), typeof(Animator), typeof(AudioSource), typeof(TriggerSensitive3D), typeof(CapsuleCollider)), new AnyOfTags("Player"));
+	private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position), typeof(MeshRenderer), typeof(AudioSource)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
-    private GameObject scriptComposer;
+	private Family playerScriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image), typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
 	private GameData gameData;
 
 	public ApplyScriptSystem(){
-		scriptComposer = GameObject.Find("ScriptContainer");
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
         newStep_f.addEntryCallback(onNewStep);
     } 
@@ -148,7 +148,7 @@ public class ApplyScriptSystem : FSystem {
 	public void applyScriptToPlayer(){
 		foreach( GameObject go in playerGO){
 			ActionManipulator.resetScript(go.GetComponent<Script>());
-			go.GetComponent<Script>().actions = ActionManipulator.ScriptContainerToActionList(scriptComposer);
+			go.GetComponent<Script>().actions = ActionManipulator.ScriptContainerToActionList(playerScriptContainer_f.First());
 			gameData.nbStep = ActionManipulator.getNbStep(go.GetComponent<Script>());
 		}
 

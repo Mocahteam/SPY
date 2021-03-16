@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using FYFY;
 using System.Collections;
+using FYFY_plugins.TriggerManager;
 
 public class CoinSystem : FSystem {
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 
-	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
-	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Coin"));
+	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position),typeof(HighLight),typeof(Direction), typeof(Animator), typeof(AudioSource), typeof(TriggerSensitive3D), typeof(CapsuleCollider)), new AnyOfTags("Player"));
+	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(MeshRenderer), typeof(CapsuleCollider), typeof(AudioSource)), new AnyOfTags("Coin"));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private float speed = 20f;
 	private GameData gameData;

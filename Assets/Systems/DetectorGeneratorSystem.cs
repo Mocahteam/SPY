@@ -3,11 +3,10 @@ using FYFY;
 
 public class DetectorGeneratorSystem : FSystem {
 
-	private Family detectRangeGO = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange)));
-	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position)));
-	private Family entityGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
-
-    private Family gameLoaded_f = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
+	private Family ennemyGO = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Script), typeof(Direction), typeof(Position), typeof(HighLight), typeof(AudioSource)), new AnyOfTags("Drone"));
+	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody), typeof(BoxCollider), typeof(MeshRenderer)));
+	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(BoxCollider), typeof(MeshRenderer)), new AnyOfTags("Wall"));
+    private Family gameLoaded_f = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private GameData gameData;
 
@@ -34,7 +33,7 @@ public class DetectorGeneratorSystem : FSystem {
 
         bool stop = false;
         //Generate detection cells
-        foreach (GameObject detect in detectRangeGO)
+        foreach (GameObject detect in ennemyGO)
         {
             switch (detect.GetComponent<DetectRange>().type)
             {
@@ -56,7 +55,7 @@ public class DetectorGeneratorSystem : FSystem {
                             {
                                 int x = detect.GetComponent<Position>().x;
                                 int z = detect.GetComponent<Position>().z + i + 1;
-                                foreach (GameObject wall in entityGO)
+                                foreach (GameObject wall in wallGO)
                                 {
                                     if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
                                     {
@@ -83,7 +82,7 @@ public class DetectorGeneratorSystem : FSystem {
                             {
                                 int x = detect.GetComponent<Position>().x - i - 1;
                                 int z = detect.GetComponent<Position>().z;
-                                foreach (GameObject wall in entityGO)
+                                foreach (GameObject wall in wallGO)
                                 {
                                     if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
                                     {
@@ -110,7 +109,7 @@ public class DetectorGeneratorSystem : FSystem {
                             {
                                 int x = detect.GetComponent<Position>().x;
                                 int z = detect.GetComponent<Position>().z - i - 1;
-                                foreach (GameObject wall in entityGO)
+                                foreach (GameObject wall in wallGO)
                                 {
                                     if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
                                     {
@@ -137,7 +136,7 @@ public class DetectorGeneratorSystem : FSystem {
                             {
                                 int x = detect.GetComponent<Position>().x + i + 1;
                                 int z = detect.GetComponent<Position>().z;
-                                foreach (GameObject wall in entityGO)
+                                foreach (GameObject wall in wallGO)
                                 {
                                     if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
                                     {
