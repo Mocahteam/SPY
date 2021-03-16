@@ -40,8 +40,7 @@ public class TitleScreenSystem : FSystem {
 		button = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Button") as GameObject, cList.transform);
 		button.transform.GetChild(0).GetComponent<Text>().text = "Level 5";
 		button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(4);});*/
-
-		campagneMenu.SetActive(false);
+		GameObjectManager.setGameObjectState(campagneMenu, false);
 		gameData.levelList = new List<string>(Directory.GetFiles(@"Assets\Levels\Campagne","*.xml"));
 
 		for(int i = 0; i < gameData.levelList.Count; i++){
@@ -73,9 +72,9 @@ public class TitleScreenSystem : FSystem {
 	}
 
 	public void showCampagneMenu(){
-		campagneMenu.SetActive(true);
-		campagneButton.SetActive(false);
-		quitButton.SetActive(false);
+		GameObjectManager.setGameObjectState(campagneMenu, true);
+		GameObjectManager.setGameObjectState(campagneButton, false);
+		GameObjectManager.setGameObjectState(quitButton, false);
 	}
 
 	public void launchLevel(int level){
@@ -84,9 +83,9 @@ public class TitleScreenSystem : FSystem {
 	}
 
 	public void backFromCampagneMenu(){
-		campagneMenu.SetActive(false);
-		campagneButton.SetActive(true);
-		quitButton.SetActive(true);
+		GameObjectManager.setGameObjectState(campagneMenu, false);
+		GameObjectManager.setGameObjectState(campagneButton, true);
+		GameObjectManager.setGameObjectState(quitButton, true);
 	}
 
 	public void quitGame(){

@@ -28,11 +28,11 @@ public class UISystem : FSystem {
 		gameData.ButtonExec = GameObject.Find("ExecuteButton");
 		gameData.ButtonReset = GameObject.Find("ResetButton");
 		positionBar = GameObject.Find("PositionBar");
-		positionBar.SetActive(false);
-        GameObject endPanel = GameObject.Find("EndPanel");
-		endPanel.SetActive(false);
+		GameObjectManager.setGameObjectState(positionBar, false);
+		GameObject endPanel = GameObject.Find("EndPanel");
+		GameObjectManager.setGameObjectState(endPanel, false);
 		dialogPanel = GameObject.Find("DialogPanel");
-		dialogPanel.SetActive(false);
+		GameObjectManager.setGameObjectState(dialogPanel, false);
 
 		//LimitTexts
 		limitTexts = new List<GameObject>();
@@ -105,7 +105,7 @@ public class UISystem : FSystem {
 		for(int i = 0; i < limitTexts.Count; i++){
 			if(gameData.actionBlocLimit[i] >= 0){
 				isActive = gameData.actionBlocLimit[i] == 0 ? false : true;
-				limitTexts[i].transform.parent.gameObject.SetActive(isActive);
+				GameObjectManager.setGameObjectState(limitTexts[i].transform.parent.gameObject, isActive);
 				limitTexts[i].GetComponent<TextMeshProUGUI>().text = "Reste\n" + gameData.actionBlocLimit[i].ToString();
 				//desactivate actionBlocs
 				if(gameData.actionBlocLimit[i] == 0){
@@ -150,8 +150,7 @@ public class UISystem : FSystem {
 			if(priority.GetComponent<UITypeContainer>().type != UITypeContainer.Type.Script){
 				start++;
 			}
-
-			positionBar.SetActive(true);
+			GameObjectManager.setGameObjectState(positionBar, true);
 			positionBar.transform.SetParent(priority.transform);
 			positionBar.transform.SetSiblingIndex(priority.transform.childCount-1);
 			for(int i = start; i < priority.transform.childCount; i++){
@@ -163,7 +162,7 @@ public class UISystem : FSystem {
 		}
 		else{
 			positionBar.transform.SetParent(GameObject.Find("PlayerScript").transform);
-			positionBar.SetActive(false);
+			GameObjectManager.setGameObjectState(positionBar, false);
 		}
 
 		//Delete
@@ -273,16 +272,16 @@ public class UISystem : FSystem {
 	}
 
 	public void showDialogPanel(){
-		dialogPanel.SetActive(true);
+		GameObjectManager.setGameObjectState(dialogPanel, true);
 		nDialog = 0;
 		dialogPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[0];
 		if(gameData.dialogMessage.Count > 1){
-			dialogPanel.transform.GetChild(1).gameObject.SetActive(false);
-			dialogPanel.transform.GetChild(2).gameObject.SetActive(true);
+			setActiveOKButton(false);
+			setActiveNextButton(true);
 		}
 		else{
-			dialogPanel.transform.GetChild(1).gameObject.SetActive(true);
-			dialogPanel.transform.GetChild(2).gameObject.SetActive(false);
+			setActiveOKButton(true);
+			setActiveNextButton(false);
 		}
 	}
 
@@ -290,18 +289,26 @@ public class UISystem : FSystem {
 		nDialog++;
 		dialogPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog];
 		if(nDialog + 1 < gameData.dialogMessage.Count){
-			dialogPanel.transform.GetChild(1).gameObject.SetActive(false);
-			dialogPanel.transform.GetChild(2).gameObject.SetActive(true);
+			setActiveOKButton(false);
+			setActiveNextButton(true);
 		}
 		else{
-			dialogPanel.transform.GetChild(1).gameObject.SetActive(true);
-			dialogPanel.transform.GetChild(2).gameObject.SetActive(false);
+			setActiveOKButton(true);
+			setActiveNextButton(false);
 		}
+	}
+
+	public void setActiveOKButton(bool active){
+		GameObjectManager.setGameObjectState(dialogPanel.transform.GetChild(1).gameObject, active);
+	}
+
+	public void setActiveNextButton(bool active){
+		GameObjectManager.setGameObjectState(dialogPanel.transform.GetChild(2).gameObject, active);
 	}
 
 	public void closeDialogPanel(){
 		nDialog = 0;
 		gameData.dialogMessage = new List<string>();;
-		dialogPanel.SetActive(false);
+		GameObjectManager.setGameObjectState(dialogPanel, false);
 	}
 }
