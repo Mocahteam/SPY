@@ -40,12 +40,6 @@ public abstract class ActionManipulator
 		return action;
 	}
 
-	//Empty the script //used in levelgeneratorsys & applyscriptsys
-	public static void resetScript(Script script){
-		script.actions = new List<Action>();
-		script.currentAction = 0;
-	}
-
 	//Return true if the script is at the end //used in checkeventsys & applyscriptsys
     public static bool endOfScript(GameObject go){
 		return go.GetComponent<Script>().currentAction >= go.GetComponent<Script>().actions.Count;

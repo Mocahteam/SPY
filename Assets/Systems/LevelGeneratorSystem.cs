@@ -316,12 +316,13 @@ public class LevelGeneratorSystem : FSystem {
 		entity.GetComponent<Position>().z = j;
 		entity.GetComponent<Direction>().direction = direction;
 
-		ActionManipulator.resetScript(entity.GetComponent<Script>());
-		if(script != null){
-			entity.GetComponent<Script>().actions = script;
-		}
-
-		entity.GetComponent<Script>().repeat = repeat;
+        Script entityScript = entity.GetComponent<Script>();
+        if (script != null)
+            entityScript.actions = script;
+        else
+            entityScript.actions = new List<Action>();
+        entityScript.currentAction = 0;
+        entityScript.repeat = repeat;
 
 		GameObjectManager.bind(entity);
 

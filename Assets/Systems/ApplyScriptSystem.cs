@@ -161,9 +161,9 @@ public class ApplyScriptSystem : FSystem {
 
 	public void applyScriptToPlayer(){
 		foreach( GameObject go in playerGO){
-			ActionManipulator.resetScript(go.GetComponent<Script>());
 			go.GetComponent<Script>().actions = ActionManipulator.ScriptContainerToActionList(playerScriptContainer_f.First());
-			gameData.nbStep = ActionManipulator.getNbStep(go.GetComponent<Script>());
+            go.GetComponent<Script>().currentAction = 0;
+            gameData.nbStep = ActionManipulator.getNbStep(go.GetComponent<Script>());
 		}
 
 		//Check if If actions are valid
