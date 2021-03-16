@@ -29,6 +29,16 @@ public class UISystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("UISystem", "nextDialog", null);
 	}
 
+	public void setActiveOKButton(System.Boolean active)
+	{
+		MainLoop.callAppropriateSystemMethod ("UISystem", "setActiveOKButton", active);
+	}
+
+	public void setActiveNextButton(System.Boolean active)
+	{
+		MainLoop.callAppropriateSystemMethod ("UISystem", "setActiveNextButton", active);
+	}
+
 	public void closeDialogPanel()
 	{
 		MainLoop.callAppropriateSystemMethod ("UISystem", "closeDialogPanel", null);
