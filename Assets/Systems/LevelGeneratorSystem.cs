@@ -32,6 +32,26 @@ public class LevelGeneratorSystem : FSystem {
 		//generateLevel6();
 
 	}
+	public static void updateLimitFromActions(GameData gameData, Action action){
+		ActionManipulator.updateActionBlocLimit(gameData, action.actionType, -1);
+		if(action.actionType == Action.ActionType.For ||action.actionType == Action.ActionType.If){
+			foreach(Action act in action.actions){
+				//check children
+				updateLimitFromActions(gameData, act);
+			}
+			
+		}
+	}
+	public static void DisplayActionsInContainer(List<Action> actions, GameObject container){
+		foreach(Action action in actions){
+			GameObject go = ActionManipulator.ActionToContainer(action, false, false, true);
+			GameObjectManager.bind(go);
+			go.transform.SetParent(container.transform, false);
+			GameData gameData = GameObject.Find("GameData").GetComponent<GameData>();
+			updateLimitFromActions(gameData, action);
+
+		}
+	}
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
@@ -46,7 +66,7 @@ public class LevelGeneratorSystem : FSystem {
 			scriptActions.repeat = false;
 			*/
 			GameObject scriptComposer = playerScript.First();
-			ActionManipulator.DisplayActionsInContainer(gameData.actionsHistory, scriptComposer);
+			DisplayActionsInContainer(gameData.actionsHistory, scriptComposer);
 			//remove from history
 			gameData.actionsHistory.Clear();
 			//history added to script ok

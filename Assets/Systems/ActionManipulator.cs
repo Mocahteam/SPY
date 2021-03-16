@@ -5,8 +5,6 @@ using UnityEngine.UI;
 using FYFY;
 using FYFY_plugins.PointerManager;
 using TMPro;
-using System.Linq;
-using System.Threading.Tasks;
 
 public abstract class ActionManipulator
 {
@@ -42,49 +40,18 @@ public abstract class ActionManipulator
 		return action;
 	}
 
-	//Empty the script
+	//Empty the script //used in levelgeneratorsys & applyscriptsys
 	public static void resetScript(Script script){
 		script.actions = new List<Action>();
 		script.currentAction = 0;
 	}
 
-	//restart the script to 0
-    public static void restartScript(Script script){
-		script.currentAction = 0;
-		foreach(Action act in script.actions){
-			restartScript(act);
-		}
-	}
-
-	public static void restartScript(Action action){
-		action.currentAction = 0;
-		action.currentFor = 0;
-		if(action.actions != null){
-			foreach(Action act in action.actions){
-				restartScript(act);
-			}
-		}
-	}
-
-	//Return true if the script is at the end
+	//Return true if the script is at the end //used in checkeventsys & applyscriptsys
     public static bool endOfScript(GameObject go){
 		return go.GetComponent<Script>().currentAction >= go.GetComponent<Script>().actions.Count;
 	}
 
-	//Return the current action
-    public static Action getCurrentAction(GameObject go) {
-		Action action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]; 
-		//end when a pure action is found
-		while(!(action.actionType == Action.ActionType.Forward || action.actionType == Action.ActionType.TurnLeft || action.actionType == Action.ActionType.TurnRight
-				|| action.actionType == Action.ActionType.Wait || action.actionType == Action.ActionType.Activate || action.actionType == Action.ActionType.TurnBack)){
-			//Case For / If
-			if(action.actionType == Action.ActionType.For || action.actionType == Action.ActionType.If){
-				action = action.actions[action.currentAction];
-			}
-		}
-		return action;
-	}
-
+	//used in applyscriptsys & checkeventsys
 	public static Action getCurrentIf(GameObject go){
 		if(go.GetComponent<Script>().actions == null || go.GetComponent<Script>().currentAction >= go.GetComponent<Script>().actions.Count){
 			return null;
@@ -116,7 +83,7 @@ public abstract class ActionManipulator
 		return null;
 	}
 
-	//increment the iterator of the action script
+	//increment the iterator of the action script //used in applyscriptsys & checkeventsys
 	public static void incrementActionScript(Script script){
 		if(incrementAction(script.actions[script.currentAction]))
 			script.currentAction++;
@@ -167,6 +134,7 @@ public abstract class ActionManipulator
 		return nb;
 	}
 
+	//used in applyscriptsys & checkeventsys
 	public static int getNbStep(Action action, bool ignoreIf = false){
 		if(action.actionType == Action.ActionType.For){
 			int nb = 0;
@@ -190,7 +158,7 @@ public abstract class ActionManipulator
 	}
 
 
-	//Convert the UI script in a usable script
+	//Convert the UI script in a usable script //used in applyscriptsys & uisys
     public static List<Action> ScriptContainerToActionList(GameObject scriptComposer){
 		List<Action> l = new List<Action>();
 
@@ -254,65 +222,12 @@ public abstract class ActionManipulator
 		return nonEmpty;
 	}
 
-	public static GameObject getLastGameObjectOf (GameObject gameObject, Action.ActionType type){
-		if(gameObject != null && (type == Action.ActionType.For ||type == Action.ActionType.If)){
-			gameObject = gameObject.transform.GetChild(gameObject.transform.childCount-1).gameObject;
-			return getLastGameObjectOf(gameObject, gameObject.GetComponent<UIActionType>().type);
-		}
-		return gameObject;		
-	}
-	async static Task removeLastHighLight(GameObject gameObject, Action action){
-		await Task.Delay((int)StepSystem.getTimeStep()*1000);		
-		if(gameObject != null)
-			gameObject = getLastGameObjectOf(gameObject, action.actionType);
-		if(gameObject != null)
-			gameObject.GetComponent<Image>().color = baseColor;
+	public static Color getBaseColor(){
+		return baseColor;
 	}
 
-	//Show the script in the container
-	public async static void ScriptToContainer(Script script, GameObject container, bool sensitive = false){
-		int i = 0;
-		GameObject obj;
-		foreach(Action action in script.actions){
-			if(i == script.currentAction){
-				obj = ActionToContainer(action,true);
-				obj.transform.SetParent(container.transform, sensitive);
-				if(action == script.actions.Last()){ // action = last action & next action
-					await removeLastHighLight(obj, action);
-				}
-			}
-			else
-				ActionToContainer(action, false).transform.SetParent(container.transform, sensitive);
-			i++;
-		}
-
-		LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)container.transform );
-
-	}
-
-	public static void updateLimitFromActions(GameData gameData, Action action){
-		updateActionBlocLimit(gameData, action.actionType, -1);
-		if(action.actionType == Action.ActionType.For ||action.actionType == Action.ActionType.If){
-			foreach(Action act in action.actions){
-				//check children
-				updateLimitFromActions(gameData, act);
-			}
-			
-		}
-	}
-
-	public static void DisplayActionsInContainer(List<Action> actions, GameObject container){
-		foreach(Action action in actions){
-			GameObject go = ActionToContainer(action, false, false, true);
-			GameObjectManager.bind(go);
-			go.transform.SetParent(container.transform, false);
-			GameData gameData = GameObject.Find("GameData").GetComponent<GameData>();
-			updateLimitFromActions(gameData, action);
-
-		}
-	}
-
-	private static GameObject ActionToContainer(Action action, bool nextAction, bool sensitive = false, bool isExecutableScriptDisplay = false){
+	//used in highlightsys & levelgeneratorsys
+	public static GameObject ActionToContainer(Action action, bool nextAction, bool sensitive = false, bool isExecutableScriptDisplay = false){
 		GameObject obj =  null;
 		int i = 0;
 		switch(action.actionType){
@@ -425,7 +340,7 @@ public abstract class ActionManipulator
 	}
 
 
-	//0 Forward, 1 Backward, 2 Left, 3 Right
+	//0 Forward, 1 Backward, 2 Left, 3 Right //used in applyscriptsys & checkeventsys
 	public static Direction.Dir getDirection(Direction.Dir dirEntity, int relativeDir){
 		if(relativeDir == 0)
 			return dirEntity;
@@ -474,6 +389,7 @@ public abstract class ActionManipulator
 		return dirEntity;
 	}
 
+	//used in applyscriptsys & checkeventsys
 	public static void invalidAllIf(Script script){
 		foreach(Action act in script.actions){
 			if(act.actionType == Action.ActionType.If)
@@ -491,7 +407,7 @@ public abstract class ActionManipulator
 		}
 	}
 
-
+	//used in levelgeneratorsys & uisys
 	public static void updateActionBlocLimit(GameData gameData, Action.ActionType type, int nb){
 		switch(type){
 			case Action.ActionType.Forward:

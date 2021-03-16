@@ -18,13 +18,27 @@ public class ApplyScriptSystem : FSystem {
         newStep_f.addEntryCallback(onNewStep);
     } 
 
+	//Return the current action
+    public static Action getCurrentAction(GameObject go) {
+		Action action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]; 
+		//end when a pure action is found
+		while(!(action.actionType == Action.ActionType.Forward || action.actionType == Action.ActionType.TurnLeft || action.actionType == Action.ActionType.TurnRight
+				|| action.actionType == Action.ActionType.Wait || action.actionType == Action.ActionType.Activate || action.actionType == Action.ActionType.TurnBack)){
+			//Case For / If
+			if(action.actionType == Action.ActionType.For || action.actionType == Action.ActionType.If){
+				action = action.actions[action.currentAction];
+			}
+		}
+		return action;
+	}
+
 	// Use to process your families.
 	private void onNewStep(GameObject unused) {
 
         foreach ( GameObject go in controllableGO){
 				
 			if(!ActionManipulator.endOfScript(go)){
-				Action action = ActionManipulator.getCurrentAction(go);
+				Action action = getCurrentAction(go);
 					
 				switch (action.actionType){
 					case Action.ActionType.Forward:

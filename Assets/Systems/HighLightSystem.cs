@@ -2,6 +2,8 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class HighLightSystem : FSystem {
 	// Use this to update member variables when system pause. 
@@ -29,6 +31,43 @@ public class HighLightSystem : FSystem {
 		EnemyScriptContainer = enemyScriptContainer_f.First();
 	}
 	
+	public static GameObject getLastGameObjectOf (GameObject gameObject, Action.ActionType type){
+		if(gameObject != null && (type == Action.ActionType.For ||type == Action.ActionType.If)){
+			gameObject = gameObject.transform.GetChild(gameObject.transform.childCount-1).gameObject;
+			return getLastGameObjectOf(gameObject, gameObject.GetComponent<UIActionType>().type);
+		}
+		return gameObject;		
+	}
+	
+	async static Task removeLastHighLight(GameObject gameObject, Action action){
+		await Task.Delay((int)StepSystem.getTimeStep()*1000);		
+		if(gameObject != null)
+			gameObject = getLastGameObjectOf(gameObject, action.actionType);
+		if(gameObject != null)
+			gameObject.GetComponent<Image>().color = ActionManipulator.getBaseColor();
+	}
+
+	//Show the script in the container
+	public async static void ScriptToContainer(Script script, GameObject container, bool sensitive = false){
+		int i = 0;
+		GameObject obj;
+		foreach(Action action in script.actions){
+			if(i == script.currentAction){
+				obj = ActionManipulator.ActionToContainer(action,true);
+				obj.transform.SetParent(container.transform, sensitive);
+				if(action == script.actions.Last()){ // action = last action & next action
+					await removeLastHighLight(obj, action);
+				}
+			}
+			else
+				ActionManipulator.ActionToContainer(action, false).transform.SetParent(container.transform, sensitive);
+			i++;
+		}
+
+		LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)container.transform );
+
+	}
+
     private void onNewStep(GameObject unused)
     {
         //Change the higlighted action every step
@@ -37,7 +76,7 @@ public class HighLightSystem : FSystem {
             {
                 GameObject.Destroy(child.gameObject);
             }
-            ActionManipulator.ScriptToContainer(scriptInWindow.GetComponent<Script>(), EnemyScriptContainer);
+            ScriptToContainer(scriptInWindow.GetComponent<Script>(), EnemyScriptContainer);
         }
     }
 
@@ -51,7 +90,7 @@ public class HighLightSystem : FSystem {
 			}
 			scriptInWindow =  highLightedItem;
 			GameObject.Find("EnemyScript").GetComponent<AudioSource>().Play();
-			ActionManipulator.ScriptToContainer(highLightedItem.GetComponent<Script>(), EnemyScriptContainer);
+			ScriptToContainer(highLightedItem.GetComponent<Script>(), EnemyScriptContainer);
 		}
 
 	}
