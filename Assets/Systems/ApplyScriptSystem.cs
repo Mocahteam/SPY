@@ -6,16 +6,17 @@ using System.Collections;
 public class ApplyScriptSystem : FSystem {
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(BoxCollider), typeof(MeshRenderer)), new AnyOfTags("Wall"));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position),typeof(HighLight),typeof(Direction), typeof(Animator), typeof(AudioSource), typeof(TriggerSensitive3D), typeof(CapsuleCollider)), new AnyOfTags("Player"));
-	private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position), typeof(MeshRenderer), typeof(AudioSource)));
+	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position), typeof(MeshRenderer), typeof(AudioSource), typeof(MeshFilter)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
 	private Family playerScriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image), typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
 	private Family scriptedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script), typeof(Position), typeof(Direction), typeof(HighLight), typeof(AudioSource)));
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(MeshRenderer), typeof(MeshFilter), typeof(AudioSource)), new AnyOfTags("Exit"));
-	private Family activationSlotGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position),typeof(Direction), typeof(BoxCollider)));
     private Family endpanel_f = FamilyManager.getFamily(new AllOfComponents(typeof(Image), typeof(AudioSource)), new AnyOfTags("endpanel"));
     private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
 	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script), typeof(Position), typeof(Direction), typeof(HighLight), typeof(AudioSource)), new AnyOfTags("Drone"));
-	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Direction), typeof(MeshRenderer), typeof(BoxCollider), typeof(Position), typeof(AudioSource)), new AnyOfTags("Door"));
+	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Direction), typeof(MeshRenderer), typeof(BoxCollider), typeof(Position), typeof(AudioSource)));
+	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position), typeof(BoxCollider), typeof(MeshRenderer), typeof(MeshFilter)));
+	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem), typeof(MeshRenderer)), new AnyOfTags("Coin"));
 	private GameObject endPanel;
 	private GameData gameData;
 
@@ -79,7 +80,7 @@ public class ApplyScriptSystem : FSystem {
 					case Action.ActionType.Wait:
 						break;
 					case Action.ActionType.Activate:
-						foreach( GameObject actGo in activableGO){
+						foreach( GameObject actGo in activableConsoleGO){
 							if(actGo.GetComponent<Position>().x == go.GetComponent<Position>().x && actGo.GetComponent<Position>().z == go.GetComponent<Position>().z){
 								actGo.GetComponent<AudioSource>().Play();
 								actGo.GetComponent<Activable>().isActivated = true;
@@ -110,7 +111,7 @@ public class ApplyScriptSystem : FSystem {
         }
 
         //Check Activations
-        foreach (GameObject activable in activableGO)
+        foreach (GameObject activable in activableConsoleGO)
         {
             if (activable.GetComponent<Activable>().isActivated && !activable.GetComponent<Activable>().isFullyActivated)
             {
@@ -124,7 +125,7 @@ public class ApplyScriptSystem : FSystem {
 	private void activate(GameObject go){
 		go.GetComponent<Activable>().isFullyActivated = true;
 		foreach(int id in go.GetComponent<Activable>().slotID){
-			foreach(GameObject slotGo in activationSlotGO){
+			foreach(GameObject slotGo in doorGO){
 				if(slotGo.GetComponent<ActivationSlot>().slotID == id){
 					switch(slotGo.GetComponent<ActivationSlot>().type){
 						case ActivationSlot.ActivationType.Destroy:
@@ -313,6 +314,33 @@ public class ApplyScriptSystem : FSystem {
 							}
 						}
 						break;
+					case 4:
+						for(int i = 1; i <= nextIf.range; i++){
+							foreach( GameObject go in activableConsoleGO){
+								if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
+									ifok = !nextIf.ifNot;
+								}
+							}
+						}
+						break;
+					case 5:
+						for(int i = 1; i <= nextIf.range; i++){
+							foreach( GameObject go in redDetectorGO){
+								if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
+									ifok = !nextIf.ifNot;
+								}
+							}
+						}
+						break;
+					case 6:
+						for(int i = 1; i <= nextIf.range; i++){
+							foreach( GameObject go in coinGO){
+								if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
+									ifok = !nextIf.ifNot;
+								}
+							}
+						}
+						break;				
 				}
 
 				if(ifok){
