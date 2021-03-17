@@ -15,7 +15,8 @@ public class ApplyScriptSystem : FSystem {
     private Family endpanel_f = FamilyManager.getFamily(new AllOfComponents(typeof(Image), typeof(AudioSource)), new AnyOfTags("endpanel"));
     private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
 	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script), typeof(Position), typeof(Direction), typeof(HighLight), typeof(AudioSource)), new AnyOfTags("Drone"));
-    private GameObject endPanel;
+	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Direction), typeof(MeshRenderer), typeof(BoxCollider), typeof(Position), typeof(AudioSource)), new AnyOfTags("Door"));
+	private GameObject endPanel;
 	private GameData gameData;
 
 	public ApplyScriptSystem(){
@@ -287,7 +288,7 @@ public class ApplyScriptSystem : FSystem {
 						break;
 					case 1:
 						for(int i = 1; i <= nextIf.range; i++){
-							foreach( GameObject go in droneGO){
+							foreach( GameObject go in doorGO){
 								if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
 									ifok = !nextIf.ifNot;
 								}
@@ -295,6 +296,15 @@ public class ApplyScriptSystem : FSystem {
 						}
 						break;
 					case 2:
+						for(int i = 1; i <= nextIf.range; i++){
+							foreach( GameObject go in droneGO){
+								if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
+									ifok = !nextIf.ifNot;
+								}
+							}
+						}
+						break;
+					case 3:
 						for(int i = 1; i <= nextIf.range; i++){
 							foreach( GameObject go in playerGO){
 								if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
