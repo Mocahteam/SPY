@@ -14,4 +14,24 @@ public class ApplyScriptSystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("ApplyScriptSystem", "applyScriptToPlayer", null);
 	}
 
+	public void applyIfEntityType()
+	{
+		MainLoop.callAppropriateSystemMethod ("ApplyScriptSystem", "applyIfEntityType", null);
+	}
+
+	public void incrementActionScript(Script script)
+	{
+		MainLoop.callAppropriateSystemMethod ("ApplyScriptSystem", "incrementActionScript", script);
+	}
+
+	public void invalidAllIf(Script script)
+	{
+		MainLoop.callAppropriateSystemMethod ("ApplyScriptSystem", "invalidAllIf", script);
+	}
+
+	public void invalidAllIf(Action action)
+	{
+		MainLoop.callAppropriateSystemMethod ("ApplyScriptSystem", "invalidAllIf", action);
+	}
+
 }
