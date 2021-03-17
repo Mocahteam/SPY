@@ -49,7 +49,7 @@ public abstract class ActionManipulator
 			if(child.GetComponent<UIActionType>().type == Action.ActionType.For){
 				Action forAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
                 forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
-				if(forAct.nbFor > 0 && child.transform.childCount > 1 && ContainerToActionList(forAct, child))
+				if(forAct.nbFor >= 0 && child.transform.childCount > 1 && ContainerToActionList(forAct, child))
 					l.Add(forAct);
 
 			}
