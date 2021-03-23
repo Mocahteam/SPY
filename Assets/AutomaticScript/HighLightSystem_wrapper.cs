@@ -14,9 +14,14 @@ public class HighLightSystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("HighLightSystem", "highLightItem", go);
 	}
 
-	public void unHighLightItem(System.Int32 id)
+	public void unHighLightItemUI(UnityEngine.GameObject go)
 	{
-		MainLoop.callAppropriateSystemMethod ("HighLightSystem", "unHighLightItem", id);
+		MainLoop.callAppropriateSystemMethod ("HighLightSystem", "unHighLightItemUI", go);
+	}
+
+	public void unHighLightItemWorld(UnityEngine.GameObject go)
+	{
+		MainLoop.callAppropriateSystemMethod ("HighLightSystem", "unHighLightItemWorld", go);
 	}
 
 }

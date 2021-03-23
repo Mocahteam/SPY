@@ -44,4 +44,24 @@ public class UISystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("UISystem", "closeDialogPanel", null);
 	}
 
+	public void reloadScene()
+	{
+		MainLoop.callAppropriateSystemMethod ("UISystem", "reloadScene", null);
+	}
+
+	public void returnToTitleScreen()
+	{
+		MainLoop.callAppropriateSystemMethod ("UISystem", "returnToTitleScreen", null);
+	}
+
+	public void nextLevel()
+	{
+		MainLoop.callAppropriateSystemMethod ("UISystem", "nextLevel", null);
+	}
+
+	public void retry()
+	{
+		MainLoop.callAppropriateSystemMethod ("UISystem", "retry", null);
+	}
+
 }

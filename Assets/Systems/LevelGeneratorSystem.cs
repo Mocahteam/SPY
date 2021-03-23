@@ -17,7 +17,7 @@ public class LevelGeneratorSystem : FSystem {
 	private List<List<int>> map;
 	private GameData gameData;
 
-	private bool historyIsInScript = false;
+	//private bool historyIsInScript = false;
 
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
@@ -32,6 +32,8 @@ public class LevelGeneratorSystem : FSystem {
 		//generateLevel6();
 
 	}
+
+	/*
 	public static void updateLimitFromActions(GameData gameData, Action action){
 		ActionManipulator.updateActionBlocLimit(gameData, action.actionType, -1);
 		if(action.actionType == Action.ActionType.For ||action.actionType == Action.ActionType.If){
@@ -52,19 +54,21 @@ public class LevelGeneratorSystem : FSystem {
 
 		}
 	}
+	*/
 
 	// Use to process your families.
+	/*
 	protected override void onProcess(int familiesUpdateCount) {
 		if (historyIsInScript == false){
 			//Debug.Log("on process");
 			Debug.Log("actionsHistory.count = "+gameData.actionsHistory.Count);
 			//get back history in player script
-			/*
+			//
 			Script scriptActions = new Script();
 			scriptActions.actions = gameData.actionsHistory;
 			scriptActions.currentAction = -1;
 			scriptActions.repeat = false;
-			*/
+			//
 			GameObject scriptComposer = playerScript.First();
 			DisplayActionsInContainer(gameData.actionsHistory, scriptComposer);
 			//remove from history
@@ -72,9 +76,9 @@ public class LevelGeneratorSystem : FSystem {
 			//history added to script ok
 			historyIsInScript = true;
 			}
-	}
+	}*/
 
-	
+	/*
 	private void generateLevel1(){
 		eraseMap();
 		map = new List<List<int>> {new List<int>{1,1,1,1,1},
@@ -245,7 +249,7 @@ public class LevelGeneratorSystem : FSystem {
 		createEntity(5,6,Direction.Dir.West,1, script, true);
 	*/
 
-
+	/*
 	private void generateLevel6(){
 		eraseMap();
 		map = new List<List<int>> {new List<int>{1,1,1,1,1,1,1,1},
@@ -267,7 +271,7 @@ public class LevelGeneratorSystem : FSystem {
 
 		gameData.actionBlocLimit = new List<int>() {1, 0, 1, 0, 0, 1, 1};
 	}
-
+	*/
 
 	private void generateMap(){
 		if (gameData.actionsHistory == null){
@@ -407,71 +411,7 @@ public class LevelGeneratorSystem : FSystem {
 		}
 	}
 
-	public void reloadScene(){
-		gameData.nbStep = 0;
-		gameData.totalActionBloc = 0;
-		gameData.totalStep = 0;
-		gameData.totalExecute = 0;
-		gameData.totalCoin = 0;
-		gameData.dialogMessage = new List<string>();
-		GameObjectManager.loadScene("MainScene");
-		Debug.Log("reload");
-	}
-
-	public void retry(){
-		gameData.nbStep = 0;
-		gameData.totalActionBloc = 0;
-		gameData.totalStep = 0;
-		gameData.totalExecute = 0;
-		gameData.totalCoin = 0;
-		
-		gameData.dialogMessage = new List<string>();
-		/*
-		List<Action> l = new List<Action>();
-		GameObject scriptComposer = GameObject.Find("ScriptContainer");
-		l = ActionManipulator.ScriptContainerToActionList(scriptComposer);
-		*/
-		GameObjectManager.loadScene("MainScene");
-		/*
-		//get back actions from history
-		Script scriptActions = new Script();
-		scriptActions.actions = gameData.actionsHistory;
-		scriptActions.currentAction = -1;
-		scriptActions.repeat = false;
-		GameObject scriptComposer = playerScript.First();
-		ActionManipulator.DisplayActionsInContainer(gameData.actionsHistory, scriptComposer);
-		*/
-		//playerGO.First().GetComponent<Script>().actions = gameData.actionsHistory;
-		//ActionManipulator.ScriptToContainer(scriptActions, scriptComposer);	
-		/*
-		Script scriptActions = new Script();
-		scriptActions.actions = l;
-		scriptActions.currentAction = 0;
-		scriptActions.repeat = false;
-		ActionManipulator.ScriptToContainer(scriptActions, scriptComposer);
-		*/
-
-		//GameObject endpanel = GameObject.Find("EndPanel");
-		//GameObjectManager.removeComponent<NewEnd>(endpanel);
-		//endpanel.SetActive(false);
-	}
-
-	public void returnToTitleScreen(){
-		gameData.nbStep = 0;
-		gameData.totalActionBloc = 0;
-		gameData.totalStep = 0;
-		gameData.totalExecute = 0;
-		gameData.totalCoin = 0;
-		gameData.dialogMessage = new List<string>();
-		GameObjectManager.loadScene("TitleScreen");
-	}
-
-	public void nextLevel(){
-		gameData.levelToLoad++;
-		reloadScene();
-		gameData.actionsHistory.Clear();
-	}
-
+	/*
 	public void levelToXML(string fileName){
 		XmlDocument doc = new XmlDocument();
 
@@ -629,7 +569,7 @@ public class LevelGeneratorSystem : FSystem {
 		}
 		return scriptElement;
 	}
-
+	
 	public XmlElement actionToXML(XmlDocument doc, Action action){
 		XmlElement actionElement = doc.CreateElement("action");
 
@@ -665,6 +605,7 @@ public class LevelGeneratorSystem : FSystem {
 
 		return actionElement;
 	}
+	*/
 
 	public void XmlToLevel(string fileName){
 

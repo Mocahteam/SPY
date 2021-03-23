@@ -990,8 +990,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289485}
-        m_TargetAssemblyTypeName: LevelGeneratorSystem_wrapper, Assembly-CSharp
+      - m_Target: {fileID: 727289482}
+        m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: reloadScene
         m_Mode: 1
         m_Arguments:
@@ -2487,8 +2487,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289485}
-        m_TargetAssemblyTypeName: LevelGeneratorSystem_wrapper, Assembly-CSharp
+      - m_Target: {fileID: 727289482}
+        m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: nextLevel
         m_Mode: 1
         m_Arguments:
@@ -3568,6 +3568,7 @@ GameObject:
   - component: {fileID: 727289486}
   - component: {fileID: 727289487}
   - component: {fileID: 727289488}
+  - component: {fileID: 727289484}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -3632,6 +3633,10 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: DetectorGeneratorSystem, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: DetectorGeneratorSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: ActionBlocSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: ActionBlocSystem
     _pause: 0
   _lateUpdateSystemDescriptions:
   - _typeAssemblyQualifiedName: StepSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
@@ -3723,6 +3728,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad72a101f2a34a743af3a93b2bc90278, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &727289484
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 727289475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f06bc6c44acea4da07838ec9e26b59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &727289485
@@ -5644,8 +5661,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289485}
-        m_TargetAssemblyTypeName: LevelGeneratorSystem_wrapper, Assembly-CSharp
+      - m_Target: {fileID: 727289482}
+        m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: returnToTitleScreen
         m_Mode: 1
         m_Arguments:
@@ -7527,8 +7544,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289485}
-        m_TargetAssemblyTypeName: LevelGeneratorSystem_wrapper, Assembly-CSharp
+      - m_Target: {fileID: 727289482}
+        m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: retry
         m_Mode: 1
         m_Arguments:
@@ -8570,8 +8587,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289485}
-        m_TargetAssemblyTypeName: LevelGeneratorSystem_wrapper, Assembly-CSharp
+      - m_Target: {fileID: 727289482}
+        m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: returnToTitleScreen
         m_Mode: 1
         m_Arguments:

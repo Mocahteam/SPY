@@ -107,56 +107,54 @@ public abstract class ActionManipulator
 	public static Color getBaseColor(){
 		return baseColor;
 	}
-
+	
 	//used in highlightsys & levelgeneratorsys
 	public static GameObject ActionToContainer(Action action, bool nextAction, bool sensitive = false, bool isExecutableScriptDisplay = false){
 		GameObject obj =  null;
 		int i = 0;
+		GameObject prefab = null;
 		switch(action.actionType){
 			case Action.ActionType.Forward:
-				obj = Object.Instantiate (Resources.Load ("Prefabs/ForwardActionBloc")) as GameObject;
-				if(nextAction){
-					baseColor = obj.GetComponent<Image>().color;
-					obj.GetComponent<Image>().color = Color.yellow;
-				}
+				prefab = Resources.Load("Prefabs/ForwardActionBloc") as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().prefab = prefab;
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("Forward");
 				break;
 			case Action.ActionType.TurnLeft:
-				obj = Object.Instantiate (Resources.Load ("Prefabs/TurnLeftActionBloc Variant")) as GameObject;
-				if(nextAction){
-					baseColor = obj.GetComponent<Image>().color;
-					obj.GetComponent<Image>().color = Color.yellow;
-				}
+				prefab = Resources.Load ("Prefabs/TurnLeftActionBloc Variant") as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().prefab = prefab;
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("TurnLeft");
 				break;
 			case Action.ActionType.TurnRight:
-				obj = Object.Instantiate (Resources.Load ("Prefabs/TurnRightActionBloc Variant")) as GameObject;
-				if(nextAction){
-					baseColor = obj.GetComponent<Image>().color;
-					obj.GetComponent<Image>().color = Color.yellow;
-				}
+				prefab = Resources.Load ("Prefabs/TurnRightActionBloc Variant") as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().prefab = prefab;
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("TurnRight");
 				break;
 			case Action.ActionType.TurnBack:
-				obj = Object.Instantiate (Resources.Load ("Prefabs/TurnBackActionBloc Variant")) as GameObject;
-				if(nextAction){
-					baseColor = obj.GetComponent<Image>().color;
-					obj.GetComponent<Image>().color = Color.yellow;
-				}
+				prefab = Resources.Load ("Prefabs/TurnBackActionBloc Variant") as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().prefab = prefab;
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("TurnBack");
 				break;
 			case Action.ActionType.Wait:
-				obj = Object.Instantiate (Resources.Load ("Prefabs/WaitActionBloc Variant")) as GameObject;
-				if(nextAction){
-					baseColor = obj.GetComponent<Image>().color;
-					obj.GetComponent<Image>().color = Color.yellow;
-				}
+				prefab = Resources.Load ("Prefabs/WaitActionBloc Variant")  as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().prefab = prefab;
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("Wait");
 				break;
 			case Action.ActionType.Activate:
-				obj = Object.Instantiate (Resources.Load ("Prefabs/ActivateActionBloc Variant")) as GameObject;
-				if(nextAction){
-					baseColor = obj.GetComponent<Image>().color;
-					obj.GetComponent<Image>().color = Color.yellow;
-				}
+				prefab = Resources.Load ("Prefabs/ActivateActionBloc Variant") as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().prefab = prefab;
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("Activate");
 				break;
 			case Action.ActionType.For:
-				obj = Object.Instantiate (Resources.Load ("Prefabs/ForBloc")) as GameObject;
+				prefab = Resources.Load ("Prefabs/ForBloc") as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().prefab = prefab;
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("For");
 				if(isExecutableScriptDisplay){ //executable for loop display
 					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = action.nbFor.ToString();
 					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = true;
@@ -177,7 +175,10 @@ public abstract class ActionManipulator
 				}
 				break;
 			case Action.ActionType.If:
-				obj = Object.Instantiate (Resources.Load ("Prefabs/IfDetectBloc")) as GameObject;
+				prefab = Resources.Load ("Prefabs/IfDetectBloc") as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().prefab = prefab;
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("If");
 
 				obj.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value = action.ifEntityType;
 				obj.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value = action.ifDirection;
@@ -215,13 +216,16 @@ public abstract class ActionManipulator
 				}
 				break;
 		}
+		action.target = obj;
+		if(action.actionType != Action.ActionType.For && action.actionType != Action.ActionType.If)
+			GameObjectManager.bind(obj);
 		if(!isExecutableScriptDisplay){ //execution script display
-			Object.Destroy(obj.GetComponent<PointerSensitive>());	
+			Object.Destroy(obj.GetComponent<PointerSensitive>());
 		}	
 		return obj;
 	}
 
-
+/*
 	//used in levelgeneratorsys & uisys
 	public static void updateActionBlocLimit(GameData gameData, Action.ActionType type, int nb){
 		switch(type){
@@ -253,4 +257,5 @@ public abstract class ActionManipulator
 				break;
 		}
 	}
+	*/
 }

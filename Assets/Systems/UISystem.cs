@@ -125,7 +125,10 @@ public class UISystem : FSystem {
 		//Drag
 		foreach( GameObject go in panelPointedGO){
 			if(Input.GetMouseButtonDown(0)){
-				itemDragged = Object.Instantiate<GameObject>(go.GetComponent<ElementToDrag>().actionPrefab, go.transform);
+				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
+				itemDragged = Object.Instantiate<GameObject>(prefab, go.transform);
+				itemDragged.GetComponent<UIActionType>().prefab = prefab;
+				itemDragged.GetComponent<UIActionType>().linkedTo = go;
 				GameObjectManager.bind(itemDragged);
 				itemDragged.GetComponent<Image>().raycastTarget = false;
 				break;
@@ -191,7 +194,9 @@ public class UISystem : FSystem {
 				itemDragged.GetComponent<Image>().raycastTarget = true;
 
 				//update limit bloc
-				ActionManipulator.updateActionBlocLimit(gameData,itemDragged.GetComponent<UIActionType>().type, -1);
+				GameObjectManager.addComponent<Dropped>(itemDragged);
+				//Object.Destroy(actionGO.GetComponent<Available>());
+				//ActionManipulator.updateActionBlocLimit(gameData,itemDragged.GetComponent<UIActionType>().type, -1);
 
 				if(itemDragged.GetComponent<UITypeContainer>() != null){
 					itemDragged.GetComponent<Image>().raycastTarget = true;
@@ -252,7 +257,9 @@ public class UISystem : FSystem {
 	private void destroyScript(Transform go, bool refund = false){
 		//refund blocActionLimit
 		if(refund && go.gameObject.GetComponent<UIActionType>() != null){
-			ActionManipulator.updateActionBlocLimit(gameData, go.gameObject.GetComponent<UIActionType>().type, 1);
+			GameObjectManager.removeComponent<Dropped>(go.gameObject);
+			//Object.Destroy(go.GetComponent<Available>());
+			//ActionManipulator.updateActionBlocLimit(gameData, go.gameObject.GetComponent<UIActionType>().type, 1);
 		}
 		else if(go.gameObject.GetComponent<UIActionType>() != null){
 			gameData.totalActionBloc++;
@@ -310,5 +317,70 @@ public class UISystem : FSystem {
 		nDialog = 0;
 		gameData.dialogMessage = new List<string>();;
 		GameObjectManager.setGameObjectState(dialogPanel, false);
+	}
+
+	public void reloadScene(){
+		gameData.nbStep = 0;
+		gameData.totalActionBloc = 0;
+		gameData.totalStep = 0;
+		gameData.totalExecute = 0;
+		gameData.totalCoin = 0;
+		gameData.dialogMessage = new List<string>();
+		GameObjectManager.loadScene("MainScene");
+		Debug.Log("reload");
+	}
+
+	public void returnToTitleScreen(){
+		gameData.nbStep = 0;
+		gameData.totalActionBloc = 0;
+		gameData.totalStep = 0;
+		gameData.totalExecute = 0;
+		gameData.totalCoin = 0;
+		gameData.dialogMessage = new List<string>();
+		GameObjectManager.loadScene("TitleScreen");
+	}
+
+	public void nextLevel(){
+		gameData.levelToLoad++;
+		reloadScene();
+		gameData.actionsHistory.Clear();
+	}
+
+	public void retry(){
+		gameData.nbStep = 0;
+		gameData.totalActionBloc = 0;
+		gameData.totalStep = 0;
+		gameData.totalExecute = 0;
+		gameData.totalCoin = 0;
+		
+		gameData.dialogMessage = new List<string>();
+		/*
+		List<Action> l = new List<Action>();
+		GameObject scriptComposer = GameObject.Find("ScriptContainer");
+		l = ActionManipulator.ScriptContainerToActionList(scriptComposer);
+		*/
+		GameObjectManager.loadScene("MainScene");
+		/*
+		//get back actions from history
+		Script scriptActions = new Script();
+		scriptActions.actions = gameData.actionsHistory;
+		scriptActions.currentAction = -1;
+		scriptActions.repeat = false;
+		GameObject scriptComposer = playerScript.First();
+		ActionManipulator.DisplayActionsInContainer(gameData.actionsHistory, scriptComposer);
+		*/
+		//playerGO.First().GetComponent<Script>().actions = gameData.actionsHistory;
+		//ActionManipulator.ScriptToContainer(scriptActions, scriptComposer);	
+		/*
+		Script scriptActions = new Script();
+		scriptActions.actions = l;
+		scriptActions.currentAction = 0;
+		scriptActions.repeat = false;
+		ActionManipulator.ScriptToContainer(scriptActions, scriptComposer);
+		*/
+
+		//GameObject endpanel = GameObject.Find("EndPanel");
+		//GameObjectManager.removeComponent<NewEnd>(endpanel);
+		//endpanel.SetActive(false);
 	}
 }

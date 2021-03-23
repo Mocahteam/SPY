@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
-public class Action {
+using UnityEngine;
+
+public class Action : MonoBehaviour{
 	public int currentAction;
+	public GameObject target;
 	public List<Action> actions;
 	public enum ActionType {Forward, TurnLeft, TurnRight, Wait, Activate, If, IfElse, For, While, Detect, TurnBack};
 	public ActionType actionType;  
