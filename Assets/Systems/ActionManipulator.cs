@@ -119,42 +119,55 @@ public abstract class ActionManipulator
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().prefab = prefab;
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("Forward");
+				action.target = obj;
+				GameObjectManager.bind(obj);
 				break;
 			case Action.ActionType.TurnLeft:
 				prefab = Resources.Load ("Prefabs/TurnLeftActionBloc Variant") as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().prefab = prefab;
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("TurnLeft");
+				action.target = obj;
+				GameObjectManager.bind(obj);
 				break;
 			case Action.ActionType.TurnRight:
 				prefab = Resources.Load ("Prefabs/TurnRightActionBloc Variant") as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().prefab = prefab;
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("TurnRight");
+				action.target = obj;
+				GameObjectManager.bind(obj);
 				break;
 			case Action.ActionType.TurnBack:
 				prefab = Resources.Load ("Prefabs/TurnBackActionBloc Variant") as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().prefab = prefab;
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("TurnBack");
+				action.target = obj;
+				GameObjectManager.bind(obj);
 				break;
 			case Action.ActionType.Wait:
 				prefab = Resources.Load ("Prefabs/WaitActionBloc Variant")  as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().prefab = prefab;
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("Wait");
+				action.target = obj;
+				GameObjectManager.bind(obj);
 				break;
 			case Action.ActionType.Activate:
 				prefab = Resources.Load ("Prefabs/ActivateActionBloc Variant") as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().prefab = prefab;
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("Activate");
+				action.target = obj;
+				GameObjectManager.bind(obj);
 				break;
 			case Action.ActionType.For:
 				prefab = Resources.Load ("Prefabs/ForBloc") as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().prefab = prefab;
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("For");
+				GameObjectManager.bind(obj);
 				if(isExecutableScriptDisplay){ //executable for loop display
 					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = action.nbFor.ToString();
 					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = true;
@@ -179,6 +192,7 @@ public abstract class ActionManipulator
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().prefab = prefab;
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("If");
+				GameObjectManager.bind(obj);
 
 				obj.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value = action.ifEntityType;
 				obj.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value = action.ifDirection;
@@ -216,9 +230,7 @@ public abstract class ActionManipulator
 				}
 				break;
 		}
-		action.target = obj;
-		if(action.actionType != Action.ActionType.For && action.actionType != Action.ActionType.If)
-			GameObjectManager.bind(obj);
+		//if(action.actionType != Action.ActionType.For && action.actionType != Action.ActionType.If)
 		if(!isExecutableScriptDisplay){ //execution script display
 			Object.Destroy(obj.GetComponent<PointerSensitive>());
 		}	

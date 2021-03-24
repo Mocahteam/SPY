@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Action : MonoBehaviour{
+public class Action{
 	public int currentAction;
 	public GameObject target;
 	public List<Action> actions;

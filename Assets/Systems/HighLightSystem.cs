@@ -102,6 +102,7 @@ public class HighLightSystem : FSystem {
 		//If click on highlighted item and item has a script, then show script in the 2nd script window
 		if(highLightedItem && Input.GetMouseButtonDown(0) && highLightedItem.GetComponent<Script>()){
 			foreach (Transform child in EnemyScriptContainer.transform) {
+				//if(child.GetComponent<UIActionType>().type != Action.ActionType.If)
 				GameObjectManager.unbind(child.gameObject);
 				GameObject.Destroy(child.gameObject);
 			}
@@ -133,17 +134,9 @@ public class HighLightSystem : FSystem {
 	}
 
 	public void unHighLightItemUI(GameObject go){
-		Debug.Log("------unhighlight");
-		//var prefab = PrefabUtility.GetCorrespondingObjectFromSource(go);
+		//Debug.Log("------unhighlight");
 		GameObject prefab = go.GetComponent<UIActionType>().prefab;
 		go.GetComponent<Image>().color = prefab.GetComponent<Image>().color;
-		/*
-		Debug.Log("test1");
-		if (go.GetComponent<HighLight>().basecolor != new Color32(0,0,0,1)){
-			Debug.Log("test2");
-			go.GetComponent<Image>().color = go.GetComponent<HighLight>().basecolor;				
-		}
-		*/
 	}
 
 	public void unHighLightItemWorld(GameObject go){

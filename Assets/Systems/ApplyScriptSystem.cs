@@ -239,6 +239,11 @@ public class ApplyScriptSystem : FSystem {
 	public void applyScriptToPlayer(){
 		foreach( GameObject go in playerGO){
 			go.GetComponent<Script>().actions = ActionManipulator.ScriptContainerToActionList(playerScriptContainer_f.First());
+			foreach(Action act in go.GetComponent<Script>().actions){
+				Debug.Log("action : "+act.actionType.ToString());
+				//Debug.Log(act.actions.Count);
+			}
+			//Debug.Log("actions = "+go.GetComponent<Script>().actions);
             go.GetComponent<Script>().currentAction = 0;
             gameData.nbStep = getNbStep(go.GetComponent<Script>());
 		}
@@ -257,7 +262,6 @@ public class ApplyScriptSystem : FSystem {
 			int nbStepPlayer = 0;
 			invalidAllIf(scripted.GetComponent<Script>());
 			Action nextIf = getCurrentIf(scripted);
-
 			while(nextIf != null && !endOfScript(scripted)){
 				//Check if ok
 				bool ifok = nextIf.ifNot;
@@ -276,7 +280,6 @@ public class ApplyScriptSystem : FSystem {
 						vec = new Vector2(-1,0);
 						break;
 				}
-
 				switch(nextIf.ifEntityType){
 					case 0:
 						for(int i = 1; i <= nextIf.range; i++){
@@ -370,13 +373,17 @@ public class ApplyScriptSystem : FSystem {
 	}
 
 	public static Action getCurrentIf(GameObject go){
+		//Debug.Log("currentif "+go.name);
 		if(go.GetComponent<Script>().actions == null || go.GetComponent<Script>().currentAction >= go.GetComponent<Script>().actions.Count){
+			//Debug.Log("if condition1 : "+go.GetComponent<Script>().actions);
+			//Debug.Log("if condition2 : "+go.GetComponent<Script>().currentAction + " >= "+go.GetComponent<Script>().actions.Count);
 			return null;
 		}
 		Action action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction]; 
 		//end when a pure action is found
 		while(!(action.actionType == Action.ActionType.Forward || action.actionType == Action.ActionType.TurnLeft || action.actionType == Action.ActionType.TurnRight
 				|| action.actionType == Action.ActionType.Wait || action.actionType == Action.ActionType.Activate || action.actionType == Action.ActionType.TurnBack)){
+			//Debug.Log("while");
 			//Case For / If
 			if(action.actionType == Action.ActionType.For){
 				if(action.currentAction >= action.actions.Count){
@@ -386,10 +393,14 @@ public class ApplyScriptSystem : FSystem {
 			}
 			if(action.actionType == Action.ActionType.If){
 				if(action.currentAction == 0 && !action.ifValid){
+					//Debug.Log("if &&");
+					//Debug.Log(action);
+					//Debug.Log(action.actions.Count);
 					return action;
 				}
 				else{
 					if(action.currentAction >= action.actions.Count){
+						//Debug.Log("else if");
 						return null;
 					}
 					action = action.actions[action.currentAction];
@@ -404,20 +415,27 @@ public class ApplyScriptSystem : FSystem {
 	public static void incrementActionScript(Script script){
 		Debug.Log("i = "+script.currentAction);
 		Action action = script.actions[script.currentAction];
-		if(incrementAction(action)){
-			if(action.target != null && action.target.GetComponent<HighLight>() == null){
-				Debug.Log("add highlight");
-				if(action.actionType != Action.ActionType.For)
-					GameObjectManager.addComponent<HighLight>(action.target);
-				else{
-					//GameObjectManager.addComponent<HighLight>(action.actions[0].target);
-				}
-			}	
+		Debug.Log("1 -- target : " + ((action.target !=null)? action.target.name:"null"));
+		bool res = incrementAction(action);
+		Debug.Log("res = "+res); 
+		if(res){
+			//remove highlight of the previous action	
 			if (script.currentAction > 0 && script.actions[script.currentAction-1].target.GetComponent<HighLight>() != null){
-				Debug.Log("remove highlight");
+				Debug.Log("remove highlight1");
 				GameObjectManager.removeComponent<HighLight>(script.actions[script.currentAction-1].target);					
 			}
-			
+			//add highlight to current action
+			if(action.target != null && action.target.GetComponent<HighLight>() == null){
+				Debug.Log("add highlight1");
+				//if(action.actionType != Action.ActionType.For && action.actionType != Action.ActionType.If)
+				GameObjectManager.addComponent<HighLight>(action.target);
+				//if(action.actionType == Action.ActionType.For || action.actionType == Action.ActionType.If)
+				//	GameObjectManager.addComponent<HighLight>(action.actions[0].target);
+				//else{
+					//GameObjectManager.addComponent<HighLight>(action.actions[0].target);
+				//}
+			}
+
 			/*
 			else if(script.currentAction > 0 && script.actions[script.currentAction-1].target != null && script.actions[script.currentAction-1].target.GetComponent<HighLight>()){
 				Debug.Log("remove highlight");
@@ -426,21 +444,25 @@ public class ApplyScriptSystem : FSystem {
 			*/
 			Debug.Log("++");
 			script.currentAction++;
+
 			/*
 			if(script.actions[script.currentAction].target != null && script.actions[script.currentAction].target.GetComponent<HighLight>() != null){
 				Debug.Log("remove highlight");
 				//GameObjectManager.removeComponent<HighLight>(script.actions[script.currentAction].target);
 			}*/
 		}
-		/*
-		if(script.actions[script.currentAction].target.GetComponent<HighLight>() != null && script.currentAction == script.actions.Count){ //last highlight
-			Debug.Log("BOO");
-			//GameObjectManager.removeComponent<HighLight>(script.actions[script.currentAction].target);
-		}
-		*/
+		
 		if(script.currentAction >= script.actions.Count && script.repeat)
 			script.currentAction = 0;
-		
+		/*
+		Debug.Log("boo : "+script.currentAction+"/"+script.actions.Count);
+		Debug.Log((action.target.GetComponent<HighLight>() == null)? "null": "pas null");
+		//remove last highlight
+		if(action.target.GetComponent<HighLight>() != null && script.currentAction == script.actions.Count){ 
+			Debug.Log("BOO");
+			GameObjectManager.removeComponent<HighLight>(action.target);
+		}
+		*/
 
 	}
 
@@ -448,14 +470,24 @@ public class ApplyScriptSystem : FSystem {
 		if(act.actionType == Action.ActionType.Forward || act.actionType == Action.ActionType.TurnLeft || act.actionType == Action.ActionType.TurnRight
 			|| act.actionType == Action.ActionType.Wait || act.actionType == Action.ActionType.Activate || act.actionType == Action.ActionType.TurnBack){
 			if(act.target != null && act.target.GetComponent<HighLight>() != null){
-				Debug.Log("AAAAAAA");
+				Debug.Log("target : " + act.target.name);
+				Debug.Log("remove highlight2");
 				GameObjectManager.removeComponent(act.target.GetComponent<HighLight>());
 			}
 			return true;
-		}				
+		}
 		//Case For
 		else if(act.actionType == Action.ActionType.For){
 			if(incrementAction(act.actions[act.currentAction]))
+				if(act.currentAction > 0 && act.actions[act.currentAction-1].target != null && act.actions[act.currentAction-1].target.GetComponent<HighLight>() != null){
+					Debug.Log("remove highlight22");
+					GameObjectManager.removeComponent<HighLight>(act.actions[act.currentAction-1].target);
+				}
+				if(act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() == null){
+					Debug.Log("highlight target : " + act.actions[act.currentAction].target.name);
+					Debug.Log("add highlight2");
+					GameObjectManager.addComponent<HighLight>(act.actions[act.currentAction].target);
+				}
 				act.currentAction++;
 
 			if(act.currentAction >= act.actions.Count){
@@ -466,10 +498,20 @@ public class ApplyScriptSystem : FSystem {
 					act.currentAction = 0;
 					act.currentFor = 0;
 					if(act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() != null){
-						Debug.Log("AAAAAAAAAAAAAAAAA");
-						//GameObjectManager.removeComponent(act.actions[act.currentAction].target.GetComponent<HighLight>());
+						Debug.Log("target : " + act.actions[act.currentAction].target.name);
+						Debug.Log("remove highlight3 end for");
+						GameObjectManager.removeComponent(act.actions[act.currentAction].target.GetComponent<HighLight>());
 					}
+					Debug.Log("true for");
 					return true;
+				}
+				//another loop
+				else{
+					//remove highlight on last actions of for
+					if(act.actions[act.actions.Count-1].target != null && act.actions[act.actions.Count-1].target.GetComponent<HighLight>() != null){
+						Debug.Log("TEST");
+						GameObjectManager.removeComponent<HighLight>(act.actions[act.actions.Count-1].target);
+					}
 				}
 			}
 		}
@@ -480,18 +522,20 @@ public class ApplyScriptSystem : FSystem {
 			if(act.currentAction >= act.actions.Count){
 				act.currentAction = 0;
 				if(act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() != null){
+					Debug.Log("target : " + act.actions[act.currentAction].target.name);
+					Debug.Log("remove highlight4 end if");
 					GameObjectManager.removeComponent(act.actions[act.currentAction].target.GetComponent<HighLight>());
 				}
 					
 				return true;
 			}
 		}
-
+		/*
 		if(act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() == null){
-			Debug.Log("add highlight 2");
+			Debug.Log("highlight target : " + act.actions[act.currentAction].target.name);
+			Debug.Log("add highlight2");
 			GameObjectManager.addComponent<HighLight>(act.actions[act.currentAction].target);
-		}
-			
+		}*/
 		return false;
 	}
 
