@@ -173,7 +173,10 @@ public abstract class ActionManipulator
 					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = true;
 				}
 				else{ //execution script display
-					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (action.currentFor +1).ToString() + " / " + action.nbFor.ToString();
+					if (action.nbFor > 0)
+						obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (action.currentFor +1).ToString() + " / " + action.nbFor.ToString();
+					else
+						obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (action.currentFor).ToString() + " / " + action.nbFor.ToString();
 					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = false;
 					Object.Destroy(obj.GetComponent<UITypeContainer>());
 				}
