@@ -50,7 +50,10 @@ public class ApplyScriptSystem : FSystem {
 				|| action.actionType == Action.ActionType.Wait || action.actionType == Action.ActionType.Activate || action.actionType == Action.ActionType.TurnBack)){
 			//Case For / If
 			if(action.actionType == Action.ActionType.For || action.actionType == Action.ActionType.If){
-				action = action.actions[action.currentAction];
+				if(action.actions.Count != 0)
+					action = action.actions[action.currentAction];
+				else
+					action = go.GetComponent<Script>().actions[go.GetComponent<Script>().currentAction+1]; 
 			}
 		}
 		return action;
@@ -394,18 +397,19 @@ public class ApplyScriptSystem : FSystem {
 				action = action.actions[action.currentAction];
 			}
 			if(action.actionType == Action.ActionType.If){
-				if(action.currentAction == 0 && !action.ifValid){
-					//Debug.Log("if &&");
-					//Debug.Log(action);
-					//Debug.Log(action.actions.Count);
+				if(action.actions.Count != 0 && action.currentAction == 0 && !action.ifValid){
+					Debug.Log("if &&");
+					Debug.Log(action.actionType);
+					Debug.Log(action.actions.Count);
 					return action;
 				}
 				else{
 					if(action.currentAction >= action.actions.Count){
-						//Debug.Log("else if");
+						Debug.Log("else if");
 						return null;
 					}
 					action = action.actions[action.currentAction];
+					Debug.Log("action "+action);
 				}
 			}
 		}
@@ -419,6 +423,7 @@ public class ApplyScriptSystem : FSystem {
 		Action action = script.actions[script.currentAction];
 		//Debug.Log("1 -- target : " + ((action.target !=null)? action.target.name:"null"));
 		if(incrementAction(action)){
+			Debug.Log("increment action");
 			//remove highlight of previous action	
 			if (script.currentAction > 0 && script.actions[script.currentAction-1].target != null &&
 			script.actions[script.currentAction-1].target.GetComponent<HighLight>() != null){
@@ -480,7 +485,7 @@ public class ApplyScriptSystem : FSystem {
 		}
 		//Case For
 		else if(act.actionType == Action.ActionType.For){
-			if(incrementAction(act.actions[act.currentAction])){
+			if(act.actions.Count != 0 && incrementAction(act.actions[act.currentAction])){
 				//if not end of for
 				if(act.currentFor < act.nbFor){
 					//new loop display
@@ -517,6 +522,7 @@ public class ApplyScriptSystem : FSystem {
 						Debug.Log("remove highlight3 end for");
 						GameObjectManager.removeComponent(act.actions[act.actions.Count-1].target.GetComponent<HighLight>());
 					}*/
+					Debug.Log("true");
 					return true;
 				}
 				
@@ -538,15 +544,27 @@ public class ApplyScriptSystem : FSystem {
 			}
 		}
 		else if(act.actionType == Action.ActionType.If){
-			if(incrementAction(act.actions[act.currentAction]))
+			if(act.actions.Count != 0 && incrementAction(act.actions[act.currentAction])){
+				//remove highlight of previous action in current loop				
+				if(act.currentAction > 0 && act.actions[act.currentAction-1].target != null && act.actions[act.currentAction-1].target.GetComponent<HighLight>() != null){
+					GameObjectManager.removeComponent<HighLight>(act.actions[act.currentAction-1].target);
+				}
+				//add highlight to current action in current loop
+				if(act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() == null){
+					GameObjectManager.addComponent<HighLight>(act.actions[act.currentAction].target);
+				}
 				act.currentAction++;
+			}
+				
 			
 			if(act.currentAction >= act.actions.Count){
 				act.currentAction = 0;
-				if(act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() != null){
+				if(act.actions.Count != 0 && act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() != null){
+					/*
 					Debug.Log("target : " + act.actions[act.currentAction].target.name);
 					Debug.Log("remove highlight4 end if");
 					GameObjectManager.removeComponent(act.actions[act.currentAction].target.GetComponent<HighLight>());
+					*/
 				}
 					
 				return true;

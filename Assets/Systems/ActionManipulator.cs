@@ -49,9 +49,10 @@ public abstract class ActionManipulator
 			if(child.GetComponent<UIActionType>().type == Action.ActionType.For){
 				Action forAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
                 forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
-				if(forAct.nbFor >= 0 && child.transform.childCount > 1 && ContainerToActionList(forAct, child))
+				if(forAct.nbFor >= 0 && ContainerToActionList(forAct, child)){
+					Debug.Log("add for");
 					l.Add(forAct);
-
+				}
 			}
 			else if(child.GetComponent<UIActionType>().type == Action.ActionType.If){
 				Action IfAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
@@ -60,7 +61,7 @@ public abstract class ActionManipulator
 				IfAct.range = int.Parse(child.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text);
 				IfAct.ifValid = false;
 				IfAct.ifNot = (child.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1);
-				if(child.transform.childCount > 1 && ContainerToActionList(IfAct, child))
+				if(ContainerToActionList(IfAct, child))
 					l.Add(IfAct);
 
 			}
@@ -72,34 +73,44 @@ public abstract class ActionManipulator
 	}
 
 	public static bool ContainerToActionList(Action act, GameObject obj){
-
+		Debug.Log("ContainerToActionList");
 		bool nonEmpty = false;
-		for(int i = 1; i < obj.transform.childCount; i++){
+		for(int i = 0; i < obj.transform.childCount; i++){
+			Debug.Log("for");
 			GameObject child = obj.transform.GetChild(i).gameObject;
-			if(child.GetComponent<UIActionType>().type == Action.ActionType.For){
-				Action forAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
-				forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
-				if(forAct.nbFor > 0 && child.transform.childCount > 1 && ContainerToActionList(forAct, child)){
-					ActionManipulator.addAction(act, forAct);
-					nonEmpty = true;
+			if (child.GetComponent<UIActionType>() != null){
+				if(child.GetComponent<UIActionType>().type == Action.ActionType.For){
+					Debug.Log("if for");
+					Action forAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
+					forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
+					if(forAct.nbFor >= 0 && ContainerToActionList(forAct, child)){
+						Debug.Log("add action");
+						ActionManipulator.addAction(act, forAct);
+						nonEmpty = true;
+					}
 				}
-			}
-			else if(child.GetComponent<UIActionType>().type == Action.ActionType.If){
-				Action IfAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
-				IfAct.ifEntityType = child.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value;
-				IfAct.ifDirection = child.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value;
-				IfAct.range = int.Parse(child.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text);
-				IfAct.ifValid = false;
-				IfAct.ifNot = (child.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1);
-				if(child.transform.childCount > 1 && ContainerToActionList(IfAct, child)){
-					ActionManipulator.addAction(act, IfAct);
-					nonEmpty = true;
+				else if(child.GetComponent<UIActionType>().type == Action.ActionType.If){
+					Action IfAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
+					IfAct.ifEntityType = child.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value;
+					IfAct.ifDirection = child.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value;
+					IfAct.range = int.Parse(child.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text);
+					IfAct.ifValid = false;
+					IfAct.ifNot = (child.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1);
+					if(ContainerToActionList(IfAct, child)){
+						ActionManipulator.addAction(act, IfAct);
+						nonEmpty = true;
+					}
 				}
+				else{
+					Debug.Log("else");
+					ActionManipulator.addAction(act, ActionManipulator.createAction(child.GetComponent<UIActionType>().type));
+					nonEmpty = true;
+				}		
 			}
 			else{
-				ActionManipulator.addAction(act, ActionManipulator.createAction(child.GetComponent<UIActionType>().type));
 				nonEmpty = true;
 			}
+
 		}
 		return nonEmpty;
 	}
