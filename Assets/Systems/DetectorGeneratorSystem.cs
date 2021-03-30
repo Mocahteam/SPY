@@ -3,9 +3,9 @@ using FYFY;
 
 public class DetectorGeneratorSystem : FSystem {
 
-	private Family ennemyGO = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Script), typeof(Direction), typeof(Position), typeof(HighLight), typeof(AudioSource)), new AnyOfTags("Drone"));
-	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody), typeof(BoxCollider), typeof(MeshRenderer)));
-	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(BoxCollider), typeof(MeshRenderer)), new AnyOfTags("Wall"));
+	private Family ennemyGO = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Script), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
+	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody)));
+	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
     private Family gameLoaded_f = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private GameData gameData;

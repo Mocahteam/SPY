@@ -6,19 +6,20 @@ using System.Collections;
 using TMPro;
 
 public class ApplyScriptSystem : FSystem {
-	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(BoxCollider), typeof(MeshRenderer)), new AnyOfTags("Wall"));
+	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position)), new AnyOfTags("Player"));
-	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position), typeof(MeshRenderer), typeof(AudioSource), typeof(MeshFilter)));
+	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
-	private Family playerScriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image), typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
-	private Family scriptedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script), typeof(Position), typeof(Direction), typeof(HighLight), typeof(AudioSource)));
-	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(MeshRenderer), typeof(MeshFilter), typeof(AudioSource)), new AnyOfTags("Exit"));
+	private Family playerScriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
+	private Family scriptedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script), typeof(Position), typeof(Direction)));
+	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
     private Family endpanel_f = FamilyManager.getFamily(new AllOfComponents(typeof(Image), typeof(AudioSource)), new AnyOfTags("endpanel"));
     private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
-	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script), typeof(Position), typeof(Direction), typeof(HighLight), typeof(AudioSource)), new AnyOfTags("Drone"));
-	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Direction), typeof(MeshRenderer), typeof(BoxCollider), typeof(Position), typeof(AudioSource)));
-	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position), typeof(BoxCollider), typeof(MeshRenderer), typeof(MeshFilter)));
-	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem), typeof(MeshRenderer)), new AnyOfTags("Coin"));
+	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script), typeof(Position)), new AnyOfTags("Drone"));
+	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
+	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
+	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem)), new AnyOfTags("Coin"));
+	private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(HighLight)));
 	private GameObject endPanel;
 	private GameData gameData;
 
@@ -94,7 +95,22 @@ public class ApplyScriptSystem : FSystem {
 						break;
 				}
 				incrementActionScript(go.GetComponent<Script>());
+			
 			}
+			/*
+			else{
+				Debug.Log("fin du script");
+
+			}
+			Debug.Log("end on new step");
+			foreach(GameObject highlightedGO in highlightedItems){
+				Debug.Log("foreach");
+				Debug.Log("hilightedGO = "+highlightedGO.name);
+				if (highlightedGO.GetComponent<HighLight>() != null){
+					Debug.Log("remove");
+					GameObjectManager.removeComponent<HighLight>(highlightedGO);
+				}
+			}*/
 		}
         //Check if the player is on the end of the level
         int nbEnd = 0;
@@ -430,18 +446,21 @@ public class ApplyScriptSystem : FSystem {
 				Debug.Log("remove highlight1");
 				GameObjectManager.removeComponent<HighLight>(script.actions[script.currentAction-1].target);					
 			}
-			//add highlight to current action
-			if(action.target != null && action.target.GetComponent<HighLight>() == null){
-				Debug.Log("add highlight1");
-				//if(action.actionType != Action.ActionType.For && action.actionType != Action.ActionType.If)
-				GameObjectManager.addComponent<HighLight>(action.target);
-				//if(action.actionType == Action.ActionType.For || action.actionType == Action.ActionType.If)
-				//	GameObjectManager.addComponent<HighLight>(action.actions[0].target);
-				//else{
-					//GameObjectManager.addComponent<HighLight>(action.actions[0].target);
-				//}
+			if (action.target != null && action.target.GetComponent<UIActionType>().type != Action.ActionType.For &&
+			action.target.GetComponent<UIActionType>().type != Action.ActionType.If){
+				//add highlight to current action
+				if(action.target != null && action.target.GetComponent<HighLight>() == null){
+					Debug.Log("add highlight1");
+					Debug.Log(action.target.GetComponent<UIActionType>().type);
+					//if(action.actionType != Action.ActionType.For && action.actionType != Action.ActionType.If)
+					GameObjectManager.addComponent<HighLight>(action.target);
+					//if(action.actionType == Action.ActionType.For || action.actionType == Action.ActionType.If)
+					//	GameObjectManager.addComponent<HighLight>(action.actions[0].target);
+					//else{
+						//GameObjectManager.addComponent<HighLight>(action.actions[0].target);
+					//}
+				}
 			}
-
 			/*
 			else if(script.currentAction > 0 && script.actions[script.currentAction-1].target != null && script.actions[script.currentAction-1].target.GetComponent<HighLight>()){
 				Debug.Log("remove highlight");
@@ -463,6 +482,7 @@ public class ApplyScriptSystem : FSystem {
 		/*
 		Debug.Log("boo : "+script.currentAction+"/"+script.actions.Count);
 		Debug.Log((action.target.GetComponent<HighLight>() == null)? "null": "pas null");
+		Debug.Log(action.target.name);
 		//remove last highlight
 		if(action.target.GetComponent<HighLight>() != null && script.currentAction == script.actions.Count){ 
 			Debug.Log("BOO");
@@ -487,11 +507,13 @@ public class ApplyScriptSystem : FSystem {
 		else if(act.actionType == Action.ActionType.For){
 			if(act.actions.Count != 0 && incrementAction(act.actions[act.currentAction])){
 				//if not end of for
-				if(act.currentFor < act.nbFor){
+				if(act.currentFor < act.nbFor && act.target != null){
 					//new loop display
-					act.actions[act.currentAction].target.transform.parent.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text =
+					act.target.transform.GetComponentInChildren<TMP_InputField>().text =
 					(act.currentFor +1).ToString() + " / " + act.nbFor.ToString();
 				}
+				if(act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<UIActionType>().type != Action.ActionType.For)
+
 				//remove highlight of last action in previous loop
 				if(act.currentFor > 0 && act.currentFor <= act.nbFor && act.actions.Count > 1 &&
 				 act.actions[act.actions.Count-1].target != null && act.actions[act.actions.Count-1].target.GetComponent<HighLight>() != null){
@@ -501,10 +523,14 @@ public class ApplyScriptSystem : FSystem {
 				if(act.currentAction > 0 && act.actions[act.currentAction-1].target != null && act.actions[act.currentAction-1].target.GetComponent<HighLight>() != null){
 					GameObjectManager.removeComponent<HighLight>(act.actions[act.currentAction-1].target);
 				}
-				//add highlight to current action in current loop
-				if(act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() == null){
-					GameObjectManager.addComponent<HighLight>(act.actions[act.currentAction].target);
+				if (act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<UIActionType>().type != Action.ActionType.For &&
+				act.actions[act.currentAction].target.GetComponent<UIActionType>().type != Action.ActionType.If){
+					//add highlight to current action in current loop
+					if(act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() == null){
+						GameObjectManager.addComponent<HighLight>(act.actions[act.currentAction].target);
+					}					
 				}
+
 				act.currentAction++;
 			}
 			//another loop
@@ -549,9 +575,12 @@ public class ApplyScriptSystem : FSystem {
 				if(act.currentAction > 0 && act.actions[act.currentAction-1].target != null && act.actions[act.currentAction-1].target.GetComponent<HighLight>() != null){
 					GameObjectManager.removeComponent<HighLight>(act.actions[act.currentAction-1].target);
 				}
-				//add highlight to current action in current loop
-				if(act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() == null){
-					GameObjectManager.addComponent<HighLight>(act.actions[act.currentAction].target);
+				if (act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<UIActionType>().type != Action.ActionType.For &&
+				act.actions[act.currentAction].target.GetComponent<UIActionType>().type != Action.ActionType.If){
+					//add highlight to current action in current loop}
+					if(act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() == null){
+						GameObjectManager.addComponent<HighLight>(act.actions[act.currentAction].target);
+					}
 				}
 				act.currentAction++;
 			}
@@ -559,13 +588,13 @@ public class ApplyScriptSystem : FSystem {
 			
 			if(act.currentAction >= act.actions.Count){
 				act.currentAction = 0;
-				if(act.actions.Count != 0 && act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() != null){
+				//if(act.actions.Count != 0 && act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<HighLight>() != null){
 					/*
 					Debug.Log("target : " + act.actions[act.currentAction].target.name);
 					Debug.Log("remove highlight4 end if");
 					GameObjectManager.removeComponent(act.actions[act.currentAction].target.GetComponent<HighLight>());
 					*/
-				}
+				//}
 					
 				return true;
 			}

@@ -4,6 +4,7 @@ using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
+using System;
 
 public class UISystem : FSystem {
 	// Use this to update member variables when system pause. 
@@ -11,10 +12,10 @@ public class UISystem : FSystem {
 	private GameObject actionContainer;
 	private Family panelPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ElementToDrag), typeof(Image)));
 	private Family playerScriptPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType), typeof(Image)));
-	private Family playerScriptPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image)));
+	private Family playerScriptPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
     private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF));
     private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-	private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image), typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
+	private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
     private GameObject itemDragged;
 	private GameObject positionBar;
 	private GameData gameData;
@@ -126,7 +127,11 @@ public class UISystem : FSystem {
 		foreach( GameObject go in panelPointedGO){
 			if(Input.GetMouseButtonDown(0)){
 				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
-				itemDragged = Object.Instantiate<GameObject>(prefab, go.transform);
+				itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, go.transform);
+				if (itemDragged.GetComponent<UIActionType>().type == Action.ActionType.For){
+					TMP_InputField input = itemDragged.GetComponentInChildren<TMP_InputField>();
+					input.onEndEdit.AddListener(delegate{onlyPositiveInteger(input);});
+				} 
 				itemDragged.GetComponent<UIActionType>().prefab = prefab;
 				itemDragged.GetComponent<UIActionType>().linkedTo = go;
 				GameObjectManager.bind(itemDragged);
@@ -194,7 +199,7 @@ public class UISystem : FSystem {
 				itemDragged.GetComponent<Image>().raycastTarget = true;
 
 				//update limit bloc
-				GameObjectManager.addComponent<Dropped>(itemDragged);
+				//GameObjectManager.addComponent<Dropped>(itemDragged);
 				//Object.Destroy(actionGO.GetComponent<Available>());
 				//ActionManipulator.updateActionBlocLimit(gameData,itemDragged.GetComponent<UIActionType>().type, -1);
 
@@ -208,11 +213,11 @@ public class UISystem : FSystem {
 			else if( itemDragged != null){
 				
 				for(int i = 0; i < itemDragged.transform.childCount;i++){
-					Object.Destroy(itemDragged.transform.GetChild(i).gameObject);
+					UnityEngine.Object.Destroy(itemDragged.transform.GetChild(i).gameObject);
 				}
 				itemDragged.transform.DetachChildren();
 				GameObjectManager.unbind(itemDragged);
-				Object.Destroy(itemDragged);
+				UnityEngine.Object.Destroy(itemDragged);
 				
 			}
 			itemDragged = null;
@@ -257,7 +262,7 @@ public class UISystem : FSystem {
 	private void destroyScript(Transform go, bool refund = false){
 		//refund blocActionLimit
 		if(refund && go.gameObject.GetComponent<UIActionType>() != null){
-			GameObjectManager.removeComponent<Dropped>(go.gameObject);
+			//GameObjectManager.removeComponent<Dropped>(go.gameObject);
 			//Object.Destroy(go.GetComponent<Available>());
 			//ActionManipulator.updateActionBlocLimit(gameData, go.gameObject.GetComponent<UIActionType>().type, 1);
 		}
@@ -271,11 +276,11 @@ public class UISystem : FSystem {
 			}
 		}
 		for(int i = 0; i < go.transform.childCount;i++){
-			Object.Destroy(go.transform.GetChild(i).gameObject);
+			UnityEngine.Object.Destroy(go.transform.GetChild(i).gameObject);
 		}
 		go.transform.DetachChildren();
 		GameObjectManager.unbind(go.gameObject);
-		Object.Destroy(go.gameObject);
+		UnityEngine.Object.Destroy(go.gameObject);
 	}
 
 	public void showDialogPanel(){
@@ -382,5 +387,11 @@ public class UISystem : FSystem {
 		//GameObject endpanel = GameObject.Find("EndPanel");
 		//GameObjectManager.removeComponent<NewEnd>(endpanel);
 		//endpanel.SetActive(false);
+	}
+
+	public void onlyPositiveInteger(TMP_InputField input){
+		if(Int32.Parse(input.text) < 0 ){
+			input.text = "0";
+		}
 	}
 }

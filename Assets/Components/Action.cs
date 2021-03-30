@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
+using System;
+[Serializable]
 public class Action{
 	public int currentAction;
+	public Color baseColor;
 	public GameObject target;
 	public List<Action> actions;
 	public enum ActionType {Forward, TurnLeft, TurnRight, Wait, Activate, If, IfElse, For, While, Detect, TurnBack};

@@ -5,6 +5,9 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEditor;
+using TMPro;
+using System;
+using UnityEngine.Events;
 
 public class HighLightSystem : FSystem {
 	// Use this to update member variables when system pause. 
@@ -16,7 +19,7 @@ public class HighLightSystem : FSystem {
 	private Family nonhighlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(HighLight)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
 
-	private Family enemyScriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image)), new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
+	private Family enemyScriptContainer_f = FamilyManager.getFamily(new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
 
 	private GameObject EnemyScriptContainer;
 
@@ -72,8 +75,11 @@ public class HighLightSystem : FSystem {
 				//}
 				
 			}
-			else
-				ActionManipulator.ActionToContainer(action, false).transform.SetParent(container.transform, sensitive);
+			else{
+				obj = ActionManipulator.ActionToContainer(action, false);
+				obj.transform.SetParent(container.transform, sensitive);
+			}
+			GameObjectManager.bind(obj);
 			i++;
 		}
 

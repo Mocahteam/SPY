@@ -5,13 +5,14 @@ using FYFY_plugins.TriggerManager;
 
 public class CameraSystem : FSystem {
 	//private Family cameraGO = FamilyManager.getFamily(new AllOfComponents(typeof(CameraComponent)));
-	private Family cameraGO = FamilyManager.getFamily(new AllOfComponents(typeof(CameraComponent), typeof(Camera), typeof(AudioListener), typeof(Transform)), new AnyOfTags("MainCamera"));
+	private Family cameraGO = FamilyManager.getFamily(new AllOfComponents(typeof(CameraComponent)), new AnyOfTags("MainCamera"));
 
-	private Family UIGO = FamilyManager.getFamily(new AnyOfComponents(typeof(UIActionType), typeof(UITypeContainer), typeof(ElementToDrag)),
-													new AllOfComponents(typeof(PointerOver)));
+	//private Family UIGO = FamilyManager.getFamily(new AnyOfComponents(typeof(UIActionType), typeof(UITypeContainer), typeof(ElementToDrag)),
+	//												new AllOfComponents(typeof(PointerOver)));
 
 	//private Family playerGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Script)), new AnyOfTags("Player"));
-	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position),typeof(HighLight),typeof(Direction), typeof(Animator), typeof(AudioSource), typeof(TriggerSensitive3D), typeof(CapsuleCollider)), new AnyOfTags("Player"));
+	
+	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
 	private GameData gameData;
 
 	public CameraSystem()
