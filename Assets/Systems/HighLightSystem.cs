@@ -60,7 +60,7 @@ public class HighLightSystem : FSystem {
 
 	//Show the script in the container
 	public static void ScriptToContainer(Script script, GameObject container, bool sensitive = false){
-		Debug.Log("SCRIPTtocontainer");
+		//Debug.Log("SCRIPTtocontainer");
 		int i = 0;
 		GameObject obj;
 		foreach(Action action in script.actions){

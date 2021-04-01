@@ -8,7 +8,7 @@ using TMPro;
 
 public abstract class ActionManipulator
 {
-	private static Color baseColor;
+	//private static Color baseColor;
    	public static void addAction(Script script, Action actionToAdd){
 		if(script.actions == null)
 			script.actions = new List<Action>();
@@ -73,18 +73,18 @@ public abstract class ActionManipulator
 	}
 
 	public static bool ContainerToActionList(Action act, GameObject obj){
-		Debug.Log("ContainerToActionList");
+		//Debug.Log("ContainerToActionList");
 		bool nonEmpty = false;
 		for(int i = 0; i < obj.transform.childCount; i++){
-			Debug.Log("for");
+			//Debug.Log("for");
 			GameObject child = obj.transform.GetChild(i).gameObject;
 			if (child.GetComponent<UIActionType>() != null){
 				if(child.GetComponent<UIActionType>().type == Action.ActionType.For){
-					Debug.Log("if for");
+					//Debug.Log("if for");
 					Action forAct = ActionManipulator.createAction(child.GetComponent<UIActionType>().type);
 					forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
 					if(forAct.nbFor >= 0 && ContainerToActionList(forAct, child)){
-						Debug.Log("add action");
+						//Debug.Log("add action");
 						ActionManipulator.addAction(act, forAct);
 						nonEmpty = true;
 					}
@@ -102,7 +102,7 @@ public abstract class ActionManipulator
 					}
 				}
 				else{
-					Debug.Log("else");
+					//Debug.Log("else");
 					ActionManipulator.addAction(act, ActionManipulator.createAction(child.GetComponent<UIActionType>().type));
 					nonEmpty = true;
 				}		
@@ -114,10 +114,10 @@ public abstract class ActionManipulator
 		}
 		return nonEmpty;
 	}
-
+	/*
 	public static Color getBaseColor(){
 		return baseColor;
-	}
+	}*/
 	//used in highlightsys & levelgeneratorsys
 	public static GameObject ActionToContainer(Action action, bool nextAction, bool sensitive = false, bool isExecutableScriptDisplay = false){
 		GameObject obj =  null;
@@ -158,9 +158,9 @@ public abstract class ActionManipulator
 				prefab = Resources.Load ("Prefabs/ForBloc") as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("For");
-				TMP_InputField input = obj.GetComponentInChildren<TMP_InputField>();
-				Debug.Log("aaaaaaaaaaaaaa");
-				Debug.Log(input.name);
+				//TMP_InputField input = obj.GetComponentInChildren<TMP_InputField>();
+				//Debug.Log("aaaaaaaaaaaaaa");
+				//Debug.Log(input.name);
 				if(isExecutableScriptDisplay){ //executable for loop display
 					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = action.nbFor.ToString();
 					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = true;
@@ -225,7 +225,7 @@ public abstract class ActionManipulator
 				break;
 		}
 		obj.GetComponent<UIActionType>().prefab = prefab;
-		Debug.Log("actionmanipulator obj "+obj.name);
+		//Debug.Log("actionmanipulator obj "+obj.name);
 		action.target = obj;
 		//if(action.actionType != Action.ActionType.For && action.actionType != Action.ActionType.If)
 		if(!isExecutableScriptDisplay){ //execution script display

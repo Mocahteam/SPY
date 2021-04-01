@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using FYFY;
+using System.Threading.Tasks;
 
 public class StepSystem : FSystem {
 
     private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+    private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(HighLight)));
 
     private float timeStepCpt;
 	private static float timeStep = 1.5f;
@@ -16,12 +18,23 @@ public class StepSystem : FSystem {
         newStep_f.addEntryCallback(onNewStep);
     }
 
-    private void onNewStep(GameObject go)
+    private async void onNewStep(GameObject go)
     {
         GameObjectManager.removeComponent(go.GetComponent<NewStep>());
         timeStepCpt = timeStep;
         gameData.nbStep--;
         Debug.Log("StepSystem End");
+        if(gameData.nbStep == 0){
+            Debug.Log("end");
+            await Task.Delay((int)timeStep*1000);
+            Debug.Log("step+1");
+            foreach(GameObject highlightedGO in highlightedItems){
+                if (highlightedGO.GetComponent<HighLight>() != null){
+                    Debug.Log("remove");
+                    GameObjectManager.removeComponent<HighLight>(highlightedGO);
+                }
+            }
+        }
     }
 
     // Use to process your families.
@@ -39,7 +52,5 @@ public class StepSystem : FSystem {
                 timeStepCpt -= Time.deltaTime;
 		}
 	}
-    public static float getTimeStep(){
-        return timeStep;
-    }
+
 }
