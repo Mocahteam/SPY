@@ -20,8 +20,11 @@ public class ApplyScriptSystem : FSystem {
 	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
 	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem)), new AnyOfTags("Coin"));
 	//private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(HighLight)));
+	private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(HighLight)));
+
 	private GameObject endPanel;
 	private GameData gameData;
+	//private static Action previousAction;
 
 	public ApplyScriptSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
@@ -94,7 +97,7 @@ public class ApplyScriptSystem : FSystem {
 						}
 						break;
 				}
-				incrementActionScript(go.GetComponent<Script>());
+				incrementActionScript(go.GetComponent<Script>(), highlightedItems);
 			
 			}
 			/*
@@ -375,7 +378,7 @@ public class ApplyScriptSystem : FSystem {
 				}
 				else{
 					nextIf.currentAction = nextIf.actions.Count-1;
-					incrementActionScript(scripted.GetComponent<Script>());
+					incrementActionScript(scripted.GetComponent<Script>(), highlightedItems);
 				}
 				nextIf = getCurrentIf(scripted);
 			}
@@ -432,54 +435,101 @@ public class ApplyScriptSystem : FSystem {
 
 		return null;
 	}
+/*
+	public static Action getPreviousAction(Action lastAction){
+		Action previousAction = null;
+		bool stopwhile = false;
+		while(stopwhile != true && (lastAction.actionType == Action.ActionType.For || lastAction.actionType == Action.ActionType.If)){
+			Debug.Log("while");
+			if(lastAction.actions.Count != 0 && (lastAction.actions[lastAction.actions.Count-1].actionType == Action.ActionType.For ||
+			lastAction.actions[lastAction.actions.Count-1].actionType == Action.ActionType.If)){
+				lastAction = lastAction.actions[lastAction.actions.Count-1];
+				Debug.Log("while if");						
+			}
+			else
+				stopwhile = true;
+		}
+		if(lastAction.actions != null && lastAction.actions.Count != 0){
+			previousAction = lastAction.actions[lastAction.actions.Count-1];
+			Debug.Log("if previousAction = "+previousAction.actionType);						
+		}
+		else if (lastAction.actionType != Action.ActionType.For && lastAction.actionType != Action.ActionType.If){
+			previousAction = lastAction;
+			Debug.Log("else previousAction = "+previousAction.actionType);
+		}
+		return previousAction;
+	}
+*/
 
 	//increment the iterator of the action script
-	public static void incrementActionScript(Script script){
+	public static void incrementActionScript(Script script, Family highlightedItems){
+		//remove highlight of previous action
+		foreach(GameObject highlightedGO in highlightedItems){
+			if (highlightedGO != null && highlightedGO.GetComponent<HighLight>() != null){
+				Debug.Log("remove");
+				GameObjectManager.removeComponent<HighLight>(highlightedGO);
+			}
+		}
+
+		
 		//Debug.Log("i = "+script.currentAction);
 		Action action = script.actions[script.currentAction];
+		/*
+		if (previousAction != null && previousAction.target.GetComponent<HighLight>() != null && !previousAction.Equals(action)){
+			GameObjectManager.removeComponent<HighLight>(previousAction.target);
+
+		}*/
+		/*
 		//Debug.Log("1 -- target : " + ((action.target !=null)? action.target.name:"null"));
 		Action previousAction = null;
 		Debug.Log("init previousAction");
 		Debug.Log(script.currentAction);
-		if (script.currentAction != 0){
-			if (script.actions[script.currentAction-1].actionType == Action.ActionType.For || script.actions[script.currentAction-1].actionType == Action.ActionType.If){
-				Debug.Log("if2");	
-				Action lastAction = script.actions[script.currentAction-1];
-				bool stopwhile = false;
-				while(stopwhile != true && (lastAction.actionType == Action.ActionType.For || lastAction.actionType == Action.ActionType.If)){
-					Debug.Log("while");
-					if(lastAction.actions.Count != 0 && (lastAction.actions[lastAction.actions.Count-1].actionType == Action.ActionType.For ||
-					lastAction.actions[lastAction.actions.Count-1].actionType == Action.ActionType.If)){
-						lastAction = lastAction.actions[lastAction.actions.Count-1];
-						Debug.Log("while if");						
-					}
-					else
-						stopwhile = true;
-				}
-				if(lastAction.actions.Count != 0){
-					previousAction = lastAction.actions[lastAction.actions.Count-1];
-					Debug.Log("if previousAction = "+previousAction.actionType);						
-				}
-				else if (lastAction.actionType != Action.ActionType.For && lastAction.actionType != Action.ActionType.If){
-					previousAction = lastAction;
-					Debug.Log("else previousAction = "+previousAction.actionType);
+		bool notfirstaction = (script.currentAction!=0)?true:false;
+		bool firstactionandloop = (script.actions[script.currentAction].actions != null)?true:false;
+		bool previousActionIsLoop = false;
+		Action lastAction = null;
+		if (notfirstaction){
+			previousActionIsLoop = (script.actions[script.currentAction-1].actions != null)?true:false;
+			if(previousActionIsLoop)
+				lastAction = script.actions[script.currentAction-1];
+		}
+		else if(firstactionandloop){
+			Action ifforaction = script.actions[script.currentAction];
+			Debug.Log("ifforaction = "+ifforaction);
+			if(ifforaction.currentAction != 0 && ifforaction.actions != null && ifforaction.actions.Count != 0){
+				previousActionIsLoop = (ifforaction.actions[ifforaction.currentAction-1].actions != null)?true:false;
+			}
+
+		}
+
+		if(previousActionIsLoop){
+			Debug.Log("if2");	
+			lastAction = script.actions[script.currentAction-1];
+			previousAction = getPreviousAction(lastAction);
+		}
+		/*
+		else if(script.actions[script.currentAction].actions.Count != 0){
+			Action ifforaction = script.actions[script.currentAction];
+			if(ifforaction.currentAction != 0){
+				if (ifforaction.actions[ifforaction.currentAction-1].actionType == Action.ActionType.For || ifforaction.actions[ifforaction.currentAction-1].actionType == Action.ActionType.If){
 				}
 			}
-		}
+		}*/
 		
 		/*
 		if (script.currentAction > 0)
 			previousAction = script.actions[script.currentAction-1];
 		*/
 
-		if(incrementAction(action, previousAction)){
+		if(incrementAction(action)){
 			Debug.Log("increment action");
+			/*
 			//remove highlight of previous action	
 			if (script.currentAction > 0 && script.actions[script.currentAction-1].target != null &&
 			script.actions[script.currentAction-1].target.GetComponent<HighLight>() != null){
 				//Debug.Log("remove highlight1");
 				GameObjectManager.removeComponent<HighLight>(script.actions[script.currentAction-1].target);					
-			}
+			}*/
 			if (action.target != null && action.target.GetComponent<UIActionType>().type != Action.ActionType.For &&
 			action.target.GetComponent<UIActionType>().type != Action.ActionType.If){
 				//add highlight to current action
@@ -529,13 +579,15 @@ public class ApplyScriptSystem : FSystem {
 
 	}
 
-    public static bool incrementAction(Action act, Action previousAction = null){
+    public static bool incrementAction(Action act){
+		/*
 		Debug.Log("previousAction = "+ ((previousAction == null)? "null":previousAction.target.name));
 		//remove highlight of previous action if previous action = for or if
 		if(previousAction != null && previousAction.target.GetComponent<HighLight>() != null){
 			Debug.Log("remove highlight previous action");
 			GameObjectManager.removeComponent<HighLight>(previousAction.target);					
 		}
+		*/
 		if(act.actionType == Action.ActionType.Forward || act.actionType == Action.ActionType.TurnLeft || act.actionType == Action.ActionType.TurnRight
 			|| act.actionType == Action.ActionType.Wait || act.actionType == Action.ActionType.Activate || act.actionType == Action.ActionType.TurnBack){
 			/*
@@ -563,7 +615,7 @@ public class ApplyScriptSystem : FSystem {
 				previousAction = act.actions[act.currentAction-1];
 			}*/
 
-			if(act.actions.Count != 0 && incrementAction(act.actions[act.currentAction], previousAction)){
+			if(act.actions.Count != 0 && incrementAction(act.actions[act.currentAction])){
 				//if not end of for
 				if(act.currentFor < act.nbFor && act.target != null){
 					//new loop display
@@ -571,7 +623,7 @@ public class ApplyScriptSystem : FSystem {
 					(act.currentFor +1).ToString() + " / " + act.nbFor.ToString();
 				}
 				if(act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<UIActionType>().type != Action.ActionType.For)
-
+				/*
 				//remove highlight of last action in previous loop
 				if(act.currentFor > 0 && act.currentFor <= act.nbFor && act.actions.Count > 1 &&
 				 act.actions[act.actions.Count-1].target != null && act.actions[act.actions.Count-1].target.GetComponent<HighLight>() != null){
@@ -581,6 +633,7 @@ public class ApplyScriptSystem : FSystem {
 				if(act.currentAction > 0 && act.actions[act.currentAction-1].target != null && act.actions[act.currentAction-1].target.GetComponent<HighLight>() != null){
 					GameObjectManager.removeComponent<HighLight>(act.actions[act.currentAction-1].target);
 				}
+				*/
 				if (act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<UIActionType>().type != Action.ActionType.For &&
 				act.actions[act.currentAction].target.GetComponent<UIActionType>().type != Action.ActionType.If){
 					//add highlight to current action in current loop
@@ -641,11 +694,12 @@ public class ApplyScriptSystem : FSystem {
 			if (act.actions.Count != 0 && act.currentAction != 0){
 				previousAction = act.actions[act.currentAction-1];
 			}*/		
-			if(act.actions.Count != 0 && incrementAction(act.actions[act.currentAction], previousAction)){
+			if(act.actions.Count != 0 && incrementAction(act.actions[act.currentAction])){
+				/*
 				//remove highlight of previous action in current loop				
 				if(act.currentAction > 0 && act.actions[act.currentAction-1].target != null && act.actions[act.currentAction-1].target.GetComponent<HighLight>() != null){
 					GameObjectManager.removeComponent<HighLight>(act.actions[act.currentAction-1].target);
-				}
+				}*/
 				if (act.actions[act.currentAction].target != null && act.actions[act.currentAction].target.GetComponent<UIActionType>().type != Action.ActionType.For &&
 				act.actions[act.currentAction].target.GetComponent<UIActionType>().type != Action.ActionType.If){
 					//add highlight to current action in current loop}
