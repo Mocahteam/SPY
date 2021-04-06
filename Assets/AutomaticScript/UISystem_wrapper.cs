@@ -64,9 +64,4 @@ public class UISystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("UISystem", "retry", null);
 	}
 
-	public void onlyPositiveInteger(TMPro.TMP_InputField input)
-	{
-		MainLoop.callAppropriateSystemMethod ("UISystem", "onlyPositiveInteger", input);
-	}
-
 }

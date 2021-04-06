@@ -3569,6 +3569,7 @@ GameObject:
   - component: {fileID: 727289487}
   - component: {fileID: 727289488}
   - component: {fileID: 727289484}
+  - component: {fileID: 727289489}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -3637,6 +3638,10 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: ActionBlocSystem, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: ActionBlocSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: DragDropSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: DragDropSystem
     _pause: 0
   _lateUpdateSystemDescriptions:
   - _typeAssemblyQualifiedName: StepSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
@@ -3788,6 +3793,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dab4df2d4eaa94643973dd20f83de4b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &727289489
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 727289475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce219623fd11f964bb3c69bb63c7f640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &823399328

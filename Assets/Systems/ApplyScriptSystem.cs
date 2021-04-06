@@ -660,7 +660,7 @@ public class ApplyScriptSystem : FSystem {
 				//End of for
 				if(act.currentFor >= act.nbFor){
 					act.currentAction = 0;
-					act.currentFor = 0;
+					act.currentFor = act.nbFor-1;
 					/*
 					Debug.Log("end for -- ");
 					if(act.actions.Count > 0 && act.actions[act.actions.Count-1].target != null && act.actions[act.actions.Count-1].target.GetComponent<HighLight>() != null){

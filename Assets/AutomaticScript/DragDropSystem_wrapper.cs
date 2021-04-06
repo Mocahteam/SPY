@@ -9,9 +9,9 @@ public class DragDropSystem_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
-	public void resetScript()
+	public void onlyPositiveInteger(TMPro.TMP_InputField input)
 	{
-		MainLoop.callAppropriateSystemMethod ("DragDropSystem", "resetScript", null);
+		MainLoop.callAppropriateSystemMethod ("DragDropSystem", "onlyPositiveInteger", input);
 	}
 
 }

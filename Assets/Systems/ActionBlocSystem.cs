@@ -1,5 +1,6 @@
 using UnityEngine;
 using FYFY;
+using UnityEngine.UI;
 
 public class ActionBlocSystem : FSystem {
 	// Use this to update member variables when system pause. 
@@ -10,10 +11,16 @@ public class ActionBlocSystem : FSystem {
 	
 	//dropped actions in playerscript container
 	private Family droppedActions = FamilyManager.getFamily(new AllOfComponents(typeof(Dropped), typeof(UIActionType)));
+	//private Family undroppedActions = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(Dropped)));
 	private GameData gameData;
-	private GameObject droppedItem;
+	//private GameObject droppedItemLinkedTo;
+	//private Action.ActionType droppedItemType = Action.ActionType.Undefined;
 	public ActionBlocSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
+		//availableActions.addExitCallback(hideActionBloc);
+		droppedActions.addEntryCallback(useAction);
+		//undroppedActions.addEntryCallback(unuseAction);
+		droppedActions.addExitCallback(unuseAction);
 	}
 	protected override void onPause(int currentFrame) {
 	}
@@ -25,9 +32,6 @@ public class ActionBlocSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-		//availableActions.addExitCallback(hideActionBloc);
-		droppedActions.addEntryCallback(useAction);
-		droppedActions.addExitCallback(unuseAction);
 	}
 
 	/*
@@ -37,8 +41,11 @@ public class ActionBlocSystem : FSystem {
 	}
 	*/
 	private void useAction(GameObject go){
-		droppedItem = go;
+		Debug.Log("useaction");
+		//droppedItem = go;
 		Action.ActionType type = go.GetComponent<UIActionType>().type;
+		//droppedItemType = type;
+		//droppedItemLinkedTo = go.GetComponent<UIActionType>().linkedTo;
 		int typeid = -1;
 		switch(type){
 			case Action.ActionType.Forward:
@@ -69,13 +76,18 @@ public class ActionBlocSystem : FSystem {
 				break;
 		}
 		if(typeid != -1){
+			Debug.Log("-1");
 			gameData.actionBlocLimit[typeid] -= 1;
 			if(gameData.actionBlocLimit[typeid] == 0){
+				Debug.Log("action not available");
+				GameObjectManager.removeComponent<Available>(go.GetComponent<UIActionType>().linkedTo);
+				go.GetComponent<UIActionType>().linkedTo.GetComponent<Image>().raycastTarget = false;
+				/*
 				foreach(GameObject actionGO in availableActions){
 					if (actionGO.GetComponent<ElementToDrag>().actionPrefab.name.Equals(go.name))
 						GameObjectManager.removeComponent<Available>(actionGO);
 						//Object.Destroy(go.GetComponent<Available>());
-				}
+				}*/
 				
 			}
 				
@@ -83,49 +95,55 @@ public class ActionBlocSystem : FSystem {
 	}
 	
 	private void unuseAction(int id){
-		if(droppedItem != null){
-			Action.ActionType type = droppedItem.GetComponent<UIActionType>().type;
-		int typeid = -1;
-		switch(type){
-			case Action.ActionType.Forward:
-				typeid = 0;
-				break;
-			case Action.ActionType.TurnLeft:
-				typeid = 1;
-				break;
-			case Action.ActionType.TurnRight:
-				typeid = 2;
-				break;
-			case Action.ActionType.Wait:
-				typeid = 3;
-				break;
-			case Action.ActionType.Activate:
-				typeid = 4;
-				break;
-			case Action.ActionType.For:
-				typeid = 5;
-				break;
-			case Action.ActionType.If:
-				typeid = 6;
-				break;
-			case Action.ActionType.TurnBack:
-				typeid = 7;
-				break;
-			default:
-				break;
-		}
-		if(typeid != -1){
-			gameData.actionBlocLimit[typeid] += 1;
-			if(gameData.actionBlocLimit[typeid] == 0){
-				foreach(GameObject actionGO in availableActions){
-					if (actionGO.GetComponent<ElementToDrag>().actionPrefab.name.Equals(droppedItem.name))
-						GameObjectManager.addComponent<Available>(actionGO);
-						//Object.Destroy(actionGO.GetComponent<Available>());
-				}
-				
+		Debug.Log("unuse action");
+		if(gameData.deletedItemLinkedTo != null){
+			Action.ActionType type = gameData.deletedItemLinkedTo.GetComponent<ElementToDrag>().actionPrefab.GetComponent<UIActionType>().type;
+			int typeid = -1;
+			switch(type){
+				case Action.ActionType.Forward:
+					typeid = 0;
+					break;
+				case Action.ActionType.TurnLeft:
+					typeid = 1;
+					break;
+				case Action.ActionType.TurnRight:
+					typeid = 2;
+					break;
+				case Action.ActionType.Wait:
+					typeid = 3;
+					break;
+				case Action.ActionType.Activate:
+					typeid = 4;
+					break;
+				case Action.ActionType.For:
+					typeid = 5;
+					break;
+				case Action.ActionType.If:
+					typeid = 6;
+					break;
+				case Action.ActionType.TurnBack:
+					typeid = 7;
+					break;
+				default:
+					break;
 			}
-		}
-		droppedItem = null;
+			if(typeid != -1){
+				Debug.Log("+1");
+				gameData.actionBlocLimit[typeid] += 1;
+				if(gameData.actionBlocLimit[typeid] > 0){
+					Debug.Log("action available");
+					GameObjectManager.addComponent<Available>(gameData.deletedItemLinkedTo);
+					gameData.deletedItemLinkedTo.GetComponent<Image>().raycastTarget = true;
+					/*
+					foreach(GameObject actionGO in availableActions){
+						if (actionGO.GetComponent<ElementToDrag>().actionPrefab.name.Equals(droppedItem.name))
+							GameObjectManager.addComponent<Available>(actionGO);
+							//Object.Destroy(actionGO.GetComponent<Available>());
+					}*/
+					
+				}
+			}
+			gameData.deletedItemLinkedTo = null;
 		}
 	}
 

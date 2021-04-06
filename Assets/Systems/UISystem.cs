@@ -10,45 +10,23 @@ public class UISystem : FSystem {
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 	private GameObject actionContainer;
-	private Family panelPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ElementToDrag), typeof(Image)));
-	private Family playerScriptPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType), typeof(Image)));
-	private Family playerScriptPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
     private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF));
     private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
-    private GameObject itemDragged;
-	private GameObject positionBar;
 	private GameData gameData;
 	private GameObject dialogPanel;
 	private int nDialog = 0;
-
-	private List<GameObject> limitTexts;
 
 	public UISystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.ButtonExec = GameObject.Find("ExecuteButton");
 		gameData.ButtonReset = GameObject.Find("ResetButton");
-		positionBar = GameObject.Find("PositionBar");
-		GameObjectManager.setGameObjectState(positionBar, false);
 		GameObject endPanel = GameObject.Find("EndPanel");
 		GameObjectManager.setGameObjectState(endPanel, false);
 		dialogPanel = GameObject.Find("DialogPanel");
 		GameObjectManager.setGameObjectState(dialogPanel, false);
-
-		//LimitTexts
-		limitTexts = new List<GameObject>();
-		limitTexts.Add(GameObject.Find("ForwardLimit"));
-		limitTexts.Add(GameObject.Find("TurnLeftLimit"));
-		limitTexts.Add(GameObject.Find("TurnRightLimit"));
-		limitTexts.Add(GameObject.Find("WaitLimit"));
-		limitTexts.Add(GameObject.Find("ActivateLimit"));
-		limitTexts.Add(GameObject.Find("ForLimit"));
-		limitTexts.Add(GameObject.Find("IfLimit"));
-		limitTexts.Add(GameObject.Find("TurnBackLimit"));
-
         requireEndPanel.addEntryCallback(displayEndPanel);
         displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
-
     }
 
     private void displayEndPanel(GameObject endPanel)
@@ -101,127 +79,7 @@ public class UISystem : FSystem {
 			gameData.ButtonExec.GetComponent<Button>().interactable = true;
 			gameData.ButtonReset.GetComponent<Button>().interactable = true;
 		}
-		bool isActive;
-		//Update LimitText
-		for(int i = 0; i < limitTexts.Count; i++){
-			if(gameData.actionBlocLimit[i] >= 0){
-				isActive = gameData.actionBlocLimit[i] == 0 ? false : true;
-				GameObjectManager.setGameObjectState(limitTexts[i].transform.parent.gameObject, isActive);
-				limitTexts[i].GetComponent<TextMeshProUGUI>().text = "Reste\n" + gameData.actionBlocLimit[i].ToString();
-				//desactivate actionBlocs
-				if(gameData.actionBlocLimit[i] == 0){
-					limitTexts[i].transform.parent.GetComponent<Image>().raycastTarget = false;
-				}
-				else{
-					limitTexts[i].transform.parent.GetComponent<Image>().raycastTarget = true;
-				}
-			}
 
-		}
-
-
-
-
-
-		//Drag
-		foreach( GameObject go in panelPointedGO){
-			if(Input.GetMouseButtonDown(0)){
-				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
-				itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, go.transform);
-				if (itemDragged.GetComponent<UIActionType>().type == Action.ActionType.For){
-					TMP_InputField input = itemDragged.GetComponentInChildren<TMP_InputField>();
-					input.onEndEdit.AddListener(delegate{onlyPositiveInteger(input);});
-				} 
-				itemDragged.GetComponent<UIActionType>().prefab = prefab;
-				itemDragged.GetComponent<UIActionType>().linkedTo = go;
-				GameObjectManager.bind(itemDragged);
-				itemDragged.GetComponent<Image>().raycastTarget = false;
-				break;
-			}
-		}
-
-		if(itemDragged != null){
-			itemDragged.transform.position = Input.mousePosition;
-		}
-
-		//Find the container with the last layer 
-		GameObject priority = null;
-		foreach( GameObject go in playerScriptPointed){
-			if(priority == null || priority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer)
-				priority = go;
-			
-		}
-
-		//PositionBar positioning
-		if(priority && itemDragged){
-			int start = 0;
-			if(priority.GetComponent<UITypeContainer>().type != UITypeContainer.Type.Script){
-				start++;
-			}
-			GameObjectManager.setGameObjectState(positionBar, true);
-			positionBar.transform.SetParent(priority.transform);
-			positionBar.transform.SetSiblingIndex(priority.transform.childCount-1);
-			for(int i = start; i < priority.transform.childCount; i++){
-				if(priority.transform.GetChild(i).gameObject != positionBar && Input.mousePosition.y > priority.transform.GetChild(i).position.y){
-					positionBar.transform.SetSiblingIndex(i);
-					break;
-				}
-			}
-		}
-		else{
-			positionBar.transform.SetParent(GameObject.Find("PlayerScript").transform);
-			GameObjectManager.setGameObjectState(positionBar, false);
-		}
-
-		//Delete
-		if(!itemDragged && Input.GetMouseButtonUp(1)){
-			priority = null;
-			foreach(GameObject go in playerScriptPointedGO){
-				if(!priority|| !go.GetComponent<UITypeContainer>() || priority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer){
-					priority = go;
-				}
-				
-			}
-			if(priority){
-				destroyScript(priority.transform, true);
-			}
-			priority = null;
-		}
-
-
-		//Drop
-		if(Input.GetMouseButtonUp(0)){
-			//Drop in script
-			if(priority != null && itemDragged != null){
-				itemDragged.transform.SetParent(priority.transform);
-				itemDragged.transform.localScale = new Vector3(1,1,1);
-				itemDragged.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
-				itemDragged.GetComponent<Image>().raycastTarget = true;
-
-				//update limit bloc
-				//GameObjectManager.addComponent<Dropped>(itemDragged);
-				//Object.Destroy(actionGO.GetComponent<Available>());
-				//ActionManipulator.updateActionBlocLimit(gameData,itemDragged.GetComponent<UIActionType>().type, -1);
-
-				if(itemDragged.GetComponent<UITypeContainer>() != null){
-					itemDragged.GetComponent<Image>().raycastTarget = true;
-					itemDragged.GetComponent<UITypeContainer>().layer = priority.GetComponent<UITypeContainer>().layer + 1;
-				}
-				GameObject.Find("PlayerScript").GetComponent<AudioSource>().Play();
-				refreshUI();
-			}
-			else if( itemDragged != null){
-				
-				for(int i = 0; i < itemDragged.transform.childCount;i++){
-					UnityEngine.Object.Destroy(itemDragged.transform.GetChild(i).gameObject);
-				}
-				itemDragged.transform.DetachChildren();
-				GameObjectManager.unbind(itemDragged);
-				UnityEngine.Object.Destroy(itemDragged);
-				
-			}
-			itemDragged = null;
-		}
 	}
 
 	//Refresh Containers size
@@ -389,9 +247,4 @@ public class UISystem : FSystem {
 		//endpanel.SetActive(false);
 	}
 
-	public void onlyPositiveInteger(TMP_InputField input){
-		if(Int32.Parse(input.text) < 0 ){
-			input.text = "0";
-		}
-	}
 }

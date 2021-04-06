@@ -19,11 +19,6 @@ public class ApplyScriptSystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("ApplyScriptSystem", "applyIfEntityType", null);
 	}
 
-	public void incrementActionScript(Script script)
-	{
-		MainLoop.callAppropriateSystemMethod ("ApplyScriptSystem", "incrementActionScript", script);
-	}
-
 	public void invalidAllIf(Script script)
 	{
 		MainLoop.callAppropriateSystemMethod ("ApplyScriptSystem", "invalidAllIf", script);
