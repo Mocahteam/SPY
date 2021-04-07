@@ -120,7 +120,9 @@ public class DragDropSystem : FSystem {
 		if(!itemDragged && Input.GetMouseButtonUp(1)){
 			priority = null;
 			foreach(GameObject go in playerScriptPointedGO){
-				if(!priority|| !go.GetComponent<UITypeContainer>() || priority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer){
+				if(!priority || !go.GetComponent<UITypeContainer>() ||
+				priority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer){
+				//(priority.GetComponent<UITypeContainer>() != null && priority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer)){
 					priority = go;
 				}
 				
@@ -177,7 +179,7 @@ public class DragDropSystem : FSystem {
 	private void destroyScript(Transform go, bool refund = false){
 		//refund blocActionLimit
 		if(go.gameObject.GetComponent<UIActionType>() != null){
-			gameData.deletedItemLinkedTo = go.GetComponent<UIActionType>().linkedTo;
+			gameData.deletedItemLinkedTo.Add(go.GetComponent<UIActionType>().linkedTo);
 			if(!refund)
 				gameData.totalActionBloc++;
 		}

@@ -97,53 +97,57 @@ public class ActionBlocSystem : FSystem {
 	private void unuseAction(int id){
 		Debug.Log("unuse action");
 		if(gameData.deletedItemLinkedTo != null){
-			Action.ActionType type = gameData.deletedItemLinkedTo.GetComponent<ElementToDrag>().actionPrefab.GetComponent<UIActionType>().type;
-			int typeid = -1;
-			switch(type){
-				case Action.ActionType.Forward:
-					typeid = 0;
-					break;
-				case Action.ActionType.TurnLeft:
-					typeid = 1;
-					break;
-				case Action.ActionType.TurnRight:
-					typeid = 2;
-					break;
-				case Action.ActionType.Wait:
-					typeid = 3;
-					break;
-				case Action.ActionType.Activate:
-					typeid = 4;
-					break;
-				case Action.ActionType.For:
-					typeid = 5;
-					break;
-				case Action.ActionType.If:
-					typeid = 6;
-					break;
-				case Action.ActionType.TurnBack:
-					typeid = 7;
-					break;
-				default:
-					break;
-			}
-			if(typeid != -1){
-				Debug.Log("+1");
-				gameData.actionBlocLimit[typeid] += 1;
-				if(gameData.actionBlocLimit[typeid] > 0){
-					Debug.Log("action available");
-					GameObjectManager.addComponent<Available>(gameData.deletedItemLinkedTo);
-					gameData.deletedItemLinkedTo.GetComponent<Image>().raycastTarget = true;
-					/*
-					foreach(GameObject actionGO in availableActions){
-						if (actionGO.GetComponent<ElementToDrag>().actionPrefab.name.Equals(droppedItem.name))
-							GameObjectManager.addComponent<Available>(actionGO);
-							//Object.Destroy(actionGO.GetComponent<Available>());
-					}*/
-					
+			//Debug.Log("deleteditem = "+gameData.deletedItemLinkedTo.name);
+			foreach(GameObject go in gameData.deletedItemLinkedTo){
+				Debug.Log("deleted item = "+go.name);
+				Action.ActionType type = go.GetComponent<ElementToDrag>().actionPrefab.GetComponent<UIActionType>().type;
+				int typeid = -1;
+				switch(type){
+					case Action.ActionType.Forward:
+						typeid = 0;
+						break;
+					case Action.ActionType.TurnLeft:
+						typeid = 1;
+						break;
+					case Action.ActionType.TurnRight:
+						typeid = 2;
+						break;
+					case Action.ActionType.Wait:
+						typeid = 3;
+						break;
+					case Action.ActionType.Activate:
+						typeid = 4;
+						break;
+					case Action.ActionType.For:
+						typeid = 5;
+						break;
+					case Action.ActionType.If:
+						typeid = 6;
+						break;
+					case Action.ActionType.TurnBack:
+						typeid = 7;
+						break;
+					default:
+						break;
+				}
+				if(typeid != -1){
+					Debug.Log("+1");
+					gameData.actionBlocLimit[typeid] += 1;
+					if(gameData.actionBlocLimit[typeid] > 0){
+						Debug.Log("action available");
+						GameObjectManager.addComponent<Available>(go);
+						go.GetComponent<Image>().raycastTarget = true;
+						/*
+						foreach(GameObject actionGO in availableActions){
+							if (actionGO.GetComponent<ElementToDrag>().actionPrefab.name.Equals(droppedItem.name))
+								GameObjectManager.addComponent<Available>(actionGO);
+								//Object.Destroy(actionGO.GetComponent<Available>());
+						}*/
+						
+					}
 				}
 			}
-			gameData.deletedItemLinkedTo = null;
+			gameData.deletedItemLinkedTo.Clear();
 		}
 	}
 

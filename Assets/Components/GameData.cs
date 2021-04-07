@@ -20,5 +20,5 @@ public class GameData : MonoBehaviour {
 	public List<Action> actionsHistory; //all actions made in the level, displayed at the end
 
 	public List<int> currentLevelBlocLimits;
-	public GameObject deletedItemLinkedTo;
+	public List<GameObject> deletedItemLinkedTo = new List<GameObject>();
 }

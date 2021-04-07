@@ -8,7 +8,6 @@ using TMPro;
 
 public abstract class ActionManipulator
 {
-	//private static Color baseColor;
    	public static void addAction(Script script, Action actionToAdd){
 		if(script.actions == null)
 			script.actions = new List<Action>();
@@ -114,10 +113,7 @@ public abstract class ActionManipulator
 		}
 		return nonEmpty;
 	}
-	/*
-	public static Color getBaseColor(){
-		return baseColor;
-	}*/
+
 	//used in highlightsys & levelgeneratorsys
 	public static GameObject ActionToContainer(Action action, bool nextAction, bool sensitive = false, bool isExecutableScriptDisplay = false){
 		GameObject obj =  null;
@@ -234,37 +230,4 @@ public abstract class ActionManipulator
 		return obj;
 	}
 
-/*
-	//used in levelgeneratorsys & uisys
-	public static void updateActionBlocLimit(GameData gameData, Action.ActionType type, int nb){
-		switch(type){
-			case Action.ActionType.Forward:
-				gameData.actionBlocLimit[0] += nb;
-				break;
-			case Action.ActionType.TurnLeft:
-				gameData.actionBlocLimit[1] += nb;
-				break;
-			case Action.ActionType.TurnRight:
-				gameData.actionBlocLimit[2] += nb;
-				break;
-			case Action.ActionType.Wait:
-				gameData.actionBlocLimit[3] += nb;
-				break;
-			case Action.ActionType.Activate:
-				gameData.actionBlocLimit[4] += nb;
-				break;
-			case Action.ActionType.For:
-				gameData.actionBlocLimit[5] += nb;
-				break;
-			case Action.ActionType.If:
-				gameData.actionBlocLimit[6] += nb;
-				break;
-			case Action.ActionType.TurnBack:
-				gameData.actionBlocLimit[7] += nb;
-				break;
-			default:
-				break;
-		}
-	}
-	*/
 }
