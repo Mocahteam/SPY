@@ -102,12 +102,13 @@ public class UISystem : FSystem {
 	public void resetScriptNoRefund(){
 		GameObject go = playerScript.First();
 		//add actions to history before destroy
+		/*
 		List<Action> lastActions = new List<Action>();
 		lastActions = ActionManipulator.ScriptContainerToActionList(go);
 		foreach(Action action in lastActions){
 			gameData.actionsHistory.Add(action);
 		}
-
+		*/
 		//destroy script
 		for(int i = 0; i < go.transform.childCount; i++){
 			destroyScript(go.transform.GetChild(i));
@@ -206,7 +207,7 @@ public class UISystem : FSystem {
 	public void nextLevel(){
 		gameData.levelToLoad++;
 		reloadScene();
-		gameData.actionsHistory.Clear();
+		//gameData.actionsHistory.Clear();
 	}
 
 	public void retry(){

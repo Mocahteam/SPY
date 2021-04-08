@@ -7,7 +7,7 @@ public class CoinSystem : FSystem {
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 
-	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position)), new AnyOfTags("Player"));
+	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Player"));
     private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource), typeof(ParticleSystem)), new AnyOfTags("Coin"));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private float speed = 20f;

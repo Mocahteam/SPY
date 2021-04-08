@@ -57,7 +57,7 @@ public class HighLightSystem : FSystem {
 			gameObject.GetComponent<Image>().color = ActionManipulator.getBaseColor();
 	}
 	*/
-
+	/*
 	//Show the script in the container
 	public static void ScriptToContainer(Script script, GameObject container, bool sensitive = false){
 		//Debug.Log("SCRIPTtocontainer");
@@ -85,7 +85,7 @@ public class HighLightSystem : FSystem {
 
 		LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)container.transform );
 
-	}
+	}*/
 
     private void onNewStep(GameObject unused)
     {
@@ -106,7 +106,7 @@ public class HighLightSystem : FSystem {
 	protected override void onProcess(int familiesUpdateCount) {
 		GameObject highLightedItem = highlightedGO.First();
 		//If click on highlighted item and item has a script, then show script in the 2nd script window
-		if(highLightedItem && Input.GetMouseButtonDown(0) && highLightedItem.GetComponent<Script>()){
+		if(highLightedItem && Input.GetMouseButtonDown(0) && highLightedItem.GetComponent<ScriptRef>()){
 			foreach (Transform child in EnemyScriptContainer.transform) {
 				//if(child.GetComponent<UIActionType>().type != Action.ActionType.If)
 				GameObjectManager.unbind(child.gameObject);
@@ -114,7 +114,14 @@ public class HighLightSystem : FSystem {
 			}
 			scriptInWindow =  highLightedItem;
 			GameObject.Find("EnemyScript").GetComponent<AudioSource>().Play();
-			ScriptToContainer(highLightedItem.GetComponent<Script>(), EnemyScriptContainer);
+			//ScriptToContainer(highLightedItem.GetComponent<Script>(), EnemyScriptContainer);
+			GameObject go = highLightedItem.GetComponent<ScriptRef>().container;
+			foreach(Transform notgo in go.transform.parent.transform){
+				if (notgo != go.transform && notgo.gameObject.activeSelf)
+					GameObjectManager.setGameObjectState(go, false);
+			}
+			GameObjectManager.setGameObjectState(go,true);
+
 		}
 
 	}

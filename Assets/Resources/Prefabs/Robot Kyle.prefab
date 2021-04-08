@@ -1040,13 +1040,13 @@ GameObject:
   - component: {fileID: 7388526215337153197}
   - component: {fileID: 577396110025408471}
   - component: {fileID: -4832419450562979949}
-  - component: {fileID: -5115187371717359244}
   - component: {fileID: -2865538330297813690}
   - component: {fileID: 6913258410562652475}
   - component: {fileID: 6087808657281523953}
   - component: {fileID: -7517250808639583692}
   - component: {fileID: 8920146386872274761}
   - component: {fileID: 7991537825072189479}
+  - component: {fileID: 8742056027784106385}
   m_Layer: 0
   m_Name: Robot Kyle
   m_TagString: Player
@@ -1103,21 +1103,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   x: 0
   z: 0
---- !u!114 &-5115187371717359244
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5823726797354950846}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12147ad79012c8b4798a96395affc1ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  actions: []
-  currentAction: 0
-  repeat: 0
 --- !u!114 &-2865538330297813690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1278,6 +1263,19 @@ MonoBehaviour:
   m_Script: {fileID: 1034401219, guid: f1acc2b074e51484a8f61cb1f0631e8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8742056027784106385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5823726797354950846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 884027c6c0273814ebb677a51949b7db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  container: {fileID: 0}
 --- !u!1 &6122943781904512377
 GameObject:
   m_ObjectHideFlags: 0

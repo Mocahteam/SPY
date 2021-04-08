@@ -13,9 +13,10 @@ public class LevelGeneratorSystem : FSystem {
 	//private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Direction), typeof(MeshRenderer), typeof(BoxCollider), typeof(Position), typeof(AudioSource)), new AnyOfTags("Door"));
 	//private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position),typeof(HighLight),typeof(Direction), typeof(Animator), typeof(AudioSource), typeof(TriggerSensitive3D), typeof(CapsuleCollider)), new AnyOfTags("Player"));
 	//private Family ennemyGO = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Script), typeof(Direction), typeof(Position), typeof(HighLight), typeof(AudioSource)), new AnyOfTags("Drone"));
-	//private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image), typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
+	private Family ennemyScript = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image)), new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
 	private List<List<int>> map;
 	private GameData gameData;
+	private GameObject scriptContainer;
 
 	//private bool historyIsInScript = false;
 
@@ -30,6 +31,7 @@ public class LevelGeneratorSystem : FSystem {
 		XmlToLevel(gameData.levelList[gameData.levelToLoad]);
 		gameData.currentLevelBlocLimits = gameData.actionBlocLimit;
 		//generateLevel6();
+		scriptContainer = ennemyScript.First();
 
 	}
 
@@ -274,10 +276,11 @@ public class LevelGeneratorSystem : FSystem {
 	*/
 
 	private void generateMap(){
+		/*
 		if (gameData.actionsHistory == null){
 			gameData.actionsHistory = new List<Action>();
 			Debug.Log("new history");
-		}
+		}*/
 
 		for(int i = 0; i< map.Count; i++){
 			for(int j = 0; j < map[i].Count; j++){
@@ -302,7 +305,7 @@ public class LevelGeneratorSystem : FSystem {
 		}
 	}
 
-	private GameObject createEntity(int i, int j, Direction.Dir direction, int type, List<Action> script = null, bool repeat = false){
+	private GameObject createEntity(int i, int j, Direction.Dir direction, int type, List<GameObject> script = null, bool repeat = false){
 		GameObject entity = null;
 		switch(type){
 			case 0:
@@ -320,6 +323,7 @@ public class LevelGeneratorSystem : FSystem {
 		entity.GetComponent<Position>().z = j;
 		entity.GetComponent<Direction>().direction = direction;
 
+		/*
         Script entityScript = entity.GetComponent<Script>();
         if (script != null)
             entityScript.actions = script;
@@ -327,6 +331,20 @@ public class LevelGeneratorSystem : FSystem {
             entityScript.actions = new List<Action>();
         entityScript.currentAction = 0;
         entityScript.repeat = repeat;
+		*/
+
+		//add new container to entity
+		ScriptRef scriptref = entity.GetComponent<ScriptRef>();
+		GameObject container = new GameObject();
+		container.transform.SetParent(scriptContainer.transform);
+		scriptref.container = container;
+
+		if(script != null){
+			//add actions to container
+			foreach(GameObject go in script){
+				go.transform.SetParent(container.transform);
+			}
+		}
 
 		GameObjectManager.bind(entity);
 
@@ -690,9 +708,8 @@ public class LevelGeneratorSystem : FSystem {
 		 slotsID, int.Parse(activableNode.Attributes.GetNamedItem("side").Value));
 	}
 
-	private List<Action> readXMLScript(XmlNode scriptNode){
-		List<Action> script = new List<Action>();
-
+	private List<GameObject> readXMLScript(XmlNode scriptNode){
+		List<GameObject> script = new List<GameObject>();
 		foreach(XmlNode actionNode in scriptNode.ChildNodes){
 			script.Add(readXMLAction(actionNode));
 		}
@@ -700,23 +717,51 @@ public class LevelGeneratorSystem : FSystem {
 		return script;
 	}
 
-	private Action readXMLAction(XmlNode actionNode){
-		Action action = new Action();
-		if(actionNode.HasChildNodes)
-			action.actions = new List<Action>();
+	private GameObject readXMLAction(XmlNode actionNode){
+		GameObject go = new GameObject();
+		BaseElement action = null;
 
-		action.actionType = (Action.ActionType)int.Parse(actionNode.Attributes.GetNamedItem("actionType").Value);
-		action.nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
-		action.ifDirection = int.Parse(actionNode.Attributes.GetNamedItem("ifDirection").Value);
-		action.ifEntityType = int.Parse(actionNode.Attributes.GetNamedItem("ifEntityType").Value);
-		action.range = int.Parse(actionNode.Attributes.GetNamedItem("range").Value);
-		action.ifNot = bool.Parse(actionNode.Attributes.GetNamedItem("ifNot").Value);
-
-		foreach(XmlNode actNode in actionNode.ChildNodes){
-			action.actions.Add(readXMLAction(actNode));
+		int type = int.Parse(actionNode.Attributes.GetNamedItem("actionType").Value);
+		switch(type){
+			case 5 :
+			GameObjectManager.addComponent<IfAction>(go);
+			action = go.GetComponent<IfAction>();
+			((IfAction)action).ifDirection = int.Parse(actionNode.Attributes.GetNamedItem("ifDirection").Value);
+			((IfAction)action).ifEntityType = int.Parse(actionNode.Attributes.GetNamedItem("ifEntityType").Value);
+			((IfAction)action).range = int.Parse(actionNode.Attributes.GetNamedItem("range").Value);
+			((IfAction)action).ifNot = bool.Parse(actionNode.Attributes.GetNamedItem("ifNot").Value);
+			if(actionNode.HasChildNodes){
+				foreach(XmlNode actNode in actionNode.ChildNodes){
+					GameObject child = (readXMLAction(actNode));
+					child.transform.SetParent(action.transform);
+				}
+				((IfAction)action).firstChild = action.transform.GetChild(0).gameObject;
+			}
+			break;
+			
+			case 7:
+			GameObjectManager.addComponent<ForAction>(go);
+			action = go.GetComponent<ForAction>();
+			((ForAction)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
+			if(actionNode.HasChildNodes){
+				foreach(XmlNode actNode in actionNode.ChildNodes){
+					GameObject child = (readXMLAction(actNode));
+					child.transform.SetParent(action.transform);
+				}
+				((ForAction)action).firstChild = action.transform.GetChild(0).gameObject;
+			}
+			break;
+			
+			default:
+			GameObjectManager.addComponent<BasicAction>(go);
+			action = go.GetComponent<BasicAction>();
+			if(type != 10)
+				((BasicAction)action).actionType = (BasicAction.ActionType)type;
+			else
+				((BasicAction)action).actionType = BasicAction.ActionType.TurnBack;
+			break;
 		}
-
-		return action;
+		return go;
 	}
 
 }

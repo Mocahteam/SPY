@@ -12,7 +12,7 @@ public class CameraSystem : FSystem {
 
 	//private Family playerGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Script)), new AnyOfTags("Player"));
 	
-	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script)), new AnyOfTags("Player"));
+	private Family playerGO = FamilyManager.getFamily(new AnyOfTags("Player"));
 	private GameData gameData;
 
 	public CameraSystem()

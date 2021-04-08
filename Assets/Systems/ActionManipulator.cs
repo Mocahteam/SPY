@@ -8,6 +8,7 @@ using TMPro;
 
 public abstract class ActionManipulator
 {
+	/*
    	public static void addAction(Script script, Action actionToAdd){
 		if(script.actions == null)
 			script.actions = new List<Action>();
@@ -229,5 +230,6 @@ public abstract class ActionManipulator
 		}	
 		return obj;
 	}
+	*/
 
 }

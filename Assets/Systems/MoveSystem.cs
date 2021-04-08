@@ -6,7 +6,7 @@ public class MoveSystem : FSystem {
 
 	private float turnSpeed = 150f;
 	private float moveSpeed = 7f;
-	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position),typeof(Direction), typeof(Animator), typeof(AudioSource)), new AnyOfTags("Player"));
+	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction), typeof(Animator), typeof(AudioSource)), new AnyOfTags("Player"));
 	private GameData gameData;
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
