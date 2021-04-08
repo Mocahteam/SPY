@@ -67,8 +67,8 @@ public class DragDropSystem : FSystem {
 		}
 
 		//Drag
-		foreach( GameObject go in panelPointedGO){
-			if(Input.GetMouseButtonDown(0)){
+		if(Input.GetMouseButtonDown(0)){
+			foreach( GameObject go in panelPointedGO){
 				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
 				itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, go.transform);
 				if (itemDragged.GetComponent<UIActionType>().type == Action.ActionType.For){
@@ -170,6 +170,7 @@ public class DragDropSystem : FSystem {
 	}
 
 	public void onlyPositiveInteger(TMP_InputField input){
+		Debug.Log(input.text);
 		if(Int32.Parse(input.text) < 0 ){
 			input.text = "0";
 		}
@@ -179,7 +180,8 @@ public class DragDropSystem : FSystem {
 	private void destroyScript(Transform go, bool refund = false){
 		//refund blocActionLimit
 		if(go.gameObject.GetComponent<UIActionType>() != null){
-			gameData.deletedItemLinkedTo.Add(go.GetComponent<UIActionType>().linkedTo);
+			//gameData.deletedItemLinkedTo.Add(go.GetComponent<UIActionType>().linkedTo);
+			GameObjectManager.addComponent<AddOne>(go.GetComponent<UIActionType>().linkedTo);
 			if(!refund)
 				gameData.totalActionBloc++;
 		}

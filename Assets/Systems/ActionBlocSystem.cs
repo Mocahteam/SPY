@@ -11,6 +11,7 @@ public class ActionBlocSystem : FSystem {
 	
 	//dropped actions in playerscript container
 	private Family droppedActions = FamilyManager.getFamily(new AllOfComponents(typeof(Dropped), typeof(UIActionType)));
+	private Family deletedActions = FamilyManager.getFamily(new AllOfComponents(typeof(AddOne)));
 	//private Family undroppedActions = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(Dropped)));
 	private GameData gameData;
 	//private GameObject droppedItemLinkedTo;
@@ -20,7 +21,8 @@ public class ActionBlocSystem : FSystem {
 		//availableActions.addExitCallback(hideActionBloc);
 		droppedActions.addEntryCallback(useAction);
 		//undroppedActions.addEntryCallback(unuseAction);
-		droppedActions.addExitCallback(unuseAction);
+		//droppedActions.addExitCallback(unuseAction);
+		deletedActions.addEntryCallback(unuseAction);
 	}
 	protected override void onPause(int currentFrame) {
 	}
@@ -94,11 +96,11 @@ public class ActionBlocSystem : FSystem {
 		}
 	}
 	
-	private void unuseAction(int id){
+	private void unuseAction(GameObject go){
 		Debug.Log("unuse action");
-		if(gameData.deletedItemLinkedTo != null){
+		//if(gameData.deletedItemLinkedTo != null){
 			//Debug.Log("deleteditem = "+gameData.deletedItemLinkedTo.name);
-			foreach(GameObject go in gameData.deletedItemLinkedTo){
+			//foreach(GameObject go in deletedActions){
 				Debug.Log("deleted item = "+go.name);
 				Action.ActionType type = go.GetComponent<ElementToDrag>().actionPrefab.GetComponent<UIActionType>().type;
 				int typeid = -1;
@@ -130,9 +132,10 @@ public class ActionBlocSystem : FSystem {
 					default:
 						break;
 				}
+				AddOne[] addOnes =  go.GetComponents<AddOne>();
 				if(typeid != -1){
 					Debug.Log("+1");
-					gameData.actionBlocLimit[typeid] += 1;
+					gameData.actionBlocLimit[typeid] += addOnes.Length;
 					if(gameData.actionBlocLimit[typeid] > 0){
 						Debug.Log("action available");
 						GameObjectManager.addComponent<Available>(go);
@@ -146,8 +149,13 @@ public class ActionBlocSystem : FSystem {
 						
 					}
 				}
-			}
-			gameData.deletedItemLinkedTo.Clear();
+				foreach(AddOne a in addOnes){
+					GameObjectManager.removeComponent(a);
+			//	}
+				
+			//}
+			//gameData.deletedItemLinkedTo.Clear();
+			
 		}
 	}
 
