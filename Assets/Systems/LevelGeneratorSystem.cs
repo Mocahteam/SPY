@@ -20,18 +20,15 @@ public class LevelGeneratorSystem : FSystem {
 
 	//private bool historyIsInScript = false;
 
-	// Use this to update member variables when system pause. 
-	// Advice: avoid to update your families inside this function.
-
 	public LevelGeneratorSystem(){
 		//Debug.Log("level constructor");
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.Level = GameObject.Find("Level");
-
+		scriptContainer = ennemyScript.First();
 		XmlToLevel(gameData.levelList[gameData.levelToLoad]);
 		gameData.currentLevelBlocLimits = gameData.actionBlocLimit;
 		//generateLevel6();
-		scriptContainer = ennemyScript.First();
+
 
 	}
 
@@ -318,11 +315,9 @@ public class LevelGeneratorSystem : FSystem {
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.Level.transform.position + new Vector3(i*3,5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				break;
 		}
-		
 		entity.GetComponent<Position>().x = i;
 		entity.GetComponent<Position>().z = j;
 		entity.GetComponent<Direction>().direction = direction;
-
 		/*
         Script entityScript = entity.GetComponent<Script>();
         if (script != null)
@@ -335,19 +330,17 @@ public class LevelGeneratorSystem : FSystem {
 
 		//add new container to entity
 		ScriptRef scriptref = entity.GetComponent<ScriptRef>();
-		GameObject container = new GameObject();
-		container.transform.SetParent(scriptContainer.transform);
-		scriptref.container = container;
+		scriptref.container = new GameObject();
+		scriptref.container.transform.SetParent(scriptContainer.gameObject.transform);
 
 		if(script != null){
 			//add actions to container
 			foreach(GameObject go in script){
-				go.transform.SetParent(container.transform);
+				go.transform.SetParent(scriptref.container.transform);
 			}
 		}
-
+		GameObjectManager.bind(scriptref.container);
 		GameObjectManager.bind(entity);
-
 		return entity;
 	}
 
@@ -640,7 +633,6 @@ public class LevelGeneratorSystem : FSystem {
 		doc.Load(fileName);
 
 		XmlNode root = doc.ChildNodes[1];
-
 		foreach(XmlNode child in root.ChildNodes){
 			switch(child.Name){
 				case "map":
@@ -662,10 +654,12 @@ public class LevelGeneratorSystem : FSystem {
 					createDoor(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
 					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), int.Parse(child.Attributes.GetNamedItem("slot").Value));
 					break;
+				
 				case "player":
 					createEntity(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
 					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),0);
 					break;
+				
 				case "ennemy":
 					GameObject ennemy = createEntity(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
 					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),2, readXMLScript(child.ChildNodes[0]), bool.Parse(child.ChildNodes[0].Attributes.GetNamedItem("repeat").Value));
@@ -719,6 +713,7 @@ public class LevelGeneratorSystem : FSystem {
 
 	private GameObject readXMLAction(XmlNode actionNode){
 		GameObject go = new GameObject();
+		GameObjectManager.bind(go);
 		BaseElement action = null;
 
 		int type = int.Parse(actionNode.Attributes.GetNamedItem("actionType").Value);
@@ -755,6 +750,7 @@ public class LevelGeneratorSystem : FSystem {
 			default:
 			GameObjectManager.addComponent<BasicAction>(go);
 			action = go.GetComponent<BasicAction>();
+			Debug.Log(action.name);
 			if(type != 10)
 				((BasicAction)action).actionType = (BasicAction.ActionType)type;
 			else

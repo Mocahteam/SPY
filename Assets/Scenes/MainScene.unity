@@ -990,9 +990,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289482}
+      - m_Target: {fileID: 361349221}
         m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
-        m_MethodName: reloadScene
+        m_MethodName: retry
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1339,6 +1339,265 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 348243853}
   m_CullTransparentMesh: 0
+--- !u!1 &361349215
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 361349229}
+  - component: {fileID: 361349228}
+  - component: {fileID: 361349227}
+  - component: {fileID: 361349226}
+  - component: {fileID: 361349225}
+  - component: {fileID: 361349224}
+  - component: {fileID: 361349223}
+  - component: {fileID: 361349222}
+  - component: {fileID: 361349221}
+  - component: {fileID: 361349220}
+  - component: {fileID: 361349219}
+  - component: {fileID: 361349218}
+  - component: {fileID: 361349217}
+  - component: {fileID: 361349216}
+  m_Layer: 0
+  m_Name: Main_Loop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!114 &361349216
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea4da55ccaf1aa249b3952a241127b28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349217
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f06bc6c44acea4da07838ec9e26b59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349218
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce219623fd11f964bb3c69bb63c7f640, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349219
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f14a736a545d122448f0d98398ef92c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349220
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c65a003bba01884a8770bff2a78a328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349221
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2b99b2b8b7c1e84c864f9738c5cadde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349222
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dab4df2d4eaa94643973dd20f83de4b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349223
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bbec978962c4404ab339ff0b5c4ac5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349224
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a53971e1ff9dcdb49be9d0d73cf3d8ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349225
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad72a101f2a34a743af3a93b2bc90278, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349226
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db7531a306e504429d50d1af3e9c72f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -369626636, guid: f81898fc82f28ac4eb9f447c8e6df64d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1260832056, guid: e5478ef6b90d22e4dbdbc892bafa4422, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fixedUpdateSystemDescriptions: []
+  _updateSystemDescriptions:
+  - _typeAssemblyQualifiedName: MoveSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    _typeFullName: MoveSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: HighLightSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: HighLightSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: ApplyScriptSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: ApplyScriptSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: CameraSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    _typeFullName: CameraSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: CoinSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    _typeFullName: CoinSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: UISystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    _typeFullName: UISystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: LevelGeneratorSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: LevelGeneratorSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: DetectorGeneratorSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: DetectorGeneratorSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: DragDropSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: DragDropSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: ActionBlocSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: ActionBlocSystem
+    _pause: 0
+  _lateUpdateSystemDescriptions:
+  - _typeAssemblyQualifiedName: StepSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    _typeFullName: StepSystem
+    _pause: 0
+  _forceUpdateInspector: 0
+  _loadingState: 0
+  _specialGameObjects:
+  - {fileID: 0}
+  showSystemProfiler: 1
+  showFamilyInspector: 0
+  showFamilyInspectorFixedUpdate: 0
+  showFamilyInspectorUpdate: 0
+  showFamilyInspectorLateUpdate: 0
+  fixedUpdateStats: 0
+  updateStats: 0
+  lateUpdateStats: 0
+  _outputWrappers: Assets/AutomaticScript
+--- !u!4 &361349229
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &388713684
 GameObject:
   m_ObjectHideFlags: 0
@@ -2487,7 +2746,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289482}
+      - m_Target: {fileID: 361349221}
         m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: nextLevel
         m_Mode: 1
@@ -3548,265 +3807,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705214591}
   m_CullTransparentMesh: 0
---- !u!1 &727289475
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 727289478}
-  - component: {fileID: 727289477}
-  - component: {fileID: 727289476}
-  - component: {fileID: 727289479}
-  - component: {fileID: 727289480}
-  - component: {fileID: 727289481}
-  - component: {fileID: 727289483}
-  - component: {fileID: 727289482}
-  - component: {fileID: 727289485}
-  - component: {fileID: 727289486}
-  - component: {fileID: 727289487}
-  - component: {fileID: 727289488}
-  - component: {fileID: 727289484}
-  - component: {fileID: 727289489}
-  m_Layer: 0
-  m_Name: Main_Loop
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
---- !u!114 &727289476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -369626636, guid: f81898fc82f28ac4eb9f447c8e6df64d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &727289477
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1260832056, guid: e5478ef6b90d22e4dbdbc892bafa4422, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _fixedUpdateSystemDescriptions: []
-  _updateSystemDescriptions:
-  - _typeAssemblyQualifiedName: MoveSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-    _typeFullName: MoveSystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: HighLightSystem, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: HighLightSystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: ApplyScriptSystem, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: ApplyScriptSystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: CameraSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-    _typeFullName: CameraSystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: CoinSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-    _typeFullName: CoinSystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: UISystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-    _typeFullName: UISystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: LevelGeneratorSystem, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: LevelGeneratorSystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: DetectorGeneratorSystem, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: DetectorGeneratorSystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: DragDropSystem, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: DragDropSystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: ActionBlocSystem, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: ActionBlocSystem
-    _pause: 0
-  _lateUpdateSystemDescriptions:
-  - _typeAssemblyQualifiedName: StepSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-    _typeFullName: StepSystem
-    _pause: 0
-  _forceUpdateInspector: 0
-  _loadingState: 0
-  _specialGameObjects:
-  - {fileID: 0}
-  showSystemProfiler: 1
-  showFamilyInspector: 0
-  showFamilyInspectorFixedUpdate: 0
-  showFamilyInspectorUpdate: 0
-  showFamilyInspectorLateUpdate: 0
-  fixedUpdateStats: 0
-  updateStats: 0
-  lateUpdateStats: 0
-  _outputWrappers: Assets/AutomaticScript
---- !u!4 &727289478
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &727289479
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9db7531a306e504429d50d1af3e9c72f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &727289480
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a53971e1ff9dcdb49be9d0d73cf3d8ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &727289481
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bbec978962c4404ab339ff0b5c4ac5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &727289482
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2b99b2b8b7c1e84c864f9738c5cadde, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &727289483
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad72a101f2a34a743af3a93b2bc90278, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &727289484
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96f06bc6c44acea4da07838ec9e26b59, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &727289485
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c65a003bba01884a8770bff2a78a328, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &727289486
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea4da55ccaf1aa249b3952a241127b28, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &727289487
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f14a736a545d122448f0d98398ef92c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &727289488
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dab4df2d4eaa94643973dd20f83de4b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &727289489
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727289475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce219623fd11f964bb3c69bb63c7f640, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &823399328
 GameObject:
   m_ObjectHideFlags: 0
@@ -4774,7 +4774,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289482}
+      - m_Target: {fileID: 361349221}
         m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: closeDialogPanel
         m_Mode: 1
@@ -5678,7 +5678,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289482}
+      - m_Target: {fileID: 361349221}
         m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: returnToTitleScreen
         m_Mode: 1
@@ -7561,7 +7561,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289482}
+      - m_Target: {fileID: 361349221}
         m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: retry
         m_Mode: 1
@@ -7791,7 +7791,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289480}
+      - m_Target: {fileID: 361349224}
         m_TargetAssemblyTypeName: ApplyScriptSystem_wrapper, Assembly-CSharp
         m_MethodName: applyScriptToPlayer
         m_Mode: 1
@@ -7803,7 +7803,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 727289482}
+      - m_Target: {fileID: 361349221}
         m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: resetScriptNoRefund
         m_Mode: 1
@@ -8070,9 +8070,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289482}
+      - m_Target: {fileID: 361349221}
         m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
-        m_MethodName: resetScript
+        m_MethodName: resetScriptNoRefund
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8471,7 +8471,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289482}
+      - m_Target: {fileID: 361349221}
         m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: nextDialog
         m_Mode: 1
@@ -8604,7 +8604,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 727289482}
+      - m_Target: {fileID: 361349221}
         m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: returnToTitleScreen
         m_Mode: 1

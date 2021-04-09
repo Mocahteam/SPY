@@ -107,11 +107,12 @@ public class HighLightSystem : FSystem {
 		GameObject highLightedItem = highlightedGO.First();
 		//If click on highlighted item and item has a script, then show script in the 2nd script window
 		if(highLightedItem && Input.GetMouseButtonDown(0) && highLightedItem.GetComponent<ScriptRef>()){
-			foreach (Transform child in EnemyScriptContainer.transform) {
+			//foreach (Transform child in EnemyScriptContainer.transform) {
 				//if(child.GetComponent<UIActionType>().type != Action.ActionType.If)
+				/*
 				GameObjectManager.unbind(child.gameObject);
-				GameObject.Destroy(child.gameObject);
-			}
+				GameObject.Destroy(child.gameObject);*/
+			//}
 			scriptInWindow =  highLightedItem;
 			GameObject.Find("EnemyScript").GetComponent<AudioSource>().Play();
 			//ScriptToContainer(highLightedItem.GetComponent<Script>(), EnemyScriptContainer);

@@ -45,35 +45,44 @@ public class ActionBlocSystem : FSystem {
 	private void useAction(GameObject go){
 		Debug.Log("useaction");
 		//droppedItem = go;
-		Action.ActionType type = go.GetComponent<UIActionType>().type;
+		BaseElement action = go.GetComponent<UIActionType>().action;
 		//droppedItemType = type;
 		//droppedItemLinkedTo = go.GetComponent<UIActionType>().linkedTo;
 		int typeid = -1;
-		switch(type){
-			case Action.ActionType.Forward:
-				typeid = 0;
+		switch(action.GetType().ToString()){
+			case "BasicAction":
+				switch( ((BasicAction)action).actionType) {
+					case BasicAction.ActionType.Forward:
+						typeid = 0;
+						break;
+					case BasicAction.ActionType.TurnLeft:
+						typeid = 1;
+						break;
+					case BasicAction.ActionType.TurnRight:
+						typeid = 2;
+						break;
+					case BasicAction.ActionType.Wait:
+						typeid = 3;
+						break;
+					case BasicAction.ActionType.Activate:
+						typeid = 4;
+						break;
+					case BasicAction.ActionType.TurnBack:
+						typeid = 7;
+						break;
+					default:
+						break;
+				}
 				break;
-			case Action.ActionType.TurnLeft:
-				typeid = 1;
-				break;
-			case Action.ActionType.TurnRight:
-				typeid = 2;
-				break;
-			case Action.ActionType.Wait:
-				typeid = 3;
-				break;
-			case Action.ActionType.Activate:
-				typeid = 4;
-				break;
-			case Action.ActionType.For:
+
+			case "ForAction":
 				typeid = 5;
 				break;
-			case Action.ActionType.If:
+
+			case "IfAction":
 				typeid = 6;
 				break;
-			case Action.ActionType.TurnBack:
-				typeid = 7;
-				break;
+
 			default:
 				break;
 		}
@@ -102,33 +111,42 @@ public class ActionBlocSystem : FSystem {
 			//Debug.Log("deleteditem = "+gameData.deletedItemLinkedTo.name);
 			//foreach(GameObject go in deletedActions){
 				Debug.Log("deleted item = "+go.name);
-				Action.ActionType type = go.GetComponent<ElementToDrag>().actionPrefab.GetComponent<UIActionType>().type;
+				BaseElement action = go.GetComponent<ElementToDrag>().actionPrefab.GetComponent<UIActionType>().action;
 				int typeid = -1;
-				switch(type){
-					case Action.ActionType.Forward:
-						typeid = 0;
+				switch(action.GetType().ToString()){
+					case "BasicAction":
+						switch( ((BasicAction)action).actionType) {
+							case BasicAction.ActionType.Forward:
+								typeid = 0;
+								break;
+							case BasicAction.ActionType.TurnLeft:
+								typeid = 1;
+								break;
+							case BasicAction.ActionType.TurnRight:
+								typeid = 2;
+								break;
+							case BasicAction.ActionType.Wait:
+								typeid = 3;
+								break;
+							case BasicAction.ActionType.Activate:
+								typeid = 4;
+								break;
+							case BasicAction.ActionType.TurnBack:
+								typeid = 7;
+								break;
+							default:
+								break;
+						}
 						break;
-					case Action.ActionType.TurnLeft:
-						typeid = 1;
-						break;
-					case Action.ActionType.TurnRight:
-						typeid = 2;
-						break;
-					case Action.ActionType.Wait:
-						typeid = 3;
-						break;
-					case Action.ActionType.Activate:
-						typeid = 4;
-						break;
-					case Action.ActionType.For:
+
+					case "ForAction":
 						typeid = 5;
 						break;
-					case Action.ActionType.If:
+
+					case "IfAction":
 						typeid = 6;
 						break;
-					case Action.ActionType.TurnBack:
-						typeid = 7;
-						break;
+
 					default:
 						break;
 				}

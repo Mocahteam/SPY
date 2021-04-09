@@ -6,4 +6,5 @@ public class BaseElement : MonoBehaviour {
     public Color baseColor;
     public GameObject target;
     public GameObject next;
+    public int currentAction;
 }

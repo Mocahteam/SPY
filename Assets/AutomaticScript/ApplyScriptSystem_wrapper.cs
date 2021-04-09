@@ -9,4 +9,14 @@ public class ApplyScriptSystem_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
+	public void applyScriptToPlayer()
+	{
+		MainLoop.callAppropriateSystemMethod ("ApplyScriptSystem", "applyScriptToPlayer", null);
+	}
+
+	public void applyIfEntityType()
+	{
+		MainLoop.callAppropriateSystemMethod ("ApplyScriptSystem", "applyIfEntityType", null);
+	}
+
 }
