@@ -1,9 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using FYFY;
 using System.Collections.Generic;
 using System.Xml;
 using FYFY_plugins.TriggerManager;
 using UnityEngine.UI;
+using TMPro;
+using FYFY_plugins.PointerManager;
 
 public class LevelGeneratorSystem : FSystem {
 
@@ -13,7 +15,8 @@ public class LevelGeneratorSystem : FSystem {
 	//private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Direction), typeof(MeshRenderer), typeof(BoxCollider), typeof(Position), typeof(AudioSource)), new AnyOfTags("Door"));
 	//private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script),typeof(Position),typeof(HighLight),typeof(Direction), typeof(Animator), typeof(AudioSource), typeof(TriggerSensitive3D), typeof(CapsuleCollider)), new AnyOfTags("Player"));
 	//private Family ennemyGO = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Script), typeof(Direction), typeof(Position), typeof(HighLight), typeof(AudioSource)), new AnyOfTags("Drone"));
-	private Family ennemyScript = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image)), new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
+	//private Family ennemyScript = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image)), new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
+	private Family ennemyScript = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
 	private List<List<int>> map;
 	private GameData gameData;
 	private GameObject scriptContainer;
@@ -330,14 +333,16 @@ public class LevelGeneratorSystem : FSystem {
 
 		//add new container to entity
 		ScriptRef scriptref = entity.GetComponent<ScriptRef>();
-		scriptref.container = new GameObject();
+		scriptref.container = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Container") as GameObject);
 		scriptref.container.transform.SetParent(scriptContainer.gameObject.transform);
 
 		if(script != null){
+			Transform containerconstructor = scriptref.container.transform.Find("Viewport").Find("ScriptContainer");
 			//add actions to container
 			foreach(GameObject go in script){
-				go.transform.SetParent(scriptref.container.transform);
+				go.transform.SetParent(containerconstructor);
 			}
+			//addNext(containerconstructor.gameObject);
 		}
 		GameObjectManager.bind(scriptref.container);
 		GameObjectManager.bind(entity);
@@ -712,52 +717,116 @@ public class LevelGeneratorSystem : FSystem {
 	}
 
 	private GameObject readXMLAction(XmlNode actionNode){
-		GameObject go = new GameObject();
-		GameObjectManager.bind(go);
+		GameObject obj = null;
 		BaseElement action = null;
+		GameObject prefab = null;
 
 		int type = int.Parse(actionNode.Attributes.GetNamedItem("actionType").Value);
 		switch(type){
-			case 5 :
-			GameObjectManager.addComponent<IfAction>(go);
-			action = go.GetComponent<IfAction>();
-			((IfAction)action).ifDirection = int.Parse(actionNode.Attributes.GetNamedItem("ifDirection").Value);
-			((IfAction)action).ifEntityType = int.Parse(actionNode.Attributes.GetNamedItem("ifEntityType").Value);
-			((IfAction)action).range = int.Parse(actionNode.Attributes.GetNamedItem("range").Value);
-			((IfAction)action).ifNot = bool.Parse(actionNode.Attributes.GetNamedItem("ifNot").Value);
-			if(actionNode.HasChildNodes){
-				foreach(XmlNode actNode in actionNode.ChildNodes){
-					GameObject child = (readXMLAction(actNode));
-					child.transform.SetParent(action.transform);
+			case 6 :
+				//obj = new GameObject("If");
+				prefab = Resources.Load ("Prefabs/IfDetectBloc") as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("If");
+				action = obj.AddComponent<IfAction>();
+				//read xml
+				((IfAction)action).ifDirection = int.Parse(actionNode.Attributes.GetNamedItem("ifDirection").Value);
+				((IfAction)action).ifEntityType = int.Parse(actionNode.Attributes.GetNamedItem("ifEntityType").Value);
+				((IfAction)action).range = int.Parse(actionNode.Attributes.GetNamedItem("range").Value);
+				((IfAction)action).ifNot = bool.Parse(actionNode.Attributes.GetNamedItem("ifNot").Value);
+
+				//add to gameobject
+				obj.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value = ((IfAction)action).ifEntityType;
+				obj.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value = ((IfAction)action).ifDirection;
+				obj.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text = ((IfAction)action).range.ToString();
+				
+				if(!((IfAction)action).ifNot)
+					obj.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value = 0;
+				else
+					obj.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value = 1;
+
+				//not interactable actions
+				obj.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().interactable = false;
+				obj.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().interactable = false;
+				obj.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().interactable = false;
+				obj.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().interactable = false;
+				
+				Object.Destroy(obj.GetComponent<UITypeContainer>());
+
+				//add children
+				if(actionNode.HasChildNodes){
+					foreach(XmlNode actNode in actionNode.ChildNodes){
+						GameObject child = (readXMLAction(actNode));
+						child.transform.SetParent(obj.transform);
+					}
+					((IfAction)action).firstChild = obj.transform.GetChild(0).gameObject;
 				}
-				((IfAction)action).firstChild = action.transform.GetChild(0).gameObject;
-			}
-			break;
+				break;
 			
 			case 7:
-			GameObjectManager.addComponent<ForAction>(go);
-			action = go.GetComponent<ForAction>();
-			((ForAction)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
-			if(actionNode.HasChildNodes){
-				foreach(XmlNode actNode in actionNode.ChildNodes){
-					GameObject child = (readXMLAction(actNode));
-					child.transform.SetParent(action.transform);
+				//obj = new GameObject("For");
+				prefab = Resources.Load ("Prefabs/ForBloc") as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("For");
+				action = obj.AddComponent<ForAction>();
+
+				//read xml
+				((ForAction)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
+				
+				//add to gameobject
+				if (((ForAction)action).nbFor > 0)
+					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (((ForAction)action).currentFor +1).ToString() + " / " + ((ForAction)action).nbFor.ToString();
+				else
+					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (((ForAction)action).currentFor).ToString() + " / " + ((ForAction)action).nbFor.ToString();
+				obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = false;
+				Object.Destroy(obj.GetComponent<UITypeContainer>());
+
+				//add children
+				if(actionNode.HasChildNodes){
+					foreach(XmlNode actNode in actionNode.ChildNodes){
+						GameObject child = (readXMLAction(actNode));
+						child.transform.SetParent(action.transform);
+					}
+					((ForAction)action).firstChild = action.transform.GetChild(0).gameObject;
 				}
-				((ForAction)action).firstChild = action.transform.GetChild(0).gameObject;
-			}
-			break;
+				break;
 			
 			default:
-			GameObjectManager.addComponent<BasicAction>(go);
-			action = go.GetComponent<BasicAction>();
-			Debug.Log(action.name);
-			if(type != 10)
+				prefab = Resources.Load ("Prefabs/"+((BasicAction.ActionType)type).ToString()+"ActionBloc") as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find(((BasicAction.ActionType)type).ToString());
+				action = obj.AddComponent<BasicAction>();		
+				//action = go.GetComponent<BasicAction>();
+				//obj = new GameObject(((BasicAction.ActionType)type).ToString());
+
+				//read xml
 				((BasicAction)action).actionType = (BasicAction.ActionType)type;
-			else
-				((BasicAction)action).actionType = BasicAction.ActionType.TurnBack;
-			break;
+				//GameObjectManager.addComponent<BasicAction>(go, new{actionType = (BasicAction.ActionType)type});
+				break;
 		}
-		return go;
+		obj.GetComponent<UIActionType>().prefab = prefab;
+		obj.GetComponent<UIActionType>().action = action;
+		action.target = obj;
+		Object.Destroy(obj.GetComponent<PointerSensitive>());
+		return obj;
+	}
+
+	private void addNext(GameObject container){
+		int i = 1;
+		//for each child, next = next child
+		foreach(Transform child in container.transform){
+			Debug.Log(child.gameObject.name);
+			if(i < container.transform.childCount){
+				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
+				i++;
+			}
+			//if or for action
+			if(child.childCount != 0)
+				addNext(child.gameObject);
+		}
+		//last child's next = parent 
+		if(i!=0)
+			container.transform.GetChild(i-1).GetComponent<BaseElement>().next = container;
 	}
 
 }

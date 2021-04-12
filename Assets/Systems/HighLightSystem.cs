@@ -114,7 +114,7 @@ public class HighLightSystem : FSystem {
 				GameObject.Destroy(child.gameObject);*/
 			//}
 			scriptInWindow =  highLightedItem;
-			GameObject.Find("EnemyScript").GetComponent<AudioSource>().Play();
+			highLightedItem.GetComponent<ScriptRef>().container.GetComponent<AudioSource>().Play();
 			//ScriptToContainer(highLightedItem.GetComponent<Script>(), EnemyScriptContainer);
 			GameObject go = highLightedItem.GetComponent<ScriptRef>().container;
 			foreach(Transform notgo in go.transform.parent.transform){

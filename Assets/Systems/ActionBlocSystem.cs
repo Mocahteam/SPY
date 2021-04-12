@@ -51,38 +51,14 @@ public class ActionBlocSystem : FSystem {
 		int typeid = -1;
 		switch(action.GetType().ToString()){
 			case "BasicAction":
-				switch( ((BasicAction)action).actionType) {
-					case BasicAction.ActionType.Forward:
-						typeid = 0;
-						break;
-					case BasicAction.ActionType.TurnLeft:
-						typeid = 1;
-						break;
-					case BasicAction.ActionType.TurnRight:
-						typeid = 2;
-						break;
-					case BasicAction.ActionType.Wait:
-						typeid = 3;
-						break;
-					case BasicAction.ActionType.Activate:
-						typeid = 4;
-						break;
-					case BasicAction.ActionType.TurnBack:
-						typeid = 7;
-						break;
-					default:
-						break;
-				}
+				typeid = (int)((BasicAction)action).actionType;
 				break;
-
-			case "ForAction":
-				typeid = 5;
-				break;
-
 			case "IfAction":
 				typeid = 6;
 				break;
-
+			case "ForAction":
+				typeid = 7;
+				break;
 			default:
 				break;
 		}
@@ -115,38 +91,14 @@ public class ActionBlocSystem : FSystem {
 				int typeid = -1;
 				switch(action.GetType().ToString()){
 					case "BasicAction":
-						switch( ((BasicAction)action).actionType) {
-							case BasicAction.ActionType.Forward:
-								typeid = 0;
-								break;
-							case BasicAction.ActionType.TurnLeft:
-								typeid = 1;
-								break;
-							case BasicAction.ActionType.TurnRight:
-								typeid = 2;
-								break;
-							case BasicAction.ActionType.Wait:
-								typeid = 3;
-								break;
-							case BasicAction.ActionType.Activate:
-								typeid = 4;
-								break;
-							case BasicAction.ActionType.TurnBack:
-								typeid = 7;
-								break;
-							default:
-								break;
-						}
+						typeid = (int)((BasicAction)action).actionType;
 						break;
-
-					case "ForAction":
-						typeid = 5;
-						break;
-
 					case "IfAction":
 						typeid = 6;
 						break;
-
+					case "ForAction":
+						typeid = 7;
+						break;
 					default:
 						break;
 				}

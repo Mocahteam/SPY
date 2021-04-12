@@ -27,9 +27,10 @@ public class DragDropSystem : FSystem {
 		limitTexts.Add(GameObject.Find("TurnRightLimit"));
 		limitTexts.Add(GameObject.Find("WaitLimit"));
 		limitTexts.Add(GameObject.Find("ActivateLimit"));
-		limitTexts.Add(GameObject.Find("ForLimit"));
-		limitTexts.Add(GameObject.Find("IfLimit"));
 		limitTexts.Add(GameObject.Find("TurnBackLimit"));
+		limitTexts.Add(GameObject.Find("IfLimit"));
+		limitTexts.Add(GameObject.Find("ForLimit"));
+
 	}
 
 	// Use this to update member variables when system pause. 
@@ -112,7 +113,7 @@ public class DragDropSystem : FSystem {
 			}
 		}
 		else{
-			positionBar.transform.SetParent(GameObject.Find("PlayerScript").transform);
+			positionBar.transform.SetParent(GameObject.Find("EditableCanvas").transform);
 			GameObjectManager.setGameObjectState(positionBar, false);
 		}
 
