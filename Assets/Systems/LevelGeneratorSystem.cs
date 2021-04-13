@@ -342,7 +342,7 @@ public class LevelGeneratorSystem : FSystem {
 			foreach(GameObject go in script){
 				go.transform.SetParent(containerconstructor);
 			}
-			//addNext(containerconstructor.gameObject);
+			addNext(containerconstructor.gameObject);
 		}
 		GameObjectManager.bind(scriptref.container);
 		GameObjectManager.bind(entity);
@@ -818,15 +818,15 @@ public class LevelGeneratorSystem : FSystem {
 			Debug.Log(child.gameObject.name);
 			if(i < container.transform.childCount){
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
-				i++;
 			}
 			//if or for action
-			if(child.childCount != 0)
+			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>())
 				addNext(child.gameObject);
+			i++;
 		}
 		//last child's next = parent 
-		if(i!=0)
-			container.transform.GetChild(i-1).GetComponent<BaseElement>().next = container;
+		if(container.transform.childCount != 0 && (container.transform.GetComponent<IfAction>() || container.transform.GetComponent<ForAction>()))
+			container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;		
 	}
 
 }

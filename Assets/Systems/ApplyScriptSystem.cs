@@ -4,7 +4,8 @@ using UnityEngine.UI;
 using FYFY_plugins.TriggerManager;
 using System.Collections;
 using TMPro;
-
+using System.Collections.Generic;
+using FYFY_plugins.PointerManager;
 public class ApplyScriptSystem : FSystem {
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
@@ -21,6 +22,7 @@ public class ApplyScriptSystem : FSystem {
 	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem)), new AnyOfTags("Coin"));
 	//private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(HighLight)));
 	private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(HighLight)));
+	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
 
 	private GameObject endPanel;
 	private GameData gameData;
@@ -260,24 +262,28 @@ public class ApplyScriptSystem : FSystem {
 	}
 
 	public void applyScriptToPlayer(){
-		GameObject script;
+		GameObject container;
+		List<GameObject> actions;
 		foreach( GameObject go in playerGO){
 			//go.GetComponent<Script>().actions = ActionManipulator.ScriptContainerToActionList(playerScriptContainer_f.First());
-			script = go.GetComponent<ScriptRef>().container;
-			foreach(Transform child in script.transform){
-				Debug.Log("action : "+child.gameObject.name);
-				//Debug.Log(act.actions.Count);
+			actions = CopyActionsFrom(editableScriptContainer.First());
+			Debug.Log(go.name);
+			container = go.GetComponent<ScriptRef>().container;
+			Debug.Log(container.name);
+			foreach(GameObject action in actions){
+				action.transform.SetParent(container.transform.Find("Viewport").Find("ScriptContainer"));
 			}
+			//addNext(container);
 			//Debug.Log("actions = "+go.GetComponent<Script>().actions);
-            go.GetComponent<ScriptRef>().currentAction = 0;
-            gameData.nbStep = getNbStep(go.GetComponent<ScriptRef>());
+            //go.GetComponent<ScriptRef>().currentAction = 0;
+            //gameData.nbStep = getNbStep(go.GetComponent<ScriptRef>());
 		}
 
-		applyIfEntityType();
-		
+		//applyIfEntityType();
+		/*
 		if(gameData.nbStep > 0){
 			gameData.totalExecute++;
-		}
+		}*/
 	}
 
 	public void applyIfEntityType(){
@@ -712,6 +718,71 @@ public class ApplyScriptSystem : FSystem {
 		}
 	}
 	*/
+    public static List<GameObject> CopyActionsFrom(GameObject container){
+		Debug.Log("CopyActionsFrom");
+		List<GameObject> l = new List<GameObject>();
+
+		for(int i = 0; i< container.transform.childCount; i++){
+			GameObject child = container.transform.GetChild(i).gameObject;
+			if(child.GetComponent<ForAction>()){
+				ForAction forAct = child.GetComponent<ForAction>();
+                forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
+				//loop display
+				if (forAct.nbFor > 0)
+					child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor +1).ToString() + " / " + forAct.nbFor.ToString();
+				else
+					child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+				//not editable for
+				child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = false;
+				Object.Destroy(child.GetComponent<UITypeContainer>());
+				
+				if(forAct.nbFor >= 0){
+					Debug.Log("add for");
+					l.Add(child);
+				}
+			}
+			else if(child.GetComponent<IfAction>()){
+				IfAction IfAct = child.GetComponent<IfAction>();
+				IfAct.ifEntityType = child.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value;
+				IfAct.ifDirection = child.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value;
+				IfAct.range = int.Parse(child.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text);
+				IfAct.ifNot = (child.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1);
+				
+				//not editable if
+				child.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().interactable = false;
+				child.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().interactable = false;
+				child.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().interactable = false;
+				child.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().interactable = false;
+				Object.Destroy(child.GetComponent<UITypeContainer>());
+
+				l.Add(child);
+
+			}
+			else{
+				l.Add(child); 
+			}
+			//not editable action
+			Object.Destroy(child.GetComponent<PointerSensitive>());
+		}
+		return l;
+	}
+	private void addNext(GameObject container){
+		int i = 1;
+		//for each child, next = next child
+		foreach(Transform child in container.transform){
+			Debug.Log(child.gameObject.name);
+			if(i < container.transform.childCount){
+				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
+			}
+			//if or for action
+			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>())
+				addNext(child.gameObject);
+			i++;
+		}
+		//last child's next = parent 
+		if(container.transform.childCount != 0 && (container.transform.GetComponent<IfAction>() || container.transform.GetComponent<ForAction>()))
+			container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;		
+	}
 }
 
 

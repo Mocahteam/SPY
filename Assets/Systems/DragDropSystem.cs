@@ -69,15 +69,30 @@ public class DragDropSystem : FSystem {
 
 		//Drag
 		if(Input.GetMouseButtonDown(0)){
+			BaseElement action = null;
 			foreach( GameObject go in panelPointedGO){
 				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
 				itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, go.transform);
-				if (itemDragged.GetComponent<UIActionType>().action.GetType().Name.Equals("ForAction")){
-					TMP_InputField input = itemDragged.GetComponentInChildren<TMP_InputField>();
-					input.onEndEdit.AddListener(delegate{onlyPositiveInteger(input);});
-				} 
+				if(itemDragged.GetComponent<UITypeContainer>()){
+					if (itemDragged.GetComponent<UITypeContainer>().type == UITypeContainer.Type.For){
+						TMP_InputField input = itemDragged.GetComponentInChildren<TMP_InputField>();
+						input.onEndEdit.AddListener(delegate{onlyPositiveInteger(input);});
+						action = itemDragged.AddComponent<ForAction>();
+					} 
+					else if (itemDragged.GetComponent<UITypeContainer>().type == UITypeContainer.Type.If){
+						action = itemDragged.AddComponent<IfAction>();
+					}
+				}
+				else{
+					action = itemDragged.AddComponent<BasicAction>();
+					((BasicAction)action).actionType = (BasicAction.ActionType)Enum.Parse(typeof(BasicAction.ActionType), go.name.ToString());
+					Debug.Log(((BasicAction)action).actionType);
+
+				}
 				itemDragged.GetComponent<UIActionType>().prefab = prefab;
 				itemDragged.GetComponent<UIActionType>().linkedTo = go;
+				itemDragged.GetComponent<UIActionType>().action = action;
+				action.target = itemDragged;
 				GameObjectManager.bind(itemDragged);
 				itemDragged.GetComponent<Image>().raycastTarget = false;
 				break;
@@ -153,7 +168,7 @@ public class DragDropSystem : FSystem {
 					itemDragged.GetComponent<Image>().raycastTarget = true;
 					itemDragged.GetComponent<UITypeContainer>().layer = priority.GetComponent<UITypeContainer>().layer + 1;
 				}
-				GameObject.Find("PlayerScript").GetComponent<AudioSource>().Play();
+				GameObject.Find("EditableCanvas").GetComponent<AudioSource>().Play();
 				refreshUI();
 			}
 			else if( itemDragged != null){
