@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 5977990777959337957}
   - component: {fileID: -4066781015480702565}
   - component: {fileID: 7281793342713614650}
+  - component: {fileID: 6755531927393431808}
   m_Layer: 5
   m_Name: ForwardActionBloc
   m_TagString: Untagged
@@ -224,7 +225,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d03048817cdae984f93f61100f43b22f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
+  action: {fileID: 6755531927393431808}
+  prefab: {fileID: 0}
+  linkedTo: {fileID: 0}
 --- !u!114 &7281793342713614650
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,3 +240,20 @@ MonoBehaviour:
   m_Script: {fileID: -53623643, guid: e160884b7e39b8e479dc90c5b7dcec1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6755531927393431808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3821364993045877023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fa89efc89768f040be0b9afc977170e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseColor: {r: 0, g: 0, b: 0, a: 0}
+  target: {fileID: 0}
+  next: {fileID: 0}
+  currentAction: 0
+  actionType: 0

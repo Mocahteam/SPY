@@ -1,6 +1,7 @@
 using UnityEngine;
 using FYFY;
 using UnityEngine.UI;
+using System;
 
 public class ActionBlocSystem : FSystem {
 	// Use this to update member variables when system pause. 
@@ -45,7 +46,7 @@ public class ActionBlocSystem : FSystem {
 	private void useAction(GameObject go){
 		Debug.Log("useaction");
 		//droppedItem = go;
-		BaseElement action = go.GetComponent<UIActionType>().action;
+		BaseElement action = go.GetComponent<BaseElement>();
 		//droppedItemType = type;
 		//droppedItemLinkedTo = go.GetComponent<UIActionType>().linkedTo;
 		int typeid = -1;
@@ -83,49 +84,55 @@ public class ActionBlocSystem : FSystem {
 	
 	private void unuseAction(GameObject go){
 		Debug.Log("unuse action");
-		//if(gameData.deletedItemLinkedTo != null){
-			//Debug.Log("deleteditem = "+gameData.deletedItemLinkedTo.name);
-			//foreach(GameObject go in deletedActions){
-				Debug.Log("deleted item = "+go.name);
-				BaseElement action = go.GetComponent<ElementToDrag>().actionPrefab.GetComponent<UIActionType>().action;
-				int typeid = -1;
-				switch(action.GetType().ToString()){
-					case "BasicAction":
-						typeid = (int)((BasicAction)action).actionType;
-						break;
-					case "IfAction":
-						typeid = 6;
-						break;
-					case "ForAction":
-						typeid = 7;
-						break;
-					default:
-						break;
-				}
-				AddOne[] addOnes =  go.GetComponents<AddOne>();
-				if(typeid != -1){
-					Debug.Log("+1");
-					gameData.actionBlocLimit[typeid] += addOnes.Length;
-					if(gameData.actionBlocLimit[typeid] > 0){
-						Debug.Log("action available");
-						GameObjectManager.addComponent<Available>(go);
-						go.GetComponent<Image>().raycastTarget = true;
-						/*
-						foreach(GameObject actionGO in availableActions){
-							if (actionGO.GetComponent<ElementToDrag>().actionPrefab.name.Equals(droppedItem.name))
-								GameObjectManager.addComponent<Available>(actionGO);
-								//Object.Destroy(actionGO.GetComponent<Available>());
-						}*/
-						
-					}
-				}
-				foreach(AddOne a in addOnes){
-					GameObjectManager.removeComponent(a);
-			//	}
+		Debug.Log("deleted item = "+go.name);
+		BaseElement action = go.GetComponent<ElementToDrag>().actionPrefab.GetComponent<UIActionType>().action;
+		int typeid = -1;
+		switch(action.GetType().ToString()){
+			case "BasicAction":
+				typeid = (int)((BasicAction)action).actionType;
+				break;
+			case "IfAction":
+				typeid = 6;
+				break;
+			case "ForAction":
+				typeid = 7;
+				break;
+			default:
+				break;
+		}
+		/*
+		if(go.GetComponent<ElementToDrag>().actionPrefab.GetComponent<UITypeContainer>()){
+			switch(go.GetComponent<ElementToDrag>().actionPrefab.GetComponent<UITypeContainer>().type){
+				case UITypeContainer.Type.If:
+				typeid = 6;
+				break;
+				case UITypeContainer.Type.For:
+				typeid = 7;
+				break;
+			}
+		}
+		else{
+			typeid = (int)(BasicAction.ActionType) Enum.Parse(typeof(BasicAction.ActionType), go.name, true);
+		}*/
+		AddOne[] addOnes =  go.GetComponents<AddOne>();
+		if(typeid != -1){
+			Debug.Log("+1");
+			gameData.actionBlocLimit[typeid] += addOnes.Length;
+			if(gameData.actionBlocLimit[typeid] > 0){
+				Debug.Log("action available");
+				GameObjectManager.addComponent<Available>(go);
+				go.GetComponent<Image>().raycastTarget = true;
+				/*
+				foreach(GameObject actionGO in availableActions){
+					if (actionGO.GetComponent<ElementToDrag>().actionPrefab.name.Equals(droppedItem.name))
+						GameObjectManager.addComponent<Available>(actionGO);
+						//Object.Destroy(actionGO.GetComponent<Available>());
+				}*/
 				
-			//}
-			//gameData.deletedItemLinkedTo.Clear();
-			
+			}
+		}
+		foreach(AddOne a in addOnes){
+			GameObjectManager.removeComponent(a);	
 		}
 	}
 

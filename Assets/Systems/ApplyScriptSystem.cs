@@ -23,7 +23,7 @@ public class ApplyScriptSystem : FSystem {
 	//private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(HighLight)));
 	private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(HighLight)));
 	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
-
+	private Family agentCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
 	private GameObject endPanel;
 	private GameData gameData;
 	//private static Action previousAction;
@@ -263,17 +263,19 @@ public class ApplyScriptSystem : FSystem {
 
 	public void applyScriptToPlayer(){
 		GameObject container;
-		List<GameObject> actions;
+		List<GameObject> actions = CopyActionsFrom(editableScriptContainer.First());
+		GameObject duplicate;
+		foreach(Transform notgo in agentCanvas.First().transform){
+			GameObjectManager.setGameObjectState(notgo.gameObject, false);
+		}
 		foreach( GameObject go in playerGO){
-			//go.GetComponent<Script>().actions = ActionManipulator.ScriptContainerToActionList(playerScriptContainer_f.First());
-			actions = CopyActionsFrom(editableScriptContainer.First());
-			Debug.Log(go.name);
-			container = go.GetComponent<ScriptRef>().container;
-			Debug.Log(container.name);
+			GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().container, true);
+			container = go.GetComponent<ScriptRef>().container.transform.Find("Viewport").Find("ScriptContainer").gameObject;
 			foreach(GameObject action in actions){
-				action.transform.SetParent(container.transform.Find("Viewport").Find("ScriptContainer"));
+				duplicate = Object.Instantiate(action);
+				duplicate.transform.SetParent(container.transform);
 			}
-			//addNext(container);
+			addNext(container);
 			//Debug.Log("actions = "+go.GetComponent<Script>().actions);
             //go.GetComponent<ScriptRef>().currentAction = 0;
             //gameData.nbStep = getNbStep(go.GetComponent<ScriptRef>());
@@ -728,18 +730,27 @@ public class ApplyScriptSystem : FSystem {
 				ForAction forAct = child.GetComponent<ForAction>();
                 forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
 				//loop display
+				/*
 				if (forAct.nbFor > 0)
 					child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor +1).ToString() + " / " + forAct.nbFor.ToString();
-				else
-					child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+				else*/
+				child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 				//not editable for
 				child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = false;
 				Object.Destroy(child.GetComponent<UITypeContainer>());
 				
-				if(forAct.nbFor >= 0){
-					Debug.Log("add for");
-					l.Add(child);
+				if(child.transform.childCount != 0){
+					List<GameObject> forchildren = CopyActionsFrom(child);
+					foreach(GameObject forchild in forchildren){
+						if (forchild.GetComponent<BaseElement>()){
+							forAct.firstChild = forchild;
+							Debug.Log("firstchild for = "+forchild.name);
+							break;							
+						}
+
+					}
 				}
+					
 			}
 			else if(child.GetComponent<IfAction>()){
 				IfAction IfAct = child.GetComponent<IfAction>();
@@ -755,12 +766,18 @@ public class ApplyScriptSystem : FSystem {
 				child.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().interactable = false;
 				Object.Destroy(child.GetComponent<UITypeContainer>());
 
-				l.Add(child);
-
+				if(child.transform.childCount != 0){
+					List<GameObject> ifchildren = CopyActionsFrom(child);
+					foreach(GameObject ifchild in ifchildren){
+						if (ifchild.GetComponent<BaseElement>()){
+							IfAct.firstChild = ifchild;
+							Debug.Log("firstchild if = "+ifchild.name);
+							break;							
+						}
+					}
+				}
 			}
-			else{
-				l.Add(child); 
-			}
+			l.Add(child); 
 			//not editable action
 			Object.Destroy(child.GetComponent<PointerSensitive>());
 		}
@@ -771,7 +788,7 @@ public class ApplyScriptSystem : FSystem {
 		//for each child, next = next child
 		foreach(Transform child in container.transform){
 			Debug.Log(child.gameObject.name);
-			if(i < container.transform.childCount){
+			if(i < container.transform.childCount && child.GetComponent<BaseElement>()){
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
 			}
 			//if or for action
@@ -780,7 +797,8 @@ public class ApplyScriptSystem : FSystem {
 			i++;
 		}
 		//last child's next = parent 
-		if(container.transform.childCount != 0 && (container.transform.GetComponent<IfAction>() || container.transform.GetComponent<ForAction>()))
+		if(container.transform.childCount != 0 && (container.transform.GetComponent<IfAction>() || container.transform.GetComponent<ForAction>()) &&
+		container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>())
 			container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;		
 	}
 }

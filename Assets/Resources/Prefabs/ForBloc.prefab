@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 589826222410828794}
   - component: {fileID: 589826222410828795}
   - component: {fileID: 6611365606304321742}
+  - component: {fileID: 8432218684345293890}
   m_Layer: 5
   m_Name: ForBloc
   m_TagString: Untagged
@@ -159,9 +160,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d03048817cdae984f93f61100f43b22f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 7
+  action: {fileID: 8432218684345293890}
   prefab: {fileID: 0}
   linkedTo: {fileID: 0}
+--- !u!114 &8432218684345293890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589826222410828797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90b99c2f8ed618d448d6122d14b5582a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseColor: {r: 0, g: 0, b: 0, a: 0}
+  target: {fileID: 0}
+  next: {fileID: 0}
+  currentAction: 0
+  currentFor: 0
+  nbFor: 0
+  firstChild: {fileID: 0}
 --- !u!1 &589826223735591177
 GameObject:
   m_ObjectHideFlags: 0

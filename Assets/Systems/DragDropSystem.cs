@@ -73,22 +73,12 @@ public class DragDropSystem : FSystem {
 			foreach( GameObject go in panelPointedGO){
 				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
 				itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, go.transform);
-				if(itemDragged.GetComponent<UITypeContainer>()){
-					if (itemDragged.GetComponent<UITypeContainer>().type == UITypeContainer.Type.For){
+				action = itemDragged.GetComponent<BaseElement>();
+				if(action.GetType().ToString().Equals("ForAction")){
 						TMP_InputField input = itemDragged.GetComponentInChildren<TMP_InputField>();
 						input.onEndEdit.AddListener(delegate{onlyPositiveInteger(input);});
-						action = itemDragged.AddComponent<ForAction>();
-					} 
-					else if (itemDragged.GetComponent<UITypeContainer>().type == UITypeContainer.Type.If){
-						action = itemDragged.AddComponent<IfAction>();
-					}
 				}
-				else{
-					action = itemDragged.AddComponent<BasicAction>();
-					((BasicAction)action).actionType = (BasicAction.ActionType)Enum.Parse(typeof(BasicAction.ActionType), go.name.ToString());
-					Debug.Log(((BasicAction)action).actionType);
 
-				}
 				itemDragged.GetComponent<UIActionType>().prefab = prefab;
 				itemDragged.GetComponent<UIActionType>().linkedTo = go;
 				itemDragged.GetComponent<UIActionType>().action = action;

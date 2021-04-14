@@ -2442,6 +2442,7 @@ GameObject:
   - component: {fileID: 4857904994598048875}
   - component: {fileID: 1190512657143156574}
   - component: {fileID: 1269177777863189614}
+  - component: {fileID: 5036532995155249292}
   m_Layer: 5
   m_Name: IfDetectBloc
   m_TagString: Untagged
@@ -2571,7 +2572,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d03048817cdae984f93f61100f43b22f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 5
+  action: {fileID: 5036532995155249292}
+  prefab: {fileID: 0}
+  linkedTo: {fileID: 0}
 --- !u!114 &1269177777863189614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2586,6 +2589,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 1
   m_VerticalFit: 1
+--- !u!114 &5036532995155249292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4857904994598048877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59cec87178a67c04da813cc00d230b4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseColor: {r: 0, g: 0, b: 0, a: 0}
+  target: {fileID: 0}
+  next: {fileID: 0}
+  currentAction: 0
+  ifEntityType: 0
+  ifNot: 0
+  range: 0
+  ifDirection: 0
+  firstChild: {fileID: 0}
 --- !u!1 &4857904995366243993
 GameObject:
   m_ObjectHideFlags: 0

@@ -23,8 +23,6 @@ public class HighLightSystem : FSystem {
 
 	private GameObject EnemyScriptContainer;
 
-	private GameObject scriptInWindow;
-
 	private GameData gameData;
 	
 	public HighLightSystem(){
@@ -36,7 +34,6 @@ public class HighLightSystem : FSystem {
 		//highlightedAction.addExitCallback(unHighLightItem);
         newStep_f.addEntryCallback(onNewStep);
         //highLightedItem = null;
-		scriptInWindow = null;
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		EnemyScriptContainer = enemyScriptContainer_f.First();
 	}
@@ -107,21 +104,15 @@ public class HighLightSystem : FSystem {
 		GameObject highLightedItem = highlightedGO.First();
 		//If click on highlighted item and item has a script, then show script in the 2nd script window
 		if(highLightedItem && Input.GetMouseButtonDown(0) && highLightedItem.GetComponent<ScriptRef>()){
-			//foreach (Transform child in EnemyScriptContainer.transform) {
-				//if(child.GetComponent<UIActionType>().type != Action.ActionType.If)
-				/*
-				GameObjectManager.unbind(child.gameObject);
-				GameObject.Destroy(child.gameObject);*/
-			//}
-			scriptInWindow =  highLightedItem;
-			highLightedItem.GetComponent<ScriptRef>().container.GetComponent<AudioSource>().Play();
-			//ScriptToContainer(highLightedItem.GetComponent<Script>(), EnemyScriptContainer);
 			GameObject go = highLightedItem.GetComponent<ScriptRef>().container;
+			//hide other containers
 			foreach(Transform notgo in go.transform.parent.transform){
-				if (notgo != go.transform && notgo.gameObject.activeSelf)
-					GameObjectManager.setGameObjectState(go, false);
+				if (notgo != go.transform && notgo.gameObject.activeSelf){
+					GameObjectManager.setGameObjectState(notgo.gameObject, false);
+				}
 			}
 			GameObjectManager.setGameObjectState(go,true);
+			highLightedItem.GetComponent<ScriptRef>().container.GetComponent<AudioSource>().Play();
 
 		}
 

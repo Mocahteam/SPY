@@ -728,7 +728,7 @@ public class LevelGeneratorSystem : FSystem {
 				prefab = Resources.Load ("Prefabs/IfDetectBloc") as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("If");
-				action = obj.AddComponent<IfAction>();
+				action = obj.GetComponent<IfAction>();
 				//read xml
 				((IfAction)action).ifDirection = int.Parse(actionNode.Attributes.GetNamedItem("ifDirection").Value);
 				((IfAction)action).ifEntityType = int.Parse(actionNode.Attributes.GetNamedItem("ifEntityType").Value);
@@ -768,7 +768,7 @@ public class LevelGeneratorSystem : FSystem {
 				prefab = Resources.Load ("Prefabs/ForBloc") as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("For");
-				action = obj.AddComponent<ForAction>();
+				action = obj.GetComponent<ForAction>();
 
 				//read xml
 				((ForAction)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
@@ -795,7 +795,7 @@ public class LevelGeneratorSystem : FSystem {
 				prefab = Resources.Load ("Prefabs/"+((BasicAction.ActionType)type).ToString()+"ActionBloc") as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find(((BasicAction.ActionType)type).ToString());
-				action = obj.AddComponent<BasicAction>();		
+				action = obj.GetComponent<BasicAction>();		
 				//action = go.GetComponent<BasicAction>();
 				//obj = new GameObject(((BasicAction.ActionType)type).ToString());
 
