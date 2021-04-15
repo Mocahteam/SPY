@@ -85,7 +85,7 @@ public class ActionBlocSystem : FSystem {
 	private void unuseAction(GameObject go){
 		Debug.Log("unuse action");
 		Debug.Log("deleted item = "+go.name);
-		BaseElement action = go.GetComponent<ElementToDrag>().actionPrefab.GetComponent<UIActionType>().action;
+		BaseElement action = go.GetComponent<ElementToDrag>().actionPrefab.GetComponent<BaseElement>();
 		int typeid = -1;
 		switch(action.GetType().ToString()){
 			case "BasicAction":

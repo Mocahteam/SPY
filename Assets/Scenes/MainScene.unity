@@ -520,7 +520,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 390ae5b6d5b4ea542a10de01639cef92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
   layer: 0
 --- !u!114 &85198316
 MonoBehaviour:
@@ -1112,7 +1111,6 @@ GameObject:
   - component: {fileID: 361349227}
   - component: {fileID: 361349226}
   - component: {fileID: 361349225}
-  - component: {fileID: 361349224}
   - component: {fileID: 361349223}
   - component: {fileID: 361349222}
   - component: {fileID: 361349221}
@@ -1120,6 +1118,7 @@ GameObject:
   - component: {fileID: 361349219}
   - component: {fileID: 361349218}
   - component: {fileID: 361349217}
+  - component: {fileID: 361349224}
   - component: {fileID: 361349216}
   m_Layer: 0
   m_Name: Main_Loop
@@ -1294,10 +1293,6 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     _typeFullName: HighLightSystem
     _pause: 0
-  - _typeAssemblyQualifiedName: ApplyScriptSystem, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: ApplyScriptSystem
-    _pause: 0
   - _typeAssemblyQualifiedName: CameraSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     _typeFullName: CameraSystem
@@ -1326,10 +1321,14 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     _typeFullName: ActionBlocSystem
     _pause: 0
-  _lateUpdateSystemDescriptions:
   - _typeAssemblyQualifiedName: StepSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     _typeFullName: StepSystem
+    _pause: 0
+  _lateUpdateSystemDescriptions:
+  - _typeAssemblyQualifiedName: ApplyScriptSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: ApplyScriptSystem
     _pause: 0
   _forceUpdateInspector: 0
   _loadingState: 0
@@ -6975,8 +6974,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361349224}
-        m_TargetAssemblyTypeName: ApplyScriptSystem_wrapper, Assembly-CSharp
+      - m_Target: {fileID: 361349221}
+        m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
         m_MethodName: applyScriptToPlayer
         m_Mode: 1
         m_Arguments:

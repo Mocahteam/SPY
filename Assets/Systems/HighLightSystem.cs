@@ -19,9 +19,10 @@ public class HighLightSystem : FSystem {
 	private Family nonhighlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(HighLight)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
 
-	private Family enemyScriptContainer_f = FamilyManager.getFamily(new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
+	//private Family enemyScriptContainer_f = FamilyManager.getFamily(new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
+	private Family visibleContainers = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasRenderer), typeof(ScrollRect), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); 
 
-	private GameObject EnemyScriptContainer;
+	//private GameObject EnemyScriptContainer;
 
 	private GameData gameData;
 	
@@ -35,7 +36,8 @@ public class HighLightSystem : FSystem {
         newStep_f.addEntryCallback(onNewStep);
         //highLightedItem = null;
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		EnemyScriptContainer = enemyScriptContainer_f.First();
+		//EnemyScriptContainer = enemyScriptContainer_f.First();
+		visibleContainers.addEntryCallback(playAudioScan);
 	}
 	/*
 	public static GameObject getLastGameObjectOf (GameObject gameObject, Action.ActionType type){
@@ -112,10 +114,16 @@ public class HighLightSystem : FSystem {
 				}
 			}
 			GameObjectManager.setGameObjectState(go,true);
-			highLightedItem.GetComponent<ScriptRef>().container.GetComponent<AudioSource>().Play();
+			if(go.activeSelf)
+				go.GetComponent<AudioSource>().Play();
 
 		}
 
+	}
+
+	public void playAudioScan(GameObject go){
+		//if(go.GetComponent<AudioSource>().clip != Resources.Load("Sound/AddActionSound"))
+		go.GetComponent<AudioSource>().Play();
 	}
 
 	public void highLightItem(GameObject go){

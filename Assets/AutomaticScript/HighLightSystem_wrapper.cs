@@ -9,6 +9,11 @@ public class HighLightSystem_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
+	public void playAudioScan(UnityEngine.GameObject go)
+	{
+		MainLoop.callAppropriateSystemMethod ("HighLightSystem", "playAudioScan", go);
+	}
+
 	public void highLightItem(UnityEngine.GameObject go)
 	{
 		MainLoop.callAppropriateSystemMethod ("HighLightSystem", "highLightItem", go);

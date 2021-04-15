@@ -81,7 +81,7 @@ public class DragDropSystem : FSystem {
 
 				itemDragged.GetComponent<UIActionType>().prefab = prefab;
 				itemDragged.GetComponent<UIActionType>().linkedTo = go;
-				itemDragged.GetComponent<UIActionType>().action = action;
+				//itemDragged.GetComponent<UIActionType>().action = action;
 				action.target = itemDragged;
 				GameObjectManager.bind(itemDragged);
 				itemDragged.GetComponent<Image>().raycastTarget = false;
@@ -104,7 +104,8 @@ public class DragDropSystem : FSystem {
 		//PositionBar positioning
 		if(priority && itemDragged){
 			int start = 0;
-			if(priority.GetComponent<UITypeContainer>().type != UITypeContainer.Type.Script){
+			//if(priority.GetComponent<UITypeContainer>().type != UITypeContainer.Type.Script){
+			if(priority.GetComponent<ForAction>() || priority.GetComponent<IfAction>()){
 				start++;
 			}
 			GameObjectManager.setGameObjectState(positionBar, true);

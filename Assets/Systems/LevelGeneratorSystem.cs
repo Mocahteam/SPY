@@ -805,7 +805,7 @@ public class LevelGeneratorSystem : FSystem {
 				break;
 		}
 		obj.GetComponent<UIActionType>().prefab = prefab;
-		obj.GetComponent<UIActionType>().action = action;
+		//obj.GetComponent<UIActionType>().action = action;
 		action.target = obj;
 		Object.Destroy(obj.GetComponent<PointerSensitive>());
 		return obj;

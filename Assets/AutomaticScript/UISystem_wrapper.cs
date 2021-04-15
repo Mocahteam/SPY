@@ -64,4 +64,9 @@ public class UISystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("UISystem", "retry", null);
 	}
 
+	public void applyScriptToPlayer()
+	{
+		MainLoop.callAppropriateSystemMethod ("UISystem", "applyScriptToPlayer", null);
+	}
+
 }

@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using FYFY;
 using System.Threading.Tasks;
+using UnityEngine.UI;
 
 public class StepSystem : FSystem {
 
     private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(HighLight)));
-
+    private Family visibleContainers = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasRenderer), typeof(ScrollRect), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); 
     private float timeStepCpt;
 	private static float timeStep = 1.5f;
 	private GameData gameData;
