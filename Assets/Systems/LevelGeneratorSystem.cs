@@ -9,7 +9,7 @@ using FYFY_plugins.PointerManager;
 
 public class LevelGeneratorSystem : FSystem {
 
-	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(HighLight)));
+	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
 	//private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(MeshRenderer), typeof(CapsuleCollider), typeof(AudioSource)), new AnyOfTags("Coin"));
 	//private Family activableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(MeshRenderer), typeof(AudioSource), typeof(MeshFilter)));
 	//private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Direction), typeof(MeshRenderer), typeof(BoxCollider), typeof(Position), typeof(AudioSource)), new AnyOfTags("Door"));
@@ -333,18 +333,18 @@ public class LevelGeneratorSystem : FSystem {
 
 		//add new container to entity
 		ScriptRef scriptref = entity.GetComponent<ScriptRef>();
-		scriptref.container = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Container") as GameObject);
-		scriptref.container.transform.SetParent(scriptContainer.gameObject.transform);
+		GameObject containerParent = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Container") as GameObject);
+		scriptref.container = containerParent.transform.Find("Viewport").Find("ScriptContainer").gameObject;
+		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
 
 		if(script != null){
-			Transform containerconstructor = scriptref.container.transform.Find("Viewport").Find("ScriptContainer");
 			//add actions to container
 			foreach(GameObject go in script){
-				go.transform.SetParent(containerconstructor);
+				go.transform.SetParent(scriptref.container.transform);
 			}
-			addNext(containerconstructor.gameObject);
+			addNext(scriptref.container);
 		}
-		GameObjectManager.bind(scriptref.container);
+		GameObjectManager.bind(containerParent);
 		GameObjectManager.bind(entity);
 		return entity;
 	}
@@ -816,7 +816,7 @@ public class LevelGeneratorSystem : FSystem {
 		//for each child, next = next child
 		foreach(Transform child in container.transform){
 			Debug.Log(child.gameObject.name);
-			if(i < container.transform.childCount){
+			if(i < container.transform.childCount && child.GetComponent<BaseElement>()){
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
 			}
 			//if or for action
@@ -825,8 +825,9 @@ public class LevelGeneratorSystem : FSystem {
 			i++;
 		}
 		//last child's next = parent 
-		if(container.transform.childCount != 0 && (container.transform.GetComponent<IfAction>() || container.transform.GetComponent<ForAction>()))
-			container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;		
+		if(container.transform.childCount != 0 && (container.transform.GetComponent<IfAction>() || container.transform.GetComponent<ForAction>()) &&
+		container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>())
+			container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;	
 	}
 
 }

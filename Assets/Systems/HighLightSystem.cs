@@ -13,31 +13,42 @@ public class HighLightSystem : FSystem {
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 
-	private Family highlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(HighLight), typeof(PointerOver)), new NoneOfComponents(typeof(UIActionType)));
-	private Family nonhighlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(HighLight)), new NoneOfComponents(typeof(PointerOver), typeof(UIActionType)));
-	private Family highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(HighLight), typeof(UIActionType)));
-	private Family nonhighlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(HighLight)));
+	private Family highlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(PointerOver)), new NoneOfComponents(typeof(UIActionType)));
+	private Family nonhighlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(UIActionType)));
+	private Family highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(UIActionType)));
+	private Family nonhighlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(UIActionType)), new NoneOfComponents(typeof(CurrentAction)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
 
 	//private Family enemyScriptContainer_f = FamilyManager.getFamily(new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
-	private Family visibleContainers = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasRenderer), typeof(ScrollRect), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); 
-
+	private Family highlightableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)));
 	//private GameObject EnemyScriptContainer;
 
 	private GameData gameData;
 	
 	public HighLightSystem(){
 		highlightedGO.addEntryCallback(highLightItem);
-		nonhighlightedGO.addEntryCallback(unHighLightItemWorld);
+		nonhighlightedGO.addEntryCallback(unHighLightItem);
 		//highlightedGO.addExitCallback(unHighLightItem);
 		highlightedAction.addEntryCallback(highLightItem);
-		nonhighlightedAction.addEntryCallback(unHighLightItemUI);
+		nonhighlightedAction.addEntryCallback(unHighLightItem);
 		//highlightedAction.addExitCallback(unHighLightItem);
         newStep_f.addEntryCallback(onNewStep);
         //highLightedItem = null;
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		//EnemyScriptContainer = enemyScriptContainer_f.First();
-		visibleContainers.addEntryCallback(playAudioScan);
+		foreach(GameObject go in highlightableGO){
+			initBaseColor(go);
+		}
+		highlightableGO.addEntryCallback(initBaseColor);
+	}
+	
+	private void initBaseColor(GameObject go){
+		if(go.GetComponent<BaseElement>() && go.GetComponent<Image>()){
+			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image>().color;
+		}
+		else{
+			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>().material.color;
+		}
 	}
 	/*
 	public static GameObject getLastGameObjectOf (GameObject gameObject, Action.ActionType type){
@@ -106,7 +117,7 @@ public class HighLightSystem : FSystem {
 		GameObject highLightedItem = highlightedGO.First();
 		//If click on highlighted item and item has a script, then show script in the 2nd script window
 		if(highLightedItem && Input.GetMouseButtonDown(0) && highLightedItem.GetComponent<ScriptRef>()){
-			GameObject go = highLightedItem.GetComponent<ScriptRef>().container;
+			GameObject go = highLightedItem.GetComponent<ScriptRef>().container.transform.parent.transform.parent.gameObject;
 			//hide other containers
 			foreach(Transform notgo in go.transform.parent.transform){
 				if (notgo != go.transform && notgo.gameObject.activeSelf){
@@ -114,44 +125,35 @@ public class HighLightSystem : FSystem {
 				}
 			}
 			GameObjectManager.setGameObjectState(go,true);
-			if(go.activeSelf)
-				go.GetComponent<AudioSource>().Play();
+			MainLoop.instance.GetComponent<AudioSource>().Play();
 
 		}
 
-	}
-
-	public void playAudioScan(GameObject go){
-		//if(go.GetComponent<AudioSource>().clip != Resources.Load("Sound/AddActionSound"))
-		go.GetComponent<AudioSource>().Play();
 	}
 
 	public void highLightItem(GameObject go){
-		//Debug.Log("TEST");
-		if(go.GetComponent<Renderer>()){		
-			go.GetComponent<HighLight>().basecolor = go.GetComponent<Renderer>().material.color;
-			go.GetComponent<Renderer>().material.color = Color.yellow;
-		}
-		else if(go.transform.childCount > 0 && go.transform.GetChild(0).GetComponent<Renderer>()){	
-			go.GetComponent<HighLight>().basecolor = go.transform.GetChild(0).GetComponent<Renderer>().material.color;
-			go.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.yellow;
-		}
-		else if(go.transform.childCount > 0 && go.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>()){
-			go.GetComponent<HighLight>().basecolor = go.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material.color;
-			go.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material.color = Color.yellow;
+
+		if(go.GetComponent<BaseElement>() && go.GetComponent<Image>()){
+			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
 		}
 		else{
-			go.GetComponent<HighLight>().basecolor = go.GetComponent<Image>().color;
-			go.GetComponent<Image>().color = Color.yellow;
+			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().highlightedColor;
 		}
 	}
 
-	public void unHighLightItemUI(GameObject go){
+	public void unHighLightItem(GameObject go){
 		//Debug.Log("------unhighlight");
+		if(go.GetComponent<BaseElement>() && go.GetComponent<Image>()){
+			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
+		}
+		else{
+			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().baseColor;
+		}
+		/*
 		GameObject prefab = go.GetComponent<UIActionType>().prefab;
-		go.GetComponent<Image>().color = prefab.GetComponent<Image>().color;
+		go.GetComponent<Image>().color = prefab.GetComponent<Image>().color;*/
 	}
-
+	/*
 	public void unHighLightItemWorld(GameObject go){
 		if (go.GetComponent<HighLight>().basecolor != new Color32(0,0,0,1)){
 			if(go.GetComponent<Renderer>()){
@@ -164,5 +166,5 @@ public class HighLightSystem : FSystem {
 				go.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material.color = go.GetComponent<HighLight>().basecolor;
 			}
 		}
-	}
+	}*/
 }

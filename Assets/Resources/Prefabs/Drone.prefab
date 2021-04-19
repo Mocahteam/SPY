@@ -12,11 +12,11 @@ GameObject:
   - component: {fileID: 7078998064783144265}
   - component: {fileID: 8936784549097885255}
   - component: {fileID: 5487263851891912790}
-  - component: {fileID: 1079597055639643908}
   - component: {fileID: 7738191142304876066}
   - component: {fileID: 8672921081651916069}
   - component: {fileID: 7346393826231993560}
   - component: {fileID: 6137909310257212381}
+  - component: {fileID: 9018447352748071422}
   m_Layer: 0
   m_Name: Drone
   m_TagString: Drone
@@ -78,19 +78,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction: 0
---- !u!114 &1079597055639643908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1889490105086536494}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5ecee827e938ff4d8c85bd60f661122, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  basecolor: {r: 0, g: 0, b: 0, a: 0.003921569}
 --- !u!114 &7738191142304876066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228,6 +215,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
+  currentAction: 0
+--- !u!114 &9018447352748071422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1889490105086536494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb8271fbef7525748a512c171b100bba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseColor: {r: 1, g: 1, b: 1, a: 1}
+  highlightedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!111 &7534346248983528881
 Animation:
   m_ObjectHideFlags: 0
