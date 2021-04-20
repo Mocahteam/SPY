@@ -9,7 +9,7 @@ public class StepSystem : FSystem {
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(CurrentAction)));
     private Family visibleContainers = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasRenderer), typeof(ScrollRect), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); 
-	//private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
+	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
     private float timeStepCpt;
 	private static float timeStep = 1.5f;
 	private GameData gameData;
@@ -19,8 +19,8 @@ public class StepSystem : FSystem {
 		timeStepCpt = timeStep;
         newStep_f.addEntryCallback(onNewStep);
     }
-
-    private async void onNewStep(GameObject go)
+    
+    private void onNewStep(GameObject go)
     {
         GameObjectManager.removeComponent(go.GetComponent<NewStep>());
         /*
@@ -31,6 +31,7 @@ public class StepSystem : FSystem {
         timeStepCpt = timeStep;
         gameData.nbStep--;
         Debug.Log("StepSystem End");
+        /*
         if(gameData.nbStep == 0){
             Debug.Log("end");
             await Task.Delay((int)timeStep*1000);
@@ -41,14 +42,15 @@ public class StepSystem : FSystem {
                     GameObjectManager.removeComponent<CurrentAction>(highlightedGO);
                 }
             }
-        }
+        }*/
     }
 
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
 
 		//Organize each steps
-		if(gameData.nbStep > 0 && newEnd_f.Count == 0){
+		//if(gameData.nbStep > 0 && newEnd_f.Count == 0){
+		if(continueSteps() && newEnd_f.Count == 0){
             //activate step
             if (timeStepCpt <= 0)
             {
@@ -60,6 +62,17 @@ public class StepSystem : FSystem {
 		}
 	}
 
+    private bool continueSteps(){
+        bool currentAction = false;
+        foreach(GameObject robot in playerGO){
+            if(robot.GetComponent<ScriptRef>().container.GetComponentInChildren<CurrentAction>()){
+                currentAction = true;
+                break;
+            }  
+        }
+        return currentAction;
+    }
+    
     private void highlight(){
         /*
         foreach(GameObject go in highlightedItems){

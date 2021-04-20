@@ -260,39 +260,25 @@ public class UISystem : FSystem {
 	}
 
 	public void applyScriptToPlayer(){
-		List<GameObject> actions = CopyActionsFrom(editableScriptContainer.First());
+		GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First());
+		addNext(containerCopy);
 		//add highlight to first action
-		GameObject duplicate;
+		//GameObject duplicate;
 		//bool firstActionHighlighted = false;
 		//GameObject firstAction;
 		foreach(Transform notgo in agentCanvas.First().transform){
 			GameObjectManager.setGameObjectState(notgo.gameObject, false);
 		}
-		foreach( GameObject go in playerGO){
-			GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().container.transform.parent.transform.parent.gameObject, true);
-			foreach(GameObject action in actions){
-				duplicate = UnityEngine.Object.Instantiate(action);
-				duplicate.transform.SetParent(go.GetComponent<ScriptRef>().container.transform);
-				
-				GameObjectManager.bind(duplicate);
-				/*
-				if(!firstActionHighlighted){
-					if(duplicate.GetComponent<BasicAction>())
-						firstAction = duplicate;					
-					else if (duplicate.GetComponent<ForAction>() && duplicate.GetComponent<ForAction>().firstChild != null)
-						firstAction = duplicate.GetComponent<ForAction>().firstChild
 
-					if (firstAction != null){
-						GameObjectManager.addComponent<HighLight>(duplicate);
-						firstActionHighlighted = true;	
-					}
-				}*/
+		foreach( GameObject go in playerGO){
+			GameObject targetContainer = go.GetComponent<ScriptRef>().container;
+			GameObjectManager.setGameObjectState(targetContainer.transform.parent.parent.gameObject, true);
+			for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
+				Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
+				child.SetParent(targetContainer.transform);
+				GameObjectManager.bind(child.gameObject);
+				GameObjectManager.refresh(targetContainer);
 			}
-			addNext(go.GetComponent<ScriptRef>().container);
-			//firstActionHighlighted = false;
-			//Debug.Log("actions = "+go.GetComponent<Script>().actions);
-            //go.GetComponent<ScriptRef>().currentAction = 0;
-            //gameData.nbStep = getNbStep(go.GetComponent<ScriptRef>());
 		}
 
 		//applyIfEntityType();
@@ -320,72 +306,34 @@ public class UISystem : FSystem {
 		return nbstep;
 	}
 	*/
-    public List<GameObject> CopyActionsFrom(GameObject container){
-		Debug.Log("CopyActionsFrom");
-		List<GameObject> l = new List<GameObject>();
-
-		for(int i = 0; i< container.transform.childCount; i++){
-			GameObject child = container.transform.GetChild(i).gameObject;
-			if(child.GetComponent<ForAction>()){
-				ForAction forAct = child.GetComponent<ForAction>();
-                forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
-				//loop display
-				/*
-				if (forAct.nbFor > 0)
-					child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor +1).ToString() + " / " + forAct.nbFor.ToString();
-				else*/
-				child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
-				//not editable for
-				child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = false;
-				UnityEngine.Object.Destroy(child.GetComponent<UITypeContainer>());
-				//GameObjectManager.removeComponent<UITypeContainer>(child);
-				
-				if(child.transform.childCount != 0){
-					List<GameObject> forchildren = CopyActionsFrom(child);
-					foreach(GameObject forchild in forchildren){
-						if (forchild.GetComponent<BaseElement>()){
-							forAct.firstChild = forchild;
-							Debug.Log("firstchild for = "+forchild.name);
-							break;							
-						}
-
-					}
-				}
-					
-			}
-			else if(child.GetComponent<IfAction>()){
-				IfAction IfAct = child.GetComponent<IfAction>();
-				IfAct.ifEntityType = child.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value;
-				IfAct.ifDirection = child.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value;
-				IfAct.range = int.Parse(child.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text);
-				IfAct.ifNot = (child.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1);
-				
-				//not editable if
-				child.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().interactable = false;
-				child.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().interactable = false;
-				child.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().interactable = false;
-				child.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().interactable = false;
-				UnityEngine.Object.Destroy(child.GetComponent<UITypeContainer>());
-				//GameObjectManager.removeComponent<UITypeContainer>(child);
-
-				if(child.transform.childCount != 0){
-					List<GameObject> ifchildren = CopyActionsFrom(child);
-					foreach(GameObject ifchild in ifchildren){
-						if (ifchild.GetComponent<BaseElement>()){
-							IfAct.firstChild = ifchild;
-							Debug.Log("firstchild if = "+ifchild.name);
-							break;							
-						}
-					}
-				}
-			}
-			l.Add(child); 
-			//not editable action
-			if(child.GetComponent<PointerSensitive>())
-				UnityEngine.Object.Destroy(child.GetComponent<PointerSensitive>());
-				//GameObjectManager.removeComponent<PointerSensitive>(child);
+    public GameObject CopyActionsFrom(GameObject container){
+		GameObject copyGO = GameObject.Instantiate(container); 
+		foreach(TMP_Dropdown drop in copyGO.GetComponentsInChildren<TMP_Dropdown>()){
+			drop.interactable = false;
 		}
-		return l;
+		foreach(TMP_InputField input in copyGO.GetComponentsInChildren<TMP_InputField>()){
+			input.interactable = false;
+		}
+		foreach(ForAction forAct in copyGO.GetComponentsInChildren<ForAction>()){
+			forAct.nbFor = int.Parse(forAct.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
+			forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+			forAct.firstChild = forAct.GetComponentInChildren<BaseElement>().gameObject;
+		}
+		foreach(IfAction IfAct in copyGO.GetComponentsInChildren<IfAction>()){
+			IfAct.ifEntityType = IfAct.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value;
+			IfAct.ifDirection = IfAct.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value;
+			IfAct.range = int.Parse(IfAct.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text);
+			IfAct.ifNot = (IfAct.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1);
+			IfAct.firstChild = IfAct.GetComponentInChildren<BaseElement>().gameObject;
+		}
+		foreach(UITypeContainer typeContainer in copyGO.GetComponentsInChildren<UITypeContainer>()){
+			UnityEngine.Object.Destroy(typeContainer);
+		}
+		foreach(PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>()){
+			UnityEngine.Object.Destroy(pointerSensitive);
+		}
+
+		return copyGO;
 	}
 	private void addNext(GameObject container){
 		int i = 1;
@@ -401,9 +349,13 @@ public class UISystem : FSystem {
 			i++;
 		}
 		//last child's next = parent 
-		if(container.transform.childCount != 0 && (container.transform.GetComponent<IfAction>() || container.transform.GetComponent<ForAction>()) &&
-		container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>())
-			container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;		
+		if(container.transform.childCount != 0 && container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>()){
+			if(container.GetComponent<ForAction>())
+				container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;
+			else if (container.GetComponent<IfAction>())
+				container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container.GetComponent<IfAction>().next;
+		}
+					
 	}
 	
 }

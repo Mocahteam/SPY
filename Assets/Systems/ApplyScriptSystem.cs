@@ -30,7 +30,7 @@ public class ApplyScriptSystem : FSystem {
 
 	public ApplyScriptSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-        newStep_f.addEntryCallback(onNewStep);
+        //newStep_f.addEntryCallback(onNewStep);
         endPanel = endpanel_f.First();
         GameObjectManager.setGameObjectState(endPanel, false);
         robotcollision_f.addEntryCallback(onNewCollision);

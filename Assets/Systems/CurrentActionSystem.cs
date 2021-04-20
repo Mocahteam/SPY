@@ -9,7 +9,7 @@ public class CurrentActionSystem : FSystem {
 	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
-	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Drone"));
+	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
 	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
 	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
 	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem)), new AnyOfTags("Coin"));
@@ -19,27 +19,88 @@ public class CurrentActionSystem : FSystem {
 		newStep_f.addEntryCallback(onNewStep);
 	}
 
-	private void onNewStep(GameObject go){
-		//to do = add/remove currentAction
-		GameObject next;
+	private void onNewStep(GameObject unused){
 		foreach(GameObject currentAction in currentActions){
-			
+			updateCurrentAction(currentAction);
 		}
 	}
 
+	public void updateCurrentAction(GameObject currentAction){
+		if(currentAction != null && currentAction.GetComponent<BasicAction>()){
+			GameObjectManager.removeComponent<CurrentAction>(currentAction);
+			//parent = for & last action of for
+			if(currentAction.transform.parent.GetComponent<ForAction>() && currentAction.GetComponent<BasicAction>().next.Equals(currentAction.transform.parent.gameObject)){
+				ForAction forAct = currentAction.transform.parent.GetComponent<ForAction>();
+				//not last loop
+				if(forAct.currentFor < forAct.nbFor){
+					//repeat loop
+					currentAction.transform.parent.GetComponent<ForAction>().currentFor++;
+					GameObjectManager.addComponent<CurrentAction>(forAct.firstChild); 
+				}
+				//last loop
+				else{
+					GameObjectManager.removeComponent<CurrentAction>(forAct.next);
+					GameObjectManager.addComponent<CurrentAction>(forAct.next);
+				}
+			}
+			//next = if
+			else if(currentAction.GetComponent<BasicAction>().next.GetComponent<IfAction>()){
+				GameObjectManager.addComponent<CurrentAction>(currentAction.GetComponent<BasicAction>().next.GetComponent<IfAction>().firstChild);
+			}
+			//next = for
+			else if(currentAction.GetComponent<BasicAction>().next.GetComponent<ForAction>()){
+				if(currentAction.GetComponent<BasicAction>().next.GetComponent<ForAction>().nbFor != 0){
+					GameObjectManager.addComponent<CurrentAction>(currentAction.GetComponent<BasicAction>().next);
+					GameObjectManager.addComponent<CurrentAction>(currentAction.GetComponent<BasicAction>().next.GetComponent<ForAction>().firstChild);
+				}
+				else{
+					//currentAction = next;
+					updateCurrentAction(currentAction.GetComponent<BasicAction>().next.GetComponent<ForAction>().next);
+				}
+
+			}
+			//next = BasicAction
+			else if(currentAction.GetComponent<BasicAction>().next.GetComponent<BasicAction>()){
+				GameObjectManager.addComponent<CurrentAction>(currentAction.GetComponent<BasicAction>().next);
+			}
+			
+		}		
+	}
+
 	public void firstAction(){
+		Debug.Log("robots "+playerGO.Count);
 		//current action robot(s)
 		GameObject firstAction;
 		foreach(GameObject robot in playerGO){
 			firstAction = getFirstActionOf(robot.GetComponent<ScriptRef>().container, robot);
+			Debug.Log(firstAction);
 			if(firstAction != null){
-				firstAction.AddComponent<CurrentAction>();
-				Debug.Log("firstAction = "+firstAction.name);
+				GameObjectManager.addComponent<CurrentAction>(firstAction);
+				Debug.Log("firstAction robot = "+firstAction.name);
+				if(firstAction.transform.parent.GetComponent<ForAction>()){
+				//if(firstAction.GetComponentInParent<ForAction>()){
+					Debug.Log("if");
+					GameObjectManager.addComponent<CurrentAction>(firstAction.transform.parent.gameObject);
+				}
 			}
 
 		}
 
-		//to do = current action drone(s)
+		//current action drone(s)
+		Debug.Log("drones "+droneGO.Count);
+		foreach(GameObject drone in droneGO){
+			if(!drone.GetComponent<ScriptRef>().container.GetComponentInChildren<CurrentAction>()){
+			firstAction = getFirstActionOf(drone.GetComponent<ScriptRef>().container, drone);
+			Debug.Log(firstAction);
+				if(firstAction != null){
+					GameObjectManager.addComponent<CurrentAction>(firstAction);
+					Debug.Log("firstAction drone = "+firstAction.name);
+					if(firstAction.transform.GetComponentInParent<ForAction>()){
+						GameObjectManager.addComponent<CurrentAction>(firstAction.transform.parent.gameObject);
+					}
+				}				
+			}
+		}
 
 	}
 
@@ -53,8 +114,7 @@ public class CurrentActionSystem : FSystem {
 					break;				
 				}
 				//For
-				else if (go.GetComponent<ForAction>() && go.GetComponent<ForAction>().nbFor != 0 && 
-				go.GetComponent<ForAction>().firstChild != null){
+				else if (go.GetComponent<ForAction>() && go.GetComponent<ForAction>().nbFor != 0 && go.GetComponent<ForAction>().firstChild != null){
 					if(go.GetComponent<ForAction>().firstChild.GetComponent<BasicAction>()){
 						res = go.GetComponent<ForAction>().firstChild;
 						break;						

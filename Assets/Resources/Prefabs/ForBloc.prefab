@@ -108,7 +108,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 390ae5b6d5b4ea542a10de01639cef92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 1
   layer: 1
 --- !u!222 &589826222410828794
 CanvasRenderer:
@@ -160,7 +159,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d03048817cdae984f93f61100f43b22f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  action: {fileID: 8432218684345293890}
   prefab: {fileID: 0}
   linkedTo: {fileID: 0}
 --- !u!114 &8432218684345293890
@@ -176,6 +174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseColor: {r: 0, g: 0, b: 0, a: 0}
+  highlightedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   target: {fileID: 0}
   next: {fileID: 0}
   currentAction: 0
