@@ -12,11 +12,11 @@ using UnityEngine.Events;
 public class HighLightSystem : FSystem {
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
-	private Family highlightableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable))); //has to be defined before nonhighlightedGO because initBaseColor must be called before unHighLightItem
+	private Family highlightableGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(UIActionType))); //has to be defined before nonhighlightedGO because initBaseColor must be called before unHighLightItem
 	private Family highlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(PointerOver)), new NoneOfComponents(typeof(UIActionType)));
 	private Family nonhighlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(UIActionType)));
 	private Family highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(UIActionType)));
-	private Family nonhighlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(UIActionType)), new NoneOfComponents(typeof(CurrentAction)));
+	private Family nonhighlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(CurrentAction)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
 
 	//private Family enemyScriptContainer_f = FamilyManager.getFamily(new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
@@ -40,7 +40,7 @@ public class HighLightSystem : FSystem {
 	
 	private void initBaseColor(GameObject go){
 		if(go.GetComponent<BaseElement>() && go.GetComponent<Image>()){
-			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image>().color;
+			go.GetComponent<BaseElement>().baseColor = go.GetComponent<Image>().color;
 		}
 		else{
 			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>().material.color;
@@ -128,7 +128,7 @@ public class HighLightSystem : FSystem {
 	}
 
 	public void highLightItem(GameObject go){
-
+		Debug.Log("highLightItem = "+go.name);
 		if(go.GetComponent<BasicAction>() && go.GetComponent<Image>()){
 			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
 		}
@@ -144,6 +144,9 @@ public class HighLightSystem : FSystem {
 		//Debug.Log("------unhighlight");
 		if(go.GetComponent<BaseElement>() && go.GetComponent<Image>()){
 			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
+		}
+		else if(go.GetComponent<ForAction>()){
+			go.transform.GetChild(0).GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
 		}
 		else{
 			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().baseColor;

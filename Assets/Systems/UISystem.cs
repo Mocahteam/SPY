@@ -261,7 +261,7 @@ public class UISystem : FSystem {
 
 	public void applyScriptToPlayer(){
 		GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First());
-		addNext(containerCopy);
+		//addNext(containerCopy);
 		//add highlight to first action
 		//GameObject duplicate;
 		//bool firstActionHighlighted = false;
@@ -275,11 +275,15 @@ public class UISystem : FSystem {
 			GameObjectManager.setGameObjectState(targetContainer.transform.parent.parent.gameObject, true);
 			for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
 				Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
+				//Debug.Log("bind "+child.name);
 				child.SetParent(targetContainer.transform);
 				GameObjectManager.bind(child.gameObject);
 				GameObjectManager.refresh(targetContainer);
 			}
+			addNext(targetContainer);
 		}
+
+		UnityEngine.Object.Destroy(containerCopy);
 
 		//applyIfEntityType();
 		/*
@@ -325,6 +329,7 @@ public class UISystem : FSystem {
 			IfAct.range = int.Parse(IfAct.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text);
 			IfAct.ifNot = (IfAct.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1);
 			IfAct.firstChild = IfAct.GetComponentInChildren<BaseElement>().gameObject;
+			//Debug.Log("copy firstchild "+IfAct.firstChild.name);
 		}
 		foreach(UITypeContainer typeContainer in copyGO.GetComponentsInChildren<UITypeContainer>()){
 			UnityEngine.Object.Destroy(typeContainer);
@@ -339,7 +344,7 @@ public class UISystem : FSystem {
 		int i = 1;
 		//for each child, next = next child
 		foreach(Transform child in container.transform){
-			Debug.Log(child.gameObject.name);
+			//Debug.Log(child.gameObject.name);
 			if(i < container.transform.childCount && child.GetComponent<BaseElement>()){
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
 			}
