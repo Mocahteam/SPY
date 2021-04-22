@@ -2,7 +2,7 @@ using UnityEngine;
 using FYFY;
 using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
-
+using TMPro;
 public class CurrentActionSystem : FSystem {
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(CurrentAction)));
@@ -29,6 +29,14 @@ public class CurrentActionSystem : FSystem {
 				Debug.Log("nextAction = "+nextAction);
 				
 				if(nextAction != null){
+					//parent = for & first loop and first child, currentfor = 0 -> currentfor = 1
+					if(nextAction.transform.parent.GetComponent<ForAction>() && nextAction.transform.parent.GetComponent<ForAction>().currentFor == 0 && 
+					nextAction.Equals(nextAction.transform.parent.GetComponent<ForAction>().firstChild)){
+						ForAction forAct = nextAction.transform.parent.GetComponent<ForAction>();
+						forAct.currentFor++;
+						forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+						GameObjectManager.addComponent<CurrentAction>(forAct.gameObject, new{agent = current.agent});
+					}
 					GameObjectManager.addComponent<CurrentAction>(nextAction, new{agent = current.agent});				
 				}
 				GameObjectManager.removeComponent<CurrentAction>(currentAction);
@@ -47,11 +55,12 @@ public class CurrentActionSystem : FSystem {
 				if(forAct.currentFor < forAct.nbFor){
 					//repeat loop
 					currentAction.transform.parent.GetComponent<ForAction>().currentFor++;
+					forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 					nextAction = forAct.firstChild; 
 				}
 				//last loop
 				else{
-					GameObjectManager.removeComponent<CurrentAction>(forAct.next);
+					GameObjectManager.removeComponent<CurrentAction>(forAct.gameObject);
 					nextAction = forAct.next;
 				}
 			}
@@ -120,8 +129,10 @@ public class CurrentActionSystem : FSystem {
 
 				Debug.Log("firstAction robot = "+firstAction.name);
 				if(firstAction.transform.parent.GetComponent<ForAction>()){
-					Debug.Log("if");
+					ForAction forAct = firstAction.transform.parent.GetComponent<ForAction>();
 					GameObjectManager.addComponent<CurrentAction>(firstAction.transform.parent.gameObject, new{agent = robot});
+					forAct.currentFor++;
+					forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 				}
 			}
 
@@ -136,8 +147,12 @@ public class CurrentActionSystem : FSystem {
 				if(firstAction != null){
 					GameObjectManager.addComponent<CurrentAction>(firstAction, new{agent = drone});
 					Debug.Log("firstAction drone = "+firstAction.name);
-					if(firstAction.transform.GetComponentInParent<ForAction>()){
+					if(firstAction.transform.parent.GetComponent<ForAction>()){
+						ForAction forAct = firstAction.transform.parent.GetComponent<ForAction>();
 						GameObjectManager.addComponent<CurrentAction>(firstAction.transform.parent.gameObject, new{agent = drone});
+						forAct.currentFor++;
+						forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+						
 					}
 				}				
 			}

@@ -120,7 +120,19 @@ public class UISystem : FSystem {
 			gameData.actionsHistory.Add(action);
 		}
 		*/
-		//destroy script
+		/*
+		//to do : history
+		CopyActionsFrom(playerGO.First().GetComponent<ScriptRef>().container, true);
+		
+		//destroy script in robot container
+		foreach(GameObject robot in playerGO){
+			foreach(Transform child in robot.GetComponent<ScriptRef>().container.transform){
+				destroyScript(child);
+			}
+		}
+		*/
+
+		//destroy script in editable canvas
 		for(int i = 0; i < go.transform.childCount; i++){
 			destroyScript(go.transform.GetChild(i));
 		}
@@ -260,7 +272,7 @@ public class UISystem : FSystem {
 	}
 
 	public void applyScriptToPlayer(){
-		GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First());
+		GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false);
 		//addNext(containerCopy);
 		//add highlight to first action
 		//GameObject duplicate;
@@ -310,33 +322,58 @@ public class UISystem : FSystem {
 		return nbstep;
 	}
 	*/
-    public GameObject CopyActionsFrom(GameObject container){
+    public GameObject CopyActionsFrom(GameObject container, bool isInteractable){
 		GameObject copyGO = GameObject.Instantiate(container); 
 		foreach(TMP_Dropdown drop in copyGO.GetComponentsInChildren<TMP_Dropdown>()){
-			drop.interactable = false;
+			drop.interactable = isInteractable;
 		}
 		foreach(TMP_InputField input in copyGO.GetComponentsInChildren<TMP_InputField>()){
-			input.interactable = false;
+			input.interactable = isInteractable;
 		}
 		foreach(ForAction forAct in copyGO.GetComponentsInChildren<ForAction>()){
 			forAct.nbFor = int.Parse(forAct.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
 			forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
-			forAct.firstChild = forAct.GetComponentInChildren<BaseElement>().gameObject;
+			foreach(BaseElement act in forAct.GetComponentsInChildren<BaseElement>()){
+				if(!act.Equals(forAct)){
+					forAct.firstChild = act.gameObject;
+					break;
+				}
+			}
 		}
 		foreach(IfAction IfAct in copyGO.GetComponentsInChildren<IfAction>()){
 			IfAct.ifEntityType = IfAct.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value;
 			IfAct.ifDirection = IfAct.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value;
 			IfAct.range = int.Parse(IfAct.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text);
 			IfAct.ifNot = (IfAct.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1);
-			IfAct.firstChild = IfAct.GetComponentInChildren<BaseElement>().gameObject;
-			//Debug.Log("copy firstchild "+IfAct.firstChild.name);
+			foreach(BaseElement act in IfAct.GetComponentsInChildren<BaseElement>()){
+				if(!act.Equals(IfAct)){
+					IfAct.firstChild = act.gameObject;
+					break;
+				}
+			}
 		}
-		foreach(UITypeContainer typeContainer in copyGO.GetComponentsInChildren<UITypeContainer>()){
-			UnityEngine.Object.Destroy(typeContainer);
+		if(isInteractable){
+			foreach(IfAction ifact in copyGO.GetComponentsInChildren<IfAction>()){
+				GameObjectManager.addComponent<UITypeContainer>(ifact.gameObject);
+			}
+			foreach(ForAction foract in copyGO.GetComponentsInChildren<ForAction>()){
+				GameObjectManager.addComponent<UITypeContainer>(foract.gameObject);
+			}
+			
+			foreach(BaseElement act in copyGO.GetComponentsInChildren<BaseElement>()){
+				GameObjectManager.addComponent<PointerSensitive>(act.gameObject);
+			}
+
 		}
-		foreach(PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>()){
-			UnityEngine.Object.Destroy(pointerSensitive);
+		else{
+			foreach(UITypeContainer typeContainer in copyGO.GetComponentsInChildren<UITypeContainer>()){
+				UnityEngine.Object.Destroy(typeContainer);
+			}
+			foreach(PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>()){
+				UnityEngine.Object.Destroy(pointerSensitive);
+			}			
 		}
+
 
 		return copyGO;
 	}
@@ -347,6 +384,7 @@ public class UISystem : FSystem {
 			//Debug.Log(child.gameObject.name);
 			if(i < container.transform.childCount && child.GetComponent<BaseElement>()){
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
+				Debug.Log(child.name+" next ok");
 			}
 			//if or for action
 			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>())
@@ -357,8 +395,10 @@ public class UISystem : FSystem {
 		if(container.transform.childCount != 0 && container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>()){
 			if(container.GetComponent<ForAction>())
 				container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;
-			else if (container.GetComponent<IfAction>())
+			else if (container.GetComponent<IfAction>()){
 				container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container.GetComponent<IfAction>().next;
+				Debug.Log("if : last child = if.next "+ container.GetComponent<IfAction>().next.name);
+			}
 		}
 					
 	}
