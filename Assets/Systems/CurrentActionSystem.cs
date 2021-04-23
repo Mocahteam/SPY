@@ -46,7 +46,7 @@ public class CurrentActionSystem : FSystem {
 
 	public GameObject getNextAction(GameObject currentAction, GameObject agent){
 		GameObject nextAction = null;
-		Debug.Log("getnextaction - currentAction = "+currentAction.name);
+		//Debug.Log("getnextaction - currentAction = "+currentAction.name);
 		if(currentAction != null && currentAction.GetComponent<BaseElement>() && currentAction.GetComponent<BaseElement>().next != null){
 			//parent = for & last action of for
 			if(currentAction.transform.parent.GetComponent<ForAction>() && currentAction.GetComponent<BasicAction>().next.Equals(currentAction.transform.parent.gameObject)){
@@ -66,12 +66,13 @@ public class CurrentActionSystem : FSystem {
 			}
 			//next = if
 			else if(currentAction.GetComponent<BaseElement>().next.GetComponent<IfAction>()){
+				//Debug.Log("next = if");
 				if(ifValid(currentAction.GetComponent<BaseElement>().next.GetComponent<IfAction>(), agent)){
 					GameObject firstchild = currentAction.GetComponent<BaseElement>().next.GetComponent<IfAction>().firstChild;
 					if (firstchild != null){
-						Debug.Log("if firstchild not null");
+						//Debug.Log("if firstchild not null");
 						if(firstchild.GetComponent<BasicAction>()){
-							Debug.Log("if firstchild basic action");
+							//Debug.Log("if firstchild basic action");
 							nextAction = firstchild;
 						}
 						else{
@@ -88,7 +89,9 @@ public class CurrentActionSystem : FSystem {
 			}
 			//next = for
 			else if(currentAction.GetComponent<BaseElement>().next.GetComponent<ForAction>()){
+				//Debug.Log("next = for");
 				if(currentAction.GetComponent<BaseElement>().next.GetComponent<ForAction>().nbFor != 0){
+					//Debug.Log("nbfor != 0");
 					GameObject firstchild = currentAction.GetComponent<BaseElement>().next.GetComponent<ForAction>().firstChild;
 					if(firstchild != null){
 						if(firstchild.GetComponent<BasicAction>()){
@@ -104,12 +107,14 @@ public class CurrentActionSystem : FSystem {
 				}
 				else if(currentAction.GetComponent<BaseElement>().next.GetComponent<ForAction>().next != null) {
 					//currentAction = next;
+					//Debug.Log("nbfor = 0");
 					nextAction = getNextAction(currentAction.GetComponent<BaseElement>().next.GetComponent<ForAction>().next, agent);
 				}
 
 			}
 			//next = BasicAction
 			else if(currentAction.GetComponent<BaseElement>().next.GetComponent<BasicAction>()){
+				//Debug.Log("next = basicaction");
 				nextAction = currentAction.GetComponent<BaseElement>().next;
 			}
 
@@ -123,7 +128,7 @@ public class CurrentActionSystem : FSystem {
 		GameObject firstAction;
 		foreach(GameObject robot in playerGO){
 			firstAction = getFirstActionOf(robot.GetComponent<ScriptRef>().container, robot);
-			Debug.Log(firstAction);
+			Debug.Log("firstAction = "+firstAction.name);
 			if(firstAction != null){
 				GameObjectManager.addComponent<CurrentAction>(firstAction, new{agent = robot});
 

@@ -120,18 +120,6 @@ public class UISystem : FSystem {
 			gameData.actionsHistory.Add(action);
 		}
 		*/
-		/*
-		//to do : history
-		CopyActionsFrom(playerGO.First().GetComponent<ScriptRef>().container, true);
-		
-		//destroy script in robot container
-		foreach(GameObject robot in playerGO){
-			foreach(Transform child in robot.GetComponent<ScriptRef>().container.transform){
-				destroyScript(child);
-			}
-		}
-		*/
-
 		//destroy script in editable canvas
 		for(int i = 0; i < go.transform.childCount; i++){
 			destroyScript(go.transform.GetChild(i));
@@ -272,12 +260,37 @@ public class UISystem : FSystem {
 	}
 
 	public void applyScriptToPlayer(){
+		
+		//add actions to history
+		GameObject historyCopy = CopyActionsFrom(playerGO.First().GetComponent<ScriptRef>().container, true);	
+		if(playerGO.First().GetComponent<ScriptRef>().container.transform.childCount != 0){
+			if(gameData.actionsHistory == null){
+				gameData.actionsHistory = UnityEngine.Object.Instantiate(historyCopy);
+			}
+			else{
+				for(int i = 0 ; i < historyCopy.transform.childCount ; i++){
+					Transform child = UnityEngine.GameObject.Instantiate(historyCopy.transform.GetChild(i));
+					//Debug.Log("bind "+child.name);
+					child.SetParent(gameData.actionsHistory.transform);
+					GameObjectManager.bind(child.gameObject);
+					GameObjectManager.refresh(gameData.actionsHistory);
+				}
+			}
+
+		}
+
+		UnityEngine.Object.Destroy(historyCopy);
+
+		//destroy history in robot container
+		foreach(GameObject robot in playerGO){
+			foreach(Transform child in robot.GetComponent<ScriptRef>().container.transform){
+				destroyScript(child);
+			}
+		}
+		
 		GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false);
 		//addNext(containerCopy);
-		//add highlight to first action
-		//GameObject duplicate;
-		//bool firstActionHighlighted = false;
-		//GameObject firstAction;
+
 		foreach(Transform notgo in agentCanvas.First().transform){
 			GameObjectManager.setGameObjectState(notgo.gameObject, false);
 		}
@@ -303,25 +316,7 @@ public class UISystem : FSystem {
 			gameData.totalExecute++;
 		}*/
 	}
-	/*
-	public int getNbStep(GameObject go){
-		int nbstep = 0;
-		GameObject action = go;
-			while(action.GetComponent<BaseElement>() && action.GetComponent<BaseElement>().next != null){
-				if(go.GetComponent<ForAction>() && go.GetComponent<ForAction>().nbFor != 0 && go.GetComponent<ForAction>().firstChild != null){
-					nbstep += getNbStep(go.GetComponent<ForAction>().firstChild)*go.GetComponent<ForAction>().nbFor;
-				}
-				else if(go.GetComponent<IfAction>()){ //TO DO + ifvalid
-					nbstep += getNbStep(go.GetComponent<IfAction>().firstChild);
-				}
-				else{ //basicaction
-					nbstep++;
-				}
-				action = go.GetComponent<BaseElement>().next;
-			}
-		return nbstep;
-	}
-	*/
+
     public GameObject CopyActionsFrom(GameObject container, bool isInteractable){
 		GameObject copyGO = GameObject.Instantiate(container); 
 		foreach(TMP_Dropdown drop in copyGO.GetComponentsInChildren<TMP_Dropdown>()){
@@ -352,7 +347,8 @@ public class UISystem : FSystem {
 				}
 			}
 		}
-		if(isInteractable){
+		if(!isInteractable){
+		/*
 			foreach(IfAction ifact in copyGO.GetComponentsInChildren<IfAction>()){
 				GameObjectManager.addComponent<UITypeContainer>(ifact.gameObject);
 			}
@@ -366,6 +362,7 @@ public class UISystem : FSystem {
 
 		}
 		else{
+		*/
 			foreach(UITypeContainer typeContainer in copyGO.GetComponentsInChildren<UITypeContainer>()){
 				UnityEngine.Object.Destroy(typeContainer);
 			}
@@ -384,7 +381,7 @@ public class UISystem : FSystem {
 			//Debug.Log(child.gameObject.name);
 			if(i < container.transform.childCount && child.GetComponent<BaseElement>()){
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
-				Debug.Log(child.name+" next ok");
+				//Debug.Log(child.name+" next ok");
 			}
 			//if or for action
 			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>())
@@ -397,7 +394,7 @@ public class UISystem : FSystem {
 				container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;
 			else if (container.GetComponent<IfAction>()){
 				container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container.GetComponent<IfAction>().next;
-				Debug.Log("if : last child = if.next "+ container.GetComponent<IfAction>().next.name);
+				//Debug.Log("if : last child = if.next "+ container.GetComponent<IfAction>().next.name);
 			}
 		}
 					
