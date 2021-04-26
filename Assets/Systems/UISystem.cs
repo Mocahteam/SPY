@@ -16,6 +16,7 @@ public class UISystem : FSystem {
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
 	private Family agentCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
+	private Family history = FamilyManager.getFamily(new AllOfComponents(typeof(History)));	
 	/*
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Drone"));
@@ -38,6 +39,7 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(dialogPanel, false);
         requireEndPanel.addEntryCallback(displayEndPanel);
         displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
+		history.addEntryCallback(destroyScript);
     }
 
     private void displayEndPanel(GameObject endPanel)
@@ -105,7 +107,7 @@ public class UISystem : FSystem {
 	public void resetScript(){
 		GameObject go = GameObject.Find("ScriptContainer");
 		for(int i = 0; i < go.transform.childCount; i++){
-			destroyScript(go.transform.GetChild(i), true);
+			destroyScript(go.transform.GetChild(i).gameObject); //,true
 		}
 		refreshUI();
 	}
@@ -122,27 +124,27 @@ public class UISystem : FSystem {
 		*/
 		//destroy script in editable canvas
 		for(int i = 0; i < go.transform.childCount; i++){
-			destroyScript(go.transform.GetChild(i));
+			destroyScript(go.transform.GetChild(i).gameObject);
 		}
 		gameData.ButtonExec.GetComponent<AudioSource>().Play();
 		refreshUI();
 	}
 
-	//Recursive script destroyer
-	private void destroyScript(Transform go, bool refund = false){
+	//Recursive script destroyer  bool refund = false
+	private void destroyScript(GameObject go){
 		//refund blocActionLimit
-		if(refund && go.gameObject.GetComponent<UIActionType>() != null){
+		//if(refund && go.gameObject.GetComponent<UIActionType>() != null){
 			//GameObjectManager.removeComponent<Dropped>(go.gameObject);
 			//Object.Destroy(go.GetComponent<Available>());
 			//ActionManipulator.updateActionBlocLimit(gameData, go.gameObject.GetComponent<UIActionType>().type, 1);
-		}
-		else if(go.gameObject.GetComponent<UIActionType>() != null){
+		//}
+		if(go.gameObject.GetComponent<UIActionType>() != null){
 			gameData.totalActionBloc++;
 		}
 		
 		if(go.gameObject.GetComponent<UITypeContainer>() != null){
-			for(int i = 0; i < go.childCount; i++){
-				destroyScript(go.GetChild(i));
+			for(int i = 0; i < go.transform.childCount; i++){
+				destroyScript(go.transform.GetChild(i).gameObject);
 			}
 		}
 		for(int i = 0; i < go.transform.childCount;i++){
@@ -280,11 +282,15 @@ public class UISystem : FSystem {
 		}
 
 		UnityEngine.Object.Destroy(historyCopy);
-
+		
 		//destroy history in robot container
 		foreach(GameObject robot in playerGO){
 			foreach(Transform child in robot.GetComponent<ScriptRef>().container.transform){
-				destroyScript(child);
+				//child.gameObject.AddComponent<History>();
+				if(child.GetComponent<BaseElement>())
+					child.gameObject.AddComponent<History>();
+					GameObjectManager.refresh(child.gameObject);
+					//GameObjectManager.addComponent<History>(child.gameObject);
 			}
 		}
 		

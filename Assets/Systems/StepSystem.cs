@@ -7,7 +7,7 @@ public class StepSystem : FSystem {
 
     private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
-    private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(CurrentAction)));
+    //private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(CurrentAction)));
     private Family visibleContainers = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasRenderer), typeof(ScrollRect), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); 
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
     private float timeStepCpt;

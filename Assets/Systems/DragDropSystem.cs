@@ -72,7 +72,7 @@ public class DragDropSystem : FSystem {
 			BaseElement action = null;
 			foreach( GameObject go in panelPointedGO){
 				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
-				itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, go.transform);
+				itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, go.transform);		
 				action = itemDragged.GetComponent<BaseElement>();
 				if(action.GetType().ToString().Equals("ForAction")){
 						TMP_InputField input = itemDragged.GetComponentInChildren<TMP_InputField>();
@@ -84,6 +84,7 @@ public class DragDropSystem : FSystem {
 				//itemDragged.GetComponent<UIActionType>().action = action;
 				action.target = itemDragged;
 				GameObjectManager.bind(itemDragged);
+				GameObjectManager.addComponent<Dragged>(itemDragged);
 				itemDragged.GetComponent<Image>().raycastTarget = false;
 				break;
 			}
@@ -152,6 +153,7 @@ public class DragDropSystem : FSystem {
 
 				//update limit bloc
 				GameObjectManager.addComponent<Dropped>(itemDragged);
+				GameObjectManager.removeComponent<Dragged>(itemDragged);
 				//Object.Destroy(actionGO.GetComponent<Available>());
 				//ActionManipulator.updateActionBlocLimit(gameData,itemDragged.GetComponent<UIActionType>().type, -1);
 

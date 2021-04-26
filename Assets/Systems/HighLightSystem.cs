@@ -16,7 +16,7 @@ public class HighLightSystem : FSystem {
 	private Family highlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(PointerOver)), new NoneOfComponents(typeof(UIActionType)));
 	private Family nonhighlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(UIActionType)));
 	private Family highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(UIActionType)));
-	private Family nonhighlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(CurrentAction)));
+	private Family nonhighlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(CurrentAction), typeof(Dragged)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
 
 	//private Family enemyScriptContainer_f = FamilyManager.getFamily(new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
@@ -41,16 +41,16 @@ public class HighLightSystem : FSystem {
 	private void initBaseColor(GameObject go){
 		if(go.GetComponent<BaseElement>()){
 			if(go.GetComponent<BasicAction>() && go.GetComponent<Image>()){
+				Debug.Log("------------init " + go.name + " " + go.GetComponent<Image>().color.ToString());
 				go.GetComponent<BasicAction>().baseColor = go.GetComponent<Image>().color;
 			}
 			else if(go.GetComponent<ForAction>()){
 				go.GetComponent<Highlightable>().baseColor = go.transform.GetChild(0).GetComponent<Image>().color;
-			}			
+			}	
 		}
-
-		else{
+		else
 			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>().material.color;
-		}
+
 	}
 	/*
 	public static GameObject getLastGameObjectOf (GameObject gameObject, Action.ActionType type){
@@ -154,7 +154,7 @@ public class HighLightSystem : FSystem {
 		if(go.GetComponent<BaseElement>()){
 			if(go.GetComponent<BasicAction>() && go.GetComponent<Image>()){
 				go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
-				Debug.Log("unhighlight "+ go.GetComponent<Highlightable>().baseColor.ToString());
+				Debug.Log("unhighlight "+ go.name +" "+ go.GetComponent<Highlightable>().baseColor.ToString());
 			}
 			else if(go.GetComponent<ForAction>()){
 				//Debug.Log("for basecolor = "+go.GetComponent<Highlightable>().baseColor.ToString());
