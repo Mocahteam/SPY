@@ -17,6 +17,7 @@ public class UISystem : FSystem {
 	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
 	private Family agentCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
 	private Family history = FamilyManager.getFamily(new AllOfComponents(typeof(History)));	
+	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(UIActionType)));
 	/*
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Drone"));
@@ -40,7 +41,33 @@ public class UISystem : FSystem {
         requireEndPanel.addEntryCallback(displayEndPanel);
         displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
 		history.addEntryCallback(destroyScript);
+		//GameObject editableCanvas = GameObject.Find("EditableCanvas").transform.GetChild(0).GetChild(0).gameObject;
+		if(gameData.actionsHistory != null){
+			GameObject editableCanvas = editableScriptContainer.First();
+			for(int i = 0 ; i < gameData.actionsHistory.transform.childCount ; i++){
+				Transform child = UnityEngine.GameObject.Instantiate(gameData.actionsHistory.transform.GetChild(i));
+				//GameObjectManager.setGameObjectParent(child.gameObject, editableCanvas, true);
+				child.SetParent(editableCanvas.transform);
+				GameObjectManager.bind(child.gameObject);
+				GameObjectManager.refresh(editableCanvas);
+			}
+		
+		}
+		actions.addEntryCallback(linkTo);
+
     }
+
+	private void linkTo(GameObject go){
+		if(go.GetComponent<UIActionType>().linkedTo == null){
+			if(go.GetComponent<BasicAction>()){
+				go.GetComponent<UIActionType>().linkedTo = GameObject.Find(go.GetComponent<BasicAction>().actionType.ToString());
+			}			
+			else if(go.GetComponent<IfAction>())
+				go.GetComponent<UIActionType>().linkedTo = GameObject.Find("If");
+			else if(go.GetComponent<ForAction>())
+				go.GetComponent<UIActionType>().linkedTo = GameObject.Find("For");
+		}
+	}
 
     private void displayEndPanel(GameObject endPanel)
     {
@@ -231,58 +258,33 @@ public class UISystem : FSystem {
 		gameData.totalCoin = 0;
 		
 		gameData.dialogMessage = new List<string>();
-		/*
-		List<Action> l = new List<Action>();
-		GameObject scriptComposer = GameObject.Find("ScriptContainer");
-		l = ActionManipulator.ScriptContainerToActionList(scriptComposer);
-		*/
+		UnityEngine.Object.DontDestroyOnLoad(gameData.actionsHistory);
 		GameObjectManager.loadScene("MainScene");
-		/*
-		//get back actions from history
-		Script scriptActions = new Script();
-		scriptActions.actions = gameData.actionsHistory;
-		scriptActions.currentAction = -1;
-		scriptActions.repeat = false;
-		GameObject scriptComposer = playerScript.First();
-		ActionManipulator.DisplayActionsInContainer(gameData.actionsHistory, scriptComposer);
-		*/
-		//playerGO.First().GetComponent<Script>().actions = gameData.actionsHistory;
-		//ActionManipulator.ScriptToContainer(scriptActions, scriptComposer);	
-		/*
-		Script scriptActions = new Script();
-		scriptActions.actions = l;
-		scriptActions.currentAction = 0;
-		scriptActions.repeat = false;
-		ActionManipulator.ScriptToContainer(scriptActions, scriptComposer);
-		*/
-
-		//GameObject endpanel = GameObject.Find("EndPanel");
-		//GameObjectManager.removeComponent<NewEnd>(endpanel);
-		//endpanel.SetActive(false);
 	}
+
 
 	public void applyScriptToPlayer(){
 		
 		//add actions to history
-		GameObject historyCopy = CopyActionsFrom(playerGO.First().GetComponent<ScriptRef>().container, true);	
 		if(playerGO.First().GetComponent<ScriptRef>().container.transform.childCount != 0){
+			GameObject historyCopy = CopyActionsFrom(playerGO.First().GetComponent<ScriptRef>().container, true);	
 			if(gameData.actionsHistory == null){
 				gameData.actionsHistory = UnityEngine.Object.Instantiate(historyCopy);
 			}
 			else{
 				for(int i = 0 ; i < historyCopy.transform.childCount ; i++){
 					Transform child = UnityEngine.GameObject.Instantiate(historyCopy.transform.GetChild(i));
-					//Debug.Log("bind "+child.name);
 					child.SetParent(gameData.actionsHistory.transform);
 					GameObjectManager.bind(child.gameObject);
 					GameObjectManager.refresh(gameData.actionsHistory);
 				}
 			}
-
+			UnityEngine.Object.Destroy(historyCopy);
+			addNext(gameData.actionsHistory);
 		}
 
-		UnityEngine.Object.Destroy(historyCopy);
-		
+
+
 		//destroy history in robot container
 		foreach(GameObject robot in playerGO){
 			foreach(Transform child in robot.GetComponent<ScriptRef>().container.transform){
@@ -294,8 +296,8 @@ public class UISystem : FSystem {
 			}
 		}
 		
+		//copy editable script
 		GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false);
-		//addNext(containerCopy);
 
 		foreach(Transform notgo in agentCanvas.First().transform){
 			GameObjectManager.setGameObjectState(notgo.gameObject, false);
@@ -332,8 +334,16 @@ public class UISystem : FSystem {
 			input.interactable = isInteractable;
 		}
 		foreach(ForAction forAct in copyGO.GetComponentsInChildren<ForAction>()){
-			forAct.nbFor = int.Parse(forAct.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
-			forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+			
+			if(!isInteractable){
+				forAct.nbFor = int.Parse(forAct.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
+				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+			}
+				
+			else{
+				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
+			}
+
 			foreach(BaseElement act in forAct.GetComponentsInChildren<BaseElement>()){
 				if(!act.Equals(forAct)){
 					forAct.firstChild = act.gameObject;
@@ -353,28 +363,12 @@ public class UISystem : FSystem {
 				}
 			}
 		}
-		if(!isInteractable){
-		/*
-			foreach(IfAction ifact in copyGO.GetComponentsInChildren<IfAction>()){
-				GameObjectManager.addComponent<UITypeContainer>(ifact.gameObject);
-			}
-			foreach(ForAction foract in copyGO.GetComponentsInChildren<ForAction>()){
-				GameObjectManager.addComponent<UITypeContainer>(foract.gameObject);
-			}
-			
-			foreach(BaseElement act in copyGO.GetComponentsInChildren<BaseElement>()){
-				GameObjectManager.addComponent<PointerSensitive>(act.gameObject);
-			}
 
+		foreach(UITypeContainer typeContainer in copyGO.GetComponentsInChildren<UITypeContainer>()){
+			typeContainer.enabled = isInteractable;
 		}
-		else{
-		*/
-			foreach(UITypeContainer typeContainer in copyGO.GetComponentsInChildren<UITypeContainer>()){
-				UnityEngine.Object.Destroy(typeContainer);
-			}
-			foreach(PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>()){
-				UnityEngine.Object.Destroy(pointerSensitive);
-			}			
+		foreach(PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>()){
+			pointerSensitive.enabled = isInteractable;
 		}
 
 
@@ -384,10 +378,8 @@ public class UISystem : FSystem {
 		int i = 1;
 		//for each child, next = next child
 		foreach(Transform child in container.transform){
-			//Debug.Log(child.gameObject.name);
 			if(i < container.transform.childCount && child.GetComponent<BaseElement>()){
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
-				//Debug.Log(child.name+" next ok");
 			}
 			//if or for action
 			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>())
@@ -400,7 +392,6 @@ public class UISystem : FSystem {
 				container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;
 			else if (container.GetComponent<IfAction>()){
 				container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container.GetComponent<IfAction>().next;
-				//Debug.Log("if : last child = if.next "+ container.GetComponent<IfAction>().next.name);
 			}
 		}
 					

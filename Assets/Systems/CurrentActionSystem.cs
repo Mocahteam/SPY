@@ -54,7 +54,6 @@ public class CurrentActionSystem : FSystem {
 
 		else if(currentAction.GetComponent<ForAction>()){
 			ForAction forAct = currentAction.GetComponent<ForAction>();
-
 			if(currentAction.GetComponent<ForAction>().currentFor == currentAction.GetComponent<ForAction>().nbFor){
 				GameObjectManager.removeComponent<CurrentAction>(currentAction);
 				if(currentAction.GetComponent<ForAction>().next == null || currentAction.GetComponent<ForAction>().next.GetComponent<BasicAction>()){
@@ -65,7 +64,8 @@ public class CurrentActionSystem : FSystem {
 				}
 			}
 			else{
-				//incrémenter
+				if(!currentAction.GetComponent<CurrentAction>())
+					GameObjectManager.addComponent<CurrentAction>(currentAction);
 				forAct.currentFor++;
 				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 				if(currentAction.GetComponent<ForAction>().firstChild == null || currentAction.GetComponent<ForAction>().firstChild.GetComponent<BasicAction>())
@@ -100,7 +100,7 @@ public class CurrentActionSystem : FSystem {
 		GameObject firstAction;
 		foreach(GameObject robot in playerGO){
 			firstAction = getFirstActionOf(robot.GetComponent<ScriptRef>().container, robot);
-			Debug.Log("firstAction = "+firstAction.name);
+			//Debug.Log("firstAction = "+firstAction.name);
 			if(firstAction != null){
 				GameObjectManager.addComponent<CurrentAction>(firstAction, new{agent = robot});
 
@@ -119,8 +119,8 @@ public class CurrentActionSystem : FSystem {
 		Debug.Log("drones "+droneGO.Count);
 		foreach(GameObject drone in droneGO){
 			if(!drone.GetComponent<ScriptRef>().container.GetComponentInChildren<CurrentAction>()){
-			firstAction = getFirstActionOf(drone.GetComponent<ScriptRef>().container, drone);
-			Debug.Log(firstAction);
+				firstAction = getFirstActionOf(drone.GetComponent<ScriptRef>().container, drone);
+				//Debug.Log(firstAction);
 				if(firstAction != null){
 					GameObjectManager.addComponent<CurrentAction>(firstAction, new{agent = drone});
 					Debug.Log("firstAction drone = "+firstAction.name);
@@ -142,7 +142,10 @@ public class CurrentActionSystem : FSystem {
 		if (container.transform.childCount != 0){
 			foreach(Transform go in container.transform){
 				if(go.GetComponent<BaseElement>() && go.GetComponent<History>()){
-					res = getFirstActionOf(go.GetComponent<BaseElement>().next, agent);
+					if(go.GetComponent<BaseElement>().next != null)
+						res = getFirstActionOf(go.GetComponent<BaseElement>().next, agent);
+					else
+						res = null;
 				}
 				else{
 					//BasicAction
