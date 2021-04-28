@@ -51,6 +51,7 @@ public class StepSystem : FSystem {
 		//Organize each steps
 		//if(gameData.nbStep > 0 && newEnd_f.Count == 0){
 		if(continueSteps() && newEnd_f.Count == 0){
+            gameData.totalExecute++;
             //activate step
             if (timeStepCpt <= 0)
             {

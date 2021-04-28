@@ -16,8 +16,11 @@ public class UISystem : FSystem {
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
 	private Family agentCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
-	private Family history = FamilyManager.getFamily(new AllOfComponents(typeof(History)));	
+	private Family deleteHistory = FamilyManager.getFamily(new AllOfComponents(typeof(HistoryToDelete)));	
+	private Family saveHistory = FamilyManager.getFamily(new AllOfComponents(typeof(HistoryToSave)));	
 	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(UIActionType)));
+    private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
+	private Family actionsPanel = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(Image)));
 	/*
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Drone"));
@@ -40,8 +43,12 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(dialogPanel, false);
         requireEndPanel.addEntryCallback(displayEndPanel);
         displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
-		history.addEntryCallback(destroyScript);
-		//GameObject editableCanvas = GameObject.Find("EditableCanvas").transform.GetChild(0).GetChild(0).gameObject;
+		deleteHistory.addEntryCallback(destroyScript);
+		saveHistory.addEntryCallback(addToHistory);
+		actions.addEntryCallback(linkTo);
+		//currentActions.addExitCallback(enableButtons);
+
+		//load history
 		if(gameData.actionsHistory != null){
 			GameObject editableCanvas = editableScriptContainer.First();
 			for(int i = 0 ; i < gameData.actionsHistory.transform.childCount ; i++){
@@ -51,12 +58,17 @@ public class UISystem : FSystem {
 				GameObjectManager.bind(child.gameObject);
 				GameObjectManager.refresh(editableCanvas);
 			}
-		
-		}
-		actions.addEntryCallback(linkTo);
+			addNext(gameData.actionsHistory);
+			//destroy history
+			destroyScript(gameData.actionsHistory);
+		}	
+
 
     }
 
+	private void enableButtons(int unused){
+
+	}
 	private void linkTo(GameObject go){
 		if(go.GetComponent<UIActionType>().linkedTo == null){
 			if(go.GetComponent<BasicAction>()){
@@ -111,11 +123,9 @@ public class UISystem : FSystem {
 		}
 
 		//Desactivate Execute & ResetButton if there is a script running
-		if(gameData.nbStep>0){
-			gameData.ButtonExec.GetComponent<Button>().interactable = false;
-			gameData.ButtonReset.GetComponent<Button>().interactable = false;
-		}
-		else{
+		if(currentActions.Count == 0){
+			//actionsPanel.First().SetActive(true);
+			GameObjectManager.setGameObjectState(actionsPanel.First(), true);
 			gameData.ButtonExec.GetComponent<Button>().interactable = true;
 			gameData.ButtonReset.GetComponent<Button>().interactable = true;
 		}
@@ -178,7 +188,7 @@ public class UISystem : FSystem {
 			UnityEngine.Object.Destroy(go.transform.GetChild(i).gameObject);
 		}
 		go.transform.DetachChildren();
-		GameObjectManager.unbind(go.gameObject);
+		//GameObjectManager.unbind(go.gameObject);
 		UnityEngine.Object.Destroy(go.gameObject);
 	}
 
@@ -247,7 +257,7 @@ public class UISystem : FSystem {
 	public void nextLevel(){
 		gameData.levelToLoad++;
 		reloadScene();
-		//gameData.actionsHistory.Clear();
+		destroyScript(gameData.actionsHistory);
 	}
 
 	public void retry(){
@@ -262,9 +272,7 @@ public class UISystem : FSystem {
 		GameObjectManager.loadScene("MainScene");
 	}
 
-
-	public void applyScriptToPlayer(){
-		
+	private void addToHistory(GameObject unused){
 		//add actions to history
 		if(playerGO.First().GetComponent<ScriptRef>().container.transform.childCount != 0){
 			GameObject historyCopy = CopyActionsFrom(playerGO.First().GetComponent<ScriptRef>().container, true);	
@@ -280,19 +288,27 @@ public class UISystem : FSystem {
 				}
 			}
 			UnityEngine.Object.Destroy(historyCopy);
-			addNext(gameData.actionsHistory);
+			//addNext(gameData.actionsHistory);
+			foreach(CurrentAction action in gameData.actionsHistory.GetComponentsInChildren<CurrentAction>()){
+				//GameObjectManager.removeComponent<CurrentAction>(action.gameObject);
+				UnityEngine.Object.Destroy(action);
+			}
 		}
+		GameObjectManager.removeComponent<HistoryToSave>(MainLoop.instance.gameObject);
+	}
 
+	public void applyScriptToPlayer(){
+		//save history
+		GameObjectManager.addComponent<HistoryToSave>(MainLoop.instance.gameObject);
 
-
-		//destroy history in robot container
+		//destroy history in container for each robot
 		foreach(GameObject robot in playerGO){
 			foreach(Transform child in robot.GetComponent<ScriptRef>().container.transform){
-				//child.gameObject.AddComponent<History>();
-				if(child.GetComponent<BaseElement>())
-					child.gameObject.AddComponent<History>();
-					GameObjectManager.refresh(child.gameObject);
-					//GameObjectManager.addComponent<History>(child.gameObject);
+				if(child.GetComponent<BaseElement>()){
+					//GameObjectManager.addComponent<HistoryToDelete>(child.gameObject);
+					child.gameObject.AddComponent<HistoryToDelete>();
+					GameObjectManager.refresh(child.gameObject);			
+				}
 			}
 		}
 		
@@ -319,10 +335,6 @@ public class UISystem : FSystem {
 		UnityEngine.Object.Destroy(containerCopy);
 
 		//applyIfEntityType();
-		/*
-		if(gameData.nbStep > 0){
-			gameData.totalExecute++;
-		}*/
 	}
 
     public GameObject CopyActionsFrom(GameObject container, bool isInteractable){
@@ -341,7 +353,11 @@ public class UISystem : FSystem {
 			}
 				
 			else{
-				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
+				forAct.currentFor = 0;
+				//Debug.Log("childoutofbounds "+forAct.gameObject.name);
+				//Debug.Log("childoutofbounds "+forAct.transform.GetChild(0).gameObject.name);
+				//Debug.Log("childoutofbounds "+forAct.transform.GetChild(0).GetChild(1).gameObject.name);
+				forAct.gameObject.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
 			}
 
 			foreach(BaseElement act in forAct.GetComponentsInChildren<BaseElement>()){
