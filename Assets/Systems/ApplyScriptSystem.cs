@@ -30,7 +30,7 @@ public class ApplyScriptSystem : FSystem {
 
 	public ApplyScriptSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-        //newStep_f.addEntryCallback(onNewStep);
+        newStep_f.addEntryCallback(onNewStep);
         endPanel = endpanel_f.First();
         GameObjectManager.setGameObjectState(endPanel, false);
         robotcollision_f.addEntryCallback(onNewCollision);
@@ -69,38 +69,44 @@ public class ApplyScriptSystem : FSystem {
 
         foreach ( GameObject go in scriptedGO){
 				
-			if(!endOfScript(go)){
-				Transform action = getCurrentAction(go);
-					
-				switch (go.GetComponent<BasicAction>().actionType){
-					case BasicAction.ActionType.Forward:
-						ApplyForward(go);
-						break;
-
-					case BasicAction.ActionType.TurnLeft:
-						ApplyTurnLeft(go);
-						break;
-
-					case BasicAction.ActionType.TurnRight:
-						ApplyTurnRight(go);
-						break;
-					case BasicAction.ActionType.TurnBack:
-						ApplyTurnBack(go);
-						break;
-					case BasicAction.ActionType.Wait:
-						break;
-					case BasicAction.ActionType.Activate:
-						foreach( GameObject actGo in activableConsoleGO){
-							if(actGo.GetComponent<Position>().x == go.GetComponent<Position>().x && actGo.GetComponent<Position>().z == go.GetComponent<Position>().z){
-								actGo.GetComponent<AudioSource>().Play();
-								actGo.GetComponent<Activable>().isActivated = true;
-							}
-						}
-						break;
-				}
-				incrementActionScript(go.GetComponent<ScriptRef>(), highlightedItems);
-			
+			//if(!endOfScript(go)){
+			BasicAction currentAct = null;
+			foreach(CurrentAction act in go.GetComponent<ScriptRef>().container.GetComponentsInChildren<CurrentAction>()){
+				if(act.GetComponent<BasicAction>()){
+					currentAct = act.GetComponent<BasicAction>();
+					break;
+				}	
 			}
+				
+			switch (currentAct.actionType){
+				case BasicAction.ActionType.Forward:
+					ApplyForward(go);
+					break;
+
+				case BasicAction.ActionType.TurnLeft:
+					ApplyTurnLeft(go);
+					break;
+
+				case BasicAction.ActionType.TurnRight:
+					ApplyTurnRight(go);
+					break;
+				case BasicAction.ActionType.TurnBack:
+					ApplyTurnBack(go);
+					break;
+				case BasicAction.ActionType.Wait:
+					break;
+				case BasicAction.ActionType.Activate:
+					foreach( GameObject actGo in activableConsoleGO){
+						if(actGo.GetComponent<Position>().x == go.GetComponent<Position>().x && actGo.GetComponent<Position>().z == go.GetComponent<Position>().z){
+							actGo.GetComponent<AudioSource>().Play();
+							actGo.GetComponent<Activable>().isActivated = true;
+						}
+					}
+					break;
+			}
+				//incrementActionScript(go.GetComponent<ScriptRef>(), highlightedItems);
+			
+			//}
 			/*
 			else{
 				Debug.Log("fin du script");
@@ -122,7 +128,7 @@ public class ApplyScriptSystem : FSystem {
         {
             foreach (GameObject exit in exitGO)
             {
-                if (gameData.nbStep == 1 && player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().z == exit.GetComponent<Position>().z)
+                if (player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().z == exit.GetComponent<Position>().z)
                 {
                     nbEnd++;
                     //end level
@@ -144,7 +150,7 @@ public class ApplyScriptSystem : FSystem {
             }
         }
 
-        applyIfEntityType();
+        //applyIfEntityType();
 	}
 
 	private void activate(GameObject go){
@@ -290,7 +296,7 @@ public class ApplyScriptSystem : FSystem {
 
 	public void applyIfEntityType(){
 		//Check if If actions are valid
-		int nbStepToAdd = 0;
+		//int nbStepToAdd = 0;
 		foreach( GameObject scripted in scriptedGO){
 			int nbStepPlayer = 0;
 			//invalidAllIf(scripted.GetComponent<ScriptRef>());
@@ -306,16 +312,17 @@ public class ApplyScriptSystem : FSystem {
 				}
 				else{
 					nextIf.currentAction = nextIfAction.transform.childCount-1;
-					incrementActionScript(scripted.GetComponent<ScriptRef>(), highlightedItems);
+					//incrementActionScript(scripted.GetComponent<ScriptRef>(), highlightedItems);
 				}
 				nextIfAction = getCurrentIf(scripted);
 			}
-
+		/*
 			if(nbStepPlayer > nbStepToAdd){
 				nbStepToAdd = nbStepPlayer;
 			}
+		*/
 		}
-		gameData.nbStep += nbStepToAdd;
+		//gameData.nbStep += nbStepToAdd;
 
 	}
 

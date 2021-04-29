@@ -21,6 +21,7 @@ public class UISystem : FSystem {
 	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(UIActionType)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
 	private Family actionsPanel = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(Image)));
+	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	/*
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Drone"));
@@ -46,9 +47,12 @@ public class UISystem : FSystem {
 		deleteHistory.addEntryCallback(destroyScript);
 		saveHistory.addEntryCallback(addToHistory);
 		actions.addEntryCallback(linkTo);
-		//currentActions.addExitCallback(enableButtons);
+		newEnd_f.addEntryCallback(levelWon);
 
-		//load history
+		loadHistory();
+    }
+
+	private void loadHistory(){
 		if(gameData.actionsHistory != null){
 			GameObject editableCanvas = editableScriptContainer.First();
 			for(int i = 0 ; i < gameData.actionsHistory.transform.childCount ; i++){
@@ -62,12 +66,11 @@ public class UISystem : FSystem {
 			//destroy history
 			destroyScript(gameData.actionsHistory);
 		}	
-
-
-    }
-
-	private void enableButtons(int unused){
-
+	}
+	private void levelWon (GameObject go){
+		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
+			loadHistory();
+		}
 	}
 	private void linkTo(GameObject go){
 		if(go.GetComponent<UIActionType>().linkedTo == null){

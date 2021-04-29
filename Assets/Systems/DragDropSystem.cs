@@ -179,8 +179,9 @@ public class DragDropSystem : FSystem {
 	}
 
 	public void onlyPositiveInteger(TMP_InputField input){
-		Debug.Log(input.text);
-		if(Int32.Parse(input.text) < 0 ){
+		int res;
+		bool success = Int32.TryParse(input.text, out res);
+		if(!success || (success && Int32.Parse(input.text) < 0)){
 			input.text = "0";
 		}
 	}

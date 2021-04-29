@@ -186,6 +186,8 @@ public class CurrentActionSystem : FSystem {
 	}
 
 	public bool ifValid(IfAction nextIf, GameObject scripted){
+		Debug.Log("ifvalid "+ nextIf);
+		Debug.Log("ifvalid "+ nextIf.ifNot);
 		bool ifok = nextIf.ifNot;
 		Vector2 vec = new Vector2();
 		switch(getDirection(scripted.GetComponent<Direction>().direction,nextIf.ifDirection)){
