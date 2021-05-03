@@ -10,7 +10,7 @@ public class ApplyScriptSystem : FSystem {
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
-    private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+    private Family newCurrentAction_f = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
 	private Family playerScriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
 	private Family scriptedGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position), typeof(Direction)));
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
@@ -30,7 +30,7 @@ public class ApplyScriptSystem : FSystem {
 
 	public ApplyScriptSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-        newStep_f.addEntryCallback(onNewStep);
+        newCurrentAction_f.addEntryCallback(onNewCurrentAction);
         endPanel = endpanel_f.First();
         GameObjectManager.setGameObjectState(endPanel, false);
         robotcollision_f.addEntryCallback(onNewCollision);
@@ -65,63 +65,36 @@ public class ApplyScriptSystem : FSystem {
 	}
 
 	// Use to process your families.
-	private void onNewStep(GameObject unused) {
+	private void onNewCurrentAction(GameObject currentAction) {
+		CurrentAction ca = currentAction.GetComponent<CurrentAction>();	
 
-        foreach ( GameObject go in scriptedGO){
-				
-			//if(!endOfScript(go)){
-			BasicAction currentAct = null;
-			foreach(CurrentAction act in go.GetComponent<ScriptRef>().container.GetComponentsInChildren<CurrentAction>()){
-				if(act.GetComponent<BasicAction>()){
-					currentAct = act.GetComponent<BasicAction>();
-					break;
-				}	
-			}
-				
-			switch (currentAct.actionType){
-				case BasicAction.ActionType.Forward:
-					ApplyForward(go);
-					break;
+		switch (currentAction.GetComponent<BasicAction>().actionType){
+			case BasicAction.ActionType.Forward:
+				ApplyForward(ca.agent);
+				break;
 
-				case BasicAction.ActionType.TurnLeft:
-					ApplyTurnLeft(go);
-					break;
+			case BasicAction.ActionType.TurnLeft:
+				ApplyTurnLeft(ca.agent);
+				break;
 
-				case BasicAction.ActionType.TurnRight:
-					ApplyTurnRight(go);
-					break;
-				case BasicAction.ActionType.TurnBack:
-					ApplyTurnBack(go);
-					break;
-				case BasicAction.ActionType.Wait:
-					break;
-				case BasicAction.ActionType.Activate:
-					foreach( GameObject actGo in activableConsoleGO){
-						if(actGo.GetComponent<Position>().x == go.GetComponent<Position>().x && actGo.GetComponent<Position>().z == go.GetComponent<Position>().z){
-							actGo.GetComponent<AudioSource>().Play();
-							actGo.GetComponent<Activable>().isActivated = true;
-						}
+			case BasicAction.ActionType.TurnRight:
+				ApplyTurnRight(ca.agent);
+				break;
+			case BasicAction.ActionType.TurnBack:
+				ApplyTurnBack(ca.agent);
+				break;
+			case BasicAction.ActionType.Wait:
+				break;
+			case BasicAction.ActionType.Activate:
+				foreach( GameObject actGo in activableConsoleGO){
+					if(actGo.GetComponent<Position>().x == ca.agent.GetComponent<Position>().x && actGo.GetComponent<Position>().z == ca.agent.GetComponent<Position>().z){
+						actGo.GetComponent<AudioSource>().Play();
+						actGo.GetComponent<Activable>().isActivated = true;
 					}
-					break;
-			}
-				//incrementActionScript(go.GetComponent<ScriptRef>(), highlightedItems);
-			
-			//}
-			/*
-			else{
-				Debug.Log("fin du script");
-
-			}
-			Debug.Log("end on new step");
-			foreach(GameObject highlightedGO in highlightedItems){
-				Debug.Log("foreach");
-				Debug.Log("hilightedGO = "+highlightedGO.name);
-				if (highlightedGO.GetComponent<HighLight>() != null){
-					Debug.Log("remove");
-					GameObjectManager.removeComponent<HighLight>(highlightedGO);
 				}
-			}*/
+				break;
 		}
+
         //Check if the player is on the end of the level
         int nbEnd = 0;
         foreach (GameObject player in playerGO)
@@ -267,33 +240,7 @@ public class ApplyScriptSystem : FSystem {
 		return false;
 	}
 
-	public void applyScriptToPlayer(){
-		GameObject container;
-		List<GameObject> actions = CopyActionsFrom(editableScriptContainer.First());
-		GameObject duplicate;
-		foreach(Transform notgo in agentCanvas.First().transform){
-			GameObjectManager.setGameObjectState(notgo.gameObject, false);
-		}
-		foreach( GameObject go in playerGO){
-			GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().container, true);
-			container = go.GetComponent<ScriptRef>().container.transform.Find("Viewport").Find("ScriptContainer").gameObject;
-			foreach(GameObject action in actions){
-				duplicate = Object.Instantiate(action);
-				duplicate.transform.SetParent(container.transform);
-			}
-			addNext(container);
-			//Debug.Log("actions = "+go.GetComponent<Script>().actions);
-            //go.GetComponent<ScriptRef>().currentAction = 0;
-            //gameData.nbStep = getNbStep(go.GetComponent<ScriptRef>());
-		}
-
-		//applyIfEntityType();
-		/*
-		if(gameData.nbStep > 0){
-			gameData.totalExecute++;
-		}*/
-	}
-
+/*
 	public void applyIfEntityType(){
 		//Check if If actions are valid
 		//int nbStepToAdd = 0;
@@ -321,101 +268,17 @@ public class ApplyScriptSystem : FSystem {
 				nbStepToAdd = nbStepPlayer;
 			}
 		*/
-		}
+		//}
 		//gameData.nbStep += nbStepToAdd;
 
-	}
+	//}
 
-	public bool ifValid(IfAction nextIf, GameObject scripted){
-		bool ifok = nextIf.ifNot;
-		Vector2 vec = new Vector2();
-		switch(getDirection(scripted.GetComponent<Direction>().direction,nextIf.ifDirection)){
-			case Direction.Dir.North:
-				vec = new Vector2(0,1);
-				break;
-			case Direction.Dir.South:
-				vec = new Vector2(0,-1);
-				break;
-			case Direction.Dir.East:
-				vec = new Vector2(1,0);
-				break;
-			case Direction.Dir.West:
-				vec = new Vector2(-1,0);
-				break;
-		}
-		switch(nextIf.ifEntityType){
-			case 0:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in wallGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
-					}
-				}
-				break;
-			case 1:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in doorGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
-					}
-				}
-				break;
-			case 2:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in droneGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
-					}
-				}
-				break;
-			case 3:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in playerGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
-					}
-				}
-				break;
-			case 4:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in activableConsoleGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
-					}
-				}
-				break;
-			case 5:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in redDetectorGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
-					}
-				}
-				break;
-			case 6:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in coinGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
-					}
-				}
-				break;				
-		}
-		return ifok;
-	}
 
 	//Return true if the script is at the end
     public static bool endOfScript(GameObject go){
 		return go.GetComponent<ScriptRef>().currentAction >= go.GetComponent<ScriptRef>().container.transform.childCount;
 	}
-
+/*
 	public Transform getCurrentIf(GameObject go){
 		if(go.GetComponent<ScriptRef>().container.transform.childCount == 0 ||
 		go.GetComponent<ScriptRef>().currentAction >= go.GetComponent<ScriptRef>().container.transform.childCount){
@@ -448,7 +311,7 @@ public class ApplyScriptSystem : FSystem {
 
 		return null;
 	}
-
+*/
 	//increment the iterator of the action script
 	public static void incrementActionScript(ScriptRef script, Family highlightedItems){
 		//remove highlight of previous action
@@ -727,87 +590,7 @@ public class ApplyScriptSystem : FSystem {
 		}
 	}
 	*/
-    public static List<GameObject> CopyActionsFrom(GameObject container){
-		Debug.Log("CopyActionsFrom");
-		List<GameObject> l = new List<GameObject>();
 
-		for(int i = 0; i< container.transform.childCount; i++){
-			GameObject child = container.transform.GetChild(i).gameObject;
-			if(child.GetComponent<ForAction>()){
-				ForAction forAct = child.GetComponent<ForAction>();
-                forAct.nbFor = int.Parse(child.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
-				//loop display
-				/*
-				if (forAct.nbFor > 0)
-					child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor +1).ToString() + " / " + forAct.nbFor.ToString();
-				else*/
-				child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
-				//not editable for
-				child.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = false;
-				Object.Destroy(child.GetComponent<UITypeContainer>());
-				
-				if(child.transform.childCount != 0){
-					List<GameObject> forchildren = CopyActionsFrom(child);
-					foreach(GameObject forchild in forchildren){
-						if (forchild.GetComponent<BaseElement>()){
-							forAct.firstChild = forchild;
-							Debug.Log("firstchild for = "+forchild.name);
-							break;							
-						}
-
-					}
-				}
-					
-			}
-			else if(child.GetComponent<IfAction>()){
-				IfAction IfAct = child.GetComponent<IfAction>();
-				IfAct.ifEntityType = child.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value;
-				IfAct.ifDirection = child.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value;
-				IfAct.range = int.Parse(child.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text);
-				IfAct.ifNot = (child.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1);
-				
-				//not editable if
-				child.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().interactable = false;
-				child.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().interactable = false;
-				child.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().interactable = false;
-				child.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().interactable = false;
-				Object.Destroy(child.GetComponent<UITypeContainer>());
-
-				if(child.transform.childCount != 0){
-					List<GameObject> ifchildren = CopyActionsFrom(child);
-					foreach(GameObject ifchild in ifchildren){
-						if (ifchild.GetComponent<BaseElement>()){
-							IfAct.firstChild = ifchild;
-							Debug.Log("firstchild if = "+ifchild.name);
-							break;							
-						}
-					}
-				}
-			}
-			l.Add(child); 
-			//not editable action
-			Object.Destroy(child.GetComponent<PointerSensitive>());
-		}
-		return l;
-	}
-	private void addNext(GameObject container){
-		int i = 1;
-		//for each child, next = next child
-		foreach(Transform child in container.transform){
-			Debug.Log(child.gameObject.name);
-			if(i < container.transform.childCount && child.GetComponent<BaseElement>()){
-				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
-			}
-			//if or for action
-			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>())
-				addNext(child.gameObject);
-			i++;
-		}
-		//last child's next = parent 
-		if(container.transform.childCount != 0 && (container.transform.GetComponent<IfAction>() || container.transform.GetComponent<ForAction>()) &&
-		container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>())
-			container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;		
-	}
 }
 
 

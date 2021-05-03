@@ -2,6 +2,7 @@ using UnityEngine;
 using FYFY;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 public class ActionBlocSystem : FSystem {
 	// Use this to update member variables when system pause. 
@@ -15,15 +16,35 @@ public class ActionBlocSystem : FSystem {
 	private Family deletedActions = FamilyManager.getFamily(new AllOfComponents(typeof(AddOne)));
 	//private Family undroppedActions = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(Dropped)));
 	private GameData gameData;
+	private Family draggableElement = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)));
+
 	//private GameObject droppedItemLinkedTo;
 	//private Action.ActionType droppedItemType = Action.ActionType.Undefined;
 	public ActionBlocSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
+		//LimitTexts
+		for(int i = 0 ; i < draggableElement.Count ; i++){
+			updateBlocLimit(i);
+		}
 		//availableActions.addExitCallback(hideActionBloc);
 		droppedActions.addEntryCallback(useAction);
 		//undroppedActions.addEntryCallback(unuseAction);
 		//droppedActions.addExitCallback(unuseAction);
 		deletedActions.addEntryCallback(unuseAction);
+	}
+
+	private void updateBlocLimit(int i){
+		bool isActive = gameData.actionBlocLimit[i] != 0; // negative means no limit
+		GameObjectManager.setGameObjectState(draggableElement.getAt(i), isActive);
+		if(isActive){
+			GameObjectManager.addComponent<Available>(draggableElement.getAt(i));
+			if(gameData.actionBlocLimit[i] < 0){
+				GameObjectManager.setGameObjectState(draggableElement.getAt(i).transform.GetChild(1).gameObject, false);
+			}
+			else{
+				draggableElement.getAt(i).transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Reste\n" + gameData.actionBlocLimit[i].ToString();
+			}
+		}		
 	}
 	protected override void onPause(int currentFrame) {
 	}
@@ -66,6 +87,8 @@ public class ActionBlocSystem : FSystem {
 		if(typeid != -1){
 			Debug.Log("-1");
 			gameData.actionBlocLimit[typeid] -= 1;
+			updateBlocLimit(typeid);
+			/*
 			if(gameData.actionBlocLimit[typeid] == 0){
 				Debug.Log("action not available");
 				GameObjectManager.removeComponent<Available>(go.GetComponent<UIActionType>().linkedTo);
@@ -77,9 +100,10 @@ public class ActionBlocSystem : FSystem {
 						//Object.Destroy(go.GetComponent<Available>());
 				}*/
 				
-			}
+			//}
 				
 		}
+		GameObjectManager.removeComponent<Dropped>(go);
 	}
 	
 	private void unuseAction(GameObject go){
@@ -118,6 +142,8 @@ public class ActionBlocSystem : FSystem {
 		if(typeid != -1){
 			Debug.Log("+1");
 			gameData.actionBlocLimit[typeid] += addOnes.Length;
+			updateBlocLimit(typeid);
+			/*
 			if(gameData.actionBlocLimit[typeid] > 0){
 				Debug.Log("action available");
 				GameObjectManager.addComponent<Available>(go);
@@ -129,7 +155,7 @@ public class ActionBlocSystem : FSystem {
 						//Object.Destroy(actionGO.GetComponent<Available>());
 				}*/
 				
-			}
+			//}
 		}
 		foreach(AddOne a in addOnes){
 			GameObjectManager.removeComponent(a);	

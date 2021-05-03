@@ -14,13 +14,12 @@ public class DragDropSystem : FSystem {
 	private GameObject itemDragged;
 	private GameObject positionBar;
 	private GameData gameData;
-	private List<GameObject> limitTexts;
-
 	public DragDropSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		positionBar = GameObject.Find("PositionBar");
 		GameObjectManager.setGameObjectState(positionBar, false);
-		//LimitTexts
+
+		/*
 		limitTexts = new List<GameObject>();
 		limitTexts.Add(GameObject.Find("ForwardLimit"));
 		limitTexts.Add(GameObject.Find("TurnLeftLimit"));
@@ -30,7 +29,7 @@ public class DragDropSystem : FSystem {
 		limitTexts.Add(GameObject.Find("TurnBackLimit"));
 		limitTexts.Add(GameObject.Find("IfLimit"));
 		limitTexts.Add(GameObject.Find("ForLimit"));
-
+		*/
 	}
 
 	// Use this to update member variables when system pause. 
@@ -45,12 +44,11 @@ public class DragDropSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
+		/*
 		bool isActive;
 		//Update LimitText
 		for(int i = 0; i < limitTexts.Count; i++){
 			if(gameData.actionBlocLimit[i] >= 0){
-				isActive = gameData.actionBlocLimit[i] == 0 ? false : true;
-				GameObjectManager.setGameObjectState(limitTexts[i].transform.parent.gameObject, isActive);
 				limitTexts[i].GetComponent<TextMeshProUGUI>().text = "Reste\n" + gameData.actionBlocLimit[i].ToString();
 				//desactivate actionBlocs
 				if(gameData.actionBlocLimit[i] == 0){
@@ -66,9 +64,11 @@ public class DragDropSystem : FSystem {
 			}
 
 		}
+		*/
 
 		//Drag
-		if(Input.GetMouseButtonDown(0)){
+		if(Input.GetMouseButtonDown(0) && !Input.GetMouseButtonUp(0)){ //focus in play mode (unity editor) could be up and down !!! (bug unity)
+			Debug.Log("drag");
 			BaseElement action = null;
 			foreach( GameObject go in panelPointedGO){
 				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
@@ -89,7 +89,7 @@ public class DragDropSystem : FSystem {
 				break;
 			}
 		}
-
+		
 		if(itemDragged != null){
 			itemDragged.transform.position = Input.mousePosition;
 		}
@@ -136,7 +136,8 @@ public class DragDropSystem : FSystem {
 				
 			}
 			if(priority){
-				destroyScript(priority.transform, true);
+				GameObjectManager.addComponent<ResetBlocLimit>(priority);
+				//destroyScript(priority.transform, true);
 			}
 			priority = null;
 		}
@@ -144,6 +145,7 @@ public class DragDropSystem : FSystem {
 
 		//Drop
 		if(Input.GetMouseButtonUp(0)){
+			Debug.Log("drop");
 			//Drop in script
 			if(priority != null && itemDragged != null){
 				itemDragged.transform.SetParent(priority.transform);
@@ -184,29 +186,6 @@ public class DragDropSystem : FSystem {
 		if(!success || (success && Int32.Parse(input.text) < 0)){
 			input.text = "0";
 		}
-	}
-
-	//Recursive script destroyer
-	private void destroyScript(Transform go, bool refund = false){
-		//refund blocActionLimit
-		if(go.gameObject.GetComponent<UIActionType>() != null){
-			//gameData.deletedItemLinkedTo.Add(go.GetComponent<UIActionType>().linkedTo);
-			GameObjectManager.addComponent<AddOne>(go.GetComponent<UIActionType>().linkedTo);
-			if(!refund)
-				gameData.totalActionBloc++;
-		}
-		
-		if(go.gameObject.GetComponent<UITypeContainer>() != null){
-			for(int i = 0; i < go.childCount; i++){
-				destroyScript(go.GetChild(i));
-			}
-		}
-		for(int i = 0; i < go.transform.childCount;i++){
-			UnityEngine.Object.Destroy(go.transform.GetChild(i).gameObject);
-		}
-		go.transform.DetachChildren();
-		GameObjectManager.unbind(go.gameObject);
-		UnityEngine.Object.Destroy(go.gameObject);
 	}
 
 	//Refresh Containers size

@@ -10,6 +10,7 @@ public class StepSystem : FSystem {
     //private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(CurrentAction)));
     private Family visibleContainers = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasRenderer), typeof(ScrollRect), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); 
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
+    private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
     private float timeStepCpt;
 	private static float timeStep = 1.5f;
 	private GameData gameData;
@@ -50,7 +51,7 @@ public class StepSystem : FSystem {
 
 		//Organize each steps
 		//if(gameData.nbStep > 0 && newEnd_f.Count == 0){
-		if(continueSteps() && newEnd_f.Count == 0){
+		if(currentActions.Count > 0 && newEnd_f.Count == 0){
             gameData.totalExecute++;
             //activate step
             if (timeStepCpt <= 0)
@@ -62,47 +63,5 @@ public class StepSystem : FSystem {
                 timeStepCpt -= Time.deltaTime;
 		}
 	}
-
-    private bool continueSteps(){
-        bool currentAction = false;
-        foreach(GameObject robot in playerGO){
-            if(robot.GetComponent<ScriptRef>().container.GetComponentInChildren<CurrentAction>()){
-                currentAction = true;
-                break;
-            }  
-        }
-        return currentAction;
-    }
-    
-    private void highlight(){
-        /*
-        foreach(GameObject go in highlightedItems){
-            if(go != null){
-                Debug.Log("highlight");
-                GameObjectManager.removeComponent(go.GetComponent<HighLight>());
-                if(go.GetComponent<BasicAction>() && go.GetComponent<BasicAction>().next != null){
-                    GameObjectManager.addComponent<HighLight>(go.GetComponent<BasicAction>().next);
-                }
-                else if(go.GetComponent<IfAction>()){
-                    if(go.GetComponent<IfAction>().firstChild != null)
-                        GameObjectManager.addComponent<HighLight>(go.GetComponent<IfAction>().firstChild);
-                    else if(go.GetComponent<IfAction>().next != null)
-                        GameObjectManager.addComponent<HighLight>(go.GetComponent<IfAction>().next);
-                }
-                else if (go.GetComponent<ForAction>()){ //TO DO for children loop
-                    if(go.GetComponent<ForAction>().firstChild != null)
-                        GameObjectManager.addComponent<HighLight>(go.GetComponent<ForAction>().firstChild);
-                    else if(go.GetComponent<ForAction>().next != null)
-                        GameObjectManager.addComponent<HighLight>(go.GetComponent<ForAction>().next);
-                }
-            }                
-        }*/
-        /*
-        GameObject container;
-        foreach(GameObject robot in playerGO){
-            container = robot.GetComponent<ScriptRef>().container.transform.Find("Viewport").Find("ScriptContainer").gameObject;
-            //
-        }*/        
-    }
 
 }
