@@ -50,8 +50,7 @@ public class StepSystem : FSystem {
     protected override void onProcess(int familiesUpdateCount) {
 
 		//Organize each steps
-		//if(gameData.nbStep > 0 && newEnd_f.Count == 0){
-		if(currentActions.Count > 0 && newEnd_f.Count == 0){
+		if(currentActions.Count > 0 && playerIsMoving() && newEnd_f.Count == 0){
             gameData.totalExecute++;
             //activate step
             if (timeStepCpt <= 0)
@@ -63,5 +62,15 @@ public class StepSystem : FSystem {
                 timeStepCpt -= Time.deltaTime;
 		}
 	}
+
+    private bool playerIsMoving(){
+		CurrentAction act;
+		foreach(GameObject go in currentActions){
+			act = go.GetComponent<CurrentAction>();
+			if(act.agent.CompareTag("Player"))
+				return true;
+		}
+        return false;
+    }
 
 }

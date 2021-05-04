@@ -35,7 +35,9 @@ public class CurrentActionSystem : FSystem {
 			if(current != null){ //current not in gameData.actionsHistory
 				nextAction = getNextAction(currentAction, current.agent);
 				Debug.Log("nextAction = "+nextAction);
-				
+				if(nextAction == null && current.agent.CompareTag("Drone")){
+					nextAction = getFirstActionOf(current.agent.GetComponent<ScriptRef>().container.transform.GetChild(0).gameObject, current.agent);
+				}
 				if(nextAction != null){
 					//parent = for & first loop and first child, currentfor = 0 -> currentfor = 1
 					if(nextAction.transform.parent.GetComponent<ForAction>() && nextAction.transform.parent.GetComponent<ForAction>().currentFor == 0 && 
@@ -113,7 +115,8 @@ public class CurrentActionSystem : FSystem {
 		return null;
 	}
 
-	public void firstAction(){
+	private IEnumerator delayFirstAction(){
+		yield return null;
 		//Debug.Log("robots "+playerGO.Count);
 		//current action robot(s)
 		GameObject firstAction = null;
@@ -158,7 +161,10 @@ public class CurrentActionSystem : FSystem {
 				}				
 			}
 		}
+	}
 
+	public void firstAction(){
+		MainLoop.instance.StartCoroutine(delayFirstAction());
 	}
 
 	public GameObject getFirstActionOf (GameObject go, GameObject agent){

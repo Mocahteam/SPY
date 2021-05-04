@@ -68,7 +68,7 @@ public class DragDropSystem : FSystem {
 
 		//Drag
 		if(Input.GetMouseButtonDown(0) && !Input.GetMouseButtonUp(0)){ //focus in play mode (unity editor) could be up and down !!! (bug unity)
-			Debug.Log("drag");
+			//Debug.Log("drag");
 			BaseElement action = null;
 			foreach( GameObject go in panelPointedGO){
 				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
@@ -145,7 +145,7 @@ public class DragDropSystem : FSystem {
 
 		//Drop
 		if(Input.GetMouseButtonUp(0)){
-			Debug.Log("drop");
+			//Debug.Log("drop");
 			//Drop in script
 			if(priority != null && itemDragged != null){
 				itemDragged.transform.SetParent(priority.transform);

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 public class GameData : MonoBehaviour {
 	// Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
 
-	public GameObject ButtonExec;
-	public GameObject ButtonReset;
+	//public GameObject ButtonExec;
+	//public GameObject ButtonReset;
 	public GameObject Level;
 	public int nbStep;
 	public List<string> levelList;
