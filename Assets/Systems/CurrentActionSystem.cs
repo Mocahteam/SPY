@@ -3,10 +3,8 @@ using FYFY;
 using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine;
-using FYFY;
 using System.Collections;
-using FYFY_plugins.TriggerManager;
+
 public class CurrentActionSystem : FSystem {
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
@@ -30,34 +28,37 @@ public class CurrentActionSystem : FSystem {
 	private void onNewStep(GameObject unused){
 		GameObject nextAction;
 		CurrentAction current;
+		bool playerEnd = true;
 		foreach(GameObject currentAction in currentActions){
 			current = currentAction.GetComponent<CurrentAction>();
 			if(current != null){ //current not in gameData.actionsHistory
 				nextAction = getNextAction(currentAction, current.agent);
 				Debug.Log("nextAction = "+nextAction);
+				//loop drone script
 				if(nextAction == null && current.agent.CompareTag("Drone")){
 					nextAction = getFirstActionOf(current.agent.GetComponent<ScriptRef>().container.transform.GetChild(0).gameObject, current.agent);
 				}
 				if(nextAction != null){
+					if(current.agent.CompareTag("Player")){
+						playerEnd = false;
+					}
 					//parent = for & first loop and first child, currentfor = 0 -> currentfor = 1
 					if(nextAction.transform.parent.GetComponent<ForAction>() && nextAction.transform.parent.GetComponent<ForAction>().currentFor == 0 && 
 					nextAction.Equals(nextAction.transform.parent.GetComponent<ForAction>().firstChild)){
 						ForAction forAct = nextAction.transform.parent.GetComponent<ForAction>();
 						forAct.currentFor++;
 						forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
-						//GameObjectManager.addComponent<CurrentAction>(forAct.gameObject, new{agent = current.agent});
 					}
 					//ask to add CurrentAction on next frame
 					MainLoop.instance.StartCoroutine(delayAddCurrentAction(nextAction, current.agent));	
 				}
+
 				GameObjectManager.removeComponent<CurrentAction>(currentAction);				
 			}
-			/*
-			else{
-				Debug.Log("onnewstep "+ currentAction.gameObject.name);
-			}
-			*/
-
+		}
+		//execution finished
+		if(playerEnd && MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>()){
+			GameObjectManager.removeComponent<PlayerIsMoving>(MainLoop.instance.gameObject);     
 		}
 	}
 

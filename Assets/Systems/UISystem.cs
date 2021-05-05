@@ -19,16 +19,8 @@ public class UISystem : FSystem {
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
 	private Family actionsPanel = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(Image)));
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
-	private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
-	/*
-	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
-	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Drone"));
-	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
-	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
-	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem)), new AnyOfTags("Coin"));
-	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
-	*/
+	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
 	private GameData gameData;
 	private GameObject dialogPanel;
 	private int nDialog = 0;
@@ -49,10 +41,17 @@ public class UISystem : FSystem {
 		actions.addEntryCallback(linkTo);
 		newEnd_f.addEntryCallback(levelWon);
 		resetBlocLimit_f.addEntryCallback(delegate(GameObject go){destroyScript(go, true);});
+		scriptIsRunning.addExitCallback(executionFinished);
 
 		loadHistory();
     }
 
+	private void executionFinished(int unused){
+		Debug.Log("execution finished");
+		GameObjectManager.setGameObjectState(actionsPanel.First(), true);
+		GameObjectManager.setGameObjectState(buttonExec, true);
+		buttonReset.GetComponent<Button>().interactable = true;
+	}
 	private void loadHistory(){
 		if(gameData.actionsHistory != null){
 			GameObject editableCanvas = editableScriptContainer.First();
@@ -129,11 +128,6 @@ public class UISystem : FSystem {
 		//Activate DialogPanel if there is a message
 		if(gameData.dialogMessage.Count > 0 && !dialogPanel.activeSelf){
 			showDialogPanel();
-		}
-
-		//Desactivate Execute & ResetButton if there is a script running
-		if(currentActions.Count == 0){
-			GameObjectManager.setGameObjectState(actionsPanel.First(), true);
 		}
 
 	}

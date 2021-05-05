@@ -60,6 +60,9 @@ public class StepSystem : FSystem {
             }
             else
                 timeStepCpt -= Time.deltaTime;
+
+            if(!MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>())
+                GameObjectManager.addComponent<PlayerIsMoving>(MainLoop.instance.gameObject);
 		}
 	}
 
@@ -69,7 +72,7 @@ public class StepSystem : FSystem {
 			act = go.GetComponent<CurrentAction>();
 			if(act.agent.CompareTag("Player"))
 				return true;
-		}
+		}  
         return false;
     }
 
