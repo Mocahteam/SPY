@@ -39,18 +39,17 @@ public class UISystem : FSystem {
         requireEndPanel.addEntryCallback(displayEndPanel);
         displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
 		actions.addEntryCallback(linkTo);
-		newEnd_f.addEntryCallback(levelWon);
+		newEnd_f.addEntryCallback(levelFinished);
 		resetBlocLimit_f.addEntryCallback(delegate(GameObject go){destroyScript(go, true);});
-		scriptIsRunning.addExitCallback(executionFinished);
+		scriptIsRunning.addEntryCallback(delegate{setExecutionFinished(false);});
+		scriptIsRunning.addExitCallback(delegate{setExecutionFinished(true);});
 
 		loadHistory();
     }
-
-	private void executionFinished(int unused){
-		Debug.Log("execution finished");
-		GameObjectManager.setGameObjectState(actionsPanel.First(), true);
-		GameObjectManager.setGameObjectState(buttonExec, true);
-		buttonReset.GetComponent<Button>().interactable = true;
+	private void setExecutionFinished(bool finished){
+		GameObjectManager.setGameObjectState(actionsPanel.First(), finished);
+		GameObjectManager.setGameObjectState(buttonExec, finished);
+		buttonReset.GetComponent<Button>().interactable = finished;
 	}
 	private void loadHistory(){
 		if(gameData.actionsHistory != null){
@@ -69,10 +68,11 @@ public class UISystem : FSystem {
 			}
 			//destroy history
 			//GameObjectManager.unbind(gameData.actionsHistory);
-			GameObject.Destroy(gameData.actionsHistory);
+			//GameObject.Destroy(gameData.actionsHistory);
 		}	
 	}
-	private void levelWon (GameObject go){
+	private void levelFinished (GameObject go){
+		setExecutionFinished(true);
 		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
 			loadHistory();
 		}
@@ -320,7 +320,6 @@ public class UISystem : FSystem {
 			GameObjectManager.setGameObjectState(targetContainer.transform.parent.parent.gameObject, true);
 			for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
 				Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
-				//Debug.Log("bind "+child.name);
 				child.SetParent(targetContainer.transform);
 				GameObjectManager.bind(child.gameObject);
 				GameObjectManager.refresh(targetContainer);
@@ -350,9 +349,6 @@ public class UISystem : FSystem {
 				
 			else{
 				forAct.currentFor = 0;
-				//Debug.Log("childoutofbounds "+forAct.gameObject.name);
-				//Debug.Log("childoutofbounds "+forAct.transform.GetChild(0).gameObject.name);
-				//Debug.Log("childoutofbounds "+forAct.transform.GetChild(0).GetChild(1).gameObject.name);
 				forAct.gameObject.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
 			}
 
@@ -390,27 +386,48 @@ public class UISystem : FSystem {
 
 		return copyGO;
 	}
+
 	private void addNext(GameObject container){
+		//assign "next" variable to all BaseElement / UI containers(if/for)
+		List<GameObject> res = addNextToChildrenIn(container);
+		//assign "next" variable to last child in UI containers(if/for)
+		addNextToLastChildOf(res);
+	}
+
+	private List<GameObject> addNextToChildrenIn(GameObject container){
 		int i = 1;
+		List<GameObject> containers = new List<GameObject>();
 		//for each child, next = next child
 		foreach(Transform child in container.transform){
 			if(i < container.transform.childCount && child.GetComponent<BaseElement>()){
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
 			}
 			//if or for action
-			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>())
-				addNext(child.gameObject);
+			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>()){
+				containers.Add(child.gameObject);
+				List<GameObject> childContainers = addNextToChildrenIn(child.gameObject);
+				foreach(GameObject childC in childContainers)
+					containers.Add(childC);
+			}
+				
 			i++;
 		}
-		//last child's next = parent 
-		if(container.transform.childCount != 0 && container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>()){
-			if(container.GetComponent<ForAction>())
-				container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;
-			else if (container.GetComponent<IfAction>()){
-				container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container.GetComponent<IfAction>().next;
+		return containers;
+	}
+
+	private void addNextToLastChildOf(List<GameObject> containers){
+		//add next to last child in container if/for
+		foreach(GameObject go in containers){
+			//last child's next = parent 
+			if(go.transform.childCount != 0 && go.transform.GetChild(go.transform.childCount-1).GetComponent<BaseElement>()){
+				if(go.GetComponent<ForAction>()){
+					go.transform.GetChild(go.transform.childCount-1).GetComponent<BaseElement>().next = go;
+				}
+				else if (go.GetComponent<IfAction>()){
+					go.transform.GetChild(go.transform.childCount-1).GetComponent<BaseElement>().next = go.GetComponent<IfAction>().next;
+				}
 			}
 		}
-					
 	}
 	
 }

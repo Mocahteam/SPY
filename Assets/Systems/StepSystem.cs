@@ -70,7 +70,7 @@ public class StepSystem : FSystem {
 		CurrentAction act;
 		foreach(GameObject go in currentActions){
 			act = go.GetComponent<CurrentAction>();
-			if(act.agent.CompareTag("Player"))
+			if(act.agent != null && act.agent.CompareTag("Player"))
 				return true;
 		}  
         return false;
