@@ -8,7 +8,7 @@ public class CoinSystem : FSystem {
 	// Advice: avoid to update your families inside this function.
 
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Player"));
-    private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource), typeof(ParticleSystem)), new AnyOfTags("Coin"));
+    private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource), typeof(ParticleSystem)), new AnyOfTags("Coin"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private float speed = 20f;
 	private GameData gameData;
@@ -48,7 +48,8 @@ public class CoinSystem : FSystem {
 		go.GetComponent<Renderer>().enabled = false;
 
 		yield return new WaitForSeconds(1f);
-		GameObjectManager.unbind(go);
-		Object.Destroy(go);
+		GameObjectManager.setGameObjectState(go, false);
+        //GameObjectManager.unbind(go);
+		//Object.Destroy(go);
 	}
 }

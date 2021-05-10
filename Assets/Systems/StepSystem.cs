@@ -14,6 +14,7 @@ public class StepSystem : FSystem {
     private float timeStepCpt;
 	private static float timeStep = 1.5f;
 	private GameData gameData;
+    //private bool stepByStep;
 	public StepSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.nbStep = 0;
@@ -76,4 +77,17 @@ public class StepSystem : FSystem {
         return false;
     }
 
+/*
+    public void setStepByStep(bool on){
+        stepByStep = on;
+    }
+
+    public void goToNextStep(){
+        if(playerIsMoving()){
+            GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
+            gameData.totalStep++;          
+        }
+
+    }
+*/
 }

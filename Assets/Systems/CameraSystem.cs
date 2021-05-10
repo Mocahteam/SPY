@@ -13,6 +13,7 @@ public class CameraSystem : FSystem {
 	//private Family playerGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Script)), new AnyOfTags("Player"));
 	
 	private Family playerGO = FamilyManager.getFamily(new AnyOfTags("Player"));
+	private Family UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver))); 
 	private GameData gameData;
 
 	public CameraSystem()
@@ -127,7 +128,7 @@ public class CameraSystem : FSystem {
             }
 
 			// Zoom avec la molette
-			else if(Input.GetAxis("Mouse ScrollWheel") < 0)
+			else if(Input.GetAxis("Mouse ScrollWheel") < 0 && UIfocused.Count == 0)
 	        {
 	            if(go.GetComponent<CameraComponent>().ScrollCount >= go.GetComponent<CameraComponent>().ScrollWheelminPush && go.GetComponent<CameraComponent>().ScrollCount < go.GetComponent<CameraComponent>().ScrollWheelLimit)
 	            {
@@ -135,7 +136,7 @@ public class CameraSystem : FSystem {
 	                go.GetComponent<CameraComponent>().ScrollCount++;
 	            }
 	        }
-	        else if(Input.GetAxis("Mouse ScrollWheel") > 0)
+	        else if(Input.GetAxis("Mouse ScrollWheel") > 0 && UIfocused.Count == 0)
 	        {
 	            if(go.GetComponent<CameraComponent>().ScrollCount > go.GetComponent<CameraComponent>().ScrollWheelminPush && go.GetComponent<CameraComponent>().ScrollCount <= go.GetComponent<CameraComponent>().ScrollWheelLimit)
 	            {

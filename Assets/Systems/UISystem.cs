@@ -9,7 +9,7 @@ using System;
 public class UISystem : FSystem {
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
-	private GameObject actionContainer;
+	//private GameObject actionContainer;
     private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF));
     private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
@@ -24,14 +24,19 @@ public class UISystem : FSystem {
 	private GameData gameData;
 	private GameObject dialogPanel;
 	private int nDialog = 0;
-	private GameObject buttonExec;
+	private GameObject buttonPlay;
 	private GameObject buttonStop;
 	private GameObject buttonReset;
+	private GameObject buttonPause;
+	private GameObject buttonStep;
+	private GameObject lastEditedScript;
 	public UISystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		buttonExec = GameObject.Find("ExecuteButton");
+		buttonPlay = GameObject.Find("ExecuteButton");
 		buttonStop = GameObject.Find("StopButton");
 		buttonReset = GameObject.Find("ResetButton");
+		buttonPause = GameObject.Find("PauseButton");
+		buttonStep = GameObject.Find("NextStepButton");
 		GameObject endPanel = GameObject.Find("EndPanel");
 		GameObjectManager.setGameObjectState(endPanel, false);
 		dialogPanel = GameObject.Find("DialogPanel");
@@ -41,16 +46,38 @@ public class UISystem : FSystem {
 		actions.addEntryCallback(linkTo);
 		newEnd_f.addEntryCallback(levelFinished);
 		resetBlocLimit_f.addEntryCallback(delegate(GameObject go){destroyScript(go, true);});
-		scriptIsRunning.addEntryCallback(delegate{setExecutionFinished(false);});
-		scriptIsRunning.addExitCallback(delegate{setExecutionFinished(true);});
+		scriptIsRunning.addEntryCallback(delegate{setExecutionState(false);});
+		scriptIsRunning.addExitCallback(delegate{setExecutionState(true);});
+		scriptIsRunning.addExitCallback(saveHistory);
+		lastEditedScript = null;
 
 		loadHistory();
     }
-	private void setExecutionFinished(bool finished){
+	private void setExecutionState(bool finished){
 		GameObjectManager.setGameObjectState(actionsPanel.First(), finished);
-		GameObjectManager.setGameObjectState(buttonExec, finished);
+		//GameObjectManager.setGameObjectState(buttonExec, finished);
 		buttonReset.GetComponent<Button>().interactable = finished;
+
+		buttonPlay.GetComponent<Button>().interactable = finished;
+		buttonStop.GetComponent<Button>().interactable = !finished;
+		buttonPause.GetComponent<Button>().interactable = !finished;
+		buttonStep.GetComponent<Button>().interactable = !finished;
 	}
+	
+	private void saveHistory(int unused = 0){
+		if(gameData.actionsHistory == null){
+			gameData.actionsHistory = lastEditedScript;
+		}
+		else{
+			foreach(Transform child in lastEditedScript.transform){
+				Transform copy = UnityEngine.GameObject.Instantiate(child);
+				copy.SetParent(gameData.actionsHistory.transform);
+				GameObjectManager.bind(copy.gameObject);				
+			}
+			GameObjectManager.refresh(gameData.actionsHistory);	
+		}	
+	}
+
 	private void loadHistory(){
 		if(gameData.actionsHistory != null){
 			GameObject editableCanvas = editableScriptContainer.First();
@@ -71,10 +98,25 @@ public class UISystem : FSystem {
 			//GameObject.Destroy(gameData.actionsHistory);
 		}	
 	}
+
+	private void restoreLastEditedScript(){
+		GameObject container = editableScriptContainer.First();
+		foreach(Transform child in lastEditedScript.transform){
+			child.SetParent(container.transform);
+			GameObjectManager.bind(child.gameObject);
+		}
+		GameObjectManager.refresh(container);
+	}
+
 	private void levelFinished (GameObject go){
-		setExecutionFinished(true);
+		setExecutionState(true);
 		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
+			saveHistory();
 			loadHistory();
+		}
+		else if(go.GetComponent<NewEnd>().endType == NewEnd.Detected){
+			//copy player container into editable container
+			restoreLastEditedScript();
 		}
 	}
 	private void linkTo(GameObject go){
@@ -163,7 +205,7 @@ public class UISystem : FSystem {
 		for(int i = 0; i < go.transform.childCount; i++){
 			destroyScript(go.transform.GetChild(i).gameObject);
 		}
-		buttonExec.GetComponent<AudioSource>().Play();
+		buttonPlay.GetComponent<AudioSource>().Play();
 		refreshUI();
 	}
 
@@ -278,27 +320,17 @@ public class UISystem : FSystem {
 	}
 
 	public void stopScript(){
+		restoreLastEditedScript();
+		setExecutionState(true);
 		CurrentAction act;
 		foreach(GameObject go in currentActions){
 			act = go.GetComponent<CurrentAction>();
 			if(act.agent.CompareTag("Player"))
 				GameObjectManager.removeComponent<CurrentAction>(go);
-		}
+		}		
 	}
 
 	public void applyScriptToPlayer(){
-		//save history
-		if(gameData.actionsHistory == null){
-			gameData.actionsHistory = UnityEngine.Object.Instantiate(editableScriptContainer.First());
-		}
-		else{
-			foreach(Transform child in editableScriptContainer.First().transform){
-				Transform copy = UnityEngine.GameObject.Instantiate(child);
-				copy.SetParent(gameData.actionsHistory.transform);
-				GameObjectManager.bind(copy.gameObject);
-				GameObjectManager.refresh(gameData.actionsHistory);
-			}	
-		}	
 
 		//clean container for each robot
 		foreach(GameObject robot in playerGO){
@@ -309,6 +341,8 @@ public class UISystem : FSystem {
 		}
 		
 		//copy editable script
+		lastEditedScript = GameObject.Instantiate(editableScriptContainer.First());
+		Debug.Log("lastEditedScript "+lastEditedScript.transform.childCount);
 		GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false);
 
 		foreach(Transform notgo in agentCanvas.First().transform){
@@ -389,32 +423,46 @@ public class UISystem : FSystem {
 
 	private void addNext(GameObject container){
 		//assign "next" variable to all BaseElement / UI containers(if/for)
-		List<GameObject> res = addNextToChildrenIn(container);
+		addNextToChildrenIn(container);
 		//assign "next" variable to last child in UI containers(if/for)
-		addNextToLastChildOf(res);
+		//addNextToLastChildOf(res);
 	}
 
-	private List<GameObject> addNextToChildrenIn(GameObject container){
-		int i = 1;
-		List<GameObject> containers = new List<GameObject>();
+	private void addNextToChildrenIn(GameObject container){
+		//int i = 1;
+		//List<GameObject> containers = new List<GameObject>();
 		//for each child, next = next child
-		foreach(Transform child in container.transform){
-			if(i < container.transform.childCount && child.GetComponent<BaseElement>()){
-				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
+		//foreach(Transform child in container.transform){
+		for(int i = 0 ; i < container.transform.childCount ; i++){
+			Transform child = container.transform.GetChild(i);
+			if(i < container.transform.childCount-1 && child.GetComponent<BaseElement>()){
+				child.GetComponent<BaseElement>().next = container.transform.GetChild(i+1).gameObject;
+			}
+			else if(i == container.transform.childCount-1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>()){
+				if(container.GetComponent<ForAction>()){
+					child.GetComponent<BaseElement>().next = container;
+				}
+				else if(container.GetComponent<IfAction>()){
+					child.GetComponent<BaseElement>().next = container.GetComponent<BaseElement>().next;
+				}
+				
 			}
 			//if or for action
 			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>()){
+				addNextToChildrenIn(child.gameObject);
+				/*
 				containers.Add(child.gameObject);
 				List<GameObject> childContainers = addNextToChildrenIn(child.gameObject);
 				foreach(GameObject childC in childContainers)
 					containers.Add(childC);
+				*/
 			}
 				
-			i++;
+			//i++;
 		}
-		return containers;
+		//return containers;
 	}
-
+/*
 	private void addNextToLastChildOf(List<GameObject> containers){
 		//add next to last child in container if/for
 		foreach(GameObject go in containers){
@@ -429,5 +477,6 @@ public class UISystem : FSystem {
 			}
 		}
 	}
+*/
 	
 }
