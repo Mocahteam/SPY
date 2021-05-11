@@ -14,6 +14,11 @@ public class SaveManager_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("SaveManager", "SaveState", null);
 	}
 
+	public void saveStateIfFirstStep()
+	{
+		MainLoop.callAppropriateSystemMethod ("SaveManager", "saveStateIfFirstStep", null);
+	}
+
 	public void LoadState()
 	{
 		MainLoop.callAppropriateSystemMethod ("SaveManager", "LoadState", null);

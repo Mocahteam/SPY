@@ -14,4 +14,9 @@ public class CurrentActionSystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("CurrentActionSystem", "firstAction", null);
 	}
 
+	public void firstActionIfFirstStep()
+	{
+		MainLoop.callAppropriateSystemMethod ("CurrentActionSystem", "firstActionIfFirstStep", null);
+	}
+
 }

@@ -9,4 +9,14 @@ public class StepSystem_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
+	public void setStepByStep(System.Boolean on)
+	{
+		MainLoop.callAppropriateSystemMethod ("StepSystem", "setStepByStep", on);
+	}
+
+	public void goToNextStep()
+	{
+		MainLoop.callAppropriateSystemMethod ("StepSystem", "goToNextStep", null);
+	}
+
 }

@@ -16,7 +16,8 @@ public class CurrentActionSystem : FSystem {
 	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
 	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem)), new AnyOfTags("Coin"));
 	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
-	
+	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
+
 	public CurrentActionSystem(){
 		newStep_f.addEntryCallback(onNewStep);
 	}
@@ -58,6 +59,7 @@ public class CurrentActionSystem : FSystem {
 		}
 		//execution finished
 		if(playerEnd && MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>()){
+			Debug.Log("fin exec");
 			GameObjectManager.removeComponent<PlayerIsMoving>(MainLoop.instance.gameObject);     
 		}
 	}
@@ -166,6 +168,11 @@ public class CurrentActionSystem : FSystem {
 
 	public void firstAction(){
 		MainLoop.instance.StartCoroutine(delayFirstAction());
+	}
+
+	public void firstActionIfFirstStep(){
+		if(scriptIsRunning.Count == 0)
+			firstAction();
 	}
 
 	public GameObject getFirstActionOf (GameObject go, GameObject agent){

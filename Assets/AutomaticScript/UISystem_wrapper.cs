@@ -64,6 +64,11 @@ public class UISystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("UISystem", "retry", null);
 	}
 
+	public void reloadState()
+	{
+		MainLoop.callAppropriateSystemMethod ("UISystem", "reloadState", null);
+	}
+
 	public void stopScript()
 	{
 		MainLoop.callAppropriateSystemMethod ("UISystem", "stopScript", null);
@@ -72,6 +77,11 @@ public class UISystem_wrapper : MonoBehaviour
 	public void applyScriptToPlayer()
 	{
 		MainLoop.callAppropriateSystemMethod ("UISystem", "applyScriptToPlayer", null);
+	}
+
+	public void applyIfFirstStep()
+	{
+		MainLoop.callAppropriateSystemMethod ("UISystem", "applyIfFirstStep", null);
 	}
 
 }

@@ -14,12 +14,13 @@ public class StepSystem : FSystem {
     private float timeStepCpt;
 	private static float timeStep = 1.5f;
 	private GameData gameData;
-    //private bool stepByStep;
+    private bool stepByStep;
 	public StepSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.nbStep = 0;
 		timeStepCpt = timeStep;
         newStep_f.addEntryCallback(onNewStep);
+        stepByStep = false;
     }
     
     private void onNewStep(GameObject go)
@@ -51,7 +52,7 @@ public class StepSystem : FSystem {
     protected override void onProcess(int familiesUpdateCount) {
 
 		//Organize each steps
-		if(currentActions.Count > 0 && playerIsMoving() && newEnd_f.Count == 0){
+		if(!stepByStep && currentActions.Count > 0 && playerIsMoving() && newEnd_f.Count == 0){
             gameData.totalExecute++;
             //activate step
             if (timeStepCpt <= 0)
@@ -77,17 +78,19 @@ public class StepSystem : FSystem {
         return false;
     }
 
-/*
     public void setStepByStep(bool on){
         stepByStep = on;
     }
 
     public void goToNextStep(){
+        stepByStep = true;
         if(playerIsMoving()){
             GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
+            if(!MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>())
+                GameObjectManager.addComponent<PlayerIsMoving>(MainLoop.instance.gameObject);
             gameData.totalStep++;          
         }
 
     }
-*/
+
 }

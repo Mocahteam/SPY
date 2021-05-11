@@ -8,7 +8,7 @@ public class SaveManager : FSystem {
     private Family f_directions = FamilyManager.getFamily(new AllOfComponents(typeof(Direction)));
     private Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)));
     private Family f_activables = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
-    private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
 
     public static SaveManager instance;
 
@@ -19,7 +19,6 @@ public class SaveManager : FSystem {
 
     public SaveManager()
 	{
-        f_newEnd.addEntryCallback(levelFinished);
         if (Application.isPlaying)
         {
             GameObject GD = GameObject.Find("GameData");
@@ -29,11 +28,6 @@ public class SaveManager : FSystem {
 		instance = this;
 	}
 
-	private void levelFinished (GameObject go){
-        if(go.GetComponent<NewEnd>().endType == NewEnd.Detected){
-            LoadState();
-		}
-	}
 
     protected override void onProcess(int familiesUpdateCount)
     {
@@ -60,6 +54,11 @@ public class SaveManager : FSystem {
             save.rawSave.activables.Add(new SaveContent.RawActivable(act.GetComponent<Activable>()));
         currentContent = JsonUtility.ToJson(save.rawSave);
         Debug.Log(currentContent);
+    }
+
+    public void saveStateIfFirstStep(){
+        if(scriptIsRunning.Count == 0)
+            SaveState();
     }
 
     // Called from UI

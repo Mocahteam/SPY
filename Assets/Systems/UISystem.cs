@@ -30,14 +30,20 @@ public class UISystem : FSystem {
 	private GameObject buttonPause;
 	private GameObject buttonStep;
 	private GameObject lastEditedScript;
+	private GameObject endPanel;
+	private GameObject executionCanvas;
+
 	public UISystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		buttonPlay = GameObject.Find("ExecuteButton");
-		buttonStop = GameObject.Find("StopButton");
+
+		executionCanvas = GameObject.Find("ExecutionCanvas");
+		buttonPlay = executionCanvas.transform.Find("ExecuteButton").gameObject;
+		buttonStop = executionCanvas.transform.Find("StopButton").gameObject;
+		buttonPause = executionCanvas.transform.Find("PauseButton").gameObject;
+		buttonStep = executionCanvas.transform.Find("NextStepButton").gameObject;
+
 		buttonReset = GameObject.Find("ResetButton");
-		buttonPause = GameObject.Find("PauseButton");
-		buttonStep = GameObject.Find("NextStepButton");
-		GameObject endPanel = GameObject.Find("EndPanel");
+		endPanel = GameObject.Find("EndPanel");
 		GameObjectManager.setGameObjectState(endPanel, false);
 		dialogPanel = GameObject.Find("DialogPanel");
 		GameObjectManager.setGameObjectState(dialogPanel, false);
@@ -46,7 +52,7 @@ public class UISystem : FSystem {
 		actions.addEntryCallback(linkTo);
 		newEnd_f.addEntryCallback(levelFinished);
 		resetBlocLimit_f.addEntryCallback(delegate(GameObject go){destroyScript(go, true);});
-		scriptIsRunning.addEntryCallback(delegate{setExecutionState(false);});
+		//scriptIsRunning.addEntryCallback(delegate{setExecutionState(false);});
 		scriptIsRunning.addExitCallback(delegate{setExecutionState(true);});
 		scriptIsRunning.addExitCallback(saveHistory);
 		lastEditedScript = null;
@@ -55,13 +61,12 @@ public class UISystem : FSystem {
     }
 	private void setExecutionState(bool finished){
 		GameObjectManager.setGameObjectState(actionsPanel.First(), finished);
-		//GameObjectManager.setGameObjectState(buttonExec, finished);
 		buttonReset.GetComponent<Button>().interactable = finished;
-
-		buttonPlay.GetComponent<Button>().interactable = finished;
-		buttonStop.GetComponent<Button>().interactable = !finished;
-		buttonPause.GetComponent<Button>().interactable = !finished;
-		buttonStep.GetComponent<Button>().interactable = !finished;
+		
+		GameObjectManager.setGameObjectState(buttonPlay, finished);
+		GameObjectManager.setGameObjectState(buttonStop, !finished);
+		GameObjectManager.setGameObjectState(buttonPause, !finished);
+		GameObjectManager.setGameObjectState(buttonStep, finished);
 	}
 	
 	private void saveHistory(int unused = 0){
@@ -96,7 +101,10 @@ public class UISystem : FSystem {
 			//destroy history
 			//GameObjectManager.unbind(gameData.actionsHistory);
 			//GameObject.Destroy(gameData.actionsHistory);
-		}	
+			LayoutRebuilder.ForceRebuildLayoutImmediate(editableCanvas.GetComponent<RectTransform>());
+		}
+		//Canvas.ForceUpdateCanvases();
+		
 	}
 
 	private void restoreLastEditedScript(){
@@ -142,7 +150,7 @@ public class UISystem : FSystem {
         {
             case 1:
                 endPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Vous avez été repéré !";
-                GameObjectManager.setGameObjectState(endPanel.transform.GetChild(3).gameObject, false);
+                GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
                 endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
                 endPanel.GetComponent<AudioSource>().loop = true;
                 endPanel.GetComponent<AudioSource>().Play();
@@ -158,7 +166,8 @@ public class UISystem : FSystem {
                 //End
                 if (gameData.levelToLoad >= gameData.levelList.Count - 1)
                 {
-                    GameObjectManager.setGameObjectState(endPanel.transform.GetChild(3).gameObject, false);
+                    GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
+					GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
                 }
                 break;
         }
@@ -319,6 +328,10 @@ public class UISystem : FSystem {
 		GameObjectManager.loadScene("MainScene");
 	}
 
+	public void reloadState(){
+		GameObjectManager.removeComponent<NewEnd>(endPanel);
+	}
+
 	public void stopScript(){
 		restoreLastEditedScript();
 		setExecutionState(true);
@@ -364,6 +377,11 @@ public class UISystem : FSystem {
 		UnityEngine.Object.Destroy(containerCopy);
 
 		//applyIfEntityType();
+	}
+
+	public void applyIfFirstStep(){
+		if(scriptIsRunning.Count == 0)
+			applyScriptToPlayer();
 	}
 
     public GameObject CopyActionsFrom(GameObject container, bool isInteractable){
