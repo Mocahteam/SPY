@@ -9,14 +9,14 @@ public class SaveManager_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
-	public void SaveState()
+	public void SaveState(UnityEngine.GameObject buttonStop)
 	{
-		MainLoop.callAppropriateSystemMethod ("SaveManager", "SaveState", null);
+		MainLoop.callAppropriateSystemMethod ("SaveManager", "SaveState", buttonStop);
 	}
 
-	public void saveStateIfFirstStep()
+	public void saveStateIfFirstStep(UnityEngine.GameObject buttonPlay)
 	{
-		MainLoop.callAppropriateSystemMethod ("SaveManager", "saveStateIfFirstStep", null);
+		MainLoop.callAppropriateSystemMethod ("SaveManager", "saveStateIfFirstStep", buttonPlay);
 	}
 
 	public void LoadState()

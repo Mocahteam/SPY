@@ -34,31 +34,37 @@ public class SaveManager : FSystem {
         
     }
 
-    public void SaveState()
+    public void SaveState(GameObject buttonStop)
 	{
-        //reset save
-        save.rawSave.coinsState.Clear();
-        foreach (GameObject coin in f_coins)
-            save.rawSave.coinsState.Add(coin.activeSelf);
-        save.rawSave.doorsState.Clear();
-        foreach (GameObject door in f_doors)
-            save.rawSave.doorsState.Add(door.activeSelf);
-        save.rawSave.directions.Clear();
-        foreach (GameObject dir in f_directions)
-            save.rawSave.directions.Add(dir.GetComponent<Direction>().direction);
-        save.rawSave.positions.Clear();
-        foreach (GameObject pos in f_positions)
-            save.rawSave.positions.Add(new SaveContent.RawPosition(pos.GetComponent<Position>()));
-        save.rawSave.activables.Clear();
-        foreach (GameObject act in f_activables)
-            save.rawSave.activables.Add(new SaveContent.RawActivable(act.GetComponent<Activable>()));
-        currentContent = JsonUtility.ToJson(save.rawSave);
-        Debug.Log(currentContent);
+        if(!buttonStop.activeInHierarchy){
+            //reset save
+            save.rawSave.coinsState.Clear();
+            foreach (GameObject coin in f_coins)
+                save.rawSave.coinsState.Add(coin.activeSelf);
+            save.rawSave.doorsState.Clear();
+            foreach (GameObject door in f_doors)
+                save.rawSave.doorsState.Add(door.activeSelf);
+            save.rawSave.directions.Clear();
+            foreach (GameObject dir in f_directions)
+                save.rawSave.directions.Add(dir.GetComponent<Direction>().direction);
+            save.rawSave.positions.Clear();
+            foreach (GameObject pos in f_positions)
+                save.rawSave.positions.Add(new SaveContent.RawPosition(pos.GetComponent<Position>()));
+            save.rawSave.activables.Clear();
+            foreach (GameObject act in f_activables)
+                save.rawSave.activables.Add(new SaveContent.RawActivable(act.GetComponent<Activable>()));
+            currentContent = JsonUtility.ToJson(save.rawSave);
+            Debug.Log(currentContent);          
+        }
+
     }
 
-    public void saveStateIfFirstStep(){
-        if(scriptIsRunning.Count == 0)
-            SaveState();
+    public void saveStateIfFirstStep(GameObject buttonPlay){
+        if(buttonPlay.activeInHierarchy){
+            GameObject buttonStop = buttonPlay.transform.parent.Find("StopButton").gameObject;
+            SaveState(buttonStop);
+        }
+            
     }
 
     // Called from UI

@@ -9,14 +9,14 @@ public class CurrentActionSystem_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
-	public void firstAction()
+	public void firstAction(UnityEngine.GameObject buttonStop)
 	{
-		MainLoop.callAppropriateSystemMethod ("CurrentActionSystem", "firstAction", null);
+		MainLoop.callAppropriateSystemMethod ("CurrentActionSystem", "firstAction", buttonStop);
 	}
 
-	public void firstActionIfFirstStep()
+	public void firstActionIfFirstStep(UnityEngine.GameObject buttonPlay)
 	{
-		MainLoop.callAppropriateSystemMethod ("CurrentActionSystem", "firstActionIfFirstStep", null);
+		MainLoop.callAppropriateSystemMethod ("CurrentActionSystem", "firstActionIfFirstStep", buttonPlay);
 	}
 
 }

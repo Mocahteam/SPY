@@ -8,19 +8,19 @@ public class StepSystem : FSystem {
     private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     //private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(CurrentAction)));
-    private Family visibleContainers = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasRenderer), typeof(ScrollRect), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); 
-	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
+    //private Family visibleContainers = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasRenderer), typeof(ScrollRect), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); 
+	//private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
     private float timeStepCpt;
 	private static float timeStep = 1.5f;
 	private GameData gameData;
-    private bool stepByStep;
+    private bool autoExecution;
 	public StepSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.nbStep = 0;
 		timeStepCpt = timeStep;
         newStep_f.addEntryCallback(onNewStep);
-        stepByStep = false;
+        autoExecution = false;
     }
     
     private void onNewStep(GameObject go)
@@ -52,7 +52,7 @@ public class StepSystem : FSystem {
     protected override void onProcess(int familiesUpdateCount) {
 
 		//Organize each steps
-		if(!stepByStep && currentActions.Count > 0 && playerIsMoving() && newEnd_f.Count == 0){
+		if(!autoExecution && currentActions.Count > 0 && playerIsMoving() && newEnd_f.Count == 0){
             gameData.totalExecute++;
             //activate step
             if (timeStepCpt <= 0)
@@ -78,12 +78,12 @@ public class StepSystem : FSystem {
         return false;
     }
 
-    public void setStepByStep(bool on){
-        stepByStep = on;
+    public void autoExecuteStep(bool on){
+        autoExecution = on;
     }
 
     public void goToNextStep(){
-        stepByStep = true;
+        autoExecution = true;
         if(playerIsMoving()){
             GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
             if(!MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>())

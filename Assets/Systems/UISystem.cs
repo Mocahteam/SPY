@@ -344,44 +344,50 @@ public class UISystem : FSystem {
 	}
 
 	public void applyScriptToPlayer(){
-
-		//clean container for each robot
-		foreach(GameObject robot in playerGO){
-			foreach(Transform child in robot.GetComponent<ScriptRef>().container.transform){
-				GameObjectManager.unbind(child.gameObject);
-				GameObject.Destroy(child.gameObject);
+		//if first click on play button
+		if(!buttonStop.activeInHierarchy){
+			//clean container for each robot
+			foreach(GameObject robot in playerGO){
+				foreach(Transform child in robot.GetComponent<ScriptRef>().container.transform){
+					GameObjectManager.unbind(child.gameObject);
+					GameObject.Destroy(child.gameObject);
+				}
 			}
-		}
-		
-		//copy editable script
-		lastEditedScript = GameObject.Instantiate(editableScriptContainer.First());
-		Debug.Log("lastEditedScript "+lastEditedScript.transform.childCount);
-		GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false);
+			
+			//copy editable script
+			lastEditedScript = GameObject.Instantiate(editableScriptContainer.First());
+			Debug.Log("lastEditedScript "+lastEditedScript.transform.childCount);
+			GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false);
 
-		foreach(Transform notgo in agentCanvas.First().transform){
-			GameObjectManager.setGameObjectState(notgo.gameObject, false);
-		}
-
-		foreach( GameObject go in playerGO){
-			GameObject targetContainer = go.GetComponent<ScriptRef>().container;
-			GameObjectManager.setGameObjectState(targetContainer.transform.parent.parent.gameObject, true);
-			for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
-				Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
-				child.SetParent(targetContainer.transform);
-				GameObjectManager.bind(child.gameObject);
-				GameObjectManager.refresh(targetContainer);
+			foreach(Transform notgo in agentCanvas.First().transform){
+				GameObjectManager.setGameObjectState(notgo.gameObject, false);
 			}
-			addNext(targetContainer);
+
+			foreach( GameObject go in playerGO){
+				GameObject targetContainer = go.GetComponent<ScriptRef>().container;
+				GameObjectManager.setGameObjectState(targetContainer.transform.parent.parent.gameObject, true);
+				for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
+					Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
+					child.SetParent(targetContainer.transform);
+					GameObjectManager.bind(child.gameObject);
+					GameObjectManager.refresh(targetContainer);
+				}
+				addNext(targetContainer);
+			}
+
+			UnityEngine.Object.Destroy(containerCopy);
+
+			//empty editable container
+			resetScriptNoRefund();
 		}
 
-		UnityEngine.Object.Destroy(containerCopy);
-
-		//applyIfEntityType();
 	}
 
-	public void applyIfFirstStep(){
-		if(scriptIsRunning.Count == 0)
+	public void applyAndResetIfFirstStep(){
+		if(buttonPlay.activeInHierarchy){
 			applyScriptToPlayer();
+			resetScriptNoRefund();
+		}		
 	}
 
     public GameObject CopyActionsFrom(GameObject container, bool isInteractable){
