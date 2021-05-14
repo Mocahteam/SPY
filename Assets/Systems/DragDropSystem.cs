@@ -88,6 +88,17 @@ public class DragDropSystem : FSystem {
 				itemDragged.GetComponent<Image>().raycastTarget = false;
 				break;
 			}
+
+			if(itemDragged == null){
+				foreach(GameObject go in playerScriptPointedGO){
+					itemDragged = go;
+					go.transform.SetParent(go.transform.parent.parent);
+					GameObjectManager.addComponent<Dragged>(itemDragged);
+					itemDragged.GetComponent<Image>().raycastTarget = false;
+					break;
+				}				
+			}
+
 		}
 		
 		if(itemDragged != null){

@@ -21,6 +21,7 @@ public class UISystem : FSystem {
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
+	private Family emptyPlayerExecution = FamilyManager.getFamily(new AllOfComponents(typeof(EmptyExecution))); 
 	private GameData gameData;
 	private GameObject dialogPanel;
 	private int nDialog = 0;
@@ -55,11 +56,15 @@ public class UISystem : FSystem {
 		//scriptIsRunning.addEntryCallback(delegate{setExecutionState(false);});
 		scriptIsRunning.addExitCallback(delegate{setExecutionState(true);});
 		scriptIsRunning.addExitCallback(saveHistory);
+		//0 execution on firstaction
+		emptyPlayerExecution.addEntryCallback(delegate{setExecutionState(true);});
+		emptyPlayerExecution.addEntryCallback(delegate{GameObjectManager.removeComponent<EmptyExecution>(MainLoop.instance.gameObject);});
 		lastEditedScript = null;
 
 		loadHistory();
     }
 	private void setExecutionState(bool finished){
+		Debug.Log("setExecutionState "+finished);
 		GameObjectManager.setGameObjectState(actionsPanel.First(), finished);
 		buttonReset.GetComponent<Button>().interactable = finished;
 		
@@ -108,8 +113,13 @@ public class UISystem : FSystem {
 	}
 
 	private void restoreLastEditedScript(){
-		GameObject container = editableScriptContainer.First();
+		List<Transform> childrenList = new List<Transform>();
 		foreach(Transform child in lastEditedScript.transform){
+			childrenList.Add(child);
+		}
+		GameObject container = editableScriptContainer.First();
+		foreach(Transform child in childrenList){
+			//Debug.Log(child.name);
 			child.SetParent(container.transform);
 			GameObjectManager.bind(child.gameObject);
 		}
@@ -356,7 +366,7 @@ public class UISystem : FSystem {
 			
 			//copy editable script
 			lastEditedScript = GameObject.Instantiate(editableScriptContainer.First());
-			Debug.Log("lastEditedScript "+lastEditedScript.transform.childCount);
+			//Debug.Log("lastEditedScript "+lastEditedScript.transform.childCount);
 			GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false);
 
 			foreach(Transform notgo in agentCanvas.First().transform){
@@ -386,7 +396,7 @@ public class UISystem : FSystem {
 	public void applyAndResetIfFirstStep(){
 		if(buttonPlay.activeInHierarchy){
 			applyScriptToPlayer();
-			resetScriptNoRefund();
+			//resetScriptNoRefund();
 		}		
 	}
 

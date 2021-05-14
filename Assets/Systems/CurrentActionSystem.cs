@@ -78,7 +78,8 @@ public class CurrentActionSystem : FSystem {
 			ForAction forAct = currentAction.GetComponent<ForAction>();
 			//do next action
 			if(currentAction.GetComponent<ForAction>().currentFor == currentAction.GetComponent<ForAction>().nbFor){
-				GameObjectManager.removeComponent<CurrentAction>(currentAction);
+				if(currentAction.GetComponent<CurrentAction>())
+					GameObjectManager.removeComponent<CurrentAction>(currentAction);
 				if(currentAction.GetComponent<ForAction>().next == null || currentAction.GetComponent<ForAction>().next.GetComponent<BasicAction>()){
 					return currentAction.GetComponent<ForAction>().next;
 				}
@@ -119,7 +120,9 @@ public class CurrentActionSystem : FSystem {
 	}
 
 	private IEnumerator delayFirstAction(){
+		Debug.Log("delayFirstAction 1");
 		yield return null;
+		Debug.Log("delayFirstAction 2");
 		//Debug.Log("robots "+playerGO.Count);
 		//current action robot(s)
 		GameObject firstAction = null;
@@ -139,6 +142,11 @@ public class CurrentActionSystem : FSystem {
 					forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 				}
 			}
+			
+			else{
+				GameObjectManager.addComponent<EmptyExecution>(MainLoop.instance.gameObject);
+			}
+			
 
 		}
 
@@ -167,8 +175,9 @@ public class CurrentActionSystem : FSystem {
 	}
 
 	public void firstAction(GameObject buttonStop){
-		if(!buttonStop.activeInHierarchy)
+		if(!buttonStop.activeInHierarchy){
 			MainLoop.instance.StartCoroutine(delayFirstAction());
+		}
 	}
 
 	public void firstActionIfFirstStep(GameObject buttonPlay){
