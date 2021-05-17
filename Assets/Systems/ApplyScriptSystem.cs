@@ -67,6 +67,11 @@ public class ApplyScriptSystem : FSystem {
 	private void onNewCurrentAction(GameObject currentAction) {
 		CurrentAction ca = currentAction.GetComponent<CurrentAction>();	
 
+		if(ca.agent.CompareTag("Player")){
+			if(!MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>())
+				GameObjectManager.addComponent<PlayerIsMoving>(MainLoop.instance.gameObject);
+		}
+
 		switch (currentAction.GetComponent<BasicAction>().actionType){
 			case BasicAction.ActionType.Forward:
 				ApplyForward(ca.agent);

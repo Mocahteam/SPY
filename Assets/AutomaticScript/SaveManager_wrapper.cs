@@ -14,11 +14,6 @@ public class SaveManager_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("SaveManager", "SaveState", buttonStop);
 	}
 
-	public void saveStateIfFirstStep(UnityEngine.GameObject buttonPlay)
-	{
-		MainLoop.callAppropriateSystemMethod ("SaveManager", "saveStateIfFirstStep", buttonPlay);
-	}
-
 	public void LoadState()
 	{
 		MainLoop.callAppropriateSystemMethod ("SaveManager", "LoadState", null);

@@ -16,10 +16,12 @@ public class CurrentActionSystem : FSystem {
 	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
 	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem)), new AnyOfTags("Coin"));
 	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
+	private Family firstStep = FamilyManager.getFamily(new AllOfComponents(typeof(FirstStep))); 
 	//private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
 
 	public CurrentActionSystem(){
 		newStep_f.addEntryCallback(onNewStep);
+		firstStep.addEntryCallback(initFirstActions);
 	}
 
 	private IEnumerator delayAddCurrentAction(GameObject nextAction, GameObject agent){
@@ -29,7 +31,7 @@ public class CurrentActionSystem : FSystem {
 	private void onNewStep(GameObject unused){
 		GameObject nextAction;
 		CurrentAction current;
-		bool playerEnd = true;
+		//bool playerEnd = true;
 		foreach(GameObject currentAction in currentActions){
 			current = currentAction.GetComponent<CurrentAction>();
 			if(current != null){ //current not in gameData.actionsHistory
@@ -40,9 +42,10 @@ public class CurrentActionSystem : FSystem {
 					nextAction = getFirstActionOf(current.agent.GetComponent<ScriptRef>().container.transform.GetChild(0).gameObject, current.agent);
 				}
 				if(nextAction != null){
+					/*
 					if(current.agent.CompareTag("Player")){
 						playerEnd = false;
-					}
+					}*/
 					//parent = for & first loop and first child, currentfor = 0 -> currentfor = 1
 					if(nextAction.transform.parent.GetComponent<ForAction>() && nextAction.transform.parent.GetComponent<ForAction>().currentFor == 0 && 
 					nextAction.Equals(nextAction.transform.parent.GetComponent<ForAction>().firstChild)){
@@ -58,10 +61,11 @@ public class CurrentActionSystem : FSystem {
 			}
 		}
 		//execution finished
+		/*
 		if(playerEnd && MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>()){
 			Debug.Log("fin exec");
 			GameObjectManager.removeComponent<PlayerIsMoving>(MainLoop.instance.gameObject);     
-		}
+		}*/
 	}
 
 	public GameObject getNextAction(GameObject currentAction, GameObject agent){
@@ -119,12 +123,8 @@ public class CurrentActionSystem : FSystem {
 		return null;
 	}
 
-	private IEnumerator delayFirstAction(){
-		Debug.Log("delayFirstAction 1");
+	private IEnumerator delayInit(){
 		yield return null;
-		Debug.Log("delayFirstAction 2");
-		//Debug.Log("robots "+playerGO.Count);
-		//current action robot(s)
 		GameObject firstAction = null;
 		foreach(GameObject robot in playerGO){
 			if(robot.GetComponent<ScriptRef>().container.transform.childCount > 0){
@@ -174,18 +174,15 @@ public class CurrentActionSystem : FSystem {
 		}
 	}
 
-	public void firstAction(GameObject buttonStop){
-		if(!buttonStop.activeInHierarchy){
-			MainLoop.instance.StartCoroutine(delayFirstAction());
-		}
+	private void initFirstActions(GameObject unused){
+		MainLoop.instance.StartCoroutine(delayInit());
 	}
 
-	public void firstActionIfFirstStep(GameObject buttonPlay){
-		if(buttonPlay.activeInHierarchy){
-			GameObject buttonStop = buttonPlay.transform.parent.Find("StopButton").gameObject;
-			firstAction(buttonStop);
+	public void firstAction(GameObject buttonStop){
+		if(!buttonStop.activeInHierarchy){
+			GameObjectManager.addComponent<FirstStep>(MainLoop.instance.gameObject);
+			//MainLoop.instance.StartCoroutine(delayFirstAction());
 		}
-			
 	}
 
 	public GameObject getFirstActionOf (GameObject go, GameObject agent){

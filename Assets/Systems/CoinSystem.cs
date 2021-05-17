@@ -9,7 +9,7 @@ public class CoinSystem : FSystem {
 
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Player"));
     private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource), typeof(ParticleSystem)), new AnyOfTags("Coin"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-    private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+    private Family newStep_f = FamilyManager.getFamily(new AnyOfComponents(typeof(NewStep), typeof(FirstStep)));
     private float speed = 20f;
 	private GameData gameData;
 

@@ -2,10 +2,12 @@
 using FYFY;
 using System.Threading.Tasks;
 using UnityEngine.UI;
+using System.Collections;
 
 public class StepSystem : FSystem {
 
     private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+    private Family firstStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(FirstStep)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     //private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(CurrentAction)));
     //private Family visibleContainers = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasRenderer), typeof(ScrollRect), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); 
@@ -14,13 +16,14 @@ public class StepSystem : FSystem {
     private float timeStepCpt;
 	private static float timeStep = 1.5f;
 	private GameData gameData;
-    private bool autoExecution;
+    //private bool autoExecution;
 	public StepSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.nbStep = 0;
 		timeStepCpt = timeStep;
         newStep_f.addEntryCallback(onNewStep);
-        autoExecution = false;
+        firstStep_f.addEntryCallback(onFirstStep);
+        //autoExecution = true;
     }
     
     private void onNewStep(GameObject go)
@@ -34,6 +37,7 @@ public class StepSystem : FSystem {
         timeStepCpt = timeStep;
         gameData.nbStep--;
         Debug.Log("StepSystem End");
+        //stepFinished = true;
         /*
         if(gameData.nbStep == 0){
             Debug.Log("end");
@@ -47,15 +51,23 @@ public class StepSystem : FSystem {
             }
         }*/
     }
+    private void onFirstStep(GameObject go)
+    {
+        GameObjectManager.removeComponent(go.GetComponent<FirstStep>());
+        timeStepCpt = timeStep;
+        gameData.nbStep--;
+        Debug.Log("FirstStep End");
+
+    }
 
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
 
 		//Organize each steps
-		if(!autoExecution && currentActions.Count > 0 && playerIsMoving() && newEnd_f.Count == 0){
+		if(currentActions.Count > 0 && newEnd_f.Count == 0){
             gameData.totalExecute++;
             //activate step
-            if (timeStepCpt <= 0)
+            if (timeStepCpt <= 0 && playerHasNextAction())
             {
                 GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
                 gameData.totalStep++;
@@ -63,34 +75,57 @@ public class StepSystem : FSystem {
             else
                 timeStepCpt -= Time.deltaTime;
 
-            if(!MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>())
-                GameObjectManager.addComponent<PlayerIsMoving>(MainLoop.instance.gameObject);
 		}
 	}
 
-    private bool playerIsMoving(){
+    private bool playerHasNextAction(){
 		CurrentAction act;
 		foreach(GameObject go in currentActions){
 			act = go.GetComponent<CurrentAction>();
-			if(act.agent != null && act.agent.CompareTag("Player"))
-				return true;
-		}  
+			if(act.agent != null && act.agent.CompareTag("Player") && act.GetComponent<BaseElement>().next != null){
+				return true;                
+            }
+		}
+        //execution finished
+		if(MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>()){
+			Debug.Log("fin exec");
+            Pause = true;
+			GameObjectManager.removeComponent<PlayerIsMoving>(MainLoop.instance.gameObject);     
+		}
         return false;
     }
 
     public void autoExecuteStep(bool on){
-        autoExecution = on;
+        Pause = !on;
+        /*
+        if(on){
+           autoExecution = true; 
+        }
+        */
+        //autoExecution = on;
     }
 
-    public void goToNextStep(){
-        autoExecution = true;
-        if(playerIsMoving()){
-            GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
-            if(!MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>())
-                GameObjectManager.addComponent<PlayerIsMoving>(MainLoop.instance.gameObject);
-            gameData.totalStep++;          
+/*
+    private IEnumerator delayPause(){
+        if(!stepFinished){
+            yield return null;
+        }
+        else{
+            stepFinished = true;
+            Pause = true;
         }
 
+    }
+*/
+
+    public void goToNextStep(){
+        Pause = false;
+        //autoExecution = false;
+        if(timeStepCpt <= 0 && playerHasNextAction()){
+            GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
+            gameData.totalStep++;          
+        }
+       //MainLoop.instance.StartCoroutine(delayPause());
     }
 
 }

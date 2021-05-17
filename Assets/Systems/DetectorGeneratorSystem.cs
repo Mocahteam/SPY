@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using FYFY;
+using System.Collections;
 
 public class DetectorGeneratorSystem : FSystem {
 
@@ -7,20 +8,22 @@ public class DetectorGeneratorSystem : FSystem {
 	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody)));
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
     private Family gameLoaded_f = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
-    private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+    private Family newStep_f = FamilyManager.getFamily(new AnyOfComponents(typeof(NewStep), typeof(FirstStep)));
     private GameData gameData;
 
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 	public DetectorGeneratorSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-        gameLoaded_f.addEntryCallback(generateStep);
-        newStep_f.addEntryCallback(generateStep);
+        gameLoaded_f.addEntryCallback(delegate{updateDetector();});
+        newStep_f.addEntryCallback(delegate{updateDetector();});
     }
 
-    private void generateStep(GameObject unused)
-    {
-        //Destroy detection cells
+    private IEnumerator delayUpdateDetector(){
+        yield return null;
+        yield return null;
+        yield return null;
+         //Destroy detection cells
         foreach (GameObject detector in detectorGO)
         {
             // Remove position (because GameObject is not destroyed immediate)
@@ -164,6 +167,11 @@ public class DetectorGeneratorSystem : FSystem {
                 case DetectRange.Type.Around:
                     break;
             }
-        }
+        }       
+    }
+
+    public void updateDetector()
+    {
+       MainLoop.instance.StartCoroutine(delayUpdateDetector());
     }
 }

@@ -6,7 +6,7 @@ public class MoveSystem : FSystem {
 
 	private float turnSpeed = 150f;
 	private float moveSpeed = 7f;
-	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction), typeof(Animator), typeof(AudioSource)));
+	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
 	private GameData gameData;
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
@@ -82,13 +82,18 @@ public class MoveSystem : FSystem {
 					go.GetComponent<Animator>().SetFloat("Turn", -1f);
 			}
 
-			if(isMoving){
-				if(!go.GetComponent<AudioSource>().isPlaying)
-					go.GetComponent<AudioSource>().Play();
+			AudioSource audio = go.GetComponent<AudioSource>(); // not included into family because red detector has no audio source
+
+			if(audio != null){
+				if(isMoving){
+					if(!audio.isPlaying)
+						audio.Play();
+				}
+				else{
+					audio.Stop();
+				}
 			}
-			else{
-				go.GetComponent<AudioSource>().Stop();
-			}
+
 		}
 	}
 }

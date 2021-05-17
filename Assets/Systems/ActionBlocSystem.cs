@@ -43,6 +43,7 @@ public class ActionBlocSystem : FSystem {
 			}
 			else{
 				draggableElement.getAt(i).transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Reste\n" + gameData.actionBlocLimit[i].ToString();
+				GameObjectManager.setGameObjectState(draggableElement.getAt(i).transform.GetChild(1).gameObject, true);
 			}
 		}		
 	}

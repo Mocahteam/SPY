@@ -59,14 +59,6 @@ public class SaveManager : FSystem {
 
     }
 
-    public void saveStateIfFirstStep(GameObject buttonPlay){
-        if(buttonPlay.activeInHierarchy){
-            GameObject buttonStop = buttonPlay.transform.parent.Find("StopButton").gameObject;
-            SaveState(buttonStop);
-        }
-            
-    }
-
     // Called from UI
     public void LoadState()
     {

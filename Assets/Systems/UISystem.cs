@@ -26,6 +26,7 @@ public class UISystem : FSystem {
 	private GameObject dialogPanel;
 	private int nDialog = 0;
 	private GameObject buttonPlay;
+	private GameObject buttonContinue;
 	private GameObject buttonStop;
 	private GameObject buttonReset;
 	private GameObject buttonPause;
@@ -39,6 +40,7 @@ public class UISystem : FSystem {
 
 		executionCanvas = GameObject.Find("ExecutionCanvas");
 		buttonPlay = executionCanvas.transform.Find("ExecuteButton").gameObject;
+		buttonContinue = executionCanvas.transform.Find("ContinueButton").gameObject;
 		buttonStop = executionCanvas.transform.Find("StopButton").gameObject;
 		buttonPause = executionCanvas.transform.Find("PauseButton").gameObject;
 		buttonStep = executionCanvas.transform.Find("NextStepButton").gameObject;
@@ -69,9 +71,10 @@ public class UISystem : FSystem {
 		buttonReset.GetComponent<Button>().interactable = finished;
 		
 		GameObjectManager.setGameObjectState(buttonPlay, finished);
+		GameObjectManager.setGameObjectState(buttonContinue, !finished);
 		GameObjectManager.setGameObjectState(buttonStop, !finished);
 		GameObjectManager.setGameObjectState(buttonPause, !finished);
-		GameObjectManager.setGameObjectState(buttonStep, finished);
+		GameObjectManager.setGameObjectState(buttonStep, !finished);
 	}
 	
 	private void saveHistory(int unused = 0){
@@ -391,13 +394,6 @@ public class UISystem : FSystem {
 			resetScriptNoRefund();
 		}
 
-	}
-
-	public void applyAndResetIfFirstStep(){
-		if(buttonPlay.activeInHierarchy){
-			applyScriptToPlayer();
-			//resetScriptNoRefund();
-		}		
 	}
 
     public GameObject CopyActionsFrom(GameObject container, bool isInteractable){

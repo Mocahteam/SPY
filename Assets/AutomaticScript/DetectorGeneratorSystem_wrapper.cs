@@ -9,4 +9,9 @@ public class DetectorGeneratorSystem_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
+	public void updateDetector()
+	{
+		MainLoop.callAppropriateSystemMethod ("DetectorGeneratorSystem", "updateDetector", null);
+	}
+
 }

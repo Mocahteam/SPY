@@ -79,9 +79,4 @@ public class UISystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("UISystem", "applyScriptToPlayer", null);
 	}
 
-	public void applyAndResetIfFirstStep()
-	{
-		MainLoop.callAppropriateSystemMethod ("UISystem", "applyAndResetIfFirstStep", null);
-	}
-
 }
