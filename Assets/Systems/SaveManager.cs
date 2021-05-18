@@ -8,7 +8,8 @@ public class SaveManager : FSystem {
     private Family f_directions = FamilyManager.getFamily(new AllOfComponents(typeof(Direction)));
     private Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)));
     private Family f_activables = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
-	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
+	//private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
+    private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
 
     public static SaveManager instance;
 
@@ -53,6 +54,13 @@ public class SaveManager : FSystem {
             save.rawSave.activables.Clear();
             foreach (GameObject act in f_activables)
                 save.rawSave.activables.Add(new SaveContent.RawActivable(act.GetComponent<Activable>()));
+            save.rawSave.currentDroneActions.Clear();    
+            foreach(GameObject go in f_currentActions){
+                if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone")){
+                    save.rawSave.currentDroneActions.Add(new SaveContent.RawCurrentAction(go));
+                }
+            }
+
             currentContent = JsonUtility.ToJson(save.rawSave);
             Debug.Log(currentContent);          
         }
@@ -88,6 +96,15 @@ public class SaveManager : FSystem {
             act.isFullyActivated = save.rawSave.activables[i].isFullyActivated;
             act.side = save.rawSave.activables[i].side;
             act.slotID = save.rawSave.activables[i].slotID;
+        }
+        foreach(GameObject go in f_currentActions){
+            if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone")){
+                GameObjectManager.removeComponent<CurrentAction>(go);
+            }
+
+        }
+        foreach(SaveContent.RawCurrentAction act in save.rawSave.currentDroneActions){
+            GameObjectManager.addComponent<CurrentAction>(act.action, new{agent = act.agent});
         }
     }
 }

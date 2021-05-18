@@ -66,7 +66,7 @@ public class ApplyScriptSystem : FSystem {
 	// Use to process your families.
 	private void onNewCurrentAction(GameObject currentAction) {
 		CurrentAction ca = currentAction.GetComponent<CurrentAction>();	
-
+		Debug.Log("on current action "+ca.name);
 		if(ca.agent.CompareTag("Player")){
 			if(!MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>())
 				GameObjectManager.addComponent<PlayerIsMoving>(MainLoop.instance.gameObject);

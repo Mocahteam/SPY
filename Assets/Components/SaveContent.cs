@@ -37,6 +37,16 @@ public class SaveContent {
     }
 
     [Serializable]
+    public class RawCurrentAction {
+        public GameObject action;
+        public GameObject agent;
+        public RawCurrentAction(GameObject go){
+            action = go;
+            agent = go.GetComponent<CurrentAction>().agent;
+        }
+    }
+
+    [Serializable]
     public class RawSave
     {
         public List<bool> coinsState = new List<bool>();
@@ -44,6 +54,7 @@ public class SaveContent {
         public List<Direction.Dir> directions = new List<Direction.Dir>();
         public List<RawPosition> positions = new List<RawPosition>();
         public List<RawActivable> activables = new List<RawActivable>();
+        public List<RawCurrentAction> currentDroneActions = new List<RawCurrentAction>();
     }
 
     public RawSave rawSave = new RawSave();

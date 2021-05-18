@@ -105,26 +105,30 @@ public class StepSystem : FSystem {
         //autoExecution = on;
     }
 
-/*
-    private IEnumerator delayPause(){
+
+    private async void delayPause(){
+        await Task.Delay((int)timeStep*1000);
+        Pause = true;
+        /*
         if(!stepFinished){
             yield return null;
         }
         else{
             stepFinished = true;
             Pause = true;
-        }
+        }*/
 
     }
-*/
+
 
     public void goToNextStep(){
         Pause = false;
         //autoExecution = false;
         if(timeStepCpt <= 0 && playerHasNextAction()){
             GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
-            gameData.totalStep++;          
+            gameData.totalStep++;   
         }
+        delayPause();
        //MainLoop.instance.StartCoroutine(delayPause());
     }
 

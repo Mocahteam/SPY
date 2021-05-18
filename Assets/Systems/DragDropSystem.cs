@@ -10,6 +10,7 @@ public class DragDropSystem : FSystem {
 	private Family panelPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ElementToDrag), typeof(Image)));
 	private Family playerScriptPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
 	private Family playerScriptPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType), typeof(Image)));
+	private Family tmpPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(TMP_InputField), typeof(TMP_Dropdown)));
 	private Family playerScript = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
 	private GameObject itemDragged;
 	private GameObject positionBar;
@@ -89,14 +90,22 @@ public class DragDropSystem : FSystem {
 				break;
 			}
 
-			if(itemDragged == null){
+			if(itemDragged == null && tmpPointedGO.Count == 0){ //cannot drag if inputfield or dropdown pointed
 				foreach(GameObject go in playerScriptPointedGO){
 					itemDragged = go;
 					go.transform.SetParent(go.transform.parent.parent);
 					GameObjectManager.addComponent<Dragged>(itemDragged);
 					itemDragged.GetComponent<Image>().raycastTarget = false;
+					GameObjectManager.addComponent<AddOne>(itemDragged);
+					/*
+					if(itemDragged.GetComponent<Dropped>()){
+						Debug.Log("aaa");
+						GameObjectManager.removeComponent<Dropped>(itemDragged);
+					}
+					*/
 					break;
-				}				
+				}
+			
 			}
 
 		}

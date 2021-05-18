@@ -29,6 +29,7 @@ public class CurrentActionSystem : FSystem {
 		GameObjectManager.addComponent<CurrentAction>(nextAction, new{agent = agent});
 	}
 	private void onNewStep(GameObject unused){
+		Debug.Log("on new step");
 		GameObject nextAction;
 		CurrentAction current;
 		//bool playerEnd = true;
@@ -94,7 +95,7 @@ public class CurrentActionSystem : FSystem {
 			//loop
 			else{
 				if(!currentAction.GetComponent<CurrentAction>())
-					GameObjectManager.addComponent<CurrentAction>(currentAction);
+					GameObjectManager.addComponent<CurrentAction>(currentAction, new{agent = agent});
 				forAct.currentFor++;
 				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 				if(currentAction.GetComponent<ForAction>().firstChild == null || currentAction.GetComponent<ForAction>().firstChild.GetComponent<BasicAction>())
@@ -169,7 +170,10 @@ public class CurrentActionSystem : FSystem {
 						forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 						
 					}
-				}				
+				}			
+			}
+			else{
+				onNewStep(null);
 			}
 		}
 	}
