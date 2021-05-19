@@ -176,6 +176,7 @@ public class UISystem : FSystem {
                 endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
                 endPanel.GetComponent<AudioSource>().loop = false;
                 endPanel.GetComponent<AudioSource>().Play();
+				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, true);
                 //End
                 if (gameData.levelToLoad >= gameData.levelList.Count - 1)
                 {
@@ -452,17 +453,6 @@ public class UISystem : FSystem {
 	}
 
 	private void addNext(GameObject container){
-		//assign "next" variable to all BaseElement / UI containers(if/for)
-		addNextToChildrenIn(container);
-		//assign "next" variable to last child in UI containers(if/for)
-		//addNextToLastChildOf(res);
-	}
-
-	private void addNextToChildrenIn(GameObject container){
-		//int i = 1;
-		//List<GameObject> containers = new List<GameObject>();
-		//for each child, next = next child
-		//foreach(Transform child in container.transform){
 		for(int i = 0 ; i < container.transform.childCount ; i++){
 			Transform child = container.transform.GetChild(i);
 			if(i < container.transform.childCount-1 && child.GetComponent<BaseElement>()){
@@ -479,34 +469,10 @@ public class UISystem : FSystem {
 			}
 			//if or for action
 			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>()){
-				addNextToChildrenIn(child.gameObject);
-				/*
-				containers.Add(child.gameObject);
-				List<GameObject> childContainers = addNextToChildrenIn(child.gameObject);
-				foreach(GameObject childC in childContainers)
-					containers.Add(childC);
-				*/
-			}
-				
-			//i++;
-		}
-		//return containers;
-	}
-/*
-	private void addNextToLastChildOf(List<GameObject> containers){
-		//add next to last child in container if/for
-		foreach(GameObject go in containers){
-			//last child's next = parent 
-			if(go.transform.childCount != 0 && go.transform.GetChild(go.transform.childCount-1).GetComponent<BaseElement>()){
-				if(go.GetComponent<ForAction>()){
-					go.transform.GetChild(go.transform.childCount-1).GetComponent<BaseElement>().next = go;
-				}
-				else if (go.GetComponent<IfAction>()){
-					go.transform.GetChild(go.transform.childCount-1).GetComponent<BaseElement>().next = go.GetComponent<IfAction>().next;
-				}
+				addNext(child.gameObject);
 			}
 		}
 	}
-*/
+
 	
 }
