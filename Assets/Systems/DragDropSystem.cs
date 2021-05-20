@@ -13,10 +13,11 @@ public class DragDropSystem : FSystem {
 	private Family tmpPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(TMP_InputField), typeof(TMP_Dropdown)));
 	private Family scriptContainers = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
 	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer), typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
+	private Family mainCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasScaler), typeof(GraphicRaycaster)));
 	private GameObject itemDragged;
 	private GameObject positionBar;
 	private GameData gameData;
-	private GameObject editableCanvas;
+	private GameObject editableContainer;
 	
 	//double click
 	private float lastClickTime;
@@ -26,8 +27,8 @@ public class DragDropSystem : FSystem {
 	public DragDropSystem(){
 		catchTime = 0.25f;
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		editableCanvas = editableScriptContainer.First();
-		positionBar = editableCanvas.transform.parent.Find("PositionBar").gameObject;
+		editableContainer = editableScriptContainer.First();
+		positionBar = editableContainer.transform.parent.Find("PositionBar").gameObject;
 		GameObjectManager.setGameObjectState(positionBar, false);
 
 		/*
@@ -85,9 +86,9 @@ public class DragDropSystem : FSystem {
 				doubleclick = true;
 
 				//drop in editable container
-				itemDragged.transform.SetParent(editableCanvas.transform);
+				itemDragged.transform.SetParent(editableContainer.transform);
 				itemDragged.transform.localScale = new Vector3(1,1,1);
-				itemDragged.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
+				//itemDragged.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
 				itemDragged.GetComponent<Image>().raycastTarget = true;
 
 				//update limit bloc
@@ -98,7 +99,7 @@ public class DragDropSystem : FSystem {
 					itemDragged.GetComponent<Image>().raycastTarget = true;
 					itemDragged.GetComponent<UITypeContainer>().layer = 1;
 				}
-				editableCanvas.transform.parent.parent.GetComponent<AudioSource>().Play();
+				editableContainer.transform.parent.parent.GetComponent<AudioSource>().Play();
 			}
 
 			//drag in editable script
@@ -112,10 +113,12 @@ public class DragDropSystem : FSystem {
 				}
 				if(actionPriority != null){
 					itemDragged = actionPriority;
-					actionPriority.transform.SetParent(actionPriority.transform.parent.parent);
+					actionPriority.transform.SetParent(mainCanvas.First().transform);
+					itemDragged.transform.localScale = new Vector3(0.8f,0.8f,0.8f);
 					GameObjectManager.addComponent<Dragged>(itemDragged);
 					itemDragged.GetComponent<Image>().raycastTarget = false;
-					GameObjectManager.addComponent<AddOne>(itemDragged);				
+					GameObjectManager.addComponent<AddOne>(itemDragged);
+					editableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = false;				
 				}
 
 			}
@@ -152,8 +155,8 @@ public class DragDropSystem : FSystem {
 					}
 				}
 			}
-			else if(positionBar){ //positionBar bug
-				positionBar.transform.SetParent(editableCanvas.transform);
+			else{
+				positionBar.transform.SetParent(editableContainer.transform.parent);
 				GameObjectManager.setGameObjectState(positionBar, false);
 			}			
 		}
@@ -197,7 +200,7 @@ public class DragDropSystem : FSystem {
 					itemDragged.GetComponent<Image>().raycastTarget = true;
 					itemDragged.GetComponent<UITypeContainer>().layer = priority.GetComponent<UITypeContainer>().layer + 1;
 				}
-				editableCanvas.transform.parent.parent.GetComponent<AudioSource>().Play();
+				editableContainer.transform.parent.parent.GetComponent<AudioSource>().Play();
 				refreshUI();
 			}
 			else if(!doubleclick && itemDragged != null){
@@ -212,6 +215,7 @@ public class DragDropSystem : FSystem {
 			}
 			itemDragged = null;
 			doubleclick = false;
+			editableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = true;
 		}			
 
 	}

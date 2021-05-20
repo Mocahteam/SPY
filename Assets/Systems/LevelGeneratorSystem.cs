@@ -625,7 +625,6 @@ public class LevelGeneratorSystem : FSystem {
 
 	public void XmlToLevel(string fileName){
 
-		gameData.nbStep = 0;
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;

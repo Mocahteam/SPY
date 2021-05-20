@@ -13,51 +13,35 @@ public class StepSystem : FSystem {
     //private Family visibleContainers = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasRenderer), typeof(ScrollRect), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); 
 	//private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
+	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
     private float timeStepCpt;
 	private static float timeStep = 1.5f;
 	private GameData gameData;
-    //private bool autoExecution;
+    private int nbStep;
+
 	public StepSystem(){
+        nbStep = 0;
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		gameData.nbStep = 0;
 		timeStepCpt = timeStep;
         newStep_f.addEntryCallback(onNewStep);
         firstStep_f.addEntryCallback(onFirstStep);
-        //autoExecution = true;
+        //reset nbstep on execution end
+        scriptIsRunning.addExitCallback(delegate{nbStep = 0;});
     }
     
     private void onNewStep(GameObject go)
     {
-        GameObjectManager.removeComponent(go.GetComponent<NewStep>());
-        /*
-        await Task.Delay((int)timeStep*1000);
-        Debug.Log("test");
-        highlight();
-        */        
+        GameObjectManager.removeComponent(go.GetComponent<NewStep>());  
         timeStepCpt = timeStep;
-        gameData.nbStep--;
         Debug.Log("StepSystem End");
-        //stepFinished = true;
-        /*
-        if(gameData.nbStep == 0){
-            Debug.Log("end");
-            await Task.Delay((int)timeStep*1000);
-            Debug.Log("step+1");
-            foreach(GameObject highlightedGO in highlightedItems){
-                if (highlightedGO.GetComponent<CurrentAction>() != null){
-                    Debug.Log("remove");
-                    GameObjectManager.removeComponent<CurrentAction>(highlightedGO);
-                }
-            }
-        }*/
     }
     private void onFirstStep(GameObject go)
     {
         GameObjectManager.removeComponent(go.GetComponent<FirstStep>());
         timeStepCpt = timeStep;
-        gameData.nbStep--;
+        gameData.totalStep++;
+        nbStep++;
         Debug.Log("FirstStep End");
-
     }
 
     // Use to process your families.
@@ -71,6 +55,7 @@ public class StepSystem : FSystem {
             {
                 GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
                 gameData.totalStep++;
+                nbStep++;
             }
             else
                 timeStepCpt -= Time.deltaTime;
@@ -97,39 +82,31 @@ public class StepSystem : FSystem {
 
     public void autoExecuteStep(bool on){
         Pause = !on;
-        /*
-        if(on){
-           autoExecution = true; 
-        }
-        */
-        //autoExecution = on;
     }
 
 
     private async void delayPause(){
         await Task.Delay((int)timeStep*1000);
         Pause = true;
-        /*
-        if(!stepFinished){
-            yield return null;
-        }
-        else{
-            stepFinished = true;
-            Pause = true;
-        }*/
-
     }
 
 
     public void goToNextStep(){
         Pause = false;
         //autoExecution = false;
+        /*
         if(timeStepCpt <= 0 && playerHasNextAction()){
             GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
             gameData.totalStep++;   
         }
+        */
         delayPause();
        //MainLoop.instance.StartCoroutine(delayPause());
+    }
+
+    public void updateTotalStep(){ //on click on stop button
+        gameData.totalStep -= nbStep;
+        nbStep = 0;
     }
 
 }

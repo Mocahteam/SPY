@@ -19,4 +19,9 @@ public class StepSystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("StepSystem", "goToNextStep", null);
 	}
 
+	public void updateTotalStep()
+	{
+		MainLoop.callAppropriateSystemMethod ("StepSystem", "updateTotalStep", null);
+	}
+
 }

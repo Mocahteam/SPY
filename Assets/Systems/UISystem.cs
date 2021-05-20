@@ -302,7 +302,6 @@ public class UISystem : FSystem {
 	}
 
 	public void reloadScene(){
-		gameData.nbStep = 0;
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
@@ -313,7 +312,6 @@ public class UISystem : FSystem {
 	}
 
 	public void returnToTitleScreen(){
-		gameData.nbStep = 0;
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
@@ -330,7 +328,6 @@ public class UISystem : FSystem {
 	}
 
 	public void retry(){
-		gameData.nbStep = 0;
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;

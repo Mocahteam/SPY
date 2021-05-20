@@ -7,7 +7,6 @@ public class GameData : MonoBehaviour {
 	//public GameObject ButtonExec;
 	//public GameObject ButtonReset;
 	public GameObject Level;
-	public int nbStep;
 	public List<string> levelList;
 	public int levelToLoad;
 	public List<string> dialogMessage;
