@@ -25,6 +25,7 @@ public class ApplyScriptSystem : FSystem {
 	//private Family agentCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
 	private GameObject endPanel;
 	private GameData gameData;
+	//private bool activeRedDetector;
 	//private static Action previousAction;
 
 	public ApplyScriptSystem(){
@@ -32,20 +33,31 @@ public class ApplyScriptSystem : FSystem {
         newCurrentAction_f.addEntryCallback(onNewCurrentAction);
         endPanel = endpanel_f.First();
         GameObjectManager.setGameObjectState(endPanel, false);
-        robotcollision_f.addEntryCallback(onNewCollision);
+
     }
 
+	/*
     private void onNewCollision(GameObject robot){
-        Triggered3D trigger = robot.GetComponent<Triggered3D>();
-        foreach(GameObject target in trigger.Targets){
-            //Check if the player collide with a detection cell
-            if (target.GetComponent<Detector>() != null){
-                //end level
-                Debug.Log("Repéré !");
-                GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Detected });
-            }
-        }
+		if(activeRedDetector){
+			Triggered3D trigger = robot.GetComponent<Triggered3D>();
+			foreach(GameObject target in trigger.Targets){
+				//Check if the player collide with a detection cell
+				if (target.GetComponent<Detector>() != null){
+					//end level
+					Debug.Log("Repéré !");
+					GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Detected });
+				}
+				else if(target.CompareTag("Coin")){
+
+				}
+			}			
+		}
     }
+
+	public void detectCollision(bool on){
+		activeRedDetector = on;
+	}
+	*/
 
 	//Return the current action
     public static Transform getCurrentAction(GameObject go) {

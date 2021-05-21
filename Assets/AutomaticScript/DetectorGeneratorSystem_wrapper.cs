@@ -9,6 +9,11 @@ public class DetectorGeneratorSystem_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
+	public void detectCollision(System.Boolean on)
+	{
+		MainLoop.callAppropriateSystemMethod ("DetectorGeneratorSystem", "detectCollision", on);
+	}
+
 	public void updateDetector()
 	{
 		MainLoop.callAppropriateSystemMethod ("DetectorGeneratorSystem", "updateDetector", null);

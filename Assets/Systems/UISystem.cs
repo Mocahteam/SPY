@@ -17,7 +17,7 @@ public class UISystem : FSystem {
 	private Family agentCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
 	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(UIActionType)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
-	private Family actionsPanel = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(Image)));
+	private Family actionsPanel = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(Image)));
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
@@ -75,6 +75,8 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(buttonStop, !finished);
 		GameObjectManager.setGameObjectState(buttonPause, !finished);
 		GameObjectManager.setGameObjectState(buttonStep, !finished);
+		//editable canvas
+		GameObjectManager.setGameObjectState(editableScriptContainer.First().transform.parent.parent.gameObject, finished);
 	}
 	
 	private void saveHistory(int unused = 0){

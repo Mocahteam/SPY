@@ -9,4 +9,9 @@ public class CoinSystem_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
+	public void detectCollision(System.Boolean on)
+	{
+		MainLoop.callAppropriateSystemMethod ("CoinSystem", "detectCollision", on);
+	}
+
 }
