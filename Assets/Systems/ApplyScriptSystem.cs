@@ -61,7 +61,7 @@ public class ApplyScriptSystem : FSystem {
 
 	//Return the current action
     public static Transform getCurrentAction(GameObject go) {
-		Transform action = go.GetComponent<ScriptRef>().container.transform.GetChild(go.GetComponent<ScriptRef>().currentAction); 
+		Transform action = go.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(go.GetComponent<ScriptRef>().currentAction); 
 		//end when a pure action is found
 		while(!(action.GetComponent<BasicAction>())){
 			//Case For / If
@@ -69,7 +69,7 @@ public class ApplyScriptSystem : FSystem {
 				if(action.childCount != 0)
 					action = action.GetChild(action.GetComponent<BaseElement>().currentAction);
 				else
-					action = go.GetComponent<ScriptRef>().container.transform.GetChild(go.GetComponent<ScriptRef>().currentAction+1); 
+					action = go.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(go.GetComponent<ScriptRef>().currentAction+1); 
 			}
 		}
 		return action;
@@ -260,7 +260,7 @@ public class ApplyScriptSystem : FSystem {
 
 	//Return true if the script is at the end
     public static bool endOfScript(GameObject go){
-		return go.GetComponent<ScriptRef>().currentAction >= go.GetComponent<ScriptRef>().container.transform.childCount;
+		return go.GetComponent<ScriptRef>().currentAction >= go.GetComponent<ScriptRef>().scriptContainer.transform.childCount;
 	}
 /*
 	public Transform getCurrentIf(GameObject go){
@@ -308,7 +308,7 @@ public class ApplyScriptSystem : FSystem {
 		}*/
 
 
-		Transform action = script.container.transform.GetChild(script.currentAction);
+		Transform action = script.scriptContainer.transform.GetChild(script.currentAction);
 		
 		if(incrementAction(action)){
 			Debug.Log("increment action");
@@ -479,7 +479,7 @@ public class ApplyScriptSystem : FSystem {
 	//Return the lenght of the script
 	public static int getNbStep(ScriptRef script){
 		int nb = 0;
-		foreach(Transform act in script.container.transform){
+		foreach(Transform act in script.scriptContainer.transform){
 			nb += getNbStep(act);
 		}
 

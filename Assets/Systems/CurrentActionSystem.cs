@@ -40,7 +40,7 @@ public class CurrentActionSystem : FSystem {
 				Debug.Log("nextAction = "+nextAction);
 				//loop drone script
 				if(nextAction == null && current.agent.CompareTag("Drone")){
-					nextAction = getFirstActionOf(current.agent.GetComponent<ScriptRef>().container.transform.GetChild(0).gameObject, current.agent);
+					nextAction = getFirstActionOf(current.agent.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(0).gameObject, current.agent);
 				}
 				if(nextAction != null){
 					/*
@@ -128,8 +128,8 @@ public class CurrentActionSystem : FSystem {
 		yield return null;
 		GameObject firstAction = null;
 		foreach(GameObject robot in playerGO){
-			if(robot.GetComponent<ScriptRef>().container.transform.childCount > 0){
-				firstAction = getFirstActionOf(robot.GetComponent<ScriptRef>().container.transform.GetChild(0).gameObject, robot);
+			if(robot.GetComponent<ScriptRef>().scriptContainer.transform.childCount > 0){
+				firstAction = getFirstActionOf(robot.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(0).gameObject, robot);
 			}
 			Debug.Log("firstAction = "+firstAction);
 			if(firstAction != null){
@@ -155,9 +155,9 @@ public class CurrentActionSystem : FSystem {
 		//Debug.Log("drones "+droneGO.Count);
 		firstAction = null;
 		foreach(GameObject drone in droneGO){
-			if(!drone.GetComponent<ScriptRef>().container.GetComponentInChildren<CurrentAction>()){
-				if(drone.GetComponent<ScriptRef>().container.transform.childCount > 0){
-					firstAction = getFirstActionOf(drone.GetComponent<ScriptRef>().container.transform.GetChild(0).gameObject, drone);
+			if(!drone.GetComponent<ScriptRef>().scriptContainer.GetComponentInChildren<CurrentAction>()){
+				if(drone.GetComponent<ScriptRef>().scriptContainer.transform.childCount > 0){
+					firstAction = getFirstActionOf(drone.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(0).gameObject, drone);
 				}
 				//Debug.Log(firstAction);
 				if(firstAction != null){

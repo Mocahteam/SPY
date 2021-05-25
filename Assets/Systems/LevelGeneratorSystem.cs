@@ -334,15 +334,16 @@ public class LevelGeneratorSystem : FSystem {
 		//add new container to entity
 		ScriptRef scriptref = entity.GetComponent<ScriptRef>();
 		GameObject containerParent = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Container") as GameObject);
-		scriptref.container = containerParent.transform.Find("Viewport").Find("ScriptContainer").gameObject;
+		scriptref.uiContainer = containerParent;
+		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
 		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
 
 		if(script != null){
 			//add actions to container
 			foreach(GameObject go in script){
-				go.transform.SetParent(scriptref.container.transform);
+				go.transform.SetParent(scriptref.scriptContainer.transform);
 			}
-			addNext(scriptref.container);
+			addNext(scriptref.scriptContainer);
 		}
 		GameObjectManager.bind(containerParent);
 		GameObjectManager.bind(entity);
