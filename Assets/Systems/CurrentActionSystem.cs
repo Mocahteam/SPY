@@ -17,7 +17,7 @@ public class CurrentActionSystem : FSystem {
 	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem)), new AnyOfTags("Coin"));
 	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
 	private Family firstStep = FamilyManager.getFamily(new AllOfComponents(typeof(FirstStep))); 
-	//private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
+	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
 
 	public CurrentActionSystem(){
 		newStep_f.addEntryCallback(onNewStep);
@@ -29,44 +29,36 @@ public class CurrentActionSystem : FSystem {
 		GameObjectManager.addComponent<CurrentAction>(nextAction, new{agent = agent});
 	}
 	private void onNewStep(GameObject unused){
-		Debug.Log("on new step");
-		GameObject nextAction;
-		CurrentAction current;
-		//bool playerEnd = true;
-		foreach(GameObject currentAction in currentActions){
-			current = currentAction.GetComponent<CurrentAction>();
-			if(current != null){ //current not in gameData.actionsHistory
-				nextAction = getNextAction(currentAction, current.agent);
-				Debug.Log("nextAction = "+nextAction);
-				//loop drone script
-				if(nextAction == null && current.agent.CompareTag("Drone")){
-					nextAction = getFirstActionOf(current.agent.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(0).gameObject, current.agent);
-				}
-				if(nextAction != null){
-					/*
-					if(current.agent.CompareTag("Player")){
-						playerEnd = false;
-					}*/
-					//parent = for & first loop and first child, currentfor = 0 -> currentfor = 1
-					if(nextAction.transform.parent.GetComponent<ForAction>() && nextAction.transform.parent.GetComponent<ForAction>().currentFor == 0 && 
-					nextAction.Equals(nextAction.transform.parent.GetComponent<ForAction>().firstChild)){
-						ForAction forAct = nextAction.transform.parent.GetComponent<ForAction>();
-						forAct.currentFor++;
-						forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+		if(unused == null || scriptIsRunning.Count != 0){ // player has next action
+			Debug.Log("on new step");
+			GameObject nextAction;
+			CurrentAction current;
+			foreach(GameObject currentAction in currentActions){
+				current = currentAction.GetComponent<CurrentAction>();
+				if(current != null){ //current not in gameData.actionsHistory
+					nextAction = getNextAction(currentAction, current.agent);
+					Debug.Log("nextAction = "+nextAction);
+					//loop drone script
+					if(nextAction == null && current.agent.CompareTag("Drone")){
+						nextAction = getFirstActionOf(current.agent.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(0).gameObject, current.agent);
 					}
-					//ask to add CurrentAction on next frame
-					MainLoop.instance.StartCoroutine(delayAddCurrentAction(nextAction, current.agent));	
-				}
+					if(nextAction != null){
+						//parent = for & first loop and first child, currentfor = 0 -> currentfor = 1
+						if(nextAction.transform.parent.GetComponent<ForAction>() && nextAction.transform.parent.GetComponent<ForAction>().currentFor == 0 && 
+						nextAction.Equals(nextAction.transform.parent.GetComponent<ForAction>().firstChild)){
+							ForAction forAct = nextAction.transform.parent.GetComponent<ForAction>();
+							forAct.currentFor++;
+							forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+						}
+						//ask to add CurrentAction on next frame
+						MainLoop.instance.StartCoroutine(delayAddCurrentAction(nextAction, current.agent));	
+					}
 
-				GameObjectManager.removeComponent<CurrentAction>(currentAction);				
+					GameObjectManager.removeComponent<CurrentAction>(currentAction);				
+				}
 			}
 		}
-		//execution finished
-		/*
-		if(playerEnd && MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>()){
-			Debug.Log("fin exec");
-			GameObjectManager.removeComponent<PlayerIsMoving>(MainLoop.instance.gameObject);     
-		}*/
+		
 	}
 
 	public GameObject getNextAction(GameObject currentAction, GameObject agent){
@@ -150,32 +142,34 @@ public class CurrentActionSystem : FSystem {
 			
 
 		}
-
-		//current action drone(s)
-		//Debug.Log("drones "+droneGO.Count);
-		firstAction = null;
-		foreach(GameObject drone in droneGO){
-			if(!drone.GetComponent<ScriptRef>().scriptContainer.GetComponentInChildren<CurrentAction>()){
-				if(drone.GetComponent<ScriptRef>().scriptContainer.transform.childCount > 0){
-					firstAction = getFirstActionOf(drone.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(0).gameObject, drone);
-				}
-				//Debug.Log(firstAction);
-				if(firstAction != null){
-					GameObjectManager.addComponent<CurrentAction>(firstAction, new{agent = drone});
-					//Debug.Log("firstAction drone = "+firstAction.name);
-					if(firstAction.transform.parent.GetComponent<ForAction>()){
-						ForAction forAct = firstAction.transform.parent.GetComponent<ForAction>();
-						GameObjectManager.addComponent<CurrentAction>(firstAction.transform.parent.gameObject, new{agent = drone});
-						forAct.currentFor++;
-						forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
-						
+		if(firstAction != null){ //not an empty execution
+			//current action drone(s)
+			//Debug.Log("drones "+droneGO.Count);
+			firstAction = null;
+			foreach(GameObject drone in droneGO){
+				if(!drone.GetComponent<ScriptRef>().scriptContainer.GetComponentInChildren<CurrentAction>()){
+					if(drone.GetComponent<ScriptRef>().scriptContainer.transform.childCount > 0){
+						firstAction = getFirstActionOf(drone.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(0).gameObject, drone);
 					}
-				}			
-			}
-			else{
-				onNewStep(null);
+					//Debug.Log(firstAction);
+					if(firstAction != null){
+						GameObjectManager.addComponent<CurrentAction>(firstAction, new{agent = drone});
+						//Debug.Log("firstAction drone = "+firstAction.name);
+						if(firstAction.transform.parent.GetComponent<ForAction>()){
+							ForAction forAct = firstAction.transform.parent.GetComponent<ForAction>();
+							GameObjectManager.addComponent<CurrentAction>(firstAction.transform.parent.gameObject, new{agent = drone});
+							forAct.currentFor++;
+							forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+							
+						}
+					}			
+				}
+				else{
+					onNewStep(null);
+				}
 			}
 		}
+
 	}
 
 	private void initFirstActions(GameObject unused){

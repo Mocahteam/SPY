@@ -5,8 +5,8 @@ public class SaveManager : FSystem {
 
     private Family f_coins = FamilyManager.getFamily(new AnyOfTags("Coin"));
     private Family f_doors = FamilyManager.getFamily(new AnyOfTags("Door"));
-    private Family f_directions = FamilyManager.getFamily(new AllOfComponents(typeof(Direction)));
-    private Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)));
+    private Family f_directions = FamilyManager.getFamily(new AllOfComponents(typeof(Direction)), new NoneOfComponents(typeof(Detector)));
+    private Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new NoneOfComponents(typeof(Detector)));
     private Family f_activables = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
 	//private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));

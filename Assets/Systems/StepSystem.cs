@@ -18,9 +18,11 @@ public class StepSystem : FSystem {
 	private static float timeStep = 1.5f;
 	private GameData gameData;
     private int nbStep;
+    private bool newStepAskedByPlayer;
 
 	public StepSystem(){
         nbStep = 0;
+        newStepAskedByPlayer = false;
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		timeStepCpt = timeStep;
         newStep_f.addEntryCallback(onNewStep);
@@ -56,6 +58,10 @@ public class StepSystem : FSystem {
                 GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
                 gameData.totalStep++;
                 nbStep++;
+                if(newStepAskedByPlayer){
+                    newStepAskedByPlayer = false;
+                    Pause = true;
+                }
             }
             else
                 timeStepCpt -= Time.deltaTime;
@@ -84,23 +90,23 @@ public class StepSystem : FSystem {
         Pause = !on;
     }
 
-
+    /*
     private async void delayPause(){
         await Task.Delay((int)timeStep*1000);
         Pause = true;
     }
-
+    */
 
     public void goToNextStep(){
         Pause = false;
-        //autoExecution = false;
+        newStepAskedByPlayer = true;
         /*
         if(timeStepCpt <= 0 && playerHasNextAction()){
             GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
             gameData.totalStep++;   
         }
         */
-        delayPause();
+        //delayPause();
        //MainLoop.instance.StartCoroutine(delayPause());
     }
 
