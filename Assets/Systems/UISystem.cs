@@ -218,7 +218,10 @@ public class UISystem : FSystem {
 	}
 
 	public void resetScriptNoRefund(){
-		GameObject go = editableScriptContainer.First();
+		GameObject editableContainer = editableScriptContainer.First();
+		//GameObject positionBar = editableContainer.transform.Find("PositionBar").gameObject;
+		//positionBar.transform.SetParent(editableContainer.transform.parent);
+		//GameObjectManager.setGameObjectParent(positionbar, editableContainer.transform.parent.gameObject, true);
 		//add actions to history before destroy
 		/*
 		List<Action> lastActions = new List<Action>();
@@ -228,10 +231,18 @@ public class UISystem : FSystem {
 		}
 		*/
 		//destroy script in editable canvas
-		for(int i = 0; i < go.transform.childCount; i++){
-			destroyScript(go.transform.GetChild(i).gameObject);
+		/*
+		for(int i = 0; i < editableContainer.transform.childCount; i++){
+			//if(!editableContainer.transform.GetChild(i).name.Equals("PositionBar"))
+			destroyScript(editableContainer.transform.GetChild(i).gameObject);
+		}
+		*/
+		foreach(BaseElement go in editableContainer.GetComponentsInChildren<BaseElement>()){
+			destroyScript(go.gameObject);
 		}
 		buttonPlay.GetComponent<AudioSource>().Play();
+		//GameObjectManager.setGameObjectParent(positionBar, editableContainer, true);
+		//positionBar.transform.SetParent(editableContainer.transform);
 		refreshUI();
 	}
 
