@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using FYFY;
 using System.Collections;
+using FYFY_plugins.TriggerManager;
+using UnityEngine.UI;
 
 public class DetectorGeneratorSystem : FSystem {
 
@@ -9,16 +11,37 @@ public class DetectorGeneratorSystem : FSystem {
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
     private Family gameLoaded_f = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
     private Family newStep_f = FamilyManager.getFamily(new AnyOfComponents(typeof(NewStep), typeof(FirstStep)));
+    private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
+    private Family endpanel_f = FamilyManager.getFamily(new AllOfComponents(typeof(Image), typeof(AudioSource)), new AnyOfTags("endpanel"));
     private GameData gameData;
+    private bool activeRedDetector;
 
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 	public DetectorGeneratorSystem(){
+        activeRedDetector = true;
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
         gameLoaded_f.addEntryCallback(delegate{updateDetector();});
         newStep_f.addEntryCallback(delegate{updateDetector();});
+        robotcollision_f.addEntryCallback(onNewCollision);	
+    }
+    private void onNewCollision(GameObject robot){
+		if(activeRedDetector){
+			Triggered3D trigger = robot.GetComponent<Triggered3D>();
+			foreach(GameObject target in trigger.Targets){
+				//Check if the player collide with a detection cell
+				if (target.GetComponent<Detector>() != null){
+					//end level
+					Debug.Log("Repéré !");
+					GameObjectManager.addComponent<NewEnd>(endpanel_f.First(), new { endType = NewEnd.Detected });
+				}
+			}			
+		}
     }
 
+	public void detectCollision(bool on){
+		activeRedDetector = on;
+	}
     private IEnumerator delayUpdateDetector(){
         yield return null;
         yield return null;

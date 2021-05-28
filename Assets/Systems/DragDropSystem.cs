@@ -23,13 +23,14 @@ public class DragDropSystem : FSystem {
 	private float lastClickTime;
 	private float catchTime;
 	private bool doubleclick;
+	private bool multipleDrag;
 	
 	public DragDropSystem(){
 		catchTime = 0.25f;
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		editableContainer = editableScriptContainer.First();
-		positionBar = editableContainer.transform.parent.Find("PositionBar").gameObject;
-		GameObjectManager.setGameObjectState(positionBar, false);
+		positionBar = editableContainer.transform.Find("PositionBar").gameObject;
+		//GameObjectManager.setGameObjectState(positionBar, false);
 
 		/*
 		limitTexts = new List<GameObject>();
@@ -82,28 +83,14 @@ public class DragDropSystem : FSystem {
 			//double click
 			if(itemDragged != null && Time.time - lastClickTime < catchTime)
 			{
-				Debug.Log("Double click");
+				//Debug.Log("Double click");
 				doubleclick = true;
 
-				//drop in editable container
-				itemDragged.transform.SetParent(editableContainer.transform);
-				itemDragged.transform.localScale = new Vector3(1,1,1);
-				//itemDragged.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
-				itemDragged.GetComponent<Image>().raycastTarget = true;
-
-				//update limit bloc
-				GameObjectManager.addComponent<Dropped>(itemDragged);
-				GameObjectManager.removeComponent<Dragged>(itemDragged);
-
-				if(itemDragged.GetComponent<UITypeContainer>()){
-					itemDragged.GetComponent<Image>().raycastTarget = true;
-					itemDragged.GetComponent<UITypeContainer>().layer = 1;
-				}
-				editableContainer.transform.parent.parent.GetComponent<AudioSource>().Play();
 			}
 
 			//drag in editable script
 			if(!doubleclick && itemDragged == null && tmpPointedGO.Count == 0){ //cannot drag if inputfield or dropdown pointed
+				multipleDrag = true;
 				GameObject actionPriority = null;
 				foreach(GameObject go in playerScriptPointedGO){
 					if(actionPriority == null || !go.GetComponent<UITypeContainer>() ||
@@ -113,12 +100,16 @@ public class DragDropSystem : FSystem {
 				}
 				if(actionPriority != null){
 					itemDragged = actionPriority;
-					actionPriority.transform.SetParent(mainCanvas.First().transform);
+					//actionPriority.transform.SetParent(mainCanvas.First().transform);
+					GameObjectManager.setGameObjectParent(actionPriority, mainCanvas.First(), true);
 					itemDragged.transform.localScale = new Vector3(0.8f,0.8f,0.8f);
 					GameObjectManager.addComponent<Dragged>(itemDragged);
 					itemDragged.GetComponent<Image>().raycastTarget = false;
-					GameObjectManager.addComponent<AddOne>(itemDragged);
-					editableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = false;				
+					//GameObjectManager.addComponent<AddOne>(itemDragged);
+					foreach(BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>()){
+						GameObjectManager.addComponent<AddOne>(actChild.gameObject);
+					}
+					editableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = false;
 				}
 
 			}
@@ -137,16 +128,21 @@ public class DragDropSystem : FSystem {
 				priority = go;
 			
 		}
-
+		/*
+		if(priority != null)
+			Debug.Log("aaaa "+priority.name);
+		*/
+		int start = -1;
 		//PositionBar positioning
 		if(!doubleclick){
-			if(priority && itemDragged){
-				int start = 0;
+			if(priority && (itemDragged || Input.GetMouseButtonDown(0))){
+				start = 0;
 				if(priority.GetComponent<ForAction>() || priority.GetComponent<IfAction>()){
 					start++;
 				}
-				GameObjectManager.setGameObjectState(positionBar, true);
+				//GameObjectManager.setGameObjectState(positionBar, true);
 				positionBar.transform.SetParent(priority.transform);
+				//GameObjectManager.setGameObjectParent(positionBar, priority, true);
 				positionBar.transform.SetSiblingIndex(priority.transform.childCount-1);
 				for(int i = start; i < priority.transform.childCount; i++){
 					if(priority.transform.GetChild(i).gameObject != positionBar && Input.mousePosition.y > priority.transform.GetChild(i).position.y){
@@ -156,10 +152,11 @@ public class DragDropSystem : FSystem {
 				}
 			}
 			else{
-				positionBar.transform.SetParent(editableContainer.transform.parent);
-				GameObjectManager.setGameObjectState(positionBar, false);
-			}			
-		}
+				positionBar.transform.SetParent(editableContainer.transform);
+				//GameObjectManager.setGameObjectParent(positionBar, editableContainer, true);
+				//GameObjectManager.setGameObjectState(positionBar, false);
+			}	
+		}	
 
 
 		//Delete
@@ -184,25 +181,42 @@ public class DragDropSystem : FSystem {
 		//Drop
 		if(Input.GetMouseButtonUp(0)){
 			//Drop in script
-			if(priority != null && itemDragged != null){
-				itemDragged.transform.SetParent(priority.transform);
-				itemDragged.transform.localScale = new Vector3(1,1,1);
+			if((priority != null && itemDragged != null) || doubleclick){
+				if(doubleclick){
+					itemDragged.transform.SetParent(editableContainer.transform);
+					//GameObjectManager.setGameObjectParent(itemDragged, editableContainer, true);
+				}
+					
+				else{
+					itemDragged.transform.SetParent(priority.transform);
+					//GameObjectManager.setGameObjectParent(itemDragged, priority, true);
+					
+				}
 				itemDragged.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
+				itemDragged.transform.localScale = new Vector3(1,1,1);
 				itemDragged.GetComponent<Image>().raycastTarget = true;
 
 				//update limit bloc
-				if(!doubleclick){
-					GameObjectManager.addComponent<Dropped>(itemDragged);
-					GameObjectManager.removeComponent<Dragged>(itemDragged);					
+				if(multipleDrag){
+					foreach(BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>()){
+						GameObjectManager.addComponent<Dropped>(actChild.gameObject);
+					}
 				}
+				else
+					GameObjectManager.addComponent<Dropped>(itemDragged);
+				GameObjectManager.removeComponent<Dragged>(itemDragged);					
 
 				if(itemDragged.GetComponent<UITypeContainer>()){
 					itemDragged.GetComponent<Image>().raycastTarget = true;
-					itemDragged.GetComponent<UITypeContainer>().layer = priority.GetComponent<UITypeContainer>().layer + 1;
+					if(doubleclick)
+						itemDragged.GetComponent<UITypeContainer>().layer = 1;
+					else
+						itemDragged.GetComponent<UITypeContainer>().layer = priority.GetComponent<UITypeContainer>().layer + 1;
 				}
 				editableContainer.transform.parent.parent.GetComponent<AudioSource>().Play();
 				refreshUI();
 			}
+
 			else if(!doubleclick && itemDragged != null){
 				
 				for(int i = 0; i < itemDragged.transform.childCount;i++){
@@ -212,11 +226,12 @@ public class DragDropSystem : FSystem {
 				GameObjectManager.unbind(itemDragged);
 				UnityEngine.Object.Destroy(itemDragged);
 				
-			}
+			}				
 			itemDragged = null;
 			doubleclick = false;
-			editableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = true;
-		}			
+			multipleDrag = false;
+			editableContainer.transform.parent.parent.GetComponent<ScrollRect>().enabled = true;
+		}
 
 	}
 

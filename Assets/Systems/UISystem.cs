@@ -17,7 +17,7 @@ public class UISystem : FSystem {
 	private Family agentCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
 	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(UIActionType)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
-	private Family actionsPanel = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(Image)));
+	private Family actionsPanel = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(Image)));
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
@@ -67,7 +67,6 @@ public class UISystem : FSystem {
     }
 	private void setExecutionState(bool finished){
 		Debug.Log("setExecutionState "+finished);
-		GameObjectManager.setGameObjectState(actionsPanel.First(), finished);
 		buttonReset.GetComponent<Button>().interactable = finished;
 		
 		GameObjectManager.setGameObjectState(buttonPlay, finished);
@@ -75,6 +74,10 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(buttonStop, !finished);
 		GameObjectManager.setGameObjectState(buttonPause, !finished);
 		GameObjectManager.setGameObjectState(buttonStep, !finished);
+
+		GameObjectManager.setGameObjectState(actionsPanel.First(), finished);
+		//editable canvas
+		GameObjectManager.setGameObjectState(editableScriptContainer.First().transform.parent.parent.gameObject, finished);
 	}
 	
 	private void saveHistory(int unused = 0){
@@ -215,7 +218,10 @@ public class UISystem : FSystem {
 	}
 
 	public void resetScriptNoRefund(){
-		GameObject go = editableScriptContainer.First();
+		GameObject editableContainer = editableScriptContainer.First();
+		//GameObject positionBar = editableContainer.transform.Find("PositionBar").gameObject;
+		//positionBar.transform.SetParent(editableContainer.transform.parent);
+		//GameObjectManager.setGameObjectParent(positionbar, editableContainer.transform.parent.gameObject, true);
 		//add actions to history before destroy
 		/*
 		List<Action> lastActions = new List<Action>();
@@ -225,10 +231,18 @@ public class UISystem : FSystem {
 		}
 		*/
 		//destroy script in editable canvas
-		for(int i = 0; i < go.transform.childCount; i++){
-			destroyScript(go.transform.GetChild(i).gameObject);
+		/*
+		for(int i = 0; i < editableContainer.transform.childCount; i++){
+			//if(!editableContainer.transform.GetChild(i).name.Equals("PositionBar"))
+			destroyScript(editableContainer.transform.GetChild(i).gameObject);
+		}
+		*/
+		foreach(BaseElement go in editableContainer.GetComponentsInChildren<BaseElement>()){
+			destroyScript(go.gameObject);
 		}
 		buttonPlay.GetComponent<AudioSource>().Play();
+		//GameObjectManager.setGameObjectParent(positionBar, editableContainer, true);
+		//positionBar.transform.SetParent(editableContainer.transform);
 		refreshUI();
 	}
 
@@ -357,9 +371,13 @@ public class UISystem : FSystem {
 	public void applyScriptToPlayer(){
 		//if first click on play button
 		if(!buttonStop.activeInHierarchy){
+			//hide panels
+			GameObjectManager.setGameObjectState(actionsPanel.First(), false);
+			//editable canvas
+			GameObjectManager.setGameObjectState(editableScriptContainer.First().transform.parent.parent.gameObject, false);
 			//clean container for each robot
 			foreach(GameObject robot in playerGO){
-				foreach(Transform child in robot.GetComponent<ScriptRef>().container.transform){
+				foreach(Transform child in robot.GetComponent<ScriptRef>().scriptContainer.transform){
 					GameObjectManager.unbind(child.gameObject);
 					GameObject.Destroy(child.gameObject);
 				}
@@ -370,13 +388,15 @@ public class UISystem : FSystem {
 			//Debug.Log("lastEditedScript "+lastEditedScript.transform.childCount);
 			GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false);
 
+			/*
 			foreach(Transform notgo in agentCanvas.First().transform){
 				GameObjectManager.setGameObjectState(notgo.gameObject, false);
 			}
-
+			*/
 			foreach( GameObject go in playerGO){
-				GameObject targetContainer = go.GetComponent<ScriptRef>().container;
-				GameObjectManager.setGameObjectState(targetContainer.transform.parent.parent.gameObject, true);
+				GameObject targetContainer = go.GetComponent<ScriptRef>().scriptContainer;
+				GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer, true);
+				go.GetComponent<ScriptRef>().uiContainer.transform.Find("Toggle").GetComponent<Toggle>().isOn = true;	
 				for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
 					Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
 					child.SetParent(targetContainer.transform);

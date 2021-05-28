@@ -56,14 +56,22 @@ public class HighLightSystem : FSystem {
 		GameObject highLightedItem = highlightedGO.First();
 		//If click on highlighted item and item has a script, then show script in the 2nd script window
 		if(highLightedItem && Input.GetMouseButtonDown(0) && highLightedItem.GetComponent<ScriptRef>()){
-			GameObject go = highLightedItem.GetComponent<ScriptRef>().container.transform.parent.transform.parent.gameObject;
+			GameObject go = highLightedItem.GetComponent<ScriptRef>().uiContainer;
+			/*
 			//hide other containers
 			foreach(Transform notgo in go.transform.parent.transform){
 				if (notgo != go.transform && notgo.gameObject.activeSelf){
 					GameObjectManager.setGameObjectState(notgo.gameObject, false);
 				}
 			}
-			GameObjectManager.setGameObjectState(go,true);
+			*/
+			if(go.activeInHierarchy){
+				GameObjectManager.setGameObjectState(go,false);
+			}
+			else{
+				GameObjectManager.setGameObjectState(go,true);
+			}
+			
 			MainLoop.instance.GetComponent<AudioSource>().Play();
 
 		}

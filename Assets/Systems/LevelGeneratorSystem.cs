@@ -307,15 +307,20 @@ public class LevelGeneratorSystem : FSystem {
 
 	private GameObject createEntity(int i, int j, Direction.Dir direction, int type, List<GameObject> script = null, bool repeat = false){
 		GameObject entity = null;
+		Sprite agentSpriteIcon = null;
 		switch(type){
 			case 0:
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Robot Kyle") as GameObject, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+				agentSpriteIcon =  Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
 				break;
+			/*
 			case 1:
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Ennemy") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				break;
+			*/
 			case 2:
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.Level.transform.position + new Vector3(i*3,5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+				agentSpriteIcon =  Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
 				break;
 		}
 		entity.GetComponent<Position>().x = i;
@@ -334,15 +339,17 @@ public class LevelGeneratorSystem : FSystem {
 		//add new container to entity
 		ScriptRef scriptref = entity.GetComponent<ScriptRef>();
 		GameObject containerParent = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Container") as GameObject);
-		scriptref.container = containerParent.transform.Find("Viewport").Find("ScriptContainer").gameObject;
+		scriptref.uiContainer = containerParent;
+		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
 		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
+		containerParent.transform.Find("agent").GetComponent<Image>().sprite = agentSpriteIcon;
 
 		if(script != null){
 			//add actions to container
 			foreach(GameObject go in script){
-				go.transform.SetParent(scriptref.container.transform);
+				go.transform.SetParent(scriptref.scriptContainer.transform);
 			}
-			addNext(scriptref.container);
+			addNext(scriptref.scriptContainer);
 		}
 		GameObjectManager.bind(containerParent);
 		GameObjectManager.bind(entity);
