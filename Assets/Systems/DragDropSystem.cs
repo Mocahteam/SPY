@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using TMPro;
 using System;
 
-public class DragDropSystem : FSystem {
-	private Family panelPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ElementToDrag), typeof(Image)));
-	private Family playerScriptPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
-	private Family playerScriptPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType), typeof(Image)));
-	private Family tmpPointedGO = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(TMP_InputField), typeof(TMP_Dropdown)));
-	private Family scriptContainers = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
-	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer), typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
-	private Family mainCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasScaler), typeof(GraphicRaycaster)));
+public class DragDropSystem : FSystem
+{
+    private Family libraryElementPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ElementToDrag), typeof(Image)));
+    private Family containerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
+	private Family actionPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType), typeof(Image)));
+	private Family inputUIOver_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(TMP_InputField), typeof(TMP_Dropdown)));
+	private Family editableScriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
+	private GameObject mainCanvas;
 	private GameObject itemDragged;
 	private GameObject positionBar;
 	private GameData gameData;
@@ -22,13 +22,12 @@ public class DragDropSystem : FSystem {
 	//double click
 	private float lastClickTime;
 	private float catchTime;
-	private bool doubleclick;
-	private bool multipleDrag;
 	
 	public DragDropSystem(){
 		catchTime = 0.25f;
-		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		editableContainer = editableScriptContainer.First();
+        mainCanvas = GameObject.Find("Canvas");
+        gameData = GameObject.Find("GameData").GetComponent<GameData>();
+		editableContainer = editableScriptContainer_f.First();
 		positionBar = editableContainer.transform.Find("PositionBar").gameObject;
 		//GameObjectManager.setGameObjectState(positionBar, false);
 
@@ -55,19 +54,20 @@ public class DragDropSystem : FSystem {
 	protected override void onResume(int currentFrame){
 	}
 
-	// Use to process your families.
-	protected override void onProcess(int familiesUpdateCount) {
-		//Drag
+    // Use to process your families.
+    protected override void onProcess(int familiesUpdateCount) {
+		//Mouse down
 		if(Input.GetMouseButtonDown(0) && !Input.GetMouseButtonUp(0)){ //focus in play mode (unity editor) could be up and down !!! (bug unity)
-			//one click
-			BaseElement action = null;
-			foreach( GameObject go in panelPointedGO){
-				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
-				itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, go.transform);		
-				action = itemDragged.GetComponent<BaseElement>();
+			//manage click on library
+			if(libraryElementPointed_f.Count > 0)
+            {
+                GameObject go = libraryElementPointed_f.First();
+                GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
+				itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, go.transform);
+                BaseElement action = itemDragged.GetComponent<BaseElement>();
 				if(action.GetType().ToString().Equals("ForAction")){
-						TMP_InputField input = itemDragged.GetComponentInChildren<TMP_InputField>();
-						input.onEndEdit.AddListener(delegate{onlyPositiveInteger(input);});
+					TMP_InputField input = itemDragged.GetComponentInChildren<TMP_InputField>();
+					input.onEndEdit.AddListener(delegate{onlyPositiveInteger(input);});
 				}
 
 				itemDragged.GetComponent<UIActionType>().prefab = prefab;
@@ -77,162 +77,111 @@ public class DragDropSystem : FSystem {
 				GameObjectManager.bind(itemDragged);
 				GameObjectManager.addComponent<Dragged>(itemDragged);
 				itemDragged.GetComponent<Image>().raycastTarget = false;
-				break;
-			}
-
-			//double click
-			if(itemDragged != null && Time.time - lastClickTime < catchTime)
-			{
-				//Debug.Log("Double click");
-				doubleclick = true;
-
 			}
 
 			//drag in editable script
-			if(!doubleclick && itemDragged == null && tmpPointedGO.Count == 0){ //cannot drag if inputfield or dropdown pointed
-				multipleDrag = true;
-				GameObject actionPriority = null;
-				foreach(GameObject go in playerScriptPointedGO){
-					if(actionPriority == null || !go.GetComponent<UITypeContainer>() ||
-					 actionPriority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer){
-						actionPriority = go;
-					}
+            if (actionPointed_f.Count > 0 && inputUIOver_f.Count == 0) //cannot drag if inputfield or dropdown pointed
+            {
+                itemDragged = actionPointed_f.getAt(actionPointed_f.Count-1); // get the last one <=> deeper child PointerOver
+				//actionPriority.transform.SetParent(mainCanvas.transform);
+				GameObjectManager.setGameObjectParent(itemDragged, mainCanvas, true);
+				itemDragged.transform.localScale = new Vector3(0.8f,0.8f,0.8f);
+				GameObjectManager.addComponent<Dragged>(itemDragged);
+				itemDragged.GetComponent<Image>().raycastTarget = false;
+				//GameObjectManager.addComponent<AddOne>(itemDragged);
+				foreach(BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>()){
+					GameObjectManager.addComponent<AddOne>(actChild.gameObject);
 				}
-				if(actionPriority != null){
-					itemDragged = actionPriority;
-					//actionPriority.transform.SetParent(mainCanvas.First().transform);
-					GameObjectManager.setGameObjectParent(actionPriority, mainCanvas.First(), true);
-					itemDragged.transform.localScale = new Vector3(0.8f,0.8f,0.8f);
-					GameObjectManager.addComponent<Dragged>(itemDragged);
-					itemDragged.GetComponent<Image>().raycastTarget = false;
-					//GameObjectManager.addComponent<AddOne>(itemDragged);
-					foreach(BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>()){
-						GameObjectManager.addComponent<AddOne>(actChild.gameObject);
-					}
-					editableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = false;
-				}
-
+				editableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = false;
 			}
-
-			lastClickTime = Time.time;
-		}
-		
-		if(!doubleclick && itemDragged != null){
-			itemDragged.transform.position = Input.mousePosition;
 		}
 
-		//Find the container with the last layer 
-		GameObject priority = null;
-		foreach( GameObject go in playerScriptPointed){
-			if(priority == null || priority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer)
-				priority = go;
-			
-		}
-		/*
-		if(priority != null)
-			Debug.Log("aaaa "+priority.name);
-		*/
-		int start = -1;
-		//PositionBar positioning
-		if(!doubleclick){
-			if(priority && (itemDragged || Input.GetMouseButtonDown(0))){
-				start = 0;
-				if(priority.GetComponent<ForAction>() || priority.GetComponent<IfAction>()){
-					start++;
-				}
-				//GameObjectManager.setGameObjectState(positionBar, true);
-				positionBar.transform.SetParent(priority.transform);
-				//GameObjectManager.setGameObjectParent(positionBar, priority, true);
-				positionBar.transform.SetSiblingIndex(priority.transform.childCount-1);
-				for(int i = start; i < priority.transform.childCount; i++){
-					if(priority.transform.GetChild(i).gameObject != positionBar && Input.mousePosition.y > priority.transform.GetChild(i).position.y){
-						positionBar.transform.SetSiblingIndex(i);
-						break;
-					}
-				}
-			}
-			else{
-				positionBar.transform.SetParent(editableContainer.transform);
-				//GameObjectManager.setGameObjectParent(positionBar, editableContainer, true);
-				//GameObjectManager.setGameObjectState(positionBar, false);
-			}	
-		}	
+        //Find the deeper container pointed
+        GameObject targetContainer = null;
+        if (containerPointed_f.Count > 0)
+            targetContainer = containerPointed_f.getAt(containerPointed_f.Count - 1);
+
+        if (itemDragged != null)
+        {
+            itemDragged.transform.position = Input.mousePosition;
+
+            //PositionBar positioning
+            if (targetContainer)
+            {
+                if (actionPointed_f.Count > 0)
+                {
+                    // default put position Bar last
+                    positionBar.transform.SetParent(targetContainer.transform);
+                    positionBar.transform.SetSiblingIndex(targetContainer.transform.childCount + 1);
+                    // get focused item and adjust position bar depending on mous position
+                    GameObject focusedItemDragged = actionPointed_f.getAt(actionPointed_f.Count - 1);
+                    if (Input.mousePosition.y > focusedItemDragged.transform.position.y)
+                        positionBar.transform.SetSiblingIndex(focusedItemDragged.transform.GetSiblingIndex());
+                    else
+                        positionBar.transform.SetSiblingIndex(focusedItemDragged.transform.GetSiblingIndex() + 1);
+                }
+            }
+        }
+        else
+        {
+            positionBar.transform.SetParent(editableContainer.transform);
+            positionBar.transform.SetSiblingIndex(editableContainer.transform.childCount + 1);
+            //GameObjectManager.setGameObjectParent(positionBar, editableContainer, true);
+            //GameObjectManager.setGameObjectState(positionBar, false);
+        }	
 
 
 		//Delete
-		if(!itemDragged && Input.GetMouseButtonUp(1)){
-			priority = null;
-			foreach(GameObject go in playerScriptPointedGO){
-				if(!priority || !go.GetComponent<UITypeContainer>() ||
-				priority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer){
-				//(priority.GetComponent<UITypeContainer>() != null && priority.GetComponent<UITypeContainer>().layer < go.GetComponent<UITypeContainer>().layer)){
-					priority = go;
-				}
-				
-			}
-			if(priority){
-				GameObjectManager.addComponent<ResetBlocLimit>(priority);
-				//destroyScript(priority.transform, true);
-			}
-			priority = null;
-		}
+		if(itemDragged == null && Input.GetMouseButtonUp(1) && actionPointed_f.Count > 0)
+			GameObjectManager.addComponent<ResetBlocLimit>(actionPointed_f.getAt(actionPointed_f.Count-1));
 
+		// Mouse Up
+		if(Input.GetMouseButtonUp(0))
+        {
+            bool doubleclick = false;
+            //check double click
+            if (Time.time - lastClickTime < catchTime)
+                doubleclick = true;
 
-		//Drop
-		if(Input.GetMouseButtonUp(0)){
-			//Drop in script
-			if((priority != null && itemDragged != null) || doubleclick){
+            //Drop in script
+            if (itemDragged != null && (targetContainer != null  || doubleclick)){
 				if(doubleclick){
 					itemDragged.transform.SetParent(editableContainer.transform);
 					//GameObjectManager.setGameObjectParent(itemDragged, editableContainer, true);
 				}
-					
 				else{
-					itemDragged.transform.SetParent(priority.transform);
+					itemDragged.transform.SetParent(targetContainer.transform);
 					//GameObjectManager.setGameObjectParent(itemDragged, priority, true);
-					
 				}
 				itemDragged.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
 				itemDragged.transform.localScale = new Vector3(1,1,1);
 				itemDragged.GetComponent<Image>().raycastTarget = true;
 
 				//update limit bloc
-				if(multipleDrag){
-					foreach(BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>()){
-						GameObjectManager.addComponent<Dropped>(actChild.gameObject);
-					}
-				}
-				else
-					GameObjectManager.addComponent<Dropped>(itemDragged);
+				foreach(BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
+					GameObjectManager.addComponent<Dropped>(actChild.gameObject);
 				GameObjectManager.removeComponent<Dragged>(itemDragged);					
 
-				if(itemDragged.GetComponent<UITypeContainer>()){
+				if(itemDragged.GetComponent<UITypeContainer>())
 					itemDragged.GetComponent<Image>().raycastTarget = true;
-					if(doubleclick)
-						itemDragged.GetComponent<UITypeContainer>().layer = 1;
-					else
-						itemDragged.GetComponent<UITypeContainer>().layer = priority.GetComponent<UITypeContainer>().layer + 1;
-				}
 				editableContainer.transform.parent.parent.GetComponent<AudioSource>().Play();
 				refreshUI();
 			}
-
+            // priority == null, means drop item outside editablePanel
 			else if(!doubleclick && itemDragged != null){
-				
+                // remove item and all its children
 				for(int i = 0; i < itemDragged.transform.childCount;i++){
 					UnityEngine.Object.Destroy(itemDragged.transform.GetChild(i).gameObject);
 				}
 				itemDragged.transform.DetachChildren();
 				GameObjectManager.unbind(itemDragged);
 				UnityEngine.Object.Destroy(itemDragged);
-				
 			}				
 			itemDragged = null;
-			doubleclick = false;
-			multipleDrag = false;
 			editableContainer.transform.parent.parent.GetComponent<ScrollRect>().enabled = true;
-		}
 
+            lastClickTime = Time.time;
+        }
 	}
 
 	public void onlyPositiveInteger(TMP_InputField input){
@@ -245,10 +194,8 @@ public class DragDropSystem : FSystem {
 
 	//Refresh Containers size
 	private void refreshUI(){
-		foreach( GameObject go in scriptContainers){
+		foreach( GameObject go in editableScriptContainer_f)
 			LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)go.transform );
-		}
-		
 	}
 
 }
