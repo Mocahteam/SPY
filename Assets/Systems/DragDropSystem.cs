@@ -108,17 +108,22 @@ public class DragDropSystem : FSystem
             //PositionBar positioning
             if (targetContainer)
             {
+                // default put position Bar last
+                positionBar.transform.SetParent(targetContainer.transform);
+                positionBar.transform.SetSiblingIndex(targetContainer.transform.childCount + 1);
                 if (actionPointed_f.Count > 0)
                 {
-                    // default put position Bar last
-                    positionBar.transform.SetParent(targetContainer.transform);
-                    positionBar.transform.SetSiblingIndex(targetContainer.transform.childCount + 1);
-                    // get focused item and adjust position bar depending on mous position
-                    GameObject focusedItemDragged = actionPointed_f.getAt(actionPointed_f.Count - 1);
-                    if (Input.mousePosition.y > focusedItemDragged.transform.position.y)
-                        positionBar.transform.SetSiblingIndex(focusedItemDragged.transform.GetSiblingIndex());
+                    // get focused item and adjust position bar depending on mouse position
+                    GameObject focusedItemTarget = actionPointed_f.getAt(actionPointed_f.Count - 1);
+                    if (focusedItemTarget == targetContainer && Input.mousePosition.y > focusedItemTarget.transform.position.y-30)
+                    {
+                        targetContainer = targetContainer.transform.parent.gameObject;
+                        positionBar.transform.SetParent(targetContainer.transform);
+                    }
+                    if ((focusedItemTarget.GetComponent<UITypeContainer>() == null && Input.mousePosition.y > focusedItemTarget.transform.position.y) || (focusedItemTarget.GetComponent<UITypeContainer>() != null && Input.mousePosition.y > focusedItemTarget.transform.position.y-30))
+                        positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex());
                     else
-                        positionBar.transform.SetSiblingIndex(focusedItemDragged.transform.GetSiblingIndex() + 1);
+                        positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex() + 1);
                 }
             }
         }
