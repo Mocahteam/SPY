@@ -210,39 +210,10 @@ public class UISystem : FSystem {
 
 	//Empty the script window
 	public void resetScript(){
-		GameObject go = editableScriptContainer.First();
-		for(int i = 0; i < go.transform.childCount; i++){
-			destroyScript(go.transform.GetChild(i).gameObject, true);
-		}
-		refreshUI();
-	}
-
-	public void resetScriptNoRefund(){
 		GameObject editableContainer = editableScriptContainer.First();
-		//GameObject positionBar = editableContainer.transform.Find("PositionBar").gameObject;
-		//positionBar.transform.SetParent(editableContainer.transform.parent);
-		//GameObjectManager.setGameObjectParent(positionbar, editableContainer.transform.parent.gameObject, true);
-		//add actions to history before destroy
-		/*
-		List<Action> lastActions = new List<Action>();
-		lastActions = ActionManipulator.ScriptContainerToActionList(go);
-		foreach(Action action in lastActions){
-			gameData.actionsHistory.Add(action);
-		}
-		*/
-		//destroy script in editable canvas
-		/*
-		for(int i = 0; i < editableContainer.transform.childCount; i++){
-			//if(!editableContainer.transform.GetChild(i).name.Equals("PositionBar"))
-			destroyScript(editableContainer.transform.GetChild(i).gameObject);
-		}
-		*/
 		foreach(BaseElement go in editableContainer.GetComponentsInChildren<BaseElement>()){
 			destroyScript(go.gameObject);
 		}
-		buttonPlay.GetComponent<AudioSource>().Play();
-		//GameObjectManager.setGameObjectParent(positionBar, editableContainer, true);
-		//positionBar.transform.SetParent(editableContainer.transform);
 		refreshUI();
 	}
 
@@ -385,7 +356,12 @@ public class UISystem : FSystem {
 			
 			//copy editable script
 			lastEditedScript = GameObject.Instantiate(editableScriptContainer.First());
-			//Debug.Log("lastEditedScript "+lastEditedScript.transform.childCount);
+			foreach(Transform child in lastEditedScript.transform){
+				if(child.name.Contains("PositionBar")){
+					UnityEngine.GameObject.Destroy(child.gameObject);
+				}
+			}
+
 			GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false);
 
 			/*
@@ -393,15 +369,19 @@ public class UISystem : FSystem {
 				GameObjectManager.setGameObjectState(notgo.gameObject, false);
 			}
 			*/
+			
 			foreach( GameObject go in playerGO){
 				GameObject targetContainer = go.GetComponent<ScriptRef>().scriptContainer;
 				GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer, true);
 				go.GetComponent<ScriptRef>().uiContainer.transform.Find("Toggle").GetComponent<Toggle>().isOn = true;	
 				for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
-					Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
-					child.SetParent(targetContainer.transform);
-					GameObjectManager.bind(child.gameObject);
-					GameObjectManager.refresh(targetContainer);
+					if(!containerCopy.transform.GetChild(i).name.Contains("PositionBar")){
+						Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
+						child.SetParent(targetContainer.transform);
+						GameObjectManager.bind(child.gameObject);
+						GameObjectManager.refresh(targetContainer);
+					}
+
 				}
 				addNext(targetContainer);
 			}
@@ -409,7 +389,9 @@ public class UISystem : FSystem {
 			UnityEngine.Object.Destroy(containerCopy);
 
 			//empty editable container
-			resetScriptNoRefund();
+			resetScript();
+
+			buttonPlay.GetComponent<AudioSource>().Play();
 		}
 
 	}
