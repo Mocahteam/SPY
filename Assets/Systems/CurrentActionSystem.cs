@@ -38,10 +38,12 @@ public class CurrentActionSystem : FSystem {
 				if(current != null){ //current not in gameData.actionsHistory
 					nextAction = getNextAction(currentAction, current.agent);
 					Debug.Log("nextAction = "+nextAction);
+					/*
 					//loop drone script
 					if(nextAction == null && current.agent.CompareTag("Drone")){
 						nextAction = getFirstActionOf(current.agent.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(0).gameObject, current.agent);
 					}
+					*/
 					if(nextAction != null){
 						//parent = for & first loop and first child, currentfor = 0 -> currentfor = 1
 						if(nextAction.transform.parent.GetComponent<ForAction>() && nextAction.transform.parent.GetComponent<ForAction>().currentFor == 0 && 
@@ -150,11 +152,12 @@ public class CurrentActionSystem : FSystem {
 				if(!drone.GetComponent<ScriptRef>().scriptContainer.GetComponentInChildren<CurrentAction>()){
 					if(drone.GetComponent<ScriptRef>().scriptContainer.transform.childCount > 0){
 						firstAction = getFirstActionOf(drone.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(0).gameObject, drone);
+						//Debug.Log("firstAction drone = "+firstAction.name);
 					}
 					//Debug.Log(firstAction);
 					if(firstAction != null){
 						GameObjectManager.addComponent<CurrentAction>(firstAction, new{agent = drone});
-						//Debug.Log("firstAction drone = "+firstAction.name);
+						Debug.Log("firstAction drone = "+firstAction.name);
 						if(firstAction.transform.parent.GetComponent<ForAction>()){
 							ForAction forAct = firstAction.transform.parent.GetComponent<ForAction>();
 							GameObjectManager.addComponent<CurrentAction>(firstAction.transform.parent.gameObject, new{agent = drone});
@@ -184,62 +187,36 @@ public class CurrentActionSystem : FSystem {
 	}
 
 	public GameObject getFirstActionOf (GameObject go, GameObject agent){
-		Debug.Log("A");
+		Debug.Log("getFirstAction "+agent.name);
 		if(go == null)
 			return null;
-		if(go.GetComponent<BasicAction>())
-			return go; 
+		if(go.GetComponent<BasicAction>()){
+			Debug.Log("basic action = "+go.name);
+			return go;
+		}
 		else{
-			Debug.Log("B");
 			//For
 			if (go.GetComponent<ForAction>()){
-				Debug.Log("F");
+				Debug.Log("foraction");
 				if(go.GetComponent<ForAction>().firstChild != null && go.GetComponent<ForAction>().nbFor != 0){
+					Debug.Log("nbfor != 0 & firstchild");
 					return getFirstActionOf(go.GetComponent<ForAction>().firstChild , agent);
 				}
 				else{
 					return getFirstActionOf(go.GetComponent<ForAction>().next , agent);
 				}
 
-					/*
-					if(go.GetComponent<ForAction>().firstChild.GetComponent<BasicAction>()){
-						Debug.Log("G");
-						res = go.GetComponent<ForAction>().firstChild;
-						break;						
-					}
-					else if (go.GetComponent<ForAction>().firstChild.GetComponent<ForAction>() || go.GetComponent<ForAction>().firstChild.GetComponent<IfAction>()){
-						Debug.Log("H");
-						res = getFirstActionOf(go.GetComponent<ForAction>().firstChild, agent);
-						break;
-					}
-					*/
 			}
 			//If
 			else if (go.GetComponent<IfAction>()){
-				Debug.Log("I");
 				if(go.GetComponent<IfAction>().firstChild != null && ifValid(go.GetComponent<IfAction>(), agent)){
 					return getFirstActionOf(go.GetComponent<IfAction>().firstChild, agent);
 				}
 				else{
 					return getFirstActionOf(go.GetComponent<IfAction>().next , agent);
 				}
-
-				/*
-				//Debug.Log("if ok");
-				if(go.GetComponent<IfAction>().firstChild.GetComponent<BasicAction>()){
-					Debug.Log("J");
-					res = go.GetComponent<IfAction>().firstChild;
-					break;						
-				}
-				else if (go.GetComponent<IfAction>().firstChild.GetComponent<ForAction>() || go.GetComponent<IfAction>().firstChild.GetComponent<IfAction>()){
-					Debug.Log("K");
-					res = getFirstActionOf(go.GetComponent<IfAction>().firstChild, agent);
-					break;
-				}
-				*/
 							
 			}
-
 			
 		}
 		return null;

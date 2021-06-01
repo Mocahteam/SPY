@@ -50,14 +50,14 @@
   <dialogs dialog="La sortie est bloquée par un champ de force, il devrait y avoir un moyen de le désactiver..." />
   <dialogs dialog="Regardez là-bas ! Il y a un terminal. Essayez donc de l'activer." />
   <actionBlocLimit>
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
+    <limit actionType="Forward" limit="-1" />
+    <limit actionType="TurnLeft" limit="-1" />
+    <limit actionType="TurnRight" limit="-1" />
+    <limit actionType="Wait" limit="-1" />
+    <limit actionType="Activate" limit="-1" />
+    <limit actionType="TurnBack" limit="-1" />
+    <limit actionType="If" limit="-1" />
+    <limit actionType="For" limit="-1" /> 
   </actionBlocLimit>
   <activable posX="1" posZ="1" side="1">
     <slot slot="0" />

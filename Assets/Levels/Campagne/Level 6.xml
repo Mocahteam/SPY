@@ -86,14 +86,14 @@
   <dialogs dialog="Evitons de saturer la ligne de communication en donnant un ordre plus efficace ! Le nombre d'ordres disponible est limité par la valeur indiquée au dessus des ordres." />
   <dialogs dialog="Utilise l'action 'Boucle', tu pourras y mettre d'autres actions dans cet ordre qui seront répétées le nombre de fois indiqué !&#xA;Attention, tu dois t'arrêter pile sur la sortie." />
   <actionBlocLimit>
-    <limit limit="1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
+    <limit actionType="Forward" limit="1" />
+    <limit actionType="TurnLeft" limit="-1" />
+    <limit actionType="TurnRight" limit="-1" />
+    <limit actionType="Wait" limit="-1" />
+    <limit actionType="Activate" limit="-1" />
+    <limit actionType="TurnBack" limit="-1" />
+    <limit actionType="If" limit="-1" />
+    <limit actionType="For" limit="-1" />
   </actionBlocLimit>
   <player posX="14" posZ="1" direction="3" />
 </level>

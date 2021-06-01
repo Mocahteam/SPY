@@ -85,20 +85,16 @@
   </map>
   <dialogs dialog="Attention ! Il y a des caméras de sécurité ici. Tu peux voir leur champ de vision en rouge. Faufile toi sans te faire repérer." />
   <actionBlocLimit>
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
+    <limit actionType="Forward" limit="-1" />
+    <limit actionType="TurnLeft" limit="-1" />
+    <limit actionType="TurnRight" limit="-1" />
+    <limit actionType="Wait" limit="-1" />
+    <limit actionType="Activate" limit="-1" />
+    <limit actionType="TurnBack" limit="-1" />
+    <limit actionType="If" limit="-1" />
+    <limit actionType="For" limit="-1" />
   </actionBlocLimit>
   <player posX="7" posZ="3" direction="3" />
-  <ennemy posX="3" posZ="1" direction="0" range="2" selfRange="False" typeRange="0">
-    <script repeat="False" />
-  </ennemy>
-  <ennemy posX="5" posZ="5" direction="1" range="2" selfRange="False" typeRange="0">
-    <script repeat="False" />
-  </ennemy>
+  <ennemy posX="3" posZ="1" direction="0" range="2" selfRange="False" typeRange="0"/>
+  <ennemy posX="5" posZ="5" direction="1" range="2" selfRange="False" typeRange="0"/>
 </level>

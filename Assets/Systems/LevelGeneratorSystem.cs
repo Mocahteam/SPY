@@ -6,6 +6,7 @@ using FYFY_plugins.TriggerManager;
 using UnityEngine.UI;
 using TMPro;
 using FYFY_plugins.PointerManager;
+//using System;
 
 public class LevelGeneratorSystem : FSystem {
 
@@ -29,7 +30,7 @@ public class LevelGeneratorSystem : FSystem {
 		gameData.Level = GameObject.Find("Level");
 		scriptContainer = ennemyScript.First();
 		XmlToLevel(gameData.levelList[gameData.levelToLoad]);
-		gameData.currentLevelBlocLimits = gameData.actionBlocLimit;
+		//gameData.currentLevelBlocLimits = gameData.actionBlocLimit;
 		//generateLevel6();
 
 
@@ -276,12 +277,6 @@ public class LevelGeneratorSystem : FSystem {
 	*/
 
 	private void generateMap(){
-		/*
-		if (gameData.actionsHistory == null){
-			gameData.actionsHistory = new List<Action>();
-			Debug.Log("new history");
-		}*/
-
 		for(int i = 0; i< map.Count; i++){
 			for(int j = 0; j < map[i].Count; j++){
 				switch (map[i][j]){
@@ -305,7 +300,7 @@ public class LevelGeneratorSystem : FSystem {
 		}
 	}
 
-	private GameObject createEntity(int i, int j, Direction.Dir direction, int type, List<GameObject> script = null, bool repeat = false){
+	private GameObject createEntity(int i, int j, Direction.Dir direction, int type, List<GameObject> script = null){
 		GameObject entity = null;
 		Sprite agentSpriteIcon = null;
 		switch(type){
@@ -637,7 +632,7 @@ public class LevelGeneratorSystem : FSystem {
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
 		gameData.dialogMessage = new List<string>();
-		gameData.actionBlocLimit = new List<int>();
+		gameData.actionBlocLimit = new Dictionary<string, int>();
 		map = new List<List<int>>();
 
 		XmlDocument doc = new XmlDocument();
@@ -673,7 +668,7 @@ public class LevelGeneratorSystem : FSystem {
 				
 				case "ennemy":
 					GameObject ennemy = createEntity(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
-					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),2, readXMLScript(child.ChildNodes[0]), bool.Parse(child.ChildNodes[0].Attributes.GetNamedItem("repeat").Value));
+					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),2, readXMLScript(child.ChildNodes[0]));
 					ennemy.GetComponent<DetectRange>().range = int.Parse(child.Attributes.GetNamedItem("range").Value);
 					ennemy.GetComponent<DetectRange>().selfRange = bool.Parse(child.Attributes.GetNamedItem("selfRange").Value);
 					ennemy.GetComponent<DetectRange>().type = (DetectRange.Type)int.Parse(child.Attributes.GetNamedItem("typeRange").Value);
@@ -697,8 +692,13 @@ public class LevelGeneratorSystem : FSystem {
 	}
 
 	private void readXMLLimits(XmlNode limitsNode){
+		string actionName = null;
 		foreach(XmlNode limitNode in limitsNode.ChildNodes){
-			gameData.actionBlocLimit.Add(int.Parse(limitNode.Attributes.GetNamedItem("limit").Value));
+			//gameData.actionBlocLimit.Add(int.Parse(limitNode.Attributes.GetNamedItem("limit").Value));
+			actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
+			if (!gameData.actionBlocLimit.ContainsKey(actionName)){
+				gameData.actionBlocLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
+			}
 		}
 	}
 
@@ -726,11 +726,11 @@ public class LevelGeneratorSystem : FSystem {
 		GameObject obj = null;
 		BaseElement action = null;
 		GameObject prefab = null;
+		bool firstchild;
 
-		int type = int.Parse(actionNode.Attributes.GetNamedItem("actionType").Value);
-		switch(type){
-			case 6 :
-				//obj = new GameObject("If");
+		string actionKey = actionNode.Attributes.GetNamedItem("actionType").Value;
+		switch(actionKey){
+			case "If" :
 				prefab = Resources.Load ("Prefabs/IfDetectBloc") as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("If");
@@ -760,17 +760,20 @@ public class LevelGeneratorSystem : FSystem {
 				Object.Destroy(obj.GetComponent<UITypeContainer>());
 
 				//add children
+				firstchild = false;
 				if(actionNode.HasChildNodes){
 					foreach(XmlNode actNode in actionNode.ChildNodes){
 						GameObject child = (readXMLAction(actNode));
 						child.transform.SetParent(obj.transform);
+						if(!firstchild){
+							firstchild = true;
+							((IfAction)action).firstChild = child;
+						}
 					}
-					((IfAction)action).firstChild = obj.transform.GetChild(0).gameObject;
 				}
 				break;
 			
-			case 7:
-				//obj = new GameObject("For");
+			case "For":
 				prefab = Resources.Load ("Prefabs/ForBloc") as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("For");
@@ -780,60 +783,59 @@ public class LevelGeneratorSystem : FSystem {
 				((ForAction)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
 				
 				//add to gameobject
-				if (((ForAction)action).nbFor > 0)
-					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (((ForAction)action).currentFor +1).ToString() + " / " + ((ForAction)action).nbFor.ToString();
-				else
-					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (((ForAction)action).currentFor).ToString() + " / " + ((ForAction)action).nbFor.ToString();
+				obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (((ForAction)action).currentFor).ToString() + " / " + ((ForAction)action).nbFor.ToString();
 				obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = false;
 				Object.Destroy(obj.GetComponent<UITypeContainer>());
 
 				//add children
+				firstchild = false;
 				if(actionNode.HasChildNodes){
 					foreach(XmlNode actNode in actionNode.ChildNodes){
 						GameObject child = (readXMLAction(actNode));
 						child.transform.SetParent(action.transform);
-					}
-					((ForAction)action).firstChild = action.transform.GetChild(0).gameObject;
+						if(!firstchild){
+							firstchild = true;
+							((ForAction)action).firstChild = child;
+						}
+					}	
 				}
 				break;
 			
 			default:
-				prefab = Resources.Load ("Prefabs/"+((BasicAction.ActionType)type).ToString()+"ActionBloc") as GameObject;
-				obj = Object.Instantiate (prefab);
-				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find(((BasicAction.ActionType)type).ToString());
-				action = obj.GetComponent<BasicAction>();		
-				//action = go.GetComponent<BasicAction>();
-				//obj = new GameObject(((BasicAction.ActionType)type).ToString());
 
-				//read xml
-				((BasicAction)action).actionType = (BasicAction.ActionType)type;
-				//GameObjectManager.addComponent<BasicAction>(go, new{actionType = (BasicAction.ActionType)type});
+				prefab = Resources.Load ("Prefabs/"+actionKey+"ActionBloc") as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find(actionKey);
+				action = obj.GetComponent<BasicAction>();		
+
 				break;
 		}
 		obj.GetComponent<UIActionType>().prefab = prefab;
-		//obj.GetComponent<UIActionType>().action = action;
 		action.target = obj;
 		Object.Destroy(obj.GetComponent<PointerSensitive>());
 		return obj;
 	}
 
 	private void addNext(GameObject container){
-		int i = 1;
-		//for each child, next = next child
-		foreach(Transform child in container.transform){
-			Debug.Log(child.gameObject.name);
-			if(i < container.transform.childCount && child.GetComponent<BaseElement>()){
-				child.GetComponent<BaseElement>().next = container.transform.GetChild(i).gameObject;
+		for(int i = 0 ; i < container.transform.childCount ; i++){
+			Transform child = container.transform.GetChild(i);
+			if(i < container.transform.childCount-1 && child.GetComponent<BaseElement>()){
+				child.GetComponent<BaseElement>().next = container.transform.GetChild(i+1).gameObject;
+			}
+			else if(i == container.transform.childCount-1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>()){
+				if(container.GetComponent<ForAction>()){
+					child.GetComponent<BaseElement>().next = container;
+				}
+				else if(container.GetComponent<IfAction>()){
+					child.GetComponent<BaseElement>().next = container.GetComponent<BaseElement>().next;
+				}
+				
 			}
 			//if or for action
-			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>())
+			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>()){
 				addNext(child.gameObject);
-			i++;
+			}
 		}
-		//last child's next = parent 
-		if(container.transform.childCount != 0 && (container.transform.GetComponent<IfAction>() || container.transform.GetComponent<ForAction>()) &&
-		container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>())
-			container.transform.GetChild(container.transform.childCount-1).GetComponent<BaseElement>().next = container;	
 	}
 
 }

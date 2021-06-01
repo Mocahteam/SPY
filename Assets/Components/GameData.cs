@@ -10,7 +10,7 @@ public class GameData : MonoBehaviour {
 	public List<string> levelList;
 	public int levelToLoad;
 	public List<string> dialogMessage;
-	public List<int> actionBlocLimit;
+	public Dictionary<string, int> actionBlocLimit;
 
 	public int totalStep;
 	public int totalActionBloc;
@@ -18,5 +18,5 @@ public class GameData : MonoBehaviour {
 	public int totalCoin;
 	public GameObject actionsHistory; //all actions made in the level, displayed at the end
 
-	public List<int> currentLevelBlocLimits;
+	//public Dictionary<string, int>  currentLevelBlocLimits;
 }

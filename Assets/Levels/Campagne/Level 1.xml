@@ -43,14 +43,14 @@
   <dialogs dialog="Vous pouvez déplacer la caméra avec ZQSD ou les flèches directionnelles" />
   <dialogs dialog="Essayez donc d'avancer 2 fois puis de tourner à droite pour commencer, cliquez ensuite sur 'Exécuter'. Essayez ensuite de terminer cette mission." />
   <actionBlocLimit>
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
+    <limit actionType="Forward" limit="-1" />
+    <limit actionType="TurnLeft" limit="-1" />
+    <limit actionType="TurnRight" limit="-1" />
+    <limit actionType="Wait" limit="-1" />
+    <limit actionType="Activate" limit="-1" />
+    <limit actionType="TurnBack" limit="-1" />
+    <limit actionType="If" limit="-1" />
+    <limit actionType="For" limit="-1" />
   </actionBlocLimit>
   <player posX="3" posZ="1" direction="3" />
 </level>

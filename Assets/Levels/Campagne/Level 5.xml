@@ -94,31 +94,31 @@
   </map>
   <dialogs dialog="Cette salle ne devrait pas vous poser de problèmes maintenant que vous êtes un expert. Cependant, il y a une pièce à récupérer, ce n'est pas obligatoire mais elle pourrait vous donner un meilleur score !" />
   <actionBlocLimit>
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
-    <limit limit="-1" />
+    <limit actionType="Forward" limit="-1" />
+    <limit actionType="TurnLeft" limit="-1" />
+    <limit actionType="TurnRight" limit="-1" />
+    <limit actionType="Wait" limit="-1" />
+    <limit actionType="Activate" limit="-1" />
+    <limit actionType="TurnBack" limit="-1" />
+    <limit actionType="If" limit="-1" />
+    <limit actionType="For" limit="-1" />
   </actionBlocLimit>
   <coin posX="1" posZ="6" />
   <player posX="1" posZ="1" direction="0" />
   <ennemy posX="4" posZ="6" direction="3" range="3" selfRange="False" typeRange="0">
-    <script repeat="True">
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="1" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="1" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="2" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="3" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
-      <action actionType="2" nbFor="0" ifDirection="0" ifEntityType="0" range="0" ifNot="False" />
+    <script>
+      <action actionType="Wait"/>
+      <action actionType="Wait"/>
+      <action actionType="TurnLeft"/>
+      <action actionType="Wait"/>
+      <action actionType="Wait"/>
+      <action actionType="TurnLeft"/>
+      <action actionType="Wait"/>
+      <action actionType="Wait"/>
+      <action actionType="TurnRight"/>
+      <action actionType="Wait"/>
+      <action actionType="Wait"/>
+      <action actionType="TurnRight"/>
     </script>
   </ennemy>
 </level>
