@@ -1,25 +1,15 @@
-<<<<<<< HEAD
 using UnityEngine;
-=======
-﻿using UnityEngine;
->>>>>>> d279ca19856d0c78f795c23fcc180dd5d9d63441
 using FYFY;
 
 public class SaveManager : FSystem {
 
     private Family f_coins = FamilyManager.getFamily(new AnyOfTags("Coin"));
     private Family f_doors = FamilyManager.getFamily(new AnyOfTags("Door"));
-<<<<<<< HEAD
     private Family f_directions = FamilyManager.getFamily(new AllOfComponents(typeof(Direction)), new NoneOfComponents(typeof(Detector)));
     private Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new NoneOfComponents(typeof(Detector)));
     private Family f_activables = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
 	//private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
-=======
-    private Family f_directions = FamilyManager.getFamily(new AllOfComponents(typeof(Direction)));
-    private Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)));
-    private Family f_activables = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
->>>>>>> d279ca19856d0c78f795c23fcc180dd5d9d63441
 
     public static SaveManager instance;
 
@@ -39,16 +29,12 @@ public class SaveManager : FSystem {
 		instance = this;
 	}
 
-<<<<<<< HEAD
 
-=======
->>>>>>> d279ca19856d0c78f795c23fcc180dd5d9d63441
     protected override void onProcess(int familiesUpdateCount)
     {
         
     }
 
-<<<<<<< HEAD
     public void SaveState(GameObject buttonStop)
 	{
         if(!buttonStop.activeInHierarchy){
@@ -79,28 +65,6 @@ public class SaveManager : FSystem {
             Debug.Log(currentContent);          
         }
 
-=======
-    public void SaveState()
-	{
-        //reset save
-        save.rawSave.coinsState.Clear();
-        foreach (GameObject coin in f_coins)
-            save.rawSave.coinsState.Add(coin.activeSelf);
-        save.rawSave.doorsState.Clear();
-        foreach (GameObject door in f_doors)
-            save.rawSave.doorsState.Add(door.activeSelf);
-        save.rawSave.directions.Clear();
-        foreach (GameObject dir in f_directions)
-            save.rawSave.directions.Add(dir.GetComponent<Direction>().direction);
-        save.rawSave.positions.Clear();
-        foreach (GameObject pos in f_positions)
-            save.rawSave.positions.Add(new SaveContent.RawPosition(pos.GetComponent<Position>()));
-        save.rawSave.activables.Clear();
-        foreach (GameObject act in f_activables)
-            save.rawSave.activables.Add(new SaveContent.RawActivable(act.GetComponent<Activable>()));
-        currentContent = JsonUtility.ToJson(save.rawSave);
-        Debug.Log(currentContent);
->>>>>>> d279ca19856d0c78f795c23fcc180dd5d9d63441
     }
 
     // Called from UI
@@ -133,7 +97,6 @@ public class SaveManager : FSystem {
             act.side = save.rawSave.activables[i].side;
             act.slotID = save.rawSave.activables[i].slotID;
         }
-<<<<<<< HEAD
         foreach(GameObject go in f_currentActions){
             if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone")){
                 GameObjectManager.removeComponent<CurrentAction>(go);
@@ -143,7 +106,5 @@ public class SaveManager : FSystem {
         foreach(SaveContent.RawCurrentAction act in save.rawSave.currentDroneActions){
             GameObjectManager.addComponent<CurrentAction>(act.action, new{agent = act.agent});
         }
-=======
->>>>>>> d279ca19856d0c78f795c23fcc180dd5d9d63441
     }
 }

@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 using UnityEngine;
-=======
-﻿using UnityEngine;
->>>>>>> d279ca19856d0c78f795c23fcc180dd5d9d63441
 using System;
 using System.Collections.Generic;
 
@@ -41,7 +37,6 @@ public class SaveContent {
     }
 
     [Serializable]
-<<<<<<< HEAD
     public class RawCurrentAction {
         public GameObject action;
         public GameObject agent;
@@ -52,8 +47,6 @@ public class SaveContent {
     }
 
     [Serializable]
-=======
->>>>>>> d279ca19856d0c78f795c23fcc180dd5d9d63441
     public class RawSave
     {
         public List<bool> coinsState = new List<bool>();
@@ -61,10 +54,7 @@ public class SaveContent {
         public List<Direction.Dir> directions = new List<Direction.Dir>();
         public List<RawPosition> positions = new List<RawPosition>();
         public List<RawActivable> activables = new List<RawActivable>();
-<<<<<<< HEAD
         public List<RawCurrentAction> currentDroneActions = new List<RawCurrentAction>();
-=======
->>>>>>> d279ca19856d0c78f795c23fcc180dd5d9d63441
     }
 
     public RawSave rawSave = new RawSave();

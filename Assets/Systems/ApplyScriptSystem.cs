@@ -13,18 +13,7 @@ public class ApplyScriptSystem : FSystem {
     private Family newCurrentAction_f = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
     private Family endpanel_f = FamilyManager.getFamily(new AllOfComponents(typeof(Image), typeof(AudioSource)), new AnyOfTags("endpanel"));
-<<<<<<< HEAD
     //private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
-=======
-    private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
-	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(Script), typeof(Position)), new AnyOfTags("Drone"));
-	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
-	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem)), new AnyOfTags("Coin"));
-	//private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(HighLight)));
-	private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(HighLight)));
-
->>>>>>> d279ca19856d0c78f795c23fcc180dd5d9d63441
 	private GameObject endPanel;
 	private GameData gameData;
 
@@ -48,12 +37,10 @@ public class ApplyScriptSystem : FSystem {
 					GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Detected });
 				}
 				else if(target.CompareTag("Coin")){
-
 				}
 			}			
 		}
     }
-
 	public void detectCollision(bool on){
 		activeRedDetector = on;
 	}
@@ -133,19 +120,6 @@ public class ApplyScriptSystem : FSystem {
 	}
 
 
-<<<<<<< HEAD
-=======
-		yield return new WaitForSeconds(0.3f);
-
-		go.GetComponent<Renderer>().enabled = false;
-		go.GetComponent<AudioSource>().Play();
-		
-		yield return new WaitForSeconds(0.5f);
-        GameObjectManager.setGameObjectState(go, false);
-		//GameObjectManager.unbind(go);
-		//Object.Destroy(go);
-	}
->>>>>>> d279ca19856d0c78f795c23fcc180dd5d9d63441
 	private void ApplyForward(GameObject go){
 		switch (go.GetComponent<Direction>().direction){
 			case Direction.Dir.North:
@@ -235,5 +209,3 @@ public class ApplyScriptSystem : FSystem {
 	}
 
 }
-
-
