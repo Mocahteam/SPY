@@ -42,7 +42,7 @@ public class HighLightSystem : FSystem {
 				//Debug.Log("------------init " + go.name + " " + go.GetComponent<Image>().color.ToString());
 				go.GetComponent<BasicAction>().baseColor = go.GetComponent<Image>().color;
 			}
-			else if(go.GetComponent<ForAction>()){
+			else if(go.GetComponent<ForAction>() || go.GetComponent<LoopAction>()){
 				go.GetComponent<Highlightable>().baseColor = go.transform.GetChild(0).GetComponent<Image>().color;
 			}	
 		}
@@ -84,7 +84,7 @@ public class HighLightSystem : FSystem {
 			if(go.GetComponent<BasicAction>() && go.GetComponent<Image>()){
 				go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
 			}
-			else if(go.GetComponent<ForAction>()){
+			else if(go.GetComponent<ForAction>() || go.GetComponent<LoopAction>()){
 				go.transform.GetChild(0).GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
 			}			
 		}
@@ -101,7 +101,7 @@ public class HighLightSystem : FSystem {
 				go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
 				//Debug.Log("unhighlight "+ go.name +" "+ go.GetComponent<Highlightable>().baseColor.ToString());
 			}
-			else if(go.GetComponent<ForAction>()){
+			else if(go.GetComponent<ForAction>() || go.GetComponent<LoopAction>()){
 				//Debug.Log("for basecolor = "+go.GetComponent<Highlightable>().baseColor.ToString());
 				go.transform.GetChild(0).GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
 			}

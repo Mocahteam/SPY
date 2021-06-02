@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="3" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="2" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+
+  </map>
+  <dialogs dialog="Un champ de force bloque le chemin !&#xA;Il devrait y avoir un moyen de le désactiver..." />
+  <dialogs dialog="Regarde là-bas ! Il y a un terminal.&#xA;Essaye donc de l'activer." />
+  <actionBlocLimit>
+    <limit actionType="Forward" limit="-1" />
+    <limit actionType="TurnLeft" limit="-1" />
+    <limit actionType="TurnRight" limit="-1" />
+    <limit actionType="Wait" limit="0" />
+    <limit actionType="Activate" limit="-1" />
+    <limit actionType="TurnBack" limit="0" />
+    <limit actionType="If" limit="0" />
+    <limit actionType="For" limit="0" />
+  </actionBlocLimit>
+  <activable posX="3" posZ="1" side="1">
+    <slot slot="0" />
+  </activable>
+  <door posX="2" posZ="1" slot="0" direction="3" />
+  <player posX="5" posZ="1" direction="3" />
+</level>

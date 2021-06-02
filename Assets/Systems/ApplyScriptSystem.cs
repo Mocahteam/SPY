@@ -7,7 +7,7 @@ using TMPro;
 using System.Collections.Generic;
 using FYFY_plugins.PointerManager;
 public class ApplyScriptSystem : FSystem {
-	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
+	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Door"));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
     private Family newCurrentAction_f = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
@@ -202,7 +202,7 @@ public class ApplyScriptSystem : FSystem {
 
 	private bool checkObstacle(int x, int z){
 		foreach( GameObject go in wallGO){
-			if(go.GetComponent<Position>().x == x && go.GetComponent<Position>().z == z)
+			if(go.activeInHierarchy && go.GetComponent<Position>().x == x && go.GetComponent<Position>().z == z)
 				return true;
 		}
 		return false;

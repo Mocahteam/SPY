@@ -423,6 +423,14 @@ public class UISystem : FSystem {
 				}
 			}
 		}
+		foreach(LoopAction loopAct in copyGO.GetComponentsInChildren<LoopAction>()){
+			foreach(BaseElement act in loopAct.GetComponentsInChildren<BaseElement>()){
+				if(!act.Equals(loopAct)){
+					loopAct.firstChild = act.gameObject;
+					break;
+				}
+			}
+		}
 		foreach(IfAction IfAct in copyGO.GetComponentsInChildren<IfAction>()){
 			Debug.Log("childoutofbounds "+IfAct.gameObject.name);
 			Debug.Log("childoutofbounds "+IfAct.transform.GetChild(0).name);
@@ -458,7 +466,7 @@ public class UISystem : FSystem {
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i+1).gameObject;
 			}
 			else if(i == container.transform.childCount-1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>()){
-				if(container.GetComponent<ForAction>()){
+				if(container.GetComponent<ForAction>() || container.GetComponent<LoopAction>()){
 					child.GetComponent<BaseElement>().next = container;
 				}
 				else if(container.GetComponent<IfAction>()){
@@ -467,7 +475,7 @@ public class UISystem : FSystem {
 				
 			}
 			//if or for action
-			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>()){
+			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>() || child.GetComponent<LoopAction>()){
 				addNext(child.gameObject);
 			}
 		}

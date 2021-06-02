@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="3" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="2" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+  </map>
+  <dialogs dialog="Bienvenue dans Spy !&#xA; Ton objectif est de t'échapper en atteignant la sortie (téléporteur rouge) !" />
+  <dialogs dialog="Pour cela, il faut donner des ordres au robot en faisant glisser les actions dans la fenêtre de script." />
+  <dialogs dialog="Tu peux utiliser le clic droit sur une action du script pour la supprimer, le bouton 'Reset' permet de vider la fenêtre de script d'un seul coup." />
+  <dialogs dialog="Pour déplacer la caméra, utilise ZQSD ou les flèches directionnelles du clavier." />
+  <actionBlocLimit>
+    <limit actionType="Forward" limit="-1" />
+    <limit actionType="TurnLeft" limit="0" />
+    <limit actionType="TurnRight" limit="0" />
+    <limit actionType="Wait" limit="0" />
+    <limit actionType="Activate" limit="0" />
+    <limit actionType="TurnBack" limit="0" />
+    <limit actionType="If" limit="0" />
+    <limit actionType="For" limit="0" />
+  </actionBlocLimit>
+  <player posX="2" posZ="1" direction="3" />
+</level>

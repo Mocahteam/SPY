@@ -107,18 +107,20 @@
   <player posX="1" posZ="1" direction="0" />
   <ennemy posX="4" posZ="6" direction="3" range="3" selfRange="False" typeRange="0">
     <script>
-      <action actionType="Wait"/>
-      <action actionType="Wait"/>
-      <action actionType="TurnLeft"/>
-      <action actionType="Wait"/>
-      <action actionType="Wait"/>
-      <action actionType="TurnLeft"/>
-      <action actionType="Wait"/>
-      <action actionType="Wait"/>
-      <action actionType="TurnRight"/>
-      <action actionType="Wait"/>
-      <action actionType="Wait"/>
-      <action actionType="TurnRight"/>
+      <action actionType="Loop">
+        <action actionType="Wait"/>
+        <action actionType="Wait"/>
+        <action actionType="TurnLeft"/>
+        <action actionType="Wait"/>
+        <action actionType="Wait"/>
+        <action actionType="TurnLeft"/>
+        <action actionType="Wait"/>
+        <action actionType="Wait"/>
+        <action actionType="TurnRight"/>
+        <action actionType="Wait"/>
+        <action actionType="Wait"/>
+        <action actionType="TurnRight"/>
+      </action>
     </script>
   </ennemy>
 </level>

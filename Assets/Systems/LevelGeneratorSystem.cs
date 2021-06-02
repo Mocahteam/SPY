@@ -800,6 +800,29 @@ public class LevelGeneratorSystem : FSystem {
 					}	
 				}
 				break;
+
+			case "Loop":
+				prefab = Resources.Load ("Prefabs/InfiniteLoop") as GameObject;
+				obj = Object.Instantiate (prefab);
+				obj.GetComponent<UIActionType>().linkedTo = null;
+				action = obj.GetComponent<LoopAction>();
+				
+				//add to gameobject
+				Object.Destroy(obj.GetComponent<UITypeContainer>());
+
+				//add children
+				firstchild = false;
+				if(actionNode.HasChildNodes){
+					foreach(XmlNode actNode in actionNode.ChildNodes){
+						GameObject child = (readXMLAction(actNode));
+						child.transform.SetParent(action.transform);
+						if(!firstchild){
+							firstchild = true;
+							((LoopAction)action).firstChild = child;
+						}
+					}	
+				}
+				break;			
 			
 			default:
 
@@ -823,7 +846,7 @@ public class LevelGeneratorSystem : FSystem {
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i+1).gameObject;
 			}
 			else if(i == container.transform.childCount-1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>()){
-				if(container.GetComponent<ForAction>()){
+				if(container.GetComponent<ForAction>() || container.GetComponent<LoopAction>()){
 					child.GetComponent<BaseElement>().next = container;
 				}
 				else if(container.GetComponent<IfAction>()){
@@ -832,7 +855,7 @@ public class LevelGeneratorSystem : FSystem {
 				
 			}
 			//if or for action
-			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>()){
+			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>() || child.GetComponent<LoopAction>()){
 				addNext(child.gameObject);
 			}
 		}

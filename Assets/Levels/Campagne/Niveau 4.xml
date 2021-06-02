@@ -36,28 +36,19 @@
       <row value="1" />
       <row value="1" />
     </line>
+
   </map>
-  <dialogs dialog="Attention ! Il y a une caméra devant toi ! Par chance, son champ de détection est très petit, mais elle te bloque tout de même le passage." />
-  <dialogs dialog="Il semblerait que cette caméra a un comportement. Clique dessus pour analyser son comportement pour y trouver une faille et passer. De plus, ce modèle de caméra ne semble pas voir en dessous d'elle même." />
+  <dialogs dialog="Tu peux maintenant utiliser les actions tourner à gauche et tourner à droite." />
+  <dialogs dialog="Attention !&#xA;Quand le robot tourne, il reste sur place." />
   <actionBlocLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="-1" />
     <limit actionType="TurnRight" limit="-1" />
-    <limit actionType="Wait" limit="-1" />
-    <limit actionType="Activate" limit="-1" />
-    <limit actionType="TurnBack" limit="-1" />
-    <limit actionType="If" limit="-1" />
-    <limit actionType="For" limit="-1" />
+    <limit actionType="Wait" limit="0" />
+    <limit actionType="Activate" limit="0" />
+    <limit actionType="TurnBack" limit="0" />
+    <limit actionType="If" limit="0" />
+    <limit actionType="For" limit="0" />
   </actionBlocLimit>
   <player posX="3" posZ="1" direction="3" />
-  <ennemy posX="1" posZ="1" direction="2" range="1" selfRange="False" typeRange="0">
-    <script>
-      <action actionType="Wait"/>
-      <action actionType="Wait"/>
-      <action actionType="TurnLeft"/>
-      <action actionType="Wait"/>
-      <action actionType="Wait"/>
-      <action actionType="TurnRight"/>
-    </script>
-  </ennemy>
 </level>

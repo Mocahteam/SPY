@@ -115,6 +115,18 @@ public class CurrentActionSystem : FSystem {
 			}
 
 		}
+		else if(currentAction.GetComponent<LoopAction>()){
+			//loop
+			if(!currentAction.GetComponent<CurrentAction>())
+				GameObjectManager.addComponent<CurrentAction>(currentAction, new{agent = agent});
+			
+			if(currentAction.GetComponent<LoopAction>().firstChild == null || currentAction.GetComponent<LoopAction>().firstChild.GetComponent<BasicAction>())
+				return currentAction.GetComponent<LoopAction>().firstChild;
+			
+			else
+				return getNextAction(currentAction.GetComponent<LoopAction>().firstChild, agent);
+		}
+
 		return null;
 	}
 
@@ -136,6 +148,8 @@ public class CurrentActionSystem : FSystem {
 					forAct.currentFor++;
 					forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 				}
+				else if (firstAction.transform.parent.GetComponent<LoopAction>())
+					GameObjectManager.addComponent<CurrentAction>(firstAction.transform.parent.gameObject, new{agent = robot});
 			}
 			
 			else{
@@ -165,6 +179,8 @@ public class CurrentActionSystem : FSystem {
 							forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 							
 						}
+						else if (firstAction.transform.parent.GetComponent<LoopAction>())
+							GameObjectManager.addComponent<CurrentAction>(firstAction.transform.parent.gameObject, new{agent = drone});
 					}			
 				}
 				else{
@@ -197,9 +213,9 @@ public class CurrentActionSystem : FSystem {
 		else{
 			//For
 			if (go.GetComponent<ForAction>()){
-				Debug.Log("foraction");
+				//Debug.Log("foraction");
 				if(go.GetComponent<ForAction>().firstChild != null && go.GetComponent<ForAction>().nbFor != 0){
-					Debug.Log("nbfor != 0 & firstchild");
+					//Debug.Log("nbfor != 0 & firstchild");
 					return getFirstActionOf(go.GetComponent<ForAction>().firstChild , agent);
 				}
 				else{
@@ -216,6 +232,16 @@ public class CurrentActionSystem : FSystem {
 					return getFirstActionOf(go.GetComponent<IfAction>().next , agent);
 				}
 							
+			}
+			//Loop
+			else if(go.GetComponent<LoopAction>()){
+				if(go.GetComponent<LoopAction>().firstChild != null){
+					//Debug.Log("nbfor != 0 & firstchild");
+					return getFirstActionOf(go.GetComponent<LoopAction>().firstChild , agent);
+				}
+				else{
+					return getFirstActionOf(go.GetComponent<LoopAction>().next , agent);
+				}
 			}
 			
 		}
