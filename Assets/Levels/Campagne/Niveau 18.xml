@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="3" />
+      <row value="1" />
+      <row value="0" />
+      <row value="3" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="2" />
+      <row value="1" />
+      <row value="2" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+  </map>
+  <dialogs dialog="Dans cette mission, vous avez deux agents que vous devez diriger vers la sortie. Malheureusement, nous ne pouvons pas nous permettre d'utiliser plusieurs communications, ils recevront donc les même ordres." />
+  <dialogs dialog="Pour cela, utilisez les particularités du terrain et ce que vous avez appris de vos précédentes missions pour ammener les deux agents à la sortie." />
+  <actionBlocLimit>
+    <limit actionType="Forward" limit="1" />
+    <limit actionType="TurnLeft" limit="1" />
+    <limit actionType="TurnRight" limit="1" />
+    <limit actionType="Wait" limit="-1" />
+    <limit actionType="Activate" limit="-1" />
+    <limit actionType="TurnBack" limit="-1" />
+    <limit actionType="If" limit="-1" />
+    <limit actionType="For" limit="-1" />
+  </actionBlocLimit>
+  <player posX="7" posZ="2" direction="3" />
+  <player posX="7" posZ="4" direction="3" />
+</level>

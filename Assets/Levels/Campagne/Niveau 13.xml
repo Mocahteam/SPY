@@ -23,6 +23,21 @@
     </line>
     <line>
       <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
       <row value="2" />
       <row value="1" />
     </line>
@@ -32,17 +47,23 @@
       <row value="1" />
     </line>
   </map>
-  <dialogs dialog="Pour déplacer la caméra, utilise ZQSD ou les flèches directionnelles du clavier." />
-  <dialogs dialog="Pour zoomer ou dézoomer, utilise la molette de la souris." />
   <actionBlocLimit>
-    <limit actionType="Forward" limit="-1" />
+    <limit actionType="Forward" limit="2" />
     <limit actionType="TurnLeft" limit="0" />
     <limit actionType="TurnRight" limit="0" />
     <limit actionType="Wait" limit="0" />
-    <limit actionType="Activate" limit="0" />
+    <limit actionType="Activate" limit="1" />
     <limit actionType="TurnBack" limit="0" />
     <limit actionType="If" limit="0" />
-    <limit actionType="For" limit="0" />
+    <limit actionType="For" limit="1" />
   </actionBlocLimit>
-  <player posX="4" posZ="1" direction="3" />
+  <activable posX="3" posZ="1" side="1">
+    <slot slot="0" />
+  </activable>
+  <activable posX="5" posZ="1" side="1">
+    <slot slot="1" />
+  </activable>
+  <door posX="2" posZ="1" slot="0" direction="2" />
+  <door posX="4" posZ="1" slot="1" direction="2" />
+  <player posX="7" posZ="1" direction="3" />
 </level>

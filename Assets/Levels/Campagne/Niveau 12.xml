@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="3" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="2" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+  </map>
+  <dialogs dialog="La sortie est au bout de ce couloir ! Evitons de saturer la ligne de communication en donnant un ordre plus efficace." />
+  <dialogs dialog="Utilise l'action boucle, tu peux mettre des actions dans une boucle pour qu'elles soient répétées le nombre de fois indiqué !"/>
+  <dialogs dialog="Attention !&#xA;Tu dois t'arrêter pile sur la sortie." />
+  <actionBlocLimit>
+    <limit actionType="Forward" limit="1" />
+    <limit actionType="TurnLeft" limit="0" />
+    <limit actionType="TurnRight" limit="0" />
+    <limit actionType="Wait" limit="0" />
+    <limit actionType="Activate" limit="0" />
+    <limit actionType="TurnBack" limit="0" />
+    <limit actionType="If" limit="0" />
+    <limit actionType="For" limit="1" />
+  </actionBlocLimit>
+  <player posX="9" posZ="1" direction="3" />
+</level>

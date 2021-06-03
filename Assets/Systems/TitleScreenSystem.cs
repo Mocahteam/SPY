@@ -3,7 +3,9 @@ using FYFY;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.IO;
+using System.Text.RegularExpressions;
 using TMPro;
+using System.Linq;
 public class TitleScreenSystem : FSystem {
 	private GameData gameData;
 	private GameObject campagneMenu;
@@ -42,6 +44,9 @@ public class TitleScreenSystem : FSystem {
 		button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(4);});*/
 		GameObjectManager.setGameObjectState(campagneMenu, false);
 		gameData.levelList = new List<string>(Directory.GetFiles(@"Assets\Levels\Campagne","*.xml"));
+		
+		//order by number of level
+		gameData.levelList = gameData.levelList.OrderBy(levelName => int.Parse(Regex.Match(levelName, @"\d+").Value)).ToList();
 
 		for(int i = 0; i < gameData.levelList.Count; i++){
 			GameObject button = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Button") as GameObject, cList.transform);
