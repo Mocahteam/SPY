@@ -113,6 +113,7 @@ public class UISystem : FSystem {
 			//GameObjectManager.unbind(gameData.actionsHistory);
 			//GameObject.Destroy(gameData.actionsHistory);
 			LayoutRebuilder.ForceRebuildLayoutImmediate(editableCanvas.GetComponent<RectTransform>());
+			gameData.actionsHistory = null;
 		}
 		//Canvas.ForceUpdateCanvases();
 		
@@ -211,8 +212,17 @@ public class UISystem : FSystem {
 	//Empty the script window
 	public void resetScript(){
 		GameObject editableContainer = editableScriptContainer.First();
+		/*
 		foreach(BaseElement go in editableContainer.GetComponentsInChildren<BaseElement>()){
+			Debug.Log("baseelement go = "+ go.name);
 			destroyScript(go.gameObject);
+		}*/
+		for (int i = 0 ; i < editableContainer.transform.childCount ; i++){
+			if(editableContainer.transform.GetChild(i).GetComponent<BaseElement>()){
+				//Debug.Log("baseelement go = "+ editableContainer.transform.GetChild(i).name);
+				destroyScript(editableContainer.transform.GetChild(i).gameObject);				
+			}
+		
 		}
 		refreshUI();
 	}
@@ -233,13 +243,21 @@ public class UISystem : FSystem {
 		}
 		
 		if(go.GetComponent<UITypeContainer>() != null){
+			/*
 			for(int i = 0; i < go.transform.childCount; i++){
 				destroyScript(go.transform.GetChild(i).gameObject, refund);
+			}*/
+			foreach(Transform child in go.transform){
+				if(child.GetComponent<BaseElement>()){
+					//Debug.Log("child of uitypecontainer = "+child.name);
+					destroyScript(child.gameObject, refund);
+				}
 			}
 		}
+		/*
 		for(int i = 0; i < go.transform.childCount;i++){
 			UnityEngine.Object.Destroy(go.transform.GetChild(i).gameObject);
-		}
+		}*/
 		go.transform.DetachChildren();
 		GameObjectManager.unbind(go);
 		UnityEngine.Object.Destroy(go);

@@ -67,9 +67,18 @@ public class StepSystem : FSystem {
                 timeStepCpt -= Time.deltaTime;
 
 		}
+        else{
+            //execution finished
+            if(MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>()){
+                Debug.Log("fin exec");
+                Pause = true;
+                GameObjectManager.removeComponent<PlayerIsMoving>(MainLoop.instance.gameObject);     
+            }
+        }
 	}
 
     private bool playerHasNextAction(){
+        Debug.Log("playerHasNextAction");
 		CurrentAction act;
 		foreach(GameObject go in currentActions){
 			act = go.GetComponent<CurrentAction>();
@@ -77,12 +86,7 @@ public class StepSystem : FSystem {
 				return true;                
             }
 		}
-        //execution finished
-		if(MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>()){
-			Debug.Log("fin exec");
-            Pause = true;
-			GameObjectManager.removeComponent<PlayerIsMoving>(MainLoop.instance.gameObject);     
-		}
+
         return false;
     }
 

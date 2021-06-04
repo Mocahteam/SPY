@@ -13,6 +13,7 @@ public class DragDropSystem : FSystem
 	private Family actionPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType), typeof(Image)));
 	private Family inputUIOver_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(TMP_InputField), typeof(TMP_Dropdown)));
 	private Family editableScriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
+	private Family editableScriptPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer), typeof(PointerOver)), new AnyOfTags("ScriptConstructor"));
 	private GameObject mainCanvas;
 	private GameObject itemDragged;
 	private GameObject positionBar;
@@ -44,16 +45,6 @@ public class DragDropSystem : FSystem
 		*/
 	}
 
-	// Use this to update member variables when system pause. 
-	// Advice: avoid to update your families inside this function.
-	protected override void onPause(int currentFrame) {
-	}
-
-	// Use this to update member variables when system resume.
-	// Advice: avoid to update your families inside this function.
-	protected override void onResume(int currentFrame){
-	}
-
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
 		//Mouse down
@@ -80,7 +71,7 @@ public class DragDropSystem : FSystem
 			}
 
 			//drag in editable script
-            if (actionPointed_f.Count > 0 && inputUIOver_f.Count == 0) //cannot drag if inputfield or dropdown pointed
+            if (actionPointed_f.Count > 0 && inputUIOver_f.Count == 0 && editableScriptPointed_f.Count > 0) //cannot drag if inputfield or dropdown pointed
             {
                 itemDragged = actionPointed_f.getAt(actionPointed_f.Count-1); // get the last one <=> deeper child PointerOver
 				//actionPriority.transform.SetParent(mainCanvas.transform);

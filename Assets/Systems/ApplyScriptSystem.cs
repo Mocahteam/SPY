@@ -13,6 +13,7 @@ public class ApplyScriptSystem : FSystem {
     private Family newCurrentAction_f = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
     private Family endpanel_f = FamilyManager.getFamily(new AllOfComponents(typeof(Image), typeof(AudioSource)), new AnyOfTags("endpanel"));
+	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
     //private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
 	private GameObject endPanel;
 	private GameData gameData;
@@ -22,7 +23,6 @@ public class ApplyScriptSystem : FSystem {
         newCurrentAction_f.addEntryCallback(onNewCurrentAction);
         endPanel = endpanel_f.First();
         GameObjectManager.setGameObjectState(endPanel, false);
-
     }
 
 	/*
@@ -110,16 +110,23 @@ public class ApplyScriptSystem : FSystem {
                     //end level
                     if (nbEnd >= playerGO.Count)
                     {
-                        //Debug.Log("Fin du niveau");
-                        GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Win });
+						//MainLoop.instance.StartCoroutine(delayCheckIfLastAction());	
+						GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Win });
+                        
                     }
                 }
             }
-        }
-
+        }	
 	}
-
-
+/*
+	private IEnumerator delayCheckIfLastAction(){
+		yield return null;
+		yield return null;
+		yield return null;
+		if(scriptIsRunning.Count == 0)
+			GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Win });
+	}
+*/
 	private void ApplyForward(GameObject go){
 		switch (go.GetComponent<Direction>().direction){
 			case Direction.Dir.North:
