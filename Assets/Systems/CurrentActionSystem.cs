@@ -277,67 +277,58 @@ public class CurrentActionSystem : FSystem {
 		}
 		switch(nextIf.ifEntityType){
 			case 0:
-				Debug.Log("wall");
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in wallGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-							Debug.Log("true");
-						}
+				foreach( GameObject go in wallGO){
+					if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * nextIf.range &&
+					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * nextIf.range){
+						ifok = !nextIf.ifNot;
 					}
 				}
 				break;
 			case 1:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in doorGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
+				foreach( GameObject go in doorGO){
+					if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * nextIf.range &&
+					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * nextIf.range){
+						ifok = !nextIf.ifNot;
 					}
 				}
 				break;
 			case 2:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in droneGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
+				foreach( GameObject go in droneGO){
+					if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * nextIf.range &&
+						go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * nextIf.range){
+						ifok = !nextIf.ifNot;
 					}
 				}
 				break;
 			case 3:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in playerGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
+				foreach( GameObject go in playerGO){
+					if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * nextIf.range &&
+						go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * nextIf.range){
+						ifok = !nextIf.ifNot;
 					}
 				}
 				break;
 			case 4:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in activableConsoleGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
+				foreach( GameObject go in activableConsoleGO){
+					if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * nextIf.range &&
+						go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * nextIf.range){
+						ifok = !nextIf.ifNot;
 					}
 				}
 				break;
 			case 5:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in redDetectorGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
+				foreach( GameObject go in redDetectorGO){
+					if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * nextIf.range &&
+					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * nextIf.range){
+						ifok = !nextIf.ifNot;
 					}
 				}
 				break;
 			case 6:
-				for(int i = 1; i <= nextIf.range; i++){
-					foreach( GameObject go in coinGO){
-						if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * i && go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * i){
-							ifok = !nextIf.ifNot;
-						}
+				foreach( GameObject go in coinGO){
+					if(go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x * nextIf.range &&
+					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y * nextIf.range){
+						ifok = !nextIf.ifNot;
 					}
 				}
 				break;				

@@ -23,7 +23,6 @@ public class ApplyScriptSystem : FSystem {
         newCurrentAction_f.addEntryCallback(onNewCurrentAction);
         newCurrentAction_f.addExitCallback(onCurrentActionRemoved);
         endPanel = endpanel_f.First();
-        GameObjectManager.setGameObjectState(endPanel, false);
     }
 
 	private void onCurrentActionRemoved(int unused){

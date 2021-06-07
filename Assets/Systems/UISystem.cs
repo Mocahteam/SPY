@@ -10,7 +10,7 @@ public class UISystem : FSystem {
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
 	//private GameObject actionContainer;
-    private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF));
+    private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
     private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer), typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
@@ -47,9 +47,9 @@ public class UISystem : FSystem {
 
 		buttonReset = GameObject.Find("ResetButton");
 		endPanel = GameObject.Find("EndPanel");
-		GameObjectManager.setGameObjectState(endPanel, false);
+		GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
 		dialogPanel = GameObject.Find("DialogPanel");
-		GameObjectManager.setGameObjectState(dialogPanel, false);
+		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
         requireEndPanel.addEntryCallback(displayEndPanel);
         displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
 		actions.addEntryCallback(linkTo);
@@ -90,7 +90,7 @@ public class UISystem : FSystem {
 				Debug.Log("copy = "+copy.name);
 				Debug.Log("actionsHistory = "+gameData.actionsHistory.name);
 				Debug.Log("child = "+child.name);
-				//copy.SetParent(gameData.actionsHistory.transform);
+				copy.SetParent(gameData.actionsHistory.transform);
 				GameObjectManager.bind(copy.gameObject);				
 			}
 			GameObjectManager.refresh(gameData.actionsHistory);
@@ -114,9 +114,8 @@ public class UISystem : FSystem {
 			}
 			//destroy history
 			//GameObjectManager.unbind(gameData.actionsHistory);
-			//GameObject.Destroy(gameData.actionsHistory);
+			GameObject.Destroy(gameData.actionsHistory);
 			LayoutRebuilder.ForceRebuildLayoutImmediate(editableCanvas.GetComponent<RectTransform>());
-			gameData.actionsHistory = null;
 		}
 		//Canvas.ForceUpdateCanvases();
 		
@@ -140,7 +139,7 @@ public class UISystem : FSystem {
 		setExecutionState(true);
 		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
 			Debug.Log("level finished avant");
-			saveHistory();
+			//saveHistory();
 			loadHistory();
 			Debug.Log("level finished après");
 		}
@@ -163,7 +162,7 @@ public class UISystem : FSystem {
 
     private void displayEndPanel(GameObject endPanel)
     {
-        GameObjectManager.setGameObjectState(endPanel, true);
+        GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, true);
     }
 
     private void onDisplayedEndPanel (GameObject endPanel)
@@ -200,7 +199,7 @@ public class UISystem : FSystem {
 	protected override void onProcess(int familiesUpdateCount) {
 
 		//Activate DialogPanel if there is a message
-		if(gameData.dialogMessage.Count > 0 && !dialogPanel.activeSelf){
+		if(gameData.dialogMessage.Count > 0 && !dialogPanel.transform.parent.gameObject.activeSelf){
 			showDialogPanel();
 		}
 
@@ -269,7 +268,7 @@ public class UISystem : FSystem {
 	}
 
 	public void showDialogPanel(){
-		GameObjectManager.setGameObjectState(dialogPanel, true);
+		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
 		nDialog = 0;
 		dialogPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[0];
 		if(gameData.dialogMessage.Count > 1){
@@ -306,7 +305,7 @@ public class UISystem : FSystem {
 	public void closeDialogPanel(){
 		nDialog = 0;
 		gameData.dialogMessage = new List<string>();;
-		GameObjectManager.setGameObjectState(dialogPanel, false);
+		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 	}
 
 	public void reloadScene(){
