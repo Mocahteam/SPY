@@ -21,9 +21,44 @@ public class ApplyScriptSystem : FSystem {
 	public ApplyScriptSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
         newCurrentAction_f.addEntryCallback(onNewCurrentAction);
+        newCurrentAction_f.addExitCallback(onCurrentActionRemoved);
         endPanel = endpanel_f.First();
         GameObjectManager.setGameObjectState(endPanel, false);
     }
+
+	private void onCurrentActionRemoved(int unused){
+		MainLoop.instance.StartCoroutine(delayCheckEnd());
+	}
+
+	private IEnumerator delayCheckEnd(){
+		//wait for new currentAction
+		yield return null;
+		yield return null;
+		//if no currentAction exists check if all players are on the end of the level
+		if(newCurrentAction_f.Count == 0){
+			int nbEnd = 0;
+			foreach (GameObject player in playerGO)
+			{
+				foreach (GameObject exit in exitGO)
+				{
+					if (player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().z == exit.GetComponent<Position>().z)
+					{
+						nbEnd++;
+						//end level
+						if (nbEnd >= playerGO.Count)
+						{
+							//MainLoop.instance.StartCoroutine(delayCheckIfLastAction());	
+							Debug.Log("avant");
+							GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Win });
+							Debug.Log("après");
+							
+						}
+					}
+				}				
+			}				
+		}
+
+	}
 
 	/*
     private void onNewCollision(GameObject robot){
@@ -98,25 +133,7 @@ public class ApplyScriptSystem : FSystem {
 				break;
 		}
 
-        //Check if the player is on the end of the level
-        int nbEnd = 0;
-        foreach (GameObject player in playerGO)
-        {
-            foreach (GameObject exit in exitGO)
-            {
-                if (player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().z == exit.GetComponent<Position>().z)
-                {
-                    nbEnd++;
-                    //end level
-                    if (nbEnd >= playerGO.Count)
-                    {
-						//MainLoop.instance.StartCoroutine(delayCheckIfLastAction());	
-						GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Win });
-                        
-                    }
-                }
-            }
-        }	
+
 	}
 /*
 	private IEnumerator delayCheckIfLastAction(){

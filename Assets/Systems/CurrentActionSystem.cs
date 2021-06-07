@@ -22,12 +22,21 @@ public class CurrentActionSystem : FSystem {
 	public CurrentActionSystem(){
 		newStep_f.addEntryCallback(onNewStep);
 		firstStep.addEntryCallback(initFirstActions);
+		scriptIsRunning.addExitCallback(removePlayersCurrentActions);
 	}
 
 	private IEnumerator delayAddCurrentAction(GameObject nextAction, GameObject agent){
 		yield return null;
 		GameObjectManager.addComponent<CurrentAction>(nextAction, new{agent = agent});
 	}
+
+	private void removePlayersCurrentActions(int unused){
+		foreach(GameObject currentAction in currentActions){
+			if(currentAction.GetComponent<CurrentAction>().agent.CompareTag("Player"))
+				GameObjectManager.removeComponent<CurrentAction>(currentAction);
+		}
+	}
+	
 	private void onNewStep(GameObject unused){
 		if(unused == null || scriptIsRunning.Count != 0){ // player has next action
 			Debug.Log("on new step");

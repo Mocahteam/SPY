@@ -87,10 +87,13 @@ public class UISystem : FSystem {
 		else{
 			foreach(Transform child in lastEditedScript.transform){
 				Transform copy = UnityEngine.GameObject.Instantiate(child);
-				copy.SetParent(gameData.actionsHistory.transform);
+				Debug.Log("copy = "+copy.name);
+				Debug.Log("actionsHistory = "+gameData.actionsHistory.name);
+				Debug.Log("child = "+child.name);
+				//copy.SetParent(gameData.actionsHistory.transform);
 				GameObjectManager.bind(copy.gameObject);				
 			}
-			GameObjectManager.refresh(gameData.actionsHistory);	
+			GameObjectManager.refresh(gameData.actionsHistory);
 		}	
 	}
 
@@ -136,8 +139,10 @@ public class UISystem : FSystem {
 	private void levelFinished (GameObject go){
 		setExecutionState(true);
 		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
+			Debug.Log("level finished avant");
 			saveHistory();
 			loadHistory();
+			Debug.Log("level finished après");
 		}
 		else if(go.GetComponent<NewEnd>().endType == NewEnd.Detected){
 			//copy player container into editable container
