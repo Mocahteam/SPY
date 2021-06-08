@@ -11,6 +11,7 @@ public class TitleScreenSystem : FSystem {
 	private GameObject campagneMenu;
 	private GameObject campagneButton;
 	private GameObject quitButton;
+	private GameObject levelName;
 
 
 	public TitleScreenSystem(){

@@ -801,6 +801,7 @@ GameObject:
   - component: {fileID: 985497468387890308}
   - component: {fileID: 985497468387890427}
   - component: {fileID: 985497468387890426}
+  - component: {fileID: 7399913999518111728}
   m_Layer: 5
   m_Name: Container
   m_TagString: Untagged
@@ -1006,6 +1007,20 @@ MonoBehaviour:
   m_Script: {fileID: -53623643, guid: e160884b7e39b8e479dc90c5b7dcec1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7399913999518111728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985497468387890425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb8271fbef7525748a512c171b100bba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseColor: {r: 1, g: 1, b: 1, a: 1}
+  highlightedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 0.39215687}
 --- !u!1 &985497468404916497
 GameObject:
   m_ObjectHideFlags: 0
@@ -1183,7 +1198,7 @@ GameObject:
   - component: {fileID: 542667408984068078}
   - component: {fileID: 7183673850279460108}
   m_Layer: 5
-  m_Name: Button
+  m_Name: locateButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

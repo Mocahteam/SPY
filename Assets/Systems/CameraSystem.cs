@@ -2,10 +2,12 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
 using FYFY_plugins.TriggerManager;
+using UnityEngine.UI;
 
 public class CameraSystem : FSystem {
 	//private Family cameraGO = FamilyManager.getFamily(new AllOfComponents(typeof(CameraComponent)));
 	private Family cameraGO = FamilyManager.getFamily(new AllOfComponents(typeof(CameraComponent)), new AnyOfTags("MainCamera"));
+	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 
 	//private Family UIGO = FamilyManager.getFamily(new AnyOfComponents(typeof(UIActionType), typeof(UITypeContainer), typeof(ElementToDrag)),
 	//												new AllOfComponents(typeof(PointerOver)));
@@ -15,6 +17,9 @@ public class CameraSystem : FSystem {
 	private Family playerGO = FamilyManager.getFamily(new AnyOfTags("Player"));
 	private Family UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver))); 
 	private GameData gameData;
+	private Transform target;
+	private float smoothSpeed = 0.125f;
+	private Vector3 offset = new Vector3(0,15,0);
 
 	public CameraSystem()
 	{
@@ -30,6 +35,8 @@ public class CameraSystem : FSystem {
         {
             setCameraOnGO(player);
         }
+
+		agents.addEntryCallback(setLocateButtons);
 
     }
 
@@ -47,21 +54,15 @@ public class CameraSystem : FSystem {
 
 	}
 
-	// Use this to update member variables when system pause. 
-	// Advice: avoid to update your families inside this function.
-	protected override void onPause(int currentFrame) {
-	}
-
-	// Use this to update member variables when system resume.
-	// Advice: avoid to update your families inside this function.
-	protected override void onResume(int currentFrame){
-		
-	}
-
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 
 		foreach( GameObject go in cameraGO ){
+			if(target){
+				go.transform.position = Vector3.MoveTowards(go.transform.position, (target.position+offset), smoothSpeed);
+				//go.transform.LookAt(target);
+			}
+				
 			
 			/*
 			// Pour placer la caméra derrière un agent
@@ -79,7 +80,9 @@ public class CameraSystem : FSystem {
 		        }
 			}
 			*/
-
+			if(Input.anyKey){
+				target = null;
+			}
 		    // gauche droite
 		    go.transform.position += new Vector3(go.transform.forward.x + go.transform.up.x, 0, go.transform.forward.z + go.transform.up.z ) * Input.GetAxis("Vertical") * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
 			// avance recule
@@ -118,6 +121,7 @@ public class CameraSystem : FSystem {
 			// Déplacement avec la molette comme dans l'éditeur
 	        if (Input.GetMouseButton(2))
             {
+				target = null;
             	Cursor.lockState = CursorLockMode.Locked;
 	        	Cursor.visible = false;
                 go.transform.Translate(-Input.GetAxisRaw("Mouse X") * Time.deltaTime * go.GetComponent<CameraComponent>().dragSpeed, -Input.GetAxisRaw("Mouse Y") * Time.deltaTime * go.GetComponent<CameraComponent>().dragSpeed, 0);
@@ -130,6 +134,7 @@ public class CameraSystem : FSystem {
 			// Zoom avec la molette
 			else if(Input.GetAxis("Mouse ScrollWheel") < 0 && UIfocused.Count == 0)
 	        {
+				target = null;
 	            if(go.GetComponent<CameraComponent>().ScrollCount >= go.GetComponent<CameraComponent>().ScrollWheelminPush && go.GetComponent<CameraComponent>().ScrollCount < go.GetComponent<CameraComponent>().ScrollWheelLimit)
 	            {
 	                go.transform.position += new Vector3(0, go.GetComponent<CameraComponent>().zoomSpeed, 0);
@@ -138,6 +143,7 @@ public class CameraSystem : FSystem {
 	        }
 	        else if(Input.GetAxis("Mouse ScrollWheel") > 0 && UIfocused.Count == 0)
 	        {
+				target = null;
 	            if(go.GetComponent<CameraComponent>().ScrollCount > go.GetComponent<CameraComponent>().ScrollWheelminPush && go.GetComponent<CameraComponent>().ScrollCount <= go.GetComponent<CameraComponent>().ScrollWheelLimit)
 	            {
 	                go.transform.position -= new Vector3(0, go.GetComponent<CameraComponent>().zoomSpeed, 0);
@@ -148,6 +154,7 @@ public class CameraSystem : FSystem {
             // Déplacement de type orbite
             else if (Input.GetMouseButton(1))
             {
+				target = null;
             	go.GetComponent<CameraComponent>().orbitH += go.GetComponent<CameraComponent>().lookSpeedH * Input.GetAxis("Mouse X");
                 go.GetComponent<CameraComponent>().orbitV -= go.GetComponent<CameraComponent>().lookSpeedV * Input.GetAxis("Mouse Y");
                 go.GetComponent<CameraComponent>().transform.eulerAngles = new Vector3(go.GetComponent<CameraComponent>().orbitV, go.GetComponent<CameraComponent>().orbitH, 0f);
@@ -175,8 +182,19 @@ public class CameraSystem : FSystem {
 	}
 
 	public void setCameraOnGO(GameObject go){
+		target = go.transform;
+		/*
 		foreach(GameObject camera in cameraGO){
-			camera.transform.position = new Vector3(go.transform.position.x +5, camera.transform.position.y, go.transform.position.z);
+			Vector3 currentVector = camera.transform.position;
+			Vector3 nextVector = new Vector3(go.transform.position.x +5, camera.transform.position.y, go.transform.position.z);
+			camera.transform.position = Vector3.MoveTowards(currentVector, nextVector, Time.deltaTime);
 		}
+		*/
+	}
+	public void setLocateButtons(GameObject go){
+		//foreach (GameObject go in agents){
+		Debug.Log("setLocateButtons");
+		go.GetComponent<ScriptRef>().uiContainer.transform.Find("locateButton").GetComponent<Button>().onClick.AddListener(delegate{setCameraOnGO(go);});
+		//}
 	}
 }

@@ -46,8 +46,13 @@ public class HighLightSystem : FSystem {
 				go.GetComponent<Highlightable>().baseColor = go.transform.GetChild(0).GetComponent<Image>().color;
 			}	
 		}
-		else
+		else if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>().material.color;
+			if(go.GetComponent<ScriptRef>()){
+				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Container").GetComponent<Image>();
+				img.GetComponent<Highlightable>().baseColor = img.color;	
+			}			
+		}
 
 	}
 
@@ -89,9 +94,15 @@ public class HighLightSystem : FSystem {
 			}			
 		}
 
-		else{
+		else if(go.GetComponentInChildren<Renderer>()){
 			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().highlightedColor;
+			if(go.GetComponent<ScriptRef>()){
+				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Container").GetComponent<Image>();
+				img.color = img.GetComponent<Highlightable>().highlightedColor;
+			}
 		}
+		
+
 	}
 
 	public void unHighLightItem(GameObject go){
@@ -108,9 +119,14 @@ public class HighLightSystem : FSystem {
 
 		}
 
-		else{
+		else if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().baseColor;
+			if(go.GetComponent<ScriptRef>()){
+				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Container").GetComponent<Image>();
+				img.color = img.GetComponent<Highlightable>().baseColor;
+			}
 		}
+
 		/*
 		GameObject prefab = go.GetComponent<UIActionType>().prefab;
 		go.GetComponent<Image>().color = prefab.GetComponent<Image>().color;*/

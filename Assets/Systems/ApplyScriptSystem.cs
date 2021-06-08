@@ -170,6 +170,7 @@ public class ApplyScriptSystem : FSystem {
 				}
 				break;
 		}
+		go.GetComponent<Position>().animate = true;
 	}
 
 	private void ApplyTurnLeft(GameObject go){
