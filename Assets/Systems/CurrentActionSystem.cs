@@ -124,16 +124,16 @@ public class CurrentActionSystem : FSystem {
 			}
 
 		}
-		else if(currentAction.GetComponent<LoopAction>()){
+		else if(currentAction.GetComponent<ForeverAction>()){
 			//loop
 			if(!currentAction.GetComponent<CurrentAction>())
 				GameObjectManager.addComponent<CurrentAction>(currentAction, new{agent = agent});
 			
-			if(currentAction.GetComponent<LoopAction>().firstChild == null || currentAction.GetComponent<LoopAction>().firstChild.GetComponent<BasicAction>())
-				return currentAction.GetComponent<LoopAction>().firstChild;
+			if(currentAction.GetComponent<ForeverAction>().firstChild == null || currentAction.GetComponent<ForeverAction>().firstChild.GetComponent<BasicAction>())
+				return currentAction.GetComponent<ForeverAction>().firstChild;
 			
 			else
-				return getNextAction(currentAction.GetComponent<LoopAction>().firstChild, agent);
+				return getNextAction(currentAction.GetComponent<ForeverAction>().firstChild, agent);
 		}
 
 		return null;
@@ -157,7 +157,7 @@ public class CurrentActionSystem : FSystem {
 					forAct.currentFor++;
 					forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 				}
-				else if (firstAction.transform.parent.GetComponent<LoopAction>())
+				else if (firstAction.transform.parent.GetComponent<ForeverAction>())
 					GameObjectManager.addComponent<CurrentAction>(firstAction.transform.parent.gameObject, new{agent = robot});
 			}
 			
@@ -188,7 +188,7 @@ public class CurrentActionSystem : FSystem {
 							forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 							
 						}
-						else if (firstAction.transform.parent.GetComponent<LoopAction>())
+						else if (firstAction.transform.parent.GetComponent<ForeverAction>())
 							GameObjectManager.addComponent<CurrentAction>(firstAction.transform.parent.gameObject, new{agent = drone});
 					}			
 				}
@@ -243,13 +243,13 @@ public class CurrentActionSystem : FSystem {
 							
 			}
 			//Loop
-			else if(go.GetComponent<LoopAction>()){
-				if(go.GetComponent<LoopAction>().firstChild != null){
+			else if(go.GetComponent<ForeverAction>()){
+				if(go.GetComponent<ForeverAction>().firstChild != null){
 					//Debug.Log("nbfor != 0 & firstchild");
-					return getFirstActionOf(go.GetComponent<LoopAction>().firstChild , agent);
+					return getFirstActionOf(go.GetComponent<ForeverAction>().firstChild , agent);
 				}
 				else{
-					return getFirstActionOf(go.GetComponent<LoopAction>().next , agent);
+					return getFirstActionOf(go.GetComponent<ForeverAction>().next , agent);
 				}
 			}
 			

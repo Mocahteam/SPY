@@ -14,4 +14,9 @@ public class CameraSystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("CameraSystem", "setCameraOnGO", go);
 	}
 
+	public void setLocateButtons(UnityEngine.GameObject go)
+	{
+		MainLoop.callAppropriateSystemMethod ("CameraSystem", "setLocateButtons", go);
+	}
+
 }

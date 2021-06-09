@@ -338,7 +338,7 @@ public class LevelGeneratorSystem : FSystem {
 		scriptref.uiContainer = containerParent;
 		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
 		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
-		containerParent.transform.Find("agent").GetComponent<Image>().sprite = agentSpriteIcon;
+		containerParent.transform.Find("Header").Find("agent").GetComponent<Image>().sprite = agentSpriteIcon;
 
 		if(script != null){
 			//add actions to container
@@ -802,11 +802,11 @@ public class LevelGeneratorSystem : FSystem {
 				}
 				break;
 
-			case "Loop":
+			case "Forever":
 				prefab = Resources.Load ("Prefabs/InfiniteLoop") as GameObject;
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().linkedTo = null;
-				action = obj.GetComponent<LoopAction>();
+				action = obj.GetComponent<ForeverAction>();
 				
 				//add to gameobject
 				Object.Destroy(obj.GetComponent<UITypeContainer>());
@@ -819,7 +819,7 @@ public class LevelGeneratorSystem : FSystem {
 						child.transform.SetParent(action.transform);
 						if(!firstchild){
 							firstchild = true;
-							((LoopAction)action).firstChild = child;
+							((ForeverAction)action).firstChild = child;
 						}
 					}	
 				}
@@ -847,7 +847,7 @@ public class LevelGeneratorSystem : FSystem {
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i+1).gameObject;
 			}
 			else if(i == container.transform.childCount-1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>()){
-				if(container.GetComponent<ForAction>() || container.GetComponent<LoopAction>()){
+				if(container.GetComponent<ForAction>() || container.GetComponent<ForeverAction>()){
 					child.GetComponent<BaseElement>().next = container;
 				}
 				else if(container.GetComponent<IfAction>()){
@@ -856,7 +856,7 @@ public class LevelGeneratorSystem : FSystem {
 				
 			}
 			//if or for action
-			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>() || child.GetComponent<LoopAction>()){
+			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>() || child.GetComponent<ForeverAction>()){
 				addNext(child.gameObject);
 			}
 		}

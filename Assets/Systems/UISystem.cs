@@ -395,7 +395,7 @@ public class UISystem : FSystem {
 			foreach( GameObject go in playerGO){
 				GameObject targetContainer = go.GetComponent<ScriptRef>().scriptContainer;
 				GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer, true);
-				go.GetComponent<ScriptRef>().uiContainer.transform.Find("Toggle").GetComponent<Toggle>().isOn = true;	
+				go.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;	
 				for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
 					if(!containerCopy.transform.GetChild(i).name.Contains("PositionBar")){
 						Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
@@ -445,7 +445,7 @@ public class UISystem : FSystem {
 				}
 			}
 		}
-		foreach(LoopAction loopAct in copyGO.GetComponentsInChildren<LoopAction>()){
+		foreach(ForeverAction loopAct in copyGO.GetComponentsInChildren<ForeverAction>()){
 			foreach(BaseElement act in loopAct.GetComponentsInChildren<BaseElement>()){
 				if(!act.Equals(loopAct)){
 					loopAct.firstChild = act.gameObject;
@@ -488,7 +488,7 @@ public class UISystem : FSystem {
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i+1).gameObject;
 			}
 			else if(i == container.transform.childCount-1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>()){
-				if(container.GetComponent<ForAction>() || container.GetComponent<LoopAction>()){
+				if(container.GetComponent<ForAction>() || container.GetComponent<ForeverAction>()){
 					child.GetComponent<BaseElement>().next = container;
 				}
 				else if(container.GetComponent<IfAction>()){
@@ -497,7 +497,7 @@ public class UISystem : FSystem {
 				
 			}
 			//if or for action
-			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>() || child.GetComponent<LoopAction>()){
+			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>() || child.GetComponent<ForeverAction>()){
 				addNext(child.gameObject);
 			}
 		}

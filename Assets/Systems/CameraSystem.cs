@@ -19,7 +19,7 @@ public class CameraSystem : FSystem {
 	private GameData gameData;
 	private Transform target;
 	private float smoothSpeed = 0.125f;
-	private Vector3 offset = new Vector3(0,15,0);
+	private Vector3 offset = new Vector3(6,15,0);
 
 	public CameraSystem()
 	{
@@ -60,7 +60,8 @@ public class CameraSystem : FSystem {
 		foreach( GameObject go in cameraGO ){
 			if(target){
 				go.transform.position = Vector3.MoveTowards(go.transform.position, (target.position+offset), smoothSpeed);
-				//go.transform.LookAt(target);
+				//go.transform.position = Vector3.MoveTowards(go.transform.position, target.position+Vector3.Scale(target.position,Vector3.Scale(go.transform.localRotation.eulerAngles,offset)), smoothSpeed);
+				go.transform.LookAt(target); 
 			}
 				
 			
@@ -194,7 +195,7 @@ public class CameraSystem : FSystem {
 	public void setLocateButtons(GameObject go){
 		//foreach (GameObject go in agents){
 		Debug.Log("setLocateButtons");
-		go.GetComponent<ScriptRef>().uiContainer.transform.Find("locateButton").GetComponent<Button>().onClick.AddListener(delegate{setCameraOnGO(go);});
+		go.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("locateButton").GetComponent<Button>().onClick.AddListener(delegate{setCameraOnGO(go);});
 		//}
 	}
 }
