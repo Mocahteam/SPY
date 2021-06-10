@@ -7,44 +7,8 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
     </line>
     <line>
-      <row value="1" />
-      <row value="2" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
       <row value="1" />
       <row value="0" />
       <row value="0" />
@@ -53,38 +17,26 @@
     </line>
     <line>
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
       <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
       <row value="1" />
       <row value="3" />
       <row value="1" />
     </line>
     <line>
       <row value="1" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
       <row value="1" />
       <row value="1" />
+      <row value="2" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
       <row value="1" />
       <row value="1" />
       <row value="1" />
@@ -92,7 +44,7 @@
       <row value="1" />
     </line>
   </map>
-  <dialogs dialog="Regarde ! Il y a une pièce à récupérer. Ce n'est pas obligatoire mais elle pourrait te donner un meilleur score !" />
+  <dialogs dialog="Attention !&#xA;Ce n'est pas exactement le même niveau." />
   <actionBlocLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="-1" />
@@ -103,23 +55,17 @@
     <limit actionType="If" limit="0" />
     <limit actionType="For" limit="-1" />
   </actionBlocLimit>
-  <coin posX="1" posZ="6" />
-  <player posX="1" posZ="1" direction="0" />
-  <ennemy posX="4" posZ="6" direction="3" range="3" selfRange="False" typeRange="0">
+  <player posX="4" posZ="2" direction="3" />
+  <ennemy posX="3" posZ="1" direction="0" range="1" selfRange="True" typeRange="0">
     <script>
       <action actionType="Forever">
+        <action actionType="Forward"/>
+        <action actionType="Forward"/>
+        <action actionType="Wait"/>
         <action actionType="Wait"/>
         <action actionType="Wait"/>
         <action actionType="TurnLeft"/>
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
         <action actionType="TurnLeft"/>
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
-        <action actionType="TurnRight"/>
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
-        <action actionType="TurnRight"/>
       </action>
     </script>
   </ennemy>

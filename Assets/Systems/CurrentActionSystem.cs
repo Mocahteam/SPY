@@ -53,7 +53,10 @@ public class CurrentActionSystem : FSystem {
 						nextAction = getFirstActionOf(current.agent.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(0).gameObject, current.agent);
 					}
 					*/
-					if(nextAction != null){
+					if(nextAction == null && currentAction.GetComponent<CurrentAction>().agent.CompareTag("Drone")){
+						currentAction.GetComponent<CurrentAction>().agent.GetComponent<ScriptRef>().scriptFinished = true;
+					}
+					else if(nextAction != null){
 						//parent = for & first loop and first child, currentfor = 0 -> currentfor = 1
 						if(nextAction.transform.parent.GetComponent<ForAction>() && nextAction.transform.parent.GetComponent<ForAction>().currentFor == 0 && 
 						nextAction.Equals(nextAction.transform.parent.GetComponent<ForAction>().firstChild)){
@@ -172,7 +175,7 @@ public class CurrentActionSystem : FSystem {
 			//Debug.Log("drones "+droneGO.Count);
 			firstAction = null;
 			foreach(GameObject drone in droneGO){
-				if(!drone.GetComponent<ScriptRef>().scriptContainer.GetComponentInChildren<CurrentAction>()){
+				if(!drone.GetComponent<ScriptRef>().scriptContainer.GetComponentInChildren<CurrentAction>() && !drone.GetComponent<ScriptRef>().scriptFinished){
 					if(drone.GetComponent<ScriptRef>().scriptContainer.transform.childCount > 0){
 						firstAction = getFirstActionOf(drone.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(0).gameObject, drone);
 						//Debug.Log("firstAction drone = "+firstAction.name);

@@ -5,4 +5,5 @@ public class ScriptRef : MonoBehaviour {
 	public GameObject scriptContainer;
 	public GameObject uiContainer; //container to show/hide - root of Container prefab
 	public int currentAction;
+	public bool scriptFinished;
 }

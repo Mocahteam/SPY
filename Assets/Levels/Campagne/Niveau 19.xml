@@ -5,13 +5,9 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
     </line>
     <line>
       <row value="1" />
-      <row value="0" />
-      <row value="0" />
       <row value="3" />
       <row value="1" />
     </line>
@@ -19,45 +15,55 @@
       <row value="1" />
       <row value="0" />
       <row value="1" />
+    </line>
+    <line>
       <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
       <row value="1" />
     </line>
     <line>
       <row value="1" />
       <row value="2" />
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
     </line>
     <line>
-      <row value="1" />
-      <row value="1" />
       <row value="1" />
       <row value="1" />
       <row value="1" />
     </line>
   </map>
   <actionBlocLimit>
-    <limit actionType="Forward" limit="-1" />
+    <limit actionType="Forward" limit="1" />
     <limit actionType="TurnLeft" limit="-1" />
     <limit actionType="TurnRight" limit="-1" />
     <limit actionType="Wait" limit="-1" />
-    <limit actionType="Activate" limit="-1" />
+    <limit actionType="Activate" limit="1" />
     <limit actionType="TurnBack" limit="-1" />
-    <limit actionType="If" limit="0" />
-    <limit actionType="For" limit="-1" />
+    <limit actionType="If" limit="1" />
+    <limit actionType="For" limit="1" />
   </actionBlocLimit>
-  <player posX="3" posZ="1" direction="3" />
-  <ennemy posX="1" posZ="1" direction="2" range="1" selfRange="False" typeRange="0">
-    <script>
-      <action actionType="Forever">
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
-        <action actionType="TurnLeft"/>
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
-        <action actionType="TurnRight"/>
-      </action>
-    </script>
-  </ennemy>
+  <activable posX="3" posZ="1" side="1">
+    <slot slot="0" />
+  </activable>
+  <activable posX="5" posZ="1" side="1">
+    <slot slot="1" />
+  </activable>
+  <door posX="2" posZ="1" slot="0" direction="2" />
+  <door posX="4" posZ="1" slot="1" direction="2" />
+  <player posX="7" posZ="1" direction="3" />
 </level>

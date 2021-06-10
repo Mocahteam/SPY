@@ -61,7 +61,7 @@ public class ActionBlocSystem : FSystem {
 				GameObjectManager.setGameObjectState(getDraggableElement(keyName).transform.GetChild(1).gameObject, false);
 			}
 			else{
-				getDraggableElement(keyName).transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Reste\n" + gameData.actionBlocLimit[keyName].ToString();
+				getDraggableElement(keyName).transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Reste " + gameData.actionBlocLimit[keyName].ToString();
 				GameObjectManager.setGameObjectState(getDraggableElement(keyName).transform.GetChild(1).gameObject, true);
 			}
 		}		

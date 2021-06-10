@@ -101,7 +101,7 @@ public class DragDropSystem : FSystem
             {
                 // default put position Bar last
                 positionBar.transform.SetParent(targetContainer.transform);
-                positionBar.transform.SetSiblingIndex(targetContainer.transform.childCount + 1);
+				positionBar.transform.SetSiblingIndex(targetContainer.transform.childCount + 1);
                 if (actionPointed_f.Count > 0)
                 {
                     // get focused item and adjust position bar depending on mouse position
@@ -111,10 +111,18 @@ public class DragDropSystem : FSystem
                         targetContainer = targetContainer.transform.parent.gameObject;
                         positionBar.transform.SetParent(targetContainer.transform);
                     }
-                    if ((focusedItemTarget.GetComponent<UITypeContainer>() == null && Input.mousePosition.y > focusedItemTarget.transform.position.y) || (focusedItemTarget.GetComponent<UITypeContainer>() != null && Input.mousePosition.y > focusedItemTarget.transform.position.y-30))
-                        positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex());
-                    else
-                        positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex() + 1);
+                    if ((focusedItemTarget.GetComponent<UITypeContainer>() == null && Input.mousePosition.y > focusedItemTarget.transform.position.y) ||
+					 (focusedItemTarget.GetComponent<UITypeContainer>() != null && Input.mousePosition.y > focusedItemTarget.transform.position.y-30)){
+						 positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex());
+					 }
+                        
+                    else if(focusedItemTarget.GetComponent<UITypeContainer>()){
+						positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex() + focusedItemTarget.transform.childCount);
+					}
+                    else {
+						positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex() + 1);
+					}
+                        
                 }
             }
         }

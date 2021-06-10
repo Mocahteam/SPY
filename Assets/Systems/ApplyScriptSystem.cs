@@ -28,13 +28,21 @@ public class ApplyScriptSystem : FSystem {
 	private void onCurrentActionRemoved(int unused){
 		MainLoop.instance.StartCoroutine(delayCheckEnd());
 	}
+	
+	private bool playerHasCurrentAction(){
+		foreach(GameObject go in newCurrentAction_f){
+			if(go.GetComponent<CurrentAction>().agent.CompareTag("Player"))
+				return true;
+		}
+		return false;
+	}
 
 	private IEnumerator delayCheckEnd(){
 		//wait for new currentAction
 		yield return null;
 		yield return null;
 		//if no currentAction exists check if all players are on the end of the level
-		if(newCurrentAction_f.Count == 0){
+		if(!playerHasCurrentAction()){
 			int nbEnd = 0;
 			foreach (GameObject player in playerGO)
 			{
