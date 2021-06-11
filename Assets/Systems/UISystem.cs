@@ -22,6 +22,7 @@ public class UISystem : FSystem {
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
 	private Family emptyPlayerExecution = FamilyManager.getFamily(new AllOfComponents(typeof(EmptyExecution))); 
+	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private GameData gameData;
 	private GameObject dialogPanel;
 	private int nDialog = 0;
@@ -214,7 +215,7 @@ public class UISystem : FSystem {
 	}
 
 	//Empty the script window
-	public void resetScript(){
+	public void resetScript(bool refund = false){
 		GameObject editableContainer = editableScriptContainer.First();
 		/*
 		foreach(BaseElement go in editableContainer.GetComponentsInChildren<BaseElement>()){
@@ -224,7 +225,7 @@ public class UISystem : FSystem {
 		for (int i = 0 ; i < editableContainer.transform.childCount ; i++){
 			if(editableContainer.transform.GetChild(i).GetComponent<BaseElement>()){
 				//Debug.Log("baseelement go = "+ editableContainer.transform.GetChild(i).name);
-				destroyScript(editableContainer.transform.GetChild(i).gameObject);				
+				destroyScript(editableContainer.transform.GetChild(i).gameObject, refund);				
 			}
 		
 		}
@@ -394,7 +395,7 @@ public class UISystem : FSystem {
 			
 			foreach( GameObject go in playerGO){
 				GameObject targetContainer = go.GetComponent<ScriptRef>().scriptContainer;
-				GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer, true);
+				//GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer, true);
 				go.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;	
 				for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
 					if(!containerCopy.transform.GetChild(i).name.Contains("PositionBar")){
@@ -414,6 +415,13 @@ public class UISystem : FSystem {
 			resetScript();
 
 			buttonPlay.GetComponent<AudioSource>().Play();
+			
+			//quick fix for container's scroll bug
+			foreach(GameObject go in agents){
+				GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer,false);
+				GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer,true);
+			}
+			
 		}
 
 	}

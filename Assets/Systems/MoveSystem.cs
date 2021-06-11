@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using FYFY;
+using System;
 using FYFY_plugins.TriggerManager;
 
 public class MoveSystem : FSystem {
@@ -7,9 +8,10 @@ public class MoveSystem : FSystem {
 	private float turnSpeed = 150f;
 	private float moveSpeed = 7f;
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
+	private Family newstep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
 	private GameData gameData;
-	// Use this to update member variables when system pause. 
-	// Advice: avoid to update your families inside this function.
+	private bool isMoving;
+
 	public MoveSystem(){
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 
@@ -38,14 +40,15 @@ public class MoveSystem : FSystem {
 
 		foreach( GameObject go in agents){
 
-			bool isMoving = false;
-
+			isMoving = false; 
 			if(go.transform.localPosition.x/3 != go.GetComponent<Position>().x || go.transform.localPosition.z/3 != go.GetComponent<Position>().z ||
 			 go.GetComponent<Position>().animate){
 				if(go.GetComponent<Animator>()){
-					go.GetComponent<Animator>().SetFloat("Run", 1f);
+					go.GetComponent<Animator>().SetFloat("Run", 1f);	
+				}
+				go.GetComponent<Position>().animate = false;				
 					go.GetComponent<Position>().animate = false;	
-				}				
+				go.GetComponent<Position>().animate = false;				
 				isMoving = true;
 				
 				go.transform.localPosition = Vector3.MoveTowards(go.transform.localPosition, new Vector3(go.GetComponent<Position>().x*3,go.transform.localPosition.y,go.GetComponent<Position>().z*3), moveSpeed* Time.deltaTime);

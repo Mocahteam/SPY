@@ -9,9 +9,9 @@ public class UISystem_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
-	public void resetScript()
+	public void resetScript(System.Boolean refund)
 	{
-		MainLoop.callAppropriateSystemMethod ("UISystem", "resetScript", null);
+		MainLoop.callAppropriateSystemMethod ("UISystem", "resetScript", refund);
 	}
 
 	public void showDialogPanel()

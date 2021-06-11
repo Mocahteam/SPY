@@ -109,8 +109,11 @@ public class ApplyScriptSystem : FSystem {
 		CurrentAction ca = currentAction.GetComponent<CurrentAction>();	
 		//Debug.Log("on current action "+ca.name);
 		if(ca.agent.CompareTag("Player")){
-			if(!MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>())
+			if(!MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>()){
 				GameObjectManager.addComponent<PlayerIsMoving>(MainLoop.instance.gameObject);
+				Debug.Log("add PlayerIsMoving");				
+			}
+
 		}
 
 		switch (currentAction.GetComponent<BasicAction>().actionType){

@@ -82,8 +82,11 @@ public class StepSystem : FSystem {
     private void stopExecution(){
         if(MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>()){
             Debug.Log("fin exec");
+            //quick fix for several PlayerIsMoving
+            foreach(PlayerIsMoving p in MainLoop.instance.GetComponents<PlayerIsMoving>()){
+                GameObjectManager.removeComponent<PlayerIsMoving>(MainLoop.instance.gameObject);
+            }
             Pause = true;
-            GameObjectManager.removeComponent<PlayerIsMoving>(MainLoop.instance.gameObject);     
         }
     }
 
