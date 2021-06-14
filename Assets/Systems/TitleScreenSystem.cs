@@ -44,7 +44,7 @@ public class TitleScreenSystem : FSystem {
 		button.transform.GetChild(0).GetComponent<Text>().text = "Level 5";
 		button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(4);});*/
 		GameObjectManager.setGameObjectState(campagneMenu, false);
-		gameData.levelList = new List<string>(Directory.GetFiles(@"Assets\Levels\Campagne","*.xml"));
+		gameData.levelList = new List<string>(Directory.GetFiles(@"Levels\Campagne","*.xml"));
 		
 		//order by number of level
 		gameData.levelList = gameData.levelList.OrderBy(levelName => int.Parse(Regex.Match(levelName, @"\d+").Value)).ToList();
@@ -59,15 +59,6 @@ public class TitleScreenSystem : FSystem {
 
 		cList.transform.GetChild(0).SetSiblingIndex(cList.transform.childCount-1);
 
-	}
-	// Use this to update member variables when system pause. 
-	// Advice: avoid to update your families inside this function.
-	protected override void onPause(int currentFrame) {
-	}
-
-	// Use this to update member variables when system resume.
-	// Advice: avoid to update your families inside this function.
-	protected override void onResume(int currentFrame){
 	}
 
 	// Use to process your families.
