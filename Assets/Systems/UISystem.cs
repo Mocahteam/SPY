@@ -17,12 +17,13 @@ public class UISystem : FSystem {
 	private Family agentCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
 	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(UIActionType)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
-	private Family actionsPanel = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(Image)));
+	//private Family actionsPanel = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(Image)));
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
 	private Family emptyPlayerExecution = FamilyManager.getFamily(new AllOfComponents(typeof(EmptyExecution))); 
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
+	private Family libraryPanel = FamilyManager.getFamily(new AllOfComponents(typeof(GridLayoutGroup)));
 	private GameData gameData;
 	private GameObject dialogPanel;
 	private int nDialog = 0;
@@ -76,7 +77,7 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(buttonPause, !finished);
 		GameObjectManager.setGameObjectState(buttonStep, !finished);
 
-		GameObjectManager.setGameObjectState(actionsPanel.First(), finished);
+		GameObjectManager.setGameObjectState(libraryPanel.First(), finished);
 		//editable canvas
 		GameObjectManager.setGameObjectState(editableScriptContainer.First().transform.parent.parent.gameObject, finished);
 	}
@@ -271,7 +272,7 @@ public class UISystem : FSystem {
 	public void showDialogPanel(){
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
 		nDialog = 0;
-		dialogPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[0];
+		dialogPanel.transform.Find("Content").GetChild(0).GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[0];
 		if(gameData.dialogMessage.Count > 1){
 			setActiveOKButton(false);
 			setActiveNextButton(true);
@@ -284,7 +285,7 @@ public class UISystem : FSystem {
 
 	public void nextDialog(){
 		nDialog++;
-		dialogPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog];
+		dialogPanel.transform.Find("Content").GetChild(0).GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog];
 		if(nDialog + 1 < gameData.dialogMessage.Count){
 			setActiveOKButton(false);
 			setActiveNextButton(true);
@@ -366,7 +367,7 @@ public class UISystem : FSystem {
 		//if first click on play button
 		if(!buttonStop.activeInHierarchy){
 			//hide panels
-			GameObjectManager.setGameObjectState(actionsPanel.First(), false);
+			GameObjectManager.setGameObjectState(libraryPanel.First(), false);
 			//editable canvas
 			GameObjectManager.setGameObjectState(editableScriptContainer.First().transform.parent.parent.gameObject, false);
 			//clean container for each robot
@@ -415,11 +416,13 @@ public class UISystem : FSystem {
 			resetScript();
 
 			buttonPlay.GetComponent<AudioSource>().Play();
-			
-			//quick fix for container's scroll bug
+			  
 			foreach(GameObject go in agents){
-				GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer,false);
-				GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer,true);
+				if(go.CompareTag("Player") || go.GetComponent<ScriptRef>().uiContainer.gameObject.activeSelf){				
+					GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer,false); //quick fix for container's scroll bug
+					GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer,true);				
+				}
+
 			}
 			
 		}

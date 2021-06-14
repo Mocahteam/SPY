@@ -344,6 +344,10 @@ public class LevelGeneratorSystem : FSystem {
 			//add actions to container
 			foreach(GameObject go in script){
 				go.transform.SetParent(scriptref.scriptContainer.transform);
+				if(type == 2 && go.GetComponent<BasicAction>()){
+					go.GetComponent<Image>().color = new Color32(0x9A,0x9A,0x9A,0xFF); //#9A9A9A
+				}
+
 			}
 			addNext(scriptref.scriptContainer);
 		}
