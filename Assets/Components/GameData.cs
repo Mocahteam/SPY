@@ -9,7 +9,7 @@ public class GameData : MonoBehaviour {
 	public GameObject Level;
 	public List<string> levelList;
 	public int levelToLoad;
-	public List<string> dialogMessage;
+	public List<(string,string)> dialogMessage; //list of (dialogText, imageName)
 	public Dictionary<string, int> actionBlocLimit;
 
 	public int totalStep;

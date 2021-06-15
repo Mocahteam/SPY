@@ -270,9 +270,22 @@ public class UISystem : FSystem {
 	}
 
 	public void showDialogPanel(){
+		/*
+		foreach((string,string) dialog in gameData.dialogMessage){
+			Debug.Log("dialog = "+dialog.Item1 + "\n"+"img = "+dialog.Item2);
+		}*/
+
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
 		nDialog = 0;
-		dialogPanel.transform.Find("Content").GetChild(0).GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[0];
+		dialogPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[0].Item1;
+		Debug.Log(gameData.dialogMessage[0].Item2);
+		if(gameData.dialogMessage[0].Item2 != null){
+			Debug.Log("item2 not null");
+			GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
+			//GameObjectManager.setGameObjectState(imageGO,true);
+			Sprite newImage = Resources.Load<Sprite>("DialogImages/"+gameData.dialogMessage[0].Item2);
+			imageGO.GetComponent<Image>().sprite = newImage;
+		}
 		if(gameData.dialogMessage.Count > 1){
 			setActiveOKButton(false);
 			setActiveNextButton(true);
@@ -285,7 +298,16 @@ public class UISystem : FSystem {
 
 	public void nextDialog(){
 		nDialog++;
-		dialogPanel.transform.Find("Content").GetChild(0).GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog];
+		dialogPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog].Item1;
+		Debug.Log(gameData.dialogMessage[nDialog].Item2);
+		if(gameData.dialogMessage[nDialog].Item2 != null){
+			Debug.Log("item2 not null");
+			GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
+			//GameObjectManager.setGameObjectState(imageGO,true);
+			Sprite newImage = Resources.Load<Sprite>("DialogImages/"+gameData.dialogMessage[0].Item2);
+			imageGO.GetComponent<Image>().sprite = newImage;
+		}
+
 		if(nDialog + 1 < gameData.dialogMessage.Count){
 			setActiveOKButton(false);
 			setActiveNextButton(true);
@@ -306,7 +328,7 @@ public class UISystem : FSystem {
 
 	public void closeDialogPanel(){
 		nDialog = 0;
-		gameData.dialogMessage = new List<string>();;
+		gameData.dialogMessage = new List<(string,string)>();;
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 	}
 
@@ -315,7 +337,7 @@ public class UISystem : FSystem {
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
-		gameData.dialogMessage = new List<string>();
+		gameData.dialogMessage = new List<(string,string)>();
 		GameObjectManager.loadScene("MainScene");
 		Debug.Log("reload");
 	}
@@ -325,7 +347,7 @@ public class UISystem : FSystem {
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
-		gameData.dialogMessage = new List<string>();
+		gameData.dialogMessage = new List<(string,string)>();
 		gameData.actionsHistory = null;
 		GameObjectManager.loadScene("TitleScreen");
 	}
@@ -342,7 +364,7 @@ public class UISystem : FSystem {
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
 		
-		gameData.dialogMessage = new List<string>();
+		gameData.dialogMessage = new List<(string,string)>();
 		if(gameData.actionsHistory != null)
 			UnityEngine.Object.DontDestroyOnLoad(gameData.actionsHistory);
 		GameObjectManager.loadScene("MainScene");

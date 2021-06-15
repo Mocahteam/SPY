@@ -339,6 +339,9 @@ public class LevelGeneratorSystem : FSystem {
 		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
 		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
 		containerParent.transform.Find("Header").Find("agent").GetComponent<Image>().sprite = agentSpriteIcon;
+		if(type == 2){
+			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = new Color32(0xA4,0xA4,0xA4,0xFF); //#A4A4A4
+		}
 
 		if(script != null){
 			//add actions to container
@@ -636,7 +639,7 @@ public class LevelGeneratorSystem : FSystem {
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
-		gameData.dialogMessage = new List<string>();
+		gameData.dialogMessage = new List<(string, string)>();
 		gameData.actionBlocLimit = new Dictionary<string, int>();
 		map = new List<List<int>>();
 
@@ -650,7 +653,12 @@ public class LevelGeneratorSystem : FSystem {
 					readXMLMap(child);
 					break;
 				case "dialogs":
-					gameData.dialogMessage.Add(child.Attributes.GetNamedItem("dialog").Value);
+					string src = null;
+					//optional xml attribute
+					if(child.Attributes["img"] !=null)
+						src = child.Attributes.GetNamedItem("img").Value.Split('.')[0];
+					Debug.Log(src);
+					gameData.dialogMessage.Add((child.Attributes.GetNamedItem("dialog").Value, src));
 					break;
 				case "actionBlocLimit":
 					readXMLLimits(child);
