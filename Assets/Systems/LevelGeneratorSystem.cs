@@ -344,11 +344,14 @@ public class LevelGeneratorSystem : FSystem {
 		}
 
 		if(script != null){
-			//add actions to container
+			
 			foreach(GameObject go in script){
-				go.transform.SetParent(scriptref.scriptContainer.transform);
-				if(type == 2 && go.GetComponent<BasicAction>()){
-					go.GetComponent<Image>().color = new Color32(0x9A,0x9A,0x9A,0xFF); //#9A9A9A
+				go.transform.SetParent(scriptref.scriptContainer.transform); //add actions to container
+				List<GameObject> basicActionGO = getBasicActionGO(go);
+				if(type == 2 && basicActionGO.Count != 0){
+					foreach(GameObject baGO in basicActionGO){
+						baGO.GetComponent<Image>().color = new Color32(0x9A,0x9A,0x9A,0xFF); //#9A9A9A
+					}	
 				}
 
 			}
@@ -357,6 +360,23 @@ public class LevelGeneratorSystem : FSystem {
 		GameObjectManager.bind(containerParent);
 		GameObjectManager.bind(entity);
 		return entity;
+	}
+
+	private List<GameObject> getBasicActionGO(GameObject go){
+		List<GameObject> res = new List<GameObject>();
+		if(go.GetComponent<BasicAction>())
+			res.Add(go);
+		foreach(Transform child in go.transform){
+			if(child.GetComponent<BasicAction>())
+				res.Add(child.gameObject);
+			else if(child.GetComponent<UITypeContainer>() && child.GetComponent<BaseElement>()){
+				List<GameObject> childGO = getBasicActionGO(child.gameObject); 
+				foreach(GameObject cgo in childGO){
+					res.Add(cgo);
+				}
+			}		
+		}
+		return res;
 	}
 
 	private void createDoor(int i, int j, Direction.Dir orientation, int slotID){
@@ -656,7 +676,7 @@ public class LevelGeneratorSystem : FSystem {
 					string src = null;
 					//optional xml attribute
 					if(child.Attributes["img"] !=null)
-						src = child.Attributes.GetNamedItem("img").Value.Split('.')[0];
+						src = child.Attributes.GetNamedItem("img").Value;
 					Debug.Log(src);
 					gameData.dialogMessage.Add((child.Attributes.GetNamedItem("dialog").Value, src));
 					break;

@@ -4,8 +4,7 @@ using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
-using System;
-
+using System.IO;
 public class UISystem : FSystem {
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
@@ -269,6 +268,15 @@ public class UISystem : FSystem {
 		UnityEngine.Object.Destroy(go);
 	}
 
+	public Sprite getImageAsSprite(string path){
+		Texture2D tex2D = new Texture2D(2, 2); //create new "empty" texture
+		byte[] fileData = File.ReadAllBytes(path); //load image from SPY/path
+		if(tex2D.LoadImage(fileData)){ //if data readable
+			return Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+		}
+		return null;	
+	}
+
 	public void showDialogPanel(){
 		/*
 		foreach((string,string) dialog in gameData.dialogMessage){
@@ -279,13 +287,14 @@ public class UISystem : FSystem {
 		nDialog = 0;
 		dialogPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[0].Item1;
 		Debug.Log(gameData.dialogMessage[0].Item2);
+		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if(gameData.dialogMessage[0].Item2 != null){
-			Debug.Log("item2 not null");
-			GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
-			//GameObjectManager.setGameObjectState(imageGO,true);
-			Sprite newImage = Resources.Load<Sprite>("DialogImages/"+gameData.dialogMessage[0].Item2);
-			imageGO.GetComponent<Image>().sprite = newImage;
+			GameObjectManager.setGameObjectState(imageGO,true);
+			imageGO.GetComponent<Image>().sprite = getImageAsSprite("Levels/Images/"+gameData.dialogMessage[0].Item2);
 		}
+		else
+			GameObjectManager.setGameObjectState(imageGO,false);
+
 		if(gameData.dialogMessage.Count > 1){
 			setActiveOKButton(false);
 			setActiveNextButton(true);
@@ -300,13 +309,13 @@ public class UISystem : FSystem {
 		nDialog++;
 		dialogPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog].Item1;
 		Debug.Log(gameData.dialogMessage[nDialog].Item2);
+		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if(gameData.dialogMessage[nDialog].Item2 != null){
-			Debug.Log("item2 not null");
-			GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
-			//GameObjectManager.setGameObjectState(imageGO,true);
-			Sprite newImage = Resources.Load<Sprite>("DialogImages/"+gameData.dialogMessage[0].Item2);
-			imageGO.GetComponent<Image>().sprite = newImage;
+			GameObjectManager.setGameObjectState(imageGO,true);
+			imageGO.GetComponent<Image>().sprite = getImageAsSprite("Levels/Images/"+gameData.dialogMessage[nDialog].Item2);
 		}
+		else
+			GameObjectManager.setGameObjectState(imageGO,false);
 
 		if(nDialog + 1 < gameData.dialogMessage.Count){
 			setActiveOKButton(false);
@@ -319,11 +328,11 @@ public class UISystem : FSystem {
 	}
 
 	public void setActiveOKButton(bool active){
-		GameObjectManager.setGameObjectState(dialogPanel.transform.GetChild(1).gameObject, active);
+		GameObjectManager.setGameObjectState(dialogPanel.transform.Find("Buttons").Find("OKButton").gameObject, active);
 	}
 
 	public void setActiveNextButton(bool active){
-		GameObjectManager.setGameObjectState(dialogPanel.transform.GetChild(2).gameObject, active);
+		GameObjectManager.setGameObjectState(dialogPanel.transform.Find("Buttons").Find("NextButton").gameObject, active);
 	}
 
 	public void closeDialogPanel(){
