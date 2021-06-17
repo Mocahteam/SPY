@@ -82,6 +82,7 @@ public class UISystem : FSystem {
 	}
 	
 	private void saveHistory(int unused = 0){
+		Debug.Log("saveHistory");
 		if(gameData.actionsHistory == null){
 			gameData.actionsHistory = lastEditedScript;
 		}
@@ -103,8 +104,6 @@ public class UISystem : FSystem {
 			GameObject editableCanvas = editableScriptContainer.First();
 			for(int i = 0 ; i < gameData.actionsHistory.transform.childCount ; i++){
 				Transform child = UnityEngine.GameObject.Instantiate(gameData.actionsHistory.transform.GetChild(i));
-				//GameObjectManager.setGameObjectParent(child.gameObject, editableCanvas, true);
-				//child.gameObject.AddComponent<Dropped>();
 				child.SetParent(editableCanvas.transform);
 				GameObjectManager.bind(child.gameObject);
 				GameObjectManager.refresh(editableCanvas);

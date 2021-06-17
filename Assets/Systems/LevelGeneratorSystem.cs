@@ -18,6 +18,7 @@ public class LevelGeneratorSystem : FSystem {
 	//private Family ennemyGO = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Script), typeof(Direction), typeof(Position), typeof(HighLight), typeof(AudioSource)), new AnyOfTags("Drone"));
 	//private Family ennemyScript = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(Image)), new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
 	private Family ennemyScript = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
+	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer), typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
 	private List<List<int>> map;
 	private GameData gameData;
 	private GameObject scriptContainer;
@@ -339,23 +340,41 @@ public class LevelGeneratorSystem : FSystem {
 		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
 		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
 		containerParent.transform.Find("Header").Find("agent").GetComponent<Image>().sprite = agentSpriteIcon;
-		if(type == 2){
+		
+		
+		if(type == 2){ //Drone
 			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = new Color32(0xA4,0xA4,0xA4,0xFF); //#A4A4A4
 		}
 
 		if(script != null){
-			
-			foreach(GameObject go in script){
-				go.transform.SetParent(scriptref.scriptContainer.transform); //add actions to container
-				List<GameObject> basicActionGO = getBasicActionGO(go);
-				if(type == 2 && basicActionGO.Count != 0){
-					foreach(GameObject baGO in basicActionGO){
-						baGO.GetComponent<Image>().color = new Color32(0x9A,0x9A,0x9A,0xFF); //#9A9A9A
-					}	
-				}
 
+			if(type == 2){ //Drone
+				foreach(GameObject go in script){
+					go.transform.SetParent(scriptref.scriptContainer.transform); //add actions to container
+					List<GameObject> basicActionGO = getBasicActionGO(go);
+					if(type == 2 && basicActionGO.Count != 0){
+						foreach(GameObject baGO in basicActionGO){
+							baGO.GetComponent<Image>().color = new Color32(0x9A,0x9A,0x9A,0xFF); //#9A9A9A
+						}	
+					}
+
+				}
+				addNext(scriptref.scriptContainer);				
 			}
-			addNext(scriptref.scriptContainer);
+			else if (type == 0 && editableScriptContainer.First().transform.childCount == 1){ //Robot & empty script (1 child for position bar)
+				GameObject editableCanvas = editableScriptContainer.First();
+				for(int k = 0 ; k < script.Count ; k++){
+					script[k].transform.SetParent(editableCanvas.transform); //add actions to editable container
+					GameObjectManager.bind(script[k]);
+					GameObjectManager.refresh(editableCanvas);
+				}
+				foreach(BaseElement act in editableCanvas.GetComponentsInChildren<BaseElement>()){
+					GameObjectManager.addComponent<Dropped>(act.gameObject);
+				}
+				LayoutRebuilder.ForceRebuildLayoutImmediate(editableCanvas.GetComponent<RectTransform>());
+			}
+			
+
 		}
 		GameObjectManager.bind(containerParent);
 		GameObjectManager.bind(entity);
@@ -696,7 +715,7 @@ public class LevelGeneratorSystem : FSystem {
 				
 				case "player":
 					createEntity(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
-					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),0);
+					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),0, readXMLScript(child.ChildNodes[0], true));
 					break;
 				
 				case "ennemy":
@@ -746,16 +765,19 @@ public class LevelGeneratorSystem : FSystem {
 		 slotsID, int.Parse(activableNode.Attributes.GetNamedItem("side").Value));
 	}
 
-	private List<GameObject> readXMLScript(XmlNode scriptNode){
-		List<GameObject> script = new List<GameObject>();
-		foreach(XmlNode actionNode in scriptNode.ChildNodes){
-			script.Add(readXMLAction(actionNode));
-		}
+	private List<GameObject> readXMLScript(XmlNode scriptNode, bool editable = false){
+		if(scriptNode != null){
+			List<GameObject> script = new List<GameObject>();
+			foreach(XmlNode actionNode in scriptNode.ChildNodes){
+				script.Add(readXMLAction(actionNode, editable));
+			}
 
-		return script;
+			return script;			
+		}
+		return null;
 	}
 
-	private GameObject readXMLAction(XmlNode actionNode){
+	private GameObject readXMLAction(XmlNode actionNode, bool editable = false){
 		GameObject obj = null;
 		BaseElement action = null;
 		GameObject prefab = null;
@@ -785,10 +807,10 @@ public class LevelGeneratorSystem : FSystem {
 					obj.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value = 1;
 
 				//not interactable actions
-				obj.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().interactable = false;
-				obj.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().interactable = false;
-				obj.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().interactable = false;
-				obj.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().interactable = false;
+				obj.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().interactable = editable;
+				obj.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().interactable = editable;
+				obj.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().interactable = editable;
+				obj.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().interactable = editable;
 				
 				Object.Destroy(obj.GetComponent<UITypeContainer>());
 
@@ -796,7 +818,7 @@ public class LevelGeneratorSystem : FSystem {
 				firstchild = false;
 				if(actionNode.HasChildNodes){
 					foreach(XmlNode actNode in actionNode.ChildNodes){
-						GameObject child = (readXMLAction(actNode));
+						GameObject child = (readXMLAction(actNode, editable));
 						child.transform.SetParent(obj.transform);
 						if(!firstchild){
 							firstchild = true;
@@ -816,15 +838,21 @@ public class LevelGeneratorSystem : FSystem {
 				((ForAction)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
 				
 				//add to gameobject
-				obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (((ForAction)action).currentFor).ToString() + " / " + ((ForAction)action).nbFor.ToString();
-				obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = false;
-				Object.Destroy(obj.GetComponent<UITypeContainer>());
+				if(editable){
+					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = ((ForAction)action).nbFor.ToString();
+				}
+				else{
+					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (((ForAction)action).currentFor).ToString() + " / " + ((ForAction)action).nbFor.ToString();
+					Object.Destroy(obj.GetComponent<UITypeContainer>());
+				}
+				obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = editable;
+				
 
 				//add children
 				firstchild = false;
 				if(actionNode.HasChildNodes){
 					foreach(XmlNode actNode in actionNode.ChildNodes){
-						GameObject child = (readXMLAction(actNode));
+						GameObject child = (readXMLAction(actNode, editable));
 						child.transform.SetParent(action.transform);
 						if(!firstchild){
 							firstchild = true;
@@ -840,14 +868,15 @@ public class LevelGeneratorSystem : FSystem {
 				obj.GetComponent<UIActionType>().linkedTo = null;
 				action = obj.GetComponent<ForeverAction>();
 				
-				//add to gameobject
-				Object.Destroy(obj.GetComponent<UITypeContainer>());
+				if(!editable)
+					//add to gameobject
+					Object.Destroy(obj.GetComponent<UITypeContainer>());
 
 				//add children
 				firstchild = false;
 				if(actionNode.HasChildNodes){
 					foreach(XmlNode actNode in actionNode.ChildNodes){
-						GameObject child = (readXMLAction(actNode));
+						GameObject child = (readXMLAction(actNode, editable));
 						child.transform.SetParent(action.transform);
 						if(!firstchild){
 							firstchild = true;
@@ -868,7 +897,8 @@ public class LevelGeneratorSystem : FSystem {
 		}
 		obj.GetComponent<UIActionType>().prefab = prefab;
 		action.target = obj;
-		Object.Destroy(obj.GetComponent<PointerSensitive>());
+		if(!editable)
+			Object.Destroy(obj.GetComponent<PointerSensitive>());
 		return obj;
 	}
 

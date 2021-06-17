@@ -108,18 +108,22 @@ public class DragDropSystem : FSystem
                     GameObject focusedItemTarget = actionPointed_f.getAt(actionPointed_f.Count - 1);
                     if (focusedItemTarget == targetContainer && Input.mousePosition.y > focusedItemTarget.transform.position.y-30)
                     {
+						Debug.Log("if1");
                         targetContainer = targetContainer.transform.parent.gameObject;
                         positionBar.transform.SetParent(targetContainer.transform);
                     }
                     if ((focusedItemTarget.GetComponent<UITypeContainer>() == null && Input.mousePosition.y > focusedItemTarget.transform.position.y) ||
 					 (focusedItemTarget.GetComponent<UITypeContainer>() != null && Input.mousePosition.y > focusedItemTarget.transform.position.y-30)){
+						 Debug.Log("if2");
 						 positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex());
 					 }
                         
                     else if(focusedItemTarget.GetComponent<UITypeContainer>()){
+						Debug.Log("else1");
 						positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex() + focusedItemTarget.transform.childCount);
 					}
                     else {
+						Debug.Log("else2");
 						positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex() + 1);
 					}
                         
