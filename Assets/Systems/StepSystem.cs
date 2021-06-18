@@ -15,7 +15,8 @@ public class StepSystem : FSystem {
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
     private float timeStepCpt;
-	private static float timeStep = 1.5f;
+    private static float defaultTimeStep = 1.5f; 
+	private static float timeStep = defaultTimeStep;
 	private GameData gameData;
     private int nbStep;
     private bool newStepAskedByPlayer;
@@ -132,4 +133,11 @@ public class StepSystem : FSystem {
         nbStep = 0;
     }
 
+    public void speedTimeStep(){
+        timeStep = defaultTimeStep/5;
+    }
+
+    public void setToDefaultTimeStep(){
+        timeStep = defaultTimeStep;
+    }
 }

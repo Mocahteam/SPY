@@ -64,7 +64,6 @@ public class CameraSystem : FSystem {
 				go.transform.LookAt(target); 
 			}
 				
-			
 			/*
 			// Pour placer la caméra derrière un agent
 			//if (Input.GetMouseButtonDown(0))
@@ -89,6 +88,11 @@ public class CameraSystem : FSystem {
 			// avance recule
 			go.transform.position += new Vector3(go.transform.right.x, 0, go.transform.right.z ) * Input.GetAxis("Horizontal") * go.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
 			
+			if (Input.GetKey(KeyCode.A))
+				go.transform.Rotate(-Vector3.up*90*Time.deltaTime, Space.World);
+			else if (Input.GetKey(KeyCode.E))
+				go.transform.Rotate(Vector3.up*90*Time.deltaTime, Space.World);
+				
 			//Debug.Log("position x = " + go.transform.position.x);
 			//Debug.Log("position y = " + go.transform.position.y);
 			//Debug.Log("position z = " + go.transform.position.z);

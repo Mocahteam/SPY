@@ -24,4 +24,14 @@ public class StepSystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("StepSystem", "updateTotalStep", null);
 	}
 
+	public void speedTimeStep()
+	{
+		MainLoop.callAppropriateSystemMethod ("StepSystem", "speedTimeStep", null);
+	}
+
+	public void setToDefaultTimeStep()
+	{
+		MainLoop.callAppropriateSystemMethod ("StepSystem", "setToDefaultTimeStep", null);
+	}
+
 }

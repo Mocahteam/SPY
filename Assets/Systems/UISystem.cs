@@ -32,6 +32,7 @@ public class UISystem : FSystem {
 	private GameObject buttonReset;
 	private GameObject buttonPause;
 	private GameObject buttonStep;
+	private GameObject buttonSpeed;
 	private GameObject lastEditedScript;
 	private GameObject endPanel;
 	private GameObject executionCanvas;
@@ -45,6 +46,7 @@ public class UISystem : FSystem {
 		buttonStop = executionCanvas.transform.Find("StopButton").gameObject;
 		buttonPause = executionCanvas.transform.Find("PauseButton").gameObject;
 		buttonStep = executionCanvas.transform.Find("NextStepButton").gameObject;
+		buttonSpeed = executionCanvas.transform.Find("SpeedButton").gameObject;
 
 		buttonReset = GameObject.Find("ResetButton");
 		endPanel = GameObject.Find("EndPanel");
@@ -67,7 +69,6 @@ public class UISystem : FSystem {
 		loadHistory();
     }
 	private void setExecutionState(bool finished){
-		Debug.Log("setExecutionState "+finished);
 		buttonReset.GetComponent<Button>().interactable = finished;
 		
 		GameObjectManager.setGameObjectState(buttonPlay, finished);
@@ -75,6 +76,7 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(buttonStop, !finished);
 		GameObjectManager.setGameObjectState(buttonPause, !finished);
 		GameObjectManager.setGameObjectState(buttonStep, !finished);
+		GameObjectManager.setGameObjectState(buttonSpeed, !finished);
 
 		GameObjectManager.setGameObjectState(libraryPanel.First(), finished);
 		//editable canvas
@@ -82,16 +84,12 @@ public class UISystem : FSystem {
 	}
 	
 	private void saveHistory(int unused = 0){
-		Debug.Log("saveHistory");
 		if(gameData.actionsHistory == null){
 			gameData.actionsHistory = lastEditedScript;
 		}
 		else{
 			foreach(Transform child in lastEditedScript.transform){
 				Transform copy = UnityEngine.GameObject.Instantiate(child);
-				Debug.Log("copy = "+copy.name);
-				Debug.Log("actionsHistory = "+gameData.actionsHistory.name);
-				Debug.Log("child = "+child.name);
 				copy.SetParent(gameData.actionsHistory.transform);
 				GameObjectManager.bind(copy.gameObject);				
 			}
@@ -128,7 +126,6 @@ public class UISystem : FSystem {
 		}
 		GameObject container = editableScriptContainer.First();
 		foreach(Transform child in childrenList){
-			//Debug.Log(child.name);
 			child.SetParent(container.transform);
 			GameObjectManager.bind(child.gameObject);
 		}
@@ -138,10 +135,7 @@ public class UISystem : FSystem {
 	private void levelFinished (GameObject go){
 		setExecutionState(true);
 		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
-			Debug.Log("level finished avant");
-			//saveHistory();
 			loadHistory();
-			Debug.Log("level finished après");
 		}
 		else if(go.GetComponent<NewEnd>().endType == NewEnd.Detected){
 			//copy player container into editable container
