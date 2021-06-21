@@ -6,6 +6,7 @@ using FYFY_plugins.TriggerManager;
 using UnityEngine.UI;
 using TMPro;
 using FYFY_plugins.PointerManager;
+using System.IO;
 //using System;
 
 public class LevelGeneratorSystem : FSystem {
@@ -31,7 +32,7 @@ public class LevelGeneratorSystem : FSystem {
 		gameData.Level = GameObject.Find("Level");
 		scriptContainer = ennemyScript.First();
 		XmlToLevel(gameData.levelList[gameData.levelToLoad]);
-		GameObject.Find("LevelName").GetComponent<TMP_Text>().text = "Niveau "+(gameData.levelToLoad+1);
+		GameObject.Find("LevelName").GetComponent<TMP_Text>().text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad]);
 		//gameData.currentLevelBlocLimits = gameData.actionBlocLimit;
 		//generateLevel6();
 
@@ -112,7 +113,8 @@ public class LevelGeneratorSystem : FSystem {
 		map = new List<List<int>> {new List<int>{1,1,1},
 									new List<int>{1,0,1},
 									new List<int>{1,3,1},
-									new List<int>{1,0,1},
+									new List<
+									>{1,0,1},
 									new List<int>{1,0,1},
 									new List<int>{1,0,1},
 									new List<int>{1,0,1},
@@ -343,7 +345,7 @@ public class LevelGeneratorSystem : FSystem {
 		
 		
 		if(type == 2){ //Drone
-			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = new Color32(0xA4,0xA4,0xA4,0xFF); //#A4A4A4
+			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = scriptref.uiContainer.GetComponent<actionColor>().droneBackground;
 		}
 
 		if(script != null){
@@ -354,7 +356,7 @@ public class LevelGeneratorSystem : FSystem {
 					List<GameObject> basicActionGO = getBasicActionGO(go);
 					if(type == 2 && basicActionGO.Count != 0){
 						foreach(GameObject baGO in basicActionGO){
-							baGO.GetComponent<Image>().color = new Color32(0x9A,0x9A,0x9A,0xFF); //#9A9A9A
+							baGO.GetComponent<Image>().color = scriptref.uiContainer.GetComponent<actionColor>().droneAction;
 						}	
 					}
 

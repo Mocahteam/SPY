@@ -259,6 +259,8 @@ public class UISystem : FSystem {
 		go.transform.DetachChildren();
 		GameObjectManager.unbind(go);
 		UnityEngine.Object.Destroy(go);
+		//go.SetActive(false);
+		//LayoutRebuilder.MarkLayoutForRebuild(editableScriptContainer.First().transform as RectTransform);
 	}
 
 	public Sprite getImageAsSprite(string path){
@@ -283,7 +285,7 @@ public class UISystem : FSystem {
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if(gameData.dialogMessage[0].Item2 != null){
 			GameObjectManager.setGameObjectState(imageGO,true);
-			imageGO.GetComponent<Image>().sprite = getImageAsSprite("Levels/Images/"+gameData.dialogMessage[0].Item2);
+			imageGO.GetComponent<Image>().sprite = getImageAsSprite(Application.streamingAssetsPath+Path.DirectorySeparatorChar+"Levels"+Path.DirectorySeparatorChar+"Images"+Path.DirectorySeparatorChar+gameData.dialogMessage[0].Item2);
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO,false);
@@ -305,7 +307,7 @@ public class UISystem : FSystem {
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if(gameData.dialogMessage[nDialog].Item2 != null){
 			GameObjectManager.setGameObjectState(imageGO,true);
-			imageGO.GetComponent<Image>().sprite = getImageAsSprite("Levels/Images/"+gameData.dialogMessage[nDialog].Item2);
+			imageGO.GetComponent<Image>().sprite = getImageAsSprite(Application.streamingAssetsPath+Path.DirectorySeparatorChar+"Levels"+Path.DirectorySeparatorChar+"Images"+Path.DirectorySeparatorChar+gameData.dialogMessage[nDialog].Item2);
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO,false);
@@ -440,10 +442,9 @@ public class UISystem : FSystem {
 			resetScript();
 
 			buttonPlay.GetComponent<AudioSource>().Play();
-			  
 			foreach(GameObject go in agents){
-				if(go.CompareTag("Player") || go.GetComponent<ScriptRef>().uiContainer.gameObject.activeSelf){				
-					GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer,false); //quick fix for container's scroll bug
+				LayoutRebuilder.ForceRebuildLayoutImmediate(go.GetComponent<ScriptRef>().uiContainer.GetComponent<RectTransform>());
+				if(go.CompareTag("Player")){				
 					GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer,true);				
 				}
 

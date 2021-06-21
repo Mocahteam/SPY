@@ -74,6 +74,7 @@ public class DragDropSystem : FSystem
             if (actionPointed_f.Count > 0 && inputUIOver_f.Count == 0 && editableScriptPointed_f.Count > 0) //cannot drag if inputfield or dropdown pointed
             {
                 itemDragged = actionPointed_f.getAt(actionPointed_f.Count-1); // get the last one <=> deeper child PointerOver
+				Debug.Log("itemDragged = "+itemDragged.name);
 				//actionPriority.transform.SetParent(mainCanvas.transform);
 				GameObjectManager.setGameObjectParent(itemDragged, mainCanvas, true);
 				itemDragged.transform.localScale = new Vector3(0.8f,0.8f,0.8f);
@@ -106,24 +107,25 @@ public class DragDropSystem : FSystem
                 {
                     // get focused item and adjust position bar depending on mouse position
                     GameObject focusedItemTarget = actionPointed_f.getAt(actionPointed_f.Count - 1);
+					Debug.Log("focusedItemTarget = "+focusedItemTarget.name);
                     if (focusedItemTarget == targetContainer && Input.mousePosition.y > focusedItemTarget.transform.position.y-30)
                     {
-						Debug.Log("if1");
+						//Debug.Log("if1");
                         targetContainer = targetContainer.transform.parent.gameObject;
                         positionBar.transform.SetParent(targetContainer.transform);
                     }
                     if ((focusedItemTarget.GetComponent<UITypeContainer>() == null && Input.mousePosition.y > focusedItemTarget.transform.position.y) ||
 					 (focusedItemTarget.GetComponent<UITypeContainer>() != null && Input.mousePosition.y > focusedItemTarget.transform.position.y-30)){
-						 Debug.Log("if2");
+						 //Debug.Log("if2");
 						 positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex());
 					 }
                         
                     else if(focusedItemTarget.GetComponent<UITypeContainer>()){
-						Debug.Log("else1");
+						//Debug.Log("else1");
 						positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex() + focusedItemTarget.transform.childCount);
 					}
                     else {
-						Debug.Log("else2");
+						//Debug.Log("else2");
 						positionBar.transform.SetSiblingIndex(focusedItemTarget.transform.GetSiblingIndex() + 1);
 					}
                         
@@ -134,6 +136,7 @@ public class DragDropSystem : FSystem
         {
             positionBar.transform.SetParent(editableContainer.transform);
             positionBar.transform.SetSiblingIndex(editableContainer.transform.childCount + 1);
+			//LayoutRebuilder.ForceRebuildLayoutImmediate(editableContainer.GetComponent<RectTransform>());
             //GameObjectManager.setGameObjectParent(positionBar, editableContainer, true);
             //GameObjectManager.setGameObjectState(positionBar, false);
         }	
@@ -153,6 +156,9 @@ public class DragDropSystem : FSystem
 
             //Drop in script
             if (itemDragged != null && (targetContainer != null  || doubleclick)){
+				Debug.Log("drop itemDragged "+itemDragged.name);
+				if(targetContainer != null)
+					Debug.Log("drop targetContainer "+targetContainer.name);
 				if(doubleclick){
 					itemDragged.transform.SetParent(editableContainer.transform);
 					//GameObjectManager.setGameObjectParent(itemDragged, editableContainer, true);

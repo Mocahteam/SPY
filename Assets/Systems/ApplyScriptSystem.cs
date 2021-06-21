@@ -13,7 +13,7 @@ public class ApplyScriptSystem : FSystem {
     private Family newCurrentAction_f = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
     private Family endpanel_f = FamilyManager.getFamily(new AllOfComponents(typeof(Image), typeof(AudioSource)), new AnyOfTags("endpanel"));
-	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
+	//private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
     //private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
 	private GameObject endPanel;
 	private GameData gameData;
@@ -89,6 +89,7 @@ public class ApplyScriptSystem : FSystem {
 	*/
 
 	//Return the current action
+	/*
     public static Transform getCurrentAction(GameObject go) {
 		Transform action = go.GetComponent<ScriptRef>().scriptContainer.transform.GetChild(go.GetComponent<ScriptRef>().currentAction); 
 		//end when a pure action is found
@@ -103,6 +104,7 @@ public class ApplyScriptSystem : FSystem {
 		}
 		return action;
 	}
+	*/
 
 	// Use to process your families.
 	private void onNewCurrentAction(GameObject currentAction) {

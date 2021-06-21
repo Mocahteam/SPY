@@ -44,15 +44,16 @@ public class TitleScreenSystem : FSystem {
 		button.transform.GetChild(0).GetComponent<Text>().text = "Level 5";
 		button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(4);});*/
 		GameObjectManager.setGameObjectState(campagneMenu, false);
-		gameData.levelList = new List<string>(Directory.GetFiles(@"Levels\Campagne","*.xml"));
+		gameData.levelList = new List<string>(Directory.GetFiles(Application.streamingAssetsPath+Path.DirectorySeparatorChar+"Levels"+Path.DirectorySeparatorChar+"Campagne","*.xml"));
 		
 		//order by number of level
-		gameData.levelList = gameData.levelList.OrderBy(levelName => int.Parse(Regex.Match(levelName, @"\d+").Value)).ToList();
+		//gameData.levelList = gameData.levelList.OrderBy(levelName => int.Parse(Regex.Match(levelName, @"\d+").Value)).ToList();
 
 		for(int i = 0; i < gameData.levelList.Count; i++){
 			GameObject button = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Button") as GameObject, cList.transform);
-			string[] texts = gameData.levelList[i].Split('\\');
-			button.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = texts[texts.Length-1].Split('.')[0];
+			//string[] texts = gameData.levelList[i].Split(Path.DirectorySeparatorChar);
+			//button.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = texts[texts.Length-1].Split('.')[0];
+			button.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(gameData.levelList[i]);
 			int indice = i;
 			button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(indice);});
 		}
