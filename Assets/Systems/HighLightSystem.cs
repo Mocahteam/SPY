@@ -15,9 +15,10 @@ public class HighLightSystem : FSystem {
 	private Family highlightableGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(UIActionType))); //has to be defined before nonhighlightedGO because initBaseColor must be called before unHighLightItem
 	private Family highlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(PointerOver)), new NoneOfComponents(typeof(UIActionType)));
 	private Family nonhighlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(UIActionType)));
-	private Family highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(UIActionType)));
-	private Family nonhighlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(CurrentAction), typeof(Dragged)));
-
+	private Family highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new AnyOfComponents( typeof(CurrentAction), typeof(PointerOver)));
+	private Family nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(CurrentAction), typeof(Dragged), typeof(PointerOver)));
+	private Family nonPointedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(CurrentAction), typeof(Dragged), typeof(PointerOver)));
+	private static Color32 currentActionColor = new Color32(0xFF,0xEB,0x04,0xFF); //#FFEB04
 	//private Family enemyScriptContainer_f = FamilyManager.getFamily(new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
 	//private GameObject EnemyScriptContainer;
 
@@ -29,7 +30,7 @@ public class HighLightSystem : FSystem {
 		nonhighlightedGO.addEntryCallback(unHighLightItem);
 		//highlightedGO.addExitCallback(unHighLightItem);
 		highlightedAction.addEntryCallback(highLightItem);
-		nonhighlightedAction.addEntryCallback(unHighLightItem);
+		nonCurrentAction.addEntryCallback(unHighLightItem);
 		//highlightedAction.addExitCallback(unHighLightItem);
         //highLightedItem = null;
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
@@ -37,22 +38,27 @@ public class HighLightSystem : FSystem {
 	}
 	
 	private void initBaseColor(GameObject go){
-		if(go.GetComponent<BaseElement>()){
-			if(go.GetComponent<BasicAction>() && go.GetComponent<Image>()){
-				//Debug.Log("------------init " + go.name + " " + go.GetComponent<Image>().color.ToString());
-				go.GetComponent<BasicAction>().baseColor = go.GetComponent<Image>().color;
-			}
+		if(go.GetComponent<BaseElement>() && go.GetComponent<Image>()){
+			//if((go.GetComponent<BasicAction>() || go.GetComponent<IfAction>()) && go.GetComponent<Image>()){
+			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image>().color;
+			//}
+			/*
 			else if(go.GetComponent<ForAction>() || go.GetComponent<ForeverAction>()){
-				go.GetComponent<Highlightable>().baseColor = go.transform.GetChild(0).GetComponent<Image>().color;
-			}	
+				go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image
+			}*/	
 		}
-		else if (go.GetComponentInChildren<Renderer>()){
+		if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>().material.color;
 			if(go.GetComponent<ScriptRef>()){
 				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Container").GetComponent<Image>();
 				img.GetComponent<Highlightable>().baseColor = img.color;	
 			}			
 		}
+		/*
+		else if(go.GetComponent<ElementToDrag>() && go.GetComponent<Image>()){
+			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image>().color;
+		}
+		*/
 
 	}
 
@@ -85,12 +91,20 @@ public class HighLightSystem : FSystem {
 
 	public void highLightItem(GameObject go){
 		//Debug.Log("highLightItem = "+go.name+"------");
-		if(go.GetComponent<BaseElement>()){
+		if(go.GetComponent<CurrentAction>()){
 			if(go.GetComponent<BasicAction>() && go.GetComponent<Image>()){
-				go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
+				go.GetComponent<Image>().color = currentActionColor;
 			}
 			else if(go.GetComponent<ForAction>() || go.GetComponent<ForeverAction>()){
-				go.transform.GetChild(0).GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
+				go.transform.GetChild(0).GetComponent<Image>().color = currentActionColor;
+			}				
+		}
+		else if(go.GetComponent<BaseElement>()){ //pointed action
+			if((go.GetComponent<BasicAction>() || go.GetComponent<IfAction>()) && go.GetComponent<Image>()){
+				go.GetComponent<Image>().color = go.GetComponent<BaseElement>().highlightedColor;
+			}
+			else if(go.GetComponent<ForAction>() || go.GetComponent<ForeverAction>()){
+				go.GetComponent<Image>().color = go.GetComponent<BaseElement>().highlightedColor;
 			}			
 		}
 
@@ -101,6 +115,9 @@ public class HighLightSystem : FSystem {
 				img.color = img.GetComponent<Highlightable>().highlightedColor;
 			}
 		}
+		else if(go.GetComponent<ElementToDrag>() && go.GetComponent<Image>()){
+			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
+		}
 		
 
 	}
@@ -108,13 +125,17 @@ public class HighLightSystem : FSystem {
 	public void unHighLightItem(GameObject go){
 		//Debug.Log("------unhighlight");
 		if(go.GetComponent<BaseElement>()){
-			if(go.GetComponent<BasicAction>() && go.GetComponent<Image>()){
-				go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
+			if((go.GetComponent<BasicAction>() || go.GetComponent<IfAction>()) && go.GetComponent<Image>()){
+				go.GetComponent<Image>().color = go.GetComponent<BaseElement>().baseColor;
 				//Debug.Log("unhighlight "+ go.name +" "+ go.GetComponent<Highlightable>().baseColor.ToString());
 			}
 			else if(go.GetComponent<ForAction>() || go.GetComponent<ForeverAction>()){
-				//Debug.Log("for basecolor = "+go.GetComponent<Highlightable>().baseColor.ToString());
-				go.transform.GetChild(0).GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
+				if(go.GetComponentInParent<AgentColor>()){
+					go.transform.GetChild(0).GetComponent<Image>().color = go.GetComponentInParent<AgentColor>().forBaseColor;
+				}
+				else{
+					go.GetComponent<Image>().color = go.GetComponent<BaseElement>().baseColor;
+				}	
 			}
 
 		}
@@ -126,6 +147,10 @@ public class HighLightSystem : FSystem {
 				img.color = img.GetComponent<Highlightable>().baseColor;
 			}
 		}
+
+		else if(go.GetComponent<ElementToDrag>()){
+			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
+		}		
 
 		/*
 		GameObject prefab = go.GetComponent<UIActionType>().prefab;

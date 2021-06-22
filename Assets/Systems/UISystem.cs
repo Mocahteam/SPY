@@ -412,7 +412,7 @@ public class UISystem : FSystem {
 				}
 			}
 
-			GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false);
+			GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false, playerGO.First());
 
 			/*
 			foreach(Transform notgo in agentCanvas.First().transform){
@@ -454,7 +454,7 @@ public class UISystem : FSystem {
 
 	}
 
-    public GameObject CopyActionsFrom(GameObject container, bool isInteractable){
+    public GameObject CopyActionsFrom(GameObject container, bool isInteractable, GameObject agent){
 		GameObject copyGO = GameObject.Instantiate(container); 
 		foreach(TMP_Dropdown drop in copyGO.GetComponentsInChildren<TMP_Dropdown>()){
 			drop.interactable = isInteractable;
@@ -490,10 +490,6 @@ public class UISystem : FSystem {
 			}
 		}
 		foreach(IfAction IfAct in copyGO.GetComponentsInChildren<IfAction>()){
-			Debug.Log("childoutofbounds "+IfAct.gameObject.name);
-			Debug.Log("childoutofbounds "+IfAct.transform.GetChild(0).name);
-			Debug.Log("childoutofbounds "+IfAct.transform.GetChild(0).Find("DropdownEntityType").name);
-			Debug.Log("childoutofbounds "+IfAct.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().name);
 			IfAct.ifEntityType = IfAct.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value;
 			IfAct.ifDirection = IfAct.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value;
 			IfAct.range = int.Parse(IfAct.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text);
@@ -511,6 +507,23 @@ public class UISystem : FSystem {
 		}
 		foreach(PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>()){
 			pointerSensitive.enabled = isInteractable;
+		}
+
+		Color actionColor;
+		switch(agent.tag){
+			case "Player":
+				actionColor = agent.GetComponent<ScriptRef>().uiContainer.GetComponent<AgentColor>().playerAction;
+				break;
+			case "Drone":
+				actionColor = agent.GetComponent<ScriptRef>().uiContainer.GetComponent<AgentColor>().droneAction;
+				break;
+			default: // agent by default = robot
+				actionColor = agent.GetComponent<ScriptRef>().uiContainer.GetComponent<AgentColor>().playerAction;
+				break;
+		}
+
+		foreach(BasicAction act in copyGO.GetComponentsInChildren<BasicAction>()){
+			act.gameObject.GetComponent<Image>().color = actionColor;
 		}
 
 

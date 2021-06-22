@@ -343,27 +343,16 @@ public class LevelGeneratorSystem : FSystem {
 		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
 		containerParent.transform.Find("Header").Find("agent").GetComponent<Image>().sprite = agentSpriteIcon;
 		
-		
-		if(type == 2){ //Drone
-			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = scriptref.uiContainer.GetComponent<actionColor>().droneBackground;
+		if(type == 0){
+			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = scriptref.uiContainer.GetComponent<AgentColor>().playerBackground;
+		}
+		else if(type == 2){ //Drone
+			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = scriptref.uiContainer.GetComponent<AgentColor>().droneBackground;
 		}
 
 		if(script != null){
 
-			if(type == 2){ //Drone
-				foreach(GameObject go in script){
-					go.transform.SetParent(scriptref.scriptContainer.transform); //add actions to container
-					List<GameObject> basicActionGO = getBasicActionGO(go);
-					if(type == 2 && basicActionGO.Count != 0){
-						foreach(GameObject baGO in basicActionGO){
-							baGO.GetComponent<Image>().color = scriptref.uiContainer.GetComponent<actionColor>().droneAction;
-						}	
-					}
-
-				}
-				addNext(scriptref.scriptContainer);				
-			}
-			else if (type == 0 && editableScriptContainer.First().transform.childCount == 1){ //Robot & empty script (1 child for position bar)
+			if (type == 0 && editableScriptContainer.First().transform.childCount == 1){ //Robot & empty script (1 child for position bar)
 				GameObject editableCanvas = editableScriptContainer.First();
 				for(int k = 0 ; k < script.Count ; k++){
 					script[k].transform.SetParent(editableCanvas.transform); //add actions to editable container
@@ -375,7 +364,20 @@ public class LevelGeneratorSystem : FSystem {
 				}
 				LayoutRebuilder.ForceRebuildLayoutImmediate(editableCanvas.GetComponent<RectTransform>());
 			}
-			
+
+			else if(type == 2){ //Drone
+				foreach(GameObject go in script){
+					go.transform.SetParent(scriptref.scriptContainer.transform); //add actions to container
+					List<GameObject> basicActionGO = getBasicActionGO(go);
+					if(type == 2 && basicActionGO.Count != 0){
+						foreach(GameObject baGO in basicActionGO){
+							baGO.GetComponent<Image>().color = scriptref.uiContainer.GetComponent<AgentColor>().droneAction;
+						}	
+					}
+
+				}
+				addNext(scriptref.scriptContainer);				
+			}			
 
 		}
 		GameObjectManager.bind(containerParent);
