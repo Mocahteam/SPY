@@ -31,8 +31,8 @@ public class LevelGeneratorSystem : FSystem {
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		gameData.Level = GameObject.Find("Level");
 		scriptContainer = ennemyScript.First();
-		XmlToLevel(gameData.levelList[gameData.levelToLoad]);
-		GameObject.Find("LevelName").GetComponent<TMP_Text>().text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad]);
+		XmlToLevel(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+		GameObject.Find("LevelName").GetComponent<TMP_Text>().text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
 		//gameData.currentLevelBlocLimits = gameData.actionBlocLimit;
 		//generateLevel6();
 

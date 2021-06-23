@@ -136,6 +136,8 @@ public class UISystem : FSystem {
 		setExecutionState(true);
 		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
 			loadHistory();
+			PlayerPrefs.SetInt(gameData.levelToLoad.Item1, gameData.levelToLoad.Item2+1);
+			PlayerPrefs.Save();
 		}
 		else if(go.GetComponent<NewEnd>().endType == NewEnd.Detected){
 			//copy player container into editable container
@@ -180,7 +182,7 @@ public class UISystem : FSystem {
                 endPanel.GetComponent<AudioSource>().Play();
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, true);
                 //End
-                if (gameData.levelToLoad >= gameData.levelList.Count - 1)
+                if (gameData.levelToLoad.Item2 >= gameData.levelList[gameData.levelToLoad.Item1].Count - 1)
                 {
                     GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 					GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
@@ -357,7 +359,7 @@ public class UISystem : FSystem {
 	}
 
 	public void nextLevel(){
-		gameData.levelToLoad++;
+		gameData.levelToLoad.Item2++;
 		reloadScene();
 		gameData.actionsHistory = null;
 	}

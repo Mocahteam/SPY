@@ -14,11 +14,6 @@ public class TitleScreenSystem_wrapper : MonoBehaviour
 		MainLoop.callAppropriateSystemMethod ("TitleScreenSystem", "showCampagneMenu", null);
 	}
 
-	public void launchLevel(System.Int32 level)
-	{
-		MainLoop.callAppropriateSystemMethod ("TitleScreenSystem", "launchLevel", level);
-	}
-
 	public void backFromCampagneMenu()
 	{
 		MainLoop.callAppropriateSystemMethod ("TitleScreenSystem", "backFromCampagneMenu", null);

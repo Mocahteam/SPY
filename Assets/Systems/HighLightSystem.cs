@@ -17,10 +17,6 @@ public class HighLightSystem : FSystem {
 	private Family nonhighlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(UIActionType)));
 	private Family highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new AnyOfComponents( typeof(CurrentAction), typeof(PointerOver)));
 	private Family nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(CurrentAction), typeof(Dragged), typeof(PointerOver)));
-	private Family nonPointedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(CurrentAction), typeof(Dragged), typeof(PointerOver)));
-	private static Color32 currentActionColor = new Color32(0xFF,0xEB,0x04,0xFF); //#FFEB04
-	//private Family enemyScriptContainer_f = FamilyManager.getFamily(new NoneOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
-	//private GameObject EnemyScriptContainer;
 
 	private GameData gameData;
 	
@@ -93,10 +89,10 @@ public class HighLightSystem : FSystem {
 		//Debug.Log("highLightItem = "+go.name+"------");
 		if(go.GetComponent<CurrentAction>()){
 			if(go.GetComponent<BasicAction>() && go.GetComponent<Image>()){
-				go.GetComponent<Image>().color = currentActionColor;
+				go.GetComponent<Image>().color = go.GetComponentInParent<AgentColor>().currentActionColor;
 			}
 			else if(go.GetComponent<ForAction>() || go.GetComponent<ForeverAction>()){
-				go.transform.GetChild(0).GetComponent<Image>().color = currentActionColor;
+				go.transform.GetChild(0).GetComponent<Image>().color = go.GetComponentInParent<AgentColor>().currentActionColor;
 			}				
 		}
 		else if(go.GetComponent<BaseElement>()){ //pointed action

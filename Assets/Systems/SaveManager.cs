@@ -10,7 +10,6 @@ public class SaveManager : FSystem {
     private Family f_activables = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
 	//private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
-
     public static SaveManager instance;
 
     private GameData gameData;

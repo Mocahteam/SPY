@@ -9,4 +9,5 @@ public class AgentColor : MonoBehaviour
     public Color droneAction;
     public Color droneBackground;
     public Color forBaseColor;
+    public Color currentActionColor;
 }
