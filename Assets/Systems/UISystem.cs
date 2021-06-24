@@ -16,7 +16,6 @@ public class UISystem : FSystem {
 	private Family agentCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
 	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(UIActionType)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
-	//private Family actionsPanel = FamilyManager.getFamily(new AllOfComponents(typeof(VerticalLayoutGroup), typeof(Image)));
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
@@ -53,6 +52,7 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
 		dialogPanel = GameObject.Find("DialogPanel");
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
+
         requireEndPanel.addEntryCallback(displayEndPanel);
         displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
 		actions.addEntryCallback(linkTo);
@@ -64,10 +64,64 @@ public class UISystem : FSystem {
 		//0 execution on firstaction
 		emptyPlayerExecution.addEntryCallback(delegate{setExecutionState(true);});
 		emptyPlayerExecution.addEntryCallback(delegate{GameObjectManager.removeComponent<EmptyExecution>(MainLoop.instance.gameObject);});
+
+		currentActions.addEntryCallback(onNewCurrentAction);
+
 		lastEditedScript = null;
 
 		loadHistory();
     }
+
+	private void onNewCurrentAction(GameObject go){
+		Vector3 v = GetGUIElementOffset(go.GetComponent<RectTransform>());
+		if(v != Vector3.zero){ // if not visible in UI
+			ScrollRect containerScrollRect = go.GetComponentInParent<ScrollRect>();
+			containerScrollRect.content.localPosition = GetSnapToPositionToBringChildIntoView(containerScrollRect, go.GetComponent<RectTransform>());
+			LayoutRebuilder.ForceRebuildLayoutImmediate(go.GetComponent<RectTransform>());
+			LayoutRebuilder.ForceRebuildLayoutImmediate(containerScrollRect.GetComponent<RectTransform>());
+		}
+	}
+
+	public Vector3 GetSnapToPositionToBringChildIntoView(ScrollRect scrollRect, RectTransform child){
+		Canvas.ForceUpdateCanvases();
+		Vector3 viewportLocalPosition = scrollRect.viewport.localPosition;
+		Vector3 childLocalPosition   = child.localPosition;
+		Vector3 result = new Vector3(
+			0 - (viewportLocalPosition.x + childLocalPosition.x),
+			0 - (viewportLocalPosition.y + childLocalPosition.y),
+			0 - (viewportLocalPosition.z + childLocalPosition.z)
+		);
+		return result;
+	}
+
+	public Vector3 GetGUIElementOffset(RectTransform rect){
+        Rect screenBounds = new Rect(0f, 0f, Screen.width, Screen.height);
+        Vector3[] objectCorners = new Vector3[4];
+        rect.GetWorldCorners(objectCorners);
+ 
+        var xnew = 0f;
+        var ynew = 0f;
+        var znew = 0f;
+ 
+        for (int i = 0; i < objectCorners.Length; i++){
+            if (objectCorners[i].x < screenBounds.xMin)
+                xnew = screenBounds.xMin - objectCorners[i].x;
+
+            if (objectCorners[i].x > screenBounds.xMax)
+                xnew = screenBounds.xMax - objectCorners[i].x;
+
+            if (objectCorners[i].y < screenBounds.yMin)
+                ynew = screenBounds.yMin - objectCorners[i].y;
+
+            if (objectCorners[i].y > screenBounds.yMax)
+                ynew = screenBounds.yMax - objectCorners[i].y;
+				
+        }
+ 
+        return new Vector3(xnew, ynew, znew);
+ 
+    }
+
 	private void setExecutionState(bool finished){
 		buttonReset.GetComponent<Button>().interactable = finished;
 		

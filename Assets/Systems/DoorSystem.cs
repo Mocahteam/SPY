@@ -30,7 +30,8 @@ public class DoorSystem : FSystem {
 				if(slotGo.GetComponent<ActivationSlot>().slotID == id){
 					switch(slotGo.GetComponent<ActivationSlot>().type){
 						case ActivationSlot.ActivationType.Destroy:
-							MainLoop.instance.StartCoroutine(doorDestroy(slotGo));
+							//MainLoop.instance.StartCoroutine(doorDestroy(slotGo));
+							doorDestroy(slotGo);
 							break;
 					}
 				}
@@ -38,14 +39,14 @@ public class DoorSystem : FSystem {
 		}
 	}
 
-	private IEnumerator doorDestroy(GameObject go){
+	private void doorDestroy(GameObject go){
 
-		yield return new WaitForSeconds(0.3f);
+		//yield return new WaitForSeconds(0.3f);
 
 		go.GetComponent<Renderer>().enabled = false;
 		go.GetComponent<AudioSource>().Play();
 		
-		yield return new WaitForSeconds(0.5f);
+		//yield return new WaitForSeconds(0.5f);
 
 		GameObjectManager.setGameObjectState(go, false);
 		//GameObjectManager.unbind(go);
