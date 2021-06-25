@@ -56,13 +56,6 @@ public class TitleScreenSystem : FSystem {
 			if(levels != null){
 				gameData.levelList[Path.GetFileName(directory)] = levels; //key = directory name
 				Debug.Log("key = "+Path.GetFileName(directory));
-				//PlayerPrefs initialization
-				/*
-				if(!PlayerPrefs.HasKey(Path.GetFileName(directory))){
-					Debug.Log("not key = "+Path.GetFileName(directory)+" count = "+Path.GetFileName(directory).Length);
-					PlayerPrefs.SetInt(Path.GetFileName(directory), 0);
-					PlayerPrefs.Save();
-				}*/
 			}
 				
 		}
@@ -77,14 +70,10 @@ public class TitleScreenSystem : FSystem {
 			directoryButton.GetComponent<Button>().onClick.AddListener(delegate{showLevels(directoryButton);});
 			//create level buttons
 			for(int i = 0; i < gameData.levelList[key].Count; i++){
-				GameObject button = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Button") as GameObject, cList.transform);
-				//string[] texts = gameData.levelList[i].Split(Path.DirectorySeparatorChar);
-				//button.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = texts[texts.Length-1].Split('.')[0];
-				button.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(gameData.levelList[key][i]);
-				//save ref to level, key = path from Levels directory, value = gameobject button ref 
-				//levelButtonRefs["Campagne"+Path.DirectorySeparatorChar+gameData.levelList[i]] = button;
+				GameObject button = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/LevelButton") as GameObject, cList.transform);
+				button.transform.Find("Button").GetChild(0).GetComponent<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(gameData.levelList[key][i]);
 				int indice = i;
-				button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(key, indice);});
+				button.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate{launchLevel(key, indice);});
 				levelButtons[directoryButton].Add(button);
 				GameObjectManager.bind(button);
 				GameObjectManager.setGameObjectState(button, false);
@@ -141,12 +130,26 @@ public class TitleScreenSystem : FSystem {
 				//foreach(GameObject go in levelButtons[directory]){
 				for(int i = 0 ; i < levelButtons[directory].Count ; i ++){
 					GameObjectManager.setGameObjectState(levelButtons[directory][i], true);
-					//lock levels
+
 					string directoryName = levelDirectory.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text;
-					if(i > PlayerPrefs.GetInt(directoryName, 0))
-						levelButtons[directory][i].GetComponent<Button>().interactable = false;
-					else
-						levelButtons[directory][i].GetComponent<Button>().interactable = true;
+					//locked levels
+					if(i > PlayerPrefs.GetInt(directoryName, 0)) //by default first level of directory is the only unlocked level of directory
+						levelButtons[directory][i].transform.Find("Button").GetComponent<Button>().interactable = false;
+					//unlocked levels
+					else{
+						levelButtons[directory][i].transform.Find("Button").GetComponent<Button>().interactable = true;
+						//scores
+						int scoredStars = PlayerPrefs.GetInt(directoryName + Path.DirectorySeparatorChar + i + gameData.scoreKey, 0); //0 star by default
+						Transform scoreCanvas = levelButtons[directory][i].transform.Find("ScoreCanvas");
+						for (int nbStar = 0 ; nbStar < 4 ; nbStar++){
+							if(nbStar == scoredStars)
+								GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, true);
+							else
+								GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, false);
+						}
+						
+					}
+						
 				}
 			}
 			//hide other levels

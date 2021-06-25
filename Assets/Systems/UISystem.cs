@@ -13,7 +13,7 @@ public class UISystem : FSystem {
     private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer), typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
-	private Family agentCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
+	//private Family agentCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
 	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(UIActionType)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
@@ -22,6 +22,7 @@ public class UISystem : FSystem {
 	private Family emptyPlayerExecution = FamilyManager.getFamily(new AllOfComponents(typeof(EmptyExecution))); 
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private Family libraryPanel = FamilyManager.getFamily(new AllOfComponents(typeof(GridLayoutGroup)));
+	private Family actionsInEditableScript = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(PointerSensitive)));
 	private GameData gameData;
 	private GameObject dialogPanel;
 	private int nDialog = 0;
@@ -66,6 +67,9 @@ public class UISystem : FSystem {
 		emptyPlayerExecution.addEntryCallback(delegate{GameObjectManager.removeComponent<EmptyExecution>(MainLoop.instance.gameObject);});
 
 		currentActions.addEntryCallback(onNewCurrentAction);
+
+		actionsInEditableScript.addEntryCallback(delegate{ buttonPlay.GetComponent<Button>().interactable = true; });
+		actionsInEditableScript.addExitCallback(delegate{ if(actionsInEditableScript.Count == 0) buttonPlay.GetComponent<Button>().interactable = false; });
 
 		lastEditedScript = null;
 
@@ -220,7 +224,7 @@ public class UISystem : FSystem {
         switch (endPanel.GetComponent<NewEnd>().endType)
         {
             case 1:
-                endPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Vous avez été repéré !";
+                endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Vous avez été repéré !";
                 GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
                 endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
                 endPanel.GetComponent<AudioSource>().loop = true;
@@ -229,9 +233,12 @@ public class UISystem : FSystem {
             case 2:
                 //endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !\n Nombre d'instructions: "+ 
                 //gameData.totalActionBloc + "\nNombre d'étape: " + gameData.totalStep +"\nPièces récoltées:" + gameData.totalCoin;
+				int score = (10000 / (gameData.totalActionBloc + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
+                Transform verticalCanvas = endPanel.transform.Find("VerticalCanvas");
+				verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez gagné !\nScore: " + score;
+                setScoreStars(score, verticalCanvas.Find("ScoreCanvas"));
 
-                endPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Bravo vous avez gagné !\nScore: " + (10000 / (gameData.totalActionBloc + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
-                endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
+				endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
                 endPanel.GetComponent<AudioSource>().loop = false;
                 endPanel.GetComponent<AudioSource>().Play();
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, true);
@@ -244,6 +251,36 @@ public class UISystem : FSystem {
                 break;
         }
     }
+
+	private void setScoreStars(int score, Transform scoreCanvas){
+		int scoredStars = 0;
+		if(gameData.levelToLoadScore != null){
+			//check 0, 1, 2 or 3 stars
+			if(score >= gameData.levelToLoadScore[0]){
+				scoredStars = 3;
+			}
+			else if(score >= gameData.levelToLoadScore[1]){
+				scoredStars = 2;
+			}
+			else {
+				scoredStars = 1;
+			}			
+		}
+
+		for (int nbStar = 0 ; nbStar < 4 ; nbStar++){
+			if(nbStar == scoredStars)
+				GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, true);
+			else
+				GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, false);
+		}
+
+		//save score only if better score
+		int savedScore = PlayerPrefs.GetInt(gameData.levelToLoad.Item1+Path.DirectorySeparatorChar+gameData.levelToLoad.Item2, 0);
+		if(savedScore < scoredStars){
+			PlayerPrefs.SetInt(gameData.levelToLoad.Item1+Path.DirectorySeparatorChar+gameData.levelToLoad.Item2+gameData.scoreKey, scoredStars);
+			PlayerPrefs.Save();			
+		}
+	}
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
@@ -397,6 +434,7 @@ public class UISystem : FSystem {
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
+		gameData.levelToLoadScore = null;
 		gameData.dialogMessage = new List<(string,string)>();
 		GameObjectManager.loadScene("MainScene");
 		Debug.Log("reload");
@@ -407,6 +445,7 @@ public class UISystem : FSystem {
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
+		gameData.levelToLoadScore = null;
 		gameData.dialogMessage = new List<(string,string)>();
 		gameData.actionsHistory = null;
 		GameObjectManager.loadScene("TitleScreen");
@@ -423,7 +462,7 @@ public class UISystem : FSystem {
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
-		
+		gameData.levelToLoadScore = null;
 		gameData.dialogMessage = new List<(string,string)>();
 		if(gameData.actionsHistory != null)
 			UnityEngine.Object.DontDestroyOnLoad(gameData.actionsHistory);
@@ -448,6 +487,7 @@ public class UISystem : FSystem {
 	public void applyScriptToPlayer(){
 		//if first click on play button
 		if(!buttonStop.activeInHierarchy){
+			gameData.totalExecute++;
 			//hide panels
 			GameObjectManager.setGameObjectState(libraryPanel.First(), false);
 			//editable canvas

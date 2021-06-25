@@ -682,6 +682,7 @@ public class LevelGeneratorSystem : FSystem {
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
+		gameData.levelToLoadScore = null;
 		gameData.dialogMessage = new List<(string, string)>();
 		gameData.actionBlocLimit = new Dictionary<string, int>();
 		map = new List<List<int>>();
@@ -728,6 +729,12 @@ public class LevelGeneratorSystem : FSystem {
 					ennemy.GetComponent<DetectRange>().range = int.Parse(child.Attributes.GetNamedItem("range").Value);
 					ennemy.GetComponent<DetectRange>().selfRange = bool.Parse(child.Attributes.GetNamedItem("selfRange").Value);
 					ennemy.GetComponent<DetectRange>().type = (DetectRange.Type)int.Parse(child.Attributes.GetNamedItem("typeRange").Value);
+					break;
+				
+				case "score":
+					gameData.levelToLoadScore = new int[2];
+					gameData.levelToLoadScore[0] = int.Parse(child.Attributes.GetNamedItem("threeStars").Value);
+					gameData.levelToLoadScore[1] = int.Parse(child.Attributes.GetNamedItem("twoStars").Value);
 					break;
 			}
 		}

@@ -76,6 +76,7 @@ public class ActionBlocSystem : FSystem {
 			updateBlocLimit(actionKey);		
 		}
 		GameObjectManager.removeComponent<Dropped>(go);
+		
 	}
 	
 	private void unuseAction(GameObject go){
