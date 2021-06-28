@@ -12,6 +12,7 @@ public class TitleScreenSystem : FSystem {
 	private GameObject campagneMenu;
 	private GameObject playButton;
 	private GameObject quitButton;
+	private GameObject backButton;
 	private GameObject levelName;
 	private GameObject cList;
 	//private List<GameObject> levelDirectories;
@@ -24,6 +25,7 @@ public class TitleScreenSystem : FSystem {
 		campagneMenu = GameObject.Find("CampagneMenu");
 		playButton = GameObject.Find("Jouer");
 		quitButton = GameObject.Find("Quitter");
+		backButton = GameObject.Find("Retour");
 		GameObjectManager.dontDestroyOnLoadAndRebind(GameObject.Find("GameData"));
 
 		cList = GameObject.Find("CampagneList");
@@ -49,6 +51,7 @@ public class TitleScreenSystem : FSystem {
 		button.transform.GetChild(0).GetComponent<Text>().text = "Level 5";
 		button.GetComponent<Button>().onClick.AddListener(delegate{launchLevel(4);});*/
 		GameObjectManager.setGameObjectState(campagneMenu, false);
+		GameObjectManager.setGameObjectState(backButton, false);
 		string levelsPath = Application.streamingAssetsPath+Path.DirectorySeparatorChar+"Levels";
 		List<string> levels;
 		foreach(string directory in Directory.GetDirectories(levelsPath)){
@@ -80,7 +83,7 @@ public class TitleScreenSystem : FSystem {
 			}
 		}
 
-		cList.transform.GetChild(0).SetSiblingIndex(cList.transform.childCount-1); //back button		
+		//cList.transform.GetChild(0).SetSiblingIndex(cList.transform.childCount-1); //back button		
 
 	}
 
@@ -118,6 +121,7 @@ public class TitleScreenSystem : FSystem {
 		}
 		GameObjectManager.setGameObjectState(playButton, false);
 		GameObjectManager.setGameObjectState(quitButton, false);
+		GameObjectManager.setGameObjectState(backButton, true);
 	}
 
 	private void showLevels(GameObject levelDirectory){
@@ -173,6 +177,7 @@ public class TitleScreenSystem : FSystem {
 				GameObjectManager.setGameObjectState(campagneMenu, false);
 				GameObjectManager.setGameObjectState(playButton, true);
 				GameObjectManager.setGameObjectState(quitButton, true);
+				GameObjectManager.setGameObjectState(backButton, false);
 				break;
 			}
 			else{

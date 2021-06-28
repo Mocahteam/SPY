@@ -22,7 +22,7 @@ public class UISystem : FSystem {
 	private Family emptyPlayerExecution = FamilyManager.getFamily(new AllOfComponents(typeof(EmptyExecution))); 
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private Family libraryPanel = FamilyManager.getFamily(new AllOfComponents(typeof(GridLayoutGroup)));
-	private Family actionsInEditableScript = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(PointerSensitive)));
+	private Family actionsInEditableScript = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType),typeof(PointerSensitive)));
 	private GameData gameData;
 	private GameObject dialogPanel;
 	private int nDialog = 0;
@@ -67,14 +67,33 @@ public class UISystem : FSystem {
 		emptyPlayerExecution.addEntryCallback(delegate{GameObjectManager.removeComponent<EmptyExecution>(MainLoop.instance.gameObject);});
 
 		currentActions.addEntryCallback(onNewCurrentAction);
+		/*
+		actionsInEditableScript.addEntryCallback(delegate(GameObject go){
+			if (go.GetComponent<PointerSensitive>().enabled)
+				buttonPlay.GetComponent<Button>().interactable = true;
+			});
 
-		actionsInEditableScript.addEntryCallback(delegate{ buttonPlay.GetComponent<Button>().interactable = true; });
-		actionsInEditableScript.addExitCallback(delegate{ if(actionsInEditableScript.Count == 0) buttonPlay.GetComponent<Button>().interactable = false; });
-
+		actionsInEditableScript.addExitCallback(delegate{
+			if(actionsInEditableScript.Count == 0 || !checkIfActionsInEditableScript())
+				buttonPlay.GetComponent<Button>().interactable = false;
+			});
+		*/
 		lastEditedScript = null;
 
 		loadHistory();
     }
+
+	/*
+	private bool checkIfActionsInEditableScript(){
+		foreach(GameObject go in actionsInEditableScript){
+			Debug.Log("checkIfActionsInEditableScript "+go.name);
+			if(go.GetComponent<PointerSensitive>() && go.GetComponent<PointerSensitive>().enabled){
+				return true;
+			}
+		}	
+		return false;
+	}
+	*/
 
 	private void onNewCurrentAction(GameObject go){
 		Vector3 v = GetGUIElementOffset(go.GetComponent<RectTransform>());
@@ -128,6 +147,7 @@ public class UISystem : FSystem {
 
 	private void setExecutionState(bool finished){
 		buttonReset.GetComponent<Button>().interactable = finished;
+		buttonPlay.GetComponent<Button>().interactable = !finished;
 		
 		GameObjectManager.setGameObjectState(buttonPlay, finished);
 		GameObjectManager.setGameObjectState(buttonContinue, !finished);
@@ -275,7 +295,7 @@ public class UISystem : FSystem {
 		}
 
 		//save score only if better score
-		int savedScore = PlayerPrefs.GetInt(gameData.levelToLoad.Item1+Path.DirectorySeparatorChar+gameData.levelToLoad.Item2, 0);
+		int savedScore = PlayerPrefs.GetInt(gameData.levelToLoad.Item1+Path.DirectorySeparatorChar+gameData.levelToLoad.Item2+gameData.scoreKey, 0);
 		if(savedScore < scoredStars){
 			PlayerPrefs.SetInt(gameData.levelToLoad.Item1+Path.DirectorySeparatorChar+gameData.levelToLoad.Item2+gameData.scoreKey, scoredStars);
 			PlayerPrefs.Save();			
@@ -378,7 +398,8 @@ public class UISystem : FSystem {
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if(gameData.dialogMessage[0].Item2 != null){
 			GameObjectManager.setGameObjectState(imageGO,true);
-			imageGO.GetComponent<Image>().sprite = getImageAsSprite(Application.streamingAssetsPath+Path.DirectorySeparatorChar+"Levels"+Path.DirectorySeparatorChar+"Images"+Path.DirectorySeparatorChar+gameData.dialogMessage[0].Item2);
+			imageGO.GetComponent<Image>().sprite = getImageAsSprite(Application.streamingAssetsPath+Path.DirectorySeparatorChar+"Levels"+
+			Path.DirectorySeparatorChar+gameData.levelToLoad.Item1+Path.DirectorySeparatorChar+"Images"+Path.DirectorySeparatorChar+gameData.dialogMessage[0].Item2);
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO,false);
@@ -400,8 +421,8 @@ public class UISystem : FSystem {
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if(gameData.dialogMessage[nDialog].Item2 != null){
 			GameObjectManager.setGameObjectState(imageGO,true);
-			imageGO.GetComponent<Image>().sprite = getImageAsSprite(Application.streamingAssetsPath+Path.DirectorySeparatorChar+"Levels"+Path.DirectorySeparatorChar+"Images"+Path.DirectorySeparatorChar+gameData.dialogMessage[nDialog].Item2);
-		}
+			imageGO.GetComponent<Image>().sprite = getImageAsSprite(Application.streamingAssetsPath+Path.DirectorySeparatorChar+"Levels"+
+			Path.DirectorySeparatorChar+gameData.levelToLoad.Item1+Path.DirectorySeparatorChar+"Images"+Path.DirectorySeparatorChar+gameData.dialogMessage[nDialog].Item2);		}
 		else
 			GameObjectManager.setGameObjectState(imageGO,false);
 

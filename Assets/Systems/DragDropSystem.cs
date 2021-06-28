@@ -2,7 +2,7 @@ using UnityEngine;
 using FYFY;
 using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
-using System.Collections.Generic;
+using System.Collections;
 using TMPro;
 using System;
 
@@ -24,12 +24,15 @@ public class DragDropSystem : FSystem
 	private float lastClickTime;
 	private float catchTime;
 	
+	private GameObject buttonPlay;
+	
 	public DragDropSystem(){
 		catchTime = 0.25f;
         mainCanvas = GameObject.Find("Canvas");
         gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		editableContainer = editableScriptContainer_f.First();
 		positionBar = editableContainer.transform.Find("PositionBar").gameObject;
+		buttonPlay = GameObject.Find("ExecuteButton");
 		//GameObjectManager.setGameObjectState(positionBar, false);
 
 		/*
@@ -95,6 +98,8 @@ public class DragDropSystem : FSystem
 				}
 				editableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = false;
 			}
+
+			MainLoop.instance.StartCoroutine(updatePlayButton());
 		}
 
         //Find the deeper container pointed
@@ -149,8 +154,11 @@ public class DragDropSystem : FSystem
 
 
 		//Delete
-		if(itemDragged == null && Input.GetMouseButtonUp(1) && actionPointed_f.Count > 0)
+		if(itemDragged == null && Input.GetMouseButtonUp(1) && actionPointed_f.Count > 0){
 			GameObjectManager.addComponent<ResetBlocLimit>(actionPointed_f.getAt(actionPointed_f.Count-1));
+			MainLoop.instance.StartCoroutine(updatePlayButton());
+		}
+			
 
 		// Mouse Up
 		if(Input.GetMouseButtonUp(0))
@@ -203,8 +211,15 @@ public class DragDropSystem : FSystem
 			editableContainer.transform.parent.parent.GetComponent<ScrollRect>().enabled = true;
 
             lastClickTime = Time.time;
+			MainLoop.instance.StartCoroutine(updatePlayButton());
         }
 	}
+
+	private IEnumerator updatePlayButton(){
+		yield return null;
+		buttonPlay.GetComponent<Button>().interactable = !(editableScriptContainer_f.First().transform.childCount < 2);
+	}
+
 
 	public void onlyPositiveInteger(TMP_InputField input){
 		int res;
