@@ -2308,6 +2308,7 @@ GameObject:
   - component: {fileID: 361349232}
   - component: {fileID: 361349233}
   - component: {fileID: 361349219}
+  - component: {fileID: 361349234}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -2689,6 +2690,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74c5d84068ea09d41925d99705fff24e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &361349234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4ebd3f1e40a10e4cb617a689664d548, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerAction: {r: 0.4862745, g: 0.5568628, b: 1, a: 1}
+  playerBackground: {r: 1, g: 1, b: 1, a: 0.39215687}
+  droneAction: {r: 0.6039216, g: 0.6039216, b: 0.6039216, a: 1}
+  droneBackground: {r: 0.6431373, g: 0.6431373, b: 0.6431373, a: 1}
+  forBaseColor: {r: 1, g: 1, b: 1, a: 1}
+  currentActionColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!1 &388713684
 GameObject:
   m_ObjectHideFlags: 0

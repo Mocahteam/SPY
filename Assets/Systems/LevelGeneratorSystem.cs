@@ -344,10 +344,10 @@ public class LevelGeneratorSystem : FSystem {
 		containerParent.transform.Find("Header").Find("agent").GetComponent<Image>().sprite = agentSpriteIcon;
 		
 		if(type == 0){
-			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = scriptref.uiContainer.GetComponent<AgentColor>().playerBackground;
+			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().playerBackground;
 		}
 		else if(type == 2){ //Drone
-			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = scriptref.uiContainer.GetComponent<AgentColor>().droneBackground;
+			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().droneBackground;
 		}
 
 		if(script != null){
@@ -371,7 +371,7 @@ public class LevelGeneratorSystem : FSystem {
 					List<GameObject> basicActionGO = getBasicActionGO(go);
 					if(type == 2 && basicActionGO.Count != 0){
 						foreach(GameObject baGO in basicActionGO){
-							baGO.GetComponent<Image>().color = scriptref.uiContainer.GetComponent<AgentColor>().droneAction;
+							baGO.GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().droneAction;
 						}	
 					}
 

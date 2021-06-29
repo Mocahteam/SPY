@@ -99,9 +99,12 @@ public class UISystem : FSystem {
 		Vector3 v = GetGUIElementOffset(go.GetComponent<RectTransform>());
 		if(v != Vector3.zero){ // if not visible in UI
 			ScrollRect containerScrollRect = go.GetComponentInParent<ScrollRect>();
-			containerScrollRect.content.localPosition = GetSnapToPositionToBringChildIntoView(containerScrollRect, go.GetComponent<RectTransform>());
-			LayoutRebuilder.ForceRebuildLayoutImmediate(go.GetComponent<RectTransform>());
-			LayoutRebuilder.ForceRebuildLayoutImmediate(containerScrollRect.GetComponent<RectTransform>());
+			containerScrollRect.content.localPosition += GetSnapToPositionToBringChildIntoView(containerScrollRect, go.GetComponent<RectTransform>());
+			//containerScrollRect.content.SetPositionAndRotation(GetSnapToPositionToBringChildIntoView(containerScrollRect, go.GetComponent<RectTransform>()), Quaternion.identity);
+			//containerScrollRect.content.localPosition = v;
+			//Canvas.ForceUpdateCanvases();
+			//LayoutRebuilder.ForceRebuildLayoutImmediate(go.GetComponentInParent<RectTransform>());
+			//LayoutRebuilder.ForceRebuildLayoutImmediate(containerScrollRect.GetComponent<RectTransform>());
 		}
 	}
 
@@ -110,9 +113,9 @@ public class UISystem : FSystem {
 		Vector3 viewportLocalPosition = scrollRect.viewport.localPosition;
 		Vector3 childLocalPosition   = child.localPosition;
 		Vector3 result = new Vector3(
-			0 - (viewportLocalPosition.x + childLocalPosition.x),
+			0,
 			0 - (viewportLocalPosition.y + childLocalPosition.y),
-			0 - (viewportLocalPosition.z + childLocalPosition.z)
+			0
 		);
 		return result;
 	}
@@ -629,13 +632,13 @@ public class UISystem : FSystem {
 		Color actionColor;
 		switch(agent.tag){
 			case "Player":
-				actionColor = agent.GetComponent<ScriptRef>().uiContainer.GetComponent<AgentColor>().playerAction;
+				actionColor = MainLoop.instance.GetComponent<AgentColor>().playerAction;
 				break;
 			case "Drone":
-				actionColor = agent.GetComponent<ScriptRef>().uiContainer.GetComponent<AgentColor>().droneAction;
+				actionColor = MainLoop.instance.GetComponent<AgentColor>().droneAction;
 				break;
 			default: // agent by default = robot
-				actionColor = agent.GetComponent<ScriptRef>().uiContainer.GetComponent<AgentColor>().playerAction;
+				actionColor = MainLoop.instance.GetComponent<AgentColor>().playerAction;
 				break;
 		}
 
