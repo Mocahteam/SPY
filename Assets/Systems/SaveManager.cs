@@ -34,6 +34,7 @@ public class SaveManager : FSystem {
         
     }
 
+    // See ExecuteButton in editor
     public void SaveState(GameObject buttonStop)
 	{
         if(!buttonStop.activeInHierarchy){
@@ -66,7 +67,7 @@ public class SaveManager : FSystem {
 
     }
 
-    // Called from UI
+    // See StopButton and ReloadState buttons in editor
     public void LoadState()
     {
         save.rawSave = JsonUtility.FromJson<SaveContent.RawSave>(currentContent);
@@ -91,9 +92,6 @@ public class SaveManager : FSystem {
         for (int i = 0; i < f_activables.Count && i < save.rawSave.activables.Count; i++)
         {
             Activable act = f_activables.getAt(i).GetComponent<Activable>();
-            act.isActivated = save.rawSave.activables[i].isActivated;
-            act.isFullyActivated = save.rawSave.activables[i].isFullyActivated;
-            act.side = save.rawSave.activables[i].side;
             act.slotID = save.rawSave.activables[i].slotID;
         }
         foreach(GameObject go in f_currentActions){

@@ -26,26 +26,30 @@ public class DragDropSystem : FSystem
 	
 	private GameObject buttonPlay;
 	
-	public DragDropSystem(){
-		catchTime = 0.25f;
-        mainCanvas = GameObject.Find("Canvas");
-        gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		editableContainer = editableScriptContainer_f.First();
-		positionBar = editableContainer.transform.Find("PositionBar").gameObject;
-		buttonPlay = GameObject.Find("ExecuteButton");
-		//GameObjectManager.setGameObjectState(positionBar, false);
+	public DragDropSystem()
+	{
+		if (Application.isPlaying)
+		{
+			catchTime = 0.25f;
+			mainCanvas = GameObject.Find("Canvas");
+			gameData = GameObject.Find("GameData").GetComponent<GameData>();
+			editableContainer = editableScriptContainer_f.First();
+			positionBar = editableContainer.transform.Find("PositionBar").gameObject;
+			buttonPlay = GameObject.Find("ExecuteButton");
+			//GameObjectManager.setGameObjectState(positionBar, false);
 
-		/*
-		limitTexts = new List<GameObject>();
-		limitTexts.Add(GameObject.Find("ForwardLimit"));
-		limitTexts.Add(GameObject.Find("TurnLeftLimit"));
-		limitTexts.Add(GameObject.Find("TurnRightLimit"));
-		limitTexts.Add(GameObject.Find("WaitLimit"));
-		limitTexts.Add(GameObject.Find("ActivateLimit"));
-		limitTexts.Add(GameObject.Find("TurnBackLimit"));
-		limitTexts.Add(GameObject.Find("IfLimit"));
-		limitTexts.Add(GameObject.Find("ForLimit"));
-		*/
+			/*
+			limitTexts = new List<GameObject>();
+			limitTexts.Add(GameObject.Find("ForwardLimit"));
+			limitTexts.Add(GameObject.Find("TurnLeftLimit"));
+			limitTexts.Add(GameObject.Find("TurnRightLimit"));
+			limitTexts.Add(GameObject.Find("WaitLimit"));
+			limitTexts.Add(GameObject.Find("ActivateLimit"));
+			limitTexts.Add(GameObject.Find("TurnBackLimit"));
+			limitTexts.Add(GameObject.Find("IfLimit"));
+			limitTexts.Add(GameObject.Find("ForLimit"));
+			*/
+		}
 	}
 
     // Use to process your families.

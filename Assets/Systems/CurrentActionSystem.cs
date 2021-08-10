@@ -19,10 +19,14 @@ public class CurrentActionSystem : FSystem {
 	private Family firstStep = FamilyManager.getFamily(new AllOfComponents(typeof(FirstStep))); 
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
 
-	public CurrentActionSystem(){
-		newStep_f.addEntryCallback(onNewStep);
-		firstStep.addEntryCallback(initFirstActions);
-		scriptIsRunning.addExitCallback(removePlayersCurrentActions);
+	public CurrentActionSystem()
+	{
+		if (Application.isPlaying)
+		{
+			newStep_f.addEntryCallback(onNewStep);
+			firstStep.addEntryCallback(initFirstActions);
+			scriptIsRunning.addExitCallback(removePlayersCurrentActions);
+		}
 	}
 
 	private IEnumerator delayAddCurrentAction(GameObject nextAction, GameObject agent){
@@ -207,10 +211,10 @@ public class CurrentActionSystem : FSystem {
 		MainLoop.instance.StartCoroutine(delayInit());
 	}
 
+	// See ExecuteButton in editor
 	public void firstAction(GameObject buttonStop){
 		if(!buttonStop.activeInHierarchy){
 			GameObjectManager.addComponent<FirstStep>(MainLoop.instance.gameObject);
-			//MainLoop.instance.StartCoroutine(delayFirstAction());
 		}
 	}
 

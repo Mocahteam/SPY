@@ -2,16 +2,11 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
-using System.Linq;
-using System.Threading.Tasks;
-using UnityEditor;
-using TMPro;
-using System;
-using UnityEngine.Events;
 
+/// <summary>
+/// Manage highlightable GameObjects
+/// </summary>
 public class HighLightSystem : FSystem {
-	// Use this to update member variables when system pause. 
-	// Advice: avoid to update your families inside this function.
 	private Family highlightableGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(UIActionType))); //has to be defined before nonhighlightedGO because initBaseColor must be called before unHighLightItem
 	private Family highlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(PointerOver)), new NoneOfComponents(typeof(UIActionType)));
 	private Family nonhighlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(UIActionType)));
@@ -20,28 +15,22 @@ public class HighLightSystem : FSystem {
 
 	private GameData gameData;
 	
-	public HighLightSystem(){
-		highlightableGO.addEntryCallback(initBaseColor);
-		highlightedGO.addEntryCallback(highLightItem);
-		nonhighlightedGO.addEntryCallback(unHighLightItem);
-		//highlightedGO.addExitCallback(unHighLightItem);
-		highlightedAction.addEntryCallback(highLightItem);
-		nonCurrentAction.addEntryCallback(unHighLightItem);
-		//highlightedAction.addExitCallback(unHighLightItem);
-        //highLightedItem = null;
-		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		//EnemyScriptContainer = enemyScriptContainer_f.First();
+	public HighLightSystem()
+	{
+		if (Application.isPlaying)
+		{
+			highlightableGO.addEntryCallback(initBaseColor);
+			highlightedGO.addEntryCallback(highLightItem);
+			nonhighlightedGO.addEntryCallback(unHighLightItem);
+			highlightedAction.addEntryCallback(highLightItem);
+			nonCurrentAction.addEntryCallback(unHighLightItem);
+			gameData = GameObject.Find("GameData").GetComponent<GameData>();
+		}
 	}
 	
 	private void initBaseColor(GameObject go){
 		if(go.GetComponent<BaseElement>() && go.GetComponent<Image>()){
-			//if((go.GetComponent<BasicAction>() || go.GetComponent<IfAction>()) && go.GetComponent<Image>()){
 			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image>().color;
-			//}
-			/*
-			else if(go.GetComponent<ForAction>() || go.GetComponent<ForeverAction>()){
-				go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image
-			}*/	
 		}
 		if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>().material.color;
@@ -50,43 +39,23 @@ public class HighLightSystem : FSystem {
 				img.GetComponent<Highlightable>().baseColor = img.color;	
 			}			
 		}
-		/*
-		else if(go.GetComponent<ElementToDrag>() && go.GetComponent<Image>()){
-			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image>().color;
-		}
-		*/
-
 	}
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		GameObject highLightedItem = highlightedGO.First();
-		//If click on highlighted item and item has a script, then show script in the 2nd script window
+		//If click on highlighted item and item has a script, then show its script in the 2nd script window
 		if(highLightedItem && Input.GetMouseButtonDown(0) && highLightedItem.GetComponent<ScriptRef>()){
 			GameObject go = highLightedItem.GetComponent<ScriptRef>().uiContainer;
-			/*
-			//hide other containers
-			foreach(Transform notgo in go.transform.parent.transform){
-				if (notgo != go.transform && notgo.gameObject.activeSelf){
-					GameObjectManager.setGameObjectState(notgo.gameObject, false);
-				}
-			}
-			*/
-			if(go.activeInHierarchy){
+			if(go.activeInHierarchy)
 				GameObjectManager.setGameObjectState(go,false);
-			}
-			else{
+			else
 				GameObjectManager.setGameObjectState(go,true);
-			}
-			
 			MainLoop.instance.GetComponent<AudioSource>().Play();
-
 		}
-
 	}
 
 	public void highLightItem(GameObject go){
-		//Debug.Log("highLightItem = "+go.name+"------");
 		if(go.GetComponent<CurrentAction>()){
 			if(go.GetComponent<BasicAction>() && go.GetComponent<Image>()){
 				go.GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().currentActionColor;
@@ -103,7 +72,6 @@ public class HighLightSystem : FSystem {
 				go.GetComponent<Image>().color = go.GetComponent<BaseElement>().highlightedColor;
 			}			
 		}
-
 		else if(go.GetComponentInChildren<Renderer>()){
 			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().highlightedColor;
 			if(go.GetComponent<ScriptRef>()){
@@ -114,16 +82,12 @@ public class HighLightSystem : FSystem {
 		else if(go.GetComponent<ElementToDrag>() && go.GetComponent<Image>()){
 			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
 		}
-		
-
 	}
 
 	public void unHighLightItem(GameObject go){
-		//Debug.Log("------unhighlight");
 		if(go.GetComponent<BaseElement>()){
 			if((go.GetComponent<BasicAction>() || go.GetComponent<IfAction>()) && go.GetComponent<Image>()){
 				go.GetComponent<Image>().color = go.GetComponent<BaseElement>().baseColor;
-				//Debug.Log("unhighlight "+ go.name +" "+ go.GetComponent<Highlightable>().baseColor.ToString());
 			}
 			else if(go.GetComponent<ForAction>() || go.GetComponent<ForeverAction>()){
 				if(go.GetComponent<Image>().color.Equals(go.GetComponent<BaseElement>().baseColor)){
@@ -133,9 +97,7 @@ public class HighLightSystem : FSystem {
 					go.GetComponent<Image>().color = go.GetComponent<BaseElement>().baseColor;
 				}	
 			}
-
 		}
-
 		else if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().baseColor;
 			if(go.GetComponent<ScriptRef>()){
@@ -146,11 +108,6 @@ public class HighLightSystem : FSystem {
 
 		else if(go.GetComponent<ElementToDrag>()){
 			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
-		}		
-
-		/*
-		GameObject prefab = go.GetComponent<UIActionType>().prefab;
-		go.GetComponent<Image>().color = prefab.GetComponent<Image>().color;*/
+		}
 	}
-
 }

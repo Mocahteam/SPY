@@ -5,15 +5,18 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 using System.IO;
+
+/// <summary>
+/// Manage dialogs at the begining of the level
+/// Manage InGame UI (Play/Pause/Stop, reset, go back to main menu...)
+/// Manage history
+/// Manage end panel (compute Score and stars)
+/// </summary>
 public class UISystem : FSystem {
-	// Use this to update member variables when system pause. 
-	// Advice: avoid to update your families inside this function.
-	//private GameObject actionContainer;
     private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
     private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer), typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
-	//private Family agentCanvas = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
 	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(UIActionType)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
@@ -22,7 +25,6 @@ public class UISystem : FSystem {
 	private Family emptyPlayerExecution = FamilyManager.getFamily(new AllOfComponents(typeof(EmptyExecution))); 
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private Family libraryPanel = FamilyManager.getFamily(new AllOfComponents(typeof(GridLayoutGroup)));
-	private Family actionsInEditableScript = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType),typeof(PointerSensitive)));
 	private GameData gameData;
 	private GameObject dialogPanel;
 	private int nDialog = 0;
@@ -37,74 +39,49 @@ public class UISystem : FSystem {
 	private GameObject endPanel;
 	private GameObject executionCanvas;
 
-	public UISystem(){
-		gameData = GameObject.Find("GameData").GetComponent<GameData>();
+	public UISystem()
+	{
+		if (Application.isPlaying)
+		{
+			gameData = GameObject.Find("GameData").GetComponent<GameData>();
 
-		executionCanvas = GameObject.Find("ExecutionCanvas");
-		buttonPlay = executionCanvas.transform.Find("ExecuteButton").gameObject;
-		buttonContinue = executionCanvas.transform.Find("ContinueButton").gameObject;
-		buttonStop = executionCanvas.transform.Find("StopButton").gameObject;
-		buttonPause = executionCanvas.transform.Find("PauseButton").gameObject;
-		buttonStep = executionCanvas.transform.Find("NextStepButton").gameObject;
-		buttonSpeed = executionCanvas.transform.Find("SpeedButton").gameObject;
+			executionCanvas = GameObject.Find("ExecutionCanvas");
+			buttonPlay = executionCanvas.transform.Find("ExecuteButton").gameObject;
+			buttonContinue = executionCanvas.transform.Find("ContinueButton").gameObject;
+			buttonStop = executionCanvas.transform.Find("StopButton").gameObject;
+			buttonPause = executionCanvas.transform.Find("PauseButton").gameObject;
+			buttonStep = executionCanvas.transform.Find("NextStepButton").gameObject;
+			buttonSpeed = executionCanvas.transform.Find("SpeedButton").gameObject;
 
-		buttonReset = GameObject.Find("ResetButton");
-		endPanel = GameObject.Find("EndPanel");
-		GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
-		dialogPanel = GameObject.Find("DialogPanel");
-		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
+			buttonReset = GameObject.Find("ResetButton");
+			endPanel = GameObject.Find("EndPanel");
+			GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
+			dialogPanel = GameObject.Find("DialogPanel");
+			GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 
-        requireEndPanel.addEntryCallback(displayEndPanel);
-        displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
-		actions.addEntryCallback(linkTo);
-		newEnd_f.addEntryCallback(levelFinished);
-		resetBlocLimit_f.addEntryCallback(delegate(GameObject go){destroyScript(go, true);});
-		//scriptIsRunning.addEntryCallback(delegate{setExecutionState(false);});
-		scriptIsRunning.addExitCallback(delegate{setExecutionState(true);});
-		scriptIsRunning.addExitCallback(saveHistory);
-		//0 execution on firstaction
-		emptyPlayerExecution.addEntryCallback(delegate{setExecutionState(true);});
-		emptyPlayerExecution.addEntryCallback(delegate{GameObjectManager.removeComponent<EmptyExecution>(MainLoop.instance.gameObject);});
+			requireEndPanel.addEntryCallback(displayEndPanel);
+			displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
+			actions.addEntryCallback(linkTo);
+			newEnd_f.addEntryCallback(levelFinished);
+			resetBlocLimit_f.addEntryCallback(delegate (GameObject go) { destroyScript(go, true); });
+			scriptIsRunning.addExitCallback(delegate { setExecutionState(true); });
+			scriptIsRunning.addExitCallback(saveHistory);
+			emptyPlayerExecution.addEntryCallback(delegate { setExecutionState(true); });
+			emptyPlayerExecution.addEntryCallback(delegate { GameObjectManager.removeComponent<EmptyExecution>(MainLoop.instance.gameObject); });
 
-		currentActions.addEntryCallback(onNewCurrentAction);
-		/*
-		actionsInEditableScript.addEntryCallback(delegate(GameObject go){
-			if (go.GetComponent<PointerSensitive>().enabled)
-				buttonPlay.GetComponent<Button>().interactable = true;
-			});
+			currentActions.addEntryCallback(onNewCurrentAction);
 
-		actionsInEditableScript.addExitCallback(delegate{
-			if(actionsInEditableScript.Count == 0 || !checkIfActionsInEditableScript())
-				buttonPlay.GetComponent<Button>().interactable = false;
-			});
-		*/
-		lastEditedScript = null;
+			lastEditedScript = null;
 
-		loadHistory();
+			loadHistory(); 
+		}
     }
-
-	/*
-	private bool checkIfActionsInEditableScript(){
-		foreach(GameObject go in actionsInEditableScript){
-			Debug.Log("checkIfActionsInEditableScript "+go.name);
-			if(go.GetComponent<PointerSensitive>() && go.GetComponent<PointerSensitive>().enabled){
-				return true;
-			}
-		}	
-		return false;
-	}
-	*/
 
 	private void onNewCurrentAction(GameObject go){
 		Vector3 v = GetGUIElementOffset(go.GetComponent<RectTransform>());
 		if(v != Vector3.zero){ // if not visible in UI
 			ScrollRect containerScrollRect = go.GetComponentInParent<ScrollRect>();
 			containerScrollRect.content.localPosition += GetSnapToPositionToBringChildIntoView(containerScrollRect, go.GetComponent<RectTransform>());
-			//containerScrollRect.content.SetPositionAndRotation(GetSnapToPositionToBringChildIntoView(containerScrollRect, go.GetComponent<RectTransform>()), Quaternion.identity);
-			//containerScrollRect.content.localPosition = v;
-			//Canvas.ForceUpdateCanvases();
-			//LayoutRebuilder.ForceRebuildLayoutImmediate(go.GetComponentInParent<RectTransform>());
-			//LayoutRebuilder.ForceRebuildLayoutImmediate(containerScrollRect.GetComponent<RectTransform>());
 		}
 	}
 
@@ -192,12 +169,9 @@ public class UISystem : FSystem {
 				GameObjectManager.addComponent<Dropped>(act.gameObject);
 			}
 			//destroy history
-			//GameObjectManager.unbind(gameData.actionsHistory);
 			GameObject.Destroy(gameData.actionsHistory);
 			LayoutRebuilder.ForceRebuildLayoutImmediate(editableCanvas.GetComponent<RectTransform>());
 		}
-		//Canvas.ForceUpdateCanvases();
-		
 	}
 
 	private void restoreLastEditedScript(){
@@ -254,8 +228,6 @@ public class UISystem : FSystem {
                 endPanel.GetComponent<AudioSource>().Play();
                 break;
             case 2:
-                //endPanel.transform.GetChild(0).GetComponent<Text>().text = "Bravo vous avez gagné !\n Nombre d'instructions: "+ 
-                //gameData.totalActionBloc + "\nNombre d'étape: " + gameData.totalStep +"\nPièces récoltées:" + gameData.totalCoin;
 				int score = (10000 / (gameData.totalActionBloc + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
                 Transform verticalCanvas = endPanel.transform.Find("VerticalCanvas");
 				verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez gagné !\nScore: " + score;
@@ -307,7 +279,6 @@ public class UISystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-
 		//Activate DialogPanel if there is a message
 		if(gameData.dialogMessage.Count > 0 && !dialogPanel.transform.parent.gameObject.activeSelf){
 			showDialogPanel();
@@ -323,17 +294,12 @@ public class UISystem : FSystem {
 		
 	}
 
-	//Empty the script window
+	// Empty the script window
+	// See ResetButton in editor
 	public void resetScript(bool refund = false){
 		GameObject editableContainer = editableScriptContainer.First();
-		/*
-		foreach(BaseElement go in editableContainer.GetComponentsInChildren<BaseElement>()){
-			Debug.Log("baseelement go = "+ go.name);
-			destroyScript(go.gameObject);
-		}*/
 		for (int i = 0 ; i < editableContainer.transform.childCount ; i++){
 			if(editableContainer.transform.GetChild(i).GetComponent<BaseElement>()){
-				//Debug.Log("baseelement go = "+ editableContainer.transform.GetChild(i).name);
 				destroyScript(editableContainer.transform.GetChild(i).gameObject, refund);				
 			}
 		
@@ -341,14 +307,8 @@ public class UISystem : FSystem {
 		refreshUI();
 	}
 
-	//Recursive script destroyer  bool refund = false
+	//Recursive script destroyer
 	private void destroyScript(GameObject go,  bool refund = false){
-		//refund blocActionLimit
-		//if(refund && go.gameObject.GetComponent<UIActionType>() != null){
-			//GameObjectManager.removeComponent<Dropped>(go.gameObject);
-			//Object.Destroy(go.GetComponent<Available>());
-			//ActionManipulator.updateActionBlocLimit(gameData, go.gameObject.GetComponent<UIActionType>().type, 1);
-		//}
 		if(go.GetComponent<UIActionType>() != null){
 			if(!refund)
 				gameData.totalActionBloc++;
@@ -357,26 +317,15 @@ public class UISystem : FSystem {
 		}
 		
 		if(go.GetComponent<UITypeContainer>() != null){
-			/*
-			for(int i = 0; i < go.transform.childCount; i++){
-				destroyScript(go.transform.GetChild(i).gameObject, refund);
-			}*/
 			foreach(Transform child in go.transform){
 				if(child.GetComponent<BaseElement>()){
-					//Debug.Log("child of uitypecontainer = "+child.name);
 					destroyScript(child.gameObject, refund);
 				}
 			}
 		}
-		/*
-		for(int i = 0; i < go.transform.childCount;i++){
-			UnityEngine.Object.Destroy(go.transform.GetChild(i).gameObject);
-		}*/
 		go.transform.DetachChildren();
 		GameObjectManager.unbind(go);
 		UnityEngine.Object.Destroy(go);
-		//go.SetActive(false);
-		//LayoutRebuilder.MarkLayoutForRebuild(editableScriptContainer.First().transform as RectTransform);
 	}
 
 	public Sprite getImageAsSprite(string path){
@@ -389,15 +338,9 @@ public class UISystem : FSystem {
 	}
 
 	public void showDialogPanel(){
-		/*
-		foreach((string,string) dialog in gameData.dialogMessage){
-			Debug.Log("dialog = "+dialog.Item1 + "\n"+"img = "+dialog.Item2);
-		}*/
-
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
 		nDialog = 0;
 		dialogPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[0].Item1;
-		Debug.Log(gameData.dialogMessage[0].Item2);
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if(gameData.dialogMessage[0].Item2 != null){
 			GameObjectManager.setGameObjectState(imageGO,true);
@@ -417,10 +360,10 @@ public class UISystem : FSystem {
 		}
 	}
 
+	// See NextButton in editor
 	public void nextDialog(){
 		nDialog++;
 		dialogPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog].Item1;
-		Debug.Log(gameData.dialogMessage[nDialog].Item2);
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if(gameData.dialogMessage[nDialog].Item2 != null){
 			GameObjectManager.setGameObjectState(imageGO,true);
@@ -447,6 +390,7 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(dialogPanel.transform.Find("Buttons").Find("NextButton").gameObject, active);
 	}
 
+	// See OKButton in editor
 	public void closeDialogPanel(){
 		nDialog = 0;
 		gameData.dialogMessage = new List<(string,string)>();;
@@ -461,9 +405,9 @@ public class UISystem : FSystem {
 		gameData.levelToLoadScore = null;
 		gameData.dialogMessage = new List<(string,string)>();
 		GameObjectManager.loadScene("MainScene");
-		Debug.Log("reload");
 	}
 
+	// See TitleScreen and ScreenTitle buttons in editor
 	public void returnToTitleScreen(){
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
@@ -475,12 +419,14 @@ public class UISystem : FSystem {
 		GameObjectManager.loadScene("TitleScreen");
 	}
 
+	// See NextLevel button in editor
 	public void nextLevel(){
 		gameData.levelToLoad.Item2++;
 		reloadScene();
 		gameData.actionsHistory = null;
 	}
 
+	// See ReloadLevel and RestartLevel buttons in editor
 	public void retry(){
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
@@ -497,6 +443,7 @@ public class UISystem : FSystem {
 		GameObjectManager.removeComponent<NewEnd>(endPanel);
 	}
 
+	// See StopButton in editor
 	public void stopScript(){
 		restoreLastEditedScript();
 		setExecutionState(true);
@@ -508,6 +455,7 @@ public class UISystem : FSystem {
 		}		
 	}
 
+	// See ExecuteButton in editor
 	public void applyScriptToPlayer(){
 		//if first click on play button
 		if(!buttonStop.activeInHierarchy){
@@ -533,16 +481,9 @@ public class UISystem : FSystem {
 			}
 
 			GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false, playerGO.First());
-
-			/*
-			foreach(Transform notgo in agentCanvas.First().transform){
-				GameObjectManager.setGameObjectState(notgo.gameObject, false);
-			}
-			*/
 			
 			foreach( GameObject go in playerGO){
 				GameObject targetContainer = go.GetComponent<ScriptRef>().scriptContainer;
-				//GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer, true);
 				go.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;	
 				for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
 					if(!containerCopy.transform.GetChild(i).name.Contains("PositionBar")){
@@ -567,11 +508,8 @@ public class UISystem : FSystem {
 				if(go.CompareTag("Player")){				
 					GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer,true);				
 				}
-
 			}
-			
 		}
-
 	}
 
     public GameObject CopyActionsFrom(GameObject container, bool isInteractable, GameObject agent){
@@ -671,6 +609,4 @@ public class UISystem : FSystem {
 			}
 		}
 	}
-
-	
 }

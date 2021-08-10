@@ -18,12 +18,16 @@ public class DetectorGeneratorSystem : FSystem {
 
 	// Use this to update member variables when system pause. 
 	// Advice: avoid to update your families inside this function.
-	public DetectorGeneratorSystem(){
-        activeRedDetector = true;
-		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-        gameLoaded_f.addEntryCallback(delegate{updateDetector();});
-        newStep_f.addEntryCallback(delegate{updateDetector();});
-        robotcollision_f.addEntryCallback(onNewCollision);	
+	public DetectorGeneratorSystem()
+    {
+        if (Application.isPlaying)
+        {
+            activeRedDetector = true;
+            gameData = GameObject.Find("GameData").GetComponent<GameData>();
+            gameLoaded_f.addEntryCallback(delegate { updateDetector(); });
+            newStep_f.addEntryCallback(delegate { updateDetector(); });
+            robotcollision_f.addEntryCallback(onNewCollision);
+        }
     }
     private void onNewCollision(GameObject robot){
 		if(activeRedDetector){
@@ -39,9 +43,11 @@ public class DetectorGeneratorSystem : FSystem {
 		}
     }
 
+    // See ExecuteButton, StopButton and ReloadState buttons in editor
 	public void detectCollision(bool on){
 		activeRedDetector = on;
 	}
+
     private IEnumerator delayUpdateDetector(){
         yield return null;
         yield return null;
@@ -193,6 +199,7 @@ public class DetectorGeneratorSystem : FSystem {
         }       
     }
 
+    // See StopButton and ReloadState buttons in editor
     public void updateDetector()
     {
        MainLoop.instance.StartCoroutine(delayUpdateDetector());

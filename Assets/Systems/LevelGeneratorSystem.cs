@@ -26,17 +26,20 @@ public class LevelGeneratorSystem : FSystem {
 
 	//private bool historyIsInScript = false;
 
-	public LevelGeneratorSystem(){
-		//Debug.Log("level constructor");
-		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		gameData.Level = GameObject.Find("Level");
-		scriptContainer = ennemyScript.First();
-		XmlToLevel(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
-		GameObject.Find("LevelName").GetComponent<TMP_Text>().text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
-		//gameData.currentLevelBlocLimits = gameData.actionBlocLimit;
-		//generateLevel6();
+	public LevelGeneratorSystem()
+	{
+		if (Application.isPlaying)
+		{
+			GameObject gameDataGO = GameObject.Find("GameData");
+			if (gameDataGO == null)
+				GameObjectManager.loadScene("TitleScreen");
 
-
+			gameData = gameDataGO.GetComponent<GameData>();
+			gameData.Level = GameObject.Find("Level");
+			scriptContainer = ennemyScript.First();
+			XmlToLevel(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+			GameObject.Find("LevelName").GetComponent<TMP_Text>().text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+		}
 	}
 
 	/*
@@ -404,9 +407,6 @@ public class LevelGeneratorSystem : FSystem {
 
 	private void createDoor(int i, int j, Direction.Dir orientation, int slotID){
 		GameObject door = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Door") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
-		if(orientation == Direction.Dir.West || orientation == Direction.Dir.East){
-			door.transform.rotation = Quaternion.Euler(0,90,0);
-		}
 
 		door.GetComponent<ActivationSlot>().slotID = slotID;
 		door.GetComponent<Position>().x = i;
@@ -415,29 +415,14 @@ public class LevelGeneratorSystem : FSystem {
 		GameObjectManager.bind(door);
 	}
 
-	private void createActivable(int i, int j, List<int> slotIDs, int side){
-		GameObject activable = null;
-		switch(side){
-			case 3:
-				activable = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/ActivableConsole") as GameObject, gameData.Level.transform.position + new Vector3(i*3-0.8f,1.5f,j*3), Quaternion.Euler(0,90,0), gameData.Level.transform);
-				break;
-			case 2:
-				activable = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/ActivableConsole") as GameObject, gameData.Level.transform.position + new Vector3(i*3+0.8f,1.5f,j*3), Quaternion.Euler(0,-90,0), gameData.Level.transform);
-				break;
-			case 1:
-				activable = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/ActivableConsole") as GameObject, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3-0.8f), Quaternion.Euler(0,0,0), gameData.Level.transform);
-				break;
-			case 0:
-				activable = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/ActivableConsole") as GameObject, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3+0.8f), Quaternion.Euler(0,180,0), gameData.Level.transform);
-				break;
-		}
+	private void createActivable(int i, int j, List<int> slotIDs, Direction.Dir orientation)
+	{
+		GameObject activable = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ActivableConsole") as GameObject, gameData.Level.transform.position + new Vector3(i * 3, 3, j * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
 
 		activable.GetComponent<Activable>().slotID = slotIDs;
-		activable.GetComponent<Activable>().isActivated = false;
-		activable.GetComponent<Activable>().isFullyActivated = false;
-		activable.GetComponent<Activable>().side = side;
 		activable.GetComponent<Position>().x = i;
 		activable.GetComponent<Position>().z = j;
+		activable.GetComponent<Direction>().direction = orientation;
 		GameObjectManager.bind(activable);
 	}
 
@@ -773,7 +758,7 @@ public class LevelGeneratorSystem : FSystem {
 		}
 
 		createActivable(int.Parse(activableNode.Attributes.GetNamedItem("posX").Value), int.Parse(activableNode.Attributes.GetNamedItem("posZ").Value),
-		 slotsID, int.Parse(activableNode.Attributes.GetNamedItem("side").Value));
+		 slotsID, (Direction.Dir)int.Parse(activableNode.Attributes.GetNamedItem("direction").Value));
 	}
 
 	private List<GameObject> readXMLScript(XmlNode scriptNode, bool editable = false){

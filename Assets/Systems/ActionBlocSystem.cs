@@ -1,46 +1,44 @@
 using UnityEngine;
 using FYFY;
-using UnityEngine.UI;
-using System;
 using TMPro;
 
+/// <summary>
+/// Manages dropped and deleted action blocs (maintains bloc counter)
+/// </summary>
 public class ActionBlocSystem : FSystem {
-	
-	//available actions in panel
-	private Family availableActions = FamilyManager.getFamily(new AllOfComponents(typeof(Available), typeof(ElementToDrag)));
-	
-	//dropped actions in playerscript container
 	private Family droppedActions = FamilyManager.getFamily(new AllOfComponents(typeof(Dropped), typeof(UIActionType)));
 	private Family deletedActions = FamilyManager.getFamily(new AllOfComponents(typeof(AddOne)));
-	private GameData gameData;
 	private Family draggableElement = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)));
+	private GameData gameData;
 
 	public ActionBlocSystem(){
-		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		//LimitTexts
-		foreach(GameObject go in draggableElement){
-			updateBlocLimit(getActionKey(go.GetComponent<ElementToDrag>().actionPrefab.GetComponent<BaseElement>()));
+		if (Application.isPlaying)
+		{
+			gameData = GameObject.Find("GameData").GetComponent<GameData>();
+			// init limitation counters for each draggable elements
+			foreach (GameObject go in draggableElement)
+			{
+				// get prefab associated to this draggable element
+				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
+				// get action key depending on prefab type
+				string key = getActionKey(prefab.GetComponent<BaseElement>());
+				// update counter
+				updateBlocLimit(key, go);
+			}
+			droppedActions.addEntryCallback(useAction);
+			deletedActions.addEntryCallback(unuseAction);
 		}
-		droppedActions.addEntryCallback(useAction);
-		deletedActions.addEntryCallback(unuseAction);
 	}
 
 	private string getActionKey(BaseElement action){
-		string actionKey = null;
-		switch(action.GetType().ToString()){
-			case "BasicAction":
-				actionKey = ((BasicAction)action).actionType.ToString();
-				break;
-			case "IfAction":
-				actionKey = "If";
-				break;
-			case "ForAction":
-				actionKey = "For";
-				break;
-			default:
-				break;
-		}
-		return actionKey;
+		if (action is BasicAction)
+			return ((BasicAction)action).actionType.ToString();
+		else if (action is IfAction)
+			return "If";
+		else if (action is ForAction)
+			return "For";
+		else
+			return null;
 	}
 
 	private GameObject getDraggableElement (string name){
@@ -52,55 +50,50 @@ public class ActionBlocSystem : FSystem {
 		return null;
 	}
 
-	private void updateBlocLimit(string keyName){
+	private void updateBlocLimit(string keyName, GameObject draggableGO){
 		bool isActive = gameData.actionBlocLimit[keyName] != 0; // negative means no limit
-		GameObjectManager.setGameObjectState(getDraggableElement(keyName), isActive);
+		GameObjectManager.setGameObjectState(draggableGO, isActive);
 		if(isActive){
-			GameObjectManager.addComponent<Available>(getDraggableElement(keyName));
-			if(gameData.actionBlocLimit[keyName] < 0){
-				GameObjectManager.setGameObjectState(getDraggableElement(keyName).transform.GetChild(1).gameObject, false);
-			}
+			GameObjectManager.addComponent<Available>(draggableGO);
+			if(gameData.actionBlocLimit[keyName] < 0)
+				// unlimited action => hide counter
+				GameObjectManager.setGameObjectState(draggableGO.transform.GetChild(1).gameObject, false);
 			else{
-				getDraggableElement(keyName).transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Reste " + gameData.actionBlocLimit[keyName].ToString();
-				GameObjectManager.setGameObjectState(getDraggableElement(keyName).transform.GetChild(1).gameObject, true);
+				// limited action => init and show counter
+				GameObject counterText = draggableGO.transform.GetChild(1).gameObject;
+				counterText.GetComponent<TextMeshProUGUI>().text = "Reste " + gameData.actionBlocLimit[keyName].ToString();
+				GameObjectManager.setGameObjectState(counterText, true);
 			}
 		}		
 	}
 
 	private void useAction(GameObject go){
-		Debug.Log("useaction");
 		string actionKey = getActionKey(go.GetComponent<BaseElement>());
 		if(actionKey != null){
-			Debug.Log("-1");
 			gameData.actionBlocLimit[actionKey] -= 1;
-			updateBlocLimit(actionKey);		
+			GameObject draggableModel = getDraggableElement(actionKey);
+			updateBlocLimit(actionKey, draggableModel);		
 		}
 		GameObjectManager.removeComponent<Dropped>(go);
-		
 	}
 	
 	private void unuseAction(GameObject go){
-		Debug.Log("unuse action");
-		Debug.Log("deleted item = "+go.name);
 		BaseElement action;
-		if(go.GetComponent<ElementToDrag>()){
+		if(go.GetComponent<ElementToDrag>())
 			action = go.GetComponent<ElementToDrag>().actionPrefab.GetComponent<BaseElement>();
-		}
-		else{
+		else
 			action = go.GetComponent<BaseElement>();
-		}
+
 		string actionKey = getActionKey(action);
 
 		AddOne[] addOnes =  go.GetComponents<AddOne>();
 		if(actionKey != null){
-			Debug.Log("+1");
 			gameData.actionBlocLimit[actionKey] += addOnes.Length;
-			updateBlocLimit(actionKey);
-
+			GameObject draggableModel = getDraggableElement(actionKey);
+			updateBlocLimit(actionKey, draggableModel);
 		}
 		foreach(AddOne a in addOnes){
 			GameObjectManager.removeComponent(a);	
 		}
 	}
-
 }

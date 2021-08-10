@@ -9,11 +9,6 @@ public class CameraSystem_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
-	public void setCameraOnGO(UnityEngine.GameObject go)
-	{
-		MainLoop.callAppropriateSystemMethod ("CameraSystem", "setCameraOnGO", go);
-	}
-
 	public void setLocateButtons(UnityEngine.GameObject go)
 	{
 		MainLoop.callAppropriateSystemMethod ("CameraSystem", "setLocateButtons", go);

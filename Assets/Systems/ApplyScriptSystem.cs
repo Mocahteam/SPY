@@ -19,10 +19,13 @@ public class ApplyScriptSystem : FSystem {
 	private GameData gameData;
 
 	public ApplyScriptSystem(){
-		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-        newCurrentAction_f.addEntryCallback(onNewCurrentAction);
-        newCurrentAction_f.addExitCallback(onCurrentActionRemoved);
-        endPanel = endpanel_f.First();
+		if (Application.isPlaying)
+		{
+			gameData = GameObject.Find("GameData").GetComponent<GameData>();
+			newCurrentAction_f.addEntryCallback(onNewCurrentAction);
+			newCurrentAction_f.addExitCallback(onCurrentActionRemoved);
+			endPanel = endpanel_f.First();
+		}
     }
 
 	private void onCurrentActionRemoved(int unused){
@@ -139,7 +142,10 @@ public class ApplyScriptSystem : FSystem {
 				foreach( GameObject actGo in activableConsoleGO){
 					if(actGo.GetComponent<Position>().x == ca.agent.GetComponent<Position>().x && actGo.GetComponent<Position>().z == ca.agent.GetComponent<Position>().z){
 						actGo.GetComponent<AudioSource>().Play();
-						actGo.GetComponent<Activable>().isActivated = true;
+						if (actGo.GetComponent<TurnedOn>())
+							GameObjectManager.removeComponent<TurnedOn>(actGo);
+						else
+							GameObjectManager.addComponent<TurnedOn>(actGo);
 					}
 				}
 				break;

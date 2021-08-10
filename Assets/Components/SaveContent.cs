@@ -23,16 +23,10 @@ public class SaveContent {
     [Serializable]
     public class RawActivable
     {
-        public bool isActivated;
-        public bool isFullyActivated;
         public List<int> slotID;
-        public int side;
         public RawActivable(Activable act)
         {
-            isActivated = act.isActivated;
-            isFullyActivated = act.isFullyActivated;
             slotID = new List<int>(act.slotID);
-            side = act.side;
         }
     }
 

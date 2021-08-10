@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using FYFY;
-using System.Threading.Tasks;
-using UnityEngine.UI;
 using System.Collections;
 
 public class StepSystem : FSystem {
@@ -9,9 +7,6 @@ public class StepSystem : FSystem {
     private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
     private Family firstStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(FirstStep)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
-    //private Family highlightedItems = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(CurrentAction)));
-    //private Family visibleContainers = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasRenderer), typeof(ScrollRect), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); 
-	//private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
     private float timeStepCpt;
@@ -21,15 +16,19 @@ public class StepSystem : FSystem {
     private int nbStep;
     private bool newStepAskedByPlayer;
 
-	public StepSystem(){
-        nbStep = 0;
-        newStepAskedByPlayer = false;
-		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		timeStepCpt = timeStep;
-        newStep_f.addEntryCallback(onNewStep);
-        firstStep_f.addEntryCallback(onFirstStep);
-        //reset nbstep on execution end
-        scriptIsRunning.addExitCallback(delegate{nbStep = 0;});
+	public StepSystem()
+    {
+        if (Application.isPlaying)
+        {
+            nbStep = 0;
+            newStepAskedByPlayer = false;
+            gameData = GameObject.Find("GameData").GetComponent<GameData>();
+            timeStepCpt = timeStep;
+            newStep_f.addEntryCallback(onNewStep);
+            firstStep_f.addEntryCallback(onFirstStep);
+            //reset nbstep on execution end
+            scriptIsRunning.addExitCallback(delegate { nbStep = 0; });
+        }
     }
     
     private void onNewStep(GameObject go)
@@ -104,39 +103,29 @@ public class StepSystem : FSystem {
         return false;
     }
 
+    // See PauseButton, ExecuteButton, ContinueButton, StopButton and ReloadState buttons in editor
     public void autoExecuteStep(bool on){
         Pause = !on;
     }
 
-    /*
-    private async void delayPause(){
-        await Task.Delay((int)timeStep*1000);
-        Pause = true;
-    }
-    */
-
+    // See NextStepButton in editor
     public void goToNextStep(){
         Pause = false;
         newStepAskedByPlayer = true;
-        /*
-        if(timeStepCpt <= 0 && playerHasNextAction()){
-            GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
-            gameData.totalStep++;   
-        }
-        */
-        //delayPause();
-       //MainLoop.instance.StartCoroutine(delayPause());
     }
 
+    // See StopButton in editor
     public void updateTotalStep(){ //on click on stop button
         gameData.totalStep -= nbStep;
         nbStep = 0;
     }
 
+    // See SpeedButton in editor
     public void speedTimeStep(){
         timeStep = defaultTimeStep/5;
     }
 
+    // See ContinueButton in editor
     public void setToDefaultTimeStep(){
         timeStep = defaultTimeStep;
     }
