@@ -4,7 +4,10 @@ using System.Collections;
 using FYFY_plugins.TriggerManager;
 using UnityEngine.UI;
 
-public class DetectorGeneratorSystem : FSystem {
+/// <summary>
+/// Manage detector areas
+/// </summary>
+public class DetectorManager : FSystem {
 
 	private Family ennemyGO = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
 	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody)));
@@ -16,9 +19,7 @@ public class DetectorGeneratorSystem : FSystem {
     private GameData gameData;
     private bool activeRedDetector;
 
-	// Use this to update member variables when system pause. 
-	// Advice: avoid to update your families inside this function.
-	public DetectorGeneratorSystem()
+	public DetectorManager()
     {
         if (Application.isPlaying)
         {
@@ -36,7 +37,6 @@ public class DetectorGeneratorSystem : FSystem {
 				//Check if the player collide with a detection cell
 				if (target.GetComponent<Detector>() != null){
 					//end level
-					Debug.Log("Repéré !");
 					GameObjectManager.addComponent<NewEnd>(endpanel_f.First(), new { endType = NewEnd.Detected });
 				}
 			}			
@@ -46,16 +46,23 @@ public class DetectorGeneratorSystem : FSystem {
     // See ExecuteButton, StopButton and ReloadState buttons in editor
 	public void detectCollision(bool on){
 		activeRedDetector = on;
-	}
+    }
+
+    // See StopButton and ReloadState buttons in editor
+    public void updateDetector()
+    {
+        MainLoop.instance.StartCoroutine(delayUpdateDetector());
+    }
 
     private IEnumerator delayUpdateDetector(){
-        yield return null;
-        yield return null;
-        yield return null;
-         //Destroy detection cells
+        yield return null; // On NewStep currentAction is moved to the next action
+        yield return null; // Following frame CurrentAction is available in families and action is executed (for exemple drone rotation)
+        // then we can update dectetors
+
+        //Destroy detection cells
         foreach (GameObject detector in detectorGO)
         {
-            // Remove position (because GameObject is not destroyed immediate)
+            // Reset positions (because GameObject is not destroyed immediate)
             Position pos = detector.GetComponent<Position>();
             pos.x = -1;
             pos.z = -1;
@@ -88,16 +95,10 @@ public class DetectorGeneratorSystem : FSystem {
                                 int x = detect.GetComponent<Position>().x;
                                 int z = detect.GetComponent<Position>().z + i + 1;
                                 foreach (GameObject wall in wallGO)
-                                {
                                     if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
-                                    {
                                         stop = true;
-                                    }
-                                }
                                 if (stop)
-                                {
                                     break;
-                                }
                                 else
                                 {
                                     GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
@@ -115,16 +116,10 @@ public class DetectorGeneratorSystem : FSystem {
                                 int x = detect.GetComponent<Position>().x - i - 1;
                                 int z = detect.GetComponent<Position>().z;
                                 foreach (GameObject wall in wallGO)
-                                {
                                     if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
-                                    {
                                         stop = true;
-                                    }
-                                }
                                 if (stop)
-                                {
                                     break;
-                                }
                                 else
                                 {
                                     GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
@@ -142,16 +137,10 @@ public class DetectorGeneratorSystem : FSystem {
                                 int x = detect.GetComponent<Position>().x;
                                 int z = detect.GetComponent<Position>().z - i - 1;
                                 foreach (GameObject wall in wallGO)
-                                {
                                     if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
-                                    {
                                         stop = true;
-                                    }
-                                }
                                 if (stop)
-                                {
                                     break;
-                                }
                                 else
                                 {
                                     GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
@@ -169,16 +158,10 @@ public class DetectorGeneratorSystem : FSystem {
                                 int x = detect.GetComponent<Position>().x + i + 1;
                                 int z = detect.GetComponent<Position>().z;
                                 foreach (GameObject wall in wallGO)
-                                {
                                     if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
-                                    {
                                         stop = true;
-                                    }
-                                }
                                 if (stop)
-                                {
                                     break;
-                                }
                                 else
                                 {
                                     GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
@@ -197,11 +180,5 @@ public class DetectorGeneratorSystem : FSystem {
                     break;
             }
         }       
-    }
-
-    // See StopButton and ReloadState buttons in editor
-    public void updateDetector()
-    {
-       MainLoop.instance.StartCoroutine(delayUpdateDetector());
     }
 }

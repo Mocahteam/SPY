@@ -47,67 +47,59 @@ public class HighLightSystem : FSystem {
 		//If click on highlighted item and item has a script, then show its script in the 2nd script window
 		if(highLightedItem && Input.GetMouseButtonDown(0) && highLightedItem.GetComponent<ScriptRef>()){
 			GameObject go = highLightedItem.GetComponent<ScriptRef>().uiContainer;
-			if(go.activeInHierarchy)
-				GameObjectManager.setGameObjectState(go,false);
-			else
-				GameObjectManager.setGameObjectState(go,true);
+			GameObjectManager.setGameObjectState(go,!go.activeInHierarchy);
 			MainLoop.instance.GetComponent<AudioSource>().Play();
 		}
 	}
 
 	public void highLightItem(GameObject go){
-		if(go.GetComponent<CurrentAction>()){
-			if(go.GetComponent<BasicAction>() && go.GetComponent<Image>()){
-				go.GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().currentActionColor;
+		// first process currentAction in agents panels
+		if(go.GetComponent<CurrentAction>())
+		{
+			go.GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().currentActionColor;
+			Transform parent = go.transform.parent;
+			while (parent != null)
+            {
+				if (parent.GetComponent<ForAction>() || parent.GetComponent<ForeverAction>())
+					parent.transform.GetChild(0).GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().currentActionColor;
+				parent = parent.parent;
 			}
-			else if(go.GetComponent<ForAction>() || go.GetComponent<ForeverAction>()){
-				go.transform.GetChild(0).GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().currentActionColor;
-			}				
 		}
-		else if(go.GetComponent<BaseElement>()){ //pointed action
-			if((go.GetComponent<BasicAction>() || go.GetComponent<IfAction>()) && go.GetComponent<Image>()){
-				go.GetComponent<Image>().color = go.GetComponent<BaseElement>().highlightedColor;
-			}
-			else if(go.GetComponent<ForAction>() || go.GetComponent<ForeverAction>()){
-				go.GetComponent<Image>().color = go.GetComponent<BaseElement>().highlightedColor;
-			}			
-		}
-		else if(go.GetComponentInChildren<Renderer>()){
+		// second manage sensitive UI inside editable panel
+		else if(go.GetComponent<BaseElement>() && go.GetComponent<PointerOver>())
+			go.GetComponent<Image>().color = go.GetComponent<BaseElement>().highlightedColor;
+		// third sensitive UI inside library panel
+		else if (go.GetComponent<ElementToDrag>() && go.GetComponent<PointerOver>())
+			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
+		// then process world GameObjects (Walls, drone, robots...)
+		else if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().highlightedColor;
 			if(go.GetComponent<ScriptRef>()){
 				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Container").GetComponent<Image>();
 				img.color = img.GetComponent<Highlightable>().highlightedColor;
 			}
 		}
-		else if(go.GetComponent<ElementToDrag>() && go.GetComponent<Image>()){
-			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
-		}
 	}
 
 	public void unHighLightItem(GameObject go){
 		if(go.GetComponent<BaseElement>()){
-			if((go.GetComponent<BasicAction>() || go.GetComponent<IfAction>()) && go.GetComponent<Image>()){
-				go.GetComponent<Image>().color = go.GetComponent<BaseElement>().baseColor;
-			}
-			else if(go.GetComponent<ForAction>() || go.GetComponent<ForeverAction>()){
-				if(go.GetComponent<Image>().color.Equals(go.GetComponent<BaseElement>().baseColor)){
-					go.transform.GetChild(0).GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().forBaseColor;
-				}
-				else{
-					go.GetComponent<Image>().color = go.GetComponent<BaseElement>().baseColor;
-				}	
+			go.GetComponent<Image>().color = go.GetComponent<BaseElement>().baseColor;
+			Transform parent = go.transform.parent;
+			while (parent != null)
+			{
+				if (parent.GetComponent<ForAction>() || parent.GetComponent<ForeverAction>())
+					parent.transform.GetChild(0).GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().forBaseColor;
+				parent = parent.parent;
 			}
 		}
+		else if (go.GetComponent<ElementToDrag>())
+			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
 		else if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().baseColor;
 			if(go.GetComponent<ScriptRef>()){
 				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Container").GetComponent<Image>();
 				img.color = img.GetComponent<Highlightable>().baseColor;
 			}
-		}
-
-		else if(go.GetComponent<ElementToDrag>()){
-			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
 		}
 	}
 }

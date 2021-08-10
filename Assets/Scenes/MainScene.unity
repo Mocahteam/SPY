@@ -2283,20 +2283,21 @@ GameObject:
   - component: {fileID: 361349227}
   - component: {fileID: 361349226}
   - component: {fileID: 361349223}
-  - component: {fileID: 361349222}
   - component: {fileID: 361349221}
-  - component: {fileID: 361349220}
   - component: {fileID: 361349218}
-  - component: {fileID: 361349217}
-  - component: {fileID: 361349224}
   - component: {fileID: 361349216}
   - component: {fileID: 361349225}
   - component: {fileID: 361349230}
-  - component: {fileID: 361349231}
-  - component: {fileID: 361349232}
   - component: {fileID: 361349233}
-  - component: {fileID: 361349219}
   - component: {fileID: 361349234}
+  - component: {fileID: 361349217}
+  - component: {fileID: 361349235}
+  - component: {fileID: 361349224}
+  - component: {fileID: 361349222}
+  - component: {fileID: 361349231}
+  - component: {fileID: 361349219}
+  - component: {fileID: 361349232}
+  - component: {fileID: 361349220}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -2325,7 +2326,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 361349215}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96f06bc6c44acea4da07838ec9e26b59, type: 3}
+  m_Script: {fileID: 11500000, guid: 4675867a6dc1f204c8e9b993b8d04d6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &361349218
@@ -2349,7 +2350,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 361349215}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f14a736a545d122448f0d98398ef92c2, type: 3}
+  m_Script: {fileID: 11500000, guid: 0a9511957827aa846aba10a11782e576, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &361349220
@@ -2361,7 +2362,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 361349215}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c65a003bba01884a8770bff2a78a328, type: 3}
+  m_Script: {fileID: 11500000, guid: 550c97d74ea1a6143be8bed036678933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &361349221
@@ -2385,7 +2386,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 361349215}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dab4df2d4eaa94643973dd20f83de4b5, type: 3}
+  m_Script: {fileID: 11500000, guid: 70b37dec52305984bbdf81a28647e2d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &361349223
@@ -2409,7 +2410,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 361349215}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a53971e1ff9dcdb49be9d0d73cf3d8ea, type: 3}
+  m_Script: {fileID: 11500000, guid: e180f627c954d494b8d41b5a98bc3434, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &361349225
@@ -2466,17 +2467,17 @@ MonoBehaviour:
       PublicKeyToken=null
     _typeFullName: MoveSystem
     _pause: 0
-  - _typeAssemblyQualifiedName: CoinSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+  - _typeAssemblyQualifiedName: CoinManager, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-    _typeFullName: CoinSystem
+    _typeFullName: CoinManager
     _pause: 0
   - _typeAssemblyQualifiedName: UISystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     _typeFullName: UISystem
     _pause: 0
-  - _typeAssemblyQualifiedName: LevelGeneratorSystem, Assembly-CSharp, Version=0.0.0.0,
+  - _typeAssemblyQualifiedName: LevelGenerator, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-    _typeFullName: LevelGeneratorSystem
+    _typeFullName: LevelGenerator
     _pause: 0
   - _typeAssemblyQualifiedName: CameraSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
@@ -2486,17 +2487,17 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     _typeFullName: DragDropSystem
     _pause: 0
-  - _typeAssemblyQualifiedName: ActionBlocSystem, Assembly-CSharp, Version=0.0.0.0,
+  - _typeAssemblyQualifiedName: BlocLimitationManager, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-    _typeFullName: ActionBlocSystem
+    _typeFullName: BlocLimitationManager
     _pause: 0
   - _typeAssemblyQualifiedName: StepSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     _typeFullName: StepSystem
     _pause: 1
-  - _typeAssemblyQualifiedName: CurrentActionSystem, Assembly-CSharp, Version=0.0.0.0,
+  - _typeAssemblyQualifiedName: CurrentActionManager, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-    _typeFullName: CurrentActionSystem
+    _typeFullName: CurrentActionManager
     _pause: 0
   - _typeAssemblyQualifiedName: SaveManager, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
@@ -2507,17 +2508,21 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     _typeFullName: HighLightSystem
     _pause: 0
-  - _typeAssemblyQualifiedName: ApplyScriptSystem, Assembly-CSharp, Version=0.0.0.0,
+  - _typeAssemblyQualifiedName: CurrentActionExecutor, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-    _typeFullName: ApplyScriptSystem
+    _typeFullName: CurrentActionExecutor
     _pause: 0
-  - _typeAssemblyQualifiedName: DetectorGeneratorSystem, Assembly-CSharp, Version=0.0.0.0,
+  - _typeAssemblyQualifiedName: EndGameManager, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-    _typeFullName: DetectorGeneratorSystem
+    _typeFullName: EndGameManager
     _pause: 0
-  - _typeAssemblyQualifiedName: DoorSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+  - _typeAssemblyQualifiedName: DoorManager, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-    _typeFullName: DoorSystem
+    _typeFullName: DoorManager
+    _pause: 0
+  - _typeAssemblyQualifiedName: DetectorManager, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: DetectorManager
     _pause: 0
   _forceUpdateInspector: 0
   _loadingState: 0
@@ -2651,7 +2656,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 361349215}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54d81631156d16a4aa9836fdf52bbe25, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ead530b66c47074f8e1a8e3eeff8ca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &361349232
@@ -2663,7 +2668,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 361349215}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4623ab1387369d4fbb7923b48e49435, type: 3}
+  m_Script: {fileID: 11500000, guid: f17afabbc7756aa4a85ef1c6daca6752, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &361349233
@@ -2693,9 +2698,21 @@ MonoBehaviour:
   playerAction: {r: 0.4862745, g: 0.5568628, b: 1, a: 1}
   playerBackground: {r: 1, g: 1, b: 1, a: 0.39215687}
   droneAction: {r: 0.6039216, g: 0.6039216, b: 0.6039216, a: 1}
-  droneBackground: {r: 0.6431373, g: 0.6431373, b: 0.6431373, a: 1}
+  droneBackground: {r: 0.6039216, g: 0.6039216, b: 0.6039216, a: 0.39215687}
   forBaseColor: {r: 1, g: 1, b: 1, a: 1}
   currentActionColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+--- !u!114 &361349235
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9433476ced47ced42ae6170b5aff88a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &388713684
 GameObject:
   m_ObjectHideFlags: 0
@@ -9987,7 +10004,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 361349231}
-        m_TargetAssemblyTypeName: CurrentActionSystem_wrapper, Assembly-CSharp
+        m_TargetAssemblyTypeName: CurrentActionManager_wrapper, Assembly-CSharp
         m_MethodName: firstAction
         m_Mode: 2
         m_Arguments:
@@ -10071,7 +10088,7 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 361349219}
-        m_TargetAssemblyTypeName: DetectorGeneratorSystem_wrapper, Assembly-CSharp
+        m_TargetAssemblyTypeName: DetectorManager_wrapper, Assembly-CSharp
         m_MethodName: detectCollision
         m_Mode: 6
         m_Arguments:
@@ -10083,7 +10100,7 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 361349222}
-        m_TargetAssemblyTypeName: CoinSystem_wrapper, Assembly-CSharp
+        m_TargetAssemblyTypeName: CoinManager_wrapper, Assembly-CSharp
         m_MethodName: detectCollision
         m_Mode: 6
         m_Arguments:
@@ -11277,7 +11294,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 361349219}
-        m_TargetAssemblyTypeName: DetectorGeneratorSystem_wrapper, Assembly-CSharp
+        m_TargetAssemblyTypeName: DetectorManager_wrapper, Assembly-CSharp
         m_MethodName: detectCollision
         m_Mode: 6
         m_Arguments:
@@ -11289,7 +11306,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 361349222}
-        m_TargetAssemblyTypeName: CoinSystem_wrapper, Assembly-CSharp
+        m_TargetAssemblyTypeName: CoinManager_wrapper, Assembly-CSharp
         m_MethodName: detectCollision
         m_Mode: 6
         m_Arguments:
@@ -11301,7 +11318,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 361349219}
-        m_TargetAssemblyTypeName: DetectorGeneratorSystem_wrapper, Assembly-CSharp
+        m_TargetAssemblyTypeName: DetectorManager_wrapper, Assembly-CSharp
         m_MethodName: updateDetector
         m_Mode: 1
         m_Arguments:
@@ -11768,7 +11785,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 361349219}
-        m_TargetAssemblyTypeName: DetectorGeneratorSystem_wrapper, Assembly-CSharp
+        m_TargetAssemblyTypeName: DetectorManager_wrapper, Assembly-CSharp
         m_MethodName: detectCollision
         m_Mode: 6
         m_Arguments:
@@ -11780,7 +11797,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 361349222}
-        m_TargetAssemblyTypeName: CoinSystem_wrapper, Assembly-CSharp
+        m_TargetAssemblyTypeName: CoinManager_wrapper, Assembly-CSharp
         m_MethodName: detectCollision
         m_Mode: 6
         m_Arguments:
@@ -11792,7 +11809,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 361349219}
-        m_TargetAssemblyTypeName: DetectorGeneratorSystem_wrapper, Assembly-CSharp
+        m_TargetAssemblyTypeName: DetectorManager_wrapper, Assembly-CSharp
         m_MethodName: updateDetector
         m_Mode: 1
         m_Arguments:

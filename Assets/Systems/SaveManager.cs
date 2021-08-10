@@ -1,6 +1,9 @@
 using UnityEngine;
 using FYFY;
 
+/// <summary>
+/// Manage game state
+/// </summary>
 public class SaveManager : FSystem {
 
     private Family f_coins = FamilyManager.getFamily(new AnyOfTags("Coin"));
@@ -8,11 +11,9 @@ public class SaveManager : FSystem {
     private Family f_directions = FamilyManager.getFamily(new AllOfComponents(typeof(Direction)), new NoneOfComponents(typeof(Detector)));
     private Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new NoneOfComponents(typeof(Detector)));
     private Family f_activables = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
-	//private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
     public static SaveManager instance;
 
-    private GameData gameData;
     private SaveContent save;
 
     private string currentContent;
@@ -21,18 +22,10 @@ public class SaveManager : FSystem {
 	{
         if (Application.isPlaying)
         {
-            GameObject GD = GameObject.Find("GameData");
-            gameData = GD.GetComponent<GameData>();
             save = new SaveContent();
         }
 		instance = this;
 	}
-
-
-    protected override void onProcess(int familiesUpdateCount)
-    {
-        
-    }
 
     // See ExecuteButton in editor
     public void SaveState(GameObject buttonStop)
@@ -55,14 +48,11 @@ public class SaveManager : FSystem {
             foreach (GameObject act in f_activables)
                 save.rawSave.activables.Add(new SaveContent.RawActivable(act.GetComponent<Activable>()));
             save.rawSave.currentDroneActions.Clear();    
-            foreach(GameObject go in f_currentActions){
-                if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone")){
+            foreach(GameObject go in f_currentActions)
+                if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
                     save.rawSave.currentDroneActions.Add(new SaveContent.RawCurrentAction(go));
-                }
-            }
 
             currentContent = JsonUtility.ToJson(save.rawSave);
-            Debug.Log(currentContent);          
         }
 
     }

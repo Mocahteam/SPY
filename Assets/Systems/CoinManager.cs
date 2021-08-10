@@ -6,12 +6,12 @@ using FYFY_plugins.TriggerManager;
 /// <summary>
 /// Manage collision between player agents and Coins
 /// </summary>
-public class CoinSystem : FSystem {
+public class CoinManager : FSystem {
     private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
 	private GameData gameData;
     private bool activeCoin;
 
-	public CoinSystem(){
+	public CoinManager(){
 		if (Application.isPlaying)
 		{
 			activeCoin = true;
@@ -42,7 +42,7 @@ public class CoinSystem : FSystem {
 	private IEnumerator coinDestroy(GameObject go){
 		go.GetComponent<ParticleSystem>().Play();
 		go.GetComponent<Renderer>().enabled = false;
-		yield return new WaitForSeconds(1f);
-		GameObjectManager.setGameObjectState(go, false);
+		yield return new WaitForSeconds(1f); // let time for animation
+		GameObjectManager.setGameObjectState(go, false); // then disabling GameObject
 	}
 }

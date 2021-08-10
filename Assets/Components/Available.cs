@@ -1,5 +1,0 @@
-using UnityEngine;
-
-public class Available : MonoBehaviour {
-	// Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
-}

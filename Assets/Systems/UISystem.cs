@@ -78,10 +78,14 @@ public class UISystem : FSystem {
     }
 
 	private void onNewCurrentAction(GameObject go){
-		Vector3 v = GetGUIElementOffset(go.GetComponent<RectTransform>());
-		if(v != Vector3.zero){ // if not visible in UI
-			ScrollRect containerScrollRect = go.GetComponentInParent<ScrollRect>();
-			containerScrollRect.content.localPosition += GetSnapToPositionToBringChildIntoView(containerScrollRect, go.GetComponent<RectTransform>());
+		if (go.activeInHierarchy)
+		{
+			Vector3 v = GetGUIElementOffset(go.GetComponent<RectTransform>());
+			if (v != Vector3.zero)
+			{ // if not visible in UI
+				ScrollRect containerScrollRect = go.GetComponentInParent<ScrollRect>();
+				containerScrollRect.content.localPosition += GetSnapToPositionToBringChildIntoView(containerScrollRect, go.GetComponent<RectTransform>());
+			}
 		}
 	}
 
@@ -164,7 +168,7 @@ public class UISystem : FSystem {
 				GameObjectManager.bind(child.gameObject);
 				GameObjectManager.refresh(editableCanvas);
 			}
-			addNext(gameData.actionsHistory);
+			LevelGenerator.computeNext(gameData.actionsHistory);
 			foreach(BaseElement act in editableCanvas.GetComponentsInChildren<BaseElement>()){
 				GameObjectManager.addComponent<Dropped>(act.gameObject);
 			}
@@ -283,7 +287,6 @@ public class UISystem : FSystem {
 		if(gameData.dialogMessage.Count > 0 && !dialogPanel.transform.parent.gameObject.activeSelf){
 			showDialogPanel();
 		}
-
 	}
 
 	//Refresh Containers size
@@ -291,7 +294,6 @@ public class UISystem : FSystem {
 		foreach( GameObject go in editableScriptContainer){
 			LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)go.transform );
 		}
-		
 	}
 
 	// Empty the script window
@@ -494,7 +496,7 @@ public class UISystem : FSystem {
 					}
 
 				}
-				addNext(targetContainer);
+				LevelGenerator.computeNext(targetContainer);
 			}
 
 			UnityEngine.Object.Destroy(containerCopy);
@@ -584,29 +586,6 @@ public class UISystem : FSystem {
 			act.gameObject.GetComponent<Image>().color = actionColor;
 		}
 
-
 		return copyGO;
-	}
-
-	private void addNext(GameObject container){
-		for(int i = 0 ; i < container.transform.childCount ; i++){
-			Transform child = container.transform.GetChild(i);
-			if(i < container.transform.childCount-1 && child.GetComponent<BaseElement>()){
-				child.GetComponent<BaseElement>().next = container.transform.GetChild(i+1).gameObject;
-			}
-			else if(i == container.transform.childCount-1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>()){
-				if(container.GetComponent<ForAction>() || container.GetComponent<ForeverAction>()){
-					child.GetComponent<BaseElement>().next = container;
-				}
-				else if(container.GetComponent<IfAction>()){
-					child.GetComponent<BaseElement>().next = container.GetComponent<BaseElement>().next;
-				}
-				
-			}
-			//if or for action
-			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>() || child.GetComponent<ForeverAction>()){
-				addNext(child.gameObject);
-			}
-		}
 	}
 }

@@ -3,15 +3,15 @@ using FYFY;
 using TMPro;
 
 /// <summary>
-/// Manages dropped and deleted action blocs (maintains bloc counter)
+/// This system manages blocs limitation in inventory
 /// </summary>
-public class ActionBlocSystem : FSystem {
+public class BlocLimitationManager : FSystem {
 	private Family droppedActions = FamilyManager.getFamily(new AllOfComponents(typeof(Dropped), typeof(UIActionType)));
 	private Family deletedActions = FamilyManager.getFamily(new AllOfComponents(typeof(AddOne)));
 	private Family draggableElement = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)));
 	private GameData gameData;
 
-	public ActionBlocSystem(){
+	public BlocLimitationManager(){
 		if (Application.isPlaying)
 		{
 			gameData = GameObject.Find("GameData").GetComponent<GameData>();
@@ -54,7 +54,6 @@ public class ActionBlocSystem : FSystem {
 		bool isActive = gameData.actionBlocLimit[keyName] != 0; // negative means no limit
 		GameObjectManager.setGameObjectState(draggableGO, isActive);
 		if(isActive){
-			GameObjectManager.addComponent<Available>(draggableGO);
 			if(gameData.actionBlocLimit[keyName] < 0)
 				// unlimited action => hide counter
 				GameObjectManager.setGameObjectState(draggableGO.transform.GetChild(1).gameObject, false);

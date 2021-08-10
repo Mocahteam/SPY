@@ -5,13 +5,13 @@ using System.Collections;
 /// <summary>
 /// Manage Doors and Consoles => open/close doors depending on consoles state
 /// </summary>
-public class DoorSystem : FSystem {
+public class DoorManager : FSystem {
 
 	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
 	private Family f_consoleOn = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource), typeof(TurnedOn)));
 	private Family f_consoleOff = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)), new NoneOfComponents(typeof(TurnedOn)));
 
-	public DoorSystem()
+	public DoorManager()
 	{
 		if (Application.isPlaying)
 		{

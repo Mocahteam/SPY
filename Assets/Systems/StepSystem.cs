@@ -2,6 +2,9 @@
 using FYFY;
 using System.Collections;
 
+/// <summary>
+/// Manage steps (automatic simulation or controled by player)
+/// </summary>
 public class StepSystem : FSystem {
 
     private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
@@ -35,7 +38,6 @@ public class StepSystem : FSystem {
     {
         GameObjectManager.removeComponent(go.GetComponent<NewStep>());  
         timeStepCpt = timeStep;
-        Debug.Log("StepSystem End");
     }
     private void onFirstStep(GameObject go)
     {
@@ -43,7 +45,6 @@ public class StepSystem : FSystem {
         timeStepCpt = timeStep;
         gameData.totalStep++;
         nbStep++;
-        Debug.Log("FirstStep End");
     }
 
     // Use to process your families.
@@ -81,17 +82,14 @@ public class StepSystem : FSystem {
 
     private void stopExecution(){
         if(MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>()){
-            Debug.Log("fin exec");
             //quick fix for several PlayerIsMoving
-            foreach(PlayerIsMoving p in MainLoop.instance.GetComponents<PlayerIsMoving>()){
+            foreach(PlayerIsMoving p in MainLoop.instance.GetComponents<PlayerIsMoving>())
                 GameObjectManager.removeComponent<PlayerIsMoving>(MainLoop.instance.gameObject);
-            }
             Pause = true;
         }
     }
 
     private bool playerHasNextAction(){
-        Debug.Log("playerHasNextAction");
 		CurrentAction act;
 		foreach(GameObject go in currentActions){
 			act = go.GetComponent<CurrentAction>();

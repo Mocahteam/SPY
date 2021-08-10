@@ -4,7 +4,7 @@ using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
 
 /// <summary>
-/// This system manages main camera (movement, rotation, focus on agent...)
+/// This system manages main camera (movement, rotation, focus on/follow agent...)
 /// </summary>
 public class CameraSystem : FSystem {
 	// Contains main camera
@@ -49,7 +49,6 @@ public class CameraSystem : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-		Debug.Log(target);
 		// manage all cameras
 		foreach( GameObject camera in cameraGO ){
 			// if target is defined move smoothy camera to it 
@@ -140,6 +139,7 @@ public class CameraSystem : FSystem {
 		}		
 	}
 
+	// add callback to locateButton inside UI container associated to the agent
 	public void setLocateButtons(GameObject go){
 		go.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("locateButton").GetComponent<Button>().onClick.AddListener(delegate{target = go.transform;});
 	}
