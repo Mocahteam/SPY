@@ -13,7 +13,7 @@ using System.IO;
 public class LevelGenerator : FSystem {
 
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
-	private Family ennemyScript = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
+	private Family enemyScript = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
 	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer), typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
 	private List<List<int>> map;
 	private GameData gameData;
@@ -29,7 +29,7 @@ public class LevelGenerator : FSystem {
 
 			gameData = gameDataGO.GetComponent<GameData>();
 			gameData.Level = GameObject.Find("Level");
-			scriptContainer = ennemyScript.First();
+			scriptContainer = enemyScript.First();
 			XmlToLevel(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
 			GameObject.Find("LevelName").GetComponent<TMP_Text>().text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
 		}
@@ -59,15 +59,15 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
-	private GameObject createEntity(int i, int j, Direction.Dir direction, int type, List<GameObject> script = null){
+	private GameObject createEntity(int i, int j, Direction.Dir direction, string type, List<GameObject> script = null){
 		GameObject entity = null;
 		Sprite agentSpriteIcon = null;
 		switch(type){
-			case 0: // Robot
+			case "player": // Robot
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Robot Kyle") as GameObject, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				agentSpriteIcon =  Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
 				break;
-			case 1: // Ennemy
+			case "enemy": // Enemy
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.Level.transform.position + new Vector3(i*3,5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				agentSpriteIcon =  Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
 				break;
@@ -83,16 +83,12 @@ public class LevelGenerator : FSystem {
 		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
 		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
 		containerParent.transform.Find("Header").Find("agent").GetComponent<Image>().sprite = agentSpriteIcon;
-		
-		if(type == 0){ // Robot
-			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().playerBackground;
-		}
-		else if(type == 1){ // Drone
-			scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().droneBackground;
-		}
+
+		AgentColor ac = MainLoop.instance.GetComponent<AgentColor>();
+		scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = (type == "player" ? ac.playerBackground : ac.droneBackground);
 
 		if(script != null){
-			if (type == 0 && editableScriptContainer.First().transform.childCount == 1){ //Robot & empty script (1 child for position bar)
+			if (type == "player" && editableScriptContainer.First().transform.childCount == 1){ //player & empty script (1 child for position bar)
 				GameObject editableCanvas = editableScriptContainer.First();
 				for(int k = 0 ; k < script.Count ; k++){
 					script[k].transform.SetParent(editableCanvas.transform); //add actions to editable container
@@ -105,7 +101,7 @@ public class LevelGenerator : FSystem {
 				LayoutRebuilder.ForceRebuildLayoutImmediate(editableCanvas.GetComponent<RectTransform>());
 			}
 
-			else if(type == 1){ //Drone
+			else if(type == "enemy"){
 				foreach(GameObject go in script){
 					go.transform.SetParent(scriptref.scriptContainer.transform); //add actions to container
 					List<GameObject> basicActionGO = getBasicActionGO(go);
@@ -241,15 +237,15 @@ public class LevelGenerator : FSystem {
 				
 				case "player":
 					createEntity(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
-					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),0, readXMLScript(child.ChildNodes[0], true));
+					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),"player", readXMLScript(child.ChildNodes[0], true));
 					break;
 				
-				case "ennemy":
-					GameObject ennemy = createEntity(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
-					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),1, readXMLScript(child.ChildNodes[0]));
-					ennemy.GetComponent<DetectRange>().range = int.Parse(child.Attributes.GetNamedItem("range").Value);
-					ennemy.GetComponent<DetectRange>().selfRange = bool.Parse(child.Attributes.GetNamedItem("selfRange").Value);
-					ennemy.GetComponent<DetectRange>().type = (DetectRange.Type)int.Parse(child.Attributes.GetNamedItem("typeRange").Value);
+				case "enemy":
+					GameObject enemy = createEntity(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
+					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),"enemy", readXMLScript(child.ChildNodes[0]));
+					enemy.GetComponent<DetectRange>().range = int.Parse(child.Attributes.GetNamedItem("range").Value);
+					enemy.GetComponent<DetectRange>().selfRange = bool.Parse(child.Attributes.GetNamedItem("selfRange").Value);
+					enemy.GetComponent<DetectRange>().type = (DetectRange.Type)int.Parse(child.Attributes.GetNamedItem("typeRange").Value);
 					break;
 				
 				case "score":

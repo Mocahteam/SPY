@@ -9,7 +9,7 @@ using UnityEngine.UI;
 /// </summary>
 public class DetectorManager : FSystem {
 
-	private Family ennemyGO = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
+	private Family enemyGO = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
 	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody)));
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
     private Family gameLoaded_f = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
@@ -72,7 +72,7 @@ public class DetectorManager : FSystem {
 
         bool stop = false;
         //Generate detection cells
-        foreach (GameObject detect in ennemyGO)
+        foreach (GameObject detect in enemyGO)
         {
             switch (detect.GetComponent<DetectRange>().type)
             {
