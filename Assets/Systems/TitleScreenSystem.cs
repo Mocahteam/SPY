@@ -34,17 +34,25 @@ public class TitleScreenSystem : FSystem {
 
 			GameObjectManager.setGameObjectState(campagneMenu, false);
 			GameObjectManager.setGameObjectState(backButton, false);
-			string levelsPath = Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels";
-			List<string> levels;
-			foreach (string directory in Directory.GetDirectories(levelsPath))
+			string levelsPath;
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
 			{
-				levels = readScenario(directory);
-				if (levels != null)
+				gameData.levelList["Campagne"] = new List<string>();
+				for (int i = 1; i <= 20; i++)
+					gameData.levelList["Campagne"].Add(Application.streamingAssetsPath + "/Levels/Campagne/Niveau" + i + ".xml");
+			}
+			else
+			{
+				levelsPath = Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels";
+				List<string> levels;
+				foreach (string directory in Directory.GetDirectories(levelsPath))
 				{
-					gameData.levelList[Path.GetFileName(directory)] = levels; //key = directory name
+					levels = readScenario(directory);
+					if (levels != null)
+						gameData.levelList[Path.GetFileName(directory)] = levels; //key = directory name
 				}
 			}
-
+			
 			//create level directory buttons
 			foreach (string key in gameData.levelList.Keys)
 			{

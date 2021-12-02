@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 using System.IO;
+using System.Collections;
+using UnityEngine.Networking;
 
 /// <summary>
 /// Manage dialogs at the begining of the level
@@ -332,13 +334,33 @@ public class UISystem : FSystem {
 		UnityEngine.Object.Destroy(go);
 	}
 
-	public Sprite getImageAsSprite(string path){
-		Texture2D tex2D = new Texture2D(2, 2); //create new "empty" texture
-		byte[] fileData = File.ReadAllBytes(path); //load image from SPY/path
-		if(tex2D.LoadImage(fileData)){ //if data readable
-			return Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+	public void setImageSprite(Image img, string path){
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, path));
 		}
-		return null;	
+		else
+		{
+			Texture2D tex2D = new Texture2D(2, 2); //create new "empty" texture
+			byte[] fileData = File.ReadAllBytes(path); //load image from SPY/path
+			if (tex2D.LoadImage(fileData))
+				img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+		}
+	}
+    IEnumerator GetTextureWebRequest(Image img, string path)
+	{
+		UnityWebRequest www = UnityWebRequestTexture.GetTexture(path);
+		yield return www.SendWebRequest();
+
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			Debug.Log(www.error);
+		}
+		else
+		{
+			Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
+			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+		}
 	}
 
 	public void showDialogPanel(){
@@ -348,8 +370,8 @@ public class UISystem : FSystem {
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if(gameData.dialogMessage[0].Item2 != null){
 			GameObjectManager.setGameObjectState(imageGO,true);
-			imageGO.GetComponent<Image>().sprite = getImageAsSprite(Application.streamingAssetsPath+Path.DirectorySeparatorChar+"Levels"+
-			Path.DirectorySeparatorChar+gameData.levelToLoad.Item1+Path.DirectorySeparatorChar+"Images"+Path.DirectorySeparatorChar+gameData.dialogMessage[0].Item2);
+			setImageSprite(imageGO.GetComponent<Image>(), Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels" +
+			Path.DirectorySeparatorChar + gameData.levelToLoad.Item1 + Path.DirectorySeparatorChar + "Images" + Path.DirectorySeparatorChar + gameData.dialogMessage[0].Item2);
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO,false);
@@ -371,8 +393,9 @@ public class UISystem : FSystem {
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if(gameData.dialogMessage[nDialog].Item2 != null){
 			GameObjectManager.setGameObjectState(imageGO,true);
-			imageGO.GetComponent<Image>().sprite = getImageAsSprite(Application.streamingAssetsPath+Path.DirectorySeparatorChar+"Levels"+
-			Path.DirectorySeparatorChar+gameData.levelToLoad.Item1+Path.DirectorySeparatorChar+"Images"+Path.DirectorySeparatorChar+gameData.dialogMessage[nDialog].Item2);		}
+			setImageSprite(imageGO.GetComponent<Image>(), Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels" +
+			Path.DirectorySeparatorChar + gameData.levelToLoad.Item1 + Path.DirectorySeparatorChar + "Images" + Path.DirectorySeparatorChar + gameData.dialogMessage[nDialog].Item2);
+		}
 		else
 			GameObjectManager.setGameObjectState(imageGO,false);
 

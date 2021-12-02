@@ -9,9 +9,9 @@ public class LevelGenerator_wrapper : MonoBehaviour
 		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
 	}
 
-	public void XmlToLevel(System.String fileName)
+	public void XmlToLevel(System.Xml.XmlDocument doc)
 	{
-		MainLoop.callAppropriateSystemMethod ("LevelGenerator", "XmlToLevel", fileName);
+		MainLoop.callAppropriateSystemMethod ("LevelGenerator", "XmlToLevel", doc);
 	}
 
 	public void computeNext(UnityEngine.GameObject container)

@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using TMPro;
 using FYFY_plugins.PointerManager;
 using System.IO;
+using System.Collections;
+using UnityEngine.Networking;
 
 /// <summary>
 /// Read XML file and load level
@@ -31,9 +33,35 @@ public class LevelGenerator : FSystem {
 				gameData = gameDataGO.GetComponent<GameData>();
 				gameData.Level = GameObject.Find("Level");
 				scriptContainer = enemyScript.First();
-				XmlToLevel(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+				XmlDocument doc = new XmlDocument();
+				if (Application.platform == RuntimePlatform.WebGLPlayer)
+				{
+					MainLoop.instance.StartCoroutine(GetLevelWebRequest(doc));
+					Debug.Log(gameData.levelToLoad.Item1 + " " + gameData.levelToLoad.Item2);
+					doc.LoadXml(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+					XmlToLevel(doc);
+				}
+				else
+				{
+					doc.Load(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+					XmlToLevel(doc);
+				}
 				GameObject.Find("LevelName").GetComponent<TMP_Text>().text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
 			}
+		}
+	}
+
+	IEnumerator GetLevelWebRequest(XmlDocument doc)
+	{
+		UnityWebRequest www = UnityWebRequest.Get(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+		yield return www.SendWebRequest();
+
+		if (www.result != UnityWebRequest.Result.Success)
+			Debug.Log(www.error);
+		else
+		{
+			doc.LoadXml(www.downloadHandler.text);
+			XmlToLevel(doc);
 		}
 	}
 
@@ -196,7 +224,8 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
-	public void XmlToLevel(string fileName){
+	public void XmlToLevel(XmlDocument doc)
+	{
 
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
@@ -206,9 +235,6 @@ public class LevelGenerator : FSystem {
 		gameData.dialogMessage = new List<(string, string)>();
 		gameData.actionBlocLimit = new Dictionary<string, int>();
 		map = new List<List<int>>();
-
-		XmlDocument doc = new XmlDocument();
-		doc.Load(fileName);
 
 		XmlNode root = doc.ChildNodes[1];
 		foreach(XmlNode child in root.ChildNodes){
