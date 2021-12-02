@@ -26,12 +26,14 @@ public class LevelGenerator : FSystem {
 			GameObject gameDataGO = GameObject.Find("GameData");
 			if (gameDataGO == null)
 				GameObjectManager.loadScene("TitleScreen");
-
-			gameData = gameDataGO.GetComponent<GameData>();
-			gameData.Level = GameObject.Find("Level");
-			scriptContainer = enemyScript.First();
-			XmlToLevel(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
-			GameObject.Find("LevelName").GetComponent<TMP_Text>().text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+			else
+			{
+				gameData = gameDataGO.GetComponent<GameData>();
+				gameData.Level = GameObject.Find("Level");
+				scriptContainer = enemyScript.First();
+				XmlToLevel(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+				GameObject.Find("LevelName").GetComponent<TMP_Text>().text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+			}
 		}
 	}
 

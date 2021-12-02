@@ -24,7 +24,9 @@ public class DetectorManager : FSystem {
         if (Application.isPlaying)
         {
             activeRedDetector = true;
-            gameData = GameObject.Find("GameData").GetComponent<GameData>();
+            GameObject go = GameObject.Find("GameData");
+            if (go != null)
+                gameData = go.GetComponent<GameData>();
             gameLoaded_f.addEntryCallback(delegate { updateDetector(); });
             newStep_f.addEntryCallback(delegate { updateDetector(); });
             robotcollision_f.addEntryCallback(onNewCollision);

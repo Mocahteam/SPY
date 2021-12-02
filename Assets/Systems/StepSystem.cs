@@ -25,7 +25,9 @@ public class StepSystem : FSystem {
         {
             nbStep = 0;
             newStepAskedByPlayer = false;
-            gameData = GameObject.Find("GameData").GetComponent<GameData>();
+            GameObject go = GameObject.Find("GameData");
+            if (go != null)
+                gameData = go.GetComponent<GameData>();
             timeStepCpt = timeStep;
             newStep_f.addEntryCallback(onNewStep);
             firstStep_f.addEntryCallback(onFirstStep);

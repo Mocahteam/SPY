@@ -15,7 +15,9 @@ public class CoinManager : FSystem {
 		if (Application.isPlaying)
 		{
 			activeCoin = true;
-			gameData = GameObject.Find("GameData").GetComponent<GameData>();
+			GameObject go = GameObject.Find("GameData");
+			if (go != null)
+				gameData = go.GetComponent<GameData>();
 			robotcollision_f.addEntryCallback(onNewCollision);
 		}
     }

@@ -14,16 +14,20 @@ public class BlocLimitationManager : FSystem {
 	public BlocLimitationManager(){
 		if (Application.isPlaying)
 		{
-			gameData = GameObject.Find("GameData").GetComponent<GameData>();
-			// init limitation counters for each draggable elements
-			foreach (GameObject go in draggableElement)
+			GameObject gd = GameObject.Find("GameData");
+			if (gd != null)
 			{
-				// get prefab associated to this draggable element
-				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
-				// get action key depending on prefab type
-				string key = getActionKey(prefab.GetComponent<BaseElement>());
-				// update counter
-				updateBlocLimit(key, go);
+				gameData = gd.GetComponent<GameData>();
+				// init limitation counters for each draggable elements
+				foreach (GameObject go in draggableElement)
+				{
+					// get prefab associated to this draggable element
+					GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
+					// get action key depending on prefab type
+					string key = getActionKey(prefab.GetComponent<BaseElement>());
+					// update counter
+					updateBlocLimit(key, go);
+				}
 			}
 			droppedActions.addEntryCallback(useAction);
 			deletedActions.addEntryCallback(unuseAction);

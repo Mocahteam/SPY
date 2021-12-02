@@ -24,7 +24,9 @@ public class HighLightSystem : FSystem {
 			nonhighlightedGO.addEntryCallback(unHighLightItem);
 			highlightedAction.addEntryCallback(highLightItem);
 			nonCurrentAction.addEntryCallback(unHighLightItem);
-			gameData = GameObject.Find("GameData").GetComponent<GameData>();
+			GameObject go = GameObject.Find("GameData");
+			if (go != null)
+				gameData = go.GetComponent<GameData>();
 		}
 	}
 	

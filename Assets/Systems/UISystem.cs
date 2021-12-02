@@ -43,7 +43,9 @@ public class UISystem : FSystem {
 	{
 		if (Application.isPlaying)
 		{
-			gameData = GameObject.Find("GameData").GetComponent<GameData>();
+			GameObject go = GameObject.Find("GameData");
+			if (go != null)
+				gameData = go.GetComponent<GameData>();
 
 			executionCanvas = GameObject.Find("ExecutionCanvas");
 			buttonPlay = executionCanvas.transform.Find("ExecuteButton").gameObject;
@@ -72,7 +74,7 @@ public class UISystem : FSystem {
 			currentActions.addEntryCallback(onNewCurrentAction);
 
 			lastEditedScript = null;
-
+			
 			loadHistory(); 
 		}
     }
@@ -160,7 +162,7 @@ public class UISystem : FSystem {
 	}
 
 	private void loadHistory(){
-		if(gameData.actionsHistory != null){
+		if(gameData != null && gameData.actionsHistory != null){
 			GameObject editableCanvas = editableScriptContainer.First();
 			for(int i = 0 ; i < gameData.actionsHistory.transform.childCount ; i++){
 				Transform child = UnityEngine.GameObject.Instantiate(gameData.actionsHistory.transform.GetChild(i));
@@ -284,7 +286,7 @@ public class UISystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		//Activate DialogPanel if there is a message
-		if(gameData.dialogMessage.Count > 0 && !dialogPanel.transform.parent.gameObject.activeSelf){
+		if(gameData != null && gameData.dialogMessage.Count > 0 && !dialogPanel.transform.parent.gameObject.activeSelf){
 			showDialogPanel();
 		}
 	}
