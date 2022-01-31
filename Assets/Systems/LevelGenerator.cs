@@ -15,39 +15,35 @@ using UnityEngine.Networking;
 public class LevelGenerator : FSystem {
 
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
-	private Family enemyScript = FamilyManager.getFamily(new AllOfComponents(typeof(HorizontalLayoutGroup), typeof(CanvasRenderer)), new NoneOfComponents(typeof(Image)));
-	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer), typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
 	private List<List<int>> map;
 	private GameData gameData;
-	private GameObject scriptContainer;
+	public GameObject editableScriptContainer;
+	public GameObject scriptContainer;
+	public TMP_Text levelName;
 
-	public LevelGenerator()
-	{
-		if (Application.isPlaying)
+	protected override void onStart()
+    {
+		GameObject gameDataGO = GameObject.Find("GameData");
+		if (gameDataGO == null)
+			GameObjectManager.loadScene("TitleScreen");
+		else
 		{
-			GameObject gameDataGO = GameObject.Find("GameData");
-			if (gameDataGO == null)
-				GameObjectManager.loadScene("TitleScreen");
+			gameData = gameDataGO.GetComponent<GameData>();
+			gameData.Level = GameObject.Find("Level");
+			XmlDocument doc = new XmlDocument();
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
+			{
+				MainLoop.instance.StartCoroutine(GetLevelWebRequest(doc));
+				Debug.Log(gameData.levelToLoad.Item1 + " " + gameData.levelToLoad.Item2);
+				doc.LoadXml(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+				XmlToLevel(doc);
+			}
 			else
 			{
-				gameData = gameDataGO.GetComponent<GameData>();
-				gameData.Level = GameObject.Find("Level");
-				scriptContainer = enemyScript.First();
-				XmlDocument doc = new XmlDocument();
-				if (Application.platform == RuntimePlatform.WebGLPlayer)
-				{
-					MainLoop.instance.StartCoroutine(GetLevelWebRequest(doc));
-					Debug.Log(gameData.levelToLoad.Item1 + " " + gameData.levelToLoad.Item2);
-					doc.LoadXml(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
-					XmlToLevel(doc);
-				}
-				else
-				{
-					doc.Load(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
-					XmlToLevel(doc);
-				}
-				GameObject.Find("LevelName").GetComponent<TMP_Text>().text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+				doc.Load(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+				XmlToLevel(doc);
 			}
+			levelName.text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
 		}
 	}
 
@@ -118,17 +114,16 @@ public class LevelGenerator : FSystem {
 		scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = (type == "player" ? ac.playerBackground : ac.droneBackground);
 
 		if(script != null){
-			if (type == "player" && editableScriptContainer.First().transform.childCount == 1){ //player & empty script (1 child for position bar)
-				GameObject editableCanvas = editableScriptContainer.First();
+			if (type == "player" && editableScriptContainer.transform.childCount == 1){ //player & empty script (1 child for position bar)
 				for(int k = 0 ; k < script.Count ; k++){
-					script[k].transform.SetParent(editableCanvas.transform); //add actions to editable container
+					script[k].transform.SetParent(editableScriptContainer.transform); //add actions to editable container
 					GameObjectManager.bind(script[k]);
-					GameObjectManager.refresh(editableCanvas);
+					GameObjectManager.refresh(editableScriptContainer);
 				}
-				foreach(BaseElement act in editableCanvas.GetComponentsInChildren<BaseElement>()){
+				foreach(BaseElement act in editableScriptContainer.GetComponentsInChildren<BaseElement>()){
 					GameObjectManager.addComponent<Dropped>(act.gameObject);
 				}
-				LayoutRebuilder.ForceRebuildLayoutImmediate(editableCanvas.GetComponent<RectTransform>());
+				LayoutRebuilder.ForceRebuildLayoutImmediate(editableScriptContainer.GetComponent<RectTransform>());
 			}
 
 			else if(type == "enemy"){

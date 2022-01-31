@@ -12,20 +12,21 @@ public class SaveManager : FSystem {
     private Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new NoneOfComponents(typeof(Detector)));
     private Family f_activables = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
-    public static SaveManager instance;
 
     private SaveContent save;
 
     private string currentContent;
 
+    public static SaveManager instance;
+
     public SaveManager()
 	{
-        if (Application.isPlaying)
-        {
-            save = new SaveContent();
-        }
 		instance = this;
 	}
+    protected override void onStart()
+    {
+        save = new SaveContent();
+    }
 
     // See ExecuteButton in editor
     public void SaveState(GameObject buttonStop)

@@ -11,27 +11,25 @@ public class BlocLimitationManager : FSystem {
 	private Family draggableElement = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)));
 	private GameData gameData;
 
-	public BlocLimitationManager(){
-		if (Application.isPlaying)
+	protected override void onStart()
+	{
+		GameObject gd = GameObject.Find("GameData");
+		if (gd != null)
 		{
-			GameObject gd = GameObject.Find("GameData");
-			if (gd != null)
+			gameData = gd.GetComponent<GameData>();
+			// init limitation counters for each draggable elements
+			foreach (GameObject go in draggableElement)
 			{
-				gameData = gd.GetComponent<GameData>();
-				// init limitation counters for each draggable elements
-				foreach (GameObject go in draggableElement)
-				{
-					// get prefab associated to this draggable element
-					GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
-					// get action key depending on prefab type
-					string key = getActionKey(prefab.GetComponent<BaseElement>());
-					// update counter
-					updateBlocLimit(key, go);
-				}
+				// get prefab associated to this draggable element
+				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
+				// get action key depending on prefab type
+				string key = getActionKey(prefab.GetComponent<BaseElement>());
+				// update counter
+				updateBlocLimit(key, go);
 			}
-			droppedActions.addEntryCallback(useAction);
-			deletedActions.addEntryCallback(unuseAction);
 		}
+		droppedActions.addEntryCallback(useAction);
+		deletedActions.addEntryCallback(unuseAction);
 	}
 
 	private string getActionKey(BaseElement action){

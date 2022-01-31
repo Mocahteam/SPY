@@ -1,17 +1,16 @@
 using UnityEngine;
 using FYFY;
 
-[ExecuteInEditMode]
-public class CameraSystem_wrapper : MonoBehaviour
+public class CameraSystem_wrapper : BaseWrapper
 {
 	private void Start()
 	{
-		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
+		this.hideFlags = HideFlags.NotEditable;
 	}
 
 	public void setLocateButtons(UnityEngine.GameObject go)
 	{
-		MainLoop.callAppropriateSystemMethod ("CameraSystem", "setLocateButtons", go);
+		MainLoop.callAppropriateSystemMethod (system, "setLocateButtons", go);
 	}
 
 }

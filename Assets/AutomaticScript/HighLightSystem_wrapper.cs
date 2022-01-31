@@ -1,22 +1,21 @@
 using UnityEngine;
 using FYFY;
 
-[ExecuteInEditMode]
-public class HighLightSystem_wrapper : MonoBehaviour
+public class HighLightSystem_wrapper : BaseWrapper
 {
 	private void Start()
 	{
-		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
+		this.hideFlags = HideFlags.NotEditable;
 	}
 
 	public void highLightItem(UnityEngine.GameObject go)
 	{
-		MainLoop.callAppropriateSystemMethod ("HighLightSystem", "highLightItem", go);
+		MainLoop.callAppropriateSystemMethod (system, "highLightItem", go);
 	}
 
 	public void unHighLightItem(UnityEngine.GameObject go)
 	{
-		MainLoop.callAppropriateSystemMethod ("HighLightSystem", "unHighLightItem", go);
+		MainLoop.callAppropriateSystemMethod (system, "unHighLightItem", go);
 	}
 
 }

@@ -11,73 +11,67 @@ using System.Xml;
 /// </summary>
 public class TitleScreenSystem : FSystem {
 	private GameData gameData;
-	private GameObject campagneMenu;
-	private GameObject playButton;
-	private GameObject quitButton;
-	private GameObject backButton;
-	private GameObject cList;
+	public GameObject campagneMenu;
+	public GameObject playButton;
+	public GameObject quitButton;
+	public GameObject backButton;
+	public GameObject cList;
+	
 	private Dictionary<GameObject, List<GameObject>> levelButtons; //key = directory button,  value = list of level buttons
 
-	public TitleScreenSystem(){
-		if (Application.isPlaying)
+    protected override void onStart()
+    {
+		gameData = GameObject.Find("GameData").GetComponent<GameData>();
+		gameData.levelList = new Dictionary<string, List<string>>();
+		GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
+
+		levelButtons = new Dictionary<GameObject, List<GameObject>>();
+
+		GameObjectManager.setGameObjectState(campagneMenu, false);
+		GameObjectManager.setGameObjectState(backButton, false);
+		string levelsPath;
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-			gameData = GameObject.Find("GameData").GetComponent<GameData>();
-			gameData.levelList = new Dictionary<string, List<string>>();
-			campagneMenu = GameObject.Find("CampagneMenu");
-			playButton = GameObject.Find("Jouer");
-			quitButton = GameObject.Find("Quitter");
-			backButton = GameObject.Find("Retour");
-			GameObjectManager.dontDestroyOnLoadAndRebind(GameObject.Find("GameData"));
-
-			cList = GameObject.Find("CampagneList");
-			levelButtons = new Dictionary<GameObject, List<GameObject>>();
-
-			GameObjectManager.setGameObjectState(campagneMenu, false);
-			GameObjectManager.setGameObjectState(backButton, false);
-			string levelsPath;
-			if (Application.platform == RuntimePlatform.WebGLPlayer)
+			gameData.levelList["Campagne"] = new List<string>();
+			for (int i = 1; i <= 20; i++)
+				gameData.levelList["Campagne"].Add(Application.streamingAssetsPath + "/Levels/Campagne/Niveau" + i + ".xml");
+		}
+		else
+		{
+			levelsPath = Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels";
+			List<string> levels;
+			foreach (string directory in Directory.GetDirectories(levelsPath))
 			{
-				gameData.levelList["Campagne"] = new List<string>();
-				for (int i = 1; i <= 20; i++)
-					gameData.levelList["Campagne"].Add(Application.streamingAssetsPath + "/Levels/Campagne/Niveau" + i + ".xml");
+				levels = readScenario(directory);
+				if (levels != null)
+					gameData.levelList[Path.GetFileName(directory)] = levels; //key = directory name
 			}
-			else
+		}
+
+		//create level directory buttons
+		foreach (string key in gameData.levelList.Keys)
+		{
+			GameObject directoryButton = Object.Instantiate<GameObject>(Resources.Load("Prefabs/Button") as GameObject, cList.transform);
+			directoryButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = key;
+			levelButtons[directoryButton] = new List<GameObject>();
+			GameObjectManager.bind(directoryButton);
+			// add on click
+			directoryButton.GetComponent<Button>().onClick.AddListener(delegate { showLevels(directoryButton); });
+			// create level buttons
+			for (int i = 0; i < gameData.levelList[key].Count; i++)
 			{
-				levelsPath = Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels";
-				List<string> levels;
-				foreach (string directory in Directory.GetDirectories(levelsPath))
-				{
-					levels = readScenario(directory);
-					if (levels != null)
-						gameData.levelList[Path.GetFileName(directory)] = levels; //key = directory name
-				}
-			}
-			
-			//create level directory buttons
-			foreach (string key in gameData.levelList.Keys)
-			{
-				GameObject directoryButton = Object.Instantiate<GameObject>(Resources.Load("Prefabs/Button") as GameObject, cList.transform);
-				directoryButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = key;
-				levelButtons[directoryButton] = new List<GameObject>();
-				GameObjectManager.bind(directoryButton);
-				// add on click
-				directoryButton.GetComponent<Button>().onClick.AddListener(delegate { showLevels(directoryButton); });
-				// create level buttons
-				for (int i = 0; i < gameData.levelList[key].Count; i++)
-				{
-					GameObject button = Object.Instantiate<GameObject>(Resources.Load("Prefabs/LevelButton") as GameObject, cList.transform);
-					button.transform.Find("Button").GetChild(0).GetComponent<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(gameData.levelList[key][i]);
-					int indice = i;
-					button.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate { launchLevel(key, indice); });
-					levelButtons[directoryButton].Add(button);
-					GameObjectManager.bind(button);
-					GameObjectManager.setGameObjectState(button, false);
-				}
+				GameObject button = Object.Instantiate<GameObject>(Resources.Load("Prefabs/LevelButton") as GameObject, cList.transform);
+				button.transform.Find("Button").GetChild(0).GetComponent<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(gameData.levelList[key][i]);
+				int indice = i;
+				button.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate { launchLevel(key, indice); });
+				levelButtons[directoryButton].Add(button);
+				GameObjectManager.bind(button);
+				GameObjectManager.setGameObjectState(button, false);
 			}
 		}
 	}
 
-	private List<string> readScenario(string repositoryPath){
+    private List<string> readScenario(string repositoryPath){
 		if(File.Exists(repositoryPath+Path.DirectorySeparatorChar+"Scenario.xml")){
 			List<string> levelList = new List<string>();
 			XmlDocument doc = new XmlDocument();

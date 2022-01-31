@@ -18,7 +18,6 @@ public class UISystem : FSystem {
     private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
     private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
-	private Family editableScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer), typeof(VerticalLayoutGroup), typeof(CanvasRenderer), typeof(PointerSensitive)));
 	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(UIActionType)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
@@ -26,60 +25,46 @@ public class UISystem : FSystem {
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
 	private Family emptyPlayerExecution = FamilyManager.getFamily(new AllOfComponents(typeof(EmptyExecution))); 
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
-	private Family libraryPanel = FamilyManager.getFamily(new AllOfComponents(typeof(GridLayoutGroup)));
 	private GameData gameData;
-	private GameObject dialogPanel;
 	private int nDialog = 0;
-	private GameObject buttonPlay;
-	private GameObject buttonContinue;
-	private GameObject buttonStop;
-	private GameObject buttonReset;
-	private GameObject buttonPause;
-	private GameObject buttonStep;
-	private GameObject buttonSpeed;
+	public GameObject buttonPlay;
+	public GameObject buttonContinue;
+	public GameObject buttonStop;
+	public GameObject buttonPause;
+	public GameObject buttonStep;
+	public GameObject buttonSpeed;
+	public GameObject buttonReset;
+	public GameObject endPanel;
+	public GameObject dialogPanel;
 	private GameObject lastEditedScript;
-	private GameObject endPanel;
-	private GameObject executionCanvas;
+	public GameObject editableScriptContainer;
+	public GameObject libraryPanel;
 
-	public UISystem()
+	protected override void onStart()
 	{
-		if (Application.isPlaying)
-		{
-			GameObject go = GameObject.Find("GameData");
-			if (go != null)
-				gameData = go.GetComponent<GameData>();
+		GameObject go = GameObject.Find("GameData");
+		if (go != null)
+			gameData = go.GetComponent<GameData>();
 
-			executionCanvas = GameObject.Find("ExecutionCanvas");
-			buttonPlay = executionCanvas.transform.Find("ExecuteButton").gameObject;
-			buttonContinue = executionCanvas.transform.Find("ContinueButton").gameObject;
-			buttonStop = executionCanvas.transform.Find("StopButton").gameObject;
-			buttonPause = executionCanvas.transform.Find("PauseButton").gameObject;
-			buttonStep = executionCanvas.transform.Find("NextStepButton").gameObject;
-			buttonSpeed = executionCanvas.transform.Find("SpeedButton").gameObject;
+		GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
+		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 
-			buttonReset = GameObject.Find("ResetButton");
-			endPanel = GameObject.Find("EndPanel");
-			GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
-			dialogPanel = GameObject.Find("DialogPanel");
-			GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
+		requireEndPanel.addEntryCallback(displayEndPanel);
+		displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
+		actions.addEntryCallback(linkTo);
+		newEnd_f.addEntryCallback(levelFinished);
+		resetBlocLimit_f.addEntryCallback(delegate (GameObject go) { destroyScript(go, true); });
+		scriptIsRunning.addExitCallback(delegate { setExecutionState(true); });
+		scriptIsRunning.addExitCallback(saveHistory);
+		emptyPlayerExecution.addEntryCallback(delegate { setExecutionState(true); });
+		emptyPlayerExecution.addEntryCallback(delegate { GameObjectManager.removeComponent<EmptyExecution>(MainLoop.instance.gameObject); });
 
-			requireEndPanel.addEntryCallback(displayEndPanel);
-			displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
-			actions.addEntryCallback(linkTo);
-			newEnd_f.addEntryCallback(levelFinished);
-			resetBlocLimit_f.addEntryCallback(delegate (GameObject go) { destroyScript(go, true); });
-			scriptIsRunning.addExitCallback(delegate { setExecutionState(true); });
-			scriptIsRunning.addExitCallback(saveHistory);
-			emptyPlayerExecution.addEntryCallback(delegate { setExecutionState(true); });
-			emptyPlayerExecution.addEntryCallback(delegate { GameObjectManager.removeComponent<EmptyExecution>(MainLoop.instance.gameObject); });
+		currentActions.addEntryCallback(onNewCurrentAction);
 
-			currentActions.addEntryCallback(onNewCurrentAction);
+		lastEditedScript = null;
 
-			lastEditedScript = null;
-			
-			loadHistory(); 
-		}
-    }
+		loadHistory();
+	}
 
 	private void onNewCurrentAction(GameObject go){
 		if (go.activeInHierarchy)
@@ -144,9 +129,9 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(buttonStep, !finished);
 		GameObjectManager.setGameObjectState(buttonSpeed, !finished);
 
-		GameObjectManager.setGameObjectState(libraryPanel.First(), finished);
+		GameObjectManager.setGameObjectState(libraryPanel, finished);
 		//editable canvas
-		GameObjectManager.setGameObjectState(editableScriptContainer.First().transform.parent.parent.gameObject, finished);
+		GameObjectManager.setGameObjectState(editableScriptContainer.transform.parent.parent.gameObject, finished);
 	}
 	
 	private void saveHistory(int unused = 0){
@@ -165,20 +150,19 @@ public class UISystem : FSystem {
 
 	private void loadHistory(){
 		if(gameData != null && gameData.actionsHistory != null){
-			GameObject editableCanvas = editableScriptContainer.First();
 			for(int i = 0 ; i < gameData.actionsHistory.transform.childCount ; i++){
 				Transform child = UnityEngine.GameObject.Instantiate(gameData.actionsHistory.transform.GetChild(i));
-				child.SetParent(editableCanvas.transform);
+				child.SetParent(editableScriptContainer.transform);
 				GameObjectManager.bind(child.gameObject);
-				GameObjectManager.refresh(editableCanvas);
+				GameObjectManager.refresh(editableScriptContainer);
 			}
 			LevelGenerator.computeNext(gameData.actionsHistory);
-			foreach(BaseElement act in editableCanvas.GetComponentsInChildren<BaseElement>()){
+			foreach(BaseElement act in editableScriptContainer.GetComponentsInChildren<BaseElement>()){
 				GameObjectManager.addComponent<Dropped>(act.gameObject);
 			}
 			//destroy history
 			GameObject.Destroy(gameData.actionsHistory);
-			LayoutRebuilder.ForceRebuildLayoutImmediate(editableCanvas.GetComponent<RectTransform>());
+			LayoutRebuilder.ForceRebuildLayoutImmediate(editableScriptContainer.GetComponent<RectTransform>());
 		}
 	}
 
@@ -187,12 +171,11 @@ public class UISystem : FSystem {
 		foreach(Transform child in lastEditedScript.transform){
 			childrenList.Add(child);
 		}
-		GameObject container = editableScriptContainer.First();
 		foreach(Transform child in childrenList){
-			child.SetParent(container.transform);
+			child.SetParent(editableScriptContainer.transform);
 			GameObjectManager.bind(child.gameObject);
 		}
-		GameObjectManager.refresh(container);
+		GameObjectManager.refresh(editableScriptContainer);
 	}
 
 	private void levelFinished (GameObject go){
@@ -295,18 +278,15 @@ public class UISystem : FSystem {
 
 	//Refresh Containers size
 	private void refreshUI(){
-		foreach( GameObject go in editableScriptContainer){
-			LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)go.transform );
-		}
+		LayoutRebuilder.ForceRebuildLayoutImmediate(editableScriptContainer.GetComponent<RectTransform>() );
 	}
 
 	// Empty the script window
 	// See ResetButton in editor
 	public void resetScript(bool refund = false){
-		GameObject editableContainer = editableScriptContainer.First();
-		for (int i = 0 ; i < editableContainer.transform.childCount ; i++){
-			if(editableContainer.transform.GetChild(i).GetComponent<BaseElement>()){
-				destroyScript(editableContainer.transform.GetChild(i).gameObject, refund);				
+		for (int i = 0 ; i < editableScriptContainer.transform.childCount ; i++){
+			if(editableScriptContainer.transform.GetChild(i).GetComponent<BaseElement>()){
+				destroyScript(editableScriptContainer.transform.GetChild(i).gameObject, refund);				
 			}
 		
 		}
@@ -488,9 +468,9 @@ public class UISystem : FSystem {
 		if(!buttonStop.activeInHierarchy){
 			gameData.totalExecute++;
 			//hide panels
-			GameObjectManager.setGameObjectState(libraryPanel.First(), false);
+			GameObjectManager.setGameObjectState(libraryPanel, false);
 			//editable canvas
-			GameObjectManager.setGameObjectState(editableScriptContainer.First().transform.parent.parent.gameObject, false);
+			GameObjectManager.setGameObjectState(editableScriptContainer.transform.parent.parent.gameObject, false);
 			//clean container for each robot
 			foreach(GameObject robot in playerGO){
 				foreach(Transform child in robot.GetComponent<ScriptRef>().scriptContainer.transform){
@@ -500,14 +480,14 @@ public class UISystem : FSystem {
 			}
 			
 			//copy editable script
-			lastEditedScript = GameObject.Instantiate(editableScriptContainer.First());
+			lastEditedScript = GameObject.Instantiate(editableScriptContainer);
 			foreach(Transform child in lastEditedScript.transform){
 				if(child.name.Contains("PositionBar")){
 					UnityEngine.GameObject.Destroy(child.gameObject);
 				}
 			}
 
-			GameObject containerCopy = CopyActionsFrom(editableScriptContainer.First(), false, playerGO.First());
+			GameObject containerCopy = CopyActionsFrom(editableScriptContainer, false, playerGO.First());
 			
 			foreach( GameObject go in playerGO){
 				GameObject targetContainer = go.GetComponent<ScriptRef>().scriptContainer;

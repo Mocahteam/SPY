@@ -15,23 +15,22 @@ public class DetectorManager : FSystem {
     private Family gameLoaded_f = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
     private Family newStep_f = FamilyManager.getFamily(new AnyOfComponents(typeof(NewStep), typeof(FirstStep)));
     private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
-    private Family endpanel_f = FamilyManager.getFamily(new AllOfComponents(typeof(Image), typeof(AudioSource)), new AnyOfTags("endpanel"));
     private GameData gameData;
     private bool activeRedDetector;
 
-	public DetectorManager()
+    public GameObject endPanel;
+
+    protected override void onStart()
     {
-        if (Application.isPlaying)
-        {
-            activeRedDetector = true;
-            GameObject go = GameObject.Find("GameData");
-            if (go != null)
-                gameData = go.GetComponent<GameData>();
-            gameLoaded_f.addEntryCallback(delegate { updateDetector(); });
-            newStep_f.addEntryCallback(delegate { updateDetector(); });
-            robotcollision_f.addEntryCallback(onNewCollision);
-        }
+        activeRedDetector = true;
+        GameObject go = GameObject.Find("GameData");
+        if (go != null)
+            gameData = go.GetComponent<GameData>();
+        gameLoaded_f.addEntryCallback(delegate { updateDetector(); });
+        newStep_f.addEntryCallback(delegate { updateDetector(); });
+        robotcollision_f.addEntryCallback(onNewCollision);
     }
+
     private void onNewCollision(GameObject robot){
 		if(activeRedDetector){
 			Triggered3D trigger = robot.GetComponent<Triggered3D>();
@@ -39,7 +38,7 @@ public class DetectorManager : FSystem {
 				//Check if the player collide with a detection cell
 				if (target.GetComponent<Detector>() != null){
 					//end level
-					GameObjectManager.addComponent<NewEnd>(endpanel_f.First(), new { endType = NewEnd.Detected });
+					GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Detected });
 				}
 			}			
 		}
@@ -59,7 +58,7 @@ public class DetectorManager : FSystem {
     private IEnumerator delayUpdateDetector(){
         yield return null; // On NewStep currentAction is moved to the next action
         yield return null; // Following frame CurrentAction is available in families and action is executed (for exemple drone rotation)
-        // then we can update dectetors
+        // then we can update detectors
 
         //Destroy detection cells
         foreach (GameObject detector in detectorGO)

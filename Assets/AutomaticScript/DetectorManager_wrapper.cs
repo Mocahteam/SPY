@@ -1,22 +1,23 @@
 using UnityEngine;
 using FYFY;
 
-[ExecuteInEditMode]
-public class DetectorManager_wrapper : MonoBehaviour
+public class DetectorManager_wrapper : BaseWrapper
 {
+	public UnityEngine.GameObject endPanel;
 	private void Start()
 	{
-		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
+		this.hideFlags = HideFlags.NotEditable;
+		MainLoop.initAppropriateSystemField (system, "endPanel", endPanel);
 	}
 
 	public void detectCollision(System.Boolean on)
 	{
-		MainLoop.callAppropriateSystemMethod ("DetectorManager", "detectCollision", on);
+		MainLoop.callAppropriateSystemMethod (system, "detectCollision", on);
 	}
 
 	public void updateDetector()
 	{
-		MainLoop.callAppropriateSystemMethod ("DetectorManager", "updateDetector", null);
+		MainLoop.callAppropriateSystemMethod (system, "updateDetector", null);
 	}
 
 }

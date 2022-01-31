@@ -11,7 +11,7 @@ public class CurrentActionSystem_wrapper : MonoBehaviour
 
 	public void firstAction(UnityEngine.GameObject buttonStop)
 	{
-		MainLoop.callAppropriateSystemMethod ("CurrentActionSystem", "firstAction", buttonStop);
+		MainLoop.callAppropriateSystemMethod (null, "firstAction", buttonStop);
 	}
 
 }

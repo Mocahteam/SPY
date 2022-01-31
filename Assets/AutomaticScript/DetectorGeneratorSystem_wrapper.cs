@@ -11,12 +11,12 @@ public class DetectorGeneratorSystem_wrapper : MonoBehaviour
 
 	public void detectCollision(System.Boolean on)
 	{
-		MainLoop.callAppropriateSystemMethod ("DetectorGeneratorSystem", "detectCollision", on);
+		MainLoop.callAppropriateSystemMethod (null, "detectCollision", on);
 	}
 
 	public void updateDetector()
 	{
-		MainLoop.callAppropriateSystemMethod ("DetectorGeneratorSystem", "updateDetector", null);
+		MainLoop.callAppropriateSystemMethod (null, "updateDetector", null);
 	}
 
 }

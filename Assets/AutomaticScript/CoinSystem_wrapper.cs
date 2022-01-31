@@ -11,7 +11,7 @@ public class CoinSystem_wrapper : MonoBehaviour
 
 	public void detectCollision(System.Boolean on)
 	{
-		MainLoop.callAppropriateSystemMethod ("CoinSystem", "detectCollision", on);
+		MainLoop.callAppropriateSystemMethod (null, "detectCollision", on);
 	}
 
 }

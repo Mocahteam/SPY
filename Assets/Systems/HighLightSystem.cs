@@ -12,24 +12,17 @@ public class HighLightSystem : FSystem {
 	private Family nonhighlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(UIActionType)));
 	private Family highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new AnyOfComponents( typeof(CurrentAction), typeof(PointerOver)));
 	private Family nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(CurrentAction), typeof(Dragged), typeof(PointerOver)));
-
-	private GameData gameData;
 	
-	public HighLightSystem()
-	{
-		if (Application.isPlaying)
-		{
-			highlightableGO.addEntryCallback(initBaseColor);
-			highlightedGO.addEntryCallback(highLightItem);
-			nonhighlightedGO.addEntryCallback(unHighLightItem);
-			highlightedAction.addEntryCallback(highLightItem);
-			nonCurrentAction.addEntryCallback(unHighLightItem);
-			GameObject go = GameObject.Find("GameData");
-			if (go != null)
-				gameData = go.GetComponent<GameData>();
-		}
+	protected override void onStart()
+    {
+		highlightableGO.addEntryCallback(initBaseColor);
+		highlightedGO.addEntryCallback(highLightItem);
+		nonhighlightedGO.addEntryCallback(unHighLightItem);
+		highlightedAction.addEntryCallback(highLightItem);
+		nonCurrentAction.addEntryCallback(unHighLightItem);
 	}
-	
+
+
 	private void initBaseColor(GameObject go){
 		if(go.GetComponent<BaseElement>() && go.GetComponent<Image>()){
 			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image>().color;

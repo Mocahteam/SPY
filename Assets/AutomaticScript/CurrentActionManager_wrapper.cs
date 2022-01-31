@@ -1,17 +1,16 @@
 using UnityEngine;
 using FYFY;
 
-[ExecuteInEditMode]
-public class CurrentActionManager_wrapper : MonoBehaviour
+public class CurrentActionManager_wrapper : BaseWrapper
 {
 	private void Start()
 	{
-		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
+		this.hideFlags = HideFlags.NotEditable;
 	}
 
 	public void firstAction(UnityEngine.GameObject buttonStop)
 	{
-		MainLoop.callAppropriateSystemMethod ("CurrentActionManager", "firstAction", buttonStop);
+		MainLoop.callAppropriateSystemMethod (system, "firstAction", buttonStop);
 	}
 
 }

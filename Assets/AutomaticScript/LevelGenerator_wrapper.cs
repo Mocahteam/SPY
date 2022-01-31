@@ -1,22 +1,22 @@
 using UnityEngine;
 using FYFY;
 
-[ExecuteInEditMode]
-public class LevelGenerator_wrapper : MonoBehaviour
+public class LevelGenerator_wrapper : BaseWrapper
 {
+	public UnityEngine.GameObject editableScriptContainer;
+	public UnityEngine.GameObject scriptContainer;
+	public TMPro.TMP_Text levelName;
 	private void Start()
 	{
-		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
-	}
-
-	public void XmlToLevel(System.Xml.XmlDocument doc)
-	{
-		MainLoop.callAppropriateSystemMethod ("LevelGenerator", "XmlToLevel", doc);
+		this.hideFlags = HideFlags.NotEditable;
+		MainLoop.initAppropriateSystemField (system, "editableScriptContainer", editableScriptContainer);
+		MainLoop.initAppropriateSystemField (system, "scriptContainer", scriptContainer);
+		MainLoop.initAppropriateSystemField (system, "levelName", levelName);
 	}
 
 	public void computeNext(UnityEngine.GameObject container)
 	{
-		MainLoop.callAppropriateSystemMethod ("LevelGenerator", "computeNext", container);
+		MainLoop.callAppropriateSystemMethod (system, "computeNext", container);
 	}
 
 }

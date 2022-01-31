@@ -11,7 +11,7 @@ public class LevelGeneratorSystem_wrapper : MonoBehaviour
 
 	public void XmlToLevel(System.String fileName)
 	{
-		MainLoop.callAppropriateSystemMethod ("LevelGeneratorSystem", "XmlToLevel", fileName);
+		MainLoop.callAppropriateSystemMethod (null, "XmlToLevel", fileName);
 	}
 
 }

@@ -21,14 +21,11 @@ public class CurrentActionManager : FSystem
 	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
 
-	public CurrentActionManager()
-	{
-		if (Application.isPlaying)
-		{
-			firstStep.addEntryCallback(initFirstActions);
-			newStep_f.addEntryCallback(delegate (GameObject unused) { onNewStep(); });
-			scriptIsRunning.addExitCallback(removePlayersCurrentActions);
-		}
+	protected override void onStart()
+    {
+		firstStep.addEntryCallback(initFirstActions);
+		newStep_f.addEntryCallback(delegate (GameObject unused) { onNewStep(); });
+		scriptIsRunning.addExitCallback(removePlayersCurrentActions);
 	}
 
 	// See ExecuteButton in editor (launch execution process by adding FirstStep)

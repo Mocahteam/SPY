@@ -10,16 +10,12 @@ public class EndGameManager : FSystem {
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
     private Family newCurrentAction_f = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
-    private Family endpanel_f = FamilyManager.getFamily(new AllOfComponents(typeof(Image), typeof(AudioSource)), new AnyOfTags("endpanel"));
-	private GameObject endPanel;
+	public GameObject endPanel;
 
-	public EndGameManager(){
-		if (Application.isPlaying)
-		{
-			newCurrentAction_f.addExitCallback(onCurrentActionRemoved);
-			endPanel = endpanel_f.First();
-		}
-    }
+	protected override void onStart()
+    {
+		newCurrentAction_f.addExitCallback(onCurrentActionRemoved);
+	}
 
 	// each time a current action is removed, we check if the level is over
 	private void onCurrentActionRemoved(int unused){

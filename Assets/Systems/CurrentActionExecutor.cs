@@ -11,12 +11,10 @@ public class CurrentActionExecutor : FSystem {
 	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
     private Family newCurrentAction_f = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
 
-	public CurrentActionExecutor(){
-		if (Application.isPlaying)
-		{
-			newCurrentAction_f.addEntryCallback(onNewCurrentAction);
-		}
-    }
+	protected override void onStart()
+    {
+		newCurrentAction_f.addEntryCallback(onNewCurrentAction);
+	}
 
 	// each time a new currentAction is added, 
 	private void onNewCurrentAction(GameObject currentAction) {

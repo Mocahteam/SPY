@@ -1,37 +1,36 @@
 using UnityEngine;
 using FYFY;
 
-[ExecuteInEditMode]
-public class StepSystem_wrapper : MonoBehaviour
+public class StepSystem_wrapper : BaseWrapper
 {
 	private void Start()
 	{
-		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
+		this.hideFlags = HideFlags.NotEditable;
 	}
 
 	public void autoExecuteStep(System.Boolean on)
 	{
-		MainLoop.callAppropriateSystemMethod ("StepSystem", "autoExecuteStep", on);
+		MainLoop.callAppropriateSystemMethod (system, "autoExecuteStep", on);
 	}
 
 	public void goToNextStep()
 	{
-		MainLoop.callAppropriateSystemMethod ("StepSystem", "goToNextStep", null);
+		MainLoop.callAppropriateSystemMethod (system, "goToNextStep", null);
 	}
 
 	public void updateTotalStep()
 	{
-		MainLoop.callAppropriateSystemMethod ("StepSystem", "updateTotalStep", null);
+		MainLoop.callAppropriateSystemMethod (system, "updateTotalStep", null);
 	}
 
 	public void speedTimeStep()
 	{
-		MainLoop.callAppropriateSystemMethod ("StepSystem", "speedTimeStep", null);
+		MainLoop.callAppropriateSystemMethod (system, "speedTimeStep", null);
 	}
 
 	public void setToDefaultTimeStep()
 	{
-		MainLoop.callAppropriateSystemMethod ("StepSystem", "setToDefaultTimeStep", null);
+		MainLoop.callAppropriateSystemMethod (system, "setToDefaultTimeStep", null);
 	}
 
 }

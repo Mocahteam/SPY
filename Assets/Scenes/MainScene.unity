@@ -2281,15 +2281,15 @@ GameObject:
   - component: {fileID: 361349229}
   - component: {fileID: 361349228}
   - component: {fileID: 361349227}
+  - component: {fileID: 361349230}
+  - component: {fileID: 361349234}
   - component: {fileID: 361349226}
   - component: {fileID: 361349223}
   - component: {fileID: 361349221}
   - component: {fileID: 361349218}
   - component: {fileID: 361349216}
   - component: {fileID: 361349225}
-  - component: {fileID: 361349230}
   - component: {fileID: 361349233}
-  - component: {fileID: 361349234}
   - component: {fileID: 361349217}
   - component: {fileID: 361349235}
   - component: {fileID: 361349224}
@@ -2307,7 +2307,7 @@ GameObject:
   m_IsActive: 1
 --- !u!114 &361349216
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2319,7 +2319,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &361349217
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2331,7 +2331,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &361349218
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2341,9 +2341,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce219623fd11f964bb3c69bb63c7f640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCanvas: {fileID: 1410401867}
+  positionBar: {fileID: 962417682}
+  editableContainer: {fileID: 85198311}
+  catchTime: 0.25
+  buttonPlay: {fileID: 1504297949}
 --- !u!114 &361349219
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2353,9 +2358,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a9511957827aa846aba10a11782e576, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  endPanel: {fileID: 1306532945}
 --- !u!114 &361349220
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2365,9 +2371,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 550c97d74ea1a6143be8bed036678933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  editableScriptContainer: {fileID: 85198311}
+  scriptContainer: {fileID: 1273315146}
+  levelName: {fileID: 278433493}
 --- !u!114 &361349221
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2377,9 +2386,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2b99b2b8b7c1e84c864f9738c5cadde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonPlay: {fileID: 1504297949}
+  buttonContinue: {fileID: 30024878}
+  buttonStop: {fileID: 1684333869}
+  buttonPause: {fileID: 768015838}
+  buttonStep: {fileID: 624363071}
+  buttonSpeed: {fileID: 121265415}
+  buttonReset: {fileID: 1983660743}
+  endPanel: {fileID: 1306532945}
+  dialogPanel: {fileID: 2103625724}
+  editableScriptContainer: {fileID: 85198311}
+  libraryPanel: {fileID: 452555838}
 --- !u!114 &361349222
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2391,7 +2411,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &361349223
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2403,7 +2423,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &361349224
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2413,9 +2433,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e180f627c954d494b8d41b5a98bc3434, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  endPanel: {fileID: 1306532945}
 --- !u!114 &361349225
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2427,7 +2448,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &361349226
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2437,6 +2458,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9db7531a306e504429d50d1af3e9c72f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turnSpeed: 150
+  moveSpeed: 7
 --- !u!114 &361349227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2649,7 +2672,7 @@ AudioSource:
     m_RotationOrder: 4
 --- !u!114 &361349231
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2661,7 +2684,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &361349232
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2673,7 +2696,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &361349233
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2703,7 +2726,7 @@ MonoBehaviour:
   currentActionColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!114 &361349235
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}

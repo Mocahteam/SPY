@@ -19,23 +19,21 @@ public class StepSystem : FSystem {
     private int nbStep;
     private bool newStepAskedByPlayer;
 
-	public StepSystem()
+    protected override void onStart()
     {
-        if (Application.isPlaying)
-        {
-            nbStep = 0;
-            newStepAskedByPlayer = false;
-            GameObject go = GameObject.Find("GameData");
-            if (go != null)
-                gameData = go.GetComponent<GameData>();
-            timeStepCpt = timeStep;
-            newStep_f.addEntryCallback(onNewStep);
-            firstStep_f.addEntryCallback(onFirstStep);
-            //reset nbstep on execution end
-            scriptIsRunning.addExitCallback(delegate { nbStep = 0; });
-        }
+        nbStep = 0;
+        newStepAskedByPlayer = false;
+        GameObject go = GameObject.Find("GameData");
+        if (go != null)
+            gameData = go.GetComponent<GameData>();
+        timeStepCpt = timeStep;
+        newStep_f.addEntryCallback(onNewStep);
+        firstStep_f.addEntryCallback(onFirstStep);
+        //reset nbstep on execution end
+        scriptIsRunning.addExitCallback(delegate { nbStep = 0; });
     }
-    
+
+
     private void onNewStep(GameObject go)
     {
         GameObjectManager.removeComponent(go.GetComponent<NewStep>());  

@@ -20,22 +20,19 @@ public class CameraSystem : FSystem {
 	private float smoothSpeed = 0.125f;
 	private Vector3 offset = new Vector3(6,15,0);
 
-	public CameraSystem()
+	protected override void onStart()
 	{
-		if (Application.isPlaying)
-		{
-			// Backup initial camera data
-			cameraGO.addEntryCallback(onNewCamera);
-			foreach (GameObject go in cameraGO)
-				onNewCamera(go);
+		// Backup initial camera data
+		cameraGO.addEntryCallback(onNewCamera);
+		foreach (GameObject go in cameraGO)
+			onNewCamera(go);
 
-			// set current camera target (the first player)
-			playerGO.addEntryCallback(delegate (GameObject go) { target = go.transform; });
+		// set current camera target (the first player)
+		playerGO.addEntryCallback(delegate (GameObject go) { target = go.transform; });
 
-			// add listener on locate button to move camera on focused agent
-			agents.addEntryCallback(setLocateButtons);
-		}
-    }
+		// add listener on locate button to move camera on focused agent
+		agents.addEntryCallback(setLocateButtons);
+	}
 
 	private void onNewCamera(GameObject go)
 	{

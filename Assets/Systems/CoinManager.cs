@@ -11,18 +11,16 @@ public class CoinManager : FSystem {
 	private GameData gameData;
     private bool activeCoin;
 
-	public CoinManager(){
-		if (Application.isPlaying)
-		{
-			activeCoin = true;
-			GameObject go = GameObject.Find("GameData");
-			if (go != null)
-				gameData = go.GetComponent<GameData>();
-			robotcollision_f.addEntryCallback(onNewCollision);
-		}
-    }
+	protected override void onStart()
+    {
+		activeCoin = true;
+		GameObject go = GameObject.Find("GameData");
+		if (go != null)
+			gameData = go.GetComponent<GameData>();
+		robotcollision_f.addEntryCallback(onNewCollision);
+	}
 
-    private void onNewCollision(GameObject robot){
+	private void onNewCollision(GameObject robot){
 		if(activeCoin){
 			Triggered3D trigger = robot.GetComponent<Triggered3D>();
 			foreach(GameObject target in trigger.Targets){

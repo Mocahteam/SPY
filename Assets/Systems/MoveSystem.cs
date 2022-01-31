@@ -6,20 +6,17 @@ using FYFY;
 /// </summary>
 public class MoveSystem : FSystem {
 
-	private float turnSpeed = 150f;
-	private float moveSpeed = 7f;
 	private Family f_movable = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
 	private bool isMoving;
+	public float turnSpeed;
+	public float moveSpeed;
 
-	public MoveSystem()
-	{
-		if (Application.isPlaying)
-		{
-			foreach (GameObject go in f_movable)
-				initAgentDirection(go);
-			f_movable.addEntryCallback(initAgentDirection);
-		}
-    }
+	protected override void onStart()
+    {
+		foreach (GameObject go in f_movable)
+			initAgentDirection(go);
+		f_movable.addEntryCallback(initAgentDirection);
+	}
 
 	private void initAgentDirection(GameObject agent)
     {

@@ -1,17 +1,16 @@
 using UnityEngine;
 using FYFY;
 
-[ExecuteInEditMode]
-public class CoinManager_wrapper : MonoBehaviour
+public class CoinManager_wrapper : BaseWrapper
 {
 	private void Start()
 	{
-		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
+		this.hideFlags = HideFlags.NotEditable;
 	}
 
 	public void detectCollision(System.Boolean on)
 	{
-		MainLoop.callAppropriateSystemMethod ("CoinManager", "detectCollision", on);
+		MainLoop.callAppropriateSystemMethod (system, "detectCollision", on);
 	}
 
 }

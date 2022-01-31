@@ -1,12 +1,13 @@
 using UnityEngine;
 using FYFY;
 
-[ExecuteInEditMode]
-public class EndGameManager_wrapper : MonoBehaviour
+public class EndGameManager_wrapper : BaseWrapper
 {
+	public UnityEngine.GameObject endPanel;
 	private void Start()
 	{
-		this.hideFlags = HideFlags.HideInInspector; // Hide this component in Inspector
+		this.hideFlags = HideFlags.NotEditable;
+		MainLoop.initAppropriateSystemField (system, "endPanel", endPanel);
 	}
 
 }

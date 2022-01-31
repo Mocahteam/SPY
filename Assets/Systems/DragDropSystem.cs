@@ -15,30 +15,21 @@ public class DragDropSystem : FSystem
     private Family containerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
 	private Family actionPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType), typeof(Image)));
 	private Family inputUIOver_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(TMP_InputField), typeof(TMP_Dropdown)));
-	private Family editableScriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor"));
 	private Family editableScriptPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer), typeof(PointerOver)), new AnyOfTags("ScriptConstructor"));
-	private GameObject mainCanvas;
+	public GameObject mainCanvas;
 	private GameObject itemDragged;
-	private GameObject positionBar;
-	private GameObject editableContainer;
+	public GameObject positionBar;
+	public GameObject editableContainer;
 	
 	//double click
 	private float lastClickTime;
-	private float catchTime;
+	public float catchTime;
 	
-	private GameObject buttonPlay;
+	public GameObject buttonPlay;
 	
-	public DragDropSystem()
-	{
-		if (Application.isPlaying)
-		{
-			catchTime = 0.25f;
-			mainCanvas = GameObject.Find("Canvas");
-			editableContainer = editableScriptContainer_f.First();
-			positionBar = editableContainer.transform.Find("PositionBar").gameObject;
-			buttonPlay = GameObject.Find("ExecuteButton");
-		}
-	}
+    protected override void onStart()
+    {
+    }
 
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
@@ -192,7 +183,7 @@ public class DragDropSystem : FSystem
 
 	private IEnumerator updatePlayButton(){
 		yield return null;
-		buttonPlay.GetComponent<Button>().interactable = !(editableScriptContainer_f.First().transform.childCount < 2);
+		buttonPlay.GetComponent<Button>().interactable = !(editableContainer.transform.childCount < 2);
 	}
 
 	public void onlyPositiveInteger(TMP_InputField input){
@@ -205,8 +196,7 @@ public class DragDropSystem : FSystem
 
 	//Refresh Containers size
 	private void refreshUI(){
-		foreach( GameObject go in editableScriptContainer_f)
-			LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)go.transform );
+		LayoutRebuilder.ForceRebuildLayoutImmediate(editableContainer.GetComponent<RectTransform>());
 	}
 
 }
