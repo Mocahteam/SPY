@@ -14,6 +14,8 @@ using UnityEngine.Networking;
 /// </summary>
 public class LevelGenerator : FSystem {
 
+	// Famille contenant les agents editables
+	private Family editableAgent_f = FamilyManager.getFamily(new AnyOfComponents(typeof(AgentName)));
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
 	private List<List<int>> map;
 	private GameData gameData;
@@ -85,6 +87,7 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
+	// Creer une entité agent ou robot et y associe un panel container
 	private GameObject createEntity(int i, int j, Direction.Dir direction, string type, List<GameObject> script = null){
 		GameObject entity = null;
 		Sprite agentSpriteIcon = null;
@@ -108,7 +111,10 @@ public class LevelGenerator : FSystem {
 		scriptref.uiContainer = containerParent;
 		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
 		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
+		// Affichage de l'icon de l'agent
 		containerParent.transform.Find("Header").Find("agent").GetComponent<Image>().sprite = agentSpriteIcon;
+		// Affichage du nom de l'agent
+		containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = entity.GetComponent<AgentName>().agentName;
 
 		AgentColor ac = MainLoop.instance.GetComponent<AgentColor>();
 		scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = (type == "player" ? ac.playerBackground : ac.droneBackground);

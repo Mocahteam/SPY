@@ -486,7 +486,7 @@ public class UISystem : FSystem {
 					UnityEngine.GameObject.Destroy(child.gameObject);
 				}
 			}
-
+			
 			GameObject containerCopy = CopyActionsFrom(editableScriptContainer, false, playerGO.First());
 			
 			foreach( GameObject go in playerGO){
