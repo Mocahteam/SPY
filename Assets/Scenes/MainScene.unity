@@ -2298,6 +2298,7 @@ GameObject:
   - component: {fileID: 361349219}
   - component: {fileID: 361349232}
   - component: {fileID: 361349220}
+  - component: {fileID: 361349236}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -2526,6 +2527,10 @@ MonoBehaviour:
       PublicKeyToken=null
     _typeFullName: SaveManager
     _pause: 0
+  - _typeAssemblyQualifiedName: EditAgentSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: EditAgentSystem
+    _pause: 0
   _lateUpdateSystemDescriptions:
   - _typeAssemblyQualifiedName: HighLightSystem, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -2736,6 +2741,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9433476ced47ced42ae6170b5aff88a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &361349236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa0511f528cf8d46888eb38ef84837e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentCanvas: {fileID: 1273315146}
 --- !u!1 &388713684
 GameObject:
   m_ObjectHideFlags: 0
