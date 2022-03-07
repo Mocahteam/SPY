@@ -140,4 +140,10 @@ public class CameraSystem : FSystem {
 	public void setLocateButtons(GameObject go){
 		go.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("locateButton").GetComponent<Button>().onClick.AddListener(delegate{target = go.transform;});
 	}
+
+	// Active ou desactive les mouvemment de la camera par le biais du clavier
+	public void ActivatedCameraControl(bool value)
+    {
+		Pause = !value;
+    }
 }

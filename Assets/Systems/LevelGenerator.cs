@@ -19,6 +19,7 @@ public class LevelGenerator : FSystem {
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
 	private List<List<int>> map;
 	private GameData gameData;
+	public GameObject camera;
 	public GameObject editableScriptContainer;
 	public GameObject scriptContainer;
 	public TMP_Text levelName;
@@ -90,17 +91,15 @@ public class LevelGenerator : FSystem {
 	// Creer une entité agent ou robot et y associe un panel container
 	private GameObject createEntity(int i, int j, Direction.Dir direction, string type, List<GameObject> script = null){
 		GameObject entity = null;
-		Sprite agentSpriteIcon = null;
 		switch(type){
 			case "player": // Robot
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Robot Kyle") as GameObject, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
-				agentSpriteIcon =  Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
 				break;
 			case "enemy": // Enemy
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.Level.transform.position + new Vector3(i*3,5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
-				agentSpriteIcon =  Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
 				break;
 		}
+		// Charger l'agent aux bonnes coordonées dans la bonne direction
 		entity.GetComponent<Position>().x = i;
 		entity.GetComponent<Position>().z = j;
 		entity.GetComponent<Direction>().direction = direction;
@@ -108,13 +107,15 @@ public class LevelGenerator : FSystem {
 		//add new container to entity
 		ScriptRef scriptref = entity.GetComponent<ScriptRef>();
 		GameObject containerParent = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Container") as GameObject);
+		// Associer l'agent l'UI container
 		scriptref.uiContainer = containerParent;
+		// Associer à l'agent le script container
 		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
 		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
 		// Association de l'agent au header du container
 		containerParent.GetComponentInChildren<ContainerHeader>().agent = entity;
-		// Affichage du nom de l'agent
-		containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = entity.GetComponent<AgentEdit>().agentName;
+		// Association de la camera de la scéne au header
+		containerParent.GetComponentInChildren<ContainerHeader>().camera = entity;
 
 		AgentColor ac = MainLoop.instance.GetComponent<AgentColor>();
 		scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = (type == "player" ? ac.playerBackground : ac.droneBackground);

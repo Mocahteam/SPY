@@ -13,4 +13,9 @@ public class CameraSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "setLocateButtons", go);
 	}
 
+	public void ActivatedCameraControl(System.Boolean value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "ActivatedCameraControl", value);
+	}
+
 }
