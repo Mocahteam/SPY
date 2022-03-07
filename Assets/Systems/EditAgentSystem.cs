@@ -9,7 +9,7 @@ public class EditAgentSystem : FSystem {
 	public static EditAgentSystem instance;
 
 	// On récupére les agents pouvant être édité
-	private Family agent_f = FamilyManager.getFamily(new AnyOfComponents(typeof(AgentEdit)));
+	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef)));
 
 	// Pour voir si le nom de l'agent change
 	private string oldNameAgent = "";

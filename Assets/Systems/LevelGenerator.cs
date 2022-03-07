@@ -111,8 +111,8 @@ public class LevelGenerator : FSystem {
 		scriptref.uiContainer = containerParent;
 		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
 		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
-		// Affichage de l'icon de l'agent
-		containerParent.transform.Find("Header").Find("agent").GetComponent<Image>().sprite = agentSpriteIcon;
+		// Association de l'agent au header du container
+		containerParent.GetComponentInChildren<ContainerHeader>().agent = entity;
 		// Affichage du nom de l'agent
 		containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = entity.GetComponent<AgentEdit>().agentName;
 
