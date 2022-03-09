@@ -112,10 +112,31 @@ public class LevelGenerator : FSystem {
 		// Associer à l'agent le script container
 		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
 		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
-		// Association de l'agent au header du container
-		containerParent.GetComponentInChildren<ContainerHeader>().agent = entity;
-		// Association de la camera de la scéne au header
-		containerParent.GetComponentInChildren<ContainerHeader>().camera = entity;
+		// Association de l'agent au script de gestion des fonctions
+		containerParent.GetComponentInChildren<EditAgentSystemBridge>().agent = entity;
+		// Association de la camera au script de gestion des fonctions
+		containerParent.GetComponentInChildren<CameraSystemBridge>().cameraAssociate = camera;
+
+		// On va charger l'image et le nom de l'agent selon l'agent (robot, enemie etc...)
+		if (entity.tag == "Player")
+		{
+			// Chargement de l'icône de l'agent
+			containerParent.transform.Find("Header").Find("agent").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
+			// Affichage du nom de l'agent
+			containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = entity.GetComponent<AgentEdit>().agentName;
+			// Si on autorise le changement de nom on dévérouille la possibilité d'écrire dans la zone de nom du robot
+			if (entity.GetComponent<AgentEdit>().editName)
+			{
+				containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().interactable = true;
+			}
+		}
+		else if (entity.tag == "Drone")
+		{
+			// Chargement de l'icône de l'agent
+			containerParent.transform.Find("Header").Find("agent").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
+			// Affichage du nom de l'agent
+			containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = "Drone";
+		}
 
 		AgentColor ac = MainLoop.instance.GetComponent<AgentColor>();
 		scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = (type == "player" ? ac.playerBackground : ac.droneBackground);

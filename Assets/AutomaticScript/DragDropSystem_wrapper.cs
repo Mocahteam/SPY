@@ -23,4 +23,9 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "onlyPositiveInteger", input);
 	}
 
+	public void DropElement(UnityEngine.GameObject dropBar)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "DropElement", dropBar);
+	}
+
 }

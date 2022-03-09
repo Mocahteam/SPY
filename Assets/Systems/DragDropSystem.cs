@@ -12,7 +12,7 @@ using System;
 public class DragDropSystem : FSystem
 {
     private Family libraryElementPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ElementToDrag), typeof(Image)));
-    private Family containerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer)));
+    private Family containerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UITypeContainer))); // Les container éditable
 	private Family actionPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType), typeof(Image)));
 	private Family inputUIOver_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(TMP_InputField), typeof(TMP_Dropdown)));
 	private Family editableScriptPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer), typeof(PointerOver)), new AnyOfTags("ScriptConstructor"));
@@ -26,26 +26,33 @@ public class DragDropSystem : FSystem
 	public float catchTime;
 	
 	public GameObject buttonPlay;
-	
-    protected override void onStart()
+
+	public static DragDropSystem instance;
+
+	public DragDropSystem()
+    {
+		instance = this;
+    }
+
+	protected override void onStart()
     {
     }
 
-    // Use to process your families.
-    protected override void onProcess(int familiesUpdateCount) {
+	// Use to process your families.
+	protected override void onProcess(int familiesUpdateCount) {
 		//Mouse down
-		if(Input.GetMouseButtonDown(0) && !Input.GetMouseButtonUp(0)){ //focus in play mode (unity editor) could be up and down !!! (bug unity)
-			//manage click on library
-			if(libraryElementPointed_f.Count > 0)
-            {
-                GameObject go = libraryElementPointed_f.First();
-                GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
+		if (Input.GetMouseButtonDown(0) && !Input.GetMouseButtonUp(0)) { //focus in play mode (unity editor) could be up and down !!! (bug unity)
+																		 //manage click on library
+			if (libraryElementPointed_f.Count > 0)
+			{
+				GameObject go = libraryElementPointed_f.First();
+				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
 				// Create a dragged GameObject
 				itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, go.transform);
-                BaseElement action = itemDragged.GetComponent<BaseElement>();
-				if(action.GetType().ToString().Equals("ForAction")){
+				BaseElement action = itemDragged.GetComponent<BaseElement>();
+				if (action.GetType().ToString().Equals("ForAction")) {
 					TMP_InputField input = itemDragged.GetComponentInChildren<TMP_InputField>();
-					input.onEndEdit.AddListener(delegate{onlyPositiveInteger(input);});
+					input.onEndEdit.AddListener(delegate { onlyPositiveInteger(input); });
 				}
 				itemDragged.GetComponent<UIActionType>().prefab = prefab;
 				itemDragged.GetComponent<UIActionType>().linkedTo = go;
@@ -54,26 +61,26 @@ public class DragDropSystem : FSystem
 				GameObjectManager.addComponent<Dragged>(itemDragged);
 				// exclude this GameObject from the EventSystem
 				itemDragged.GetComponent<Image>().raycastTarget = false;
-				if(itemDragged.GetComponent<BasicAction>())
-					foreach(Image child in itemDragged.GetComponentsInChildren<Image>())
+				if (itemDragged.GetComponent<BasicAction>())
+					foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
 						child.raycastTarget = false;
 			}
 
 			// drag in editable script
-            if (actionPointed_f.Count > 0 && inputUIOver_f.Count == 0 && editableScriptPointed_f.Count > 0) // cannot drag if inputfield or dropdown pointed
-            {
-                itemDragged = actionPointed_f.getAt(actionPointed_f.Count-1); // get the last one <=> deeper child PointerOver
-				// make this Action draggable
+			if (actionPointed_f.Count > 0 && inputUIOver_f.Count == 0 && editableScriptPointed_f.Count > 0) // cannot drag if inputfield or dropdown pointed
+			{
+				itemDragged = actionPointed_f.getAt(actionPointed_f.Count - 1); // get the last one <=> deeper child PointerOver
+																				// make this Action draggable
 				GameObjectManager.setGameObjectParent(itemDragged, mainCanvas, true);
-				itemDragged.transform.localScale = new Vector3(0.8f,0.8f,0.8f);
+				itemDragged.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
 				GameObjectManager.addComponent<Dragged>(itemDragged);
 				// exclude this GameObject from the EventSystem
 				itemDragged.GetComponent<Image>().raycastTarget = false;
-				if(itemDragged.GetComponent<BasicAction>())
-					foreach(Image child in itemDragged.GetComponentsInChildren<Image>())
+				if (itemDragged.GetComponent<BasicAction>())
+					foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
 						child.raycastTarget = false;
 				// Restore action and subactions to inventory
-				foreach(BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
+				foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
 					GameObjectManager.addComponent<AddOne>(actChild.gameObject);
 				editableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = false;
 			}
@@ -81,10 +88,13 @@ public class DragDropSystem : FSystem
 			MainLoop.instance.StartCoroutine(updatePlayButton());
 		}
 
-        //Find the deeper container pointed
-        GameObject targetContainer = null;
-        if (containerPointed_f.Count > 0)
-            targetContainer = containerPointed_f.getAt(containerPointed_f.Count - 1);
+		//Find the deeper container pointed
+		GameObject targetContainer = null;
+		// Si un container editable est pointé
+		if (containerPointed_f.Count > 0) {
+			//Debug.Log(containerPointed_f.Count);
+			targetContainer = containerPointed_f.getAt(containerPointed_f.Count - 1);
+		}
 
         if (itemDragged != null)
         {
@@ -198,5 +208,10 @@ public class DragDropSystem : FSystem
 	private void refreshUI(){
 		LayoutRebuilder.ForceRebuildLayoutImmediate(editableContainer.GetComponent<RectTransform>());
 	}
+
+	public void DropElement(GameObject dropBar)
+    {
+		Debug.Log("test dropBar : " + dropBar.name);
+    }
 
 }

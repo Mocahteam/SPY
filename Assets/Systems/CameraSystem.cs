@@ -20,6 +20,13 @@ public class CameraSystem : FSystem {
 	private float smoothSpeed = 0.125f;
 	private Vector3 offset = new Vector3(6,15,0);
 
+	public static CameraSystem instance;
+
+	public CameraSystem()
+    {
+		instance = this;
+    }
+
 	protected override void onStart()
 	{
 		// Backup initial camera data
@@ -141,9 +148,9 @@ public class CameraSystem : FSystem {
 		go.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("locateButton").GetComponent<Button>().onClick.AddListener(delegate{target = go.transform;});
 	}
 
-	// Active ou desactive les mouvemment de la camera par le biais du clavier
-	public void ActivatedCameraControl(bool value)
+	// Active ou desactive le systéme
+	public void SetCameraSystem(bool value)
     {
-		Pause = !value;
+		Pause = value;
     }
 }
