@@ -5,28 +5,35 @@ using UnityEngine.EventSystems;
 
 public class DragDropSystemBridge : MonoBehaviour
 {
-  public void DropElement(BaseEventData e)
-    {
-        Debug.Log(e.selectedObject.name);
-        DragDropSystem.instance.DropElement(e.selectedObject);
-    }
 
-  public void EndDragAction(GameObject go)
+  public void pointerUpElement(BaseEventData e)
     {
-        Debug.Log("EndDrag action");
-        if(go == null)
+        Debug.Log("Up pointer detecte");
+        // On verifie si c'est un up droit ou gauche
+        PointerEventData pointerEventData = e as PointerEventData;
+        if (pointerEventData.button == PointerEventData.InputButton.Left && e.selectedObject != null)
         {
-            Debug.Log("Event is null");
+            Debug.Log("Up gauche detecte");
+            DragDropSystem.instance.pointerRightUpElement(e.selectedObject);
         }
         else
         {
-            Debug.Log("Name object");
-            Debug.Log(go.name);
+            DragDropSystem.instance.pointerLeftUpElement(e.selectedObject);
         }
+
     }
 
-    public void MoveAction()
+    public void pointerDownElement(BaseEventData e)
     {
-        Debug.Log("move action");
+        Debug.Log("Up down detecte");
+
+        DragDropSystem.instance.pointerDownElement(e.selectedObject);
+    }
+
+    public void dragElement(BaseEventData e)
+    {
+        Debug.Log("Drag detecte");
+
+        DragDropSystem.instance.dragElement(e.selectedObject);
     }
 }

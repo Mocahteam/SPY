@@ -43,6 +43,7 @@ public class DragDropSystem : FSystem
 		//Mouse down
 		if (Input.GetMouseButtonDown(0) && !Input.GetMouseButtonUp(0)) { //focus in play mode (unity editor) could be up and down !!! (bug unity)
 																		 //manage click on library
+			Debug.Log("Bouton down");
 			if (libraryElementPointed_f.Count > 0)
 			{
 				GameObject go = libraryElementPointed_f.First();
@@ -72,7 +73,7 @@ public class DragDropSystem : FSystem
 				itemDragged = actionPointed_f.getAt(actionPointed_f.Count - 1); // get the last one <=> deeper child PointerOver
 																				// make this Action draggable
 				GameObjectManager.setGameObjectParent(itemDragged, mainCanvas, true);
-				itemDragged.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+				itemDragged.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 				GameObjectManager.addComponent<Dragged>(itemDragged);
 				// exclude this GameObject from the EventSystem
 				itemDragged.GetComponent<Image>().raycastTarget = false;
@@ -95,9 +96,10 @@ public class DragDropSystem : FSystem
 			//Debug.Log(containerPointed_f.Count);
 			targetContainer = containerPointed_f.getAt(containerPointed_f.Count - 1);
 		}
-
+		/*
         if (itemDragged != null)
         {
+			
             itemDragged.transform.position = Input.mousePosition;
 
             //PositionBar positioning
@@ -128,12 +130,14 @@ public class DragDropSystem : FSystem
 					}
                 }
             }
+			
         }
         else
         {
             positionBar.transform.SetParent(editableContainer.transform);
             positionBar.transform.SetSiblingIndex(editableContainer.transform.childCount + 1);
         }	
+		*/
 
 
 		// Delete with right click
@@ -150,39 +154,53 @@ public class DragDropSystem : FSystem
             if (Time.time - lastClickTime < catchTime)
                 doubleclick = true;
 
-            //Drop in script
-            if (itemDragged != null && (targetContainer != null  || doubleclick)){
-				if(doubleclick)
-					itemDragged.transform.SetParent(editableContainer.transform);
+			//Drop in script
+			if (itemDragged != null && (targetContainer != null  || doubleclick)){
+				if (doubleclick)
+				{
+					dropElementInContainer(itemDragged, editableContainer);
+					//itemDragged.transform.SetParent(editableContainer.transform);
+				}
+				/*
 				else
 					itemDragged.transform.SetParent(targetContainer.transform);
-				itemDragged.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
-				itemDragged.transform.localScale = new Vector3(1,1,1);
+				
+			itemDragged.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
+			itemDragged.transform.localScale = new Vector3(1,1,1);
+			itemDragged.GetComponent<Image>().raycastTarget = true;
+				
+			if(itemDragged.GetComponent<BasicAction>())
+				foreach(Image child in itemDragged.GetComponentsInChildren<Image>())
+					child.raycastTarget = true;
+				
+			// update limit bloc
+			foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
+				GameObjectManager.addComponent<Dropped>(actChild.gameObject);
+
+			GameObjectManager.removeComponent<Dragged>(itemDragged);					
+
+			if(itemDragged.GetComponent<UITypeContainer>())
 				itemDragged.GetComponent<Image>().raycastTarget = true;
-				if(itemDragged.GetComponent<BasicAction>())
-					foreach(Image child in itemDragged.GetComponentsInChildren<Image>())
-						child.raycastTarget = true;
-
-				// update limit bloc
-				foreach(BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
-					GameObjectManager.addComponent<Dropped>(actChild.gameObject);
-
-				GameObjectManager.removeComponent<Dragged>(itemDragged);					
-
-				if(itemDragged.GetComponent<UITypeContainer>())
-					itemDragged.GetComponent<Image>().raycastTarget = true;
-				editableContainer.transform.parent.parent.GetComponent<AudioSource>().Play();
-				refreshUI();
+			editableContainer.transform.parent.parent.GetComponent<AudioSource>().Play();
+			refreshUI();
+			*/
 			}
+			/*
             // priority == null, means drop item outside editablePanel
 			else if(!doubleclick && itemDragged != null){
+				Debug.Log("Object laché : " + itemDragged.name);
+				dropOutDoorContainer(itemDragged);
+
+				Debug.Log("arreter drag dans mauvais zone");
                 // remove item and all its children
 				for(int i = 0; i < itemDragged.transform.childCount;i++)
 					UnityEngine.Object.Destroy(itemDragged.transform.GetChild(i).gameObject);
 				itemDragged.transform.DetachChildren();
 				GameObjectManager.unbind(itemDragged);
-				UnityEngine.Object.Destroy(itemDragged);
-			}				
+
+			}
+			*/
+
 			itemDragged = null;
 			editableContainer.transform.parent.parent.GetComponent<ScrollRect>().enabled = true;
 
@@ -209,9 +227,114 @@ public class DragDropSystem : FSystem
 		LayoutRebuilder.ForceRebuildLayoutImmediate(editableContainer.GetComponent<RectTransform>());
 	}
 
-	public void DropElement(GameObject dropBar)
+	// Place l'element dans la place ciblé du container editable (zone de sequence d'action)
+	private void dropElementInContainer(GameObject element, GameObject targetContainer)
     {
-		Debug.Log("test dropBar : " + dropBar.name);
+		Debug.Log("drop element in container : " + element.name);
+
+		// On associe l'element au container
+		element.transform.SetParent(targetContainer.transform);
+		// On met l'élément à la position voulue
+		element.transform.SetSiblingIndex(positionBar.transform.GetSiblingIndex());
+		// On le met à la taille voulue
+		element.transform.localScale = new Vector3(1, 1, 1);
+		// Pour réactivé la selection posible
+		element.GetComponent<Image>().raycastTarget = true;
+		if (element.GetComponent<BasicAction>())
+		{
+			foreach (Image child in element.GetComponentsInChildren<Image>())
+			{
+				child.raycastTarget = true;
+			}
+		}
+		
+		// update limit bloc
+		foreach (BaseElement actChild in element.GetComponentsInChildren<BaseElement>())
+			GameObjectManager.addComponent<Dropped>(actChild.gameObject);
+
+		GameObjectManager.removeComponent<Dragged>(element);
+
+		if (element.GetComponent<UITypeContainer>())
+			element.GetComponent<Image>().raycastTarget = true;
+
+		// Lance le son de dépôt du block d'action
+		targetContainer.transform.parent.parent.GetComponent<AudioSource>().Play();
+		
+		refreshUI();
+	}
+
+	// Désabonne l'élément des familles du systéme et le détruit l'element (ainsi que ces enfants)
+	private void dropOutDoorContainer(GameObject element)
+    {
+		Debug.Log("arreter drag dans mauvais zone (mais par gestion de fonction)");
+		// remove item and all its children
+		for (int i = 0; i < element.transform.childCount; i++)
+			UnityEngine.Object.Destroy(element.transform.GetChild(i).gameObject);
+		element.transform.DetachChildren();
+		GameObjectManager.unbind(element);
+		UnityEngine.Object.Destroy(element);
+		Debug.Log("Object détruit");
+		Debug.Log("itemDragged : " + itemDragged.name);
+
+		refreshUI();
+	}
+
+	// Determine si l'element associer à l'évenement Pointer Up se trouvé dans une zone de container ou non
+	// Dirige vers la bonne fonction selon le cas
+	public void pointerRightUpElement(GameObject element)
+	{
+		Debug.Log("Objet laché fonction");
+		// On commence par regarder si il y a un container pointé et si oui, on le récupére
+		GameObject targetContainer = null;
+		if (containerPointed_f.Count > 0)
+		{
+			//Debug.Log(containerPointed_f.Count);
+			targetContainer = containerPointed_f.getAt(containerPointed_f.Count - 1);
+		}
+
+		// Si aucun container n'est pointé
+		if (targetContainer == null)
+		{
+			Debug.Log("Pas de container");
+			dropOutDoorContainer(element);
+		}
+		else // Sinon cela veux dire qu'il y a au moins un container de pointé
+		{
+			Debug.Log("container présent");
+			dropElementInContainer(element, targetContainer);
+		}
+	}
+
+	// Supprime l'element
+	public void pointerLeftUpElement(GameObject element)
+    {
+
     }
+
+	public void pointerDownElement(GameObject element)
+    {
+		Debug.Log("Pointer down");
+	}
+
+	public void dragElement(GameObject element)
+	{
+		Debug.Log("Pointer drag");
+
+		itemDragged.transform.position = Input.mousePosition;
+	}
+
+
+	// Fonction de test pour voir si l'event associé est le bon
+	public void testObjectpointer()
+	{
+		Debug.Log("Fonction test d'objet pointé");
+		if (actionPointed_f.Count > 0)
+		{
+			foreach (GameObject go in actionPointed_f)
+			{
+				Debug.Log("Objet pointé : " + go.name);
+			}
+		}
+	}
 
 }
