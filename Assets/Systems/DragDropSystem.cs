@@ -24,7 +24,8 @@ public class DragDropSystem : FSystem
 	//double click
 	private float lastClickTime;
 	public float catchTime;
-	
+	bool doubleclick = false;
+
 	public GameObject buttonPlay;
 
 	public static DragDropSystem instance;
@@ -43,7 +44,6 @@ public class DragDropSystem : FSystem
 		//Mouse down
 		if (Input.GetMouseButtonDown(0) && !Input.GetMouseButtonUp(0)) { //focus in play mode (unity editor) could be up and down !!! (bug unity)
 																		 //manage click on library
-			Debug.Log("Bouton down");
 			if (libraryElementPointed_f.Count > 0)
 			{
 				GameObject go = libraryElementPointed_f.First();
@@ -149,11 +149,12 @@ public class DragDropSystem : FSystem
 		// Mouse Up
 		if(Input.GetMouseButtonUp(0))
         {
-            bool doubleclick = false;
+			/*
+            doubleclick = false;
             //check double click
             if (Time.time - lastClickTime < catchTime)
                 doubleclick = true;
-
+			
 			//Drop in script
 			if (itemDragged != null && (targetContainer != null  || doubleclick)){
 				if (doubleclick)
@@ -161,6 +162,7 @@ public class DragDropSystem : FSystem
 					dropElementInContainer(itemDragged, editableContainer);
 					//itemDragged.transform.SetParent(editableContainer.transform);
 				}
+			*/
 				/*
 				else
 					itemDragged.transform.SetParent(targetContainer.transform);
@@ -184,7 +186,7 @@ public class DragDropSystem : FSystem
 			editableContainer.transform.parent.parent.GetComponent<AudioSource>().Play();
 			refreshUI();
 			*/
-			}
+			//}
 			/*
             // priority == null, means drop item outside editablePanel
 			else if(!doubleclick && itemDragged != null){
@@ -295,14 +297,38 @@ public class DragDropSystem : FSystem
 		// Si aucun container n'est pointé
 		if (targetContainer == null)
 		{
-			Debug.Log("Pas de container");
 			dropOutDoorContainer(element);
+
 		}
 		else // Sinon cela veux dire qu'il y a au moins un container de pointé
 		{
 			Debug.Log("container présent");
 			dropElementInContainer(element, targetContainer);
 		}
+
+
+		Debug.Log("Pas de container");
+
+		// Vérifier si double clique ou non
+		doubleclick = false;
+		//check double click
+		if (Time.time - lastClickTime < catchTime)
+			doubleclick = true;
+		// On met à jours le timer du dernier clique
+		lastClickTime = Time.time;
+
+		if (doubleclick)
+		{
+			dropElementInContainer(element, editableContainer);
+		}
+		else
+		{
+			dropOutDoorContainer(element);
+		}
+
+		// On fois la fonction terminer on désactive de nouveau le doubleclick
+		doubleclick = false;
+
 	}
 
 	// Supprime l'element
@@ -314,6 +340,7 @@ public class DragDropSystem : FSystem
 	public void pointerDownElement(GameObject element)
     {
 		Debug.Log("Pointer down");
+		
 	}
 
 	public void dragElement(GameObject element)
