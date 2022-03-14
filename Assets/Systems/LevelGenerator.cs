@@ -473,8 +473,8 @@ public class LevelGenerator : FSystem {
 
 				break;
 		}
-		obj.GetComponent<UIActionType>().prefab = prefab;
-		action.target = obj;
+		//obj.GetComponent<UIActionType>().prefab = prefab;
+		//action.target = obj;
 		if(!editable)
 			Object.Destroy(obj.GetComponent<PointerSensitive>());
 		return obj;
