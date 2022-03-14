@@ -46,6 +46,7 @@ public class DragDropSystem : FSystem
 																		 //manage click on library
 			if (libraryElementPointed_f.Count > 0)
 			{
+				/*
 				GameObject go = libraryElementPointed_f.First();
 				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
 				// Create a dragged GameObject
@@ -65,6 +66,7 @@ public class DragDropSystem : FSystem
 				if (itemDragged.GetComponent<BasicAction>())
 					foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
 						child.raycastTarget = false;
+				*/
 			}
 
 			// drag in editable script
@@ -254,7 +256,7 @@ public class DragDropSystem : FSystem
 		foreach (BaseElement actChild in element.GetComponentsInChildren<BaseElement>())
 			GameObjectManager.addComponent<Dropped>(actChild.gameObject);
 
-		GameObjectManager.removeComponent<Dragged>(element);
+		//GameObjectManager.removeComponent<Dragged>(element);
 
 		if (element.GetComponent<UITypeContainer>())
 			element.GetComponent<Image>().raycastTarget = true;
@@ -281,9 +283,34 @@ public class DragDropSystem : FSystem
 		refreshUI();
 	}
 
+	public void beginDragElement(GameObject element)
+    {
+		GameObject itemDragged2;
+		GameObject go = libraryElementPointed_f.First();
+		GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
+		// Create a dragged GameObject
+		itemDragged2 = UnityEngine.Object.Instantiate<GameObject>(prefab, go.transform);
+		BaseElement action = itemDragged2.GetComponent<BaseElement>();
+		if (action.GetType().ToString().Equals("ForAction"))
+		{
+			TMP_InputField input = itemDragged.GetComponentInChildren<TMP_InputField>();
+			input.onEndEdit.AddListener(delegate { onlyPositiveInteger(input); });
+		}
+		itemDragged2.GetComponent<UIActionType>().prefab = prefab;
+		itemDragged2.GetComponent<UIActionType>().linkedTo = go;
+		action.target = itemDragged2;
+		GameObjectManager.bind(itemDragged2);
+		GameObjectManager.addComponent<Dragged>(itemDragged2);
+		// exclude this GameObject from the EventSystem
+		itemDragged2.GetComponent<Image>().raycastTarget = false;
+		if (itemDragged2.GetComponent<BasicAction>())
+			foreach (Image child in itemDragged2.GetComponentsInChildren<Image>())
+				child.raycastTarget = false;
+	}
+
 	// Determine si l'element associer à l'évenement Pointer Up se trouvé dans une zone de container ou non
 	// Dirige vers la bonne fonction selon le cas
-	public void pointerRightUpElement(GameObject element)
+	public void endDragElement(GameObject element)
 	{
 		Debug.Log("Objet laché fonction");
 		// On commence par regarder si il y a un container pointé et si oui, on le récupére
@@ -297,6 +324,7 @@ public class DragDropSystem : FSystem
 		// Si aucun container n'est pointé
 		if (targetContainer == null)
 		{
+			Debug.Log("Pas de container");
 			dropOutDoorContainer(element);
 
 		}
@@ -306,9 +334,10 @@ public class DragDropSystem : FSystem
 			dropElementInContainer(element, targetContainer);
 		}
 
+	}
 
-		Debug.Log("Pas de container");
-
+	public void doubleClick(GameObject element)
+	{
 		// Vérifier si double clique ou non
 		doubleclick = false;
 		//check double click
@@ -328,7 +357,6 @@ public class DragDropSystem : FSystem
 
 		// On fois la fonction terminer on désactive de nouveau le doubleclick
 		doubleclick = false;
-
 	}
 
 	// Supprime l'element

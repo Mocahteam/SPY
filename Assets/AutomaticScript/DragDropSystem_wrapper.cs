@@ -23,9 +23,19 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "onlyPositiveInteger", input);
 	}
 
-	public void pointerRightUpElement(UnityEngine.GameObject element)
+	public void beginDragElement(UnityEngine.GameObject element)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "pointerRightUpElement", element);
+		MainLoop.callAppropriateSystemMethod (system, "beginDragElement", element);
+	}
+
+	public void endDragElement(UnityEngine.GameObject element)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "endDragElement", element);
+	}
+
+	public void doubleClick(UnityEngine.GameObject element)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "doubleClick", element);
 	}
 
 	public void pointerLeftUpElement(UnityEngine.GameObject element)
