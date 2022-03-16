@@ -39,6 +39,8 @@ public class UISystem : FSystem {
 	private GameObject lastEditedScript;
 	public GameObject editableScriptContainer;
 	public GameObject libraryPanel;
+	public GameObject EditableContainer;
+	public GameObject prefabViewportEditableContainer;
 
 	protected override void onStart()
 	{
@@ -592,5 +594,21 @@ public class UISystem : FSystem {
 		}
 
 		return copyGO;
+	}
+
+	
+	// Ajout un container à la scéne
+	public void addContainer()
+    {
+		// On clone de viewport
+		GameObject cloneContainer = Object.Instantiate(prefabViewportEditableContainer);
+		// On l'ajoute à l'éditableContainer
+		cloneContainer.transform.SetParent(EditableContainer.transform);
+		// On regarde conbien de viewport container contient l'éditable pour mettre le nouveau viewport à la bonne position
+		cloneContainer.transform.SetSiblingIndex(EditableContainer.GetComponent<EditableCanvacComponent>().nbViewportContainer);
+		// Puis on imcrémente le nombre de viewport contenue dans l'éditable
+		EditableContainer.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
+		// On ajoute le nouveau viewport container à FYFY
+		GameObjectManager.bind(cloneContainer);
 	}
 }

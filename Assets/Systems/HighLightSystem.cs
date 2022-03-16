@@ -61,7 +61,7 @@ public class HighLightSystem : FSystem {
 			}
 		}
 		// second manage sensitive UI inside editable panel
-		else if(go.GetComponent<BaseElement>() && go.GetComponent<PointerOver>())
+		else if(go.GetComponent<BaseElement>() && go.GetComponent<PointerOver>() && go.name != "EndZoneActionBloc")
 			go.GetComponent<Image>().color = go.GetComponent<BaseElement>().highlightedColor;
 		// third sensitive UI inside library panel
 		else if (go.GetComponent<ElementToDrag>() && go.GetComponent<PointerOver>())

@@ -14,6 +14,8 @@ public class UISystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject dialogPanel;
 	public UnityEngine.GameObject editableScriptContainer;
 	public UnityEngine.GameObject libraryPanel;
+	public UnityEngine.GameObject EditableContainer;
+	public UnityEngine.GameObject prefabViewportEditableContainer;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -28,6 +30,8 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "dialogPanel", dialogPanel);
 		MainLoop.initAppropriateSystemField (system, "editableScriptContainer", editableScriptContainer);
 		MainLoop.initAppropriateSystemField (system, "libraryPanel", libraryPanel);
+		MainLoop.initAppropriateSystemField (system, "EditableContainer", EditableContainer);
+		MainLoop.initAppropriateSystemField (system, "prefabViewportEditableContainer", prefabViewportEditableContainer);
 	}
 
 	public void resetScript(System.Boolean refund)
@@ -98,6 +102,11 @@ public class UISystem_wrapper : BaseWrapper
 	public void applyScriptToPlayer()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "applyScriptToPlayer", null);
+	}
+
+	public void addContainer()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "addContainer", null);
 	}
 
 }
