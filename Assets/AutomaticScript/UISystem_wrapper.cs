@@ -15,7 +15,7 @@ public class UISystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject editableScriptContainer;
 	public UnityEngine.GameObject libraryPanel;
 	public UnityEngine.GameObject EditableContainer;
-	public UnityEngine.GameObject prefabViewportEditableContainer;
+	public UnityEngine.GameObject prefabViewportScriptContainer;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -31,7 +31,17 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "editableScriptContainer", editableScriptContainer);
 		MainLoop.initAppropriateSystemField (system, "libraryPanel", libraryPanel);
 		MainLoop.initAppropriateSystemField (system, "EditableContainer", EditableContainer);
-		MainLoop.initAppropriateSystemField (system, "prefabViewportEditableContainer", prefabViewportEditableContainer);
+		MainLoop.initAppropriateSystemField (system, "prefabViewportScriptContainer", prefabViewportScriptContainer);
+	}
+
+	public void startUpdatePlayButton()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "startUpdatePlayButton", null);
+	}
+
+	public void refreshUI()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "refreshUI", null);
 	}
 
 	public void resetScript(System.Boolean refund)
@@ -107,6 +117,26 @@ public class UISystem_wrapper : BaseWrapper
 	public void addContainer()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "addContainer", null);
+	}
+
+	public void changeNameContainerExterneElement()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "changeNameContainerExterneElement", null);
+	}
+
+	public void newNameContainer(System.String name)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "newNameContainer", name);
+	}
+
+	public void verticalName(System.String name)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "verticalName", name);
+	}
+
+	public void horizontalName(System.String name)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "horizontalName", name);
 	}
 
 }

@@ -12,12 +12,10 @@ public class DragDropSystemBridge : MonoBehaviour
         // On verifie si c'est un up droit ou gauche
         if ((e as PointerEventData).button == PointerEventData.InputButton.Left)
         {
-            Debug.Log("Up gauche detecte");
 
         }
         else
         {
-            Debug.Log("Up droit detecte");
             DragDropSystem.instance.deleteElement(e.selectedObject);
         }
 

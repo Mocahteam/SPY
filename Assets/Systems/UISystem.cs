@@ -15,18 +15,23 @@ using UnityEngine.Networking;
 /// Manage end panel (compute Score and stars)
 /// </summary>
 public class UISystem : FSystem {
-    private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-    private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
+	private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Player"));
 	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(UIActionType)));
-    private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
+	private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction), typeof(UIActionType), typeof(CurrentAction)));
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
-	private Family emptyPlayerExecution = FamilyManager.getFamily(new AllOfComponents(typeof(EmptyExecution))); 
+	private Family emptyPlayerExecution = FamilyManager.getFamily(new AllOfComponents(typeof(EmptyExecution)));
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
+	private Family viewportContainerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les container éditable
+	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer))); // Les containers scripts
+
 	private GameData gameData;
 	private int nDialog = 0;
+	private GameObject lastEditedScript;
+
 	public GameObject buttonPlay;
 	public GameObject buttonContinue;
 	public GameObject buttonStop;
@@ -36,11 +41,17 @@ public class UISystem : FSystem {
 	public GameObject buttonReset;
 	public GameObject endPanel;
 	public GameObject dialogPanel;
-	private GameObject lastEditedScript;
 	public GameObject editableScriptContainer;
 	public GameObject libraryPanel;
 	public GameObject EditableContainer;
-	public GameObject prefabViewportEditableContainer;
+	public GameObject prefabViewportScriptContainer;
+	private string nameContainerSelect; // Nom du container selectionné
+
+	public static UISystem instance;
+
+	public UISystem(){
+		instance = this;
+	}
 
 	protected override void onStart()
 	{
@@ -66,6 +77,33 @@ public class UISystem : FSystem {
 		lastEditedScript = null;
 
 		loadHistory();
+	}
+
+	// Active ou désactive le bouton play si il y a ou non des actions dans un container script
+	private IEnumerator updatePlayButton()
+	{
+		yield return null;
+		foreach (GameObject container in scriptContainer_f)
+		{
+			buttonPlay.GetComponent<Button>().interactable = !(container.transform.childCount < 2);
+		}
+	}
+
+	// Permet de lancer la corroutine "updatePlayButton" depuis l'extérieur du systéme
+	public void startUpdatePlayButton()
+    {
+		MainLoop.instance.StartCoroutine(updatePlayButton());
+	}
+
+	// Rafraichit certain élément de l'UI
+	public void refreshUI()
+	{
+		//Refresh Containers size
+		foreach (GameObject container in scriptContainer_f)
+		{
+			LayoutRebuilder.ForceRebuildLayoutImmediate(container.GetComponent<RectTransform>());
+		}
+		MainLoop.instance.StartCoroutine(updatePlayButton());
 	}
 
 	private void onNewCurrentAction(GameObject go){
@@ -278,17 +316,20 @@ public class UISystem : FSystem {
 		}
 	}
 
-	//Refresh Containers size
-	private void refreshUI(){
-		LayoutRebuilder.ForceRebuildLayoutImmediate(editableScriptContainer.GetComponent<RectTransform>() );
-	}
 
 	// Empty the script window
 	// See ResetButton in editor
 	public void resetScript(bool refund = false){
-		for (int i = 0 ; i < editableScriptContainer.transform.childCount ; i++){
-			if(editableScriptContainer.transform.GetChild(i).GetComponent<BaseElement>()){
-				destroyScript(editableScriptContainer.transform.GetChild(i).gameObject, refund);				
+		// On récupére le contenaire pointer lors du clique poubelle
+		GameObject scriptContainerPointer = viewportContainerPointed_f.First().transform.Find("ScriptContainer").gameObject;
+		Debug.Log("scriptContainerPointer : " + scriptContainerPointer.name);
+
+		// On parcourt le script container pour détruire toutes les actions
+		for (int i = 0 ; i < scriptContainerPointer.transform.childCount ; i++){
+			Debug.Log("scriptContainerPointer : " + scriptContainerPointer.transform.GetChild(i).name);
+			if (scriptContainerPointer.transform.GetChild(i).GetComponent<BaseElement>()){
+				Debug.Log("scriptContainerPointer : " + scriptContainerPointer.transform.GetChild(i).name);
+				destroyScript(scriptContainerPointer.transform.GetChild(i).gameObject, refund);				
 			}
 		
 		}
@@ -297,13 +338,17 @@ public class UISystem : FSystem {
 
 	//Recursive script destroyer
 	private void destroyScript(GameObject go,  bool refund = false){
+		// Que fait cette partie?
+		/*
 		if(go.GetComponent<UIActionType>() != null){
 			if(!refund)
 				gameData.totalActionBloc++;
 			else
 				GameObjectManager.addComponent<AddOne>(go.GetComponent<UIActionType>().linkedTo);
 		}
+		*/
 		
+		// Si l'objet passer est un script container
 		if(go.GetComponent<UITypeContainer>() != null){
 			foreach(Transform child in go.transform){
 				if(child.GetComponent<BaseElement>()){
@@ -311,9 +356,14 @@ public class UISystem : FSystem {
 				}
 			}
 		}
-		go.transform.DetachChildren();
-		GameObjectManager.unbind(go);
-		UnityEngine.Object.Destroy(go);
+
+		// Si ce n'est pas le block de fin
+		if(go.GetComponent<EndBlockScriptComponent>() == null)
+        {
+			go.transform.DetachChildren();
+			GameObjectManager.unbind(go);
+			UnityEngine.Object.Destroy(go);
+		}
 	}
 
 	public void setImageSprite(Image img, string path){
@@ -509,7 +559,7 @@ public class UISystem : FSystem {
 			UnityEngine.Object.Destroy(containerCopy);
 
 			//empty editable container
-			resetScript();
+			//resetScript();
 
 			buttonPlay.GetComponent<AudioSource>().Play();
 			foreach(GameObject go in agents){
@@ -601,7 +651,7 @@ public class UISystem : FSystem {
 	public void addContainer()
     {
 		// On clone de viewport
-		GameObject cloneContainer = Object.Instantiate(prefabViewportEditableContainer);
+		GameObject cloneContainer = Object.Instantiate(prefabViewportScriptContainer);
 		// On l'ajoute à l'éditableContainer
 		cloneContainer.transform.SetParent(EditableContainer.transform);
 		// On regarde conbien de viewport container contient l'éditable pour mettre le nouveau viewport à la bonne position
@@ -610,5 +660,94 @@ public class UISystem : FSystem {
 		EditableContainer.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
 		// On ajoute le nouveau viewport container à FYFY
 		GameObjectManager.bind(cloneContainer);
+
+		// Lance le son de l'ajout d'un container
+		cloneContainer.GetComponent<AudioSource>().Play();
+	}
+
+
+	// Change le nom du contenaire apeller par des éléments extérieur
+	public void changeNameContainerExterneElement(string oldName, string newName)
+    {
+		Debug.Log("Changer nom container auto : " + oldName);
+		// On parcours les script container 
+		foreach (GameObject container in scriptContainer_f)
+		{
+            // SI on trouve celui dont l'ancien nom correspond
+            if (container.GetComponent<UITypeContainer>().associedAgentName == oldName)
+            {
+				// On considére que le nom du container à modifier et selectionné
+				nameContainerSelect = oldName;
+				// On change pour son nouveau nom
+				container.GetComponent<UITypeContainer>().associedAgentName = newName;
+				// Puis on l'affiche verticalement
+				verticalName(newName);
+			}
+		}
+	}
+
+	
+	// Chnage le nom du container
+	public void newNameContainer(string name)
+    {
+		// On cherche le container
+		foreach (GameObject container in scriptContainer_f)
+		{
+			// Si on trouve celui dont le nom du container selectionné correspond
+			if (container.GetComponent<UITypeContainer>().associedAgentName == nameContainerSelect)
+			{
+				string oldName = container.GetComponent<UITypeContainer>().associedAgentName;
+				// On envoie le nom de l'agent à dissocié
+				EditAgentSystem.instance.dislinkOrLinkAgent(oldName, false);
+				// On change pour son nouveau nom
+				container.GetComponent<UITypeContainer>().associedAgentName = name;
+				// Puis on l'affiche verticalement
+				verticalName(name);
+				// Si le changement de nom entre l'agent et le container est automatique, on change aussi le nom du container
+				if (container.GetComponent<UITypeContainer>().editNameAuto)
+                {
+					EditAgentSystem.instance.changeNameAgentExterneElement(oldName, name);
+				}
+				// On ratache un agent si il a le même nom
+				EditAgentSystem.instance.dislinkOrLinkAgent(name, true);
+			}
+		}
+	}
+
+
+	// Afichage du nom du container à la verticale
+	public void verticalName(string name)
+    {
+		// On recherhe le container qui contient le même nom
+		foreach(GameObject container in scriptContainer_f)
+        {
+			// Si on le trouve, alors on change l'écriture du nom à la vertical
+			if(container.GetComponent<UITypeContainer>().associedAgentName == name) {
+				// On créer une variable pour stocker les modifications du nom
+				string newViewName = "";
+				foreach (char l in name)
+				{
+					newViewName = newViewName + l + "\n";
+				}
+				// On remplace le nom actuel par le nouveau format
+				container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text = newViewName;
+			}
+        }
+    }
+
+	public void horizontalName(string name)
+    {
+		// On recherhe le container qui contient le même nom
+		foreach (GameObject container in scriptContainer_f)
+		{
+			// Si on le trouve, alors on change l'écriture du nom à l'horizontal
+			if (container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text == name)
+			{
+				// On remplace le nom actuel par le nouveau format
+				container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text = container.GetComponent<UITypeContainer>().associedAgentName;
+				// On enregistre le nom du container selectionné
+				nameContainerSelect = container.GetComponent<UITypeContainer>().associedAgentName;
+			}
+		}
 	}
 }

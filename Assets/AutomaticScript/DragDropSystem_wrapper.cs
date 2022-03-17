@@ -4,20 +4,18 @@ using FYFY;
 public class DragDropSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject mainCanvas;
-	public UnityEngine.GameObject positionBar;
 	public UnityEngine.GameObject lastEditableContainer;
 	public UnityEngine.AudioSource audioSource;
-	public System.Single catchTime;
 	public UnityEngine.GameObject buttonPlay;
+	public System.Single catchTime;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
-		MainLoop.initAppropriateSystemField (system, "positionBar", positionBar);
 		MainLoop.initAppropriateSystemField (system, "lastEditableContainer", lastEditableContainer);
 		MainLoop.initAppropriateSystemField (system, "audioSource", audioSource);
-		MainLoop.initAppropriateSystemField (system, "catchTime", catchTime);
 		MainLoop.initAppropriateSystemField (system, "buttonPlay", buttonPlay);
+		MainLoop.initAppropriateSystemField (system, "catchTime", catchTime);
 	}
 
 	public void beginDragElementFromLibrary(UnityEngine.EventSystems.BaseEventData element)
@@ -53,11 +51,6 @@ public class DragDropSystem_wrapper : BaseWrapper
 	public void clickLibraryElementForAddInContainer(UnityEngine.EventSystems.BaseEventData element)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "clickLibraryElementForAddInContainer", element);
-	}
-
-	public void testObjectpointer()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "testObjectpointer", null);
 	}
 
 }
