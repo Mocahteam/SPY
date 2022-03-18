@@ -16,8 +16,10 @@ public class UISystemBridge : MonoBehaviour
         UISystem.instance.newNameContainer(name);
     }
 
+
     public void horizontalName(string name)
     {
         UISystem.instance.horizontalName(name);
     }
+
 }

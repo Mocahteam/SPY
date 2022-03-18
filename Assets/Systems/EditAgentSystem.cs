@@ -4,19 +4,18 @@ using TMPro;
 using UnityEngine.EventSystems;
 
 /// <summary>
+/// 
 /// agentSelect
 ///		Pour enregistrer sur qu'elle agents le systéme va travaillé
-/// changeName
+///	modificationAgent
+///		Pour les appel extérieurs, permet de trouver l'agent (et le considéré comme selectionné) en fonction de son nom
+///		Renvoie True si trouvé, sinon false
+/// setAgentName
 ///		Pour changer le nom d'un agent
-///	changeNameAgentExterneElement
-///		
-///	linkScriptContainer
-///		Création d'un lien entre un agent et un script container du même nom
-///	dislinkAgent
-///		
-///	dislinkScriptContainer
-///		Suppression d'un lien entre un agent et un script container du même nom (principalement car l'un des deux partie va changer de nom)
-///	changeNameAssociedElement
+///	majDisplayCardAgent
+///		Met à jour l'affichage des info de l'agent dans ça fiche
+///	newScriptContainerLink
+///		Supprime le lien existant avec le container Script actuelle et recherche le containe script identique au nouveau nom de l'agent
 ///		
 /// </summary>
 
@@ -41,100 +40,65 @@ public class EditAgentSystem : FSystem
 	// Enregistre l'agent selectionné dans la variable agentSelected
 	public void agentSelect(BaseEventData agent)
     {
-		Debug.Log("agent selectionné : " + agent.selectedObject.name);
 		agentSelected = agent.selectedObject;
 	}
 
 
-	// Associe le nouveau nom reçue à l'agent selectionné
-	public void changeName(string newName)
+	// Utilisé principalement par les systéme extérieur
+	// Définie l'agent sur lequel les modifications seront opporté
+	// Renvoie True si agent trouvé, sinon false
+	public bool modificationAgent(string nameAgent)
     {
-		// On supprime le lien entre l'agent et le container (vue que le nom va changer)
-		dislinkScriptContainer(agentSelected);
+		foreach (GameObject agent in agent_f)
+        {
+			//Debug.Log("Nom agent : " + agent.GetComponent<AgentEdit>().agentName);
+			if (agent.GetComponent<AgentEdit>().agentName == nameAgent)
+            {
+				agentSelected = agent;
+				return true;
+			}
+        }
+		return false;
+	}
+
+
+	// Associe le nouveau nom reçue à l'agent selectionné
+	// Met à jours son affichage dans ça fiche
+	// Met à jours le lien qu'il à avec le script container du même nom
+	public void setAgentName(string newName)
+    {
         // Si le changement de nom entre l'agent et le container est automatique, on change aussi le nom du container
         if (agentSelected.GetComponent<AgentEdit>().editNameAuto)
         {
-			changeNameAssociedElement(agentSelected.GetComponent<AgentEdit>().agentName, newName);
+			UISystem.instance.setContainerName(agentSelected.GetComponent<AgentEdit>().agentName, newName);
 		}
 		// On met à jours le nom de l'agent
 		agentSelected.GetComponent<AgentEdit>().agentName = newName;
-		// On relie l'agent au script container du même nom
-		linkScriptContainer(agentSelected);
+		// On met à jour l'affichage du nom dans le containe fiche de l'agent
+		majDisplayCardAgent(newName);
+		// On associe la fiche du l'agent au nouveau container
+		newScriptContainerLink();
 	}
 
-	// Chengement du nom d'un agent par un element extérieur
-	public void changeNameAgentExterneElement(string oldName, string newName)
+	// Met à jours l'affichage du nom de l'agent dans ça fiche
+	public void majDisplayCardAgent(string newName)
     {
-		// On cherche l'agent ayant le même nom
-		foreach(GameObject agent in agent_f)
-        {
-			// On trouve le bon agent
-			if(agent.GetComponent<AgentEdit>().agentName == oldName)
-            {
-				// On change le nom de l'agent
-				agent.GetComponent<AgentEdit>().agentName = newName;
-				// On change l'affichage du nom dans son container perso
-				agent.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().text = newName;
-				// On l'associe au nouveau container
-				linkScriptContainer(agent);
-			}
-        }
-    }
-
-	// Si le nom est le même, met en lien avec un container script
-	public void linkScriptContainer(GameObject agent)
-	{
-		// On parcourt la liste des container éditable
-		foreach(GameObject container in viewportContainer_f)
-        {
-			// si un contenaire à le même nom que l'agent, alors on les lie ensemble
-			if(container.GetComponentInChildren<UITypeContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
-            {
-				container.GetComponentInChildren<UITypeContainer>().agentAssocied = agent;
-				agent.GetComponent<ScriptRef>().scriptContainer = container.transform.Find("ScriptContainer").gameObject;
-			}
-        }
+		agentSelected.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().text = newName;
 	}
 
-
-	// Cherche l'agent dont on a reçue le nom pour apeller la fonction dislinkContainer (false) ou linkContainer (true)
-	public void dislinkOrLinkAgent(string agentName, bool value)
+	// Associe la fiche de l'agent au nouveau container (correspondant au nom de l'agent)
+	public void newScriptContainerLink()
     {
-		foreach(GameObject agent in agent_f)
-        {
-			if(agent.GetComponent<AgentEdit>().agentName == agentName)
-            {
-                if (value)
-                {
-					linkScriptContainer(agent);
-
-				}
-                else
-                {
-					dislinkScriptContainer(agent);
-				}
-			}
-        }
-    }
-
-	// Si le nom est le même, supprime le lien avec un container script
-	public void dislinkScriptContainer(GameObject agent)
-	{
-		// On parcourt la liste des container éditable
+		// On supprime le lien actuel
+		agentSelected.GetComponent<ScriptRef>().scriptContainer = null;
+		// On parcourt la liste des container pour y associer celui du même nom (si il existe)
 		foreach (GameObject container in viewportContainer_f)
 		{
-			// si un contenaire à le même nom que l'agent, alors on les dissocie
-			if (container.GetComponentInChildren<UITypeContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
+			if (container.GetComponentInChildren<UITypeContainer>().associedAgentName == agentSelected.GetComponent<AgentEdit>().agentName)
 			{
-				container.GetComponentInChildren<UITypeContainer>().agentAssocied = null;
-				agent.GetComponent<ScriptRef>().scriptContainer = null;
+				agentSelected.GetComponent<ScriptRef>().scriptContainer = container.transform.Find("ScriptContainer").gameObject;
 			}
 		}
 	}
 
-	// Change le nom auquel l'agent est associer
-	public void changeNameAssociedElement(string oldName, string newName)
-    {
-		UISystem.instance.changeNameContainerExterneElement(oldName, newName);
-	}
 }

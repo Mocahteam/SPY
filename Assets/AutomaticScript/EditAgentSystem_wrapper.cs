@@ -13,34 +13,19 @@ public class EditAgentSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "agentSelect", agent);
 	}
 
-	public void changeName(System.String newName)
+	public void setAgentName(System.String newName)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "changeName", newName);
+		MainLoop.callAppropriateSystemMethod (system, "setAgentName", newName);
 	}
 
-	public void changeNameAgentExterneElement()
+	public void majDisplayCardAgent(System.String newName)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "changeNameAgentExterneElement", null);
+		MainLoop.callAppropriateSystemMethod (system, "majDisplayCardAgent", newName);
 	}
 
-	public void linkScriptContainer(UnityEngine.GameObject agent)
+	public void newScriptContainerLink()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "linkScriptContainer", agent);
-	}
-
-	public void dislinkOrLinkAgent()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "dislinkOrLinkAgent", null);
-	}
-
-	public void dislinkScriptContainer(UnityEngine.GameObject agent)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "dislinkScriptContainer", agent);
-	}
-
-	public void changeNameAssociedElement()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "changeNameAssociedElement", null);
+		MainLoop.callAppropriateSystemMethod (system, "newScriptContainerLink", null);
 	}
 
 }

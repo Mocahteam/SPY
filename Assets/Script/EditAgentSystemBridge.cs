@@ -20,8 +20,8 @@ public class EditAgentSystemBridge : MonoBehaviour
 	}
 
 	// Methode appellée pour changer le nom de l'agent
-	public void changeName(string newName)
+	public void setAgentName(string newName)
 	{
-		EditAgentSystem.instance.changeName(newName);
+		EditAgentSystem.instance.setAgentName(newName);
 	}
 }

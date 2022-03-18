@@ -119,11 +119,6 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "addContainer", null);
 	}
 
-	public void changeNameContainerExterneElement()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "changeNameContainerExterneElement", null);
-	}
-
 	public void newNameContainer(System.String name)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "newNameContainer", name);
@@ -137,6 +132,16 @@ public class UISystem_wrapper : BaseWrapper
 	public void horizontalName(System.String name)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "horizontalName", name);
+	}
+
+	public void setContainerName()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setContainerName", null);
+	}
+
+	public void cancelChangeNameContainer(System.String name)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "cancelChangeNameContainer", name);
 	}
 
 }

@@ -7,6 +7,7 @@ using TMPro;
 using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Manage dialogs at the begining of the level
@@ -45,7 +46,8 @@ public class UISystem : FSystem {
 	public GameObject libraryPanel;
 	public GameObject EditableContainer;
 	public GameObject prefabViewportScriptContainer;
-	private string nameContainerSelect; // Nom du container selectionné
+	private string nameContainerSelected; // Nom du container selectionné
+	private GameObject containerSelected; // Le container selectionné
 
 	public static UISystem instance;
 
@@ -656,6 +658,8 @@ public class UISystem : FSystem {
 		cloneContainer.transform.SetParent(EditableContainer.transform);
 		// On regarde conbien de viewport container contient l'éditable pour mettre le nouveau viewport à la bonne position
 		cloneContainer.transform.SetSiblingIndex(EditableContainer.GetComponent<EditableCanvacComponent>().nbViewportContainer);
+		// On ajoute la caméra dans le bridge
+		cloneContainer.GetComponent<CameraSystemBridge>().cameraAssociate = GameObject.Find("Main Camera");
 		// Puis on imcrémente le nombre de viewport contenue dans l'éditable
 		EditableContainer.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
 		// On ajoute le nouveau viewport container à FYFY
@@ -663,66 +667,96 @@ public class UISystem : FSystem {
 
 		// Lance le son de l'ajout d'un container
 		cloneContainer.GetComponent<AudioSource>().Play();
-	}
 
-
-	// Change le nom du contenaire apeller par des éléments extérieur
-	public void changeNameContainerExterneElement(string oldName, string newName)
-    {
-		Debug.Log("Changer nom container auto : " + oldName);
-		// On parcours les script container 
-		foreach (GameObject container in scriptContainer_f)
-		{
-            // SI on trouve celui dont l'ancien nom correspond
-            if (container.GetComponent<UITypeContainer>().associedAgentName == oldName)
+		// Affiche le bon nom
+		bool nameOk = false;
+		for(int i = EditableContainer.GetComponent<EditableCanvacComponent>().nbViewportContainer; !nameOk; i++)
+        {
+			// Si le nom n'est pas déjà utilisé on nomme le nouveau container de cette façon
+			if(!nameContainerUsed("Agent" + i))
             {
-				// On considére que le nom du container à modifier et selectionné
-				nameContainerSelect = oldName;
-				// On change pour son nouveau nom
-				container.GetComponent<UITypeContainer>().associedAgentName = newName;
-				// Puis on l'affiche verticalement
-				verticalName(newName);
+				cloneContainer.GetComponentInChildren<UITypeContainer>().associedAgentName = "Agent" + i;
+				nameOk = true;
 			}
 		}
+		MainLoop.instance.StartCoroutine(updateVerticalName(cloneContainer.GetComponentInChildren<UITypeContainer>().associedAgentName));
+
 	}
 
+	public bool nameContainerUsed(string name) {
+		bool nameUsed = false;
+		// On regarde en premier lieu si le nom n'existe pas déjà
+		foreach (GameObject container in scriptContainer_f)
+		{
+			if (container.GetComponent<UITypeContainer>().associedAgentName == name)
+			{
+				nameUsed = true;
+			}
+		}
+
+		return nameUsed;
+	}
 	
-	// Chnage le nom du container
+	// Change le nom du container
 	public void newNameContainer(string name)
     {
-		// On cherche le container
-		foreach (GameObject container in scriptContainer_f)
-		{
-			// Si on trouve celui dont le nom du container selectionné correspond
-			if (container.GetComponent<UITypeContainer>().associedAgentName == nameContainerSelect)
+		Debug.Log("Nom reçue : " + name);
+		// Si le nom n'est pas utilisé
+        if (!nameContainerUsed(name) && name.Length < 8)
+        {
+			// On cherche le container
+			foreach (GameObject container in scriptContainer_f)
 			{
-				string oldName = container.GetComponent<UITypeContainer>().associedAgentName;
-				// On envoie le nom de l'agent à dissocié
-				EditAgentSystem.instance.dislinkOrLinkAgent(oldName, false);
-				// On change pour son nouveau nom
-				container.GetComponent<UITypeContainer>().associedAgentName = name;
-				// Puis on l'affiche verticalement
-				verticalName(name);
-				// Si le changement de nom entre l'agent et le container est automatique, on change aussi le nom du container
-				if (container.GetComponent<UITypeContainer>().editNameAuto)
-                {
-					EditAgentSystem.instance.changeNameAgentExterneElement(oldName, name);
+				// Si on trouve celui dont le nom du container selectionné correspond
+				if (container.GetComponent<UITypeContainer>().associedAgentName == nameContainerSelected)
+				{
+					string oldName = container.GetComponent<UITypeContainer>().associedAgentName;
+					// On change pour son nouveau nom
+					container.GetComponent<UITypeContainer>().associedAgentName = name;
+					// Puis on l'affiche verticalement
+					verticalName(name);
+					// On envoie au systéme sur quel agent on va modifie les données
+					bool agentExist = EditAgentSystem.instance.modificationAgent(oldName);
+					// Si l'agent existe, on met à jours son lien (on supprime le lien actuelle)
+					if (agentExist)
+					{
+						EditAgentSystem.instance.newScriptContainerLink();
+						// Si le changement de nom entre l'agent et le container est automatique, on change aussi le nom de l'agent
+						if (container.GetComponent<UITypeContainer>().editNameAuto)
+						{
+							EditAgentSystem.instance.setAgentName(name);
+						}
+					}
+					else // Sinon on regarde si on agent du même nom existe pour établir un lien
+					{
+						agentExist = EditAgentSystem.instance.modificationAgent(name);
+						if (agentExist)
+						{
+							EditAgentSystem.instance.newScriptContainerLink();
+						}
+					}
 				}
-				// On ratache un agent si il a le même nom
-				EditAgentSystem.instance.dislinkOrLinkAgent(name, true);
 			}
+		}
+        else{ // Sinon on annule le changement
+			cancelChangeNameContainer(name);
 		}
 	}
 
+	private IEnumerator updateVerticalName(string name)
+	{
+		yield return null;
+		verticalName(name);
+	}
 
 	// Afichage du nom du container à la verticale
 	public void verticalName(string name)
     {
 		// On recherhe le container qui contient le même nom
-		foreach(GameObject container in scriptContainer_f)
+		foreach (GameObject container in scriptContainer_f)
         {
 			// Si on le trouve, alors on change l'écriture du nom à la vertical
-			if(container.GetComponent<UITypeContainer>().associedAgentName == name) {
+			if (container.GetComponent<UITypeContainer>().associedAgentName == name) {
 				// On créer une variable pour stocker les modifications du nom
 				string newViewName = "";
 				foreach (char l in name)
@@ -733,8 +767,10 @@ public class UISystem : FSystem {
 				container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text = newViewName;
 			}
         }
-    }
+	}
 
+
+	// Affiche le nom du container de manniére horizontal
 	public void horizontalName(string name)
     {
 		// On recherhe le container qui contient le même nom
@@ -746,7 +782,31 @@ public class UISystem : FSystem {
 				// On remplace le nom actuel par le nouveau format
 				container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text = container.GetComponent<UITypeContainer>().associedAgentName;
 				// On enregistre le nom du container selectionné
-				nameContainerSelect = container.GetComponent<UITypeContainer>().associedAgentName;
+				nameContainerSelected = container.GetComponent<UITypeContainer>().associedAgentName;
+			}
+		}
+	}
+
+	// Utilisé surtout par les apelles extérieurs au systéme
+	// Permet d'enregistrer le nom du container que l'on veux changé
+	// Et lui changer son nom 
+	public void setContainerName(string oldName, string newName)
+    {
+		nameContainerSelected = oldName;
+		newNameContainer(newName);
+	}
+
+
+	// On annule le nouveau nom
+	public void cancelChangeNameContainer(string name)
+	{
+		foreach (GameObject container in scriptContainer_f)
+		{
+			// Si le nom afficher du container et le même quand paramétre, mais pas son nom, on a bien le container non modifier
+			if (container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text == name)
+			{
+				// On réaffiche son ancien nom à la vertical
+				verticalName(container.GetComponent<UITypeContainer>().associedAgentName);
 			}
 		}
 	}
