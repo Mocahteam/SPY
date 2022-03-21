@@ -28,6 +28,7 @@ public class UISystem : FSystem {
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private Family viewportContainerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les container éditable
 	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer))); // Les containers scripts
+	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
 
 	private GameData gameData;
 	private int nDialog = 0;
@@ -81,15 +82,102 @@ public class UISystem : FSystem {
 		loadHistory();
 	}
 
+
+	// Use to process your families.
+	protected override void onProcess(int familiesUpdateCount)
+	{
+		//Activate DialogPanel if there is a message
+		if (gameData != null && gameData.dialogMessage.Count > 0 && !dialogPanel.transform.parent.gameObject.activeSelf)
+		{
+			showDialogPanel();
+		}
+	}
+
+
 	// Active ou désactive le bouton play si il y a ou non des actions dans un container script
 	private IEnumerator updatePlayButton()
 	{
 		yield return null;
 		foreach (GameObject container in scriptContainer_f)
 		{
-			buttonPlay.GetComponent<Button>().interactable = !(container.transform.childCount < 2);
+			buttonPlay.GetComponent<Button>().interactable = !(container.transform.childCount < 3);
 		}
 	}
+
+
+	// Vérifie si les noms des containers correspond à un agent et vice-versa
+	// Si non, Fait apparaitre le nom en rouge
+	private IEnumerator tcheckLinkName()
+	{
+		Debug.Log("Start coroutine ok : tcheckLinkName");
+		yield return null;
+
+		// On parcours les containers et si aucun nom ne correspond alors on met leur nom en gras rouge
+		foreach (GameObject container in scriptContainer_f)
+		{
+			bool nameSame = false;
+			foreach (GameObject agent in agent_f)
+			{
+				if (container.GetComponent<UITypeContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
+				{
+					nameSame = true;
+				}
+			}
+
+			// Si même nom trouver on met l'arriére plan blanc
+			if (nameSame)
+			{
+				container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().image.color = Color.white;
+			}
+			else // sinon rouge 
+			{
+				container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
+			}
+		}
+
+		// On fait la même chose pour les agents
+		foreach (GameObject agent in agent_f)
+		{
+			bool nameSame = false;
+			foreach (GameObject container in scriptContainer_f)
+			{
+				if (container.GetComponent<UITypeContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
+				{
+					nameSame = true;
+				}
+			}
+
+			// Si même nom trouver on met l'arriére transparent
+			if (nameSame)
+			{
+				agent.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 1f, 1f, 0f);
+			}
+			else // sinon rouge 
+			{
+				agent.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
+				//new Color(255f, 102f, 71f)
+			}
+		}
+	}
+
+
+	///  ????
+	IEnumerator GetTextureWebRequest(Image img, string path)
+	{
+		UnityWebRequest www = UnityWebRequestTexture.GetTexture(path);
+		yield return www.SendWebRequest();
+
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			Debug.Log(www.error);
+		}
+		else
+		{
+			Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
+			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+		}
+	}
+
 
 	// Permet de lancer la corroutine "updatePlayButton" depuis l'extérieur du systéme
 	public void startUpdatePlayButton()
@@ -106,8 +194,11 @@ public class UISystem : FSystem {
 			LayoutRebuilder.ForceRebuildLayoutImmediate(container.GetComponent<RectTransform>());
 		}
 		MainLoop.instance.StartCoroutine(updatePlayButton());
+		MainLoop.instance.StartCoroutine(tcheckLinkName());
 	}
 
+
+	// ?????
 	private void onNewCurrentAction(GameObject go){
 		if (go.activeInHierarchy)
 		{
@@ -120,6 +211,8 @@ public class UISystem : FSystem {
 		}
 	}
 
+
+	// ?????
 	public Vector3 GetSnapToPositionToBringChildIntoView(ScrollRect scrollRect, RectTransform child){
 		Canvas.ForceUpdateCanvases();
 		Vector3 viewportLocalPosition = scrollRect.viewport.localPosition;
@@ -132,17 +225,23 @@ public class UISystem : FSystem {
 		return result;
 	}
 
+	
+	// ?????
 	public Vector3 GetGUIElementOffset(RectTransform rect){
         Rect screenBounds = new Rect(0f, 0f, Screen.width, Screen.height);
         Vector3[] objectCorners = new Vector3[4];
         rect.GetWorldCorners(objectCorners);
- 
-        var xnew = 0f;
+		Debug.Log("objectCorners : ");
+
+
+		var xnew = 0f;
         var ynew = 0f;
         var znew = 0f;
  
         for (int i = 0; i < objectCorners.Length; i++){
-            if (objectCorners[i].x < screenBounds.xMin)
+			Debug.Log("x" + i + " : " + objectCorners[i].x);
+			Debug.Log("y" + i + " : " + objectCorners[i].y);
+			if (objectCorners[i].x < screenBounds.xMin)
                 xnew = screenBounds.xMin - objectCorners[i].x;
 
             if (objectCorners[i].x > screenBounds.xMax)
@@ -160,6 +259,8 @@ public class UISystem : FSystem {
  
     }
 
+	// Modifie l'interactibilité des différents boutons selon l'état envoyé (état du niveau fini ou stopé)
+	//
 	private void setExecutionState(bool finished){
 		buttonReset.GetComponent<Button>().interactable = finished;
 		buttonPlay.GetComponent<Button>().interactable = !finished;
@@ -176,6 +277,8 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(editableScriptContainer.transform.parent.parent.gameObject, finished);
 	}
 	
+
+	// Permet de sauvegarder l'historique de la sequence créer
 	private void saveHistory(int unused = 0){
 		if(gameData.actionsHistory == null){
 			gameData.actionsHistory = lastEditedScript;
@@ -190,6 +293,8 @@ public class UISystem : FSystem {
 		}	
 	}
 
+
+	// Charge la sequence d'action sauvegarder dans le script container
 	private void loadHistory(){
 		if(gameData != null && gameData.actionsHistory != null){
 			for(int i = 0 ; i < gameData.actionsHistory.transform.childCount ; i++){
@@ -208,6 +313,8 @@ public class UISystem : FSystem {
 		}
 	}
 
+
+	// ????
 	private void restoreLastEditedScript(){
 		List<Transform> childrenList = new List<Transform>();
 		foreach(Transform child in lastEditedScript.transform){
@@ -220,8 +327,12 @@ public class UISystem : FSystem {
 		GameObjectManager.refresh(editableScriptContainer);
 	}
 
+
+	// ????
 	private void levelFinished (GameObject go){
+		// On débloque et bloque les bons boutons d'éxecution
 		setExecutionState(true);
+
 		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
 			loadHistory();
 			PlayerPrefs.SetInt(gameData.levelToLoad.Item1, gameData.levelToLoad.Item2+1);
@@ -232,6 +343,9 @@ public class UISystem : FSystem {
 			restoreLastEditedScript();
 		}
 	}
+
+
+	// ?????
 	private void linkTo(GameObject go){
 		if(go.GetComponent<UIActionType>().linkedTo == null){
 			if(go.GetComponent<BasicAction>()){
@@ -244,11 +358,17 @@ public class UISystem : FSystem {
 		}
 	}
 
+
+	// Permet la gestion de l'affiche du panel de fin de niveau
     private void displayEndPanel(GameObject endPanel)
     {
         GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, true);
     }
 
+
+	// Permet de switcher entre les deux affichage différents de fin de niveau
+	// Cas 1 : Un ennemie à repéré le robot
+	// Cas 2 : Le robot est sortie du labyrinth
     private void onDisplayedEndPanel (GameObject endPanel)
     { 
         switch (endPanel.GetComponent<NewEnd>().endType)
@@ -280,7 +400,9 @@ public class UISystem : FSystem {
         }
     }
 
+	// Gére le nombre d'étoile à afficher selon le score obtenue
 	private void setScoreStars(int score, Transform scoreCanvas){
+		// Détermine le nombre d'étoile à afficher
 		int scoredStars = 0;
 		if(gameData.levelToLoadScore != null){
 			//check 0, 1, 2 or 3 stars
@@ -294,7 +416,8 @@ public class UISystem : FSystem {
 				scoredStars = 1;
 			}			
 		}
-
+		
+		// Affiche le nombre d'étoile désiré
 		for (int nbStar = 0 ; nbStar < 4 ; nbStar++){
 			if(nbStar == scoredStars)
 				GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, true);
@@ -310,33 +433,23 @@ public class UISystem : FSystem {
 		}
 	}
 
-	// Use to process your families.
-	protected override void onProcess(int familiesUpdateCount) {
-		//Activate DialogPanel if there is a message
-		if(gameData != null && gameData.dialogMessage.Count > 0 && !dialogPanel.transform.parent.gameObject.activeSelf){
-			showDialogPanel();
-		}
-	}
-
 
 	// Empty the script window
 	// See ResetButton in editor
 	public void resetScript(bool refund = false){
 		// On récupére le contenaire pointer lors du clique poubelle
 		GameObject scriptContainerPointer = viewportContainerPointed_f.First().transform.Find("ScriptContainer").gameObject;
-		Debug.Log("scriptContainerPointer : " + scriptContainerPointer.name);
 
 		// On parcourt le script container pour détruire toutes les actions
 		for (int i = 0 ; i < scriptContainerPointer.transform.childCount ; i++){
-			Debug.Log("scriptContainerPointer : " + scriptContainerPointer.transform.GetChild(i).name);
 			if (scriptContainerPointer.transform.GetChild(i).GetComponent<BaseElement>()){
-				Debug.Log("scriptContainerPointer : " + scriptContainerPointer.transform.GetChild(i).name);
 				destroyScript(scriptContainerPointer.transform.GetChild(i).gameObject, refund);				
 			}
 		
 		}
 		refreshUI();
 	}
+
 
 	//Recursive script destroyer
 	private void destroyScript(GameObject go,  bool refund = false){
@@ -368,6 +481,8 @@ public class UISystem : FSystem {
 		}
 	}
 
+
+	// Affiche l'image associée au dialogue
 	public void setImageSprite(Image img, string path){
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
@@ -381,22 +496,9 @@ public class UISystem : FSystem {
 				img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
 		}
 	}
-    IEnumerator GetTextureWebRequest(Image img, string path)
-	{
-		UnityWebRequest www = UnityWebRequestTexture.GetTexture(path);
-		yield return www.SendWebRequest();
 
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			Debug.Log(www.error);
-		}
-		else
-		{
-			Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
-			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
-		}
-	}
 
+	// Affiche le panneau de dialoge au début de niveau (si besoin)
 	public void showDialogPanel(){
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
 		nDialog = 0;
@@ -420,9 +522,11 @@ public class UISystem : FSystem {
 		}
 	}
 
+
 	// See NextButton in editor
+	// Permet d'afficher la suite du dialogue
 	public void nextDialog(){
-		nDialog++;
+		nDialog++; // On incrémente le nombre de dialogue
 		dialogPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog].Item1;
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if(gameData.dialogMessage[nDialog].Item2 != null){
@@ -433,6 +537,7 @@ public class UISystem : FSystem {
 		else
 			GameObjectManager.setGameObjectState(imageGO,false);
 
+		// Si il reste des dialogue à afficher ensuite
 		if(nDialog + 1 < gameData.dialogMessage.Count){
 			setActiveOKButton(false);
 			setActiveNextButton(true);
@@ -443,68 +548,84 @@ public class UISystem : FSystem {
 		}
 	}
 
+
+	// Active ou non le bouton Ok du panel dialogue
 	public void setActiveOKButton(bool active){
 		GameObjectManager.setGameObjectState(dialogPanel.transform.Find("Buttons").Find("OKButton").gameObject, active);
 	}
 
+
+	// Active ou non le bouton next du panle dialogue
 	public void setActiveNextButton(bool active){
 		GameObjectManager.setGameObjectState(dialogPanel.transform.Find("Buttons").Find("NextButton").gameObject, active);
 	}
 
+
 	// See OKButton in editor
+	// Désactive le panel de dialogue et réinitialise le nombre de dialogue à 0
 	public void closeDialogPanel(){
 		nDialog = 0;
-		gameData.dialogMessage = new List<(string,string)>();;
+		gameData.dialogMessage = new List<(string,string)>();
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 	}
 
-	public void reloadScene(){
-		gameData.totalActionBloc = 0;
-		gameData.totalStep = 0;
-		gameData.totalExecute = 0;
-		gameData.totalCoin = 0;
-		gameData.levelToLoadScore = null;
-		gameData.dialogMessage = new List<(string,string)>();
+
+	// Permet de relaner le niveau au début
+	public void restartScene(){
+		initZeroVariableLevel();
 		GameObjectManager.loadScene("MainScene");
 	}
 
+
 	// See TitleScreen and ScreenTitle buttons in editor
+	// Permet de revenir à la scéne titre
 	public void returnToTitleScreen(){
-		gameData.totalActionBloc = 0;
-		gameData.totalStep = 0;
-		gameData.totalExecute = 0;
-		gameData.totalCoin = 0;
-		gameData.levelToLoadScore = null;
-		gameData.dialogMessage = new List<(string,string)>();
+		initZeroVariableLevel();
 		gameData.actionsHistory = null;
 		GameObjectManager.loadScene("TitleScreen");
 	}
 
-	// See NextLevel button in editor
-	public void nextLevel(){
-		gameData.levelToLoad.Item2++;
-		reloadScene();
-		gameData.actionsHistory = null;
-	}
 
-	// See ReloadLevel and RestartLevel buttons in editor
-	public void retry(){
+	// Permet de réinitialiser les variables du niveau dans l'objet gameData
+	public void initZeroVariableLevel()
+    {
 		gameData.totalActionBloc = 0;
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
 		gameData.levelToLoadScore = null;
-		gameData.dialogMessage = new List<(string,string)>();
-		if(gameData.actionsHistory != null)
-			UnityEngine.Object.DontDestroyOnLoad(gameData.actionsHistory);
-		GameObjectManager.loadScene("MainScene");
+		gameData.dialogMessage = new List<(string, string)>();
 	}
 
+
+	// See NextLevel button in editor
+	// On charge la scéne suivante
+	public void nextLevel(){
+		// On imcrémente le numéro du niveau
+		gameData.levelToLoad.Item2++;
+		// On efface l'historique
+		gameData.actionsHistory = null;
+		// On recharge la scéne (mais avec le nouveau numéro de niveau)
+		restartScene();
+	}
+
+
+	// See ReloadLevel and RestartLevel buttons in editor
+	// Fait recommencé la scéne mais en gardant l'historique des actions
+	public void retry(){
+		if (gameData.actionsHistory != null)
+			UnityEngine.Object.DontDestroyOnLoad(gameData.actionsHistory);
+		restartScene();
+	}
+	
+
+	// ????
 	public void reloadState(){
 		GameObjectManager.removeComponent<NewEnd>(endPanel);
 	}
 
 	// See StopButton in editor
+	// ??????
 	public void stopScript(){
 		restoreLastEditedScript();
 		setExecutionState(true);
@@ -517,6 +638,7 @@ public class UISystem : FSystem {
 	}
 
 	// See ExecuteButton in editor
+	// ???????
 	public void applyScriptToPlayer(){
 		//if first click on play button
 		if(!buttonStop.activeInHierarchy){
@@ -573,6 +695,8 @@ public class UISystem : FSystem {
 		}
 	}
 
+
+	// ???????
     public GameObject CopyActionsFrom(GameObject container, bool isInteractable, GameObject agent){
 		GameObject copyGO = GameObject.Instantiate(container); 
 		foreach(TMP_Dropdown drop in copyGO.GetComponentsInChildren<TMP_Dropdown>()){
@@ -680,9 +804,12 @@ public class UISystem : FSystem {
 			}
 		}
 		MainLoop.instance.StartCoroutine(updateVerticalName(cloneContainer.GetComponentInChildren<UITypeContainer>().associedAgentName));
+		MainLoop.instance.StartCoroutine(tcheckLinkName());
 
 	}
 
+
+	// Vérifie si le nom proposé existe déjà ou non pour un script container
 	public bool nameContainerUsed(string name) {
 		bool nameUsed = false;
 		// On regarde en premier lieu si le nom n'existe pas déjà
@@ -700,40 +827,43 @@ public class UISystem : FSystem {
 	// Change le nom du container
 	public void newNameContainer(string name)
     {
-		Debug.Log("Nom reçue : " + name);
 		// Si le nom n'est pas utilisé
         if (!nameContainerUsed(name) && name.Length < 8)
         {
 			// On cherche le container
 			foreach (GameObject container in scriptContainer_f)
 			{
-				// Si on trouve celui dont le nom du container selectionné correspond
-				if (container.GetComponent<UITypeContainer>().associedAgentName == nameContainerSelected)
+				if (container.GetComponent<UITypeContainer>().editName)
 				{
-					string oldName = container.GetComponent<UITypeContainer>().associedAgentName;
-					// On change pour son nouveau nom
-					container.GetComponent<UITypeContainer>().associedAgentName = name;
-					// Puis on l'affiche verticalement
-					verticalName(name);
-					// On envoie au systéme sur quel agent on va modifie les données
-					bool agentExist = EditAgentSystem.instance.modificationAgent(oldName);
-					// Si l'agent existe, on met à jours son lien (on supprime le lien actuelle)
-					if (agentExist)
+					// Si on trouve celui dont le nom du container selectionné correspond
+					if (container.GetComponent<UITypeContainer>().associedAgentName == nameContainerSelected)
 					{
-						EditAgentSystem.instance.newScriptContainerLink();
-						// Si le changement de nom entre l'agent et le container est automatique, on change aussi le nom de l'agent
-						if (container.GetComponent<UITypeContainer>().editNameAuto)
-						{
-							EditAgentSystem.instance.setAgentName(name);
-						}
-					}
-					else // Sinon on regarde si on agent du même nom existe pour établir un lien
-					{
-						agentExist = EditAgentSystem.instance.modificationAgent(name);
+						string oldName = container.GetComponent<UITypeContainer>().associedAgentName;
+						// On change pour son nouveau nom
+						container.GetComponent<UITypeContainer>().associedAgentName = name;
+						// Puis on l'affiche verticalement
+						verticalName(name);
+						// On envoie au systéme sur quel agent on va modifie les données
+						bool agentExist = EditAgentSystem.instance.modificationAgent(oldName);
+						// Si l'agent existe, on met à jours son lien (on supprime le lien actuelle)
 						if (agentExist)
 						{
 							EditAgentSystem.instance.newScriptContainerLink();
+							// Si le changement de nom entre l'agent et le container est automatique, on change aussi le nom de l'agent
+							if (container.GetComponent<UITypeContainer>().editNameAuto)
+							{
+								EditAgentSystem.instance.setAgentName(name);
+							}
 						}
+						else // Sinon on regarde si on agent du même nom existe pour établir un lien
+						{
+							agentExist = EditAgentSystem.instance.modificationAgent(name);
+							if (agentExist)
+							{
+								EditAgentSystem.instance.newScriptContainerLink();
+							}
+						}
+						nameContainerSelected = container.GetComponent<UITypeContainer>().associedAgentName;
 					}
 				}
 			}
@@ -743,6 +873,8 @@ public class UISystem : FSystem {
 		}
 	}
 
+	// Udapte (au cycle update suivant) le nom du container à la veticale
+	// Ceci afin d'être sur que toutes les modifications de l'update actuelle on été prise en compte
 	private IEnumerator updateVerticalName(string name)
 	{
 		yield return null;
@@ -767,6 +899,7 @@ public class UISystem : FSystem {
 				container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text = newViewName;
 			}
         }
+		MainLoop.instance.StartCoroutine(tcheckLinkName());
 	}
 
 
@@ -777,7 +910,7 @@ public class UISystem : FSystem {
 		foreach (GameObject container in scriptContainer_f)
 		{
 			// Si on le trouve, alors on change l'écriture du nom à l'horizontal
-			if (container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text == name)
+			if (container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text == name && container.GetComponent<UITypeContainer>().editName)
 			{
 				// On remplace le nom actuel par le nouveau format
 				container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text = container.GetComponent<UITypeContainer>().associedAgentName;
@@ -796,6 +929,16 @@ public class UISystem : FSystem {
 		newNameContainer(newName);
 	}
 
+	public void noChangeName(string name)
+    {
+		foreach (GameObject container in scriptContainer_f)
+		{
+			if (container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text == name && !container.GetComponent<UITypeContainer>().editName)
+			{
+				cancelChangeNameContainer(name);
+			}
+		}
+	}
 
 	// On annule le nouveau nom
 	public void cancelChangeNameContainer(string name)
@@ -810,4 +953,6 @@ public class UISystem : FSystem {
 			}
 		}
 	}
+
+
 }

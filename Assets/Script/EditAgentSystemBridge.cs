@@ -5,14 +5,6 @@ using UnityEngine.EventSystems;
 
 public class EditAgentSystemBridge : MonoBehaviour
 {
-	// Agent associé au script
-	private GameObject agent;
-
-	void Start()
-	{
-
-	}
-
 	public void agentSelect(BaseEventData agent)
     {
 		Debug.Log("agent selectionné");

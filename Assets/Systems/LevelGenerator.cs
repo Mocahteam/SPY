@@ -418,13 +418,13 @@ public class LevelGenerator : FSystem {
 				
 				//add to gameobject
 				if(editable){
-					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = ((ForAction)action).nbFor.ToString();
+					obj.transform.GetComponentInChildren<TMP_InputField>().text = ((ForAction)action).nbFor.ToString();
 				}
 				else{
-					obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (((ForAction)action).currentFor).ToString() + " / " + ((ForAction)action).nbFor.ToString();
+					obj.transform.GetComponentInChildren<TMP_InputField>().text = (((ForAction)action).currentFor).ToString() + " / " + ((ForAction)action).nbFor.ToString();
 					Object.Destroy(obj.GetComponent<UITypeContainer>());
 				}
-				obj.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().interactable = editable;
+				obj.transform.GetComponentInChildren<TMP_InputField>().interactable = editable;
 
 				//add children
 				firstchild = false;

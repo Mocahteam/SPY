@@ -158,13 +158,13 @@ public class DragDropSystem : FSystem
 			itemDragged.transform.localScale = new Vector3(1, 1, 1);
 			// Pour réactivé la selection posible
 			itemDragged.GetComponent<Image>().raycastTarget = true;
-			if (itemDragged.GetComponent<BasicAction>())
+			//if (itemDragged.GetComponent<BasicAction>())
+			//{
+			foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
 			{
-				foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
-				{
-					child.raycastTarget = true;
-				}
+				child.raycastTarget = true;
 			}
+			//}
 
 			// update limit bloc
 			foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
@@ -197,9 +197,9 @@ public class DragDropSystem : FSystem
 		GameObjectManager.bind(itemDragged);
 		// exclude this GameObject from the EventSystem
 		itemDragged.GetComponent<Image>().raycastTarget = false;
-		if (itemDragged.GetComponent<BasicAction>())
-			foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
-				child.raycastTarget = false;
+		//if (itemDragged.GetComponent<BasicAction>())
+		foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
+			child.raycastTarget = false;
 	}
 
 

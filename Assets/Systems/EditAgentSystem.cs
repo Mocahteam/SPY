@@ -67,23 +67,27 @@ public class EditAgentSystem : FSystem
 	// Met à jours le lien qu'il à avec le script container du même nom
 	public void setAgentName(string newName)
     {
-        // Si le changement de nom entre l'agent et le container est automatique, on change aussi le nom du container
-        if (agentSelected.GetComponent<AgentEdit>().editNameAuto)
+        if (agentSelected.GetComponent<AgentEdit>().editName)
         {
-			UISystem.instance.setContainerName(agentSelected.GetComponent<AgentEdit>().agentName, newName);
+			// Si le changement de nom entre l'agent et le container est automatique, on change aussi le nom du container
+			if (agentSelected.GetComponent<AgentEdit>().editNameAuto)
+			{
+				UISystem.instance.setContainerName(agentSelected.GetComponent<AgentEdit>().agentName, newName);
+			}
+			// On met à jours le nom de l'agent
+			agentSelected.GetComponent<AgentEdit>().agentName = newName;
+			// On met à jour l'affichage du nom dans le containe fiche de l'agent
+			majDisplayCardAgent(newName);
+			// On associe la fiche du l'agent au nouveau container
+			newScriptContainerLink();
 		}
-		// On met à jours le nom de l'agent
-		agentSelected.GetComponent<AgentEdit>().agentName = newName;
-		// On met à jour l'affichage du nom dans le containe fiche de l'agent
-		majDisplayCardAgent(newName);
-		// On associe la fiche du l'agent au nouveau container
-		newScriptContainerLink();
 	}
 
 	// Met à jours l'affichage du nom de l'agent dans ça fiche
 	public void majDisplayCardAgent(string newName)
     {
 		agentSelected.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().text = newName;
+		UISystem.instance.refreshUI();
 	}
 
 	// Associe la fiche de l'agent au nouveau container (correspondant au nom de l'agent)

@@ -79,14 +79,19 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "closeDialogPanel", null);
 	}
 
-	public void reloadScene()
+	public void restartScene()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "reloadScene", null);
+		MainLoop.callAppropriateSystemMethod (system, "restartScene", null);
 	}
 
 	public void returnToTitleScreen()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "returnToTitleScreen", null);
+	}
+
+	public void initZeroVariableLevel()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "initZeroVariableLevel", null);
 	}
 
 	public void nextLevel()
@@ -137,6 +142,11 @@ public class UISystem_wrapper : BaseWrapper
 	public void setContainerName()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setContainerName", null);
+	}
+
+	public void noChangeName(System.String name)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "noChangeName", name);
 	}
 
 	public void cancelChangeNameContainer(System.String name)

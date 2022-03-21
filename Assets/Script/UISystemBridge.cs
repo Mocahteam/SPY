@@ -22,4 +22,9 @@ public class UISystemBridge : MonoBehaviour
         UISystem.instance.horizontalName(name);
     }
 
+    public void noChangeName(string name)
+    {
+        UISystem.instance.noChangeName(name);
+    }
+
 }
