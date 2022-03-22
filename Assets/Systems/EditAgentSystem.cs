@@ -87,7 +87,7 @@ public class EditAgentSystem : FSystem
 	public void majDisplayCardAgent(string newName)
     {
 		agentSelected.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().text = newName;
-		UISystem.instance.refreshUI();
+		UISystem.instance.refreshUINameContainer();
 	}
 
 	// Associe la fiche de l'agent au nouveau container (correspondant au nom de l'agent)

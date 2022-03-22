@@ -481,21 +481,24 @@ public class LevelGenerator : FSystem {
 	}
 
 	// link actions together => define next property
+	// Associe à chaque bloc le bloc qui sera executé aprés
 	public static void computeNext(GameObject container){
 		for(int i = 0 ; i < container.transform.childCount ; i++){
 			Transform child = container.transform.GetChild(i);
+			// Si l'action est une action basique et n'est pas la dernière
 			if(i < container.transform.childCount-1 && child.GetComponent<BaseElement>()){
 				child.GetComponent<BaseElement>().next = container.transform.GetChild(i+1).gameObject;
-			}
+			}// Sinon si c'est la derniére et une action basique
 			else if(i == container.transform.childCount-1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>()){
 				if(container.GetComponent<ForAction>() || container.GetComponent<ForeverAction>())
 					child.GetComponent<BaseElement>().next = container;
 				else if(container.GetComponent<IfAction>())
 					child.GetComponent<BaseElement>().next = container.GetComponent<BaseElement>().next;
 			}
-			//if or for action
+			// Si autre action que les actions basique
+			// Alors récursive de la fonction sur leur container
 			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>() || child.GetComponent<ForeverAction>())
-				computeNext(child.gameObject);
+				computeNext(child.transform.Find("Container").gameObject);
 		}
 	}
 }

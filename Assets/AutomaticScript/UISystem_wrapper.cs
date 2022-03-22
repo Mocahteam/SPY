@@ -15,6 +15,7 @@ public class UISystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject editableScriptContainer;
 	public UnityEngine.GameObject libraryPanel;
 	public UnityEngine.GameObject EditableContainer;
+	public UnityEngine.GameObject EditableCanvas;
 	public UnityEngine.GameObject prefabViewportScriptContainer;
 	private void Start()
 	{
@@ -31,6 +32,7 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "editableScriptContainer", editableScriptContainer);
 		MainLoop.initAppropriateSystemField (system, "libraryPanel", libraryPanel);
 		MainLoop.initAppropriateSystemField (system, "EditableContainer", EditableContainer);
+		MainLoop.initAppropriateSystemField (system, "EditableCanvas", EditableCanvas);
 		MainLoop.initAppropriateSystemField (system, "prefabViewportScriptContainer", prefabViewportScriptContainer);
 	}
 
@@ -39,9 +41,14 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "startUpdatePlayButton", null);
 	}
 
-	public void refreshUI()
+	public void refreshUIButton()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "refreshUI", null);
+		MainLoop.callAppropriateSystemMethod (system, "refreshUIButton", null);
+	}
+
+	public void refreshUINameContainer()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "refreshUINameContainer", null);
 	}
 
 	public void resetScript(System.Boolean refund)

@@ -46,6 +46,7 @@ public class UISystem : FSystem {
 	public GameObject editableScriptContainer;
 	public GameObject libraryPanel;
 	public GameObject EditableContainer;
+	public GameObject EditableCanvas;
 	public GameObject prefabViewportScriptContainer;
 	private string nameContainerSelected; // Nom du container selectionné
 	private GameObject containerSelected; // Le container selectionné
@@ -185,8 +186,8 @@ public class UISystem : FSystem {
 		MainLoop.instance.StartCoroutine(updatePlayButton());
 	}
 
-	// Rafraichit certain élément de l'UI
-	public void refreshUI()
+	// Rafraichit certain boutton de l'UI
+	public void refreshUIButton()
 	{
 		//Refresh Containers size
 		foreach (GameObject container in scriptContainer_f)
@@ -194,6 +195,11 @@ public class UISystem : FSystem {
 			LayoutRebuilder.ForceRebuildLayoutImmediate(container.GetComponent<RectTransform>());
 		}
 		MainLoop.instance.StartCoroutine(updatePlayButton());
+	}
+
+	// Rafraichit le nom des container
+	public void refreshUINameContainer()
+	{
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
 	}
 
@@ -231,7 +237,6 @@ public class UISystem : FSystem {
         Rect screenBounds = new Rect(0f, 0f, Screen.width, Screen.height);
         Vector3[] objectCorners = new Vector3[4];
         rect.GetWorldCorners(objectCorners);
-		Debug.Log("objectCorners : ");
 
 
 		var xnew = 0f;
@@ -239,8 +244,6 @@ public class UISystem : FSystem {
         var znew = 0f;
  
         for (int i = 0; i < objectCorners.Length; i++){
-			Debug.Log("x" + i + " : " + objectCorners[i].x);
-			Debug.Log("y" + i + " : " + objectCorners[i].y);
 			if (objectCorners[i].x < screenBounds.xMin)
                 xnew = screenBounds.xMin - objectCorners[i].x;
 
@@ -447,7 +450,7 @@ public class UISystem : FSystem {
 			}
 		
 		}
-		refreshUI();
+		refreshUIButton();
 	}
 
 
@@ -643,12 +646,13 @@ public class UISystem : FSystem {
 		//if first click on play button
 		if(!buttonStop.activeInHierarchy){
 			gameData.totalExecute++;
-			//hide panels
+			//hide library panels
 			GameObjectManager.setGameObjectState(libraryPanel, false);
-			//editable canvas
-			GameObjectManager.setGameObjectState(editableScriptContainer.transform.parent.parent.gameObject, false);
+			//editable viewport and scrollbar
+			GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("Viewport").gameObject, false);
+			GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("Scrollbar Vertical").gameObject, false);
 			//clean container for each robot
-			foreach(GameObject robot in playerGO){
+			foreach (GameObject robot in playerGO){
 				foreach(Transform child in robot.GetComponent<ScriptRef>().scriptContainer.transform){
 					GameObjectManager.unbind(child.gameObject);
 					GameObject.Destroy(child.gameObject);
@@ -657,11 +661,13 @@ public class UISystem : FSystem {
 			
 			//copy editable script
 			lastEditedScript = GameObject.Instantiate(editableScriptContainer);
+			/*
 			foreach(Transform child in lastEditedScript.transform){
 				if(child.name.Contains("PositionBar")){
 					UnityEngine.GameObject.Destroy(child.gameObject);
 				}
 			}
+			*/
 			
 			GameObject containerCopy = CopyActionsFrom(editableScriptContainer, false, playerGO.First());
 			
@@ -669,7 +675,8 @@ public class UISystem : FSystem {
 				GameObject targetContainer = go.GetComponent<ScriptRef>().scriptContainer;
 				go.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;	
 				for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
-					if(!containerCopy.transform.GetChild(i).name.Contains("PositionBar")){
+					if(!containerCopy.transform.GetChild(i).name.Contains("ContainerName") && !containerCopy.transform.GetChild(i).name.Contains("EndZoneActionBloc"))
+					{
 						Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
 						child.SetParent(targetContainer.transform);
 						GameObjectManager.bind(child.gameObject);
