@@ -27,7 +27,8 @@ public class UISystem : FSystem {
 	private Family emptyPlayerExecution = FamilyManager.getFamily(new AllOfComponents(typeof(EmptyExecution)));
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private Family viewportContainerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les container éditable
-	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer))); // Les containers scripts
+	private Family viewportContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les containers viewport
+	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor")); // Les containers scripts qui ne sont pas des block d'action
 	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
 
 	private GameData gameData;
@@ -125,14 +126,15 @@ public class UISystem : FSystem {
 				}
 			}
 
+			Debug.Log("Container : " + container.name);
 			// Si même nom trouver on met l'arriére plan blanc
 			if (nameSame)
 			{
-				container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().image.color = Color.white;
+				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().image.color = Color.white;
 			}
 			else // sinon rouge 
 			{
-				container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
+				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
 			}
 		}
 
@@ -817,12 +819,15 @@ public class UISystem : FSystem {
 
 
 	// Vérifie si le nom proposé existe déjà ou non pour un script container
-	public bool nameContainerUsed(string name) {
+	public bool nameContainerUsed(string nameTested) {
 		bool nameUsed = false;
+		Debug.Log("Nb cript container familly : " + scriptContainer_f.Count);
 		// On regarde en premier lieu si le nom n'existe pas déjà
 		foreach (GameObject container in scriptContainer_f)
 		{
-			if (container.GetComponent<UITypeContainer>().associedAgentName == name)
+			Debug.Log("Script container familly name : " + container.name);
+			Debug.Log("Nom associé : " + container.GetComponent<UITypeContainer>().associedAgentName);
+			if (container.GetComponent<UITypeContainer>().associedAgentName == nameTested)
 			{
 				nameUsed = true;
 			}
@@ -903,7 +908,7 @@ public class UISystem : FSystem {
 					newViewName = newViewName + l + "\n";
 				}
 				// On remplace le nom actuel par le nouveau format
-				container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text = newViewName;
+				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = newViewName;
 			}
         }
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
@@ -917,10 +922,10 @@ public class UISystem : FSystem {
 		foreach (GameObject container in scriptContainer_f)
 		{
 			// Si on le trouve, alors on change l'écriture du nom à l'horizontal
-			if (container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text == name && container.GetComponent<UITypeContainer>().editName)
+			if (container.transform.Find("ContainerName").GetComponent<TMP_InputField>().text == name && container.GetComponent<UITypeContainer>().editName)
 			{
 				// On remplace le nom actuel par le nouveau format
-				container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text = container.GetComponent<UITypeContainer>().associedAgentName;
+				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = container.GetComponent<UITypeContainer>().associedAgentName;
 				// On enregistre le nom du container selectionné
 				nameContainerSelected = container.GetComponent<UITypeContainer>().associedAgentName;
 			}
@@ -940,7 +945,7 @@ public class UISystem : FSystem {
     {
 		foreach (GameObject container in scriptContainer_f)
 		{
-			if (container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text == name && !container.GetComponent<UITypeContainer>().editName)
+			if (container.transform.Find("ContainerName").GetComponent<TMP_InputField>().text == name && !container.GetComponent<UITypeContainer>().editName)
 			{
 				cancelChangeNameContainer(name);
 			}
@@ -953,7 +958,7 @@ public class UISystem : FSystem {
 		foreach (GameObject container in scriptContainer_f)
 		{
 			// Si le nom afficher du container et le même quand paramétre, mais pas son nom, on a bien le container non modifier
-			if (container.transform.Find("InputField (TMP)").GetComponent<TMP_InputField>().text == name)
+			if (container.transform.Find("ContainerName").GetComponent<TMP_InputField>().text == name)
 			{
 				// On réaffiche son ancien nom à la vertical
 				verticalName(container.GetComponent<UITypeContainer>().associedAgentName);

@@ -33,7 +33,7 @@ public class DragDropSystem : FSystem
 	private Family actionPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType), typeof(Image)));  // Les block d'actions pointer
 	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer))); // Les containers scripts
 	private Family dropZone_f = FamilyManager.getFamily(new AllOfComponents(typeof(DropZoneComponent))); // Les drops zones
-	private Family noBaseActionBloc = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(BaseElement))); // Les blocs qui ne sont pas de base
+	private Family containerActionBloc_f = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(ContainerActionBloc))); // Les blocs qui ne sont pas de base
 
 	// Les variables
 	private GameObject itemDragged; // L'item (ici block d'action) en cours de drag
@@ -54,6 +54,14 @@ public class DragDropSystem : FSystem
     }
 
 
+	// Besoin d'attendre l'update pour effectuer le recalcule de la taille des container
+	private IEnumerator waitForResizeContainer(GameObject bloc)
+	{
+		yield return null;
+		resizeContainerActionBloc(bloc);
+	}
+
+
 	// On active toutes les drop zone
 	private void dropZoneActivated(bool value)
 	{
@@ -62,22 +70,41 @@ public class DragDropSystem : FSystem
 			Dp.SetActive(value);
 			Dp.transform.GetChild(0).gameObject.SetActive(false); // On est sur que les bar sont désactivé
 		}
+
+		// Si l'item drag est un container d'un bloc d'action
+		// On désactive ses blocs
+		if (itemDragged!= null && itemDragged.GetComponent<UIActionType>().container)
+		{
+			dropZoneContainerDragDesactived(itemDragged);
+		}
 	}
+
+
+	// Annule l'activation des drops zones du container en cours de drag and drop
+	private void dropZoneContainerDragDesactived(GameObject container)
+    {
+		// On désactive la drop zone du parent
+		container.transform.Find("Image").Find("DropZone").gameObject.SetActive(false);
+		foreach (Transform childBloc in container.transform.Find("Container").transform)
+        {
+			childBloc.Find("DropZone").gameObject.SetActive(false);
+        }
+    }
 
 
 	// Lors de la selection (début d'un drag) d'un block de la librairie
 	// Crée un game object action = à l'action selectionné dans librairie pour ensuite pouvoir le manipuler (durant le drag et le drop)
 	public void beginDragElementFromLibrary(BaseEventData element)
     {
-		// On active les drops zone 
-		dropZoneActivated(true);
-
 		// On verifie si c'est un up droit ou gauche
 		if ((element as PointerEventData).button == PointerEventData.InputButton.Left)
 		{
 			// On créer le block action associé à l'élément
 			creationActionBlock(element.selectedObject);
 		}
+
+		// On active les drops zone 
+		dropZoneActivated(true);
 	}
 
 
@@ -85,29 +112,27 @@ public class DragDropSystem : FSystem
 	// l'enélve de la hiérarchie de la sequence d'action 
 	public void beginDragElementFromEditableScript(BaseEventData element)
     {
-		// On active les drops zone 
-		dropZoneActivated(true);
-
-		// On note le container utilisé
-		lastEditableContainer = element.selectedObject.transform.parent.gameObject;
-
 		// On verifie si c'est un up droit ou gauche
 		if ((element as PointerEventData).button == PointerEventData.InputButton.Left)
 		{
+			// On note le container utilisé
+			lastEditableContainer = element.selectedObject.transform.parent.gameObject;
 			// On enregistre l'objet sur lequel on va travailler le drag and drop dans le systéme
 			itemDragged = element.selectedObject;
+			// On active les drops zone 
+			dropZoneActivated(true);
 			// On l'associe (temporairement) au Canvas Main
 			GameObjectManager.setGameObjectParent(itemDragged, mainCanvas, true);
 			itemDragged.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 			// exclude this GameObject from the EventSystem
 			itemDragged.GetComponent<Image>().raycastTarget = false;
-			if (itemDragged.GetComponent<BasicAction>())
-				foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
-					child.raycastTarget = false;
+			//if (itemDragged.GetComponent<BasicAction>())
+			foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
+				child.raycastTarget = false;
 			// Restore action and subactions to inventory
 			foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
 				GameObjectManager.addComponent<AddOne>(actChild.gameObject);
-			lastEditableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = false;
+			//lastEditableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = false;
 
 			// Rend le bouton d'execution acitf (ou non)
 			UISystem.instance.startUpdatePlayButton();
@@ -128,7 +153,6 @@ public class DragDropSystem : FSystem
 	// Détruite l'objet si pas dans un container, sinon rien
 	public void endDragElement()
 	{
-		Debug.Log("End drag element");
 		if (itemDragged != null)
 		{
 			// On commence par regarder si il y a un container pointé et sinon on supprime l'objet drag
@@ -148,6 +172,8 @@ public class DragDropSystem : FSystem
 				// Suppression de l'item stocker en donnée systéme
 				itemDragged = null;
 				//lastEditableContainer.transform.parent.parent.GetComponent<ScrollRect>().enabled = true;
+				// On désactive les drop zone
+				dropZoneActivated(false);
 			}
             else // sinon on ajoute l'élément au container pointé
             {
@@ -157,29 +183,34 @@ public class DragDropSystem : FSystem
 				dropElementInContainer(container.transform.Find("EndZoneActionBloc").Find("DropZone").gameObject);
 			}
 		}
-
-		// On désactive les drop zone
-		dropZoneActivated(false);
 	}
 
 
 	// Place l'element dans la place ciblé (position de l'element associer au radar) du container editable
 	public void dropElementInContainer(GameObject redBar)
 	{
-		Debug.Log("Drop in container");
 		// On note le container utilisé
 		lastEditableContainer = redBar.transform.parent.parent.gameObject;
-		Debug.Log(redBar.transform.parent.parent.gameObject.name);
-
+		Debug.Log("dropElementInContainer : " + lastEditableContainer.name);
 
 		if (itemDragged != null)
 		{
-			// On associe l'element au container
-			GameObjectManager.setGameObjectParent(itemDragged, redBar.transform.parent.parent.gameObject, true);
-			itemDragged.transform.SetParent(redBar.transform.parent.parent.gameObject.transform);
-			// On met l'élément à la position voulue
-			itemDragged.transform.SetSiblingIndex(redBar.transform.parent.transform.GetSiblingIndex());
-			// DIFFERENTIER DROPZONE DE BLOC D'ACTION
+			if (lastEditableContainer.GetComponent<UITypeContainer>().notScriptContainer)
+			{
+				// On associe l'element au container
+				GameObjectManager.setGameObjectParent(itemDragged, lastEditableContainer.transform.parent.gameObject, true);
+				itemDragged.transform.SetParent(lastEditableContainer.transform.parent.transform);
+				// On met l'élément à la position voulue
+				itemDragged.transform.SetSiblingIndex(redBar.transform.parent.parent.transform.GetSiblingIndex());
+			}
+            else
+            {
+				// On associe l'element au container
+				GameObjectManager.setGameObjectParent(itemDragged, lastEditableContainer, true);
+				itemDragged.transform.SetParent(lastEditableContainer.transform);
+				// On met l'élément à la position voulue
+				itemDragged.transform.SetSiblingIndex(redBar.transform.parent.transform.GetSiblingIndex());
+			}
 			// On le met à la taille voulue
 			itemDragged.transform.localScale = new Vector3(1, 1, 1);
 			// Pour réactivé la selection posible
@@ -187,17 +218,19 @@ public class DragDropSystem : FSystem
 			//if (itemDragged.GetComponent<BasicAction>())
 			//{
 			foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
-			{
 				child.raycastTarget = true;
-			}
 			//}
 
 			// update limit bloc
 			foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
+			{
 				GameObjectManager.addComponent<Dropped>(actChild.gameObject);
+			}
 
 			if (itemDragged.GetComponent<UITypeContainer>())
+            {
 				itemDragged.GetComponent<Image>().raycastTarget = true;
+			}
 
 			// Lance le son de dépôt du block d'action
 			audioSource.Play();
@@ -207,14 +240,14 @@ public class DragDropSystem : FSystem
 			mainCanvas.transform.Find("EditableCanvas").GetComponent<ScrollRect>().enabled = true;
 			UISystem.instance.refreshUIButton();
 
-            // Si le container est un container d'un bloc d'action
-            if (lastEditableContainer.GetComponent<UITypeContainer>().actionContainer)
+			// On désactive les drop zone
+			dropZoneActivated(false);
+
+			// Si le container est un container d'un bloc d'action
+			if (lastEditableContainer.GetComponent<UITypeContainer>().actionContainer)
             {
 				resizeContainerActionBloc(lastEditableContainer.transform.parent.gameObject);
             }
-
-			// On désactive les drop zone
-			dropZoneActivated(false);
 		}
 	}
 
@@ -232,8 +265,8 @@ public class DragDropSystem : FSystem
 		GameObjectManager.unbind(bloc);
 		// Déstruction du block
 		UnityEngine.Object.Destroy(bloc);
-
-
+		// On oublie pas d'associer le nouveau container créer en tant que dernier container
+		lastEditableContainer = copy.transform.Find("Container").gameObject;
 	}
 
 
@@ -256,15 +289,31 @@ public class DragDropSystem : FSystem
 	}
 
 
-	// Supprime l'element
+	// Supprime l'elementd
 	public void deleteElement(GameObject element)
-    {
-		foreach (GameObject bloc in noBaseActionBloc)
-		{
-			resizeContainerActionBloc(bloc);
+	{
+		// On note l'action pointé
+		GameObject actionPointed = null;
+		if(actionPointed_f.Count > 0)
+        {
+			actionPointed = actionPointed_f.getAt(actionPointed_f.Count - 1); actionPointed_f.getAt(actionPointed_f.Count - 1);
+			Debug.Log(actionPointed.name);
 		}
-		GameObjectManager.addComponent<ResetBlocLimit>(actionPointed_f.getAt(actionPointed_f.Count - 1));
-		UISystem.instance.startUpdatePlayButton();
+
+		// On vérifie qu'il y à bien un objet pointé pour la suppression
+		if(actionPointed != null)
+        {
+			GameObjectManager.addComponent<ResetBlocLimit>(actionPointed);
+			UISystem.instance.startUpdatePlayButton();
+
+			if (!actionPointed.GetComponent<UIActionType>().container)
+			{
+				foreach (GameObject bloc in containerActionBloc_f)
+				{
+					MainLoop.instance.StartCoroutine(waitForResizeContainer(bloc));
+				}
+			}
+		}
 	}
 
 

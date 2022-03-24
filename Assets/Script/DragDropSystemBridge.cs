@@ -8,7 +8,7 @@ public class DragDropSystemBridge : MonoBehaviour
 
   public void pointerUpElement(BaseEventData e)
     {
-        //Debug.Log("Up pointer detecte "+e.selectedObject.name);
+        Debug.Log("Up pointer detecte : " + e);
         // On verifie si c'est un up droit ou gauche
         if ((e as PointerEventData).button == PointerEventData.InputButton.Left)
         {
