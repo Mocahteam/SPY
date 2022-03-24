@@ -51,7 +51,9 @@ public class DragDropSystem : FSystem
 	public DragDropSystem()
     {
 		instance = this;
-    }
+		
+
+	}
 
 
 	// Besoin d'attendre l'update pour effectuer le recalcule de la taille des container
@@ -191,25 +193,25 @@ public class DragDropSystem : FSystem
 	{
 		// On note le container utilisé
 		lastEditableContainer = redBar.transform.parent.parent.gameObject;
-		Debug.Log("dropElementInContainer : " + lastEditableContainer.name);
 
 		if (itemDragged != null)
 		{
 			if (lastEditableContainer.GetComponent<UITypeContainer>().notScriptContainer)
 			{
 				// On associe l'element au container
-				GameObjectManager.setGameObjectParent(itemDragged, lastEditableContainer.transform.parent.gameObject, true);
 				itemDragged.transform.SetParent(lastEditableContainer.transform.parent.transform);
 				// On met l'élément à la position voulue
 				itemDragged.transform.SetSiblingIndex(redBar.transform.parent.parent.transform.GetSiblingIndex());
+				GameObjectManager.refresh(itemDragged);
 			}
             else
             {
 				// On associe l'element au container
-				GameObjectManager.setGameObjectParent(itemDragged, lastEditableContainer, true);
 				itemDragged.transform.SetParent(lastEditableContainer.transform);
 				// On met l'élément à la position voulue
-				itemDragged.transform.SetSiblingIndex(redBar.transform.parent.transform.GetSiblingIndex());
+				itemDragged.transform.SetSiblingIndex(redBar.transform.parent.transform.GetSiblingIndex()); 
+				GameObjectManager.refresh(itemDragged);
+
 			}
 			// On le met à la taille voulue
 			itemDragged.transform.localScale = new Vector3(1, 1, 1);
