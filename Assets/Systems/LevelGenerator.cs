@@ -19,8 +19,9 @@ public class LevelGenerator : FSystem {
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
 	private List<List<int>> map;
 	private GameData gameData;
+	private int nbAgent = 0; // Nombre d'agent créer
 	public GameObject camera;
-	public GameObject editableScriptContainer;
+	public GameObject editableScriptContainer;// Le container qui contient les Viewport/script container
 	public GameObject scriptContainer;
 	public TMP_Text levelName;
 
@@ -120,8 +121,36 @@ public class LevelGenerator : FSystem {
 		// On va charger l'image et le nom de l'agent selon l'agent (robot, enemie etc...)
 		if (entity.tag == "Player")
 		{
-			// Chargement de l'icône de l'agent
-			containerParent.transform.Find("Header").Find("agent").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
+			nbAgent++;
+			// On nomme l'agent
+			entity.GetComponent<AgentEdit>().agentName = "Num " + nbAgent;
+			// On fait apparaitre un container associer à l'agent
+			GameObject scriptContainer = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ViewportScriptContainer") as GameObject);
+			GameObjectManager.bind(scriptContainer);
+			scriptContainer.transform.SetParent(editableScriptContainer.transform, false);
+			scriptContainer.transform.SetSiblingIndex(scriptContainer.transform.GetSiblingIndex() - 3);
+			UISystem.instance.editableScriptContainer = scriptContainer;
+			DragDropSystem.instance.lastEditableContainer = scriptContainer.transform.Find("ScriptContainer").gameObject;
+
+			// Si le edit name n'est pas activé on créer le nom du container automatiquement
+			if (!scriptContainer.GetComponentInChildren<UITypeContainer>().editName)
+            {
+				scriptContainer.GetComponentInChildren<UITypeContainer>().associedAgentName = "Num " + nbAgent;
+				scriptContainer.GetComponentInChildren<TMP_InputField>().interactable = false; 
+			}
+            else // Sinon ce sera a l'utilisateur de le faire
+            {
+				scriptContainer.GetComponentInChildren<UITypeContainer>().associedAgentName = "...";
+			}
+			// On affiche le bon nom sur le container
+			scriptContainer.GetComponentInChildren<TMP_InputField>().text = scriptContainer.GetComponentInChildren<UITypeContainer>().associedAgentName;
+
+			// On associe le container au scroll bar
+			UISystem.instance.EditableCanvas.GetComponent<ScrollRect>().content = scriptContainer.transform.Find("ScriptContainer").GetComponent<RectTransform>();
+			UISystem.instance.EditableCanvas.GetComponent<ScrollRect>().viewport = scriptContainer.GetComponent<RectTransform>();
+
+			// Chargement de l'icône de l'agent sur la localisation
+			containerParent.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
 			containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = entity.GetComponent<AgentEdit>().agentName;
 			// Si on autorise le changement de nom on dévérouille la possibilité d'écrire dans la zone de nom du robot
@@ -132,8 +161,8 @@ public class LevelGenerator : FSystem {
 		}
 		else if (entity.tag == "Drone")
 		{
-			// Chargement de l'icône de l'agent
-			containerParent.transform.Find("Header").Find("agent").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
+			// Chargement de l'icône de l'agent sur la localisation
+			containerParent.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
 			containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = "Drone";
 		}
@@ -166,6 +195,7 @@ public class LevelGenerator : FSystem {
 			}			
 
 		}
+		containerParent.SetActive(false);
 		GameObjectManager.bind(containerParent);
 		GameObjectManager.bind(entity);
 		return entity;

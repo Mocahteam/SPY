@@ -5,7 +5,21 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.EventSystems;
 
+/// Ce systéme permet la gestion du drag and drop des différents éléments de construction de la séquence d'action.
+/// Il gére entre autre :
+///		Le drag and drop d'un élément du panel librairie vers une séquence d'action
+///		Le drag and drop d'un élément d'une séquence d'action vers une séquence d'action (la même ou autre)
+///		Le drag and drop d'un élément (libraie ou sequence d'action) vers l'extérieur (pour le supprimer)
+///		Le clique droit sur un élément dans une sequence d'action pour le supprimer
+///		Le double click sur un élément pour l'ajouter à la derniére séquence d'action utilisé
+/// 
 /// <summary>
+/// waitForResizeContainer (IEnumerator)
+///		Attendre un cycle d'update pour lancer le recalcule des tailles des containers (utilisé pour laisse à FYFY le temps de mettre à jours les familles)
+/// dropZoneActivated
+///		Permet d'activer ou désactiver toutes les drops zones
+///	dropZoneContainerDragDesactived
+///		En cas de drag and drop d'un container, permet de désactiver ses drops zones (uniquement les siennes)
 /// beginDragElementFromLibrary
 ///		Pour le début du drag and drop d'un élément venant de la librairie
 /// beginDragElementFromEditableScript
@@ -16,6 +30,8 @@ using UnityEngine.EventSystems;
 ///		A la fin d'un drag and drop si l'élément n'est pas laché dans un container pour la création d'une séquence
 /// dropElementInContainer
 ///		A la fin d'un drag and drop si l'élément est laché dans un container pour la création d'une séquence
+///	resizeContainerActionBloc
+///		Rearrange correctement la taille des containers (par copy)
 /// creationActionBlock
 ///		Création d'un block d'action lors de la selection de l'element correspondant dans la librairie
 /// deleteElement
@@ -70,7 +86,7 @@ public class DragDropSystem : FSystem
 		foreach (GameObject Dp in dropZone_f)
 		{
 			Dp.SetActive(value);
-			Dp.transform.GetChild(0).gameObject.SetActive(false); // On est sur que les bar sont désactivé
+			Dp.transform.GetChild(0).gameObject.SetActive(false); // On est sur que les bares sont désactivées
 		}
 
 		// Si l'item drag est un container d'un bloc d'action

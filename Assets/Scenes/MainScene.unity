@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4482491, g: 0.49827605, b: 0.5755831, a: 1}
+  m_IndirectSpecularColor: {r: 0.44824827, g: 0.49827528, b: 0.5755824, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -268,6 +268,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Ex\xE9cuter le script"
+  agentNameActiveTooltip: 0
 --- !u!82 &30024880
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1392,7 +1393,7 @@ RectTransform:
   m_Children:
   - {fileID: 10373304}
   m_Father: {fileID: 451020364}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -1540,6 +1541,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Acc\xE9l\xE9rer l'ex\xE9cution"
+  agentNameActiveTooltip: 0
 --- !u!82 &121265418
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1813,6 +1815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Activer
+  agentNameActiveTooltip: 0
 --- !u!114 &130906300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2350,6 +2353,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Avancer
+  agentNameActiveTooltip: 0
 --- !u!114 &264547476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3514,7 +3518,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCanvas: {fileID: 1410401867}
-  lastEditableContainer: {fileID: 1346179923}
+  lastEditableContainer: {fileID: 0}
   audioSource: {fileID: 451020368}
   buttonPlay: {fileID: 1504297949}
   catchTime: 0.25
@@ -3544,7 +3548,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 963194225}
-  editableScriptContainer: {fileID: 1346179923}
+  editableScriptContainer: {fileID: 451020363}
   scriptContainer: {fileID: 1273315146}
   levelName: {fileID: 278433493}
 --- !u!114 &361349221
@@ -3565,10 +3569,9 @@ MonoBehaviour:
   buttonPause: {fileID: 768015838}
   buttonStep: {fileID: 624363071}
   buttonSpeed: {fileID: 121265415}
-  buttonReset: {fileID: 1983660743}
   endPanel: {fileID: 1306532945}
   dialogPanel: {fileID: 2103625724}
-  editableScriptContainer: {fileID: 1346179923}
+  editableScriptContainer: {fileID: 0}
   libraryPanel: {fileID: 452555838}
   EditableContainer: {fileID: 451020363}
   EditableCanvas: {fileID: 451020363}
@@ -4075,6 +4078,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Tourner \xE0 droite"
+  agentNameActiveTooltip: 0
 --- !u!114 &386463157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4396,6 +4400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Attendre
+  agentNameActiveTooltip: 0
 --- !u!114 &388713691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5233,7 +5238,6 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1240096933}
   - {fileID: 1696905609}
   - {fileID: 91740665}
   - {fileID: 1339828889}
@@ -5257,7 +5261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Content: {fileID: 1346179924}
+  m_Content: {fileID: 0}
   m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 2
@@ -5265,7 +5269,7 @@ MonoBehaviour:
   m_Inertia: 1
   m_DecelerationRate: 0.135
   m_ScrollSensitivity: 20
-  m_Viewport: {fileID: 1240096933}
+  m_Viewport: {fileID: 0}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 1696905610}
   m_HorizontalScrollbarVisibility: 2
@@ -5890,6 +5894,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Activer
+  agentNameActiveTooltip: 0
 --- !u!114 &460862511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6159,6 +6164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Boucle
+  agentNameActiveTooltip: 0
 --- !u!114 &473899111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7069,6 +7075,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Ex\xE9cuter le pas suivant"
+  agentNameActiveTooltip: 0
 --- !u!82 &624363074
 AudioSource:
   m_ObjectHideFlags: 0
@@ -8092,6 +8099,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Se retourner
+  agentNameActiveTooltip: 0
 --- !u!114 &670075276
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9103,6 +9111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Pause
+  agentNameActiveTooltip: 0
 --- !u!82 &768015841
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9938,6 +9947,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Relancer le niveau et<br>recommencer \xE0 0 ?"
+  agentNameActiveTooltip: 0
 --- !u!114 &876796628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10598,6 +10608,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Avancer
+  agentNameActiveTooltip: 0
 --- !u!114 &926471071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11209,6 +11220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Attendre
+  agentNameActiveTooltip: 0
 --- !u!114 &998795847
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11478,6 +11490,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Tourner \xE0 gauche"
+  agentNameActiveTooltip: 0
 --- !u!114 &1010904170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12696,6 +12709,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Tourner \xE0 droite"
+  agentNameActiveTooltip: 0
 --- !u!114 &1133693547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13340,6 +13354,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Tourner \xE0 gauche"
+  agentNameActiveTooltip: 0
 --- !u!114 &1189529036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13729,6 +13744,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Avancer
+  agentNameActiveTooltip: 0
 --- !u!114 &1209419481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13965,12 +13981,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!224 &1240096933 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-    type: 3}
-  m_PrefabInstance: {fileID: 2876508348224948344}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1242356725
 GameObject:
   m_ObjectHideFlags: 0
@@ -14117,6 +14127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Si
+  agentNameActiveTooltip: 0
 --- !u!114 &1258946890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14887,7 +14898,7 @@ RectTransform:
   - {fileID: 30024884}
   - {fileID: 121265416}
   m_Father: {fileID: 451020364}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -15043,6 +15054,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Attendre
+  agentNameActiveTooltip: 0
 --- !u!114 &1344854384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15107,18 +15119,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1344854380}
   m_CullTransparentMesh: 0
---- !u!1 &1346179923 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2876508349029538603, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-    type: 3}
-  m_PrefabInstance: {fileID: 2876508348224948344}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &1346179924 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2876508349029538604, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-    type: 3}
-  m_PrefabInstance: {fileID: 2876508348224948344}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1409167090
 GameObject:
   m_ObjectHideFlags: 0
@@ -15190,6 +15190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Si
+  agentNameActiveTooltip: 0
 --- !u!114 &1409167094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15619,6 +15620,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Boucle
+  agentNameActiveTooltip: 0
 --- !u!114 &1462829755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15898,6 +15900,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Ex\xE9cuter le script"
+  agentNameActiveTooltip: 0
 --- !u!82 &1504297952
 AudioSource:
   m_ObjectHideFlags: 0
@@ -16158,7 +16161,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 1983660745}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
         m_MethodName: set_interactable
         m_Mode: 6
@@ -16365,6 +16368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Si
+  agentNameActiveTooltip: 0
 --- !u!114 &1514071828
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16502,6 +16506,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Activer
+  agentNameActiveTooltip: 0
 --- !u!114 &1554861024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17421,6 +17426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Arr\xEAter le script"
+  agentNameActiveTooltip: 0
 --- !u!82 &1684333872
 AudioSource:
   m_ObjectHideFlags: 0
@@ -17561,7 +17567,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1983660745}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
         m_MethodName: set_interactable
         m_Mode: 6
@@ -17907,7 +17913,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1696905609
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17921,10 +17927,10 @@ RectTransform:
   m_Children:
   - {fileID: 478135344}
   m_Father: {fileID: 451020364}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 554}
   m_Pivot: {x: 0, y: 1}
@@ -18218,6 +18224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "R\xE9essayer la mission \xE0 partir<br>de la derni\xE8re ex\xE9cution ?"
+  agentNameActiveTooltip: 0
 --- !u!114 &1722249730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18507,6 +18514,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Tourner \xE0 droite"
+  agentNameActiveTooltip: 0
 --- !u!114 &1746994390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20066,6 +20074,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Tourner \xE0 gauche"
+  agentNameActiveTooltip: 0
 --- !u!114 &1888427852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20522,24 +20531,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1975438561}
   m_CullTransparentMesh: 0
---- !u!1 &1983660743 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2876508348593244863, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-    type: 3}
-  m_PrefabInstance: {fileID: 2876508348224948344}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1983660745 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2876508348593244849, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-    type: 3}
-  m_PrefabInstance: {fileID: 2876508348224948344}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1983660743}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1986776493
 GameObject:
   m_ObjectHideFlags: 0
@@ -20937,6 +20928,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Ajouter un container
+  agentNameActiveTooltip: 0
 --- !u!82 &2015004023
 AudioSource:
   m_ObjectHideFlags: 0
@@ -21408,6 +21400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Boucle
+  agentNameActiveTooltip: 0
 --- !u!114 &2033700429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21544,6 +21537,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Se retourner
+  agentNameActiveTooltip: 0
 --- !u!114 &2043545709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22519,7 +22513,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -23021,6 +23015,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Se retourner
+  agentNameActiveTooltip: 0
 --- !u!114 &2133670330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23146,279 +23141,3 @@ LightingSettings:
   m_PVRFilteringAtrousPositionSigmaDirect: 0.5
   m_PVRFilteringAtrousPositionSigmaIndirect: 2
   m_PVRFilteringAtrousPositionSigmaAO: 1
---- !u!1001 &2876508348224948344
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 451020364}
-    m_Modifications:
-    - target: {fileID: 570210727992613973, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: cameraAssociate
-      value: 
-      objectReference: {fileID: 963194225}
-    - target: {fileID: 1341464425774805774, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1341464425774805774, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1341464425774805774, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1341464425774805774, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1427976450206494739, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1427976450206494739, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1427976450206494739, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1427976450206494739, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508348593244849, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2876508348224948345}
-    - target: {fileID: 2876508348593244849, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: resetScriptContainer
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349029538592, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: editNameAuto
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349029538592, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: associedAgentName
-      value: Agent
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349029538604, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875100, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_Name
-      value: Viewport
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_Pivot.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_Pivot.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 45
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 554
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876508349418875101, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3083762047923502375, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_Colors.m_NormalColor.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3083762047923502375, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_Colors.m_NormalColor.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3083762047923502375, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_Colors.m_NormalColor.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3083762047923502375, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3083762047923502375, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3083762047923502375, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2876508348224948345}
-    - target: {fileID: 3083762047923502375, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3083762047923502375, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: noChangeName
-      objectReference: {fileID: 0}
-    - target: {fileID: 3083762047923502375, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: UISystemBridge, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 3083762047923502375, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 5633695387477661303, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5633695387477661303, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5633695387477661303, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 45
-      objectReference: {fileID: 0}
-    - target: {fileID: 5633695387477661303, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5633695387477661303, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28, type: 3}
---- !u!114 &2876508348224948345 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1188262041932789460, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-    type: 3}
-  m_PrefabInstance: {fileID: 2876508348224948344}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e957d8f9c61154b44a13f0d96eda550e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

@@ -30,6 +30,7 @@ public class UISystem : FSystem {
 	private Family viewportContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les containers viewport
 	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor")); // Les containers scripts qui ne sont pas des block d'action
 	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
+	private Family resetButton_f = FamilyManager.getFamily(new AnyOfTags("ResetButton")); // Les boutons reset
 
 	private GameData gameData;
 	private int nDialog = 0;
@@ -41,7 +42,6 @@ public class UISystem : FSystem {
 	public GameObject buttonPause;
 	public GameObject buttonStep;
 	public GameObject buttonSpeed;
-	public GameObject buttonReset;
 	public GameObject endPanel;
 	public GameObject dialogPanel;
 	public GameObject editableScriptContainer;
@@ -82,6 +82,9 @@ public class UISystem : FSystem {
 		lastEditedScript = null;
 
 		loadHistory();
+
+		// Afin de mettre en rouge les noms qui ne sont pas en lien dés le début
+		MainLoop.instance.StartCoroutine(tcheckLinkName());
 	}
 
 
@@ -111,7 +114,6 @@ public class UISystem : FSystem {
 	// Si non, Fait apparaitre le nom en rouge
 	private IEnumerator tcheckLinkName()
 	{
-		Debug.Log("Start coroutine ok : tcheckLinkName");
 		yield return null;
 
 		// On parcours les containers et si aucun nom ne correspond alors on met leur nom en gras rouge
@@ -126,7 +128,6 @@ public class UISystem : FSystem {
 				}
 			}
 
-			Debug.Log("Container : " + container.name);
 			// Si même nom trouver on met l'arriére plan blanc
 			if (nameSame)
 			{
@@ -153,12 +154,11 @@ public class UISystem : FSystem {
 			// Si même nom trouver on met l'arriére transparent
 			if (nameSame)
 			{
-				agent.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 1f, 1f, 0f);
+				agent.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 1f, 1f, 1f);
 			}
 			else // sinon rouge 
 			{
 				agent.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
-				//new Color(255f, 102f, 71f)
 			}
 		}
 	}
@@ -214,6 +214,7 @@ public class UISystem : FSystem {
 			if (v != Vector3.zero)
 			{ // if not visible in UI
 				ScrollRect containerScrollRect = go.GetComponentInParent<ScrollRect>();
+				Debug.Log(go.name);
 				containerScrollRect.content.localPosition += GetSnapToPositionToBringChildIntoView(containerScrollRect, go.GetComponent<RectTransform>());
 			}
 		}
@@ -267,7 +268,10 @@ public class UISystem : FSystem {
 	// Modifie l'interactibilité des différents boutons selon l'état envoyé (état du niveau fini ou stopé)
 	//
 	private void setExecutionState(bool finished){
-		buttonReset.GetComponent<Button>().interactable = finished;
+		foreach(GameObject reset_go in resetButton_f)
+        {
+			reset_go.GetComponent<Button>().interactable = finished;
+		}
 		buttonPlay.GetComponent<Button>().interactable = !finished;
 		
 		GameObjectManager.setGameObjectState(buttonPlay, finished);
@@ -283,7 +287,7 @@ public class UISystem : FSystem {
 	}
 	
 
-	// Permet de sauvegarder l'historique de la sequence créer
+	// Permet de sauvegarder l'historique de la sequence créée
 	private void saveHistory(int unused = 0){
 		if(gameData.actionsHistory == null){
 			gameData.actionsHistory = lastEditedScript;
@@ -646,23 +650,34 @@ public class UISystem : FSystem {
 	// ???????
 	public void applyScriptToPlayer(){
 		//if first click on play button
-		if(!buttonStop.activeInHierarchy){
+		if (!buttonStop.activeInHierarchy) {
 			gameData.totalExecute++;
 			//hide library panels
 			GameObjectManager.setGameObjectState(libraryPanel, false);
 			//editable viewport and scrollbar
-			GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("Viewport").gameObject, false);
+			//GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("ViewportScript").gameObject, false);
 			GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("Scrollbar Vertical").gameObject, false);
 			//clean container for each robot
-			foreach (GameObject robot in playerGO){
-				foreach(Transform child in robot.GetComponent<ScriptRef>().scriptContainer.transform){
+			foreach (GameObject robot in playerGO) {
+				foreach (Transform child in robot.GetComponent<ScriptRef>().scriptContainer.transform) {
 					GameObjectManager.unbind(child.gameObject);
 					GameObject.Destroy(child.gameObject);
 				}
+				//}
+
+				//copy editable script
+				GameObject containerAssocied = null;
+			foreach (GameObject container in viewportContainer_f)
+			{
+				if (container.GetComponentInChildren<UITypeContainer>().associedAgentName == robot.GetComponent<AgentEdit>().agentName)
+                    {
+						Debug.Log("Container trouvé pour copy");
+						lastEditedScript = GameObject.Instantiate(container);
+						containerAssocied = container.transform.Find("ScriptContainer").gameObject;
+
+					}
 			}
-			
-			//copy editable script
-			lastEditedScript = GameObject.Instantiate(editableScriptContainer);
+			//lastEditedScript = GameObject.Instantiate(editableScriptContainer);
 			/*
 			foreach(Transform child in lastEditedScript.transform){
 				if(child.name.Contains("PositionBar")){
@@ -670,14 +685,37 @@ public class UISystem : FSystem {
 				}
 			}
 			*/
-			
-			GameObject containerCopy = CopyActionsFrom(editableScriptContainer, false, playerGO.First());
-			
+				if(containerAssocied != null)
+                {
+					GameObject containerCopy = CopyActionsFrom(containerAssocied, false, robot);
+					GameObject targetContainer = robot.GetComponent<ScriptRef>().scriptContainer;
+					robot.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
+					for (int i = 0; i < containerCopy.transform.childCount; i++)
+					{
+						// ICI CREER UNE FONCTION QUI COPIERA LES BLOCK D4ACTION (ENLEVER LES ZONE DE FIN DE CONTAINER MEME POUR LES CONTAINER FOR ET AUTRE)
+						// Les blocs du script container à ne pas faire apparaitre dans la fiche de l'agent
+						if (!containerCopy.transform.GetChild(i).name.Contains("ContainerName") && !containerCopy.transform.GetChild(i).name.Contains("EndZoneActionBloc") && !containerCopy.transform.GetChild(i).name.Contains("AgentName"))
+						{
+							Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
+							child.SetParent(targetContainer.transform);
+							GameObjectManager.bind(child.gameObject);
+							GameObjectManager.refresh(targetContainer);
+						}
+
+					}
+					LevelGenerator.computeNext(targetContainer);
+
+					UnityEngine.Object.Destroy(containerCopy);
+				}
+
+			}
+			/*
 			foreach( GameObject go in playerGO){
 				GameObject targetContainer = go.GetComponent<ScriptRef>().scriptContainer;
 				go.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;	
 				for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
-					if(!containerCopy.transform.GetChild(i).name.Contains("ContainerName") && !containerCopy.transform.GetChild(i).name.Contains("EndZoneActionBloc"))
+					// Les blocs du script container à ne pas faire apparaitre dans la fiche de l'agent
+					if(!containerCopy.transform.GetChild(i).name.Contains("ContainerName") && !containerCopy.transform.GetChild(i).name.Contains("EndZoneActionBloc") && !containerCopy.transform.GetChild(i).name.Contains("AgentName"))
 					{
 						Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
 						child.SetParent(targetContainer.transform);
@@ -688,8 +726,9 @@ public class UISystem : FSystem {
 				}
 				LevelGenerator.computeNext(targetContainer);
 			}
+			*/
 
-			UnityEngine.Object.Destroy(containerCopy);
+			//UnityEngine.Object.Destroy(containerCopy);
 
 			//empty editable container
 			//resetScript();
@@ -821,12 +860,9 @@ public class UISystem : FSystem {
 	// Vérifie si le nom proposé existe déjà ou non pour un script container
 	public bool nameContainerUsed(string nameTested) {
 		bool nameUsed = false;
-		Debug.Log("Nb cript container familly : " + scriptContainer_f.Count);
 		// On regarde en premier lieu si le nom n'existe pas déjà
 		foreach (GameObject container in scriptContainer_f)
 		{
-			Debug.Log("Script container familly name : " + container.name);
-			Debug.Log("Nom associé : " + container.GetComponent<UITypeContainer>().associedAgentName);
 			if (container.GetComponent<UITypeContainer>().associedAgentName == nameTested)
 			{
 				nameUsed = true;
@@ -860,19 +896,10 @@ public class UISystem : FSystem {
 						// Si l'agent existe, on met à jours son lien (on supprime le lien actuelle)
 						if (agentExist)
 						{
-							EditAgentSystem.instance.newScriptContainerLink();
 							// Si le changement de nom entre l'agent et le container est automatique, on change aussi le nom de l'agent
 							if (container.GetComponent<UITypeContainer>().editNameAuto)
 							{
 								EditAgentSystem.instance.setAgentName(name);
-							}
-						}
-						else // Sinon on regarde si on agent du même nom existe pour établir un lien
-						{
-							agentExist = EditAgentSystem.instance.modificationAgent(name);
-							if (agentExist)
-							{
-								EditAgentSystem.instance.newScriptContainerLink();
 							}
 						}
 						nameContainerSelected = container.GetComponent<UITypeContainer>().associedAgentName;
@@ -903,9 +930,16 @@ public class UISystem : FSystem {
 			if (container.GetComponent<UITypeContainer>().associedAgentName == name) {
 				// On créer une variable pour stocker les modifications du nom
 				string newViewName = "";
-				foreach (char l in name)
+				for(int i = 0; i < name.Length; i++)
 				{
-					newViewName = newViewName + l + "\n";
+					if(i != name.Length - 1)
+                    {
+						newViewName = newViewName + name[i] + "\n";
+					}
+                    else
+                    {
+						newViewName = newViewName + name[i];
+					}
 				}
 				// On remplace le nom actuel par le nouveau format
 				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = newViewName;

@@ -23,9 +23,4 @@ public class EditAgentSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "majDisplayCardAgent", newName);
 	}
 
-	public void newScriptContainerLink()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "newScriptContainerLink", null);
-	}
-
 }
