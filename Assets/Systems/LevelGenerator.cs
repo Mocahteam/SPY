@@ -144,6 +144,7 @@ public class LevelGenerator : FSystem {
 			}
 			// On affiche le bon nom sur le container
 			scriptContainer.GetComponentInChildren<TMP_InputField>().text = scriptContainer.GetComponentInChildren<UITypeContainer>().associedAgentName;
+			MainLoop.instance.StartCoroutine(UISystem.instance.updateVerticalName(scriptContainer.GetComponentInChildren<UITypeContainer>().associedAgentName));
 
 			// On associe le container au scroll bar
 			UISystem.instance.EditableCanvas.GetComponent<ScrollRect>().content = scriptContainer.transform.Find("ScriptContainer").GetComponent<RectTransform>();

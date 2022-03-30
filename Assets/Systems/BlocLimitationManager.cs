@@ -18,13 +18,15 @@ public class BlocLimitationManager : FSystem {
 		{
 			gameData = gd.GetComponent<GameData>();
 			// init limitation counters for each draggable elements
+			// Initialisation des block à afficher dans l'inventaire
 			foreach (GameObject go in draggableElement)
 			{
 				// get prefab associated to this draggable element
+				// On récupére le préfab de l'élément
 				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
 				// get action key depending on prefab type
 				string key = getActionKey(prefab.GetComponent<BaseElement>());
-				// update counter
+				// update counter et active les block necessaire
 				updateBlocLimit(key, go);
 			}
 		}
@@ -52,6 +54,9 @@ public class BlocLimitationManager : FSystem {
 		return null;
 	}
 
+	// Met à jour la limite du nombre de fois ou l'on peux utiliser un bloc (si il y a une limite)
+	// Le désactive si la limite est atteinte
+	// Met à jour le compteur
 	private void updateBlocLimit(string keyName, GameObject draggableGO){
 		bool isActive = gameData.actionBlocLimit[keyName] != 0; // negative means no limit
 		GameObjectManager.setGameObjectState(draggableGO, isActive);

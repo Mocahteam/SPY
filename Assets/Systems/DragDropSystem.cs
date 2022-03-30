@@ -295,6 +295,8 @@ public class DragDropSystem : FSystem
 		GameObject prefab = element.GetComponent<ElementToDrag>().actionPrefab;
 		// Create a dragged GameObject
 		itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, element.transform);
+		//On l'attache au canvas pour le drag ou l'on veux
+		itemDragged.transform.SetParent(mainCanvas.transform);
 		BaseElement action = itemDragged.GetComponent<BaseElement>();
 		itemDragged.GetComponent<UIActionType>().linkedTo = element;
 		// On l'ajoute au famille de FYFY

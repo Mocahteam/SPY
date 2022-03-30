@@ -9,6 +9,7 @@ public class UISystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject buttonPause;
 	public UnityEngine.GameObject buttonStep;
 	public UnityEngine.GameObject buttonSpeed;
+	public UnityEngine.GameObject menuEchap;
 	public UnityEngine.GameObject endPanel;
 	public UnityEngine.GameObject dialogPanel;
 	public UnityEngine.GameObject editableScriptContainer;
@@ -25,6 +26,7 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "buttonPause", buttonPause);
 		MainLoop.initAppropriateSystemField (system, "buttonStep", buttonStep);
 		MainLoop.initAppropriateSystemField (system, "buttonSpeed", buttonSpeed);
+		MainLoop.initAppropriateSystemField (system, "menuEchap", menuEchap);
 		MainLoop.initAppropriateSystemField (system, "endPanel", endPanel);
 		MainLoop.initAppropriateSystemField (system, "dialogPanel", dialogPanel);
 		MainLoop.initAppropriateSystemField (system, "editableScriptContainer", editableScriptContainer);
@@ -157,6 +159,11 @@ public class UISystem_wrapper : BaseWrapper
 	public void cancelChangeNameContainer(System.String name)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "cancelChangeNameContainer", name);
+	}
+
+	public void setActiveEscapeMenu()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setActiveEscapeMenu", null);
 	}
 
 }

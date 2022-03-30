@@ -42,6 +42,7 @@ public class UISystem : FSystem {
 	public GameObject buttonPause;
 	public GameObject buttonStep;
 	public GameObject buttonSpeed;
+	public GameObject menuEchap;
 	public GameObject endPanel;
 	public GameObject dialogPanel;
 	public GameObject editableScriptContainer;
@@ -96,6 +97,12 @@ public class UISystem : FSystem {
 		{
 			showDialogPanel();
 		}
+
+        //Active/désactive le menu echap si on appuie su echap
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+			setActiveEscapeMenu();
+        }
 	}
 
 
@@ -677,14 +684,6 @@ public class UISystem : FSystem {
 
 					}
 			}
-			//lastEditedScript = GameObject.Instantiate(editableScriptContainer);
-			/*
-			foreach(Transform child in lastEditedScript.transform){
-				if(child.name.Contains("PositionBar")){
-					UnityEngine.GameObject.Destroy(child.gameObject);
-				}
-			}
-			*/
 				if(containerAssocied != null)
                 {
 					GameObject containerCopy = CopyActionsFrom(containerAssocied, false, robot);
@@ -709,29 +708,6 @@ public class UISystem : FSystem {
 				}
 
 			}
-			/*
-			foreach( GameObject go in playerGO){
-				GameObject targetContainer = go.GetComponent<ScriptRef>().scriptContainer;
-				go.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;	
-				for(int i = 0 ; i < containerCopy.transform.childCount ; i++){
-					// Les blocs du script container à ne pas faire apparaitre dans la fiche de l'agent
-					if(!containerCopy.transform.GetChild(i).name.Contains("ContainerName") && !containerCopy.transform.GetChild(i).name.Contains("EndZoneActionBloc") && !containerCopy.transform.GetChild(i).name.Contains("AgentName"))
-					{
-						Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
-						child.SetParent(targetContainer.transform);
-						GameObjectManager.bind(child.gameObject);
-						GameObjectManager.refresh(targetContainer);
-					}
-
-				}
-				LevelGenerator.computeNext(targetContainer);
-			}
-			*/
-
-			//UnityEngine.Object.Destroy(containerCopy);
-
-			//empty editable container
-			//resetScript();
 
 			buttonPlay.GetComponent<AudioSource>().Play();
 			foreach(GameObject go in agents){
@@ -914,7 +890,7 @@ public class UISystem : FSystem {
 
 	// Udapte (au cycle update suivant) le nom du container à la veticale
 	// Ceci afin d'être sur que toutes les modifications de l'update actuelle on été prise en compte
-	private IEnumerator updateVerticalName(string name)
+	public IEnumerator updateVerticalName(string name)
 	{
 		yield return null;
 		verticalName(name);
@@ -999,6 +975,20 @@ public class UISystem : FSystem {
 			}
 		}
 	}
+
+	// Permet d'activé ou désactivé le menu echap
+	public void setActiveEscapeMenu()
+    {
+		// Si le menu est active, le désactive
+        if (menuEchap.activeInHierarchy)
+        {
+			menuEchap.SetActive(false);
+		}// Et inversement
+        else
+        {
+			menuEchap.SetActive(true);
+		}
+    }
 
 
 }
