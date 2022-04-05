@@ -70,7 +70,7 @@ public class BlocLimitationManager : FSystem {
 				counterText.GetComponent<TextMeshProUGUI>().text = "Reste " + gameData.actionBlocLimit[keyName].ToString();
 				GameObjectManager.setGameObjectState(counterText, true);
 			}
-		}		
+		}
 	}
 
 	private void useAction(GameObject go){

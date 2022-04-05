@@ -127,8 +127,9 @@ public class LevelGenerator : FSystem {
 			// On fait apparaitre un container associer à l'agent
 			GameObject scriptContainer = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ViewportScriptContainer") as GameObject);
 			GameObjectManager.bind(scriptContainer);
-			scriptContainer.transform.SetParent(editableScriptContainer.transform, false);
-			scriptContainer.transform.SetSiblingIndex(scriptContainer.transform.GetSiblingIndex() - 3);
+			//scriptContainer.transform.SetParent(editableScriptContainer.transform, false);
+			//scriptContainer.transform.SetSiblingIndex(scriptContainer.transform.GetSiblingIndex() - 3);
+			scriptContainer.transform.SetParent(editableScriptContainer.transform.Find("test"), false);
 			UISystem.instance.editableScriptContainer = scriptContainer;
 			DragDropSystem.instance.lastEditableContainer = scriptContainer.transform.Find("ScriptContainer").gameObject;
 

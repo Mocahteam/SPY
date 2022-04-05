@@ -200,6 +200,8 @@ public class DragDropSystem : FSystem
 				// Et on ajouter l'action à la fin du container éditable
 				dropElementInContainer(container.transform.Find("EndZoneActionBloc").Find("DropZone").gameObject);
 			}
+
+			// Remmettre à jour l'association du scrollbar avec le container le plus grand  
 		}
 	}
 

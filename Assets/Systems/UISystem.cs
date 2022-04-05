@@ -32,6 +32,8 @@ public class UISystem : FSystem {
 	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
 	private Family resetButton_f = FamilyManager.getFamily(new AnyOfTags("ResetButton")); // Les boutons reset
 
+	private Family inventoryBlocks = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+
 	private GameData gameData;
 	private int nDialog = 0;
 	private GameObject lastEditedScript;
@@ -77,8 +79,11 @@ public class UISystem : FSystem {
 		scriptIsRunning.addExitCallback(saveHistory);
 		emptyPlayerExecution.addEntryCallback(delegate { setExecutionState(true); });
 		emptyPlayerExecution.addEntryCallback(delegate { GameObjectManager.removeComponent<EmptyExecution>(MainLoop.instance.gameObject); });
-
+		
 		currentActions.addEntryCallback(onNewCurrentAction);
+
+		inventoryBlocks.addEntryCallback(delegate { forceUIRefresh(); });
+		inventoryBlocks.addExitCallback(delegate { forceUIRefresh(); });
 
 		lastEditedScript = null;
 
@@ -212,6 +217,10 @@ public class UISystem : FSystem {
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
 	}
 
+	private void forceUIRefresh()
+    {
+		LayoutRebuilder.ForceRebuildLayoutImmediate(libraryPanel.GetComponent<RectTransform>());
+	}
 
 	// ?????
 	private void onNewCurrentAction(GameObject go){
