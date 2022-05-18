@@ -519,7 +519,16 @@ public class LevelGenerator : FSystem {
 			Transform child = container.transform.GetChild(i);
 			// Si l'action est une action basique et n'est pas la dernière
 			if(i < container.transform.childCount-1 && child.GetComponent<BaseElement>()){
-				child.GetComponent<BaseElement>().next = container.transform.GetChild(i+1).gameObject;
+                // Si on est dans un container for, il faut que l'avant dernier élément boucle
+                if (container.transform.parent.GetComponent<ForAction>() && i == container.transform.childCount - 2)
+                {
+					child.GetComponent<BaseElement>().next = container.transform.parent.gameObject;
+					i = container.transform.childCount;
+				}// Sinon l'associer au block suivant
+                else
+                {
+					child.GetComponent<BaseElement>().next = container.transform.GetChild(i + 1).gameObject;
+				}
 			}// Sinon si c'est la derniére et une action basique
 			else if(i == container.transform.childCount-1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>()){
 				if(container.GetComponent<ForAction>() || container.GetComponent<ForeverAction>())

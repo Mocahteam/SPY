@@ -663,10 +663,11 @@ public class UISystem : FSystem {
 	}
 
 	// See ExecuteButton in editor
-	// ???????
+	// Copie les blocks d'actions dans le container du robot associer
 	public void applyScriptToPlayer(){
 		//if first click on play button
 		if (!buttonStop.activeInHierarchy) {
+			// On note une tentative d'execution en plus
 			gameData.totalExecute++;
 			//hide library panels
 			GameObjectManager.setGameObjectState(libraryPanel, false);
@@ -683,21 +684,25 @@ public class UISystem : FSystem {
 
 				//copy editable script
 				GameObject containerAssocied = null;
-			foreach (GameObject container in viewportContainer_f)
-			{
-				if (container.GetComponentInChildren<UITypeContainer>().associedAgentName == robot.GetComponent<AgentEdit>().agentName)
+				foreach (GameObject container in viewportContainer_f)
+				{
+					// Si le container comporte le même nom que le robot
+					if (container.GetComponentInChildren<UITypeContainer>().associedAgentName == robot.GetComponent<AgentEdit>().agentName)
                     {
 						Debug.Log("Container trouvé pour copy");
 						lastEditedScript = GameObject.Instantiate(container);
 						containerAssocied = container.transform.Find("ScriptContainer").gameObject;
 
 					}
-			}
+				}
+				// Si on a bien trouvé un container associer
 				if(containerAssocied != null)
                 {
+					// Copie du container pour l'associer au robot
 					GameObject containerCopy = CopyActionsFrom(containerAssocied, false, robot);
 					GameObject targetContainer = robot.GetComponent<ScriptRef>().scriptContainer;
-					robot.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
+					robot.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true; // On fait apparaitre le panneau du robot
+					// On copie les actions dans 
 					for (int i = 0; i < containerCopy.transform.childCount; i++)
 					{
 						// ICI CREER UNE FONCTION QUI COPIERA LES BLOCK D4ACTION (ENLEVER LES ZONE DE FIN DE CONTAINER MEME POUR LES CONTAINER FOR ET AUTRE)
@@ -717,8 +722,9 @@ public class UISystem : FSystem {
 				}
 
 			}
-
+			// Lancement du son 
 			buttonPlay.GetComponent<AudioSource>().Play();
+			// On harmonise l'affichage de l'UI container de l'agent
 			foreach(GameObject go in agents){
 				LayoutRebuilder.ForceRebuildLayoutImmediate(go.GetComponent<ScriptRef>().uiContainer.GetComponent<RectTransform>());
 				if(go.CompareTag("Player")){				
@@ -729,7 +735,7 @@ public class UISystem : FSystem {
 	}
 
 
-	// ???????
+	// On copie le container qui contient la sequence d'actions pour modifier les blocks spéciaux
     public GameObject CopyActionsFrom(GameObject container, bool isInteractable, GameObject agent){
 		GameObject copyGO = GameObject.Instantiate(container); 
 		foreach(TMP_Dropdown drop in copyGO.GetComponentsInChildren<TMP_Dropdown>()){
@@ -738,26 +744,33 @@ public class UISystem : FSystem {
 		foreach(TMP_InputField input in copyGO.GetComponentsInChildren<TMP_InputField>()){
 			input.interactable = isInteractable;
 		}
+
+		// Pour chaque bloc for
 		foreach(ForAction forAct in copyGO.GetComponentsInChildren<ForAction>()){
-			
+			// Si activer, on note combien a quel boucle on est sur combien de boucle à faire
 			if(!isInteractable){
 				forAct.nbFor = int.Parse(forAct.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
 				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
-			}
-				
-			else{
+				//Debug.Log("Nb for : " + forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text);			
+			}// Sinon on met tous à 0
+			else
+			{
 				forAct.currentFor = 0;
 				forAct.gameObject.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
 			}
-
+			// On parcourt les éléments présent dans le block action
+			bool firstElement = false;
 			foreach(BaseElement act in forAct.GetComponentsInChildren<BaseElement>()){
-				if(!act.Equals(forAct)){
+				// Si ce n'est pas un bloc action alors on le note comme premier élément puis on arrête le parcourt des éléments
+				if(!act.Equals(forAct) && !firstElement){
 					forAct.firstChild = act.gameObject;
+					firstElement = true;
 					break;
 				}
 			}
 		}
-		foreach(ForeverAction loopAct in copyGO.GetComponentsInChildren<ForeverAction>()){
+		// Pour chaque block de boucle infini
+		foreach (ForeverAction loopAct in copyGO.GetComponentsInChildren<ForeverAction>()){
 			foreach(BaseElement act in loopAct.GetComponentsInChildren<BaseElement>()){
 				if(!act.Equals(loopAct)){
 					loopAct.firstChild = act.gameObject;
@@ -765,12 +778,14 @@ public class UISystem : FSystem {
 				}
 			}
 		}
+		// Pour chaque block if
 		foreach(IfAction IfAct in copyGO.GetComponentsInChildren<IfAction>()){
-			IfAct.ifEntityType = IfAct.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value;
-			IfAct.ifDirection = IfAct.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value;
-			IfAct.range = int.Parse(IfAct.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text);
-			IfAct.ifNot = (IfAct.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1);
+			IfAct.ifEntityType = IfAct.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value; // Elément actuelle : un mur, un champ de force, un ennemi, un allié, un terminal, une zone rouge, une pièce
+			IfAct.ifDirection = IfAct.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value; // Element actuelle : devant, derrière, à gauche, à droite
+			IfAct.range = int.Parse(IfAct.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text); // nombre de case ou ce situe l'élément sur lequel se porte la condition
+			IfAct.ifNot = (IfAct.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1); // Element actuelle : est, n'est pas
 			foreach(BaseElement act in IfAct.GetComponentsInChildren<BaseElement>()){
+				// Test pour vérifier qu'on ne prend pas l'objet lui même comme premier élément de la séquence de la condition
 				if(!act.Equals(IfAct)){
 					IfAct.firstChild = act.gameObject;
 					break;

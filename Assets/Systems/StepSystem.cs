@@ -66,7 +66,6 @@ public class StepSystem : FSystem {
             }
             else
                 timeStepCpt -= Time.deltaTime;
-
 		}
         else{
             MainLoop.instance.StartCoroutine(delayCheckEnd());

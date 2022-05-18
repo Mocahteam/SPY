@@ -2520,6 +2520,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 390ae5b6d5b4ea542a10de01639cef92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  associedAgentName: Agent
+  editName: 1
+  editNameAuto: 1
+  actionContainer: 0
+  notScriptContainer: 0
 --- !u!222 &4857904994598048874
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2570,8 +2575,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d03048817cdae984f93f61100f43b22f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 0}
   linkedTo: {fileID: 0}
+  container: 0
 --- !u!114 &1269177777863189614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2600,7 +2605,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0, g: 0.09411765, b: 1, a: 1}
   highlightedColor: {r: 0.23829652, g: 0.30909836, b: 0.990566, a: 0.19607843}
-  target: {fileID: 0}
   next: {fileID: 0}
   currentAction: 0
   ifEntityType: 0
