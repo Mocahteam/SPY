@@ -293,6 +293,8 @@ public class DragDropSystem : FSystem
 	// On créer l'action block en fonction de l'element reçu
 	private void creationActionBlock(GameObject element)
     {
+		Debug.Log("Name element : " + element.name);
+		Debug.Log("Name element prefab associate : " + element.GetComponent<ElementToDrag>().actionPrefab.name);
 		// On récupére le pref fab associé à l'action de la libriaire
 		GameObject prefab = element.GetComponent<ElementToDrag>().actionPrefab;
 		// Create a dragged GameObject

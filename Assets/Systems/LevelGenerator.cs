@@ -360,7 +360,10 @@ public class LevelGenerator : FSystem {
 			//gameData.actionBlocLimit.Add(int.Parse(limitNode.Attributes.GetNamedItem("limit").Value));
 			actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
 			if (!gameData.actionBlocLimit.ContainsKey(actionName)){
+				Debug.Log("Lvl create : " + limitNode.Attributes.GetNamedItem("actionType").Value);
+				Debug.Log("Lvl create node : " + limitNode.Attributes.GetNamedItem("limit").Value);
 				gameData.actionBlocLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
+				Debug.Log("Lvl create gamemanager : " + gameData.actionBlocLimit[actionName]);
 			}
 		}
 	}

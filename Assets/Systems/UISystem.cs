@@ -211,7 +211,7 @@ public class UISystem : FSystem {
 		MainLoop.instance.StartCoroutine(updatePlayButton());
 	}
 
-	// Rafraichit le nom des container
+	// Rafraichit le nom des containers
 	public void refreshUINameContainer()
 	{
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
@@ -220,7 +220,16 @@ public class UISystem : FSystem {
 	private void forceUIRefresh()
     {
 		LayoutRebuilder.ForceRebuildLayoutImmediate(libraryPanel.GetComponent<RectTransform>());
+		RebuildInventory();
 	}
+
+	// Met les hauteurs de chaque partie de l'inventaire à la bonne taille selon le nombre de bloc activé par partie
+	private void RebuildInventory()
+    {
+		// Pour chaque partie on va compter le nombre de bloc activé
+		// Tous les 3 block on ajoute +40unité pour la taille
+		// Avec une taille de départ de 25 pour 0 block et 65 pour 1 block
+    }
 
 	// ?????
 	private void onNewCurrentAction(GameObject go){
