@@ -24,8 +24,11 @@ public class BlocLimitationManager : FSystem {
 				// get prefab associated to this draggable element
 				// On récupére le préfab de l'élément
 				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
-				// get action key depending on prefab type
-				string key = getActionKey(prefab.GetComponent<BaseElement>());
+                // get action key depending on prefab type
+                // Si c'est un bloc action
+				string key = getActionKey(prefab.GetComponent<Highlightable>());
+				// Si c'est un bloc pour les conditions
+
 				// update counter et active les block necessaire
 				updateBlocLimit(key, go);
 			}
@@ -34,13 +37,16 @@ public class BlocLimitationManager : FSystem {
 		deletedActions.addEntryCallback(unuseAction);
 	}
 
-	private string getActionKey(BaseElement action){
+	// Retourne l'action key du bloc
+	private string getActionKey(Highlightable action){
 		if (action is BasicAction)
 			return ((BasicAction)action).actionType.ToString();
 		else if (action is IfAction)
 			return "If";
 		else if (action is ForAction)
 			return "For";
+		else if (action is BaseCondition)
+			return ((BaseCondition)action).conditionType.ToString();
 		else
 			return null;
 	}
@@ -58,7 +64,7 @@ public class BlocLimitationManager : FSystem {
 	// Le désactive si la limite est atteinte
 	// Met à jour le compteur
 	private void updateBlocLimit(string keyName, GameObject draggableGO){
-		Debug.Log("Name bloc : " + draggableGO.name);
+		Debug.Log("Name bloc : " + draggableGO.name + " " + keyName);
 		Debug.Log("Value : " + gameData.actionBlocLimit[keyName]);
 		bool isActive = gameData.actionBlocLimit[keyName] != 0; // negative means no limit
 		Debug.Log("Active : " + isActive);

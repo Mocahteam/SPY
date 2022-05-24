@@ -89,11 +89,15 @@ public class DragDropSystem : FSystem
 			Dp.transform.GetChild(0).gameObject.SetActive(false); // On est sur que les bares sont désactivées
 		}
 
-		// Si l'item drag est un container d'un bloc d'action
-		// On désactive ses blocs
-		if (itemDragged!= null && itemDragged.GetComponent<UIActionType>().container)
+		// Si on à un item et qu'il à le component UIActionType associé
+		if (itemDragged!= null && itemDragged.GetComponent<UIActionType>())
 		{
-			dropZoneContainerDragDesactived(itemDragged);
+			// Si c'est un container
+			// On désactive ses drop zones
+			if (itemDragged.GetComponent<UIActionType>().container)
+            {
+				dropZoneContainerDragDesactived(itemDragged);
+			}
 		}
 	}
 
@@ -130,30 +134,49 @@ public class DragDropSystem : FSystem
 	// l'enélve de la hiérarchie de la sequence d'action 
 	public void beginDragElementFromEditableScript(BaseEventData element)
     {
-		// On verifie si c'est un up droit ou gauche
+		// On verifie si c'est un up droit ou gauche et si ce n'est pas un drop bar
 		if ((element as PointerEventData).button == PointerEventData.InputButton.Left)
 		{
 			// On note le container utilisé
 			lastEditableContainer = element.selectedObject.transform.parent.gameObject;
 			// On enregistre l'objet sur lequel on va travailler le drag and drop dans le systéme
-			itemDragged = element.selectedObject;
-			// On active les drops zone 
-			dropZoneActivated(true);
-			// On l'associe (temporairement) au Canvas Main
-			GameObjectManager.setGameObjectParent(itemDragged, mainCanvas, true);
-			itemDragged.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-			// exclude this GameObject from the EventSystem
-			itemDragged.GetComponent<Image>().raycastTarget = false;
-			//if (itemDragged.GetComponent<BasicAction>())
-			foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
-				child.raycastTarget = false;
-			// Restore action and subactions to inventory
-			foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
-				GameObjectManager.addComponent<AddOne>(actChild.gameObject);
-			//lastEditableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = false;
+			// Si c'est un drop zone dans un bloc special, alors on selectionne le container
+			if (element.selectedObject.name == "EndZoneActionBloc")
+            {
+				// Si l'élément est dans un bloc spécial, on bouge le block entiérement
+                if(element.selectedObject.transform.parent.gameObject.GetComponent<ContainerActionBloc>().blockSpecial)
+                {
+					itemDragged = element.selectedObject.transform.parent.parent.gameObject;
+				}
+                else
+                {
+					itemDragged = null;
+				}
+			}// Sinon c'est l'objet selectionné
+            else
+            {
+				itemDragged = element.selectedObject;
+			}
+			if(itemDragged != null)
+            {
+				// On active les drops zone 
+				dropZoneActivated(true);
+				// On l'associe (temporairement) au Canvas Main
+				GameObjectManager.setGameObjectParent(itemDragged, mainCanvas, true);
+				itemDragged.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+				// exclude this GameObject from the EventSystem
+				itemDragged.GetComponent<Image>().raycastTarget = false;
+				//if (itemDragged.GetComponent<BasicAction>())
+				foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
+					child.raycastTarget = false;
+				// Restore action and subactions to inventory
+				foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
+					GameObjectManager.addComponent<AddOne>(actChild.gameObject);
+				//lastEditableContainer.transform.parent.GetComponentInParent<ScrollRect>().enabled = false;
 
-			// Rend le bouton d'execution acitf (ou non)
-			UISystem.instance.startUpdatePlayButton();
+				// Rend le bouton d'execution acitf (ou non)
+				UISystem.instance.startUpdatePlayButton();
+			}
 		}
 	}
 
@@ -301,8 +324,12 @@ public class DragDropSystem : FSystem
 		itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, element.transform);
 		//On l'attache au canvas pour le drag ou l'on veux
 		itemDragged.transform.SetParent(mainCanvas.transform);
-		BaseElement action = itemDragged.GetComponent<BaseElement>();
-		itemDragged.GetComponent<UIActionType>().linkedTo = element;
+		// Si c'est un basic action
+		if(itemDragged.GetComponent<Highlightable>() is BasicAction)
+        {
+			BaseElement action = itemDragged.GetComponent<BaseElement>();
+			itemDragged.GetComponent<UIActionType>().linkedTo = element;
+		}
 		// On l'ajoute au famille de FYFY
 		GameObjectManager.bind(itemDragged);
 		// exclude this GameObject from the EventSystem
