@@ -64,10 +64,7 @@ public class BlocLimitationManager : FSystem {
 	// Le désactive si la limite est atteinte
 	// Met à jour le compteur
 	private void updateBlocLimit(string keyName, GameObject draggableGO){
-		Debug.Log("Name bloc : " + draggableGO.name + " " + keyName);
-		Debug.Log("Value : " + gameData.actionBlocLimit[keyName]);
 		bool isActive = gameData.actionBlocLimit[keyName] != 0; // negative means no limit
-		Debug.Log("Active : " + isActive);
 		GameObjectManager.setGameObjectState(draggableGO, isActive);
 		if(isActive){
 			if(gameData.actionBlocLimit[keyName] < 0)

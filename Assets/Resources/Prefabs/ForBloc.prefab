@@ -1487,6 +1487,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0bbb5f2733c92043afefad8d8705cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 589826222410828797}
+  parentTarget: 1
 --- !u!1001 &7234999947793928295
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1494,6 +1496,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4435016572614460956}
     m_Modifications:
+    - target: {fileID: 515017787102981466, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 8301838759094395345}
     - target: {fileID: 619072184055030603, guid: 08dcf38c6bcc87b409cbe319b4606d30,
         type: 3}
       propertyPath: m_IsActive
@@ -1547,7 +1554,7 @@ PrefabInstance:
     - target: {fileID: 3763417325450270626, guid: 08dcf38c6bcc87b409cbe319b4606d30,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3763417325450270626, guid: 08dcf38c6bcc87b409cbe319b4606d30,
         type: 3}

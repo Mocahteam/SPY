@@ -418,6 +418,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0bbb5f2733c92043afefad8d8705cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 3821364993045877023}
+  parentTarget: 1
 --- !u!1 &3821364993045877023
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,6 +436,7 @@ GameObject:
   - component: {fileID: 3221113927477367202}
   - component: {fileID: 2559671865773975778}
   - component: {fileID: 1721759257969761979}
+  - component: {fileID: 7335658204014780665}
   m_Layer: 5
   m_Name: WallElement
   m_TagString: Untagged
@@ -659,6 +662,20 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 5977990777959337957}
+--- !u!114 &7335658204014780665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3821364993045877023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d03048817cdae984f93f61100f43b22f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  linkedTo: {fileID: 0}
+  container: 0
 --- !u!1 &5414264701325107142
 GameObject:
   m_ObjectHideFlags: 0
