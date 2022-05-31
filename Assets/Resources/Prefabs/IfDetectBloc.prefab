@@ -368,7 +368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.09575987, b: 1, a: 0.19607843}
+  m_Color: {r: 0.48627454, g: 0.5647059, b: 1, a: 0.50980395}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -425,8 +425,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59cec87178a67c04da813cc00d230b4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseColor: {r: 0, g: 0.09411765, b: 1, a: 1}
-  highlightedColor: {r: 0.23829652, g: 0.30909836, b: 0.990566, a: 0.19607843}
+  baseColor: {r: 0.48627454, g: 0.5647059, b: 1, a: 0.50980395}
+  highlightedColor: {r: 0.5921569, g: 0.64705884, b: 1, a: 1}
   next: {fileID: 0}
   currentAction: 0
   ifEntityType: 0
@@ -1293,6 +1293,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7770698556164227995, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: rootElement
+      value: 
+      objectReference: {fileID: 4857904994598048877}
     - target: {fileID: 8580194198825902654, guid: 08dcf38c6bcc87b409cbe319b4606d30,
         type: 3}
       propertyPath: m_Color.b
@@ -1454,6 +1459,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7770698556164227995, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: rootElement
+      value: 
+      objectReference: {fileID: 4857904994598048877}
     m_RemovedComponents:
     - {fileID: 8657211129562995931, guid: 08dcf38c6bcc87b409cbe319b4606d30, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 08dcf38c6bcc87b409cbe319b4606d30, type: 3}

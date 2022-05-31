@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-//[RequireComponent(typeof(BaseElement))]
+
+[RequireComponent(typeof(Highlightable))]
 public class UIActionType : MonoBehaviour {
 	// Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
 	//public GameObject prefab;

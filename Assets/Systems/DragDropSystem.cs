@@ -120,14 +120,14 @@ public class DragDropSystem : FSystem
 			// Si c'est un drop zone dans un bloc special, alors on selectionne le container
 			if (element.selectedObject.name == "EndZoneActionBloc")
             {
-				// Si l'élément est dans un bloc spécial, on bouge le block entiérement
+				// Si l'élément est dans un bloc spécial (for, if, operator), on selectionne le parent
                 if(element.selectedObject.transform.parent.gameObject.GetComponent<ContainerActionBloc>().blockSpecial)
                 {
-                    // Si c'est un block condition d'opérateur on bouge le block
+                    // Si c'est un block condition et opérateur on selectionne le parent direct comme élément à drag and drop
                     if (element.selectedObject.transform.parent.gameObject.GetComponent<ContainerActionBloc>().containerCondition && element.selectedObject.transform.parent.gameObject.GetComponent<BaseCondition>())
                     {
 						itemDragged = element.selectedObject.transform.parent.gameObject;
-					}// sinon On bouge le container parent parent
+					}// sinon on selectionne le parent du parent comme élément à drag and drop
                     else
                     {
 						itemDragged = element.selectedObject.transform.parent.parent.gameObject;
@@ -141,6 +141,12 @@ public class DragDropSystem : FSystem
             else
             {
 				itemDragged = element.selectedObject;
+				// Si l'élément sélétionner est dans un emplacement opérator
+				// Alors on réactive la dropzone
+				if (itemDragged.transform.parent.GetComponent<ContainerActionBloc>().containerCondition && itemDragged.transform.parent.GetComponent<BaseCondition>())
+                {
+					activateEndZone(itemDragged);
+				}
 			}
 			if(itemDragged != null)
             {
@@ -179,6 +185,7 @@ public class DragDropSystem : FSystem
 	// Détruite l'objet si pas dans un container, sinon rien
 	public void endDragElement()
 	{
+		Debug.Log("End drag");
 		if (itemDragged != null)
 		{
 			// On commence par regarder si il y a un container pointé et sinon on supprime l'objet drag
@@ -217,6 +224,8 @@ public class DragDropSystem : FSystem
 	// Place l'element dans la place ciblé (position de l'element associer au radar) du container editable
 	public void dropElementInContainer(GameObject redBar)
 	{
+		// Variable pour valider si c'est le bon block dans le bon type de container
+		bool goodTypeBlock = false;
 		// On note le container utilisé
 		// Choisis le container à associer en fonction des renseignant dans DropZoneComponent
         if (redBar.GetComponent<DropZoneComponent>().parentTarget)
@@ -229,19 +238,28 @@ public class DragDropSystem : FSystem
 			lastEditableContainer =  redBar.GetComponent<DropZoneComponent>().target;
 		}
 
-		if (itemDragged != null)
-		{
-			/*
-			// Si c'est un container qui ne doit pas contenir de script
-			if (lastEditableContainer.GetComponent<UITypeContainer>().notScriptContainer)
+        // On vérifie que le type de l'élément est compatible avec le container
+        //Si c'est de type action
+        if (itemDragged.GetComponent<BaseElement>())
+        {
+            // Si le container n'est pas bien un container condition
+            if (!lastEditableContainer.GetComponent<ContainerActionBloc>().containerCondition)
+            {
+				goodTypeBlock = true;
+			}
+        }
+		else if (itemDragged.GetComponent<BaseCondition>())
+        {
+			// Si le container est bien un container condition
+			if (lastEditableContainer.GetComponent<ContainerActionBloc>().containerCondition)
 			{
-				// On associe l'element au container parent
-				itemDragged.transform.SetParent(lastEditableContainer.transform.parent.transform);
-				// On met l'élément à la position voulue
-				itemDragged.transform.SetSiblingIndex(redBar.transform.parent.parent.transform.GetSiblingIndex());
-				GameObjectManager.refresh(itemDragged);
-			}// Sinon si le container cible est le parent, alors l'index à prendre est la cible
-			*/
+				goodTypeBlock = true;
+			}
+		}
+
+		// Si on a bien un item et qu'il est pausé dans le bon block
+		if (itemDragged != null && goodTypeBlock)
+		{
 			if (redBar.GetComponent<DropZoneComponent>().parentTarget)
             {
 				// On associe l'element au container parent
@@ -257,7 +275,6 @@ public class DragDropSystem : FSystem
 				// On met l'élément à la position voulue
 				itemDragged.transform.SetSiblingIndex(redBar.transform.parent.transform.GetSiblingIndex()); 
 				GameObjectManager.refresh(itemDragged);
-
 			}
 			// On le met à la taille voulue
 			itemDragged.transform.localScale = new Vector3(1, 1, 1);
@@ -290,7 +307,7 @@ public class DragDropSystem : FSystem
 
 			// On désactive les drop zone
 			dropZoneActivated(false);
-            /*
+			/*
 			// Si le container est un container d'un bloc d'action
 			if (lastEditableContainer.GetComponent<UITypeContainer>().actionContainer)
             {
@@ -298,16 +315,21 @@ public class DragDropSystem : FSystem
             }
 			*/
 
-            // Si l'élément est laché dans un container base condition
-            // Il remplace le drop zone sur lequel il est drop
-            if (lastEditableContainer.GetComponent<BaseCondition>())
-            {
+			// Si l'élément est laché dans un container condition
+			// Il remplace le drop zone sur lequel il est drop
+			if (lastEditableContainer.GetComponent<ContainerActionBloc>().containerCondition)
+			{
 				// On desactive la zone
 				redBar.transform.parent.gameObject.SetActive(false);
 			}
-
-
+		} // Sinon si pas le bon container on alerte l'utilisateur de son erreur
+        else
+        {
+			Debug.Log("Dsl, ce block ne va pas dans ce type de container");
+			GameObjectManager.addComponent<ResetBlocLimit>(itemDragged);
 		}
+		// Evite d'autre drag and drop par mégarde
+		itemDragged = null;
 	}
 
 
@@ -315,7 +337,6 @@ public class DragDropSystem : FSystem
 	// Recréer la taille du contenaire (action) selon le nombre d'élément qu'il contient
 	private void resizeContainerActionBloc(GameObject element)
     {
-		Debug.Log("Resize bloc name : " + element.name);
 		// On note le container dans lequel on à mis l'élément
 		GameObject parentBloc = element.transform.parent.gameObject;
 		// On copy l'élément
@@ -339,8 +360,6 @@ public class DragDropSystem : FSystem
 	// On créer l'action block en fonction de l'element reçu
 	private void creationActionBlock(GameObject element)
     {
-		Debug.Log("Name element : " + element.name);
-		Debug.Log("Name element prefab associate : " + element.GetComponent<ElementToDrag>().actionPrefab.name);
 		// On récupére le pref fab associé à l'action de la libriaire
 		GameObject prefab = element.GetComponent<ElementToDrag>().actionPrefab;
 		// Create a dragged GameObject
@@ -371,20 +390,33 @@ public class DragDropSystem : FSystem
 		if(actionPointed_f.Count > 0)
         {
 			actionPointed = actionPointed_f.getAt(actionPointed_f.Count - 1); actionPointed_f.getAt(actionPointed_f.Count - 1);
-			Debug.Log(actionPointed.name);
 		}
 
 		// On vérifie qu'il y a bien un objet pointé pour la suppression
 		if(actionPointed != null)
         {
-			GameObjectManager.addComponent<ResetBlocLimit>(actionPointed);
+			GameObject eleDel = null;
+			// Si l'élément est un end block, alors l'élément à supprimer c'est le bloc entier
+			if (actionPointed.GetComponent<EndBlockScriptComponent>())
+            {
+				eleDel = actionPointed.transform.GetComponent<EndBlockScriptComponent>().rootElement;
+			}
+            else // Sinon c'est l'élément pointé
+            {
+				eleDel = actionPointed;
+			}
+			// On demande la réactivation de la end zone (utile surtout pour les blocks de opérator)
+			activateEndZone(eleDel);
+			//On associe à l'élément le component ResetBlocLimit pour déclancher le script de destruction de l'élément
+			GameObjectManager.addComponent<ResetBlocLimit>(eleDel);
 			UISystem.instance.startUpdatePlayButton();
 
 			if (!actionPointed.GetComponent<UIActionType>().container)
 			{
 				foreach (GameObject bloc in containerActionBloc_f)
 				{
-					MainLoop.instance.StartCoroutine(waitForResizeContainer(bloc));
+					// Commentaire temporaire
+					//MainLoop.instance.StartCoroutine(waitForResizeContainer(bloc));
 				}
 			}
 		}
@@ -421,6 +453,17 @@ public class DragDropSystem : FSystem
 			return false;
 		}
 
+	}
+
+	// Réactive une end zone situer juste en dessous de l'élément reçue en paramétre dans l'index du container
+	// Principalement utilisé pour la gestion des dropzones des block opérator
+	private void activateEndZone(GameObject ele)
+    {
+		// On récupére la place de l'item dans l'opérator
+		int index = ele.transform.GetSiblingIndex();
+		// La place juste en dessous est utilisé par la dropzone, on l'active
+		GameObject child = ele.transform.parent.GetChild(index + 1).gameObject;
+		child.SetActive(true);
 	}
 
 }

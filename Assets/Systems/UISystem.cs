@@ -487,7 +487,7 @@ public class UISystem : FSystem {
 
 	//Recursive script destroyer
 	private void destroyScript(GameObject go,  bool refund = false){
-		// Que fait cette partie?
+		// Gére la limitation des blocks
 		/*
 		if(go.GetComponent<UIActionType>() != null){
 			if(!refund)
@@ -509,7 +509,7 @@ public class UISystem : FSystem {
 		// Si ce n'est pas le block de fin
 		if(go.GetComponent<EndBlockScriptComponent>() == null)
         {
-			go.transform.DetachChildren();
+			//go.transform.DetachChildren();
 			GameObjectManager.unbind(go);
 			UnityEngine.Object.Destroy(go);
 		}

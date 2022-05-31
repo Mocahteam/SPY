@@ -1,5 +1,5 @@
 using UnityEngine;
 
 public class EndBlockScriptComponent : MonoBehaviour {
-	// Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
+	public GameObject rootElement; // Elément racine du prefab
 }
