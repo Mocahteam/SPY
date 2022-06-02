@@ -53,4 +53,9 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "clickLibraryElementForAddInContainer", element);
 	}
 
+	public void activeOutlineConditionContainer()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "activeOutlineConditionContainer", null);
+	}
+
 }

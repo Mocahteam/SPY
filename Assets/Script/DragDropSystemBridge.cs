@@ -26,6 +26,11 @@ public class DragDropSystemBridge : MonoBehaviour
         DragDropSystem.instance.dropElementInContainer(element);
     }
 
+    public void activeOutlineConditionContainer(bool value)
+    {
+        DragDropSystem.instance.activeOutlineConditionContainer(transform.gameObject, value);
+    }
+
 
     public void beginDragElement(BaseEventData e)
     {

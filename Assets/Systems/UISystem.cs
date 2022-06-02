@@ -496,7 +496,7 @@ public class UISystem : FSystem {
 				GameObjectManager.addComponent<AddOne>(go.GetComponent<UIActionType>().linkedTo);
 		}
 		*/
-		
+		/*
 		// Si l'objet passer est un script container
 		if(go.GetComponent<UITypeContainer>() != null){
 			foreach(Transform child in go.transform){
@@ -509,10 +509,13 @@ public class UISystem : FSystem {
 		// Si ce n'est pas le block de fin
 		if(go.GetComponent<EndBlockScriptComponent>() == null)
         {
-			//go.transform.DetachChildren();
+			go.transform.DetachChildren();
 			GameObjectManager.unbind(go);
 			UnityEngine.Object.Destroy(go);
 		}
+		*/
+		GameObjectManager.unbind(go);
+		UnityEngine.Object.Destroy(go);
 	}
 
 

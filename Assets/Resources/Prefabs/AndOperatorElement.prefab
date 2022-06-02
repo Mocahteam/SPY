@@ -204,6 +204,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 1
           m_CallState: 2
+        - m_Target: {fileID: 3221113927477367202}
+          m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
+          m_MethodName: activeOutlineConditionContainer
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
   - eventID: 1
     callback:
       m_PersistentCalls:
@@ -211,6 +223,18 @@ MonoBehaviour:
         - m_Target: {fileID: 7966912715253763519}
           m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_MethodName: SetActive
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 3221113927477367202}
+          m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
+          m_MethodName: activeOutlineConditionContainer
           m_Mode: 6
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -455,6 +479,7 @@ GameObject:
   - component: {fileID: 2522982906285849175}
   - component: {fileID: 8518420125127011074}
   - component: {fileID: 1549791575896686906}
+  - component: {fileID: 2697659401814754074}
   m_Layer: 5
   m_Name: AndOperatorElement
   m_TagString: Untagged
@@ -750,6 +775,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockSpecial: 1
   containerCondition: 1
+--- !u!114 &2697659401814754074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3821364993045877023}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 1, g: 0.02745098, b: 0, a: 1}
+  m_EffectDistance: {x: 3, y: -3}
+  m_UseGraphicAlpha: 1
 --- !u!1 &7012619459835545800
 GameObject:
   m_ObjectHideFlags: 0
@@ -1114,6 +1154,11 @@ PrefabInstance:
       propertyPath: rootElement
       value: 
       objectReference: {fileID: 3821364993045877023}
+    - target: {fileID: 7770698556164227995, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: baseColor.rgba
+      value: 11728296
+      objectReference: {fileID: 0}
     - target: {fileID: 7982554293768696349, guid: 08dcf38c6bcc87b409cbe319b4606d30,
         type: 3}
       propertyPath: m_IsActive
@@ -1187,7 +1232,17 @@ PrefabInstance:
     - target: {fileID: 185290336339557078, guid: 08dcf38c6bcc87b409cbe319b4606d30,
         type: 3}
       propertyPath: m_Color.a
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 185290336339557078, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.6745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 185290336339557078, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 515017787102981466, guid: 08dcf38c6bcc87b409cbe319b4606d30,
         type: 3}
@@ -1253,6 +1308,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 2970091485995380462, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3763417325450270626, guid: 08dcf38c6bcc87b409cbe319b4606d30,
         type: 3}
@@ -1389,11 +1449,31 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 7390581142971451803, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: m_EffectColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7390581142971451803, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: m_EffectColor.g
+      value: 0.73434687
+      objectReference: {fileID: 0}
+    - target: {fileID: 7390581142971451803, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: m_EffectColor.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7770698556164227995, guid: 08dcf38c6bcc87b409cbe319b4606d30,
         type: 3}
       propertyPath: rootElement
       value: 
       objectReference: {fileID: 3821364993045877023}
+    - target: {fileID: 7770698556164227995, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: baseColor.rgba
+      value: 11993004
+      objectReference: {fileID: 0}
     - target: {fileID: 7982554293768696349, guid: 08dcf38c6bcc87b409cbe319b4606d30,
         type: 3}
       propertyPath: m_IsActive
@@ -1418,6 +1498,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Color.r
       value: 0.6745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 8580194198825902654, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8657211129562995931, guid: 08dcf38c6bcc87b409cbe319b4606d30,
         type: 3}
@@ -1448,6 +1533,16 @@ PrefabInstance:
         type: 3}
       propertyPath: highlightedColor.r
       value: 0.6745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 8763080100946781449, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8763080100946781449, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08dcf38c6bcc87b409cbe319b4606d30, type: 3}

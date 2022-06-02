@@ -51,6 +51,7 @@ public class DragDropSystem : FSystem
 	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer))); // Les containers scripts
 	private Family dropZone_f = FamilyManager.getFamily(new AllOfComponents(typeof(DropZoneComponent))); // Les drops zones
 	private Family containerActionBloc_f = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(ContainerActionBloc))); // Les blocs qui ne sont pas de base
+	private Family endzone_f = FamilyManager.getFamily(new AllOfComponents(typeof(EndBlockScriptComponent))); // Les end zones
 
 	// Les variables
 	private GameObject itemDragged; // L'item (ici block d'action) en cours de drag
@@ -84,6 +85,7 @@ public class DragDropSystem : FSystem
 	// On active toutes les drop zone
 	private void dropZoneActivated(bool value)
 	{
+		Debug.Log("Taille famille drop zone : " + dropZone_f.Count);
 		foreach (GameObject Dp in dropZone_f)
 		{
 			Dp.SetActive(value);
@@ -95,6 +97,9 @@ public class DragDropSystem : FSystem
 	// Crée un game object action = à l'action selectionné dans librairie pour ensuite pouvoir le manipuler (durant le drag et le drop)
 	public void beginDragElementFromLibrary(BaseEventData element)
     {
+		// On active les drops zone 
+		dropZoneActivated(true);
+
 		// On verifie si c'est un up droit ou gauche
 		if ((element as PointerEventData).button == PointerEventData.InputButton.Left)
 		{
@@ -102,8 +107,6 @@ public class DragDropSystem : FSystem
 			creationActionBlock(element.selectedObject);
 		}
 
-		// On active les drops zone 
-		dropZoneActivated(true);
 	}
 
 
@@ -152,6 +155,17 @@ public class DragDropSystem : FSystem
             {
 				// On active les drops zone 
 				dropZoneActivated(true);
+
+				// On active les zones possible pour l'élément drag
+				// Si l'élément est un block d'action
+				if (itemDragged.GetComponent<BaseElement>())
+                {
+					dropZoneActivateView(true, false);
+				}
+                else{
+					dropZoneActivateView(true, true);
+				}
+
 				// On l'associe (temporairement) au Canvas Main
 				GameObjectManager.setGameObjectParent(itemDragged, mainCanvas, true);
 				itemDragged.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
@@ -185,16 +199,19 @@ public class DragDropSystem : FSystem
 	// Détruite l'objet si pas dans un container, sinon rien
 	public void endDragElement()
 	{
-		Debug.Log("End drag");
 		if (itemDragged != null)
 		{
+			dropZoneActivateView(false);
+
 			// On commence par regarder si il y a un container pointé et sinon on supprime l'objet drag
 			if (viewportContainerPointed_f.Count <= 0)
 			{
+				/*
 				// remove item and all its children
 				for (int i = 0; i < itemDragged.transform.childCount; i++)
 					UnityEngine.Object.Destroy(itemDragged.transform.GetChild(i).gameObject);
 				itemDragged.transform.DetachChildren();
+				*/
 				// Suppresion des famille de FYFY
 				GameObjectManager.unbind(itemDragged);
 				// Déstruction du block
@@ -224,6 +241,8 @@ public class DragDropSystem : FSystem
 	// Place l'element dans la place ciblé (position de l'element associer au radar) du container editable
 	public void dropElementInContainer(GameObject redBar)
 	{
+		dropZoneActivateView(false);
+
 		// Variable pour valider si c'est le bon block dans le bon type de container
 		bool goodTypeBlock = false;
 		// On note le container utilisé
@@ -379,10 +398,21 @@ public class DragDropSystem : FSystem
 		//if (itemDragged.GetComponent<BasicAction>())
 		foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
 			child.raycastTarget = false;
+
+		// On active les zones possible pour l'élément drag
+		// Si l'élément est un block d'action
+		if (itemDragged.GetComponent<BaseElement>())
+		{
+			dropZoneActivateView(true, false);
+		}
+		else
+		{
+			dropZoneActivateView(true, true);
+		}
 	}
 
 
-	// Supprime l'elementd
+	// Supprime l'element
 	public void deleteElement(GameObject element)
 	{
 		// On note l'action pointé
@@ -465,5 +495,75 @@ public class DragDropSystem : FSystem
 		GameObject child = ele.transform.parent.GetChild(index + 1).gameObject;
 		child.SetActive(true);
 	}
+
+	// Active la visualisation des zones ou l'on peux pauser l'élément que l'on drag and drop
+	// Grise les autres zones
+	// Paramétre : 
+	//   - calue : Activation de la zone ou non
+	//   - condition : zone de dépôt pour els conditions à activé ou non
+	private void dropZoneActivateView(bool value, bool condition = false)
+    {
+		// Si la value est vrai on active la visualisation des zones voulue
+        if (value)
+        {
+			// On active la visualisation des drop zone de condition disponible et on grise les drop zone de création de sequence
+            if (condition)
+            {
+				foreach (GameObject endZone in endzone_f)
+				{
+					if (endZone.transform.Find("DropZone").GetComponent<DropZoneComponent>().target.GetComponent<ContainerActionBloc>().containerCondition)
+                    {
+						//endZone.transform.Find("ViewContainerTrue").gameObject.SetActive(true);
+						endZone.transform.GetComponent<Outline>().enabled = true;
+					}
+                    else
+                    {
+						//endZone.transform.Find("ViewContainerFalse").gameObject.SetActive(true);
+						endZone.transform.GetComponent<Image>().color = new Color32(148, 148, 148, 255);
+						endZone.transform.Find("DropZone").gameObject.SetActive(false);
+					}
+				}
+            }// On fait l'inverse
+            else
+            {
+				foreach (GameObject endZone in endzone_f)
+				{
+					if (endZone.transform.Find("DropZone").GetComponent<DropZoneComponent>().target.GetComponent<ContainerActionBloc>().containerCondition)
+					{
+						//endZone.transform.Find("ViewContainerFalse").gameObject.SetActive(true);
+						//endZone.transform.Find("DropZone").gameObject.SetActive(false);
+						endZone.transform.GetComponent<Image>().color = new Color32(148, 148, 148, 255);
+						endZone.transform.Find("DropZone").gameObject.SetActive(false);
+					}
+					else
+					{
+						//endZone.transform.Find("ViewContainerTrue").gameObject.SetActive(true);
+						endZone.transform.GetComponent<Outline>().enabled = true;
+					}
+				}
+			}
+        }// On désactive toutes les visualisations
+        else
+        {
+			foreach (GameObject endZone in endzone_f)
+			{
+				//endZone.transform.Find("ViewContainerTrue").gameObject.SetActive(false);
+				//endZone.transform.Find("ViewContainerFalse").gameObject.SetActive(false);
+				endZone.transform.GetComponent<Image>().color = endZone.GetComponent<EndBlockScriptComponent>().baseColor;
+				endZone.transform.GetComponent<Outline>().enabled = false;
+			}
+		}
+    }
+
+	// En fonction de la valeur, change l'état du oultine de l'element reçue et desactive la red barre de l'élément
+	// Si value = false; desactive le outline de l'élément
+	// Si value = true; active le outline de l'élément
+	public void activeOutlineConditionContainer(GameObject element, bool value)
+    {
+		// Active ou desactive la outline de l'élément
+		element.GetComponent<Outline>().enabled = value;
+		// Desactive la red barre de la drop box associé
+		element.transform.Find("DropZone").Find("PositionBar").gameObject.SetActive(false);
+    }
 
 }

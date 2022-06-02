@@ -307,6 +307,7 @@ GameObject:
   - component: {fileID: 8435790970670081204}
   - component: {fileID: 2308717272534958701}
   - component: {fileID: 3895558349511978887}
+  - component: {fileID: 7282561185082647422}
   m_Layer: 5
   m_Name: NotOperatorElement
   m_TagString: Untagged
@@ -629,6 +630,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockSpecial: 1
   containerCondition: 1
+--- !u!114 &7282561185082647422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3821364993045877023}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 1, g: 0.02745098, b: 0, a: 1}
+  m_EffectDistance: {x: 3, y: -3}
+  m_UseGraphicAlpha: 1
 --- !u!1 &8788277647825638576
 GameObject:
   m_ObjectHideFlags: 0
@@ -699,6 +715,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 1
           m_CallState: 2
+        - m_Target: {fileID: 3221113927477367202}
+          m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
+          m_MethodName: activeOutlineConditionContainer
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
   - eventID: 1
     callback:
       m_PersistentCalls:
@@ -706,6 +734,18 @@ MonoBehaviour:
         - m_Target: {fileID: 3383422458069187813}
           m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_MethodName: SetActive
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 3221113927477367202}
+          m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
+          m_MethodName: activeOutlineConditionContainer
           m_Mode: 6
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1032,6 +1072,11 @@ PrefabInstance:
       propertyPath: rootElement
       value: 
       objectReference: {fileID: 3821364993045877023}
+    - target: {fileID: 7770698556164227995, guid: 08dcf38c6bcc87b409cbe319b4606d30,
+        type: 3}
+      propertyPath: baseColor.rgba
+      value: 11993004
+      objectReference: {fileID: 0}
     - target: {fileID: 7982554293768696349, guid: 08dcf38c6bcc87b409cbe319b4606d30,
         type: 3}
       propertyPath: m_IsActive
