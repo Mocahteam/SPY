@@ -12,10 +12,10 @@ public class UISystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject menuEchap;
 	public UnityEngine.GameObject endPanel;
 	public UnityEngine.GameObject dialogPanel;
+	public UnityEngine.GameObject canvas;
 	public UnityEngine.GameObject editableScriptContainer;
 	public UnityEngine.GameObject libraryPanel;
 	public UnityEngine.GameObject EditableContainer;
-	public UnityEngine.GameObject EditableCanvas;
 	public UnityEngine.GameObject prefabViewportScriptContainer;
 	private void Start()
 	{
@@ -29,10 +29,10 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "menuEchap", menuEchap);
 		MainLoop.initAppropriateSystemField (system, "endPanel", endPanel);
 		MainLoop.initAppropriateSystemField (system, "dialogPanel", dialogPanel);
+		MainLoop.initAppropriateSystemField (system, "canvas", canvas);
 		MainLoop.initAppropriateSystemField (system, "editableScriptContainer", editableScriptContainer);
 		MainLoop.initAppropriateSystemField (system, "libraryPanel", libraryPanel);
 		MainLoop.initAppropriateSystemField (system, "EditableContainer", EditableContainer);
-		MainLoop.initAppropriateSystemField (system, "EditableCanvas", EditableCanvas);
 		MainLoop.initAppropriateSystemField (system, "prefabViewportScriptContainer", prefabViewportScriptContainer);
 	}
 

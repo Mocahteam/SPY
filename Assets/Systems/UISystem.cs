@@ -47,10 +47,10 @@ public class UISystem : FSystem {
 	public GameObject menuEchap;
 	public GameObject endPanel;
 	public GameObject dialogPanel;
+	public GameObject canvas;
 	public GameObject editableScriptContainer;
 	public GameObject libraryPanel;
 	public GameObject EditableContainer;
-	public GameObject EditableCanvas;
 	public GameObject prefabViewportScriptContainer;
 	private string nameContainerSelected; // Nom du container selectionné
 	private GameObject containerSelected; // Le container selectionné
@@ -239,7 +239,6 @@ public class UISystem : FSystem {
 			if (v != Vector3.zero)
 			{ // if not visible in UI
 				ScrollRect containerScrollRect = go.GetComponentInParent<ScrollRect>();
-				Debug.Log(go.name);
 				containerScrollRect.content.localPosition += GetSnapToPositionToBringChildIntoView(containerScrollRect, go.GetComponent<RectTransform>());
 			}
 		}
@@ -683,26 +682,27 @@ public class UISystem : FSystem {
 			gameData.totalExecute++;
 			//hide library panels
 			GameObjectManager.setGameObjectState(libraryPanel, false);
+			GameObjectManager.setGameObjectState(canvas.transform.Find("Scrollbar Vertical").gameObject, false);
 			//editable viewport and scrollbar
-			//GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("ViewportScript").gameObject, false);
-			GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("Scrollbar Vertical").gameObject, false);
-			//clean container for each robot
+			GameObjectManager.setGameObjectState(EditableContainer.transform.Find("EditableContainers").gameObject, false);
+			GameObjectManager.setGameObjectState(EditableContainer.transform.Find("Scrollbar Vertical").gameObject, false);
+			//clean container for each robot and copy the new sequence
 			foreach (GameObject robot in playerGO) {
+				// Clean robot container
 				foreach (Transform child in robot.GetComponent<ScriptRef>().scriptContainer.transform) {
 					GameObjectManager.unbind(child.gameObject);
 					GameObject.Destroy(child.gameObject);
 				}
-				//}
 
 				//copy editable script
 				GameObject containerAssocied = null;
+				// On parcourt les script container pour identifer celui associé au robot 
 				foreach (GameObject container in viewportContainer_f)
 				{
 					// Si le container comporte le même nom que le robot
 					if (container.GetComponentInChildren<UITypeContainer>().associedAgentName == robot.GetComponent<AgentEdit>().agentName)
                     {
-						Debug.Log("Container trouvé pour copy");
-						lastEditedScript = GameObject.Instantiate(container);
+						// On recupére le container qui contiend le script à associer au robot
 						containerAssocied = container.transform.Find("ScriptContainer").gameObject;
 
 					}
@@ -710,17 +710,23 @@ public class UISystem : FSystem {
 				// Si on a bien trouvé un container associer
 				if(containerAssocied != null)
                 {
-					// Copie du container pour l'associer au robot
+					// On va copier la sequence créer par le joueur dans le container de la fenêtre du robot
+					// On commence par créer une copie du container ou se trouve la sequence
 					GameObject containerCopy = CopyActionsFrom(containerAssocied, false, robot);
+					// On recupere le container de la fenêtre du robot qui contiendra la sequence à executer
 					GameObject targetContainer = robot.GetComponent<ScriptRef>().scriptContainer;
-					robot.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true; // On fait apparaitre le panneau du robot
+					// On fait apparaitre le panneau du robot
+					robot.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
 					// On copie les actions dans 
 					for (int i = 0; i < containerCopy.transform.childCount; i++)
 					{
-						// ICI CREER UNE FONCTION QUI COPIERA LES BLOCK D4ACTION (ENLEVER LES ZONE DE FIN DE CONTAINER MEME POUR LES CONTAINER FOR ET AUTRE)
 						// Les blocs du script container à ne pas faire apparaitre dans la fiche de l'agent
-						if (!containerCopy.transform.GetChild(i).name.Contains("ContainerName") && !containerCopy.transform.GetChild(i).name.Contains("EndZoneActionBloc") && !containerCopy.transform.GetChild(i).name.Contains("AgentName"))
+						// La name text, le container name et le block end zone du container
+						if (!containerCopy.transform.GetChild(i).name.Contains("ContainerName") && !containerCopy.transform.GetChild(i).name.Contains("EndZoneActionBloc") && !containerCopy.transform.GetChild(i).name.Contains("NameText"))
 						{
+							// Si c'est une boucle for
+							// Si c'est un if
+							// Sinon
 							Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
 							child.SetParent(targetContainer.transform);
 							GameObjectManager.bind(child.gameObject);
@@ -728,8 +734,10 @@ public class UISystem : FSystem {
 						}
 
 					}
+					// Va linker les blocs ensemble
+					// C'est à dire qu'il va définir pour chaque bloc, qu'elle est le suivant à exécuté
 					LevelGenerator.computeNext(targetContainer);
-
+					// On détruit la copy de la sequence d'action
 					UnityEngine.Object.Destroy(containerCopy);
 				}
 
@@ -746,10 +754,18 @@ public class UISystem : FSystem {
 		}
 	}
 
-
-	// On copie le container qui contient la sequence d'actions pour modifier les blocks spéciaux
-    public GameObject CopyActionsFrom(GameObject container, bool isInteractable, GameObject agent){
+	/**
+	 * On copie le container qui contient la sequence d'actions pour modifier les parametre des block speciaux
+	 * Param:
+	 *	Container (GameObject) : Le container qui contient le script à copier
+	 *	isInteractable (bool) : Si le script copié peut contenir des éléments interactable (sinon l'interaction sera desactivé)
+	 *	agent (GameObject) : L'agent sur qui l'on va copier la sequence (pour définir la couleur)
+	 * 
+	 **/
+	public GameObject CopyActionsFrom(GameObject container, bool isInteractable, GameObject agent){
+		// On va travailler avec une copy du container
 		GameObject copyGO = GameObject.Instantiate(container); 
+		//Pour tous les élément interactible, on va les désactiver/activer selon le paramétrage
 		foreach(TMP_Dropdown drop in copyGO.GetComponentsInChildren<TMP_Dropdown>()){
 			drop.interactable = isInteractable;
 		}
@@ -762,8 +778,7 @@ public class UISystem : FSystem {
 			// Si activer, on note combien a quel boucle on est sur combien de boucle à faire
 			if(!isInteractable){
 				forAct.nbFor = int.Parse(forAct.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
-				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
-				//Debug.Log("Nb for : " + forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text);			
+				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();		
 			}// Sinon on met tous à 0
 			else
 			{
@@ -792,10 +807,13 @@ public class UISystem : FSystem {
 		}
 		// Pour chaque block if
 		foreach(IfAction IfAct in copyGO.GetComponentsInChildren<IfAction>()){
-			IfAct.ifEntityType = IfAct.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value; // Elément actuelle : un mur, un champ de force, un ennemi, un allié, un terminal, une zone rouge, une pièce
-			IfAct.ifDirection = IfAct.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value; // Element actuelle : devant, derrière, à gauche, à droite
-			IfAct.range = int.Parse(IfAct.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text); // nombre de case ou ce situe l'élément sur lequel se porte la condition
-			IfAct.ifNot = (IfAct.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1); // Element actuelle : est, n'est pas
+			//On recoit le bloc IF
+			// OU REGARDE T ON SI LA CONDITION EST BONNE????
+			Debug.Log("Element IfAct : " + IfAct.name);
+			//IfAct.ifEntityType = IfAct.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value; // Elément actuelle : un mur, un champ de force, un ennemi, un allié, un terminal, une zone rouge, une pièce
+			//IfAct.ifDirection = IfAct.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value; // Element actuelle : devant, derrière, à gauche, à droite
+			//IfAct.range = int.Parse(IfAct.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text); // nombre de case ou ce situe l'élément sur lequel se porte la condition
+			//IfAct.ifNot = (IfAct.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1); // Element actuelle : est, n'est pas
 			foreach(BaseElement act in IfAct.GetComponentsInChildren<BaseElement>()){
 				// Test pour vérifier qu'on ne prend pas l'objet lui même comme premier élément de la séquence de la condition
 				if(!act.Equals(IfAct)){
@@ -812,6 +830,7 @@ public class UISystem : FSystem {
 			pointerSensitive.enabled = isInteractable;
 		}
 
+		// On défini la couleur de l'action selon l'agent à qui appartiendra la script
 		Color actionColor;
 		switch(agent.tag){
 			case "Player":
@@ -832,7 +851,20 @@ public class UISystem : FSystem {
 		return copyGO;
 	}
 
-	
+	/**
+	 * Copy des contenu des block speciaux afin de les mettre en forme correctement
+	 * (On vire les end zone, on met les conditions sous forme d'un seul bloque)
+	 * Param:
+	 *	container (GameObject) : Container qui contient ce qu'il faut copier
+	 *	targetContainer (GameObject) : Container on l'on va copier les éléments
+	 * 
+	 **/
+	private GameObject CopySpecialBlock(GameObject container, GameObject targetContainer)
+    {
+		return targetContainer;
+
+	}
+
 	// Ajout un container à la scéne
 	public void addContainer()
     {

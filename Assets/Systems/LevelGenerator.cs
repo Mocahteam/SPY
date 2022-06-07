@@ -38,7 +38,6 @@ public class LevelGenerator : FSystem {
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 			{
 				MainLoop.instance.StartCoroutine(GetLevelWebRequest(doc));
-				Debug.Log(gameData.levelToLoad.Item1 + " " + gameData.levelToLoad.Item2);
 				doc.LoadXml(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
 				XmlToLevel(doc);
 			}
@@ -129,7 +128,7 @@ public class LevelGenerator : FSystem {
 			GameObjectManager.bind(scriptContainer);
 			//scriptContainer.transform.SetParent(editableScriptContainer.transform, false);
 			//scriptContainer.transform.SetSiblingIndex(scriptContainer.transform.GetSiblingIndex() - 3);
-			scriptContainer.transform.SetParent(editableScriptContainer.transform.Find("test"), false);
+			scriptContainer.transform.SetParent(editableScriptContainer.transform.Find("EditableContainers"), false);
 			UISystem.instance.editableScriptContainer = scriptContainer;
 			DragDropSystem.instance.lastEditableContainer = scriptContainer.transform.Find("ScriptContainer").gameObject;
 
@@ -148,8 +147,8 @@ public class LevelGenerator : FSystem {
 			MainLoop.instance.StartCoroutine(UISystem.instance.updateVerticalName(scriptContainer.GetComponentInChildren<UITypeContainer>().associedAgentName));
 
 			// On associe le container au scroll bar
-			UISystem.instance.EditableCanvas.GetComponent<ScrollRect>().content = scriptContainer.transform.Find("ScriptContainer").GetComponent<RectTransform>();
-			UISystem.instance.EditableCanvas.GetComponent<ScrollRect>().viewport = scriptContainer.GetComponent<RectTransform>();
+			UISystem.instance.EditableContainer.GetComponent<ScrollRect>().content = scriptContainer.transform.Find("ScriptContainer").GetComponent<RectTransform>();
+			UISystem.instance.EditableContainer.GetComponent<ScrollRect>().viewport = scriptContainer.GetComponent<RectTransform>();
 
 			// Chargement de l'icône de l'agent sur la localisation
 			containerParent.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;

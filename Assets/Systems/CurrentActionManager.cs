@@ -133,6 +133,7 @@ public class CurrentActionManager : FSystem
 	{
 		bool ifok = false;
 		// get absolute target position depending on player orientation and relative direction to observe
+		// On commence par identifier quelle case doit être regardé pour voir si la condition est respecté
 		Vector2 vec = new Vector2();
 		switch (getDirection(scripted.GetComponent<Direction>().direction, ifAction.ifDirection))
 		{

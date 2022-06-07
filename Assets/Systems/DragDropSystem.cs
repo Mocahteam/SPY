@@ -85,7 +85,6 @@ public class DragDropSystem : FSystem
 	// On active toutes les drop zone
 	private void dropZoneActivated(bool value)
 	{
-		Debug.Log("Taille famille drop zone : " + dropZone_f.Count);
 		foreach (GameObject Dp in dropZone_f)
 		{
 			Dp.SetActive(value);
@@ -335,11 +334,19 @@ public class DragDropSystem : FSystem
 			*/
 
 			// Si l'élément est laché dans un container condition
-			// Il remplace le drop zone sur lequel il est drop
+			// Il remplace l'élémentsur lequel il est drop
 			if (lastEditableContainer.GetComponent<ContainerActionBloc>().containerCondition)
 			{
-				// On desactive la zone
-				redBar.transform.parent.gameObject.SetActive(false);
+				// Si c'est une end zone, on la désactive
+				if (redBar.transform.parent.gameObject.name == "EndZoneActionBloc")
+				{
+					// Sinon on suprime l'élément qu'il remplace
+					redBar.transform.parent.gameObject.SetActive(false);
+				}
+				else// Sinon on suprime l'élément qu'il remplace
+				{
+					GameObjectManager.addComponent<ResetBlocLimit>(redBar.GetComponent<DropZoneComponent>().target);
+				}
 			}
 		} // Sinon si pas le bon container on alerte l'utilisateur de son erreur
         else
@@ -563,7 +570,8 @@ public class DragDropSystem : FSystem
 		// Active ou desactive la outline de l'élément
 		element.GetComponent<Outline>().enabled = value;
 		// Desactive la red barre de la drop box associé
-		element.transform.Find("DropZone").Find("PositionBar").gameObject.SetActive(false);
-    }
+		element.GetComponent<Highlightable>().dropZoneChild.gameObject.transform.Find("PositionBar").gameObject.SetActive(false);
+
+	}
 
 }

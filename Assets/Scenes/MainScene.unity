@@ -204,7 +204,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 130, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &18844533
 MonoBehaviour:
@@ -1820,6 +1820,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0.0627451, g: 0.75686276, b: 0.14901961, a: 1}
   highlightedColor: {r: 0.4221253, g: 0.9622642, b: 0.4892612, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &134265735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2345,6 +2346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0.4862745, g: 0.5568628, b: 1, a: 1}
   highlightedColor: {r: 0.5934051, g: 0.647977, b: 0.990566, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &148128131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3436,6 +3438,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0.0627451, g: 0.75686276, b: 0.14901961, a: 1}
   highlightedColor: {r: 0.4221253, g: 0.9622642, b: 0.4892612, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &291200067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4042,10 +4045,10 @@ MonoBehaviour:
   menuEchap: {fileID: 989566791}
   endPanel: {fileID: 1306532945}
   dialogPanel: {fileID: 2103625724}
+  canvas: {fileID: 1410401867}
   editableScriptContainer: {fileID: 0}
   libraryPanel: {fileID: 1493523084}
   EditableContainer: {fileID: 451020363}
-  EditableCanvas: {fileID: 451020363}
   prefabViewportScriptContainer: {fileID: 2876508349418875100, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
     type: 3}
 --- !u!114 &361349222
@@ -4790,6 +4793,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0.4862745, g: 0.5568628, b: 1, a: 1}
   highlightedColor: {r: 0.5934051, g: 0.647977, b: 0.990566, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &412377541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5721,6 +5725,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0.4862745, g: 0.5568628, b: 1, a: 1}
   highlightedColor: {r: 0.5934051, g: 0.647977, b: 0.990566, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &490968337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8945,6 +8950,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 1, g: 0.4117647, b: 0, a: 1}
   highlightedColor: {r: 1, g: 0.6117647, b: 0, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &877772709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9908,6 +9914,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0.0627451, g: 0.75686276, b: 0.14901961, a: 1}
   highlightedColor: {r: 0.4221253, g: 0.9622642, b: 0.4892612, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &973265658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10000,7 +10007,7 @@ GameObject:
   - component: {fileID: 976971669}
   - component: {fileID: 976971668}
   m_Layer: 5
-  m_Name: test
+  m_Name: EditableContainers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10619,7 +10626,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 130, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1031550377
 MonoBehaviour:
@@ -11448,6 +11455,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0.4862745, g: 0.5568628, b: 1, a: 1}
   highlightedColor: {r: 0.5934051, g: 0.647977, b: 0.990566, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &1115831558
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12394,6 +12402,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 1, g: 0.4117647, b: 0, a: 1}
   highlightedColor: {r: 1, g: 0.6117647, b: 0, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &1250803501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13317,7 +13326,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 20, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 25, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1339828890
@@ -14041,7 +14050,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 130, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1483460591
 MonoBehaviour:
@@ -16434,6 +16443,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0.4862745, g: 0.5568628, b: 1, a: 1}
   highlightedColor: {r: 0.5934051, g: 0.647977, b: 0.990566, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &1703199455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16910,6 +16920,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 1, g: 0.4117647, b: 0, a: 1}
   highlightedColor: {r: 1, g: 0.6117647, b: 0, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &1743652249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18480,6 +18491,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0.4862745, g: 0.5568628, b: 1, a: 1}
   highlightedColor: {r: 0.5934051, g: 0.647977, b: 0.990566, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &1869922869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19024,6 +19036,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 1, g: 0.4117647, b: 0, a: 1}
   highlightedColor: {r: 1, g: 0.6117647, b: 0, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &1927751267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19355,6 +19368,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0.4862745, g: 0.5568628, b: 1, a: 1}
   highlightedColor: {r: 0.5934051, g: 0.647977, b: 0.990566, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &1944301449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19879,6 +19893,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 1, g: 0.4117647, b: 0, a: 1}
   highlightedColor: {r: 1, g: 0.6117647, b: 0, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &1993543143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21503,6 +21518,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0.4862745, g: 0.5568628, b: 1, a: 1}
   highlightedColor: {r: 0.5934051, g: 0.647977, b: 0.990566, a: 1}
+  dropZoneChild: {fileID: 0}
 --- !u!114 &2103959526
 MonoBehaviour:
   m_ObjectHideFlags: 0
