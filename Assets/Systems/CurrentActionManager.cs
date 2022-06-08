@@ -91,6 +91,7 @@ public class CurrentActionManager : FSystem
 	}
 
 	// get first action inside "action", it could be control structure (if, for...) => recursive call
+	// Si mon script commence par un if
 	public GameObject getFirstActionOf(GameObject action, GameObject agent)
 	{
 		if (action == null)
@@ -131,6 +132,7 @@ public class CurrentActionManager : FSystem
 
 	public bool ifValid(IfAction ifAction, GameObject scripted)
 	{
+		/*
 		bool ifok = false;
 		// get absolute target position depending on player orientation and relative direction to observe
 		// On commence par identifier quelle case doit être regardé pour voir si la condition est respecté
@@ -198,6 +200,8 @@ public class CurrentActionManager : FSystem
 				break;
 		}
 		return ifok;
+		*/
+		return true;
 	}
 
 	//0 Forward, 1 Backward, 2 Left, 3 Right

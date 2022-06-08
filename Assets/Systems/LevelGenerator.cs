@@ -514,18 +514,28 @@ public class LevelGenerator : FSystem {
 	// link actions together => define next property
 	// Associe à chaque bloc le bloc qui sera executé aprés
 	public static void computeNext(GameObject container){
-		for(int i = 0 ; i < container.transform.childCount ; i++){
+		for (int i = 0 ; i < container.transform.childCount ; i++){
 			Transform child = container.transform.GetChild(i);
 			// Si l'action est une action basique et n'est pas la dernière
-			if(i < container.transform.childCount-1 && child.GetComponent<BaseElement>()){
-                // Si on est dans un container for, il faut que l'avant dernier élément boucle
-                if (container.transform.parent.GetComponent<ForAction>() && i == container.transform.childCount - 2)
-                {
+			if (i < container.transform.childCount && child.GetComponent<BaseElement>()){
+				// Si le bloc appartient à un for, il faut que le dernier élément est comme next le block for
+				if (container.transform.parent.GetComponent<ForAction>() && i == container.transform.childCount - 1)
+				{
 					child.GetComponent<BaseElement>().next = container.transform.parent.gameObject;
 					i = container.transform.childCount;
+				}// Si le bloc appartient à un if et qu'il est le dernier block de la partie action
+				else if (container.transform.parent.GetComponent<IfAction>() && i == container.transform.childCount - 1) {
+					// On regarde si il reste des éléments dans le container parent
+					// Si oui on met l'élément suivant en next
+					// Sinon on ne fait rien et fin de la sequence
+					if(container.transform.parent.parent.childCount - 1 > container.transform.parent.GetSiblingIndex())
+                    {
+						child.GetComponent<BaseElement>().next = container.transform.parent.parent.GetChild(container.transform.parent.GetSiblingIndex() + 1).gameObject;
+
+					}
 				}// Sinon l'associer au block suivant
-                else
-                {
+				else if (i != container.transform.childCount - 1)
+				{
 					child.GetComponent<BaseElement>().next = container.transform.GetChild(i + 1).gameObject;
 				}
 			}// Sinon si c'est la derniére et une action basique

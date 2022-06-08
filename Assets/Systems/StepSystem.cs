@@ -49,7 +49,6 @@ public class StepSystem : FSystem {
 
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
-
 		//Organize each steps
 		if(currentActions.Count > 0 && newEnd_f.Count == 0){
             

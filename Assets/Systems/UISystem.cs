@@ -724,10 +724,16 @@ public class UISystem : FSystem {
 						// La name text, le container name et le block end zone du container
 						if (!containerCopy.transform.GetChild(i).name.Contains("ContainerName") && !containerCopy.transform.GetChild(i).name.Contains("EndZoneActionBloc") && !containerCopy.transform.GetChild(i).name.Contains("NameText"))
 						{
-							// Si c'est une boucle for
-							// Si c'est un if
-							// Sinon
-							Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
+							Transform child = null;
+							// Si c'est un block special (for, if)
+							if (containerCopy.transform.GetChild(i).GetComponent<ForAction>() || containerCopy.transform.GetChild(i).GetComponent<IfAction>())
+							{
+								child = CopySpecialBlock(containerCopy.transform.GetChild(i));
+							}
+                            else
+                            {
+								child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
+							}
 							child.SetParent(targetContainer.transform);
 							GameObjectManager.bind(child.gameObject);
 							GameObjectManager.refresh(targetContainer);
@@ -777,7 +783,7 @@ public class UISystem : FSystem {
 		foreach(ForAction forAct in copyGO.GetComponentsInChildren<ForAction>()){
 			// Si activer, on note combien a quel boucle on est sur combien de boucle à faire
 			if(!isInteractable){
-				forAct.nbFor = int.Parse(forAct.transform.GetChild(0).transform.GetChild(1).GetComponent<TMP_InputField>().text);
+				forAct.nbFor = int.Parse(forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text);
 				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();		
 			}// Sinon on met tous à 0
 			else
@@ -798,29 +804,17 @@ public class UISystem : FSystem {
 		}
 		// Pour chaque block de boucle infini
 		foreach (ForeverAction loopAct in copyGO.GetComponentsInChildren<ForeverAction>()){
-			foreach(BaseElement act in loopAct.GetComponentsInChildren<BaseElement>()){
-				if(!act.Equals(loopAct)){
-					loopAct.firstChild = act.gameObject;
-					break;
-				}
-			}
+			loopAct.firstChild = loopAct.gameObject.transform.Find("Container").GetChild(0).gameObject;
 		}
 		// Pour chaque block if
 		foreach(IfAction IfAct in copyGO.GetComponentsInChildren<IfAction>()){
 			//On recoit le bloc IF
-			// OU REGARDE T ON SI LA CONDITION EST BONNE????
-			Debug.Log("Element IfAct : " + IfAct.name);
 			//IfAct.ifEntityType = IfAct.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value; // Elément actuelle : un mur, un champ de force, un ennemi, un allié, un terminal, une zone rouge, une pièce
 			//IfAct.ifDirection = IfAct.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value; // Element actuelle : devant, derrière, à gauche, à droite
 			//IfAct.range = int.Parse(IfAct.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text); // nombre de case ou ce situe l'élément sur lequel se porte la condition
 			//IfAct.ifNot = (IfAct.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1); // Element actuelle : est, n'est pas
-			foreach(BaseElement act in IfAct.GetComponentsInChildren<BaseElement>()){
-				// Test pour vérifier qu'on ne prend pas l'objet lui même comme premier élément de la séquence de la condition
-				if(!act.Equals(IfAct)){
-					IfAct.firstChild = act.gameObject;
-					break;
-				}
-			}
+
+			IfAct.firstChild = IfAct.gameObject.transform.Find("Container").GetChild(0).gameObject;
 		}
 
 		foreach(UITypeContainer typeContainer in copyGO.GetComponentsInChildren<UITypeContainer>()){
@@ -852,17 +846,66 @@ public class UISystem : FSystem {
 	}
 
 	/**
-	 * Copy des contenu des block speciaux afin de les mettre en forme correctement
+	 * Copy des contenus des block speciaux afin de les mettrent en forme correctement
 	 * (On vire les end zone, on met les conditions sous forme d'un seul bloque)
 	 * Param:
-	 *	container (GameObject) : Container qui contient ce qu'il faut copier
-	 *	targetContainer (GameObject) : Container on l'on va copier les éléments
+	 *	specialBlock (GameObject) : Container qui contient ce qu'il faut copier
+	 * Out:
+	 *	newBlockForm (Transform) : Container épurer des éléments indésirables
 	 * 
 	 **/
-	private GameObject CopySpecialBlock(GameObject container, GameObject targetContainer)
+	private Transform CopySpecialBlock(Transform specialBlock)
     {
-		return targetContainer;
+		Transform newBlockForm = null;
+        //Si c'est un block for on enléve juste la end zone
+        if (specialBlock.GetComponent<ForAction>())
+        {
+			GameObject endZone = specialBlock.transform.Find("Container").GetChild(specialBlock.transform.Find("Container").childCount - 1).gameObject;
+			endZone.transform.SetParent(null);
+			GameObject.Destroy(endZone);
 
+		}// Si c'est une block if on garde le container des actions (sans la end zone) mais le condition est traduite dans IfAction
+		else if (specialBlock.GetComponent<IfAction>())
+        {
+			GameObject supChild = specialBlock.transform.Find("ConditionContainer").gameObject;
+			supChild.transform.SetParent(null);
+			GameObject.Destroy(supChild);
+			supChild = specialBlock.transform.Find("Container").GetChild(specialBlock.transform.Find("Container").childCount - 1).gameObject;
+			supChild.transform.SetParent(null);
+			GameObject.Destroy(supChild);
+		}
+
+		// On parcourt les block qui compose le container afin de voir si il n'est pas composé de block spécial
+		foreach (Transform block in specialBlock.transform.Find("Container"))
+        {
+			// Si c'est le cas on fait une récursive
+			if(block.GetComponent<ForAction>() || block.GetComponent<IfAction>())
+            {
+				Transform newFormBlock = CopySpecialBlock(block);
+				newFormBlock.SetParent(block.parent);
+				int index = block.GetSiblingIndex();// On note l'index du block que l'on va remplacer
+				newFormBlock.SetSiblingIndex(index);
+				GameObjectManager.bind(newFormBlock.gameObject);
+				block.SetParent(null);
+				GameObject.Destroy(block.gameObject);
+
+				// Si c'est le premier block du container, alors il faut associer le nouveau block comme firstchild du block spécial sur lequel on travail
+				if(index == 0)
+                {
+                    if (specialBlock.GetComponent<ForAction>())
+                    {
+						specialBlock.GetComponent<ForAction>().firstChild = newFormBlock.gameObject;
+					}
+                    else if (specialBlock.GetComponent<IfAction>())
+                    {
+						specialBlock.GetComponent<IfAction>().firstChild = newFormBlock.gameObject;
+					}
+                }
+			}
+        }
+
+		newBlockForm = UnityEngine.GameObject.Instantiate(specialBlock.transform);
+		return newBlockForm;
 	}
 
 	// Ajout un container à la scéne
