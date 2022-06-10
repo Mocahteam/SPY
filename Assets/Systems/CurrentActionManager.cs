@@ -201,6 +201,11 @@ public class CurrentActionManager : FSystem
 		}
 		return ifok;
 		*/
+
+		bool ifok = false;
+
+
+
 		return true;
 	}
 

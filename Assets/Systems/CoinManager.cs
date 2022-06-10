@@ -34,7 +34,8 @@ public class CoinManager : FSystem {
 		}
     }
 
-	// See ExecuteButton, StopButton and ReloadState buttons in editor
+	// See ExecuteButton, StopButton and Re
+	// buttons in editor
 	public void detectCollision(bool on){
 		activeCoin = on;
 	}

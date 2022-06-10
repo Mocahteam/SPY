@@ -289,25 +289,21 @@ public class UISystem : FSystem {
  
     }
 
-	// Modifie l'interactibilité des différents boutons selon l'état envoyé (état du niveau fini ou stopé)
-	//
-	private void setExecutionState(bool finished){
-		foreach(GameObject reset_go in resetButton_f)
+	// On affiche ou non la partie librairie/programmation sequence en fonction de la valeur reçue
+	public void setExecutionState(bool value){
+		GameObjectManager.setGameObjectState(libraryPanel, !value);
+		GameObjectManager.setGameObjectState(EditableContainer.transform.Find("EditableContainers").gameObject, !value); 
+		GameObjectManager.setGameObjectState(canvas.transform.Find("Scrollbar Vertical").gameObject, !value);
+		GameObjectManager.setGameObjectState(canvas.transform.Find("AgentCanvas").gameObject, value);
+		if (value)
         {
-			reset_go.GetComponent<Button>().interactable = finished;
+			EditableContainer.transform.position = new Vector3(0.0f, EditableContainer.transform.position.y, 0.0f);
 		}
-		buttonPlay.GetComponent<Button>().interactable = !finished;
-		
-		GameObjectManager.setGameObjectState(buttonPlay, finished);
-		GameObjectManager.setGameObjectState(buttonContinue, !finished);
-		GameObjectManager.setGameObjectState(buttonStop, !finished);
-		GameObjectManager.setGameObjectState(buttonPause, !finished);
-		GameObjectManager.setGameObjectState(buttonStep, !finished);
-		GameObjectManager.setGameObjectState(buttonSpeed, !finished);
-
-		GameObjectManager.setGameObjectState(libraryPanel, finished);
-		//editable canvas
-		GameObjectManager.setGameObjectState(editableScriptContainer.transform.parent.parent.gameObject, finished);
+        else
+        {
+			float calculeReplacement = libraryPanel.GetComponent<RectTransform>().sizeDelta.x + canvas.transform.Find("Scrollbar Vertical").GetComponent<RectTransform>().sizeDelta.x;
+			EditableContainer.transform.position = new Vector3(calculeReplacement, EditableContainer.transform.position.y, 0.0f);
+		}
 	}
 	
 
@@ -350,28 +346,41 @@ public class UISystem : FSystem {
 	// ????
 	private void restoreLastEditedScript(){
 		List<Transform> childrenList = new List<Transform>();
-		foreach(Transform child in lastEditedScript.transform){
-			childrenList.Add(child);
+		if(lastEditedScript != null)
+        {
+			foreach (Transform child in lastEditedScript.transform)
+			{
+				childrenList.Add(child);
+			}
+			foreach (Transform child in childrenList)
+			{
+				child.SetParent(editableScriptContainer.transform);
+				GameObjectManager.bind(child.gameObject);
+			}
+			GameObjectManager.refresh(editableScriptContainer);
 		}
-		foreach(Transform child in childrenList){
-			child.SetParent(editableScriptContainer.transform);
-			GameObjectManager.bind(child.gameObject);
-		}
-		GameObjectManager.refresh(editableScriptContainer);
 	}
 
 
-	// ????
+	// Lors d'une fin d'exécution de séquence, gére les différents éléments à ré-afficher ou si il faut sauvegarder que la progression du joueur
 	private void levelFinished (GameObject go){
-		// On débloque et bloque les bons boutons d'éxecution
+		// On réaffiche les différent panel pour la création de séquence
 		setExecutionState(true);
 
+		// En cas de fin de niveau
 		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
+			// Affichage de l'historique de l'ensemble des actions exécutés
 			loadHistory();
+			// Sauvegarde de l'état d'avancement des niveaux pour le jour (niveau et étoile)
 			PlayerPrefs.SetInt(gameData.levelToLoad.Item1, gameData.levelToLoad.Item2+1);
 			PlayerPrefs.Save();
 		}
 		else if(go.GetComponent<NewEnd>().endType == NewEnd.Detected){
+			//copy player container into editable container
+			restoreLastEditedScript();
+		}
+		else if (go.GetComponent<NewEnd>().endType == NewEnd.BadCondition)
+		{
 			//copy player container into editable container
 			restoreLastEditedScript();
 		}
@@ -399,9 +408,10 @@ public class UISystem : FSystem {
     }
 
 
-	// Permet de switcher entre les deux affichage différents de fin de niveau
+	// Permet de switcher entre les affichages différents de fin de niveau
 	// Cas 1 : Un ennemie à repéré le robot
 	// Cas 2 : Le robot est sortie du labyrinth
+	// Cas 3 : Le joueur à mal remplit une condition
     private void onDisplayedEndPanel (GameObject endPanel)
     { 
         switch (endPanel.GetComponent<NewEnd>().endType)
@@ -409,11 +419,13 @@ public class UISystem : FSystem {
             case 1:
                 endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Vous avez été repéré !";
                 GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
-                endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
+				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
+				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
+				endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
                 endPanel.GetComponent<AudioSource>().loop = true;
                 endPanel.GetComponent<AudioSource>().Play();
                 break;
-            case 2:
+            case 2: 
 				int score = (10000 / (gameData.totalActionBloc + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
                 Transform verticalCanvas = endPanel.transform.Find("VerticalCanvas");
 				verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez gagné !\nScore: " + score;
@@ -427,9 +439,19 @@ public class UISystem : FSystem {
                 if (gameData.levelToLoad.Item2 >= gameData.levelList[gameData.levelToLoad.Item1].Count - 1)
                 {
                     GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
+					GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
 					GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
                 }
                 break;
+			case 3:
+				endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Une condition est mal remplie !";
+				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
+				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, false);
+				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
+				endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
+				endPanel.GetComponent<AudioSource>().loop = true;
+				endPanel.GetComponent<AudioSource>().Play();
+				break;
         }
     }
 
@@ -486,33 +508,6 @@ public class UISystem : FSystem {
 
 	//Recursive script destroyer
 	private void destroyScript(GameObject go,  bool refund = false){
-		// Gére la limitation des blocks
-		/*
-		if(go.GetComponent<UIActionType>() != null){
-			if(!refund)
-				gameData.totalActionBloc++;
-			else
-				GameObjectManager.addComponent<AddOne>(go.GetComponent<UIActionType>().linkedTo);
-		}
-		*/
-		/*
-		// Si l'objet passer est un script container
-		if(go.GetComponent<UITypeContainer>() != null){
-			foreach(Transform child in go.transform){
-				if(child.GetComponent<BaseElement>()){
-					destroyScript(child.gameObject, refund);
-				}
-			}
-		}
-
-		// Si ce n'est pas le block de fin
-		if(go.GetComponent<EndBlockScriptComponent>() == null)
-        {
-			go.transform.DetachChildren();
-			GameObjectManager.unbind(go);
-			UnityEngine.Object.Destroy(go);
-		}
-		*/
 		GameObjectManager.unbind(go);
 		UnityEngine.Object.Destroy(go);
 	}
@@ -808,6 +803,17 @@ public class UISystem : FSystem {
 		}
 		// Pour chaque block if
 		foreach(IfAction IfAct in copyGO.GetComponentsInChildren<IfAction>()){
+			//On vérifie que le bloc condition comporte un élément ou un opérator
+            if (!IfAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<EndBlockScriptComponent>())
+            {
+				// On traduit la condition en string
+				IfAct.condition = ConditionManagement.instance.convertionConditionSequence(IfAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject);
+			}
+            else
+            {
+				GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
+			}
+
 			//On recoit le bloc IF
 			//IfAct.ifEntityType = IfAct.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value; // Elément actuelle : un mur, un champ de force, un ennemi, un allié, un terminal, une zone rouge, une pièce
 			//IfAct.ifDirection = IfAct.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value; // Element actuelle : devant, derrière, à gauche, à droite
@@ -847,7 +853,7 @@ public class UISystem : FSystem {
 
 	/**
 	 * Copy des contenus des block speciaux afin de les mettrent en forme correctement
-	 * (On vire les end zone, on met les conditions sous forme d'un seul bloque)
+	 * (On vire les end-zones, on met les conditions sous forme d'un seul bloc)
 	 * Param:
 	 *	specialBlock (GameObject) : Container qui contient ce qu'il faut copier
 	 * Out:
@@ -867,10 +873,7 @@ public class UISystem : FSystem {
 		}// Si c'est une block if on garde le container des actions (sans la end zone) mais le condition est traduite dans IfAction
 		else if (specialBlock.GetComponent<IfAction>())
         {
-			GameObject supChild = specialBlock.transform.Find("ConditionContainer").gameObject;
-			supChild.transform.SetParent(null);
-			GameObject.Destroy(supChild);
-			supChild = specialBlock.transform.Find("Container").GetChild(specialBlock.transform.Find("Container").childCount - 1).gameObject;
+			GameObject supChild = specialBlock.transform.Find("Container").GetChild(specialBlock.transform.Find("Container").childCount - 1).gameObject;
 			supChild.transform.SetParent(null);
 			GameObject.Destroy(supChild);
 		}

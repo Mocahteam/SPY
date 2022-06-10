@@ -126,8 +126,6 @@ public class LevelGenerator : FSystem {
 			// On fait apparaitre un container associer à l'agent
 			GameObject scriptContainer = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ViewportScriptContainer") as GameObject);
 			GameObjectManager.bind(scriptContainer);
-			//scriptContainer.transform.SetParent(editableScriptContainer.transform, false);
-			//scriptContainer.transform.SetSiblingIndex(scriptContainer.transform.GetSiblingIndex() - 3);
 			scriptContainer.transform.SetParent(editableScriptContainer.transform.Find("EditableContainers"), false);
 			UISystem.instance.editableScriptContainer = scriptContainer;
 			DragDropSystem.instance.lastEditableContainer = scriptContainer.transform.Find("ScriptContainer").gameObject;
@@ -183,7 +181,6 @@ public class LevelGenerator : FSystem {
 				}
 				LayoutRebuilder.ForceRebuildLayoutImmediate(editableScriptContainer.GetComponent<RectTransform>());
 			}
-
 			else if(type == "enemy"){
 				foreach(GameObject go in script){
 					go.transform.SetParent(scriptref.scriptContainer.transform); //add actions to container
@@ -194,7 +191,6 @@ public class LevelGenerator : FSystem {
 				}
 				computeNext(scriptref.scriptContainer);				
 			}			
-
 		}
 		containerParent.SetActive(false);
 		GameObjectManager.bind(containerParent);
@@ -531,7 +527,6 @@ public class LevelGenerator : FSystem {
 					if(container.transform.parent.parent.childCount - 1 > container.transform.parent.GetSiblingIndex())
                     {
 						child.GetComponent<BaseElement>().next = container.transform.parent.parent.GetChild(container.transform.parent.GetSiblingIndex() + 1).gameObject;
-
 					}
 				}// Sinon l'associer au block suivant
 				else if (i != container.transform.childCount - 1)

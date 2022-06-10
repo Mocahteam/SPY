@@ -51,6 +51,11 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "refreshUINameContainer", null);
 	}
 
+	public void setExecutionState(System.Boolean value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setExecutionState", value);
+	}
+
 	public void resetScript(System.Boolean refund)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "resetScript", refund);

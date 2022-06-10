@@ -6,5 +6,6 @@ public class IfAction : BaseElement {
     public bool ifNot;
     public int range;
     public int ifDirection; // 0: Forward, 1: Backward, 2: Left, 3: Right
-    public GameObject firstChild;
+    public GameObject firstChild; // Le premier bloc d'action que contient le if
+    public string condition; // La condition du if sous forme de string
 }

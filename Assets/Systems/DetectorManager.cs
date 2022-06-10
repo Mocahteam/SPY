@@ -29,6 +29,8 @@ public class DetectorManager : FSystem {
         gameLoaded_f.addEntryCallback(delegate { updateDetector(); });
         newStep_f.addEntryCallback(delegate { updateDetector(); });
         robotcollision_f.addEntryCallback(onNewCollision);
+
+        
     }
 
     private void onNewCollision(GameObject robot){
