@@ -528,6 +528,14 @@ public class LevelGenerator : FSystem {
                     {
 						child.GetComponent<BaseElement>().next = container.transform.parent.parent.GetChild(container.transform.parent.GetSiblingIndex() + 1).gameObject;
 					}
+                    else
+                    {
+                        // Execption, si le container parent parent est un for, on le met en next
+                        if (container.transform.parent.parent.parent.GetComponent<ForAction>())
+                        {
+							child.GetComponent<BaseElement>().next = container.transform.parent.parent.parent.gameObject;
+						}
+                    }
 				}// Sinon l'associer au block suivant
 				else if (i != container.transform.childCount - 1)
 				{

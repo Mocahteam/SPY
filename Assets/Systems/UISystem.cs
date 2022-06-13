@@ -804,10 +804,10 @@ public class UISystem : FSystem {
 		// Pour chaque block if
 		foreach(IfAction IfAct in copyGO.GetComponentsInChildren<IfAction>()){
 			//On vérifie que le bloc condition comporte un élément ou un opérator
-            if (!IfAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<EndBlockScriptComponent>())
-            {
+			if (!IfAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<EndBlockScriptComponent>())
+			{
 				// On traduit la condition en string
-				IfAct.condition = ConditionManagement.instance.convertionConditionSequence(IfAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject);
+				IfAct.condition = ConditionManagement.instance.convertionConditionSequence(IfAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, new string[] { });
 			}
             else
             {

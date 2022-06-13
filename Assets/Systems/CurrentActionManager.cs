@@ -2,6 +2,7 @@ using UnityEngine;
 using FYFY;
 using TMPro;
 using System.Collections;
+using System.Globalization;
 
 
 /// <summary>
@@ -13,13 +14,15 @@ public class CurrentActionManager : FSystem
 	private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(UIActionType), typeof(CurrentAction)));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
-	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
-	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
-	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
-	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem)), new AnyOfTags("Coin"));
-	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
+
+	public static CurrentActionManager instance;
+
+	public CurrentActionManager()
+	{
+		instance = this;
+	}
 
 	protected override void onStart()
     {
@@ -69,23 +72,8 @@ public class CurrentActionManager : FSystem
 			firstAction = getFirstActionOf(container.GetChild(0).gameObject, agent);
 
 		if (firstAction != null)
-		{
 			// Set this action as CurrentAction
 			GameObjectManager.addComponent<CurrentAction>(firstAction, new { agent = agent });
-
-			// parse parents to init ForAction blocs
-			Transform parentAction = firstAction.transform.parent;
-			while (parentAction != null)
-			{
-				if (parentAction.GetComponent<ForAction>())
-				{
-					ForAction forAct = parentAction.GetComponent<ForAction>();
-					forAct.currentFor++;
-					forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
-				}
-				parentAction = parentAction.parent;
-			}
-		}
 		else
 			GameObjectManager.addComponent<EmptyExecution>(MainLoop.instance.gameObject);
 	}
@@ -103,19 +91,24 @@ public class CurrentActionManager : FSystem
 			// check if action is a ForAction
 			if (action.GetComponent<ForAction>())
 			{
-				// check if this ForAction include a child and nb iteration != 0
-				if (action.GetComponent<ForAction>().firstChild != null && action.GetComponent<ForAction>().nbFor != 0)
+				ForAction forAct = action.GetComponent<ForAction>();
+				// check if this ForAction include a child and nb iteration != 0 and end loop not reached
+				if (action.GetComponent<ForAction>().firstChild != null && forAct.nbFor != 0 && forAct.currentFor < forAct.nbFor)
+				{
+					forAct.currentFor++;
+					forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 					// get first action of its first child (could be if, for...)
 					return getFirstActionOf(action.GetComponent<ForAction>().firstChild, agent);
+				}
 				else
-					// this for doesn't contain action or nb iteration == 0 => get first action of next action (could be if, for...)
+					// this for doesn't contain action or nb iteration == 0 or end loop reached => get first action of next action (could be if, for...)
 					return getFirstActionOf(action.GetComponent<ForAction>().next, agent);
 			}
 			// check if action is a IfAction
 			else if (action.GetComponent<IfAction>())
 			{
 				// check if this IfAction include a child and if condition is evaluated to true
-				if (action.GetComponent<IfAction>().firstChild != null && ifValid(action.GetComponent<IfAction>(), agent))
+				if (action.GetComponent<IfAction>().firstChild != null && ConditionManagement.instance.ifValid(action.GetComponent<IfAction>(), agent))
 					// get first action of its first child (could be if, for...)
 					return getFirstActionOf(action.GetComponent<IfAction>().firstChild, agent);
 				else
@@ -124,89 +117,12 @@ public class CurrentActionManager : FSystem
 			}
 			// check if action is a ForeverAction
 			else if (action.GetComponent<ForeverAction>())
+			{
 				// always return firstchild of this ForeverAction
 				return getFirstActionOf(action.GetComponent<ForeverAction>().firstChild, agent);
+			}
 		}
 		return null;
-	}
-
-	public bool ifValid(IfAction ifAction, GameObject scripted)
-	{
-		/*
-		bool ifok = false;
-		// get absolute target position depending on player orientation and relative direction to observe
-		// On commence par identifier quelle case doit être regardé pour voir si la condition est respecté
-		Vector2 vec = new Vector2();
-		switch (getDirection(scripted.GetComponent<Direction>().direction, ifAction.ifDirection))
-		{
-			case Direction.Dir.North:
-				vec = new Vector2(0, ifAction.range);
-				break;
-			case Direction.Dir.South:
-				vec = new Vector2(0, -ifAction.range);
-				break;
-			case Direction.Dir.East:
-				vec = new Vector2(ifAction.range, 0);
-				break;
-			case Direction.Dir.West:
-				vec = new Vector2(-ifAction.range, 0);
-				break;
-		}
-
-		// check target position
-		switch (ifAction.ifEntityType)
-		{
-			case 0: // walls
-				foreach (GameObject go in wallGO)
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
-						ifok = !ifAction.ifNot;
-				break;
-			case 1: // doors
-				foreach (GameObject go in doorGO)
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
-						ifok = !ifAction.ifNot;
-				break;
-			case 2: // ennemies
-				foreach (GameObject go in droneGO)
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-						go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
-						ifok = !ifAction.ifNot;
-				break;
-			case 3: // allies
-				foreach (GameObject go in playerGO)
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-						go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
-						ifok = !ifAction.ifNot;
-				break;
-			case 4: // consoles
-				foreach (GameObject go in activableConsoleGO)
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-						go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
-						ifok = !ifAction.ifNot;
-				break;
-			case 5: // detectors
-				foreach (GameObject go in redDetectorGO)
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
-						ifok = !ifAction.ifNot;
-				break;
-			case 6: // coins
-				foreach (GameObject go in coinGO)
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
-						ifok = !ifAction.ifNot;
-				break;
-		}
-		return ifok;
-		*/
-
-		bool ifok = false;
-
-
-
-		return true;
 	}
 
 	//0 Forward, 1 Backward, 2 Left, 3 Right
@@ -337,7 +253,7 @@ public class CurrentActionManager : FSystem
 		else if(currentAction.GetComponent<IfAction>()){
 			// check if IfAction has a first child and condition is true
 			IfAction ifAction = currentAction.GetComponent<IfAction>();
-			if (ifAction.firstChild != null && ifValid(ifAction, agent)){ 
+			if (ifAction.firstChild != null && ConditionManagement.instance.ifValid(ifAction, agent)){ 
 				// return first action
 				if(ifAction.firstChild.GetComponent<BasicAction>())
 					return ifAction.firstChild;
