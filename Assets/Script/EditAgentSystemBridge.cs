@@ -7,7 +7,6 @@ public class EditAgentSystemBridge : MonoBehaviour
 {
 	public void agentSelect(BaseEventData agent)
     {
-		Debug.Log("agent selectionné");
 		EditAgentSystem.instance.agentSelect(agent);
 	}
 

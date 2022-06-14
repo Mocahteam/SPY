@@ -43,8 +43,12 @@ public class BlocLimitationManager : FSystem {
 			return ((BasicAction)action).actionType.ToString();
 		else if (action is IfAction)
 			return "If";
+		else if (action is ElseAction)
+			return "Else";
 		else if (action is ForAction)
 			return "For";
+		else if (action is WhileAction)
+			return "While";
 		else if (action is BaseCondition)
 			return ((BaseCondition)action).conditionType.ToString();
 		else

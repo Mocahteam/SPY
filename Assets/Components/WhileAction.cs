@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public class ElseAction : IfAction {
+public class WhileAction : ForAction{
 	// Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
-	public GameObject elsePart;
-	public GameObject elseFirstChild;
+	public string[] condition; // La condition du while sous forme de tableau de string
 }

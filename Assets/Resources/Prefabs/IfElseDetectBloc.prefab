@@ -1640,8 +1640,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 083fdacb85c559b4da3e8f7574e46e42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseColor: {r: 1, g: 1, b: 1, a: 1}
-  highlightedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  baseColor: {r: 0.4862745, g: 0.5647059, b: 1, a: 0.50980395}
+  highlightedColor: {r: 0.5921569, g: 0.64705884, b: 1, a: 0.50980395}
   dropZoneChild: {fileID: 8924877918302666231}
   next: {fileID: 0}
   currentAction: 0
@@ -1652,6 +1652,7 @@ MonoBehaviour:
   firstChild: {fileID: 0}
   condition: []
   elsePart: {fileID: 8538426183980842838}
+  elseFirstChild: {fileID: 0}
 --- !u!114 &7543008458914054955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2157,7 +2158,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8538426183980842838}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: 
+        m_MethodName: SetActive
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3292,7 +3293,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8538426183980842838}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: 
+        m_MethodName: SetActive
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -131,27 +131,24 @@ public class ConditionManagement : FSystem {
 		return new string[] { };
 	}
 
-	public bool ifValid(IfAction ifAction, GameObject scripted)
+	public bool ifValid(string[] condition, GameObject scripted)
 	{
 
 		string cond = "";
-		for (int i = 0; i < ifAction.condition.Length; i++)
+		for (int i = 0; i < condition.Length; i++)
 		{
-			if (ifAction.condition[i] == "(" || ifAction.condition[i] == ")" || ifAction.condition[i] == "OR" || ifAction.condition[i] == "AND" || ifAction.condition[i] == "NOT")
+			if (condition[i] == "(" || condition[i] == ")" || condition[i] == "OR" || condition[i] == "AND" || condition[i] == "NOT")
 			{
-				cond = cond + ifAction.condition[i] + " ";
+				cond = cond + condition[i] + " ";
 			}
 			else
 			{
-				cond = cond + verifCondition(ifAction.condition[i], scripted) + " ";
+				cond = cond + verifCondition(condition[i], scripted) + " ";
 			}
 		}
 
-		Debug.Log("Verif condition : " + cond);
 		DataTable dt = new DataTable();
 		var v = dt.Compute(cond, "");
-		Debug.Log("Vérif : " + v.ToString());
-
 		return bool.Parse(v.ToString());
 	}
 

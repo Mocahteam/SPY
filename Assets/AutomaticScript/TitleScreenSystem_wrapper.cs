@@ -3,6 +3,7 @@ using FYFY;
 
 public class TitleScreenSystem_wrapper : BaseWrapper
 {
+	public GameData prefabGameData;
 	public UnityEngine.GameObject campagneMenu;
 	public UnityEngine.GameObject playButton;
 	public UnityEngine.GameObject quitButton;
@@ -11,6 +12,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
+		MainLoop.initAppropriateSystemField (system, "prefabGameData", prefabGameData);
 		MainLoop.initAppropriateSystemField (system, "campagneMenu", campagneMenu);
 		MainLoop.initAppropriateSystemField (system, "playButton", playButton);
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);

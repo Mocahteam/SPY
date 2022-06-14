@@ -64,7 +64,9 @@
     <limit actionType="Activate" limit="-1" />
     <limit actionType="TurnBack" limit="-1" />
     <limit actionType="If" limit="-1" />
+    <limit actionType="Else" limit="-1" />
     <limit actionType="For" limit="-1" />
+    <limit actionType="While" limit="-1" />
     <limit actionType="AndOperator" limit="-1" />
     <limit actionType="OrOperator" limit="-1" />
     <limit actionType="NotOperator" limit="-1" />
@@ -74,6 +76,18 @@
     <limit actionType="FieldGate" limit="-1" />
     <limit actionType="Terminal" limit="-1" />
   </actionBlocLimit>
+  <competence>
+    <comp name="1.3" presence="0"/>
+    <comp name="1.6" presence="1"/>
+    <comp name="2.4" presence="0"/>
+    <comp name="2.3" presence="0"/>
+    <comp name="3.1" presence="0"/>
+    <comp name="3.2" presence="1"/>
+    <comp name="3.3" presence="0"/>
+    <comp name="3.4" presence="0"/>
+    <comp name="4.1" presence="1"/>
+    <comp name="6.4" presence="0"/>
+  </competence>
   <player posX="4" posZ="1" direction="3" />
   <player posX="4" posZ="5" direction="3" />
   <score twoStars="7999" threeStars="10500"/>

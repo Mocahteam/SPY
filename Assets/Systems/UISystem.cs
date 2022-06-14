@@ -777,14 +777,27 @@ public class UISystem : FSystem {
 		// Pour chaque bloc for
 		foreach(ForAction forAct in copyGO.GetComponentsInChildren<ForAction>()){
 			// Si activer, on note combien a quel boucle on est sur combien de boucle à faire
-			if(!isInteractable){
+			if(!isInteractable && !forAct.gameObject.GetComponent<WhileAction>())
+			{
 				forAct.nbFor = int.Parse(forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text);
 				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();		
 			}// Sinon on met tous à 0
-			else
+			else if(isInteractable && !forAct.gameObject.GetComponent<WhileAction>())
 			{
 				forAct.currentFor = 0;
 				forAct.gameObject.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
+			}
+			else if (forAct.gameObject.GetComponent<WhileAction>())
+            {
+				if (!forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<EndBlockScriptComponent>())
+				{
+					// On traduit la condition en string
+					forAct.gameObject.GetComponent<WhileAction>().condition = ConditionManagement.instance.convertionConditionSequence(forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, new string[] { });
+				}
+				else
+				{
+					GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
+				}
 			}
 			// On parcourt les éléments présent dans le block action
 			bool firstElement = false;
@@ -814,13 +827,12 @@ public class UISystem : FSystem {
 				GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
 			}
 
-			//On recoit le bloc IF
-			//IfAct.ifEntityType = IfAct.transform.GetChild(0).Find("DropdownEntityType").GetComponent<TMP_Dropdown>().value; // Elément actuelle : un mur, un champ de force, un ennemi, un allié, un terminal, une zone rouge, une pièce
-			//IfAct.ifDirection = IfAct.transform.GetChild(0).Find("DropdownDirection").GetComponent<TMP_Dropdown>().value; // Element actuelle : devant, derrière, à gauche, à droite
-			//IfAct.range = int.Parse(IfAct.transform.GetChild(0).Find("InputFieldRange").GetComponent<TMP_InputField>().text); // nombre de case ou ce situe l'élément sur lequel se porte la condition
-			//IfAct.ifNot = (IfAct.transform.GetChild(0).Find("DropdownIsOrIsNot").GetComponent<TMP_Dropdown>().value == 1); // Element actuelle : est, n'est pas
-
 			IfAct.firstChild = IfAct.gameObject.transform.Find("Container").GetChild(0).gameObject;
+			//Si c'est un elseAction
+			if (IfAct.gameObject.GetComponent<ElseAction>())
+            {
+				IfAct.gameObject.GetComponent<ElseAction>().elseFirstChild = IfAct.gameObject.GetComponent<ElseAction>().elsePart.transform.GetChild(0).gameObject;
+			}
 		}
 
 		foreach(UITypeContainer typeContainer in copyGO.GetComponentsInChildren<UITypeContainer>()){
@@ -876,6 +888,13 @@ public class UISystem : FSystem {
 			GameObject supChild = specialBlock.transform.Find("Container").GetChild(specialBlock.transform.Find("Container").childCount - 1).gameObject;
 			supChild.transform.SetParent(null);
 			GameObject.Destroy(supChild);
+
+            if (specialBlock.GetComponent<ElseAction>())
+            {
+				supChild = specialBlock.GetComponent<ElseAction>().elsePart.transform.GetChild(specialBlock.GetComponent<ElseAction>().elsePart.transform.childCount - 1).gameObject;
+				supChild.transform.SetParent(null);
+				GameObject.Destroy(supChild);
+			}
 		}
 
 		// On parcourt les block qui compose le container afin de voir si il n'est pas composé de block spécial

@@ -551,7 +551,14 @@ public class LevelGenerator : FSystem {
 			// Si autre action que les actions basique
 			// Alors récursive de la fonction sur leur container
 			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>() || child.GetComponent<ForeverAction>())
+            {
 				computeNext(child.transform.Find("Container").gameObject);
+                // Si c'est un esle il ne faut pas oublier le container else
+                if (child.GetComponent<ElseAction>())
+                {
+					computeNext(child.transform.Find("ElseContainer").gameObject);
+				}
+			}
 		}
 	}
 }

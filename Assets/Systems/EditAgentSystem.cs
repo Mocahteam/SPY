@@ -55,7 +55,6 @@ public class EditAgentSystem : FSystem
     {
 		foreach (GameObject agent in agent_f)
         {
-			//Debug.Log("Nom agent : " + agent.GetComponent<AgentEdit>().agentName);
 			if (agent.GetComponent<AgentEdit>().agentName == nameAgent)
             {
 				agentSelected = agent;

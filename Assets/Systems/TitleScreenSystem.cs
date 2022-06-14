@@ -11,6 +11,7 @@ using System.Xml;
 /// </summary>
 public class TitleScreenSystem : FSystem {
 	private GameData gameData;
+	public GameData prefabGameData;
 	public GameObject campagneMenu;
 	public GameObject playButton;
 	public GameObject quitButton;
@@ -21,9 +22,19 @@ public class TitleScreenSystem : FSystem {
 
     protected override void onStart()
     {
-		gameData = GameObject.Find("GameData").GetComponent<GameData>();
+        if (!GameObject.Find("GameData"))
+        {
+			Debug.Log("Creation gamedata");
+			gameData = UnityEngine.Object.Instantiate(prefabGameData);
+			gameData.name = "GameData";
+			GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
+		}
+        else
+        {
+			gameData = GameObject.Find("GameData").GetComponent<GameData>();
+		}
+
 		gameData.levelList = new Dictionary<string, List<string>>();
-		GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
 
 		levelButtons = new Dictionary<GameObject, List<GameObject>>();
 
