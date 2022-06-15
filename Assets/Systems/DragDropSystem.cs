@@ -87,7 +87,7 @@ public class DragDropSystem : FSystem
 	{
 		foreach (GameObject Dp in dropZone_f)
 		{
-			Dp.SetActive(value);
+			GameObjectManager.setGameObjectState(Dp, value);
 			Dp.transform.GetChild(0).gameObject.SetActive(false); // On est sur que les bares sont désactivées
 		}
 	}

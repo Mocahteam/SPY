@@ -3,7 +3,7 @@ using FYFY;
 using TMPro;
 using UnityEngine.EventSystems;
 
-/// Ce systéme gére tout les éléments d'éditions des agents par l'utilisateur.
+/// Ce systéme gére tous les éléments d'éditions des agents par l'utilisateur.
 /// Il gére entre autre:
 ///		Le changement de nom du robot
 ///		Le changement automatique (si activé) du nom du container associé (si container associé)
@@ -27,10 +27,9 @@ public class EditAgentSystem : FSystem
 {
 	// Les familles
 	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
-	private Family viewportContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les container contenant les container éditable
 
 	// Les variables
-	private GameObject agentSelected = null;
+	public GameObject agentSelected = null;
 
 	// L'instance
 	public static EditAgentSystem instance;
@@ -40,28 +39,21 @@ public class EditAgentSystem : FSystem
 		instance = this;
 	}
 
-
-	// Enregistre l'agent selectionné dans la variable agentSelected
-	public void agentSelect(BaseEventData agent)
-    {
-		agentSelected = agent.selectedObject;
-	}
-
-
-	// Utilisé principalement par les systéme extérieur
+	// Utilisé principalement par les systémes extérieurs
 	// Définie l'agent sur lequel les modifications seront opporté
-	// Renvoie True si agent trouvé, sinon false
-	public bool modificationAgent(string nameAgent)
+	// Renvoie le composant AgentEdit de l'agent sélectionné s'il a été trouvé, sinon null
+	public AgentEdit selectLinkedAgentByName(string nameAgent)
     {
 		foreach (GameObject agent in agent_f)
         {
-			if (agent.GetComponent<AgentEdit>().agentName == nameAgent)
+			AgentEdit ae = agent.GetComponent<AgentEdit>();
+			if (ae.agentName == nameAgent && ae.editState == AgentEdit.EditMode.Synch)
             {
 				agentSelected = agent;
-				return true;
+				return agentSelected.GetComponent<AgentEdit>();
 			}
         }
-		return false;
+		return null;
 	}
 
 
@@ -70,26 +62,39 @@ public class EditAgentSystem : FSystem
 	// Met à jours le lien qu'il a avec le script container du même nom
 	public void setAgentName(string newName)
     {
-        if (agentSelected.GetComponent<AgentEdit>().editName)
+		string oldName = agentSelected.GetComponent<AgentEdit>().agentName;
+
+		if (agentSelected.GetComponent<AgentEdit>().editState != AgentEdit.EditMode.Locked && newName != oldName)
         {
-			// Si le changement de nom entre l'agent et le container est automatique, on change aussi le nom du container
-			if (agentSelected.GetComponent<AgentEdit>().editNameAuto)
-			{
-				UISystem.instance.setContainerName(agentSelected.GetComponent<AgentEdit>().agentName, newName);
+			// On annule la saisie si l'agent est locked ou s'il est synchro et que le nouveau nom choisi est un nom de container editable déjà défini. En effet changer le nom du robot implique de changer aussi le nom du container mais attention il ne peut y avoir de doublons dans les noms des containers editables donc il faut s'assurer que le renommage du container editable a été accepté pour pouvoir valider le nouveau nom de l'agent.
+			if (agentSelected.GetComponent<AgentEdit>().editState == AgentEdit.EditMode.Locked || (agentSelected.GetComponent<AgentEdit>().editState == AgentEdit.EditMode.Synch && UISystem.instance.nameContainerUsed(newName)))
+            { // on annule la saisie
+				agentSelected.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().text = agentSelected.GetComponent<AgentEdit>().agentName;
 			}
-			// On met à jours le nom de l'agent
-			agentSelected.GetComponent<AgentEdit>().agentName = newName;
-			// On met à jour l'affichage du nom dans le containe fiche de l'agent
-			majDisplayCardAgent(newName);
-			// On associe la fiche du l'agent au nouveau container
+			else
+			{
+				if (agentSelected.GetComponent<AgentEdit>().editState == AgentEdit.EditMode.Synch)
+				{
+					// On met à jours le nom de tous les agents qui auraient le même nom pour garder l'association avec le container editable
+					foreach (GameObject agent in agent_f)
+						if (agent.GetComponent<AgentEdit>().agentName == oldName)
+						{
+							agent.GetComponent<AgentEdit>().agentName = newName;
+							agent.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().text = newName;
+						}
+					// Puis on demande la mise à jour du nom du container éditable
+					UISystem.instance.setContainerName(oldName, newName);
+				}
+                else
+				{
+					// on ne modifie que l'agent selectionné
+					agentSelected.GetComponent<AgentEdit>().agentName = newName;
+				}
+				agentSelected.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().text = newName;
+			}
+
+			// On vérifie si on a une association avec les container éditables
+			UISystem.instance.refreshUINameContainer();
 		}
 	}
-
-	// Met à jours l'affichage du nom de l'agent dans ça fiche
-	public void majDisplayCardAgent(string newName)
-    {
-		agentSelected.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().text = newName;
-		UISystem.instance.refreshUINameContainer();
-	}
-
 }

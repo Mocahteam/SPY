@@ -1177,6 +1177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6517dd926d9cc214fafc702e691c8880, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agent: {fileID: 0}
 --- !u!114 &4385477686766711649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1189,7 +1190,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e41c5cf59d687e468669710d3c809d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraAssociate: {fileID: 0}
 --- !u!1 &2612784136186079853
 GameObject:
   m_ObjectHideFlags: 0
@@ -1362,7 +1362,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6070435586562775536}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4385477686766711649}
+        m_TargetAssemblyTypeName: CameraSystemBridge, Assembly-CSharp
+        m_MethodName: locateAgent
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 8973151784706398113}
+          m_ObjectArgumentAssemblyTypeName: EditAgentSystemBridge, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &7183673850279460108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1412,7 +1424,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -4, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &400257805496640336
 CanvasRenderer:
@@ -1473,7 +1485,7 @@ MonoBehaviour:
   m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 10
+  m_fontSizeMin: 2
   m_fontSizeMax: 20
   m_fontStyle: 0
   m_HorizontalAlignment: 2
@@ -1547,7 +1559,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -4, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8044233986274893558
 CanvasRenderer:
@@ -1577,7 +1589,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Enter text...
+  m_text: Entrer un nom...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1604,15 +1616,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
+  m_fontSize: 14.65
   m_fontSizeBase: 14
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 2
   m_fontSizeMax: 72
   m_fontStyle: 2
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1948,7 +1960,7 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 14
-  m_CharacterLimit: 7
+  m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
@@ -1972,8 +1984,20 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4385477686766711649}
         m_TargetAssemblyTypeName: CameraSystemBridge, Assembly-CSharp
-        m_MethodName: SetCameraSystem
+        m_MethodName: PauseCameraSystem
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 8973151784706398113}
+        m_TargetAssemblyTypeName: EditAgentSystemBridge, Assembly-CSharp
+        m_MethodName: selectAgent
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1987,7 +2011,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4385477686766711649}
         m_TargetAssemblyTypeName: CameraSystemBridge, Assembly-CSharp
-        m_MethodName: SetCameraSystem
+        m_MethodName: PauseCameraSystem
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
