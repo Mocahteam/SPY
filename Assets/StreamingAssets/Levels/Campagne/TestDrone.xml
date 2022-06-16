@@ -7,33 +7,25 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
     </line>
     <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="3" />
       <row value="1" />
       <row value="3" />
       <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
       <row value="0" />
       <row value="1" />
     </line>
     <line>
       <row value="1" />
       <row value="0" />
+      <row value="0" />
+      <row value="0" />
       <row value="1" />
+    </line>
+    <line>
       <row value="1" />
-      <row value="1" />
+      <row value="0" />
+      <row value="0" />
       <row value="0" />
       <row value="1" />
     </line>
@@ -43,12 +35,8 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
-      <row value="2" />
-      <row value="1" />
     </line>
     <line>
-      <row value="1" />
-      <row value="1" />
       <row value="1" />
       <row value="1" />
       <row value="1" />
@@ -56,18 +44,11 @@
       <row value="1" />
     </line>
   </map>
-  <competence>
-    <comp name="1.6" presence="1"/>
-    <comp name="3.1" presence="0"/>
-    <comp name="3.2" presence="1"/>
-    <comp name="3.3" presence="0"/>
-    <comp name="3.4" presence="0"/>
-  </competence>
   <actionBlocLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="-1" />
     <limit actionType="TurnRight" limit="-1" />
-    <limit actionType="Wait" limit="3" />
+    <limit actionType="Wait" limit="-1" />
     <limit actionType="Activate" limit="-1" />
     <limit actionType="TurnBack" limit="-1" />
     <limit actionType="If" limit="-1" />
@@ -84,6 +65,24 @@
     <limit actionType="Terminal" limit="-1" />
   </actionBlocLimit>
   <player posX="4" posZ="1" direction="3" />
-  <player posX="4" posZ="5" direction="3" />
-  <score twoStars="7999" threeStars="10500"/>
+  <enemy posX="2" posZ="1" direction="0" range="2" selfRange="False" typeRange="0">
+    <script>
+      <action actionType="Forever">
+        <action actionType="Else">
+          <action container="Condition">
+            <action actionType="NotOperator" element="1">
+              <action actionType="Wall"/>
+            </action>
+          </action>
+          <action container="IfContainer">
+            <action actionType="Forward"/>
+          </action>
+          <action container="ElseContainer">
+            <action actionType="TurnBack"/>
+          </action>
+        </action>
+      </action>
+    </script>
+  </enemy>
+  <score twoStars="3875" threeStars="4875"/>
 </level>

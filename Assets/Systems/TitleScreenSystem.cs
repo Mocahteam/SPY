@@ -24,7 +24,6 @@ public class TitleScreenSystem : FSystem {
     {
         if (!GameObject.Find("GameData"))
         {
-			Debug.Log("Creation gamedata");
 			gameData = UnityEngine.Object.Instantiate(prefabGameData);
 			gameData.name = "GameData";
 			GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);

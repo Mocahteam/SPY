@@ -92,7 +92,7 @@ public class CurrentActionManager : FSystem
 			if (action.GetComponent<ForAction>())
 			{
 				ForAction forAct = action.GetComponent<ForAction>();
-                if (action.GetComponent<WhileAction>().firstChild != null)
+                if (action.GetComponent<WhileAction>() && action.GetComponent<WhileAction>().firstChild != null)
                 {
 					return getFirstActionOf(action.GetComponent<WhileAction>().firstChild, agent);
 				}
@@ -115,7 +115,7 @@ public class CurrentActionManager : FSystem
 				if (action.GetComponent<IfAction>().firstChild != null && ConditionManagement.instance.ifValid(action.GetComponent<IfAction>().condition, agent))
 					// get first action of its first child (could be if, for...)
 					return getFirstActionOf(action.GetComponent<IfAction>().firstChild, agent);
-				else if (action.GetComponent<ElseAction>().firstChild != null)
+				else if (action.GetComponent<ElseAction>() && action.GetComponent<ElseAction>().firstChild != null)
 					return getFirstActionOf(action.GetComponent<ElseAction>().elseFirstChild, agent);
 				else
 					// this if doesn't contain action or its condition is false => get first action of next action (could be if, for...)

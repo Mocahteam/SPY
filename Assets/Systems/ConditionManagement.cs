@@ -21,8 +21,8 @@ public class ConditionManagement : FSystem {
 	}
 
 	// Transforme une sequence de condition en une chaine de caractére
-	public string[] convertionConditionSequence(GameObject condition, string[] chaine)
-	{
+	public string[] convertionConditionSequence(GameObject condition, string[] chaine){
+		Debug.Log(condition.name);
 		//string[] chaine = new string[] { };
 		// On regarde si la condition reçue est un élément ou bien un opérator
 		// Si c'est un élément, on le traduit en string et on le renvoie 
@@ -79,7 +79,7 @@ public class ConditionManagement : FSystem {
 						newCopyChaine[i] = copyChaine[i];
 					}
 					newCopyChaine[newCopyChaine.Length - 1] = "AND";
-					newCopyChaine = convertionConditionSequence(condition.transform.GetChild(1).gameObject, newCopyChaine);
+					newCopyChaine = convertionConditionSequence(condition.transform.GetChild(4).gameObject, newCopyChaine);
 					copyChaine = new string[newCopyChaine.Length + 1];
 					for (int i = 0; i < newCopyChaine.Length; i++)
 					{
@@ -197,10 +197,12 @@ public class ConditionManagement : FSystem {
 						ifok = true;
 				break;
 			case "Terminal": // consoles
-				foreach (GameObject go in activableConsoleGO)
+				foreach (GameObject go in activableConsoleGO) {
+					vec = new Vector2(0, 0);
 					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
 						go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
 						ifok = true;
+					}
 				break;
 			case "RedArea": // detectors
 				foreach (GameObject go in redDetectorGO)
