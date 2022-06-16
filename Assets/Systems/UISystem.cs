@@ -28,7 +28,7 @@ public class UISystem : FSystem {
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private Family viewportContainerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les container éditable
 	private Family viewportContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les containers viewport
-	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer)), new AnyOfTags("ScriptConstructor")); // Les containers scripts qui ne sont pas des block d'action
+	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
 	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
 	private Family resetButton_f = FamilyManager.getFamily(new AnyOfTags("ResetButton")); // Les boutons reset
 
@@ -52,7 +52,7 @@ public class UISystem : FSystem {
 	public GameObject libraryPanel;
 	public GameObject EditableContainer;
 	public GameObject prefabViewportScriptContainer;
-	private UITypeContainer containerSelected; // Le container selectionné
+	private UIRootContainer containerSelected; // Le container selectionné
 
 	public static UISystem instance;
 
@@ -132,22 +132,14 @@ public class UISystem : FSystem {
 		{
 			bool nameSame = false;
 			foreach (GameObject agent in agent_f)
-			{
-				if (container.GetComponent<UITypeContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
-				{
+				if (container.GetComponent<UIRootContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
 					nameSame = true;
-				}
-			}
 
 			// Si même nom trouver on met l'arriére plan blanc
 			if (nameSame)
-			{
 				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().image.color = Color.white;
-			}
 			else // sinon rouge 
-			{
 				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
-			}
 		}
 
 		// On fait la même chose pour les agents
@@ -155,22 +147,14 @@ public class UISystem : FSystem {
 		{
 			bool nameSame = false;
 			foreach (GameObject container in scriptContainer_f)
-			{
-				if (container.GetComponent<UITypeContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
-				{
+				if (container.GetComponent<UIRootContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
 					nameSame = true;
-				}
-			}
 
 			// Si même nom trouver on met l'arriére transparent
 			if (nameSame)
-			{
 				agent.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 1f, 1f, 1f);
-			}
 			else // sinon rouge 
-			{
 				agent.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
-			}
 		}
 	}
 
@@ -420,6 +404,7 @@ public class UISystem : FSystem {
                 GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
+				GameObjectManager.setGameObjectState(endPanel.transform.Find("ScreenTitle").gameObject, true);
 				endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
                 endPanel.GetComponent<AudioSource>().loop = true;
                 endPanel.GetComponent<AudioSource>().Play();
@@ -434,19 +419,21 @@ public class UISystem : FSystem {
                 endPanel.GetComponent<AudioSource>().loop = false;
                 endPanel.GetComponent<AudioSource>().Play();
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, true);
-                //End
-                if (gameData.levelToLoad.Item2 >= gameData.levelList[gameData.levelToLoad.Item1].Count - 1)
+				GameObjectManager.setGameObjectState(endPanel.transform.Find("ScreenTitle").gameObject, true);
+				//End
+				if (gameData.levelToLoad.Item2 >= gameData.levelList[gameData.levelToLoad.Item1].Count - 1)
                 {
                     GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 					GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
 					GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
-                }
+				}
                 break;
 			case 3:
 				endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Une condition est mal remplie !";
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, false);
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
+				GameObjectManager.setGameObjectState(endPanel.transform.Find("ScreenTitle").gameObject, false);
 				endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 				endPanel.GetComponent<AudioSource>().loop = true;
 				endPanel.GetComponent<AudioSource>().Play();
@@ -702,7 +689,7 @@ public class UISystem : FSystem {
 				foreach (GameObject container in viewportContainer_f)
 				{
 					// Si le container comporte le même nom que le robot
-					if (container.GetComponentInChildren<UITypeContainer>().associedAgentName == robot.GetComponent<AgentEdit>().agentName)
+					if (container.GetComponentInChildren<UIRootContainer>().associedAgentName == robot.GetComponent<AgentEdit>().agentName)
                     {
 						// On recupére le container qui contiend le script à associer au robot
 						containerAssocied = container.transform.Find("ScriptContainer").gameObject;
@@ -842,12 +829,11 @@ public class UISystem : FSystem {
 			}
 		}
 
-		foreach(UITypeContainer typeContainer in copyGO.GetComponentsInChildren<UITypeContainer>()){
-			typeContainer.enabled = isInteractable;
-		}
-		foreach(PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>()){
+		foreach(PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>())
 			pointerSensitive.enabled = isInteractable;
-		}
+
+		foreach (Selectable selectable in copyGO.GetComponentsInChildren<Selectable>())
+			selectable.interactable = isInteractable;
 
 		// On défini la couleur de l'action selon l'agent à qui appartiendra la script
 		Color actionColor;
@@ -961,7 +947,7 @@ public class UISystem : FSystem {
 			// Si le nom n'est pas déjà utilisé on nomme le nouveau container de cette façon
 			if(!nameContainerUsed("Script" + i))
             {
-				cloneContainer.GetComponentInChildren<UITypeContainer>().associedAgentName = "Script" + i;
+				cloneContainer.GetComponentInChildren<UIRootContainer>().associedAgentName = "Script" + i;
 				nameOk = true;
 			}
 		}
@@ -969,16 +955,16 @@ public class UISystem : FSystem {
 
 	}
 
-	public void selectContainer(UITypeContainer container)
+	public void selectContainer(UIRootContainer container)
     {
 		containerSelected = container;
 	}
 
-	public UITypeContainer selectContainerByName(string name)
+	public UIRootContainer selectContainerByName(string name)
 	{
 		foreach (GameObject container in scriptContainer_f)
 		{
-			UITypeContainer uiContainer = container.GetComponent<UITypeContainer>();
+			UIRootContainer uiContainer = container.GetComponent<UIRootContainer>();
 			if (uiContainer.associedAgentName == name)
 				return uiContainer;
 		}
@@ -991,7 +977,7 @@ public class UISystem : FSystem {
 	public bool nameContainerUsed(string nameTested) {
 		// On regarde en premier lieu si le nom n'existe pas déjà
 		foreach (GameObject container in scriptContainer_f)
-			if (container.GetComponent<UITypeContainer>().associedAgentName == nameTested)
+			if (container.GetComponent<UIRootContainer>().associedAgentName == nameTested)
 				return true;
 
 		return false;
@@ -1023,12 +1009,12 @@ public class UISystem : FSystem {
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
 	}
 
-	// Utilisé surtout par les apelles extérieurs au systéme
+	// Utilisé surtout par les appels extérieurs au systéme
 	// Permet d'enregistrer le nom du container que l'on veux changé
 	// Et lui changer son nom 
 	public void setContainerName(string oldName, string newName)
 	{
-		UITypeContainer uiContainer = selectContainerByName(oldName);
+		UIRootContainer uiContainer = selectContainerByName(oldName);
 		if (uiContainer != null)
 		{
 			containerSelected = uiContainer;

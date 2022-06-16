@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class UITypeContainer : MonoBehaviour {
+public class UIRootContainer : MonoBehaviour {
 	// Nom de l'agent à associer au container
 	public string associedAgentName = "Agent";
 }

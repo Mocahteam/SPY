@@ -131,7 +131,7 @@ public class LevelGenerator : FSystem {
 				scriptContainer.transform.SetParent(editableScriptContainer.transform.Find("EditableContainers"), false);
 				DragDropSystem.instance.lastEditableContainer = scriptContainer.transform.Find("ScriptContainer").gameObject;
 				// On définie son nom à celui de l'agent
-				scriptContainer.GetComponentInChildren<UITypeContainer>().associedAgentName = agentEdit.agentName;
+				scriptContainer.GetComponentInChildren<UIRootContainer>().associedAgentName = agentEdit.agentName;
 
 				// On affiche le bon nom sur le container
 				scriptContainer.GetComponentInChildren<TMP_InputField>().text = agentEdit.agentName;
@@ -177,9 +177,12 @@ public class LevelGenerator : FSystem {
 				foreach(GameObject go in script){
 					go.transform.SetParent(scriptref.scriptContainer.transform); //add actions to container
 					List<GameObject> basicActionGO = getBasicActionGO(go);
-					if(basicActionGO.Count != 0)
-						foreach(GameObject baGO in basicActionGO)
-							baGO.GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().droneAction;
+					foreach (GameObject baGO in basicActionGO)
+					{
+						baGO.GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().droneAction;
+						if (baGO.GetComponent<Selectable>() != null)
+							baGO.GetComponent<Selectable>().interactable = false;
+					}
 				}
 				computeNext(scriptref.scriptContainer);				
 			}			
@@ -197,12 +200,12 @@ public class LevelGenerator : FSystem {
 		foreach(Transform child in go.transform){
 			if(child.GetComponent<BasicAction>())
 				res.Add(child.gameObject);
-			else if(child.GetComponent<UITypeContainer>() && child.GetComponent<BaseElement>()){
-				List<GameObject> childGO = getBasicActionGO(child.gameObject); 
-				foreach(GameObject cgo in childGO){
-					res.Add(cgo);
-				}
-			}		
+			else {
+					List<GameObject> childGO = getBasicActionGO(child.gameObject); 
+					foreach(GameObject cgo in childGO){
+						res.Add(cgo);
+					}
+				}		
 		}
 		return res;
 	}
@@ -539,7 +542,6 @@ public class LevelGenerator : FSystem {
 				}
 				else{
 					obj.transform.GetComponentInChildren<TMP_InputField>().text = (((ForAction)action).currentFor).ToString() + " / " + ((ForAction)action).nbFor.ToString();
-					Object.Destroy(obj.GetComponent<UITypeContainer>());
 				}
 				obj.transform.GetComponentInChildren<TMP_InputField>().interactable = editable;
 
@@ -566,10 +568,6 @@ public class LevelGenerator : FSystem {
 				obj = Object.Instantiate (prefab);
 				obj.GetComponent<UIActionType>().linkedTo = null;
 				action = obj.GetComponent<ForeverAction>();
-				
-				if(!editable)
-					//add to gameobject
-					Object.Destroy(obj.GetComponent<UITypeContainer>());
 
 				//add children
 				firstchild = false;

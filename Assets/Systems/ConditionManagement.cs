@@ -149,7 +149,15 @@ public class ConditionManagement : FSystem {
 
 		DataTable dt = new DataTable();
 		var v = dt.Compute(cond, "");
-		return bool.Parse(v.ToString());
+		bool result;
+        try
+        {
+			result = bool.Parse(v.ToString());
+		} catch
+        {
+			result = false;
+        }
+		return result;
 	}
 
 	public bool verifCondition(string ele, GameObject scripted)

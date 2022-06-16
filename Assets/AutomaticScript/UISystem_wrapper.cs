@@ -136,7 +136,7 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "addContainer", null);
 	}
 
-	public void selectContainer(UITypeContainer container)
+	public void selectContainer(UIRootContainer container)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "selectContainer", container);
 	}

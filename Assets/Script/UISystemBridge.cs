@@ -16,7 +16,7 @@ public class UISystemBridge : MonoBehaviour
         UISystem.instance.newNameContainer(name);
     }
 
-    public void selectContainer(UITypeContainer container)
+    public void selectContainer(UIRootContainer container)
     {
         UISystem.instance.selectContainer(container);
     }

@@ -113,7 +113,7 @@ public class DragDropSystem : FSystem
 	public void beginDragElementFromEditableScript(BaseEventData element)
     {
 		// On verifie si c'est un up droit ou gauche et si ce n'est pas un drop bar
-		if ((element as PointerEventData).button == PointerEventData.InputButton.Left)
+		if ((element as PointerEventData).button == PointerEventData.InputButton.Left && element.selectedObject != null)
 		{
 			// On note le container utilisé
 			lastEditableContainer = element.selectedObject.transform.parent.gameObject;
@@ -309,11 +309,6 @@ public class DragDropSystem : FSystem
 				GameObjectManager.addComponent<Dropped>(actChild.gameObject);
 			}
 
-			if (itemDragged.GetComponent<UITypeContainer>())
-            {
-				itemDragged.GetComponent<Image>().raycastTarget = true;
-			}
-
 			// Lance le son de dépôt du block d'action
 			audioSource.Play();
 
@@ -324,13 +319,6 @@ public class DragDropSystem : FSystem
 
 			// On désactive les drop zone
 			dropZoneActivated(false);
-			/*
-			// Si le container est un container d'un bloc d'action
-			if (lastEditableContainer.GetComponent<UITypeContainer>().actionContainer)
-            {
-				resizeContainerActionBloc(lastEditableContainer.transform.parent.gameObject);
-            }
-			*/
 
 			// Si l'élément est laché dans un container condition
 			// Il remplace l'élémentsur lequel il est drop
