@@ -15,7 +15,6 @@ using UnityEngine.Networking;
 public class LevelGenerator : FSystem {
 
 	// Famille contenant les agents editables
-	private Family editableAgent_f = FamilyManager.getFamily(new AnyOfComponents(typeof(AgentEdit)));
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
 	private List<List<int>> map;
 	private GameData gameData;
@@ -113,47 +112,40 @@ public class LevelGenerator : FSystem {
 		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
 		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
 		// Association de l'agent au script de gestion des fonctions
-		//containerParent.GetComponentInChildren<EditAgentSystemBridge>().agent = entity;
-		// Association de la camera au script de gestion des fonctions
-		containerParent.GetComponentInChildren<CameraSystemBridge>().cameraAssociate = camera;
+		containerParent.GetComponentInChildren<EditAgentSystemBridge>().agent = entity;
 
 		// On va charger l'image et le nom de l'agent selon l'agent (robot, enemie etc...)
 		if (entity.tag == "Player")
 		{
 			nbAgent++;
 			// On nomme l'agent
-			entity.GetComponent<AgentEdit>().agentName = "Num " + nbAgent;
-			// On fait apparaitre un container associer à l'agent
-			GameObject scriptContainer = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ViewportScriptContainer") as GameObject);
-			GameObjectManager.bind(scriptContainer);
-			scriptContainer.transform.SetParent(editableScriptContainer.transform.Find("EditableContainers"), false);
-			UISystem.instance.editableScriptContainer = scriptContainer;
-			DragDropSystem.instance.lastEditableContainer = scriptContainer.transform.Find("ScriptContainer").gameObject;
+			AgentEdit agentEdit = entity.GetComponent<AgentEdit>();
+			agentEdit.agentName = "Num " + nbAgent;
 
-			// Si le edit name n'est pas activé on créer le nom du container automatiquement
-			if (!scriptContainer.GetComponentInChildren<UITypeContainer>().editName)
-            {
-				scriptContainer.GetComponentInChildren<UITypeContainer>().associedAgentName = "Num " + nbAgent;
-				scriptContainer.GetComponentInChildren<TMP_InputField>().interactable = false; 
-			}
-            else // Sinon ce sera a l'utilisateur de le faire
-            {
-				scriptContainer.GetComponentInChildren<UITypeContainer>().associedAgentName = "...";
-			}
-			// On affiche le bon nom sur le container
-			scriptContainer.GetComponentInChildren<TMP_InputField>().text = scriptContainer.GetComponentInChildren<UITypeContainer>().associedAgentName;
-			MainLoop.instance.StartCoroutine(UISystem.instance.updateVerticalName(scriptContainer.GetComponentInChildren<UITypeContainer>().associedAgentName));
+			// Si l'agent est en mode Locked ou Synchro, on crée une zone de programmation dédiée
+			if (agentEdit.editState == AgentEdit.EditMode.Locked || agentEdit.editState == AgentEdit.EditMode.Synch)
+			{
+				// On crée une zone editable associée à l'agent
+				GameObject scriptContainer = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ViewportScriptContainer") as GameObject);
+				GameObjectManager.bind(scriptContainer);
+				scriptContainer.transform.SetParent(editableScriptContainer.transform.Find("EditableContainers"), false);
+				DragDropSystem.instance.lastEditableContainer = scriptContainer.transform.Find("ScriptContainer").gameObject;
+				// On définie son nom à celui de l'agent
+				scriptContainer.GetComponentInChildren<UITypeContainer>().associedAgentName = agentEdit.agentName;
 
-			// On associe le container au scroll bar
-			UISystem.instance.EditableContainer.GetComponent<ScrollRect>().content = scriptContainer.transform.Find("ScriptContainer").GetComponent<RectTransform>();
-			UISystem.instance.EditableContainer.GetComponent<ScrollRect>().viewport = scriptContainer.GetComponent<RectTransform>();
+				// On affiche le bon nom sur le container
+				scriptContainer.GetComponentInChildren<TMP_InputField>().text = agentEdit.agentName;
+				// Si on est en mode Lock, on bloque l'édition
+				if (agentEdit.editState == AgentEdit.EditMode.Locked)
+					scriptContainer.GetComponentInChildren<TMP_InputField>().interactable = false;
+			}
 
 			// Chargement de l'icône de l'agent sur la localisation
 			containerParent.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
 			containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = entity.GetComponent<AgentEdit>().agentName;
 			// Si on autorise le changement de nom on dévérouille la possibilité d'écrire dans la zone de nom du robot
-			if (entity.GetComponent<AgentEdit>().editName)
+			if (entity.GetComponent<AgentEdit>().editState != AgentEdit.EditMode.Locked)
 			{
 				containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().interactable = true;
 			}

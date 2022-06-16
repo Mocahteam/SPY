@@ -48,7 +48,6 @@ public class DragDropSystem : FSystem
     private Family viewportContainerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les container éditable
 	private Family actionPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(UIActionType), typeof(Image)));  // Les block d'actions pointer
 	//private Family actionPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(Image)), new AnyOfComponents(typeof(UIActionType), typeof(BaseCondition))); // Les block d'actions, opérateurs et éléments pointer
-	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UITypeContainer))); // Les containers scripts
 	private Family dropZone_f = FamilyManager.getFamily(new AllOfComponents(typeof(DropZoneComponent))); // Les drops zones
 	private Family containerActionBloc_f = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType), typeof(ContainerActionBloc))); // Les blocs qui ne sont pas de base
 	private Family endzone_f = FamilyManager.getFamily(new AllOfComponents(typeof(EndBlockScriptComponent))); // Les end zones
@@ -87,7 +86,7 @@ public class DragDropSystem : FSystem
 	{
 		foreach (GameObject Dp in dropZone_f)
 		{
-			Dp.SetActive(value);
+			GameObjectManager.setGameObjectState(Dp, value);
 			Dp.transform.GetChild(0).gameObject.SetActive(false); // On est sur que les bares sont désactivées
 		}
 	}

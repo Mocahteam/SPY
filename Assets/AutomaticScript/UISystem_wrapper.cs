@@ -136,34 +136,19 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "addContainer", null);
 	}
 
-	public void newNameContainer(System.String name)
+	public void selectContainer(UITypeContainer container)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "newNameContainer", name);
+		MainLoop.callAppropriateSystemMethod (system, "selectContainer", container);
 	}
 
-	public void verticalName(System.String name)
+	public void newNameContainer(System.String newName)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "verticalName", name);
-	}
-
-	public void horizontalName(System.String name)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "horizontalName", name);
+		MainLoop.callAppropriateSystemMethod (system, "newNameContainer", newName);
 	}
 
 	public void setContainerName()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setContainerName", null);
-	}
-
-	public void noChangeName(System.String name)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "noChangeName", name);
-	}
-
-	public void cancelChangeNameContainer(System.String name)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "cancelChangeNameContainer", name);
 	}
 
 	public void setActiveEscapeMenu()

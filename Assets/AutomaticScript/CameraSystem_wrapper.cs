@@ -8,14 +8,9 @@ public class CameraSystem_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void setLocateButtons(UnityEngine.GameObject go)
+	public void focusOnAgent(UnityEngine.GameObject agent)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setLocateButtons", go);
-	}
-
-	public void SetCameraSystem(System.Boolean value)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "SetCameraSystem", value);
+		MainLoop.callAppropriateSystemMethod (system, "focusOnAgent", agent);
 	}
 
 }

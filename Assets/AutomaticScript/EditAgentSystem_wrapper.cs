@@ -3,24 +3,16 @@ using FYFY;
 
 public class EditAgentSystem_wrapper : BaseWrapper
 {
+	public UnityEngine.GameObject agentSelected;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
-	}
-
-	public void agentSelect(UnityEngine.EventSystems.BaseEventData agent)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "agentSelect", agent);
+		MainLoop.initAppropriateSystemField (system, "agentSelected", agentSelected);
 	}
 
 	public void setAgentName(System.String newName)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setAgentName", newName);
-	}
-
-	public void majDisplayCardAgent(System.String newName)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "majDisplayCardAgent", newName);
 	}
 
 }

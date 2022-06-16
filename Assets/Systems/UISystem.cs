@@ -52,8 +52,7 @@ public class UISystem : FSystem {
 	public GameObject libraryPanel;
 	public GameObject EditableContainer;
 	public GameObject prefabViewportScriptContainer;
-	private string nameContainerSelected; // Nom du container selectionné
-	private GameObject containerSelected; // Le container selectionné
+	private UITypeContainer containerSelected; // Le container selectionné
 
 	public static UISystem instance;
 
@@ -941,14 +940,12 @@ public class UISystem : FSystem {
 	// Ajout un container à la scéne
 	public void addContainer()
     {
-		// On clone de viewport
+		// On clone le prefab
 		GameObject cloneContainer = Object.Instantiate(prefabViewportScriptContainer);
 		// On l'ajoute à l'éditableContainer
 		cloneContainer.transform.SetParent(EditableContainer.transform);
 		// On regarde conbien de viewport container contient l'éditable pour mettre le nouveau viewport à la bonne position
 		cloneContainer.transform.SetSiblingIndex(EditableContainer.GetComponent<EditableCanvacComponent>().nbViewportContainer);
-		// On ajoute la caméra dans le bridge
-		cloneContainer.GetComponent<CameraSystemBridge>().cameraAssociate = GameObject.Find("Main Camera");
 		// Puis on imcrémente le nombre de viewport contenue dans l'éditable
 		EditableContainer.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
 		// On ajoute le nouveau viewport container à FYFY
@@ -962,158 +959,80 @@ public class UISystem : FSystem {
 		for(int i = EditableContainer.GetComponent<EditableCanvacComponent>().nbViewportContainer; !nameOk; i++)
         {
 			// Si le nom n'est pas déjà utilisé on nomme le nouveau container de cette façon
-			if(!nameContainerUsed("Agent" + i))
+			if(!nameContainerUsed("Script" + i))
             {
-				cloneContainer.GetComponentInChildren<UITypeContainer>().associedAgentName = "Agent" + i;
+				cloneContainer.GetComponentInChildren<UITypeContainer>().associedAgentName = "Script" + i;
 				nameOk = true;
 			}
 		}
-		MainLoop.instance.StartCoroutine(updateVerticalName(cloneContainer.GetComponentInChildren<UITypeContainer>().associedAgentName));
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
 
+	}
+
+	public void selectContainer(UITypeContainer container)
+    {
+		containerSelected = container;
+	}
+
+	public UITypeContainer selectContainerByName(string name)
+	{
+		foreach (GameObject container in scriptContainer_f)
+		{
+			UITypeContainer uiContainer = container.GetComponent<UITypeContainer>();
+			if (uiContainer.associedAgentName == name)
+				return uiContainer;
+		}
+
+		return null;
 	}
 
 
 	// Vérifie si le nom proposé existe déjà ou non pour un script container
 	public bool nameContainerUsed(string nameTested) {
-		bool nameUsed = false;
 		// On regarde en premier lieu si le nom n'existe pas déjà
 		foreach (GameObject container in scriptContainer_f)
-		{
 			if (container.GetComponent<UITypeContainer>().associedAgentName == nameTested)
-			{
-				nameUsed = true;
-			}
-		}
+				return true;
 
-		return nameUsed;
+		return false;
 	}
 	
 	// Change le nom du container
-	public void newNameContainer(string name)
-    {
-		// Si le nom n'est pas utilisé
-        if (!nameContainerUsed(name) && name.Length < 8)
-        {
-			// On cherche le container
-			foreach (GameObject container in scriptContainer_f)
-			{
-				if (container.GetComponent<UITypeContainer>().editName)
-				{
-					// Si on trouve celui dont le nom du container selectionné correspond
-					if (container.GetComponent<UITypeContainer>().associedAgentName == nameContainerSelected)
-					{
-						string oldName = container.GetComponent<UITypeContainer>().associedAgentName;
-						// On change pour son nouveau nom
-						container.GetComponent<UITypeContainer>().associedAgentName = name;
-						// Puis on l'affiche verticalement
-						verticalName(name);
-						// On envoie au systéme sur quel agent on va modifie les données
-						bool agentExist = EditAgentSystem.instance.modificationAgent(oldName);
-						// Si l'agent existe, on met à jours son lien (on supprime le lien actuelle)
-						if (agentExist)
-						{
-							// Si le changement de nom entre l'agent et le container est automatique, on change aussi le nom de l'agent
-							if (container.GetComponent<UITypeContainer>().editNameAuto)
-							{
-								EditAgentSystem.instance.setAgentName(name);
-							}
-						}
-						nameContainerSelected = container.GetComponent<UITypeContainer>().associedAgentName;
-					}
-				}
-			}
-		}
-        else{ // Sinon on annule le changement
-			cancelChangeNameContainer(name);
-		}
-	}
-
-	// Udapte (au cycle update suivant) le nom du container à la veticale
-	// Ceci afin d'être sur que toutes les modifications de l'update actuelle on été prise en compte
-	public IEnumerator updateVerticalName(string name)
+	public void newNameContainer(string newName)
 	{
-		yield return null;
-		verticalName(name);
-	}
-
-	// Afichage du nom du container à la verticale
-	public void verticalName(string name)
-    {
-		// On recherhe le container qui contient le même nom
-		foreach (GameObject container in scriptContainer_f)
-        {
-			// Si on le trouve, alors on change l'écriture du nom à la vertical
-			if (container.GetComponent<UITypeContainer>().associedAgentName == name) {
-				// On créer une variable pour stocker les modifications du nom
-				string newViewName = "";
-				for(int i = 0; i < name.Length; i++)
-				{
-					if(i != name.Length - 1)
-                    {
-						newViewName = newViewName + name[i] + "\n";
-					}
-                    else
-                    {
-						newViewName = newViewName + name[i];
-					}
-				}
-				// On remplace le nom actuel par le nouveau format
-				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = newViewName;
-			}
-        }
-		MainLoop.instance.StartCoroutine(tcheckLinkName());
-	}
-
-
-	// Affiche le nom du container de manniére horizontal
-	public void horizontalName(string name)
-    {
-		// On recherhe le container qui contient le même nom
-		foreach (GameObject container in scriptContainer_f)
+		string oldName = containerSelected.associedAgentName;
+		if (oldName != newName)
 		{
-			// Si on le trouve, alors on change l'écriture du nom à l'horizontal
-			if (container.transform.Find("ContainerName").GetComponent<TMP_InputField>().text == name && container.GetComponent<UITypeContainer>().editName)
+			// Si le nom n'est pas utilisé
+			if (!nameContainerUsed(newName))
 			{
-				// On remplace le nom actuel par le nouveau format
-				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = container.GetComponent<UITypeContainer>().associedAgentName;
-				// On enregistre le nom du container selectionné
-				nameContainerSelected = container.GetComponent<UITypeContainer>().associedAgentName;
+				// On tente de récupérer un agent lié à l'ancien nom
+				AgentEdit linkedAgent = EditAgentSystem.instance.selectLinkedAgentByName(oldName);
+				// Si l'agent existe, on met à jour son lien (on supprime le lien actuelle)
+				if (linkedAgent)
+					EditAgentSystem.instance.setAgentName(newName);
+				// On change pour son nouveau nom
+				containerSelected.associedAgentName = newName;
+				containerSelected.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = newName;
+			}
+			else
+			{ // Sinon on annule le changement
+				containerSelected.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = oldName;
 			}
 		}
+		MainLoop.instance.StartCoroutine(tcheckLinkName());
 	}
 
 	// Utilisé surtout par les apelles extérieurs au systéme
 	// Permet d'enregistrer le nom du container que l'on veux changé
 	// Et lui changer son nom 
 	public void setContainerName(string oldName, string newName)
-    {
-		nameContainerSelected = oldName;
-		newNameContainer(newName);
-	}
-
-	public void noChangeName(string name)
-    {
-		foreach (GameObject container in scriptContainer_f)
-		{
-			if (container.transform.Find("ContainerName").GetComponent<TMP_InputField>().text == name && !container.GetComponent<UITypeContainer>().editName)
-			{
-				cancelChangeNameContainer(name);
-			}
-		}
-	}
-
-	// On annule le nouveau nom
-	public void cancelChangeNameContainer(string name)
 	{
-		foreach (GameObject container in scriptContainer_f)
+		UITypeContainer uiContainer = selectContainerByName(oldName);
+		if (uiContainer != null)
 		{
-			// Si le nom afficher du container et le même quand paramétre, mais pas son nom, on a bien le container non modifier
-			if (container.transform.Find("ContainerName").GetComponent<TMP_InputField>().text == name)
-			{
-				// On réaffiche son ancien nom à la vertical
-				verticalName(container.GetComponent<UITypeContainer>().associedAgentName);
-			}
+			containerSelected = uiContainer;
+			newNameContainer(newName);
 		}
 	}
 

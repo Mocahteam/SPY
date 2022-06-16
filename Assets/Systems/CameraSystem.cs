@@ -9,8 +9,6 @@ using UnityEngine.UI;
 public class CameraSystem : FSystem {
 	// Contains main camera
 	private Family cameraGO = FamilyManager.getFamily(new AllOfComponents(typeof(CameraComponent)), new AnyOfTags("MainCamera"));
-	// In game agents containing reference to a Script
-	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	// In games agents controlable by the eplayer
 	private Family playerGO = FamilyManager.getFamily(new AnyOfTags("Player"));
 	// Contains current UI focused
@@ -36,9 +34,6 @@ public class CameraSystem : FSystem {
 
 		// set current camera target (the first player)
 		playerGO.addEntryCallback(delegate (GameObject go) { target = go.transform; });
-
-		// add listener on locate button to move camera on focused agent
-		agents.addEntryCallback(setLocateButtons);
 	}
 
 	private void onNewCamera(GameObject go)
@@ -143,14 +138,8 @@ public class CameraSystem : FSystem {
 		}		
 	}
 
-	// add callback to locateButton inside UI container associated to the agent
-	public void setLocateButtons(GameObject go){
-		go.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("locateButton").GetComponent<Button>().onClick.AddListener(delegate{target = go.transform;});
-	}
-
-	// Active ou desactive le systéme
-	public void SetCameraSystem(bool value)
+	public void focusOnAgent(GameObject agent)
     {
-		Pause = value;
-    }
+		target = agent.transform;
+	}
 }

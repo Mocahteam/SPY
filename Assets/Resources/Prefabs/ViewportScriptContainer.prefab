@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 30, y: 110}
+  m_SizeDelta: {x: 42, y: 17}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2373119215472063672
 CanvasRenderer:
@@ -135,7 +135,7 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 14
-  m_CharacterLimit: 7
+  m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
@@ -157,21 +157,9 @@ MonoBehaviour:
   m_OnSelect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1188262041932789460}
-        m_TargetAssemblyTypeName: UISystemBridge, Assembly-CSharp
-        m_MethodName: horizontalName
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 570210727992613973}
         m_TargetAssemblyTypeName: CameraSystemBridge, Assembly-CSharp
-        m_MethodName: SetCameraSystem
+        m_MethodName: PauseCameraSystem
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -181,24 +169,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-  m_OnDeselect:
-    m_PersistentCalls:
-      m_Calls:
       - m_Target: {fileID: 1188262041932789460}
         m_TargetAssemblyTypeName: UISystemBridge, Assembly-CSharp
-        m_MethodName: newNameContainer
-        m_Mode: 0
+        m_MethodName: selectContainer
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 2876508349029538592}
+          m_ObjectArgumentAssemblyTypeName: UITypeContainer, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
+  m_OnDeselect:
+    m_PersistentCalls:
+      m_Calls:
       - m_Target: {fileID: 570210727992613973}
         m_TargetAssemblyTypeName: CameraSystemBridge, Assembly-CSharp
-        m_MethodName: SetCameraSystem
+        m_MethodName: PauseCameraSystem
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -216,26 +204,14 @@ MonoBehaviour:
       m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1188262041932789460}
-        m_TargetAssemblyTypeName: UISystemBridge, Assembly-CSharp
-        m_MethodName: noChangeName
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTouchScreenKeyboardStatusChanged:
     m_PersistentCalls:
       m_Calls: []
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_CustomCaretColor: 0
   m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
-  m_Text: "N\n\xB0\n1"
+  m_Text: Script 1
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
@@ -492,7 +468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   associedAgentName: "N\xB01"
-  editName: 0
+  editName: 1
   editNameAuto: 0
   actionContainer: 0
   notScriptContainer: 0
@@ -816,7 +792,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e41c5cf59d687e468669710d3c809d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraAssociate: {fileID: 0}
 --- !u!1 &4543883933324483242
 GameObject:
   m_ObjectHideFlags: 0
@@ -980,7 +955,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -4, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6015866909247981993
 CanvasRenderer:
@@ -1010,7 +985,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "N\n\xB0\n1\u200B"
+  m_text: "Script 1\u200B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1037,7 +1012,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 11.6
   m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1115,7 +1090,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -4, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3715166425326162704
 CanvasRenderer:
@@ -1145,7 +1120,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Enter text...
+  m_text: Entrer un nom...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1172,15 +1147,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
+  m_fontSize: 5.25
   m_fontSizeBase: 14
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 2
   m_fontSizeMax: 72
   m_fontStyle: 2
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1269,7 +1244,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 42, y: 30}
+  m_SizeDelta: {x: 42, y: 20.94}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &558578274065986923
 CanvasRenderer:
@@ -1299,7 +1274,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Sequence \nde \nl'agent :"
+  m_text: "Sequence \nde :"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1326,7 +1301,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 8.75
+  m_fontSize: 9.2
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

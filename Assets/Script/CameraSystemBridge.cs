@@ -1,16 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraSystemBridge : MonoBehaviour
 {
-    // Camera
-    public GameObject cameraAssociate;
-
     // Active ou desactive le systéme
-    public void SetCameraSystem(bool value)
+    public void PauseCameraSystem(bool value)
     {
         // Comment faire pour mettre le systéme en pause puis le relancer
-        CameraSystem.instance.SetCameraSystem(value);
+        CameraSystem.instance.Pause = value;
+    }
+
+    public void locateAgent(EditAgentSystemBridge agent)
+    {
+        CameraSystem.instance.focusOnAgent(agent.agent);
     }
 }
