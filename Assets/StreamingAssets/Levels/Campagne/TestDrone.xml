@@ -52,7 +52,7 @@
     <limit actionType="Activate" limit="-1" />
     <limit actionType="TurnBack" limit="-1" />
     <limit actionType="If" limit="-1" />
-    <limit actionType="Else" limit="-1" />
+    <limit actionType="IfElse" limit="-1" />
     <limit actionType="For" limit="-1" />
     <limit actionType="While" limit="-1" />
     <limit actionType="AndOperator" limit="-1" />
@@ -68,7 +68,7 @@
   <enemy posX="2" posZ="1" direction="0" range="2" selfRange="False" typeRange="0">
     <script>
       <action actionType="For" nbFor="10">
-        <action actionType="Else">
+        <action actionType="IfElse">
           <action container="Condition">
             <action actionType="NotOperator" element="1">
               <action actionType="Wall"/>

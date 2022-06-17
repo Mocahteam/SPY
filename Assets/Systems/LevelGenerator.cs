@@ -424,6 +424,7 @@ public class LevelGenerator : FSystem {
 								child.transform.SetParent(conditionContainer.transform);
 								child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
 							}
+							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
 							((IfAction)action).condition = ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, new string[] { });
@@ -446,6 +447,7 @@ public class LevelGenerator : FSystem {
 									((IfAction)action).firstChild = child;
 								}
 							}
+							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
 						}
@@ -453,13 +455,13 @@ public class LevelGenerator : FSystem {
 				}
 				break;
 
-			case "Else":
+			case "IfElse":
 				prefab = Resources.Load("Prefabs/IfElseDetectBloc") as GameObject;
 				obj = Object.Instantiate(prefab);
 				conditionContainer = obj.transform.Find("ConditionContainer").gameObject;
 				firstContainerBloc = obj.transform.Find("Container").gameObject;
 				secondeContainerBloc = obj.transform.Find("ElseContainer").gameObject;
-				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("If");
+				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("IfElse");
 				action = obj.GetComponent<IfAction>();
 
 				// On ajoute les éléments enfant dans les bons container
@@ -477,6 +479,7 @@ public class LevelGenerator : FSystem {
 								child.transform.SetParent(conditionContainer.transform);
 								child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
 							}
+							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
 							((IfAction)action).condition = ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, new string[] { });
@@ -499,6 +502,7 @@ public class LevelGenerator : FSystem {
 									((IfAction)action).firstChild = child;
 								}
 							}
+							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
 						}
@@ -520,6 +524,7 @@ public class LevelGenerator : FSystem {
 									((ElseAction)action).elseFirstChild = child;
 								}
 							}
+							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
 						}
@@ -560,10 +565,8 @@ public class LevelGenerator : FSystem {
 							((ForAction)action).firstChild = child;
 						}
 					}
-					//Object.Destroy(endZone);
-					GameObject end = obj.transform.Find("Container").GetComponentInChildren<EndBlockScriptComponent>().gameObject;
-					end.transform.SetParent(canvas.transform);
-					Object.Destroy(end);
+					endZone.transform.SetParent(null);
+					Object.Destroy(endZone);
 					GameObjectManager.refresh(obj);
 				}
 				break;
@@ -591,6 +594,7 @@ public class LevelGenerator : FSystem {
 								child.transform.SetParent(conditionContainer.transform);
 								child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
 							}
+							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
 							((IfAction)action).condition = ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, new string[] { });
@@ -613,6 +617,7 @@ public class LevelGenerator : FSystem {
 									((IfAction)action).firstChild = child;
 								}
 							}
+							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
 						}
@@ -744,22 +749,13 @@ public class LevelGenerator : FSystem {
 	// Associe à chaque bloc le bloc qui sera executé aprés
 	public static void computeNext(GameObject container){
 		for (int i = 0 ; i < container.transform.childCount ; i++){
-			Debug.Log("next : " + container.transform.GetChild(i).name);
 			Transform child = container.transform.GetChild(i);
 			// Si l'action est une action basique et n'est pas la dernière
 			if (i < container.transform.childCount && child.GetComponent<BaseElement>()){
 				// Si le bloc appartient à un for, il faut que le dernier élément est comme next le block for
 				if ((container.transform.parent.GetComponent<ForeverAction>() || container.transform.parent.GetComponent<ForAction>()) && i == container.transform.childCount - 1)
 				{
-					if (!child.GetComponent<EndBlockScriptComponent>())
-					{
-						child.GetComponent<BaseElement>().next = container.transform.parent.gameObject;
-					}
-					else if (child.GetComponent<EndBlockScriptComponent>() && child.GetSiblingIndex() != 0)
-					{
-						GameObject lastChild = container.transform.GetChild(child.GetSiblingIndex() - 1).gameObject;
-						lastChild.GetComponent<BaseElement>().next = container.transform.parent.gameObject; ;
-					}
+					child.GetComponent<BaseElement>().next = container.transform.parent.gameObject;
 					i = container.transform.childCount;
 				}// Si le bloc appartient à un if et qu'il est le dernier block de la partie action
 				else if (container.transform.parent.GetComponent<IfAction>() && i == container.transform.childCount - 1) {
@@ -768,29 +764,14 @@ public class LevelGenerator : FSystem {
 					// Sinon on ne fait rien et fin de la sequence
 					if(container.transform.parent.parent.childCount - 1 > container.transform.parent.GetSiblingIndex())
                     {
-						if (!child.GetComponent<EndBlockScriptComponent>())
-                        {
-							child.GetComponent<BaseElement>().next = container.transform.parent.parent.GetChild(container.transform.parent.GetSiblingIndex() + 1).gameObject;
-						}
-						else if(child.GetComponent<EndBlockScriptComponent>() && child.GetSiblingIndex() != 0){
-							GameObject lastChild = container.transform.GetChild(child.GetSiblingIndex() - 1).gameObject;
-							lastChild.GetComponent<BaseElement>().next = container.transform.parent.parent.GetChild(container.transform.parent.GetSiblingIndex() + 1).gameObject;
-						}
+						child.GetComponent<BaseElement>().next = container.transform.parent.parent.GetChild(container.transform.parent.GetSiblingIndex() + 1).gameObject;
 					}
                     else
                     {
 						// Exception, si le container parent parent est un for, on le met en next
 						if (container.transform.parent.parent.parent.GetComponent<ForAction>() || container.transform.parent.parent.parent.GetComponent<ForeverAction>())
                         {
-							if (!child.GetComponent<EndBlockScriptComponent>())
-							{
-								child.GetComponent<BaseElement>().next = container.transform.parent.parent.parent.gameObject;
-							}
-							else if (child.GetComponent<EndBlockScriptComponent>() && child.GetSiblingIndex() != 0)
-							{
-								GameObject lastChild = container.transform.GetChild(child.GetSiblingIndex() - 1).gameObject;
-								lastChild.GetComponent<BaseElement>().next = container.transform.parent.parent.parent.gameObject;
-							}
+							child.GetComponent<BaseElement>().next = container.transform.parent.parent.parent.gameObject;
 						}
                     }
 				}// Sinon l'associer au block suivant
