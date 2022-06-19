@@ -6,30 +6,21 @@ using UnityEngine.EventSystems;
 public class DragDropSystemBridge : MonoBehaviour
 {
 
-  public void pointerUpElement(BaseEventData e)
+    public void checkRightClickForDelete(BaseEventData e)
     {
-        // On verifie si c'est un up droit ou gauche
-        if ((e as PointerEventData).button == PointerEventData.InputButton.Left)
-        {
-
-        }
-        else
-        {
-            DragDropSystem.instance.deleteElement(e.selectedObject);
-        }
-
+        // On verifie si c'est bien un clic-droit
+        if ((e as PointerEventData).button == PointerEventData.InputButton.Right)
+            DragDropSystem.instance.deleteElement(gameObject);
     }
 
-    public void dropElement(GameObject element)
+    public void checkHighlightDropArea()
     {
-        DragDropSystem.instance.dropElementInContainer(element);
+        DragDropSystem.instance.checkHighlightDropArea(gameObject);
     }
-
-    public void activeOutlineConditionContainer(bool value)
+    public void unhighlightDropArea()
     {
-        DragDropSystem.instance.activeOutlineConditionContainer(transform.gameObject, value);
+        DragDropSystem.instance.unhighlightDropArea(gameObject);
     }
-
 
     public void beginDragElement(BaseEventData e)
     {

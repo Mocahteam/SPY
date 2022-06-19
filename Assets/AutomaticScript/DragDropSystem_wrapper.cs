@@ -4,7 +4,7 @@ using FYFY;
 public class DragDropSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject mainCanvas;
-	public UnityEngine.GameObject lastEditableContainer;
+	public UnityEngine.GameObject lastDropZoneUsed;
 	public UnityEngine.AudioSource audioSource;
 	public UnityEngine.GameObject buttonPlay;
 	public System.Single catchTime;
@@ -12,10 +12,20 @@ public class DragDropSystem_wrapper : BaseWrapper
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
-		MainLoop.initAppropriateSystemField (system, "lastEditableContainer", lastEditableContainer);
+		MainLoop.initAppropriateSystemField (system, "lastDropZoneUsed", lastDropZoneUsed);
 		MainLoop.initAppropriateSystemField (system, "audioSource", audioSource);
 		MainLoop.initAppropriateSystemField (system, "buttonPlay", buttonPlay);
 		MainLoop.initAppropriateSystemField (system, "catchTime", catchTime);
+	}
+
+	public void checkHighlightDropArea(UnityEngine.GameObject dropArea)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "checkHighlightDropArea", dropArea);
+	}
+
+	public void unhighlightDropArea(UnityEngine.GameObject dropArea)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "unhighlightDropArea", dropArea);
 	}
 
 	public void beginDragElementFromLibrary(UnityEngine.EventSystems.BaseEventData element)
@@ -38,24 +48,14 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "endDragElement", null);
 	}
 
-	public void dropElementInContainer(UnityEngine.GameObject redBar)
+	public void deleteElement(UnityEngine.GameObject elementToDelete)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "dropElementInContainer", redBar);
+		MainLoop.callAppropriateSystemMethod (system, "deleteElement", elementToDelete);
 	}
 
-	public void deleteElement(UnityEngine.GameObject element)
+	public void checkDoubleClick(UnityEngine.EventSystems.BaseEventData element)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "deleteElement", element);
-	}
-
-	public void clickLibraryElementForAddInContainer(UnityEngine.EventSystems.BaseEventData element)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "clickLibraryElementForAddInContainer", element);
-	}
-
-	public void activeOutlineConditionContainer()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "activeOutlineConditionContainer", null);
+		MainLoop.callAppropriateSystemMethod (system, "checkDoubleClick", element);
 	}
 
 }

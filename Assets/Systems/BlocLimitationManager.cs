@@ -6,7 +6,7 @@ using TMPro;
 /// This system manages blocs limitation in inventory
 /// </summary>
 public class BlocLimitationManager : FSystem {
-	private Family droppedActions = FamilyManager.getFamily(new AllOfComponents(typeof(Dropped), typeof(UIActionType)));
+	private Family droppedActions = FamilyManager.getFamily(new AllOfComponents(typeof(Dropped), typeof(LibraryItemRef)));
 	private Family deletedActions = FamilyManager.getFamily(new AllOfComponents(typeof(AddOne)));
 	private Family draggableElement = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)));
 	private GameData gameData;
@@ -41,13 +41,13 @@ public class BlocLimitationManager : FSystem {
 	private string getActionKey(Highlightable action){
 		if (action is BasicAction)
 			return ((BasicAction)action).actionType.ToString();
-		else if (action is IfAction)
+		else if (action is IfControl)
 			return "If";
-		else if (action is ElseAction)
+		else if (action is IfElseControl)
 			return "Else";
-		else if (action is ForAction)
+		else if (action is ForControl)
 			return "For";
-		else if (action is WhileAction)
+		else if (action is WhileControl)
 			return "While";
 		else if (action is BaseCondition)
 			return ((BaseCondition)action).conditionType.ToString();

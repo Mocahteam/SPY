@@ -7,11 +7,11 @@ using UnityEngine.UI;
 /// Manage highlightable GameObjects
 /// </summary>
 public class HighLightSystem : FSystem {
-	private Family highlightableGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(UIActionType))); //has to be defined before nonhighlightedGO because initBaseColor must be called before unHighLightItem
-	private Family highlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(PointerOver)), new NoneOfComponents(typeof(UIActionType)));
-	private Family nonhighlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(UIActionType)));
-	private Family highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new AnyOfComponents( typeof(CurrentAction), typeof(PointerOver)));
-	private Family nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(UIActionType)), new NoneOfComponents(typeof(CurrentAction), typeof(Dragged), typeof(PointerOver)));
+	private Family highlightableGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(LibraryItemRef))); //has to be defined before nonhighlightedGO because initBaseColor must be called before unHighLightItem
+	private Family highlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(PointerOver)), new NoneOfComponents(typeof(LibraryItemRef)));
+	private Family nonhighlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(LibraryItemRef)));
+	private Family highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new AnyOfComponents( typeof(CurrentAction), typeof(PointerOver)));
+	private Family nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new NoneOfComponents(typeof(CurrentAction), typeof(Dragged), typeof(PointerOver)));
 	
 	protected override void onStart()
     {
@@ -24,9 +24,11 @@ public class HighLightSystem : FSystem {
 
 
 	private void initBaseColor(GameObject go){
-		if(go.GetComponent<BaseElement>() && go.GetComponent<Image>()){
+		// check if it is a script instruction
+		if((go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) && go.GetComponent<Image>()){
 			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image>().color;
 		}
+		// check if it is a word object (robot, ground...)
 		if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>().material.color;
 			if(go.GetComponent<ScriptRef>()){
@@ -55,13 +57,14 @@ public class HighLightSystem : FSystem {
 			Transform parent = go.transform.parent;
 			while (parent != null)
             {
-				if (parent.GetComponent<ForAction>() || parent.GetComponent<ForeverAction>())
+				// TODO : vérifier s'il est nécessaire d'ajouter le WhileControl qui hérite de ForControl => vérifier si en mode play les while s'éclairent en jaune
+				if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
 					parent.transform.GetChild(0).GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().currentActionColor;
 				parent = parent.parent;
 			}
 		}
 		// second manage sensitive UI inside editable panel
-		else if(go.GetComponent<BaseElement>() && go.GetComponent<PointerOver>() && go.name != "EndZoneActionBloc")
+		else if(go.GetComponent<BaseElement>() && go.GetComponent<PointerOver>())
 			go.GetComponent<Image>().color = go.GetComponent<BaseElement>().highlightedColor;
 		// third sensitive UI inside library panel
 		else if (go.GetComponent<ElementToDrag>() && go.GetComponent<PointerOver>())
@@ -77,18 +80,22 @@ public class HighLightSystem : FSystem {
 	}
 
 	public void unHighLightItem(GameObject go){
-		if(go.GetComponent<BaseElement>()){
+		// manage the case of script execution
+        if (go.GetComponent<BaseElement>()) { 
 			go.GetComponent<Image>().color = go.GetComponent<BaseElement>().baseColor;
 			Transform parent = go.transform.parent;
 			while (parent != null)
 			{
-				if (parent.GetComponent<ForAction>() || parent.GetComponent<ForeverAction>())
+				// TODO : vérifier s'il est nécessaire d'ajouter le WhileControl qui hérite de ForControl => vérifier si en mode play les while se remette dans leur couleur de base après avoir été exécutés
+				if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
 					parent.transform.GetChild(0).GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().forBaseColor;
 				parent = parent.parent;
 			}
 		}
+		// the case of item inside library panel
 		else if (go.GetComponent<ElementToDrag>())
 			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
+		// the case of world GameObjects (robot, ground...)
 		else if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().baseColor;
 			if(go.GetComponent<ScriptRef>()){

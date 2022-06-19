@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using FYFY;
-using UnityEngine.UI;
-using System.Collections;
 
 /// <summary>
 /// This system executes new currentActions

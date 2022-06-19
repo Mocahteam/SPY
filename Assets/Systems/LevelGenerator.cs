@@ -130,7 +130,6 @@ public class LevelGenerator : FSystem {
 				GameObject scriptContainer = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ViewportScriptContainer") as GameObject);
 				GameObjectManager.bind(scriptContainer);
 				scriptContainer.transform.SetParent(editableScriptContainer.transform.Find("EditableContainers"), false);
-				DragDropSystem.instance.lastEditableContainer = scriptContainer.transform.Find("ScriptContainer").gameObject;
 				// On définie son nom à celui de l'agent
 				scriptContainer.GetComponentInChildren<UIRootContainer>().associedAgentName = agentEdit.agentName;
 
@@ -402,12 +401,12 @@ public class LevelGenerator : FSystem {
 		string actionKey = actionNode.Attributes.GetNamedItem("actionType").Value;
 		switch(actionKey){
 			case "If" :
-				prefab = Resources.Load ("Prefabs/IfDetectBloc") as GameObject;
+				prefab = Resources.Load ("Prefabs/ScriptElements/IfDetectBloc") as GameObject;
 				obj = Object.Instantiate (prefab);
 				conditionContainer = obj.transform.Find("ConditionContainer").gameObject;
 				firstContainerBloc = obj.transform.Find("Container").gameObject;
-				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("If");
-				action = obj.GetComponent<IfAction>();
+				obj.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("If");
+				action = obj.GetComponent<IfControl>();
 
 				// On ajoute les éléments enfant dans les bons container
 				foreach(XmlNode containerNode in actionNode.ChildNodes)
@@ -427,7 +426,7 @@ public class LevelGenerator : FSystem {
 							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
-							((IfAction)action).condition = ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, new string[] { });
+							((IfControl)action).condition = ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, new string[] { });
 						}
                     }
 					else if (containerNode.Attributes.GetNamedItem("container").Value == "IfContainer")
@@ -444,7 +443,7 @@ public class LevelGenerator : FSystem {
 								if (!firstchild)
 								{
 									firstchild = true;
-									((IfAction)action).firstChild = child;
+									((IfControl)action).firstChild = child;
 								}
 							}
 							endZone.transform.SetParent(null);
@@ -456,13 +455,13 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "IfElse":
-				prefab = Resources.Load("Prefabs/IfElseDetectBloc") as GameObject;
+				prefab = Resources.Load("Prefabs/ScriptElements/IfElseDetectBloc") as GameObject;
 				obj = Object.Instantiate(prefab);
 				conditionContainer = obj.transform.Find("ConditionContainer").gameObject;
 				firstContainerBloc = obj.transform.Find("Container").gameObject;
 				secondeContainerBloc = obj.transform.Find("ElseContainer").gameObject;
-				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("IfElse");
-				action = obj.GetComponent<IfAction>();
+				obj.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("IfElse");
+				action = obj.GetComponent<IfControl>();
 
 				// On ajoute les éléments enfant dans les bons container
 				foreach (XmlNode containerNode in actionNode.ChildNodes)
@@ -482,7 +481,7 @@ public class LevelGenerator : FSystem {
 							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
-							((IfAction)action).condition = ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, new string[] { });
+							((IfControl)action).condition = ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, new string[] { });
 						}
 					}
 					else if (containerNode.Attributes.GetNamedItem("container").Value == "IfContainer")
@@ -499,7 +498,7 @@ public class LevelGenerator : FSystem {
 								if (!firstchild)
 								{
 									firstchild = true;
-									((IfAction)action).firstChild = child;
+									((IfControl)action).firstChild = child;
 								}
 							}
 							endZone.transform.SetParent(null);
@@ -521,7 +520,7 @@ public class LevelGenerator : FSystem {
 								if (!firstchild)
 								{
 									firstchild = true;
-									((ElseAction)action).elseFirstChild = child;
+									((IfElseControl)action).elseFirstChild = child;
 								}
 							}
 							endZone.transform.SetParent(null);
@@ -533,20 +532,20 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "For":
-				prefab = Resources.Load ("Prefabs/ForBloc") as GameObject;
+				prefab = Resources.Load ("Prefabs/ScriptElements/ForBloc") as GameObject;
 				obj = Object.Instantiate (prefab);
-				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("For");
-				action = obj.GetComponent<ForAction>();
+				obj.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("For");
+				action = obj.GetComponent<ForControl>();
 				firstContainerBloc = obj.transform.Find("Container").gameObject;
 
-				((ForAction)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
+				((ForControl)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
 				if (editable)
 				{
-					obj.transform.GetComponentInChildren<TMP_InputField>().text = ((ForAction)action).nbFor.ToString();
+					obj.transform.GetComponentInChildren<TMP_InputField>().text = ((ForControl)action).nbFor.ToString();
 				}
 				else
 				{
-					obj.transform.GetComponentInChildren<TMP_InputField>().text = (((ForAction)action).currentFor).ToString() + " / " + ((ForAction)action).nbFor.ToString();
+					obj.transform.GetComponentInChildren<TMP_InputField>().text = (((ForControl)action).currentFor).ToString() + " / " + ((ForControl)action).nbFor.ToString();
 				}
 				obj.transform.GetComponentInChildren<TMP_InputField>().interactable = editable;
 
@@ -562,7 +561,7 @@ public class LevelGenerator : FSystem {
 						if (!firstchild)
 						{
 							firstchild = true;
-							((ForAction)action).firstChild = child;
+							((ForControl)action).firstChild = child;
 						}
 					}
 					endZone.transform.SetParent(null);
@@ -572,10 +571,10 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "While":
-				prefab = Resources.Load("Prefabs/WhileBloc") as GameObject;
+				prefab = Resources.Load("Prefabs/ScriptElements/WhileBloc") as GameObject;
 				obj = Object.Instantiate(prefab);
-				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find("For");
-				action = obj.GetComponent<WhileAction>();
+				obj.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("For");
+				action = obj.GetComponent<WhileControl>();
 				firstContainerBloc = obj.transform.Find("Container").gameObject;
 				conditionContainer = obj.transform.Find("ConditionContainer").gameObject;
 
@@ -597,7 +596,7 @@ public class LevelGenerator : FSystem {
 							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
-							((IfAction)action).condition = ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, new string[] { });
+							((IfControl)action).condition = ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, new string[] { });
 						}
 					}
 					else if (containerNode.Attributes.GetNamedItem("container").Value == "IfContainer")
@@ -614,7 +613,7 @@ public class LevelGenerator : FSystem {
 								if (!firstchild)
 								{
 									firstchild = true;
-									((IfAction)action).firstChild = child;
+									((IfControl)action).firstChild = child;
 								}
 							}
 							endZone.transform.SetParent(null);
@@ -626,10 +625,10 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "Forever":
-				prefab = Resources.Load ("Prefabs/InfiniteLoop") as GameObject;
+				prefab = Resources.Load ("Prefabs/ScriptElements/InfiniteLoop") as GameObject;
 				obj = Object.Instantiate (prefab);
-				obj.GetComponent<UIActionType>().linkedTo = null;
-				action = obj.GetComponent<ForeverAction>();
+				obj.GetComponent<LibraryItemRef>().linkedTo = null;
+				action = obj.GetComponent<ForeverControl>();
 
 				//add children
 				firstchild = false;
@@ -639,16 +638,16 @@ public class LevelGenerator : FSystem {
 						child.transform.SetParent(action.transform.Find("Container"));
 						if(!firstchild){
 							firstchild = true;
-							((ForeverAction)action).firstChild = child;
+							((ForeverControl)action).firstChild = child;
 						}
 					}	
 				}
 				break;
 
 			default:
-				prefab = Resources.Load("Prefabs/" + actionKey + "ActionBloc") as GameObject;
+				prefab = Resources.Load("Prefabs/ScriptElements/" + actionKey + "ActionBloc") as GameObject;
 				obj = Object.Instantiate(prefab);
-				obj.GetComponent<UIActionType>().linkedTo = GameObject.Find(actionKey);
+				obj.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find(actionKey);
 				action = obj.GetComponent<BasicAction>();
 				break;
 		}
@@ -668,24 +667,24 @@ public class LevelGenerator : FSystem {
 		switch (actionKey)
 		{
 			case "AndOperator":
-				prefab = Resources.Load("Prefabs/" + actionKey + "Element") as GameObject;
+				prefab = Resources.Load("Prefabs/ScriptElements/" + actionKey + "Element") as GameObject;
 				obj = Object.Instantiate(prefab);
 				if (actionNode.HasChildNodes)
 				{
 					GameObject endZone = null;
-					foreach (XmlNode orNode in actionNode.ChildNodes)
+					foreach (XmlNode andNode in actionNode.ChildNodes)
 					{
-						if (orNode.Attributes.GetNamedItem("element").Value == "1")
+						if (andNode.Attributes.GetNamedItem("element").Value == "1")
 						{
-							GameObject child = (readXMLElement(orNode, editable));
+							GameObject child = (readXMLElement(andNode, editable));
 							endZone = obj.transform.GetChild(1).gameObject;
 							child.transform.SetParent(obj.transform);
 							child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
 							endZone.SetActive(false);
 						}
-						else if (orNode.Attributes.GetNamedItem("element").Value == "2")
+						else if (andNode.Attributes.GetNamedItem("element").Value == "2")
 						{
-							GameObject child = (readXMLElement(orNode, editable));
+							GameObject child = (readXMLElement(andNode, editable));
 							endZone = obj.transform.GetChild(4).gameObject;
 							child.transform.SetParent(obj.transform);
 							child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
@@ -696,7 +695,7 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "OrOperator":
-				prefab = Resources.Load("Prefabs/" + actionKey + "Element") as GameObject;
+				prefab = Resources.Load("Prefabs/ScriptElements/" + actionKey + "Element") as GameObject;
 				obj = Object.Instantiate(prefab);
 				if (actionNode.HasChildNodes)
 				{
@@ -724,7 +723,7 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "NotOperator":
-				prefab = Resources.Load("Prefabs/" + actionKey + "Element") as GameObject;
+				prefab = Resources.Load("Prefabs/ScriptElements/" + actionKey + "Element") as GameObject;
 				obj = Object.Instantiate(prefab);
 				if (actionNode.HasChildNodes)
 				{
@@ -737,7 +736,7 @@ public class LevelGenerator : FSystem {
 				break;
 
 			default:
-				prefab = Resources.Load("Prefabs/" + actionKey + "Element") as GameObject;
+				prefab = Resources.Load("Prefabs/ScriptElements/" + actionKey + "Element") as GameObject;
 				obj = Object.Instantiate(prefab);
 				break;
 		}
@@ -752,13 +751,13 @@ public class LevelGenerator : FSystem {
 			Transform child = container.transform.GetChild(i);
 			// Si l'action est une action basique et n'est pas la dernière
 			if (i < container.transform.childCount && child.GetComponent<BaseElement>()){
-				// Si le bloc appartient à un for, il faut que le dernier élément est comme next le block for
-				if ((container.transform.parent.GetComponent<ForeverAction>() || container.transform.parent.GetComponent<ForAction>()) && i == container.transform.childCount - 1)
+				// Si le bloc appartient à un for, il faut que le dernier élément ait comme next le block for
+				if ((container.transform.parent.GetComponent<ForeverControl>() || container.transform.parent.GetComponent<ForControl>()) && i == container.transform.childCount - 1)
 				{
 					child.GetComponent<BaseElement>().next = container.transform.parent.gameObject;
 					i = container.transform.childCount;
 				}// Si le bloc appartient à un if et qu'il est le dernier block de la partie action
-				else if (container.transform.parent.GetComponent<IfAction>() && i == container.transform.childCount - 1) {
+				else if (container.transform.parent.GetComponent<IfControl>() && i == container.transform.childCount - 1) {
 					// On regarde si il reste des éléments dans le container parent
 					// Si oui on met l'élément suivant en next
 					// Sinon on ne fait rien et fin de la sequence
@@ -769,7 +768,7 @@ public class LevelGenerator : FSystem {
                     else
                     {
 						// Exception, si le container parent parent est un for, on le met en next
-						if (container.transform.parent.parent.parent.GetComponent<ForAction>() || container.transform.parent.parent.parent.GetComponent<ForeverAction>())
+						if (container.transform.parent.parent.parent.GetComponent<ForControl>() || container.transform.parent.parent.parent.GetComponent<ForeverControl>())
                         {
 							child.GetComponent<BaseElement>().next = container.transform.parent.parent.parent.gameObject;
 						}
@@ -781,23 +780,23 @@ public class LevelGenerator : FSystem {
 				}
 			}// Sinon si c'est la derniére et une action basique
 			else if(i == container.transform.childCount-1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>()){
-				if(container.GetComponent<ForAction>() || container.GetComponent<ForeverAction>())
+				if(container.GetComponent<ForControl>() || container.GetComponent<ForeverControl>())
 					child.GetComponent<BaseElement>().next = container;
-				else if(container.GetComponent<IfAction>())
+				else if(container.GetComponent<IfControl>())
 					child.GetComponent<BaseElement>().next = container.GetComponent<BaseElement>().next;
 			}
 			// Si autre action que les actions basique
 			// Alors récursive de la fonction sur leur container
-			if(child.GetComponent<IfAction>() || child.GetComponent<ForAction>())
+			if(child.GetComponent<IfControl>() || child.GetComponent<ForControl>())
             {
 				computeNext(child.transform.Find("Container").gameObject);
                 // Si c'est un esle il ne faut pas oublier le container else
-                if (child.GetComponent<ElseAction>())
+                if (child.GetComponent<IfElseControl>())
                 {
 					computeNext(child.transform.Find("ElseContainer").gameObject);
 				}
 			}
-			else if (child.GetComponent<ForeverAction>())
+			else if (child.GetComponent<ForeverControl>())
             {
 				computeNext(child.transform.Find("Container").gameObject);
 			}

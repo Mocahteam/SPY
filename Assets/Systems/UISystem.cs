@@ -19,8 +19,8 @@ public class UISystem : FSystem {
 	private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Player"));
-	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(UIActionType)));
-	private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction), typeof(UIActionType), typeof(CurrentAction)));
+	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(LibraryItemRef)));
+	private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction), typeof(LibraryItemRef), typeof(CurrentAction)));
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
 	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
@@ -81,8 +81,8 @@ public class UISystem : FSystem {
 		
 		currentActions.addEntryCallback(onNewCurrentAction);
 
-		inventoryBlocks.addEntryCallback(delegate { forceUIRefresh(); });
-		inventoryBlocks.addExitCallback(delegate { forceUIRefresh(); });
+		inventoryBlocks.addEntryCallback(delegate { MainLoop.instance.StartCoroutine(forceUIRefresh()); });
+		inventoryBlocks.addExitCallback(delegate { MainLoop.instance.StartCoroutine(forceUIRefresh()); });
 
 		lastEditedScript = null;
 
@@ -90,6 +90,7 @@ public class UISystem : FSystem {
 
 		// Afin de mettre en rouge les noms qui ne sont pas en lien dés le début
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
+		MainLoop.instance.StartCoroutine(forceUIRefresh());
 	}
 
 
@@ -114,9 +115,13 @@ public class UISystem : FSystem {
 	private IEnumerator updatePlayButton()
 	{
 		yield return null;
+		buttonPlay.GetComponent<Button>().interactable = false;
 		foreach (GameObject container in scriptContainer_f)
 		{
-			buttonPlay.GetComponent<Button>().interactable = !(container.transform.childCount < 3);
+			if (container.GetComponentsInChildren<BaseElement>().Length > 0)
+			{
+				buttonPlay.GetComponent<Button>().interactable = true;
+			}
 		}
 	}
 
@@ -186,11 +191,6 @@ public class UISystem : FSystem {
 	// Rafraichit certain boutton de l'UI
 	public void refreshUIButton()
 	{
-		//Refresh Containers size
-		foreach (GameObject container in scriptContainer_f)
-		{
-			LayoutRebuilder.ForceRebuildLayoutImmediate(container.GetComponent<RectTransform>());
-		}
 		MainLoop.instance.StartCoroutine(updatePlayButton());
 	}
 
@@ -200,19 +200,11 @@ public class UISystem : FSystem {
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
 	}
 
-	private void forceUIRefresh()
+	private IEnumerator forceUIRefresh()
     {
+		yield return null;
 		LayoutRebuilder.ForceRebuildLayoutImmediate(libraryPanel.GetComponent<RectTransform>());
-		RebuildInventory();
 	}
-
-	// Met les hauteurs de chaque partie de l'inventaire à la bonne taille selon le nombre de bloc activé par partie
-	private void RebuildInventory()
-    {
-		// Pour chaque partie on va compter le nombre de bloc activé
-		// Tous les 3 block on ajoute +40unité pour la taille
-		// Avec une taille de départ de 25 pour 0 block et 65 pour 1 block
-    }
 
 	// ?????
 	private void onNewCurrentAction(GameObject go){
@@ -372,14 +364,14 @@ public class UISystem : FSystem {
 
 	// ?????
 	private void linkTo(GameObject go){
-		if(go.GetComponent<UIActionType>().linkedTo == null){
+		if(go.GetComponent<LibraryItemRef>().linkedTo == null){
 			if(go.GetComponent<BasicAction>()){
-				go.GetComponent<UIActionType>().linkedTo = GameObject.Find(go.GetComponent<BasicAction>().actionType.ToString());
+				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find(go.GetComponent<BasicAction>().actionType.ToString());
 			}			
-			else if(go.GetComponent<IfAction>())
-				go.GetComponent<UIActionType>().linkedTo = GameObject.Find("If");
-			else if(go.GetComponent<ForAction>())
-				go.GetComponent<UIActionType>().linkedTo = GameObject.Find("For");
+			else if(go.GetComponent<IfControl>())
+				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("If");
+			else if(go.GetComponent<ForControl>())
+				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("For");
 		}
 	}
 
@@ -693,7 +685,6 @@ public class UISystem : FSystem {
                     {
 						// On recupére le container qui contiend le script à associer au robot
 						containerAssocied = container.transform.Find("ScriptContainer").gameObject;
-
 					}
 				}
 				// Si on a bien trouvé un container associer
@@ -701,28 +692,21 @@ public class UISystem : FSystem {
                 {
 					// On va copier la sequence créer par le joueur dans le container de la fenêtre du robot
 					// On commence par créer une copie du container ou se trouve la sequence
-					GameObject containerCopy = CopyActionsFrom(containerAssocied, false, robot);
+					GameObject containerCopy = CopyActionsFromAndInitFirstChild(containerAssocied, false, robot);
 					// On recupere le container de la fenêtre du robot qui contiendra la sequence à executer
 					GameObject targetContainer = robot.GetComponent<ScriptRef>().scriptContainer;
 					// On fait apparaitre le panneau du robot
 					robot.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
-					// On copie les actions dans 
+					// On copie les actions dedans 
 					for (int i = 0; i < containerCopy.transform.childCount; i++)
 					{
-						// Les blocs du script container à ne pas faire apparaitre dans la fiche de l'agent
-						// La name text, le container name et le block end zone du container
-						if (!containerCopy.transform.GetChild(i).name.Contains("ContainerName") && !containerCopy.transform.GetChild(i).name.Contains("EndZoneActionBloc") && !containerCopy.transform.GetChild(i).name.Contains("NameText"))
+						// On ne conserve que les BaseElement et on les nettoie
+						if (containerCopy.transform.GetChild(i).GetComponent<BaseElement>())
 						{
-							Transform child = null;
-							// Si c'est un block special (for, if)
-							if (containerCopy.transform.GetChild(i).GetComponent<ForAction>() || containerCopy.transform.GetChild(i).GetComponent<IfAction>())
-							{
-								child = CopySpecialBlock(containerCopy.transform.GetChild(i));
-							}
-                            else
-                            {
-								child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
-							}
+							Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i)); ;
+							// Si c'est un block special (for, if...)
+							if (child.GetComponent<ControlElement>())
+								CleanControlBlock(child);
 							child.SetParent(targetContainer.transform);
 							GameObjectManager.bind(child.gameObject);
 							GameObjectManager.refresh(targetContainer);
@@ -730,7 +714,7 @@ public class UISystem : FSystem {
 
 					}
 					// Va linker les blocs ensemble
-					// C'est à dire qu'il va définir pour chaque bloc, qu'elle est le suivant à exécuté
+					// C'est à dire qu'il va définir pour chaque bloc, qu'elle est le suivant à exécuter
 					LevelGenerator.computeNext(targetContainer);
 					// On détruit la copy de la sequence d'action
 					UnityEngine.Object.Destroy(containerCopy);
@@ -750,14 +734,14 @@ public class UISystem : FSystem {
 	}
 
 	/**
-	 * On copie le container qui contient la sequence d'actions pour modifier les parametre des block speciaux
+	 * On copie le container qui contient la sequence d'actions et on initialise les firstChild
 	 * Param:
 	 *	Container (GameObject) : Le container qui contient le script à copier
 	 *	isInteractable (bool) : Si le script copié peut contenir des éléments interactable (sinon l'interaction sera desactivé)
 	 *	agent (GameObject) : L'agent sur qui l'on va copier la sequence (pour définir la couleur)
 	 * 
 	 **/
-	public GameObject CopyActionsFrom(GameObject container, bool isInteractable, GameObject agent){
+	public GameObject CopyActionsFromAndInitFirstChild(GameObject container, bool isInteractable, GameObject agent){
 		// On va travailler avec une copy du container
 		GameObject copyGO = GameObject.Instantiate(container); 
 		//Pour tous les élément interactible, on va les désactiver/activer selon le paramétrage
@@ -769,24 +753,24 @@ public class UISystem : FSystem {
 		}
 
 		// Pour chaque bloc for
-		foreach(ForAction forAct in copyGO.GetComponentsInChildren<ForAction>()){
+		foreach(ForControl forAct in copyGO.GetComponentsInChildren<ForControl>()){
 			// Si activer, on note combien a quel boucle on est sur combien de boucle à faire
-			if(!isInteractable && !forAct.gameObject.GetComponent<WhileAction>())
+			if(!isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
 			{
 				forAct.nbFor = int.Parse(forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text);
 				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();		
-			}// Sinon on met tous à 0
-			else if(isInteractable && !forAct.gameObject.GetComponent<WhileAction>())
+			}// Sinon on met tout à 0
+			else if(isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
 			{
 				forAct.currentFor = 0;
-				forAct.gameObject.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
+				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
 			}
-			else if (forAct.gameObject.GetComponent<WhileAction>())
+			else if (forAct.GetComponent<WhileControl>())
             {
-				if (!forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<EndBlockScriptComponent>())
+				if (!forAct.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<ReplacementSlot>())
 				{
 					// On traduit la condition en string
-					forAct.gameObject.GetComponent<WhileAction>().condition = ConditionManagement.instance.convertionConditionSequence(forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, new string[] { });
+					forAct.GetComponent<WhileControl>().condition = ConditionManagement.instance.convertionConditionSequence(forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, new string[] { });
 				}
 				else
 				{
@@ -794,38 +778,49 @@ public class UISystem : FSystem {
 				}
 			}
 			// On parcourt les éléments présent dans le block action
-			bool firstElement = false;
 			foreach(BaseElement act in forAct.GetComponentsInChildren<BaseElement>()){
 				// Si ce n'est pas un bloc action alors on le note comme premier élément puis on arrête le parcourt des éléments
-				if(!act.Equals(forAct) && !firstElement){
+				if(!act.Equals(forAct)){
 					forAct.firstChild = act.gameObject;
-					firstElement = true;
 					break;
 				}
 			}
 		}
 		// Pour chaque block de boucle infini
-		foreach (ForeverAction loopAct in copyGO.GetComponentsInChildren<ForeverAction>()){
-			loopAct.firstChild = loopAct.gameObject.transform.Find("Container").GetChild(0).gameObject;
+		foreach (ForeverControl loopAct in copyGO.GetComponentsInChildren<ForeverControl>()){
+			foreach (BaseElement act in loopAct.GetComponentsInChildren<BaseElement>())
+			{
+				if (!act.Equals(loopAct))
+				{
+					loopAct.firstChild = act.gameObject;
+					break;
+				}
+			}
 		}
 		// Pour chaque block if
-		foreach(IfAction IfAct in copyGO.GetComponentsInChildren<IfAction>()){
+		foreach(IfControl ifAct in copyGO.GetComponentsInChildren<IfControl>()){
 			//On vérifie que le bloc condition comporte un élément ou un opérator
-			if (!IfAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<EndBlockScriptComponent>())
+			if (!ifAct.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<BaseCondition>())
 			{
 				// On traduit la condition en string
-				IfAct.condition = ConditionManagement.instance.convertionConditionSequence(IfAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, new string[] { });
+				ifAct.condition = ConditionManagement.instance.convertionConditionSequence(ifAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, new string[] { });
 			}
             else
             {
 				GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
 			}
 
-			IfAct.firstChild = IfAct.gameObject.transform.Find("Container").GetChild(0).gameObject;
+			GameObject thenContainer = ifAct.transform.Find("Container").gameObject;
+			BaseElement firstThen = thenContainer.GetComponentInChildren<BaseElement>();
+			if (firstThen)
+				ifAct.firstChild = firstThen.gameObject;
 			//Si c'est un elseAction
-			if (IfAct.gameObject.GetComponent<ElseAction>())
+			if (ifAct is IfElseControl)
             {
-				IfAct.gameObject.GetComponent<ElseAction>().elseFirstChild = IfAct.gameObject.GetComponent<ElseAction>().elsePart.transform.GetChild(0).gameObject;
+				GameObject elseContainer = ifAct.transform.Find("ElseContainer").gameObject;
+				BaseElement firstElse = elseContainer.GetComponentInChildren<BaseElement>();
+				if (firstElse)
+					((IfElseControl)ifAct).elseFirstChild = firstElse.gameObject;
 			}
 		}
 
@@ -857,70 +852,48 @@ public class UISystem : FSystem {
 	}
 
 	/**
-	 * Copy des contenus des block speciaux afin de les mettrent en forme correctement
-	 * (On vire les end-zones, on met les conditions sous forme d'un seul bloc)
+	 * Nettoie le bloc de controle (On supprime les end-zones, on met les conditions sous forme d'un seul bloc)
 	 * Param:
-	 *	specialBlock (GameObject) : Container qui contient ce qu'il faut copier
-	 * Out:
-	 *	newBlockForm (Transform) : Container épurer des éléments indésirables
+	 *	specialBlock (GameObject) : Container qu'il faut nettoyer
 	 * 
 	 **/
-	private Transform CopySpecialBlock(Transform specialBlock)
+	private void CleanControlBlock(Transform specialBlock)
     {
-		Transform newBlockForm = null;
-        //Si c'est un block for on enléve juste la end zone
-        if (specialBlock.GetComponent<ForAction>())
-        {
-			GameObject endZone = specialBlock.transform.Find("Container").GetChild(specialBlock.transform.Find("Container").childCount - 1).gameObject;
-			endZone.transform.SetParent(null);
-			GameObject.Destroy(endZone);
+		// Vérifier que c'est bien un block de controle
+		if (specialBlock.GetComponent<ControlElement>())
+		{
+			// Récupérer le container des actions
+			Transform container = specialBlock.transform.Find("Container");
+			// remove the last child, the emptyZone
+			GameObject emptySlot = container.GetChild(container.childCount - 1).gameObject;
+			emptySlot.transform.SetParent(null);
+			GameObject.Destroy(emptySlot);
+			// remove the new last child, the dropzone
+			GameObject dropZone = container.GetChild(container.childCount - 1).gameObject;
+			dropZone.transform.SetParent(null);
+			GameObject.Destroy(dropZone);
 
-		}// Si c'est une block if on garde le container des actions (sans la end zone) mais le condition est traduite dans IfAction
-		else if (specialBlock.GetComponent<IfAction>())
-        {
-			GameObject supChild = specialBlock.transform.Find("Container").GetChild(specialBlock.transform.Find("Container").childCount - 1).gameObject;
-			supChild.transform.SetParent(null);
-			GameObject.Destroy(supChild);
-
-            if (specialBlock.GetComponent<ElseAction>())
-            {
-				supChild = specialBlock.GetComponent<ElseAction>().elsePart.transform.GetChild(specialBlock.GetComponent<ElseAction>().elsePart.transform.childCount - 1).gameObject;
-				supChild.transform.SetParent(null);
-				GameObject.Destroy(supChild);
+			// Si c'est un block if on garde le container des actions (sans le emptyslot et la dropzone) mais la condition est traduite dans IfAction
+			if (specialBlock.GetComponent<IfElseControl>())
+			{
+				// get else container
+				Transform elseContainer = specialBlock.transform.Find("ElseContainer");
+				// remove the last child, the emptyZone
+				emptySlot = elseContainer.GetChild(elseContainer.childCount - 1).gameObject;
+				emptySlot.transform.SetParent(null);
+				GameObject.Destroy(emptySlot);
+				// remove the new last child, the dropzone
+				dropZone = elseContainer.GetChild(elseContainer.childCount - 1).gameObject;
+				dropZone.transform.SetParent(null);
+				GameObject.Destroy(dropZone);
 			}
+
+			// On parcourt les blocks qui composent le container afin de les nettoyer également
+			foreach (Transform block in container)
+				// Si c'est le cas on fait un appel récursif
+				if (block.GetComponent<ControlElement>())
+					CleanControlBlock(block);
 		}
-
-		// On parcourt les block qui compose le container afin de voir si il n'est pas composé de block spécial
-		foreach (Transform block in specialBlock.transform.Find("Container"))
-        {
-			// Si c'est le cas on fait une récursive
-			if(block.GetComponent<ForAction>() || block.GetComponent<IfAction>())
-            {
-				Transform newFormBlock = CopySpecialBlock(block);
-				newFormBlock.SetParent(block.parent);
-				int index = block.GetSiblingIndex();// On note l'index du block que l'on va remplacer
-				newFormBlock.SetSiblingIndex(index);
-				GameObjectManager.bind(newFormBlock.gameObject);
-				block.SetParent(null);
-				GameObject.Destroy(block.gameObject);
-
-				// Si c'est le premier block du container, alors il faut associer le nouveau block comme firstchild du block spécial sur lequel on travail
-				if(index == 0)
-                {
-                    if (specialBlock.GetComponent<ForAction>())
-                    {
-						specialBlock.GetComponent<ForAction>().firstChild = newFormBlock.gameObject;
-					}
-                    else if (specialBlock.GetComponent<IfAction>())
-                    {
-						specialBlock.GetComponent<IfAction>().firstChild = newFormBlock.gameObject;
-					}
-                }
-			}
-        }
-
-		newBlockForm = UnityEngine.GameObject.Instantiate(specialBlock.transform);
-		return newBlockForm;
 	}
 
 	// Ajout un container à la scéne

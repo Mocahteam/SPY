@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using FYFY;
 using FYFY_plugins.PointerManager;
-using UnityEngine.UI;
 
 /// <summary>
 /// This system manages main camera (movement, rotation, focus on/follow agent...)

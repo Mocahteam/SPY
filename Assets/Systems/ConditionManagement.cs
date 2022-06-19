@@ -9,7 +9,6 @@ public class ConditionManagement : FSystem {
 	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
 	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
 	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)));
-	private Family coinGO = FamilyManager.getFamily(new AllOfComponents(typeof(CapsuleCollider), typeof(Position), typeof(ParticleSystem)), new AnyOfTags("Coin"));
 
 	public GameObject endPanel;
 
@@ -48,7 +47,7 @@ public class ConditionManagement : FSystem {
 					copyChaine[i] = chaine[i];
 				}
 				// On vérifie qu'il y a bien un élément présent
-				if (!condition.transform.GetChild(1).gameObject.GetComponent<EndBlockScriptComponent>())
+				if (!condition.transform.GetChild(1).gameObject.GetComponent<ReplacementSlot>())
                 {
 					//chaine = chaine + "NOT" + convertionConditionSequence(condition.transform.GetChild(1).gameObject);
 					copyChaine[copyChaine.Length - 1] = "NOT";
