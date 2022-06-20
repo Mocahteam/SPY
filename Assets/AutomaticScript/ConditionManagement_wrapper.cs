@@ -10,4 +10,9 @@ public class ConditionManagement_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "endPanel", endPanel);
 	}
 
+	public void convertionConditionSequence()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "convertionConditionSequence", null);
+	}
+
 }

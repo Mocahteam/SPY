@@ -765,12 +765,13 @@ public class UISystem : FSystem {
 				forAct.currentFor = 0;
 				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
 			}
-			else if (forAct.GetComponent<WhileControl>())
+			else if (forAct is WhileControl)
             {
-				if (!forAct.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<ReplacementSlot>())
+				if (forAct.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<BaseCondition>())
 				{
 					// On traduit la condition en string
-					forAct.GetComponent<WhileControl>().condition = ConditionManagement.instance.convertionConditionSequence(forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, new string[] { });
+					((WhileControl)forAct).condition = new List<string>();
+					ConditionManagement.instance.convertionConditionSequence(forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ((WhileControl)forAct).condition);
 				}
 				else
 				{
@@ -800,10 +801,11 @@ public class UISystem : FSystem {
 		// Pour chaque block if
 		foreach(IfControl ifAct in copyGO.GetComponentsInChildren<IfControl>()){
 			//On vérifie que le bloc condition comporte un élément ou un opérator
-			if (!ifAct.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<BaseCondition>())
+			if (ifAct.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<BaseCondition>())
 			{
 				// On traduit la condition en string
-				ifAct.condition = ConditionManagement.instance.convertionConditionSequence(ifAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, new string[] { });
+				ifAct.condition = new List<string>();
+				ConditionManagement.instance.convertionConditionSequence(ifAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ifAct.condition);
 			}
             else
             {

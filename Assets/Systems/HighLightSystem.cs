@@ -57,7 +57,6 @@ public class HighLightSystem : FSystem {
 			Transform parent = go.transform.parent;
 			while (parent != null)
             {
-				// TODO : vérifier s'il est nécessaire d'ajouter le WhileControl qui hérite de ForControl => vérifier si en mode play les while s'éclairent en jaune
 				if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
 					parent.transform.GetChild(0).GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().currentActionColor;
 				parent = parent.parent;
@@ -86,7 +85,6 @@ public class HighLightSystem : FSystem {
 			Transform parent = go.transform.parent;
 			while (parent != null)
 			{
-				// TODO : vérifier s'il est nécessaire d'ajouter le WhileControl qui hérite de ForControl => vérifier si en mode play les while se remette dans leur couleur de base après avoir été exécutés
 				if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
 					parent.transform.GetChild(0).GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().forBaseColor;
 				parent = parent.parent;

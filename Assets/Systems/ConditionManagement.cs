@@ -1,6 +1,7 @@
 using UnityEngine;
 using FYFY;
 using System.Data;
+using System.Collections.Generic;
 
 public class ConditionManagement : FSystem {
 
@@ -20,121 +21,75 @@ public class ConditionManagement : FSystem {
 	}
 
 	// Transforme une sequence de condition en une chaine de caractére
-	public string[] convertionConditionSequence(GameObject condition, string[] chaine){
-		Debug.Log(condition.name);
-		//string[] chaine = new string[] { };
+	public void convertionConditionSequence(GameObject condition, List<string> chaine){
 		// On regarde si la condition reçue est un élément ou bien un opérator
 		// Si c'est un élément, on le traduit en string et on le renvoie 
-		if (condition.GetComponent<BaseCondition>().Type == BaseCondition.blockType.Element)
+		if (condition.GetComponent<BaseCaptor>())
+			chaine.Add("" + condition.GetComponent<BaseCaptor>().captorType);
+		else
 		{
-			string[] copyChaine = new string[chaine.Length + 1];
-			for (int i = 0; i < chaine.Length; i++)
+			BaseOperator bo;
+			if (condition.TryGetComponent<BaseOperator>(out bo))
 			{
-				copyChaine[i] = chaine[i];
+				// Si c'est une négation on met "!" puis on fait une récursive sur le container et on renvoie le tous traduit en string
+				if (bo.operatorType == BaseOperator.OperatorType.NotOperator)
+				{
+					// On vérifie qu'il y a bien un élément présent
+					if (condition.transform.GetChild(1).gameObject.GetComponent<BaseCondition>())
+					{
+						chaine.Add("NOT");
+						convertionConditionSequence(condition.transform.GetChild(1).gameObject, chaine);
+					}
+					else
+					{
+						GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
+					}
+				}
+				else if (bo.operatorType == BaseOperator.OperatorType.AndOperator)
+				{
+					// Si les côtés de l'opérateur sont remplis, alors il compte 5 childs, sinon cela veux dire que il manque des conditions
+					if (condition.transform.childCount == 5)
+					{
+						chaine.Add("(");
+						convertionConditionSequence(condition.transform.GetChild(0).gameObject, chaine);
+						chaine.Add("AND");
+						convertionConditionSequence(condition.transform.GetChild(3).gameObject, chaine);
+						chaine.Add(")");
+					}
+					else
+					{
+						GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
+					}
+				}
+				else if (bo.operatorType == BaseOperator.OperatorType.OrOperator)
+				{
+					// Si les côtés de l'opérateur sont remplis, alors il compte 5 childs, sinon cela veux dire que il manque des conditions
+					if (condition.transform.childCount == 5)
+					{
+						chaine.Add("(");
+						convertionConditionSequence(condition.transform.GetChild(0).gameObject, chaine);
+						chaine.Add("OR");
+						convertionConditionSequence(condition.transform.GetChild(3).gameObject, chaine);
+						chaine.Add(")");
+					}
+					else
+					{
+						GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
+					}
+				}
 			}
-			//chaine = chaine + condition.GetComponent<BaseCondition>().conditionType;
-			copyChaine[copyChaine.Length - 1] = "" + condition.GetComponent<BaseCondition>().conditionType;
-			return copyChaine;
-		}
-		else if (condition.GetComponent<BaseCondition>().Type == BaseCondition.blockType.Operator)
-		{
-			// Si c'est une négation on met "!" puis on fait une récursive sur le container et on renvoie le tous traduit en string
-			if (condition.GetComponent<BaseCondition>().conditionType == BaseCondition.ConditionType.NotOperator)
+            else
             {
-				string[] copyChaine = new string[chaine.Length + 1];
-				for (int i = 0; i < chaine.Length; i++)
-				{
-					copyChaine[i] = chaine[i];
-				}
-				// On vérifie qu'il y a bien un élément présent
-				if (!condition.transform.GetChild(1).gameObject.GetComponent<ReplacementSlot>())
-                {
-					//chaine = chaine + "NOT" + convertionConditionSequence(condition.transform.GetChild(1).gameObject);
-					copyChaine[copyChaine.Length - 1] = "NOT";
-					copyChaine = convertionConditionSequence(condition.transform.GetChild(1).gameObject, copyChaine);
-				}
-                else
-                {
-					GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
-				}
-				return copyChaine;
-			}
-			else if (condition.GetComponent<BaseCondition>().conditionType == BaseCondition.ConditionType.AndOperator)
-			{
-				// Si les côté de l'opérateur sont remplit, alors il compte 6 child, sinon cela veux dire que il manque des conditions
-				if (condition.transform.childCount == 6)
-                {
-					string[] copyChaine = new string[chaine.Length + 1];
-					for (int i = 0; i < chaine.Length; i++)
-					{
-						copyChaine[i] = chaine[i];
-					}
-					//chaine = chaine + "(" + convertionConditionSequence(condition.transform.GetChild(1).gameObject) + "AND" + convertionConditionSequence(condition.transform.GetChild(4).gameObject) + ")";
-					copyChaine[copyChaine.Length - 1] = "(";
-					copyChaine = convertionConditionSequence(condition.transform.GetChild(1).gameObject, copyChaine);
-					string[] newCopyChaine = new string[copyChaine.Length + 1];
-					for (int i = 0; i < copyChaine.Length; i++)
-					{
-						newCopyChaine[i] = copyChaine[i];
-					}
-					newCopyChaine[newCopyChaine.Length - 1] = "AND";
-					newCopyChaine = convertionConditionSequence(condition.transform.GetChild(4).gameObject, newCopyChaine);
-					copyChaine = new string[newCopyChaine.Length + 1];
-					for (int i = 0; i < newCopyChaine.Length; i++)
-					{
-						copyChaine[i] = newCopyChaine[i];
-					}
-					copyChaine[copyChaine.Length - 1] = ")";
-					return copyChaine;
-				}
-                else
-                {
-					GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
-				}
-			}
-			else if (condition.GetComponent<BaseCondition>().conditionType == BaseCondition.ConditionType.OrOperator)
-			{
-				// Si les côté de l'opérateur sont remplit, alors il compte 6 child, sinon cela veux dire que il manque des conditions
-				if (condition.transform.childCount == 6)
-				{
-					string[] copyChaine = new string[chaine.Length + 1];
-					for (int i = 0; i < chaine.Length; i++)
-					{
-						copyChaine[i] = chaine[i];
-					}
-					//chaine = chaine + "(" + convertionConditionSequence(condition.transform.GetChild(1).gameObject) + "OR" + convertionConditionSequence(condition.transform.GetChild(4).gameObject) + ")";
-					copyChaine[copyChaine.Length - 1] = "(";
-					copyChaine = convertionConditionSequence(condition.transform.GetChild(1).gameObject, copyChaine);
-					string[] newCopyChaine = new string[copyChaine.Length + 1];
-					for (int i = 0; i < copyChaine.Length; i++)
-					{
-						newCopyChaine[i] = copyChaine[i];
-					}
-					newCopyChaine[newCopyChaine.Length - 1] = "OR";
-					newCopyChaine = convertionConditionSequence(condition.transform.GetChild(1).gameObject, newCopyChaine);
-					copyChaine = new string[newCopyChaine.Length + 1];
-					for (int i = 0; i < newCopyChaine.Length; i++)
-					{
-						copyChaine[i] = newCopyChaine[i];
-					}
-					copyChaine[copyChaine.Length - 1] = ")";
-					return copyChaine;
-				}
-				else
-				{
-					GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
-				}
-			}
+				Debug.LogError("Unknown BaseCondition!!!");
+            }
 		}
-
-		return new string[] { };
 	}
 
-	public bool ifValid(string[] condition, GameObject scripted)
+	public bool ifValid(List<string> condition, GameObject scripted)
 	{
 
 		string cond = "";
-		for (int i = 0; i < condition.Length; i++)
+		for (int i = 0; i < condition.Count; i++)
 		{
 			if (condition[i] == "(" || condition[i] == ")" || condition[i] == "OR" || condition[i] == "AND" || condition[i] == "NOT")
 			{

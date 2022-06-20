@@ -426,7 +426,9 @@ public class LevelGenerator : FSystem {
 							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
-							((IfControl)action).condition = ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, new string[] { });
+
+							((IfControl)action).condition = new List<string>();
+							ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, ((IfControl)action).condition);
 						}
                     }
 					else if (containerNode.Attributes.GetNamedItem("container").Value == "IfContainer")
@@ -481,7 +483,9 @@ public class LevelGenerator : FSystem {
 							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
-							((IfControl)action).condition = ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, new string[] { });
+
+							((IfControl)action).condition = new List<string>();
+							ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, ((IfControl)action).condition);
 						}
 					}
 					else if (containerNode.Attributes.GetNamedItem("container").Value == "IfContainer")
@@ -596,7 +600,9 @@ public class LevelGenerator : FSystem {
 							endZone.transform.SetParent(null);
 							Object.Destroy(endZone);
 							GameObjectManager.refresh(obj);
-							((IfControl)action).condition = ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, new string[] { });
+
+							((IfControl)action).condition = new List<string>();
+							ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, ((IfControl)action).condition);
 						}
 					}
 					else if (containerNode.Attributes.GetNamedItem("container").Value == "IfContainer")
