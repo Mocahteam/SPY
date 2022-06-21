@@ -141,6 +141,11 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "addContainer", null);
 	}
 
+	public void removeContainer(UnityEngine.GameObject container)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "removeContainer", container);
+	}
+
 	public void selectContainer(UIRootContainer container)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "selectContainer", container);

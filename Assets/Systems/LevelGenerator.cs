@@ -20,7 +20,7 @@ public class LevelGenerator : FSystem {
 	private GameData gameData;
 	private int nbAgent = 0; // Nombre d'agent créer
 	public GameObject camera;
-	public GameObject editableScriptContainer;// Le container qui contient les Viewport/script container
+	public GameObject editableCanvas;// Le container qui contient les Viewport/script container
 	public GameObject scriptContainer;
 	public TMP_Text levelName;
 	public GameObject canvas;
@@ -123,7 +123,7 @@ public class LevelGenerator : FSystem {
 			nbAgent++;
 			// On nomme l'agent
 			AgentEdit agentEdit = entity.GetComponent<AgentEdit>();
-			agentEdit.agentName = "Num " + nbAgent;
+			agentEdit.agentName = "Script" + nbAgent;
 
 			// Si l'agent est en mode Locked ou Synchro, on crée une zone de programmation dédiée
 			if (agentEdit.editState == AgentEdit.EditMode.Locked || agentEdit.editState == AgentEdit.EditMode.Synch)
@@ -131,15 +131,22 @@ public class LevelGenerator : FSystem {
 				// On crée une zone editable associée à l'agent
 				GameObject scriptContainer = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ViewportScriptContainer") as GameObject);
 				GameObjectManager.bind(scriptContainer);
-				scriptContainer.transform.SetParent(editableScriptContainer.transform.Find("EditableContainers"), false);
+				scriptContainer.transform.SetParent(editableCanvas.transform.Find("EditableContainers"), false);
+				// Count this new script
+				editableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
+				// ask to refresh Container
+				MainLoop.instance.StartCoroutine(DragDropSystem.instance.forceUIRefresh((RectTransform)editableCanvas.transform));
 				// On définie son nom à celui de l'agent
 				scriptContainer.GetComponentInChildren<UIRootContainer>().associedAgentName = agentEdit.agentName;
 
 				// On affiche le bon nom sur le container
 				scriptContainer.GetComponentInChildren<TMP_InputField>().text = agentEdit.agentName;
-				// Si on est en mode Lock, on bloque l'édition
+				// Si on est en mode Lock, on bloque l'édition et on interdit de supprimer le script
 				if (agentEdit.editState == AgentEdit.EditMode.Locked)
+				{
 					scriptContainer.GetComponentInChildren<TMP_InputField>().interactable = false;
+					scriptContainer.transform.Find("ScriptContainer").Find("Header").Find("CloseButton").GetComponent<Button>().interactable = false;
+				}
 			}
 
 			// Chargement de l'icône de l'agent sur la localisation
@@ -164,16 +171,16 @@ public class LevelGenerator : FSystem {
 		scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = (type == "player" ? ac.playerBackground : ac.droneBackground);
 
 		if(script != null){
-			if (type == "player" && editableScriptContainer.transform.childCount == 1){ //player & empty script (1 child for position bar)
+			if (type == "player" && editableCanvas.transform.childCount == 1){ //player & empty script (1 child for position bar)
 				for(int k = 0 ; k < script.Count ; k++){
-					script[k].transform.SetParent(editableScriptContainer.transform); //add actions to editable container
+					script[k].transform.SetParent(editableCanvas.transform); //add actions to editable container
 					GameObjectManager.bind(script[k]);
-					GameObjectManager.refresh(editableScriptContainer);
+					GameObjectManager.refresh(editableCanvas);
 				}
-				foreach(BaseElement act in editableScriptContainer.GetComponentsInChildren<BaseElement>()){
+				foreach(BaseElement act in editableCanvas.GetComponentsInChildren<BaseElement>()){
 					GameObjectManager.addComponent<Dropped>(act.gameObject);
 				}
-				LayoutRebuilder.ForceRebuildLayoutImmediate(editableScriptContainer.GetComponent<RectTransform>());
+				LayoutRebuilder.ForceRebuildLayoutImmediate(editableCanvas.GetComponent<RectTransform>());
 			}
 			else if(type == "enemy"){
 				GameObject targetContainer = entity.GetComponent<ScriptRef>().scriptContainer;

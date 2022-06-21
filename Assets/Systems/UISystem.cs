@@ -478,8 +478,10 @@ public class UISystem : FSystem {
 			if (scriptContainerPointer.transform.GetChild(i).GetComponent<BaseElement>()){
 				destroyScript(scriptContainerPointer.transform.GetChild(i).gameObject, refund);				
 			}
-		
 		}
+		// Enable the last emptySlot
+		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 1).gameObject, true);
+		// TODO : rafraichir les containers
 		refreshUIButton();
 	}
 
@@ -907,6 +909,10 @@ public class UISystem : FSystem {
 		cloneContainer.transform.SetParent(EditableCanvas.transform.Find("EditableContainers"));
 		// On regarde conbien de viewport container contient l'éditable pour mettre le nouveau viewport à la bonne position
 		cloneContainer.transform.SetSiblingIndex(EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer);
+		// We secure the scale
+		cloneContainer.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+		// ask to refresh Container
+		MainLoop.instance.StartCoroutine(DragDropSystem.instance.forceUIRefresh((RectTransform)EditableCanvas.transform));
 		// Puis on imcrémente le nombre de viewport contenue dans l'éditable
 		EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
 		// On ajoute le nouveau viewport container à FYFY
@@ -923,11 +929,20 @@ public class UISystem : FSystem {
 			if(!nameContainerUsed("Script" + i))
             {
 				cloneContainer.GetComponentInChildren<UIRootContainer>().associedAgentName = "Script" + i;
+				// On affiche le bon nom sur le container
+				cloneContainer.GetComponentInChildren<TMP_InputField>().text = "Script" + i;
 				nameOk = true;
 			}
 		}
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
+	}
 
+	public void removeContainer(GameObject container)
+    {
+		GameObjectManager.unbind(container);
+		Object.Destroy(container);
+		// ask to refresh Container
+		MainLoop.instance.StartCoroutine(DragDropSystem.instance.forceUIRefresh((RectTransform)EditableCanvas.transform));
 	}
 
 	public void selectContainer(UIRootContainer container)

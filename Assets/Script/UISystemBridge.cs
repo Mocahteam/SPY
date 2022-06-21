@@ -10,7 +10,6 @@ public class UISystemBridge : MonoBehaviour
         UISystem.instance.resetScript();
     }
 
-
 	public void newNameContainer(string name)
     {
         UISystem.instance.newNameContainer(name);
@@ -19,6 +18,11 @@ public class UISystemBridge : MonoBehaviour
     public void selectContainer(UIRootContainer container)
     {
         UISystem.instance.selectContainer(container);
+    }
+
+    public void removeContainer()
+    {
+        UISystem.instance.removeContainer(gameObject);
     }
 
 }
