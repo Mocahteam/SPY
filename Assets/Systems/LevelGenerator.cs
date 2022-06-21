@@ -176,8 +176,9 @@ public class LevelGenerator : FSystem {
 				LayoutRebuilder.ForceRebuildLayoutImmediate(editableScriptContainer.GetComponent<RectTransform>());
 			}
 			else if(type == "enemy"){
-				foreach(GameObject go in script){
-					go.transform.SetParent(scriptref.scriptContainer.transform); //add actions to container
+				GameObject targetContainer = entity.GetComponent<ScriptRef>().scriptContainer;
+				foreach (GameObject go in script){
+					go.transform.SetParent(targetContainer.transform); //add actions to container
 					List<GameObject> basicActionGO = getBasicActionGO(go);
 					foreach (GameObject baGO in basicActionGO)
 					{
@@ -186,35 +187,11 @@ public class LevelGenerator : FSystem {
 							baGO.GetComponent<Selectable>().interactable = false;
 					}
 				}
-				/*
-				GameObject containerCopy = UISystem.instance.CopyActionsFromAndInitFirstChild(scriptref.scriptContainer, false, entity);
-				// On recupere le container de la fenêtre du robot qui contiendra la sequence à executer
-				GameObject targetContainer = entity.GetComponent<ScriptRef>().scriptContainer;
-				// On fait apparaitre le panneau du robot
-				entity.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
-				// On copie les actions dedans 
-				for (int k = 0; k < containerCopy.transform.childCount; k++)
-				{
-					// On ne conserve que les BaseElement et on les nettoie
-					if (containerCopy.transform.GetChild(k).GetComponent<BaseElement>())
-					{
-						Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(k)); ;
-						// Si c'est un block special (for, if...)
-						if (child.GetComponent<ControlElement>())
-							UISystem.instance.CleanControlBlock(child);
-						child.SetParent(targetContainer.transform);
-						GameObjectManager.bind(child.gameObject);
-						GameObjectManager.refresh(targetContainer);
-					}
-
-				}
-				*/
-
 				computeNext(scriptref.scriptContainer);				
 			}			
 		}
 		containerParent.SetActive(false);
-		//GameObjectManager.bind(scriptref.scriptContainer);
+		GameObjectManager.bind(containerParent);
 		GameObjectManager.bind(entity);
 		return entity;
 	}
@@ -450,7 +427,8 @@ public class LevelGenerator : FSystem {
 								child.transform.SetParent(conditionContainer);
 								child.transform.SetSiblingIndex(emptyZone.transform.GetSiblingIndex());
 							}
-							emptyZone.SetActive(false);
+							emptyZone.transform.SetParent(null);
+							GameObject.Destroy(emptyZone);
 							GameObjectManager.refresh(obj);
 
 							((IfControl)action).condition = new List<string>();
@@ -474,7 +452,8 @@ public class LevelGenerator : FSystem {
 									((IfControl)action).firstChild = child;
 								}
 							}
-							emptyZone.SetActive(false);
+							emptyZone.transform.SetParent(null);
+							GameObject.Destroy(emptyZone);
 							GameObjectManager.refresh(obj);
 						}
 					}
@@ -505,13 +484,12 @@ public class LevelGenerator : FSystem {
 								child.transform.SetParent(conditionContainer);
 								child.transform.SetSiblingIndex(emptyZone.transform.GetSiblingIndex());
 							}
-							/*
-							emptyZone.SetActive(false);
+							emptyZone.transform.SetParent(null);
+							GameObject.Destroy(emptyZone);
 							GameObjectManager.refresh(obj);
 
 							((IfControl)action).condition = new List<string>();
 							ConditionManagement.instance.convertionConditionSequence(conditionContainer.GetChild(0).gameObject, ((IfControl)action).condition);
-							*/
 						}
 					}
 					else if (containerNode.Attributes.GetNamedItem("container").Value == "IfContainer")
@@ -531,10 +509,10 @@ public class LevelGenerator : FSystem {
 									((IfControl)action).firstChild = child;
 								}
 							}
-							/*
-							emptyZone.SetActive(false);
+							emptyZone.transform.SetParent(null);
+							GameObject.Destroy(emptyZone);
 							GameObjectManager.refresh(obj);
-							*/
+							
 						}
 					}
 					else if (containerNode.Attributes.GetNamedItem("container").Value == "ElseContainer")
@@ -554,10 +532,9 @@ public class LevelGenerator : FSystem {
 									((IfElseControl)action).elseFirstChild = child;
 								}
 							}
-							/*
-							emptyZone.SetActive(false);
+							emptyZone.transform.SetParent(null);
+							GameObject.Destroy(emptyZone);
 							GameObjectManager.refresh(obj);
-							*/
 						}
 					}
 				}
@@ -590,10 +567,9 @@ public class LevelGenerator : FSystem {
 							((ForControl)action).firstChild = child;
 						}
 					}
-					/*
-					emptyZone.SetActive(false);
+					emptyZone.transform.SetParent(null);
+					GameObject.Destroy(emptyZone);
 					GameObjectManager.refresh(obj);
-					*/
 				}
 				break;
 
@@ -620,13 +596,13 @@ public class LevelGenerator : FSystem {
 								child.transform.SetParent(conditionContainer);
 								child.transform.SetSiblingIndex(emptyZone.transform.GetSiblingIndex());
 							}
-							/*
-							emptyZone.SetActive(false);
+							emptyZone.transform.SetParent(null);
+							GameObject.Destroy(emptyZone);
 							GameObjectManager.refresh(obj);
 
 							((IfControl)action).condition = new List<string>();
 							ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, ((IfControl)action).condition);
-						*/
+						
 							}
 					}
 					else if (containerNode.Attributes.GetNamedItem("container").Value == "IfContainer")
@@ -646,10 +622,10 @@ public class LevelGenerator : FSystem {
 									((IfControl)action).firstChild = child;
 								}
 							}
-							/*
-							emptyZone.SetActive(false);
+							emptyZone.transform.SetParent(null);
+							GameObject.Destroy(emptyZone);
 							GameObjectManager.refresh(obj);
-							*/
+							
 						}
 					}
 				}
