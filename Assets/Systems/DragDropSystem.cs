@@ -244,7 +244,7 @@ public class DragDropSystem : FSystem
 				addDraggedItemOnDropZone(dropArea);
 			}
 			// Rafraichissement de l'UI
-			UISystem.instance.refreshUIButton();
+			UISystem.instance.startUpdatePlayButton();
 
 			itemDragged = null;
 		}
@@ -386,7 +386,6 @@ public class DragDropSystem : FSystem
 		RectTransform candidate = (RectTransform)scroll.transform.Find("EditableContainers").GetChild(0);
 		foreach (Transform child in scroll.transform.Find("EditableContainers"))
 		{
-			Debug.Log(((RectTransform)child).rect.height);
 			if (((RectTransform)child).rect.height > candidate.rect.height)
 				candidate = (RectTransform)child;
 		}
@@ -479,7 +478,7 @@ public class DragDropSystem : FSystem
 				parent = parent.parent;
 			}
 			// Rafraichissement de l'UI
-			UISystem.instance.refreshUIButton();
+			UISystem.instance.startUpdatePlayButton();
 			itemDragged = null;
 		}
 	}

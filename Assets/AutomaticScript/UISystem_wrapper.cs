@@ -41,11 +41,6 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "startUpdatePlayButton", null);
 	}
 
-	public void refreshUIButton()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "refreshUIButton", null);
-	}
-
 	public void refreshUINameContainer()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "refreshUINameContainer", null);
@@ -56,9 +51,9 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "setExecutionState", value);
 	}
 
-	public void resetScript(System.Boolean refund)
+	public void resetScriptContainer(System.Boolean refund)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "resetScript", refund);
+		MainLoop.callAppropriateSystemMethod (system, "resetScriptContainer", refund);
 	}
 
 	public void setImageSprite()

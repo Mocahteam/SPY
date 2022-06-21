@@ -81,8 +81,8 @@ public class UISystem : FSystem {
 		
 		currentActions.addEntryCallback(onNewCurrentAction);
 
-		inventoryBlocks.addEntryCallback(delegate { MainLoop.instance.StartCoroutine(forceUIRefresh()); });
-		inventoryBlocks.addExitCallback(delegate { MainLoop.instance.StartCoroutine(forceUIRefresh()); });
+		inventoryBlocks.addEntryCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
+		inventoryBlocks.addExitCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
 
 		lastEditedScript = null;
 
@@ -90,7 +90,7 @@ public class UISystem : FSystem {
 
 		// Afin de mettre en rouge les noms qui ne sont pas en lien dés le début
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
-		MainLoop.instance.StartCoroutine(forceUIRefresh());
+		MainLoop.instance.StartCoroutine(forceLibraryRefresh());
 	}
 
 
@@ -123,6 +123,7 @@ public class UISystem : FSystem {
 				buttonPlay.GetComponent<Button>().interactable = true;
 			}
 		}
+		DragDropSystem.instance.forceUIRefresh((RectTransform)EditableCanvas.transform.Find("EditableContainers"));
 	}
 
 
@@ -188,19 +189,13 @@ public class UISystem : FSystem {
 		MainLoop.instance.StartCoroutine(updatePlayButton());
 	}
 
-	// Rafraichit certain boutton de l'UI
-	public void refreshUIButton()
-	{
-		MainLoop.instance.StartCoroutine(updatePlayButton());
-	}
-
 	// Rafraichit le nom des containers
 	public void refreshUINameContainer()
 	{
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
 	}
 
-	private IEnumerator forceUIRefresh()
+	private IEnumerator forceLibraryRefresh()
     {
 		yield return null;
 		LayoutRebuilder.ForceRebuildLayoutImmediate(libraryPanel.GetComponent<RectTransform>());
@@ -469,20 +464,18 @@ public class UISystem : FSystem {
 
 	// Empty the script window
 	// See ResetButton in editor
-	public void resetScript(bool refund = false){
+	public void resetScriptContainer(bool refund = false){
 		// On récupére le contenaire pointer lors du clique poubelle
 		GameObject scriptContainerPointer = viewportContainerPointed_f.First().transform.Find("ScriptContainer").gameObject;
 
 		// On parcourt le script container pour détruire toutes les actions
 		for (int i = 0 ; i < scriptContainerPointer.transform.childCount ; i++){
 			if (scriptContainerPointer.transform.GetChild(i).GetComponent<BaseElement>()){
-				destroyScript(scriptContainerPointer.transform.GetChild(i).gameObject, refund);				
+				DragDropSystem.instance.deleteElement(scriptContainerPointer.transform.GetChild(i).gameObject);				
 			}
 		}
 		// Enable the last emptySlot
 		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 1).gameObject, true);
-		// TODO : rafraichir les containers
-		refreshUIButton();
 	}
 
 

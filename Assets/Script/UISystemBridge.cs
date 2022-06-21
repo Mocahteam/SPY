@@ -7,7 +7,7 @@ public class UISystemBridge : MonoBehaviour
 {
     public void resetScriptContainer()
     {
-        UISystem.instance.resetScript();
+        UISystem.instance.resetScriptContainer();
     }
 
 	public void newNameContainer(string name)
