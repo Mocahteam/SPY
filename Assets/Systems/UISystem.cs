@@ -859,7 +859,7 @@ public class UISystem : FSystem {
 	 *	specialBlock (GameObject) : Container qu'il faut nettoyer
 	 * 
 	 **/
-	private void CleanControlBlock(Transform specialBlock)
+	public void CleanControlBlock(Transform specialBlock)
     {
 		// Vérifier que c'est bien un block de controle
 		if (specialBlock.GetComponent<ControlElement>())

@@ -131,6 +131,11 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "applyScriptToPlayer", null);
 	}
 
+	public void CleanControlBlock(UnityEngine.Transform specialBlock)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "CleanControlBlock", specialBlock);
+	}
+
 	public void addContainer()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "addContainer", null);
