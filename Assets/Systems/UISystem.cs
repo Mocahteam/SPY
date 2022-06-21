@@ -50,7 +50,7 @@ public class UISystem : FSystem {
 	public GameObject canvas;
 	public GameObject editableScriptContainer;
 	public GameObject libraryPanel;
-	public GameObject EditableContainer;
+	public GameObject EditableCanvas;
 	public GameObject prefabViewportScriptContainer;
 	private UIRootContainer containerSelected; // Le container selectionné
 
@@ -267,17 +267,17 @@ public class UISystem : FSystem {
 	// On affiche ou non la partie librairie/programmation sequence en fonction de la valeur reçue
 	public void setExecutionState(bool value){
 		GameObjectManager.setGameObjectState(libraryPanel, !value);
-		GameObjectManager.setGameObjectState(EditableContainer.transform.Find("EditableContainers").gameObject, !value); 
+		GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("EditableContainers").gameObject, !value); 
 		GameObjectManager.setGameObjectState(canvas.transform.Find("Scrollbar Vertical").gameObject, !value);
 		GameObjectManager.setGameObjectState(canvas.transform.Find("AgentCanvas").gameObject, value);
 		if (value)
         {
-			EditableContainer.transform.position = new Vector3(0.0f, EditableContainer.transform.position.y, 0.0f);
+			EditableCanvas.transform.position = new Vector3(0.0f, EditableCanvas.transform.position.y, 0.0f);
 		}
         else
         {
 			float calculeReplacement = libraryPanel.GetComponent<RectTransform>().sizeDelta.x + canvas.transform.Find("Scrollbar Vertical").GetComponent<RectTransform>().sizeDelta.x;
-			EditableContainer.transform.position = new Vector3(calculeReplacement, EditableContainer.transform.position.y, 0.0f);
+			EditableCanvas.transform.position = new Vector3(calculeReplacement, EditableCanvas.transform.position.y, 0.0f);
 		}
 	}
 	
@@ -665,8 +665,8 @@ public class UISystem : FSystem {
 			GameObjectManager.setGameObjectState(libraryPanel, false);
 			GameObjectManager.setGameObjectState(canvas.transform.Find("Scrollbar Vertical").gameObject, false);
 			//editable viewport and scrollbar
-			GameObjectManager.setGameObjectState(EditableContainer.transform.Find("EditableContainers").gameObject, false);
-			GameObjectManager.setGameObjectState(EditableContainer.transform.Find("Scrollbar Vertical").gameObject, false);
+			GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("EditableContainers").gameObject, false);
+			GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("Scrollbar Vertical").gameObject, false);
 			//clean container for each robot and copy the new sequence
 			foreach (GameObject robot in playerGO) {
 				// Clean robot container
@@ -904,11 +904,11 @@ public class UISystem : FSystem {
 		// On clone le prefab
 		GameObject cloneContainer = Object.Instantiate(prefabViewportScriptContainer);
 		// On l'ajoute à l'éditableContainer
-		cloneContainer.transform.SetParent(EditableContainer.transform);
+		cloneContainer.transform.SetParent(EditableCanvas.transform.Find("EditableContainers"));
 		// On regarde conbien de viewport container contient l'éditable pour mettre le nouveau viewport à la bonne position
-		cloneContainer.transform.SetSiblingIndex(EditableContainer.GetComponent<EditableCanvacComponent>().nbViewportContainer);
+		cloneContainer.transform.SetSiblingIndex(EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer);
 		// Puis on imcrémente le nombre de viewport contenue dans l'éditable
-		EditableContainer.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
+		EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
 		// On ajoute le nouveau viewport container à FYFY
 		GameObjectManager.bind(cloneContainer);
 
@@ -917,7 +917,7 @@ public class UISystem : FSystem {
 
 		// Affiche le bon nom
 		bool nameOk = false;
-		for(int i = EditableContainer.GetComponent<EditableCanvacComponent>().nbViewportContainer; !nameOk; i++)
+		for(int i = EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer; !nameOk; i++)
         {
 			// Si le nom n'est pas déjà utilisé on nomme le nouveau container de cette façon
 			if(!nameContainerUsed("Script" + i))

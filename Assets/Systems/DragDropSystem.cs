@@ -75,7 +75,9 @@ public class DragDropSystem : FSystem
 			{
 				GameObjectManager.setGameObjectState(Dp, value);
 				Dp.transform.GetChild(0).gameObject.SetActive(false); // Be sure the red bar is disabled
-				MainLoop.instance.StartCoroutine(forceUIRefresh((RectTransform)Dp.transform.parent));
+				// refresh hierachy only for the deepest zones
+				if (Dp.transform.parent.GetComponentsInChildren<DropZone>(true).Length == 1)
+					refreshHierarchyContainers(Dp);
 			}
 		}
 	}
@@ -128,7 +130,7 @@ public class DragDropSystem : FSystem
 	// Crée un game object action = à l'action selectionné dans librairie pour ensuite pouvoir le manipuler (durant le drag et le drop)
 	public void beginDragElementFromLibrary(BaseEventData element)
     {
-		// On verifie si c'est évènement généré par le bouton gauche de la souris
+		// On verifie si c'est un évènement généré par le bouton gauche de la souris
 		if ((element as PointerEventData).button == PointerEventData.InputButton.Left && element.selectedObject != null)
 		{
 			// On active les drops zone 
@@ -144,13 +146,13 @@ public class DragDropSystem : FSystem
 	// l'enlever de la hiérarchie de la sequence d'action 
 	public void beginDragElementFromEditableScript(BaseEventData element)
     {
-		// On verifie si c'est évènement généré par le bouton gauche de la souris
+		// On verifie si c'est un évènement généré par le bouton gauche de la souris
 		if ((element as PointerEventData).button == PointerEventData.InputButton.Left && element.selectedObject != null)
 		{
+			itemDragged = element.selectedObject;
+
 			// On active les drops zone 
 			setDropZoneState(true);
-
-			itemDragged = element.selectedObject;
 
 			// Update empty zone if required
 			manageEmptyZone(itemDragged);
@@ -248,6 +250,7 @@ public class DragDropSystem : FSystem
 		}
 	}
 
+	// Add the dragger item on the drop area
 	private void addDraggedItemOnDropZone (GameObject dropArea)
     {
 		if (dropArea.GetComponent<DropZone>())
@@ -365,6 +368,9 @@ public class DragDropSystem : FSystem
 		// Lance le son de dépôt du block d'action
 		audioSource.Play();
 
+		// refresh all the hierarchy of parent containers
+		refreshHierarchyContainers(itemDragged);
+
 		UISystem.instance.startUpdatePlayButton();
 	}
 
@@ -416,12 +422,18 @@ public class DragDropSystem : FSystem
 			GameObjectManager.addComponent<ResetBlocLimit>(elementToDelete);
 			UISystem.instance.startUpdatePlayButton();
 			// refresh all the hierarchy of parent containers
-			Transform parent = elementToDelete.transform.parent;
-			while (parent is RectTransform)
-			{
-				MainLoop.instance.StartCoroutine(forceUIRefresh((RectTransform)parent));
-				parent = parent.parent;
-			}
+			refreshHierarchyContainers(elementToDelete);
+		}
+	}
+
+	public void refreshHierarchyContainers(GameObject elementToRefresh)
+    {
+		// refresh all the hierarchy of parent containers
+		Transform parent = elementToRefresh.transform.parent;
+		while (parent is RectTransform)
+		{
+			MainLoop.instance.StartCoroutine(forceUIRefresh((RectTransform)parent));
+			parent = parent.parent;
 		}
 	}
 
