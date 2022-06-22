@@ -371,26 +371,7 @@ public class DragDropSystem : FSystem
 		// refresh all the hierarchy of parent containers
 		refreshHierarchyContainers(itemDragged);
 
-		MainLoop.instance.StartCoroutine(manageScrollBar());
-
 		UISystem.instance.startUpdatePlayButton();
-	}
-
-	private IEnumerator manageScrollBar()
-	{
-		yield return null;
-		yield return null;
-		yield return null; // on more than forceUIRefresh
-		ScrollRect scroll = mainCanvas.transform.Find("EditableCanvas").GetComponent<ScrollRect>();
-		// find the longest editable container
-		RectTransform candidate = (RectTransform)scroll.transform.Find("EditableContainers").GetChild(0);
-		foreach (Transform child in scroll.transform.Find("EditableContainers"))
-		{
-			if (((RectTransform)child).rect.height > candidate.rect.height)
-				candidate = (RectTransform)child;
-		}
-		if (candidate != null)
-			scroll.content = candidate;
 	}
 
 	private void undoDrop()

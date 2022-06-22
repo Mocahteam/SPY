@@ -261,19 +261,14 @@ public class UISystem : FSystem {
 
 	// On affiche ou non la partie librairie/programmation sequence en fonction de la valeur reçue
 	public void setExecutionState(bool value){
-		GameObjectManager.setGameObjectState(libraryPanel, !value);
-		GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("EditableContainers").gameObject, !value); 
-		GameObjectManager.setGameObjectState(canvas.transform.Find("Scrollbar Vertical").gameObject, !value);
+		// Toggle library panel
+		GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.gameObject, !value);
+		// Toggle editable panel
+		GameObjectManager.setGameObjectState(EditableCanvas, !value);
+		GameObjectManager.setGameObjectState(EditableCanvas.transform.parent.Find("Scrollbar Vertical").gameObject, !value);
+		GameObjectManager.setGameObjectState(EditableCanvas.transform.parent.Find("Scrollbar Horizontal").gameObject, !value);
+		// Toggle execution panel
 		GameObjectManager.setGameObjectState(canvas.transform.Find("AgentCanvas").gameObject, value);
-		if (value)
-        {
-			EditableCanvas.transform.position = new Vector3(0.0f, EditableCanvas.transform.position.y, 0.0f);
-		}
-        else
-        {
-			float calculeReplacement = libraryPanel.GetComponent<RectTransform>().sizeDelta.x + canvas.transform.Find("Scrollbar Vertical").GetComponent<RectTransform>().sizeDelta.x;
-			EditableCanvas.transform.position = new Vector3(calculeReplacement, EditableCanvas.transform.position.y, 0.0f);
-		}
 	}
 	
 
@@ -656,12 +651,6 @@ public class UISystem : FSystem {
 		if (!buttonStop.activeInHierarchy) {
 			// On note une tentative d'execution en plus
 			gameData.totalExecute++;
-			//hide library panels
-			GameObjectManager.setGameObjectState(libraryPanel, false);
-			GameObjectManager.setGameObjectState(canvas.transform.Find("Scrollbar Vertical").gameObject, false);
-			//editable viewport and scrollbar
-			GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("EditableContainers").gameObject, false);
-			GameObjectManager.setGameObjectState(EditableCanvas.transform.Find("Scrollbar Vertical").gameObject, false);
 			//clean container for each robot and copy the new sequence
 			foreach (GameObject robot in playerGO) {
 				// Clean robot container
@@ -893,17 +882,24 @@ public class UISystem : FSystem {
 		}
 	}
 
-	// Ajout un container à la scéne
+	// used on + button
 	public void addContainer()
+    {
+		addSpecificContainer();
+	}
+
+	// Ajout un container à la scéne
+	public void addSpecificContainer(string name = "", AgentEdit.EditMode editState = AgentEdit.EditMode.Editable)
     {
 		// On clone le prefab
 		GameObject cloneContainer = Object.Instantiate(prefabViewportScriptContainer);
+		Transform editableContainers = EditableCanvas.transform.Find("EditableContainers");
 		// On l'ajoute à l'éditableContainer
-		cloneContainer.transform.SetParent(EditableCanvas.transform.Find("EditableContainers"));
-		// On regarde conbien de viewport container contient l'éditable pour mettre le nouveau viewport à la bonne position
-		cloneContainer.transform.SetSiblingIndex(EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer);
+		cloneContainer.transform.SetParent(editableContainers, false);
 		// We secure the scale
-		cloneContainer.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+		cloneContainer.transform.localScale = new Vector3(1, 1, 1);
+		// On regarde combien de viewport container contient l'éditable pour mettre le nouveau viewport à la bonne position
+		cloneContainer.transform.SetSiblingIndex(EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer);
 		// ask to refresh Container
 		MainLoop.instance.StartCoroutine(DragDropSystem.instance.forceUIRefresh((RectTransform)EditableCanvas.transform));
 		// Puis on imcrémente le nombre de viewport contenue dans l'éditable
@@ -915,19 +911,56 @@ public class UISystem : FSystem {
 		cloneContainer.GetComponent<AudioSource>().Play();
 
 		// Affiche le bon nom
-		bool nameOk = false;
-		for(int i = EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer; !nameOk; i++)
-        {
-			// Si le nom n'est pas déjà utilisé on nomme le nouveau container de cette façon
-			if(!nameContainerUsed("Script" + i))
-            {
-				cloneContainer.GetComponentInChildren<UIRootContainer>().associedAgentName = "Script" + i;
-				// On affiche le bon nom sur le container
-				cloneContainer.GetComponentInChildren<TMP_InputField>().text = "Script" + i;
-				nameOk = true;
-			}
+		if (name != "")
+		{
+			// On définie son nom à celui de l'agent
+			cloneContainer.GetComponentInChildren<UIRootContainer>().associedAgentName = name;
+			// On affiche le bon nom sur le container
+			cloneContainer.GetComponentInChildren<TMP_InputField>().text = name;
 		}
-		MainLoop.instance.StartCoroutine(tcheckLinkName());
+		else
+		{
+			bool nameOk = false;
+			for (int i = EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer; !nameOk; i++)
+			{
+				// Si le nom n'est pas déjà utilisé on nomme le nouveau container de cette façon
+				if (!nameContainerUsed("Script" + i))
+				{
+					cloneContainer.GetComponentInChildren<UIRootContainer>().associedAgentName = "Script" + i;
+					// On affiche le bon nom sur le container
+					cloneContainer.GetComponentInChildren<TMP_InputField>().text = "Script" + i;
+					nameOk = true;
+				}
+			}
+			MainLoop.instance.StartCoroutine(tcheckLinkName());
+		}
+
+		// Si on est en mode Lock, on bloque l'édition et on interdit de supprimer le script
+		if (editState == AgentEdit.EditMode.Locked)
+		{
+			cloneContainer.GetComponentInChildren<TMP_InputField>().interactable = false;
+			cloneContainer.transform.Find("ScriptContainer").Find("Header").Find("CloseButton").GetComponent<Button>().interactable = false;
+		}
+		// Update size of parent GameObject
+		MainLoop.instance.StartCoroutine(setEditableSize());
+	}
+
+	private IEnumerator setEditableSize()
+    {
+		yield return null;
+		yield return null;
+		RectTransform editableContainers = (RectTransform)EditableCanvas.transform.Find("EditableContainers");
+		// Resolve bug when creating the first editable component, it is the child of the verticalLayout but not included inside!!!
+		// We just disable and enable it and force update rect
+		if (editableContainers.childCount > 0)
+		{
+			editableContainers.GetChild(0).gameObject.SetActive(false);
+			editableContainers.GetChild(0).gameObject.SetActive(true);
+		}
+		editableContainers.ForceUpdateRectTransforms();
+		yield return null;
+		// compute new size
+		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(215, editableContainers.rect.width));
 	}
 
 	public void removeContainer(GameObject container)
@@ -936,6 +969,8 @@ public class UISystem : FSystem {
 		Object.Destroy(container);
 		// ask to refresh Container
 		MainLoop.instance.StartCoroutine(DragDropSystem.instance.forceUIRefresh((RectTransform)EditableCanvas.transform));
+		// Update size of parent GameObject
+		MainLoop.instance.StartCoroutine(setEditableSize());
 	}
 
 	public void selectContainer(UIRootContainer container)
