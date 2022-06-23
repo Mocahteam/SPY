@@ -127,27 +127,7 @@ public class LevelGenerator : FSystem {
 
 			// Si l'agent est en mode Locked ou Synchro, on crée une zone de programmation dédiée
 			if (agentEdit.editState == AgentEdit.EditMode.Locked || agentEdit.editState == AgentEdit.EditMode.Synch)
-			{
-				// On crée une zone editable associée à l'agent
-				GameObject scriptContainer = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ViewportScriptContainer") as GameObject);
-				GameObjectManager.bind(scriptContainer);
-				scriptContainer.transform.SetParent(editableCanvas.transform.Find("EditableContainers"), false);
-				// Count this new script
-				editableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
-				// ask to refresh Container
-				MainLoop.instance.StartCoroutine(DragDropSystem.instance.forceUIRefresh((RectTransform)editableCanvas.transform));
-				// On définie son nom à celui de l'agent
-				scriptContainer.GetComponentInChildren<UIRootContainer>().associedAgentName = agentEdit.agentName;
-
-				// On affiche le bon nom sur le container
-				scriptContainer.GetComponentInChildren<TMP_InputField>().text = agentEdit.agentName;
-				// Si on est en mode Lock, on bloque l'édition et on interdit de supprimer le script
-				if (agentEdit.editState == AgentEdit.EditMode.Locked)
-				{
-					scriptContainer.GetComponentInChildren<TMP_InputField>().interactable = false;
-					scriptContainer.transform.Find("ScriptContainer").Find("Header").Find("CloseButton").GetComponent<Button>().interactable = false;
-				}
-			}
+				UISystem.instance.addSpecificContainer(agentEdit.agentName, agentEdit.editState);
 
 			// Chargement de l'icône de l'agent sur la localisation
 			containerParent.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
