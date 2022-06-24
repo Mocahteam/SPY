@@ -1013,6 +1013,7 @@ GameObject:
   - component: {fileID: 137781487}
   - component: {fileID: 137781488}
   - component: {fileID: 137781489}
+  - component: {fileID: 137781490}
   m_Layer: 5
   m_Name: C14
   m_TagString: Untagged
@@ -1063,7 +1064,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -1103,6 +1104,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &137781490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137781486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 137781486}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 137781486}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &160265242
 GameObject:
   m_ObjectHideFlags: 0
@@ -1204,8 +1250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 1
-  info: "Etre capable de donner des noms \xE0 des objets, des actions et des cons\xE9quences
-    d'actions."
+  info: 
 --- !u!114 &160265246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1786,6 +1831,7 @@ GameObject:
   - component: {fileID: 230537545}
   - component: {fileID: 230537546}
   - component: {fileID: 230537547}
+  - component: {fileID: 230537548}
   m_Layer: 5
   m_Name: C51
   m_TagString: Untagged
@@ -1836,7 +1882,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -1876,6 +1922,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &230537548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 230537544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 230537544}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 230537544}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &262223721
 GameObject:
   m_ObjectHideFlags: 0
@@ -2254,6 +2345,7 @@ GameObject:
   - component: {fileID: 347180719}
   - component: {fileID: 347180720}
   - component: {fileID: 347180721}
+  - component: {fileID: 347180722}
   m_Layer: 5
   m_Name: C64
   m_TagString: Untagged
@@ -2304,7 +2396,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -2344,6 +2436,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &347180722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 347180718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 347180718}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 347180718}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &347327258
 GameObject:
   m_ObjectHideFlags: 0
@@ -3146,7 +3283,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: C1.7
+  m_Text: 'C1.7 '
 --- !u!222 &425183108
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3166,6 +3303,7 @@ GameObject:
   - component: {fileID: 425503571}
   - component: {fileID: 425503572}
   - component: {fileID: 425503573}
+  - component: {fileID: 425503574}
   m_Layer: 5
   m_Name: C32
   m_TagString: Untagged
@@ -3216,7 +3354,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -3256,6 +3394,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   info: 
+--- !u!114 &425503574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 425503570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 425503570}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 425503570}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &426125691
 GameObject:
   m_ObjectHideFlags: 0
@@ -3346,6 +3529,7 @@ GameObject:
   - component: {fileID: 476677432}
   - component: {fileID: 476677433}
   - component: {fileID: 476677434}
+  - component: {fileID: 476677435}
   m_Layer: 5
   m_Name: C62
   m_TagString: Untagged
@@ -3396,7 +3580,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -3436,6 +3620,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &476677435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 476677431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 476677431}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 476677431}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &483105103
 GameObject:
   m_ObjectHideFlags: 0
@@ -3506,7 +3735,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: C6.3
+  m_Text: 'C6.3 '
 --- !u!222 &483105106
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4114,6 +4343,7 @@ GameObject:
   - component: {fileID: 659151236}
   - component: {fileID: 659151237}
   - component: {fileID: 659151238}
+  - component: {fileID: 659151239}
   m_Layer: 5
   m_Name: C41
   m_TagString: Untagged
@@ -4164,7 +4394,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -4204,6 +4434,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &659151239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 659151235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 659151235}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 659151235}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &662918341
 GameObject:
   m_ObjectHideFlags: 0
@@ -4424,7 +4699,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "C1.2 Diff\xE9rencier objet/action, et action atomiques/non-atomique"
+  m_Text: C1.2
 --- !u!222 &698640023
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4728,6 +5003,7 @@ GameObject:
   - component: {fileID: 754668798}
   - component: {fileID: 754668799}
   - component: {fileID: 754668800}
+  - component: {fileID: 754668801}
   m_Layer: 5
   m_Name: C61
   m_TagString: Untagged
@@ -4778,7 +5054,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -4818,6 +5094,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &754668801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754668797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 754668797}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 754668797}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &756071976
 GameObject:
   m_ObjectHideFlags: 0
@@ -4955,8 +5276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 1
-  info: "Etre capable de dire si quelque chose (image, expression, phrase) fait r\xE9f\xE9rence
-    \xE0 un objet, \xE0 une action, ou bien \xE0 une s\xE9quence d'actions"
+  info: 
 --- !u!114 &756982506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5147,6 +5467,7 @@ GameObject:
   - component: {fileID: 770606144}
   - component: {fileID: 770606145}
   - component: {fileID: 770606146}
+  - component: {fileID: 770606147}
   m_Layer: 5
   m_Name: C24
   m_TagString: Untagged
@@ -5197,7 +5518,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -5237,6 +5558,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   info: 
+--- !u!114 &770606147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770606143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 770606143}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 770606143}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &799008097
 GameObject:
   m_ObjectHideFlags: 0
@@ -5917,6 +6283,7 @@ GameObject:
   - component: {fileID: 932153119}
   - component: {fileID: 932153120}
   - component: {fileID: 932153121}
+  - component: {fileID: 932153122}
   m_Layer: 5
   m_Name: C15
   m_TagString: Untagged
@@ -5967,7 +6334,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -6007,6 +6374,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &932153122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932153118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 932153118}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 932153118}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &952155322
 GameObject:
   m_ObjectHideFlags: 0
@@ -6275,6 +6687,7 @@ GameObject:
   - component: {fileID: 989885965}
   - component: {fileID: 989885966}
   - component: {fileID: 989885967}
+  - component: {fileID: 989885968}
   m_Layer: 5
   m_Name: C17
   m_TagString: Untagged
@@ -6325,7 +6738,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -6365,6 +6778,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &989885968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989885964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 989885964}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 989885964}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1011210149
 GameObject:
   m_ObjectHideFlags: 0
@@ -6376,6 +6834,7 @@ GameObject:
   - component: {fileID: 1011210150}
   - component: {fileID: 1011210151}
   - component: {fileID: 1011210152}
+  - component: {fileID: 1011210153}
   m_Layer: 5
   m_Name: C52
   m_TagString: Untagged
@@ -6426,7 +6885,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -6466,6 +6925,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &1011210153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011210149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1011210149}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1011210149}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1052916869
 GameObject:
   m_ObjectHideFlags: 0
@@ -7154,7 +7658,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: C3.4
+  m_Text: 'C3.4 '
 --- !u!222 &1157193240
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7673,8 +8177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 0
-  info: "Etre capable de dire ce qui est requis (objet ou s\xE9quence d'actions)
-    pour effectuer une s\xE9quence d'actions"
+  info: 
 --- !u!114 &1222294401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8586,7 +9089,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: C5.2
+  m_Text: 'C5.2 '
 --- !u!222 &1277756148
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8891,6 +9394,7 @@ GameObject:
   - component: {fileID: 1332957387}
   - component: {fileID: 1332957388}
   - component: {fileID: 1332957389}
+  - component: {fileID: 1332957390}
   m_Layer: 5
   m_Name: C42
   m_TagString: Untagged
@@ -8941,7 +9445,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -8981,6 +9485,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &1332957390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332957386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1332957386}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1332957386}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1333102370
 GameObject:
   m_ObjectHideFlags: 0
@@ -9147,6 +9696,7 @@ GameObject:
   - component: {fileID: 1379910428}
   - component: {fileID: 1379910429}
   - component: {fileID: 1379910430}
+  - component: {fileID: 1379910431}
   m_Layer: 5
   m_Name: C33
   m_TagString: Untagged
@@ -9197,7 +9747,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -9237,6 +9787,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   info: 
+--- !u!114 &1379910431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379910427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1379910427}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1379910427}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1419207977
 GameObject:
   m_ObjectHideFlags: 0
@@ -9307,7 +9902,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: C4.1
+  m_Text: 'C4.1 '
 --- !u!222 &1419207980
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9598,7 +10193,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 16
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -10326,6 +10921,7 @@ GameObject:
   - component: {fileID: 1564302141}
   - component: {fileID: 1564302142}
   - component: {fileID: 1564302143}
+  - component: {fileID: 1564302144}
   m_Layer: 5
   m_Name: C34
   m_TagString: Untagged
@@ -10376,7 +10972,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -10416,6 +11012,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   info: 
+--- !u!114 &1564302144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564302140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1564302140}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1564302140}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1586109719
 GameObject:
   m_ObjectHideFlags: 0
@@ -10486,7 +11127,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: C2.1
+  m_Text: 'C2.1 '
 --- !u!222 &1586109722
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10506,6 +11147,7 @@ GameObject:
   - component: {fileID: 1587890882}
   - component: {fileID: 1587890883}
   - component: {fileID: 1587890884}
+  - component: {fileID: 1587890885}
   m_Layer: 5
   m_Name: C31
   m_TagString: Untagged
@@ -10556,7 +11198,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -10596,6 +11238,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   info: 
+--- !u!114 &1587890885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1587890881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1587890881}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1587890881}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1619673075
 GameObject:
   m_ObjectHideFlags: 0
@@ -10958,6 +11645,7 @@ GameObject:
   - component: {fileID: 1690677359}
   - component: {fileID: 1690677360}
   - component: {fileID: 1690677361}
+  - component: {fileID: 1690677362}
   m_Layer: 5
   m_Name: C23
   m_TagString: Untagged
@@ -11008,7 +11696,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -11048,6 +11736,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   info: 
+--- !u!114 &1690677362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1690677358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1690677358}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1690677358}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1725294705
 GameObject:
   m_ObjectHideFlags: 0
@@ -11059,6 +11792,7 @@ GameObject:
   - component: {fileID: 1725294706}
   - component: {fileID: 1725294707}
   - component: {fileID: 1725294708}
+  - component: {fileID: 1725294709}
   m_Layer: 5
   m_Name: C43
   m_TagString: Untagged
@@ -11109,7 +11843,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -11149,6 +11883,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &1725294709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1725294705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1725294705}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1725294705}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1761879147
 GameObject:
   m_ObjectHideFlags: 0
@@ -11160,6 +11939,7 @@ GameObject:
   - component: {fileID: 1761879148}
   - component: {fileID: 1761879149}
   - component: {fileID: 1761879150}
+  - component: {fileID: 1761879151}
   m_Layer: 5
   m_Name: C26
   m_TagString: Untagged
@@ -11210,7 +11990,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -11250,6 +12030,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   info: 
+--- !u!114 &1761879151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1761879147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1761879147}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1761879147}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1776212283
 GameObject:
   m_ObjectHideFlags: 0
@@ -12232,7 +13057,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: C1.4
+  m_Text: 'C1.4 '
 --- !u!222 &1852939295
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12252,6 +13077,7 @@ GameObject:
   - component: {fileID: 1858938066}
   - component: {fileID: 1858938067}
   - component: {fileID: 1858938068}
+  - component: {fileID: 1858938069}
   m_Layer: 5
   m_Name: C25
   m_TagString: Untagged
@@ -12302,7 +13128,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -12342,6 +13168,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &1858938069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1858938065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1858938065}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1858938065}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1873984855
 GameObject:
   m_ObjectHideFlags: 0
@@ -12429,6 +13300,7 @@ GameObject:
   - component: {fileID: 1903694506}
   - component: {fileID: 1903694507}
   - component: {fileID: 1903694508}
+  - component: {fileID: 1903694509}
   m_Layer: 5
   m_Name: C21
   m_TagString: Untagged
@@ -12479,7 +13351,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -12519,6 +13391,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   info: 
+--- !u!114 &1903694509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1903694505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1903694505}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1903694505}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1918233856
 GameObject:
   m_ObjectHideFlags: 0
@@ -13323,7 +14240,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "C1.3 Identifier les param\xE8tres d'entr\xE9e d'une s\xE9quence d'actions"
+  m_Text: 'C1.3 '
 --- !u!222 &1964298609
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13861,7 +14778,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: C4.2
+  m_Text: 'C4.2 '
 --- !u!222 &2001111507
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13981,6 +14898,7 @@ GameObject:
   - component: {fileID: 2018030087}
   - component: {fileID: 2018030088}
   - component: {fileID: 2018030089}
+  - component: {fileID: 2018030090}
   m_Layer: 5
   m_Name: C63
   m_TagString: Untagged
@@ -14031,7 +14949,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -14071,6 +14989,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &2018030090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2018030086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 2018030086}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 2018030086}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &2028973813
 GameObject:
   m_ObjectHideFlags: 0
@@ -14082,6 +15045,7 @@ GameObject:
   - component: {fileID: 2028973814}
   - component: {fileID: 2028973815}
   - component: {fileID: 2028973816}
+  - component: {fileID: 2028973817}
   m_Layer: 5
   m_Name: C22
   m_TagString: Untagged
@@ -14132,7 +15096,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -14172,6 +15136,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   info: 
+--- !u!114 &2028973817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2028973813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 2028973813}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 2028973813}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &2032429769
 GameObject:
   m_ObjectHideFlags: 0
@@ -14183,6 +15192,7 @@ GameObject:
   - component: {fileID: 2032429770}
   - component: {fileID: 2032429771}
   - component: {fileID: 2032429772}
+  - component: {fileID: 2032429773}
   m_Layer: 5
   m_Name: C16
   m_TagString: Untagged
@@ -14233,7 +15243,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.31764707, g: 0.43529412, b: 0.77254903, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -14273,6 +15283,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   info: 
+--- !u!114 &2032429773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032429769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: infoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 2032429769}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 262223725}
+          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+          m_MethodName: resetViewInfoCompetence
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 2032429769}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &2034820647
 GameObject:
   m_ObjectHideFlags: 0
@@ -14636,7 +15691,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: C1.6
+  m_Text: 'C1.6 '
 --- !u!222 &2045043443
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -14715,7 +15770,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "C1.1 Nommer des objets et s\xE9quence d'actions"
+  m_Text: 'C1.1 '
 --- !u!222 &2049159564
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -15691,7 +16746,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: C2.2
+  m_Text: 'C2.2 '
 --- !u!222 &2136755907
 CanvasRenderer:
   m_ObjectHideFlags: 0
