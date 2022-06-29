@@ -12,4 +12,6 @@ public class Competence : MonoBehaviour {
 	public List<string> compLink;
 	// Quel compétence griser si celle-ci est coché
 	public List<string> compNoPossible;
+	// Quel compétence décoché si celle-ci est décoché
+	public List<string> compLinkUnselect;
 }

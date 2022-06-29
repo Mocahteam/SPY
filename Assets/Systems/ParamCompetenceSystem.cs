@@ -6,6 +6,7 @@ using System.IO;
 using System;
 using System.Xml;
 using System.Collections.Generic;
+using System.Collections;
 
 public class ParamCompetenceSystem : FSystem
 {
@@ -16,9 +17,15 @@ public class ParamCompetenceSystem : FSystem
 	private Family competence_f = FamilyManager.getFamily(new AllOfComponents(typeof(Competence)));
 
 	// Variable
-	public GameObject panelInfoComp;
+	public GameObject panelSelectComp; // Panneau de selection des compétences
+	public GameObject panelInfoComp; // Panneau d'information des compétences
+	public GameObject panelInfoUser; // Panneau pour informer le joueur (erreurs de chargement, conflit dans la selection des compétences etc...)
+	public string pathParamComp = "/StreamingAssets/ParamPrefab/ParamCompetence.csv"; // Chemin d'acces du fichier CSV contenant les info à charger des competences
 
 	private GameData gameData;
+	private TMP_Text messageForUser; // Zone de texte pour les messages d'erreur adressé à l'utilisateur
+	private List<string> listCompSelectUser = new List<string>(); // Enregistre temporairement les compétences séléctionnées par le user
+	private List<string> listCompSelectUserSave = new List<string>(); // Contient les compétences selectionnées par le user
 
 	public ParamCompetenceSystem()
 	{
@@ -28,31 +35,64 @@ public class ParamCompetenceSystem : FSystem
 	protected override void onStart()
 	{
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
+		messageForUser = panelInfoUser.transform.Find("Panel").Find("Message").GetComponent<TMP_Text>();
 
-		try
+		// Va disparaitre une fois le préfab fini
+		openPanelSelectComp(); 
+	}
+
+	IEnumerator noSelect(GameObject comp)
+    {
+		yield return null;
+
+		listCompSelectUser = new List<string>(listCompSelectUserSave);
+		resetSelectComp();
+		foreach(string level in listCompSelectUserSave)
         {
+			foreach(GameObject c in competence_f)
+            {
+				if(c.name == level)
+                {
+					selectComp(c, false);
+				}
+			}
+		}
+		MainLoop.instance.StopCoroutine(noSelect(comp));
+	}
+
+	public void openPanelSelectComp()
+    {
+		try
+		{
 			// On charge les données pour chaque compétence
 			loadParamComp();
-
 			// On désactive les compétences pas encore implémenté
 			desactiveToogleComp();
-
 			// Note pour chaque compétence les niveaux ou elle est présente
 			readXMLinfo();
 		}
-        catch
-        {
-			Debug.Log("Erreur chargement fichier de parametrage des compétences");
-        }
-
-
+		catch
+		{
+			string message = "Erreur chargement fichier de parametrage des compétences!\n";
+			message += "Vérifier que le fichier csv et les informations contenues sont au bon format";
+			displayMessageUser(message);
+			// Permetra de fermer le panel de selection des competence lorsque le user apuie sur le bouton ok du message d'erreur
+			//panelSelectComp.GetComponent<ParamCompetenceSystemBridge>().closePanelParamComp = true;
+		}
 	}
 
 	public void startLevel()
     {
-		// On créer une copie de la liste des niveaux disponible
-		List<string> copyLevel = new List<string>(gameData.levelList["Campagne"]);
-		int nbCompActive = 0; // Permet de noter si au moins une compétence à été selectionnée
+		// On parcourt tous les levels disponible pour les copier dans une liste temporaire
+		List<string> copyLevel = new List<string>();
+		foreach(List<string> levels in gameData.levelList.Values)
+		{
+			// On créer une copie de la liste des niveaux disponible
+			foreach(string level in levels)
+			copyLevel.Add(level);
+		}
+
+		int nbCompActive = 0;
 
 		// On parcours chaque compétence selectionner
 		foreach (GameObject comp in competence_f)
@@ -89,34 +129,45 @@ public class ParamCompetenceSystem : FSystem
 		// On lance un niveau selectionné aléatoirement parmis la liste des niveaux restant
 		if (nbCompActive != 0 && copyLevel.Count != 0)
         {
-			if(copyLevel.Count > 1)
+			if (copyLevel.Count > 1)
             {
+				// On selectionne le niveau aléatoirement
 				var rand = new System.Random();
-				gameData.levelToLoad = ("Campagne", gameData.levelList["Campagne"].IndexOf(copyLevel[rand.Next(0, copyLevel.Count)]));
+				int r = rand.Next(0, copyLevel.Count);
+				string levelSelected = copyLevel[r];
+				// On split la chaine de caractére pour pouvoir récupérer le dossier ou se trouve le niveau selectionné
+				var level = levelSelected.Split('\\');
+				string folder = level[level.Length - 2];
+				gameData.levelToLoad = (folder, gameData.levelList[folder].IndexOf(levelSelected));
 			}
             else
             {
-				gameData.levelToLoad = ("Campagne", gameData.levelList["Campagne"].IndexOf(copyLevel[0]));
+				string levelSelected = copyLevel[0];
+				// On split la chaine de caractére pour pouvoir récupérer le dossier ou se trouve le niveau selectionné
+				var level = levelSelected.Split('\\');
+				string folder = level[level.Length - 2];
+				gameData.levelToLoad = (folder, gameData.levelList[folder].IndexOf(levelSelected));
 			}
-			// TROUVER MOYEN DE CHARGER LES BONNES INFOS DANS GAMEDATA
 			GameObjectManager.loadScene("MainScene");
 		}
 		else // Sinon on signal que aucune compétence n'est selectionné ou que aucun niveau n'est disponible
         {
+			string message = "";
 			// Si pas de competence selectionnée
-			if(nbCompActive == 0)
+			if (nbCompActive == 0)
             {
-				Debug.Log("Pas de compétence sélectionnée");
+				message = "Pas de compétence sélectionnée";
             }
 			else if (copyLevel.Count == 0) // Si pas de niveau dispo
             {
-				Debug.Log("Pas de niveau disponible pour l'ensemble des compétences selectionnées");
+				message = "Pas de niveau disponible pour l'ensemble des compétences selectionnées";
 			}
             else
             {
-				Debug.Log("Erreur run level ");
+				message = "Erreur run level ";
 			}
-        }
+			displayMessageUser(message);
+		}
 	}
 
 	public void infoCompetence(GameObject comp)
@@ -131,10 +182,112 @@ public class ParamCompetenceSystem : FSystem
 		comp.transform.Find("Label").GetComponent<Text>().fontStyle = FontStyle.Normal;
 	}
 
-	// Cgarement des parametre des compétences
+	// On parcourt toutes les compétences
+	// On desactive toutes les compétences non implémenté et les compétences ne pouvant plus être selectionné
+	// On selectionne automatiquement les competences linker
+	public void selectComp(GameObject comp, bool userSelect)
+    {
+        if (userSelect)
+        {
+			addOrRemoveCompSelect(comp, true);
+		}
+        else
+        {
+			comp.GetComponent<Toggle>().isOn = true;
+		}
+
+		bool error = false;
+
+		foreach (string compSelect in comp.GetComponent<Competence>().compLink)
+		{
+			foreach (GameObject c in competence_f)
+			{
+				if (c.name == compSelect && comp.GetComponent<Competence>().active)
+				{
+					if (c.GetComponent<Toggle>().interactable)
+					{
+						selectComp(c, false);
+					}
+					else
+					{
+						error = true;
+						break;
+					}
+				}
+			}
+		}
+
+
+		foreach (string compSelect in comp.GetComponent<Competence>().compNoPossible)
+		{
+			foreach (GameObject c in competence_f)
+			{
+				if (c.name == compSelect)
+				{
+					if (!c.GetComponent<Toggle>().isOn)
+					{
+						c.GetComponent<Toggle>().interactable = false;
+					}
+					else
+					{
+						error = true;
+						break;
+					}
+				}
+			}
+		}
+
+        if (error)
+        {
+			string message = "Conflit concernant l'interactibilité de la compétence sélectionné";
+			displayMessageUser(message);
+			// Deselectionner la compétence
+			stratCoroutineNoSelect(comp);
+		}
+	}
+
+	private void stratCoroutineNoSelect(GameObject comp)
+    {
+		MainLoop.instance.StartCoroutine(noSelect(comp));
+	}
+
+	public void unselectComp(GameObject comp, bool userUnselect)
+    {
+        if (!userUnselect)
+        {
+			comp.GetComponent<Toggle>().isOn = false;
+		}
+
+		foreach(GameObject competence in competence_f)
+        {
+			foreach(string compName in comp.GetComponent<Competence>().compLinkUnselect)
+            {
+				if(compName == competence.name)
+                {
+					unselectComp(competence, false);
+				}
+			}
+
+			foreach (string compName in comp.GetComponent<Competence>().compNoPossible)
+			{
+				if (compName == competence.name)
+				{
+					competence.GetComponent<Toggle>().interactable = true;
+                    if (competence.GetComponent<Toggle>().isOn)
+                    {
+						unselectComp(competence, false);
+					}
+				}
+			}
+		}
+
+		desactiveToogleComp();
+		addOrRemoveCompSelect(comp, false);
+	}
+	// Chargement des parametre des compétences
 	private void loadParamComp()
     {
-		StreamReader reader = new StreamReader(Application.dataPath + "/StreamingAssets/ParamPrefab/ParamCompetence.csv");
+		StreamReader reader = new StreamReader("" + Application.dataPath + pathParamComp);
 		bool endOfFile = false;
 		while (!endOfFile)
 		{
@@ -155,6 +308,7 @@ public class ParamCompetenceSystem : FSystem
 				{
 					// On charge le text de la compétence
 					comp.transform.Find("Label").GetComponent<Text>().text = data[1];
+					comp.transform.Find("Label").GetComponent<Text>().alignment = TextAnchor.MiddleLeft;
 					// On charge les info de la compétence qui sera affiché lorsque l'on survolera celle-ci avec la souris
 					comp.GetComponent<Competence>().info = data[2];
 					// (temporaire) On charge si la compétence peut être selectionnée (est-elle implémentée)
@@ -170,6 +324,12 @@ public class ParamCompetenceSystem : FSystem
 					foreach (string value in data_noPossible)
 					{
 						comp.GetComponent<Competence>().compNoPossible.Add(value);
+					}
+					// On charge le vecteur des compétences qui seront automatiquement deselectionné si la compétence est déséléctionnée
+					var data_unlink = data[6].Split(',');
+					foreach (string value in data_unlink)
+					{
+						comp.GetComponent<Competence>().compLinkUnselect.Add(value);
 					}
 				}
 			}
@@ -188,21 +348,24 @@ public class ParamCompetenceSystem : FSystem
 		}
 	}
 
-	// Lis tous les fichiers XML des niveaux afin de charger quelle compétence se trouve dans quel niveau  
+	// Lis tous les fichiers XML des niveaux de chaque dossier afin de charger quelle compétence se trouve dans quel niveau  
 	private void readXMLinfo()
     {
-        foreach(string level in gameData.levelList["Campagne"])
+        foreach (List<string> levels in gameData.levelList.Values)
         {
-			XmlDocument doc = new XmlDocument();
-			if (Application.platform == RuntimePlatform.WebGLPlayer)
+			foreach (string level in levels)
 			{
-				doc.LoadXml(level);
-				loadInfo(doc, level);
-			}
-			else
-			{
-				doc.Load(level);
-				loadInfo(doc, level);
+				XmlDocument doc = new XmlDocument();
+				if (Application.platform == RuntimePlatform.WebGLPlayer)
+				{
+					doc.LoadXml(level);
+					loadInfo(doc, level);
+				}
+				else
+				{
+					doc.Load(level);
+					loadInfo(doc, level);
+				}
 			}
 		}
 	}
@@ -241,4 +404,70 @@ public class ParamCompetenceSystem : FSystem
 			}
 		}
 	}
+
+	// Ajoute ou retire la compétence de la liste des compétences selectionner manuellement par l'utilisateur
+	public void addOrRemoveCompSelect(GameObject comp, bool value)
+	{
+        if (value)
+        {
+			// Si la compétence n'est pas encore noté comme avoir été selectionné par le user
+            if (!listCompSelectUser.Contains(comp.name))
+            {
+				listCompSelectUser.Add(comp.name);
+			}
+		}
+        else
+        {
+			// Si la compétence avait été séléctionné par le user
+			if(listCompSelectUser.Contains(comp.name)){
+				listCompSelectUser.Remove(comp.name);
+			}
+		}
+	}
+
+	// Reset toutes les compétences en "non selectionné"
+	private void resetSelectComp()
+    {
+		foreach (GameObject comp in competence_f)
+		{
+			comp.GetComponent<Toggle>().isOn = false;
+		}
+	}
+
+	// Enregistre la liste des compétence séléctionné par le user
+	public void saveListUser()
+    {
+		listCompSelectUserSave = new List<string>(listCompSelectUser);
+	}
+
+	// Ferme le panel de selection des compétences
+	// Décoche toutes les compétences cochées
+	// vide les listes de suivis des compétences selectionné
+	public void closeSelectCompetencePanel()
+    {
+		panelSelectComp.SetActive(false);
+		resetSelectComp();
+		listCompSelectUser = new List<string>();
+		listCompSelectUserSave = new List<string>();
+	}
+
+	// Affiche le panel message avec le bon message
+	public void displayMessageUser(string message)
+    {
+		messageForUser.text = message;
+		panelInfoUser.SetActive(true);
+	}
+
+	public void changeSizeButtonCategory(GameObject button, float value)
+    {
+        if(button.GetComponent<RectTransform>().sizeDelta.x == value)
+        {
+			button.GetComponent<RectTransform>().sizeDelta = new Vector2(button.GetComponent<RectTransform>().sizeDelta.x + 2, button.GetComponent<RectTransform>().sizeDelta.y + 2);
+		}
+        else
+        {
+			button.GetComponent<RectTransform>().sizeDelta = new Vector2(button.GetComponent<RectTransform>().sizeDelta.x - 2, button.GetComponent<RectTransform>().sizeDelta.y - 2);	
+		}
+
+    }
 }
