@@ -7,6 +7,12 @@ using UnityEngine.UI;
 public class ParamCompetenceSystemBridge : MonoBehaviour
 {
     public bool closePanelParamComp = false;
+    public GameObject scrollViewComp;
+
+    private void Start()
+    {
+        scrollViewComp = GameObject.Find("Scroll View Comp");
+    }
 
     public void startLevel()
     {
@@ -15,7 +21,7 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
 
     public void onScroll(BaseEventData ev)
     {
-        ExecuteEvents.ExecuteHierarchy(transform.Find("Scroll View").gameObject, ev, ExecuteEvents.scrollHandler);
+        ExecuteEvents.ExecuteHierarchy(scrollViewComp, ev, ExecuteEvents.scrollHandler);
     }
 
     public void infoCompetence(GameObject target)
@@ -51,9 +57,13 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
         }
     }
 
-    public void changeSizeButtonCategory(GameObject button)
+    public void viewOrHideCompList(GameObject category)
     {
-        ParamCompetenceSystem.instance.changeSizeButtonCategory(button, 15.0f);
+        ParamCompetenceSystem.instance.viewOrHideCompList(category);
     }
 
+    public void hideOrShowButtonCategory(GameObject button)
+    {
+        ParamCompetenceSystem.instance.hideOrShowButtonCategory(button);
+    }
 }

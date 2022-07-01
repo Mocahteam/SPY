@@ -6,14 +6,22 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject panelSelectComp;
 	public UnityEngine.GameObject panelInfoComp;
 	public UnityEngine.GameObject panelInfoUser;
+	public UnityEngine.GameObject scrollViewComp;
 	public System.String pathParamComp;
+	public UnityEngine.GameObject prefabCateComp;
+	public UnityEngine.GameObject prefabComp;
+	public UnityEngine.GameObject ContentCompMenu;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "panelSelectComp", panelSelectComp);
 		MainLoop.initAppropriateSystemField (system, "panelInfoComp", panelInfoComp);
 		MainLoop.initAppropriateSystemField (system, "panelInfoUser", panelInfoUser);
+		MainLoop.initAppropriateSystemField (system, "scrollViewComp", scrollViewComp);
 		MainLoop.initAppropriateSystemField (system, "pathParamComp", pathParamComp);
+		MainLoop.initAppropriateSystemField (system, "prefabCateComp", prefabCateComp);
+		MainLoop.initAppropriateSystemField (system, "prefabComp", prefabComp);
+		MainLoop.initAppropriateSystemField (system, "ContentCompMenu", ContentCompMenu);
 	}
 
 	public void openPanelSelectComp()
@@ -66,9 +74,14 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "displayMessageUser", message);
 	}
 
-	public void changeSizeButtonCategory()
+	public void viewOrHideCompList(UnityEngine.GameObject category)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "changeSizeButtonCategory", null);
+		MainLoop.callAppropriateSystemMethod (system, "viewOrHideCompList", category);
+	}
+
+	public void hideOrShowButtonCategory(UnityEngine.GameObject button)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "hideOrShowButtonCategory", button);
 	}
 
 }
