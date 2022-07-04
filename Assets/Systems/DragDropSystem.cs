@@ -369,6 +369,8 @@ public class DragDropSystem : FSystem
 
 		// refresh all the hierarchy of parent containers
 		refreshHierarchyContainers(itemDragged);
+		// Update size of parent GameObject
+		MainLoop.instance.StartCoroutine(UISystem.instance.setEditableSize());
 
 		UISystem.instance.startUpdatePlayButton();
 	}

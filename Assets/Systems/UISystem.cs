@@ -945,7 +945,7 @@ public class UISystem : FSystem {
 		MainLoop.instance.StartCoroutine(setEditableSize());
 	}
 
-	private IEnumerator setEditableSize()
+	public IEnumerator setEditableSize()
     {
 		yield return null;
 		yield return null;

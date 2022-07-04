@@ -108,12 +108,11 @@ public class LevelGenerator : FSystem {
 		
 		//add new container to entity
 		ScriptRef scriptref = entity.GetComponent<ScriptRef>();
-		GameObject containerParent = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Container") as GameObject);
+		GameObject containerParent = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Container") as GameObject, scriptContainer.gameObject.transform, false);
 		// Associer à l'agent l'UI container
 		scriptref.uiContainer = containerParent;
 		// Associer à l'agent le script container
 		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
-		containerParent.transform.SetParent(scriptContainer.gameObject.transform);
 		// Association de l'agent au script de gestion des fonctions
 		containerParent.GetComponentInChildren<EditAgentSystemBridge>().agent = entity;
 
