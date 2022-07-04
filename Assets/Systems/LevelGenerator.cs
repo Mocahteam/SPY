@@ -670,7 +670,7 @@ public class LevelGenerator : FSystem {
 						if (andNode.Attributes.GetNamedItem("element").Value == "1")
 						{
 							GameObject child = (readXMLElement(andNode, editable));
-							endZone = obj.transform.GetChild(1).gameObject;
+							endZone = obj.transform.Find("Container").GetChild(1).gameObject;
 							child.transform.SetParent(obj.transform);
 							child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
 							endZone.SetActive(false);
@@ -678,7 +678,7 @@ public class LevelGenerator : FSystem {
 						else if (andNode.Attributes.GetNamedItem("element").Value == "2")
 						{
 							GameObject child = (readXMLElement(andNode, editable));
-							endZone = obj.transform.GetChild(4).gameObject;
+							endZone = obj.transform.Find("Container").GetChild(4).gameObject;
 							child.transform.SetParent(obj.transform);
 							child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
 							endZone.SetActive(false);
@@ -698,7 +698,7 @@ public class LevelGenerator : FSystem {
 						if(orNode.Attributes.GetNamedItem("element").Value == "1")
                         {
 							GameObject child = (readXMLElement(orNode, editable));
-							endZone = obj.transform.GetChild(1).gameObject;
+							endZone = obj.transform.Find("Container").GetChild(1).gameObject;
 							child.transform.SetParent(obj.transform);
 							child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
 							endZone.SetActive(false);
@@ -706,7 +706,7 @@ public class LevelGenerator : FSystem {
 						else if (orNode.Attributes.GetNamedItem("element").Value == "2")
                         {
 							GameObject child = (readXMLElement(orNode, editable));
-							endZone = obj.transform.GetChild(4).gameObject;
+							endZone = obj.transform.Find("Container").GetChild(4).gameObject;
 							child.transform.SetParent(obj.transform);
 							child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
 							endZone.SetActive(false);
@@ -721,7 +721,7 @@ public class LevelGenerator : FSystem {
 				if (actionNode.HasChildNodes)
 				{
 					GameObject child = (readXMLElement(actionNode.FirstChild, editable));
-					GameObject endZone = obj.transform.GetChild(1).gameObject;
+					GameObject endZone = obj.transform.Find("Container").GetChild(1).gameObject;
 					child.transform.SetParent(obj.transform);
 					child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
 					endZone.SetActive(false);

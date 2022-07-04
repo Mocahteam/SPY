@@ -59,7 +59,6 @@ public class DragDropSystem : FSystem
 	public IEnumerator forceUIRefresh(RectTransform bloc)
 	{
 		yield return null;
-		yield return null;
 		LayoutRebuilder.ForceRebuildLayoutImmediate(bloc);
 	}
 
