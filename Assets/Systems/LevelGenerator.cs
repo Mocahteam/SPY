@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Xml;
 using UnityEngine.UI;
 using TMPro;
-using FYFY_plugins.PointerManager;
 using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
@@ -108,25 +107,25 @@ public class LevelGenerator : FSystem {
 		
 		//add new container to entity
 		ScriptRef scriptref = entity.GetComponent<ScriptRef>();
-		GameObject containerParent = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Container") as GameObject, scriptContainer.gameObject.transform, false);
+		GameObject containerParent = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/ExecutablePanel") as GameObject, scriptContainer.gameObject.transform, false);
 		// Associer à l'agent l'UI container
 		scriptref.uiContainer = containerParent;
 		// Associer à l'agent le script container
-		scriptref.scriptContainer = containerParent.transform.Find("Container").Find("Viewport").Find("ScriptContainer").gameObject;
+		scriptref.scriptContainer = containerParent.transform.Find("Scroll View").Find("Viewport").Find("ScriptContainer").gameObject;
 		// Association de l'agent au script de gestion des fonctions
 		containerParent.GetComponentInChildren<EditAgentSystemBridge>().agent = entity;
 
 		// On va charger l'image et le nom de l'agent selon l'agent (robot, enemie etc...)
-		if (entity.tag == "Player")
+		if (type == "player")
 		{
 			nbAgent++;
 			// On nomme l'agent
 			AgentEdit agentEdit = entity.GetComponent<AgentEdit>();
 			agentEdit.agentName = "Script" + nbAgent;
 
-			// Si l'agent est en mode Locked ou Synchro, on crée une zone de programmation dédiée
-			if (agentEdit.editState == AgentEdit.EditMode.Locked || agentEdit.editState == AgentEdit.EditMode.Synch)
-				UISystem.instance.addSpecificContainer(agentEdit.agentName, agentEdit.editState);
+			// Si l'agent est en mode Locked ou Synchro ou qu'un script est défini, on crée une zone de programmation dédiée
+			if (agentEdit.editState == AgentEdit.EditMode.Locked || agentEdit.editState == AgentEdit.EditMode.Synch || script != null)
+				UISystem.instance.addSpecificContainer(agentEdit.agentName, agentEdit.editState, script);
 
 			// Chargement de l'icône de l'agent sur la localisation
 			containerParent.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
@@ -138,32 +137,18 @@ public class LevelGenerator : FSystem {
 				containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().interactable = true;
 			}
 		}
-		else if (entity.tag == "Drone")
+		else if (type == "enemy")
 		{
 			// Chargement de l'icône de l'agent sur la localisation
 			containerParent.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
 			containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = "Drone";
-		}
 
-		AgentColor ac = MainLoop.instance.GetComponent<AgentColor>();
-		scriptref.uiContainer.transform.Find("Container").GetComponent<Image>().color = (type == "player" ? ac.playerBackground : ac.droneBackground);
-
-		if(script != null){
-			if (type == "player" && editableCanvas.transform.childCount == 1){ //player & empty script (1 child for position bar)
-				for(int k = 0 ; k < script.Count ; k++){
-					script[k].transform.SetParent(editableCanvas.transform); //add actions to editable container
-					GameObjectManager.bind(script[k]);
-					GameObjectManager.refresh(editableCanvas);
-				}
-				foreach(BaseElement act in editableCanvas.GetComponentsInChildren<BaseElement>()){
-					GameObjectManager.addComponent<Dropped>(act.gameObject);
-				}
-				LayoutRebuilder.ForceRebuildLayoutImmediate(editableCanvas.GetComponent<RectTransform>());
-			}
-			else if(type == "enemy"){
+			if (script != null)
+			{
 				GameObject targetContainer = entity.GetComponent<ScriptRef>().scriptContainer;
-				foreach (GameObject go in script){
+				foreach (GameObject go in script)
+				{
 					go.transform.SetParent(targetContainer.transform); //add actions to container
 					List<GameObject> basicActionGO = getBasicActionGO(go);
 					foreach (GameObject baGO in basicActionGO)
@@ -173,9 +158,14 @@ public class LevelGenerator : FSystem {
 							baGO.GetComponent<Selectable>().interactable = false;
 					}
 				}
-				computeNext(scriptref.scriptContainer);				
-			}			
+				//TODO : calculer les firstchild, stringifier les conditions...
+				computeNext(scriptref.scriptContainer);
+			}
 		}
+
+		AgentColor ac = MainLoop.instance.GetComponent<AgentColor>();
+		scriptref.uiContainer.transform.Find("Scroll View").GetComponent<Image>().color = (type == "player" ? ac.playerBackground : ac.droneBackground);
+
 		containerParent.SetActive(false);
 		GameObjectManager.bind(containerParent);
 		GameObjectManager.bind(entity);
@@ -301,7 +291,7 @@ public class LevelGenerator : FSystem {
 					break;
 				case "player":
 					createEntity(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
-					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),"player", readXMLScript(child.ChildNodes[0], true));
+					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),"player", readXMLScript(child.ChildNodes[0]));
 					break;
 				
 				case "enemy":
@@ -367,371 +357,252 @@ public class LevelGenerator : FSystem {
 		 slotsID, (Direction.Dir)int.Parse(activableNode.Attributes.GetNamedItem("direction").Value));
 	}
 
-	private List<GameObject> readXMLScript(XmlNode scriptNode, bool editable = false)
+	private List<GameObject> readXMLScript(XmlNode scriptNode)
 	{
 		if(scriptNode != null){
 			List<GameObject> script = new List<GameObject>();
 			foreach(XmlNode actionNode in scriptNode.ChildNodes){
-				script.Add(readXMLAction(actionNode, editable));
+				script.Add(readXMLInstruction(actionNode));
 			}
 			return script;			
 		}
 		return null;
 	}
 
-	// Transforme le noeux d'action XML en gameObject action/élément/opérator
-	private GameObject readXMLAction(XmlNode actionNode, bool editable = false){
+	// Transforme le noeux d'action XML en gameObject
+	private GameObject readXMLInstruction(XmlNode actionNode){
 		GameObject obj = null;
 		BaseElement action = null;
-		GameObject prefab = null;
 		Transform conditionContainer = null;
 		Transform firstContainerBloc = null;
-		Transform secondeContainerBloc = null;
-		bool firstchild;
-		string actionKey = actionNode.Attributes.GetNamedItem("actionType").Value;
-		switch(actionKey){
-			case "If" :
-				prefab = Resources.Load ("Prefabs/ScriptElements/IfDetectBloc") as GameObject;
-				obj = Object.Instantiate (prefab);
-				conditionContainer = obj.transform.Find("ConditionContainer");
-				firstContainerBloc = obj.transform.Find("Container");
-				obj.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("If");
-				action = obj.GetComponent<IfControl>();
-
-				// On ajoute les éléments enfant dans les bons container
-				foreach(XmlNode containerNode in actionNode.ChildNodes)
+		Transform secondContainerBloc = null;
+        switch (actionNode.Name)
+        {
+			case "control":
+				switch (actionNode.Attributes.GetNamedItem("type").Value)
                 {
-					// Ajout des conditions
-					if (containerNode.Attributes.GetNamedItem("container").Value == "Condition")
-                    {
-						if (containerNode.HasChildNodes)
-						{
-							GameObject emptyZone = conditionContainer.GetChild(0).gameObject;
-							foreach (XmlNode eleNode in containerNode.ChildNodes)
-							{
-								GameObject child = (readXMLElement(eleNode, editable));
-								child.transform.SetParent(conditionContainer);
-								child.transform.SetSiblingIndex(emptyZone.transform.GetSiblingIndex());
-							}
-							emptyZone.transform.SetParent(null);
-							GameObject.Destroy(emptyZone);
-							GameObjectManager.refresh(obj);
+					case "If":
+						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("If"));
 
-							((IfControl)action).condition = new List<string>();
-							ConditionManagement.instance.convertionConditionSequence(conditionContainer.GetChild(0).gameObject, ((IfControl)action).condition);
-						}
-                    }
-					else if (containerNode.Attributes.GetNamedItem("container").Value == "IfContainer")
-                    {
-						if (containerNode.HasChildNodes)
+						conditionContainer = obj.transform.Find("ConditionContainer");
+						firstContainerBloc = obj.transform.Find("Container");
+						action = obj.GetComponent<IfControl>();
+
+						// On ajoute les éléments enfant dans les bons container
+						foreach (XmlNode containerNode in actionNode.ChildNodes)
 						{
-							GameObject emptyZone = firstContainerBloc.GetChild(1).gameObject;
-							firstchild = false;
-							foreach (XmlNode eleNode in containerNode.ChildNodes)
+							// Ajout des conditions
+							if (containerNode.Name == "condition")
 							{
-								GameObject child = (readXMLAction(eleNode, editable));
-								child.transform.SetParent(firstContainerBloc);
-								child.transform.SetSiblingIndex(emptyZone.transform.GetSiblingIndex());
-								if (!firstchild)
+								if (containerNode.HasChildNodes)
 								{
-									firstchild = true;
-									((IfControl)action).firstChild = child;
+									// The first child of the conditional container of a If action contains the ReplacementSlot
+									GameObject emptyZone = conditionContainer.GetChild(0).gameObject;
+									// Parse xml condition
+									GameObject child = readXMLCondition(containerNode.FirstChild);
+									// Add child to empty zone
+									DragDropSystem.instance.addItemOnDropArea(child, emptyZone);
 								}
 							}
-							emptyZone.transform.SetParent(null);
-							GameObject.Destroy(emptyZone);
-							GameObjectManager.refresh(obj);
-						}
-					}
-				}
-				break;
-
-			case "IfElse":
-				prefab = Resources.Load("Prefabs/ScriptElements/IfElseDetectBloc") as GameObject;
-				obj = Object.Instantiate(prefab);
-				conditionContainer = obj.transform.Find("ConditionContainer");
-				firstContainerBloc = obj.transform.Find("Container");
-				secondeContainerBloc = obj.transform.Find("ElseContainer");
-				obj.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("IfElse");
-				action = obj.GetComponent<IfControl>();
-
-				// On ajoute les éléments enfant dans les bons container
-				foreach (XmlNode containerNode in actionNode.ChildNodes)
-				{
-					// Ajout des conditions
-					if (containerNode.Attributes.GetNamedItem("container").Value == "Condition")
-					{
-						if (containerNode.HasChildNodes)
-						{
-							GameObject emptyZone = conditionContainer.GetChild(0).gameObject;
-							foreach (XmlNode eleNode in containerNode.ChildNodes)
+							else if (containerNode.Name == "container")
 							{
-								GameObject child = (readXMLElement(eleNode, editable));
-								child.transform.SetParent(conditionContainer);
-								child.transform.SetSiblingIndex(emptyZone.transform.GetSiblingIndex());
+								if (containerNode.HasChildNodes)
+									processXMLInstruction(firstContainerBloc, containerNode);
 							}
-							emptyZone.transform.SetParent(null);
-							GameObject.Destroy(emptyZone);
-							GameObjectManager.refresh(obj);
-
-							((IfControl)action).condition = new List<string>();
-							ConditionManagement.instance.convertionConditionSequence(conditionContainer.GetChild(0).gameObject, ((IfControl)action).condition);
 						}
-					}
-					else if (containerNode.Attributes.GetNamedItem("container").Value == "IfContainer")
-					{
-						if (containerNode.HasChildNodes)
+						break;
+
+					case "IfElse":
+						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("IfElse"));
+						conditionContainer = obj.transform.Find("ConditionContainer");
+						firstContainerBloc = obj.transform.Find("Container");
+						secondContainerBloc = obj.transform.Find("ElseContainer");
+						action = obj.GetComponent<IfControl>();
+
+						// On ajoute les éléments enfant dans les bons container
+						foreach (XmlNode containerNode in actionNode.ChildNodes)
 						{
-							GameObject emptyZone = firstContainerBloc.GetChild(1).gameObject;
-							firstchild = false;
-							foreach (XmlNode eleNode in containerNode.ChildNodes)
+							// Ajout des conditions
+							if (containerNode.Name == "condition")
 							{
-								GameObject child = (readXMLAction(eleNode, editable));
-								child.transform.SetParent(firstContainerBloc);
-								child.transform.SetSiblingIndex(emptyZone.transform.GetSiblingIndex());
-								if (!firstchild)
+								if (containerNode.HasChildNodes)
 								{
-									firstchild = true;
-									((IfControl)action).firstChild = child;
+									// The first child of the conditional container of a IfElse action contains the ReplacementSlot
+									GameObject emptyZone = conditionContainer.GetChild(0).gameObject;
+									// Parse xml condition
+									GameObject child = readXMLCondition(containerNode.FirstChild);
+									// Add child to empty zone
+									DragDropSystem.instance.addItemOnDropArea(child, emptyZone);
 								}
 							}
-							emptyZone.transform.SetParent(null);
-							GameObject.Destroy(emptyZone);
-							GameObjectManager.refresh(obj);
-							
-						}
-					}
-					else if (containerNode.Attributes.GetNamedItem("container").Value == "ElseContainer")
-                    {
-						if (containerNode.HasChildNodes)
-						{
-							GameObject emptyZone = secondeContainerBloc.GetChild(1).gameObject;
-							firstchild = false;
-							foreach (XmlNode eleNode in containerNode.ChildNodes)
+							else if (containerNode.Name == "container" && containerNode.Attributes.GetNamedItem("type").Value == "ThenContainer")
 							{
-								GameObject child = (readXMLAction(eleNode, editable));
-								child.transform.SetParent(secondeContainerBloc);
-								child.transform.SetSiblingIndex(emptyZone.transform.GetSiblingIndex());
-								if (!firstchild)
+								if (containerNode.HasChildNodes)
+									processXMLInstruction(firstContainerBloc, containerNode);
+							}
+							else if (containerNode.Name == "container" && containerNode.Attributes.GetNamedItem("type").Value == "ElseContainer")
+							{
+								if (containerNode.HasChildNodes)
+									processXMLInstruction(secondContainerBloc, containerNode);
+							}
+						}
+						break;
+
+					case "For":
+						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("For"));
+						firstContainerBloc = obj.transform.Find("Container");
+						action = obj.GetComponent<ForControl>();
+
+						((ForControl)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
+						obj.transform.GetComponentInChildren<TMP_InputField>().text = ((ForControl)action).nbFor.ToString();
+
+						if (actionNode.HasChildNodes)
+							processXMLInstruction(firstContainerBloc, actionNode);
+						break;
+
+					case "While":
+						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("While"));
+						firstContainerBloc = obj.transform.Find("Container");
+						conditionContainer = obj.transform.Find("ConditionContainer");
+						action = obj.GetComponent<WhileControl>();
+
+						// On ajoute les éléments enfant dans les bons container
+						foreach (XmlNode containerNode in actionNode.ChildNodes)
+						{
+							// Ajout des conditions
+							if (containerNode.Name == "condition")
+							{
+								if (containerNode.HasChildNodes)
 								{
-									firstchild = true;
-									((IfElseControl)action).elseFirstChild = child;
+									// The first child of the conditional container of a While action contains the ReplacementSlot
+									GameObject emptyZone = conditionContainer.GetChild(0).gameObject;
+									// Parse xml condition
+									GameObject child = readXMLCondition(containerNode.FirstChild);
+									// Add child to empty zone
+									DragDropSystem.instance.addItemOnDropArea(child, emptyZone);
 								}
 							}
-							emptyZone.transform.SetParent(null);
-							GameObject.Destroy(emptyZone);
-							GameObjectManager.refresh(obj);
-						}
-					}
-				}
-				break;
-
-			case "For":
-				prefab = Resources.Load ("Prefabs/ScriptElements/ForBloc") as GameObject;
-				obj = Object.Instantiate (prefab);
-				obj.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("For");
-				action = obj.GetComponent<ForControl>();
-				firstContainerBloc = obj.transform.Find("Container");
-
-				((ForControl)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
-				obj.transform.GetComponentInChildren<TMP_InputField>().text = ((ForControl)action).nbFor.ToString();
-
-				obj.transform.GetComponentInChildren<TMP_InputField>().interactable = editable;
-
-				if (actionNode.HasChildNodes)
-				{
-					GameObject emptyZone = firstContainerBloc.GetChild(1).gameObject;
-					firstchild = false;
-					foreach (XmlNode eleNode in actionNode.ChildNodes)
-					{
-						GameObject child = (readXMLAction(eleNode, editable));
-						child.transform.SetParent(firstContainerBloc);
-						child.transform.SetSiblingIndex(emptyZone.transform.GetSiblingIndex());
-						if (!firstchild)
-						{
-							firstchild = true;
-							((ForControl)action).firstChild = child;
-						}
-					}
-					emptyZone.transform.SetParent(null);
-					GameObject.Destroy(emptyZone);
-					GameObjectManager.refresh(obj);
-				}
-				break;
-
-			case "While":
-				prefab = Resources.Load("Prefabs/ScriptElements/WhileBloc") as GameObject;
-				obj = Object.Instantiate(prefab);
-				obj.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("For");
-				action = obj.GetComponent<WhileControl>();
-				firstContainerBloc = obj.transform.Find("Container");
-				conditionContainer = obj.transform.Find("ConditionContainer");
-
-				// On ajoute les éléments enfant dans les bons container
-				foreach (XmlNode containerNode in actionNode.ChildNodes)
-				{
-					// Ajout des conditions
-					if (containerNode.Attributes.GetNamedItem("container").Value == "Condition")
-					{
-						if (containerNode.HasChildNodes)
-						{
-							GameObject emptyZone = conditionContainer.GetChild(0).gameObject;
-							foreach (XmlNode eleNode in containerNode.ChildNodes)
+							else if (containerNode.Name == "container")
 							{
-								GameObject child = (readXMLElement(eleNode, editable));
-								child.transform.SetParent(conditionContainer);
-								child.transform.SetSiblingIndex(emptyZone.transform.GetSiblingIndex());
+								if (containerNode.HasChildNodes)
+									processXMLInstruction(firstContainerBloc, containerNode);
 							}
-							emptyZone.transform.SetParent(null);
-							GameObject.Destroy(emptyZone);
-							GameObjectManager.refresh(obj);
-
-							((IfControl)action).condition = new List<string>();
-							ConditionManagement.instance.convertionConditionSequence(conditionContainer.transform.GetChild(0).gameObject, ((IfControl)action).condition);
-						
-							}
-					}
-					else if (containerNode.Attributes.GetNamedItem("container").Value == "IfContainer")
-					{
-						if (containerNode.HasChildNodes)
-						{
-							GameObject emptyZone = firstContainerBloc.GetChild(1).gameObject;
-							firstchild = false;
-							foreach (XmlNode eleNode in containerNode.ChildNodes)
-							{
-								GameObject child = (readXMLAction(eleNode, editable));
-								child.transform.SetParent(firstContainerBloc);
-								child.transform.SetSiblingIndex(emptyZone.transform.GetSiblingIndex());
-								if (!firstchild)
-								{
-									firstchild = true;
-									((IfControl)action).firstChild = child;
-								}
-							}
-							emptyZone.transform.SetParent(null);
-							GameObject.Destroy(emptyZone);
-							GameObjectManager.refresh(obj);
-							
 						}
-					}
+						break;
+
+					case "Forever":
+						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("Forever"));
+						firstContainerBloc = obj.transform.Find("Container");
+
+						if (actionNode.HasChildNodes)
+							processXMLInstruction(firstContainerBloc, actionNode);
+						break;
 				}
 				break;
-
-			case "Forever":
-				prefab = Resources.Load ("Prefabs/ScriptElements/InfiniteLoop") as GameObject;
-				obj = Object.Instantiate (prefab);
-				obj.GetComponent<LibraryItemRef>().linkedTo = null;
-				action = obj.GetComponent<ForeverControl>();
-
-				//add children
-				firstchild = false;
-				if(actionNode.HasChildNodes){
-					foreach(XmlNode actNode in actionNode.ChildNodes){
-						GameObject child = (readXMLAction(actNode, editable));
-						child.transform.SetParent(action.transform.Find("Container"));
-						if(!firstchild){
-							firstchild = true;
-							((ForeverControl)action).firstChild = child;
-						}
-					}	
-				}
+			case "action":
+				obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find(actionNode.Attributes.GetNamedItem("type").Value));
 				break;
-
-			default:
-				prefab = Resources.Load("Prefabs/ScriptElements/" + actionKey + "ActionBloc") as GameObject;
-				obj = Object.Instantiate(prefab);
-				obj.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find(actionKey);
-				break;
-		}
-
-		if(!editable)
-			Object.Destroy(obj.GetComponent<PointerSensitive>());
+        }
 
 		return obj;
 	}
 
-	// Transforme le noeux d'action XML en gameObject élément/opérator
-	private GameObject readXMLElement(XmlNode actionNode, bool editable = false) {
-		GameObject obj = null;
-		GameObject prefab = null;
-		Debug.Log("Element name : " + actionNode.Attributes.GetNamedItem("actionType").Value);
-		string actionKey = actionNode.Attributes.GetNamedItem("actionType").Value;
-		switch (actionKey)
+	private void processXMLInstruction(Transform gameContainer, XmlNode xmlContainer)
+	{
+		// The first child of a control container is a drop zone and the second an emptySolt
+		GameObject dropZone = gameContainer.GetChild(0).gameObject;
+		GameObject emptySlot = gameContainer.GetChild(1).gameObject;
+		bool firstchild = true;
+		foreach (XmlNode eleNode in xmlContainer.ChildNodes)
 		{
-			case "AndOperator":
-				prefab = Resources.Load("Prefabs/ScriptElements/" + actionKey + "Element") as GameObject;
-				obj = Object.Instantiate(prefab);
-				if (actionNode.HasChildNodes)
-				{
-					GameObject endZone = null;
-					foreach (XmlNode andNode in actionNode.ChildNodes)
-					{
-						if (andNode.Attributes.GetNamedItem("element").Value == "1")
-						{
-							GameObject child = (readXMLElement(andNode, editable));
-							endZone = obj.transform.Find("Container").GetChild(1).gameObject;
-							child.transform.SetParent(obj.transform);
-							child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
-							endZone.SetActive(false);
-						}
-						else if (andNode.Attributes.GetNamedItem("element").Value == "2")
-						{
-							GameObject child = (readXMLElement(andNode, editable));
-							endZone = obj.transform.Find("Container").GetChild(4).gameObject;
-							child.transform.SetParent(obj.transform);
-							child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
-							endZone.SetActive(false);
-						}
-					}
-				}
-				break;
-
-			case "OrOperator":
-				prefab = Resources.Load("Prefabs/ScriptElements/" + actionKey + "Element") as GameObject;
-				obj = Object.Instantiate(prefab);
-				if (actionNode.HasChildNodes)
-				{
-					GameObject endZone = null;
-					foreach (XmlNode orNode in actionNode.ChildNodes)
-                    {
-						if(orNode.Attributes.GetNamedItem("element").Value == "1")
-                        {
-							GameObject child = (readXMLElement(orNode, editable));
-							endZone = obj.transform.Find("Container").GetChild(1).gameObject;
-							child.transform.SetParent(obj.transform);
-							child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
-							endZone.SetActive(false);
-						}
-						else if (orNode.Attributes.GetNamedItem("element").Value == "2")
-                        {
-							GameObject child = (readXMLElement(orNode, editable));
-							endZone = obj.transform.Find("Container").GetChild(4).gameObject;
-							child.transform.SetParent(obj.transform);
-							child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
-							endZone.SetActive(false);
-						}
-                    }
-				}
-				break;
-
-			case "NotOperator":
-				prefab = Resources.Load("Prefabs/ScriptElements/" + actionKey + "Element") as GameObject;
-				obj = Object.Instantiate(prefab);
-				if (actionNode.HasChildNodes)
-				{
-					GameObject child = (readXMLElement(actionNode.FirstChild, editable));
-					GameObject endZone = obj.transform.Find("Container").GetChild(1).gameObject;
-					child.transform.SetParent(obj.transform);
-					child.transform.SetSiblingIndex(endZone.transform.GetSiblingIndex());
-					endZone.SetActive(false);
-				}
-				break;
-
-			default:
-				prefab = Resources.Load("Prefabs/ScriptElements/" + actionKey + "Element") as GameObject;
-				obj = Object.Instantiate(prefab);
-				break;
+			GameObject child = readXMLInstruction(eleNode);
+			if (firstchild) // add the first child to the emptySlot
+			{
+				DragDropSystem.instance.addItemOnDropArea(child, emptySlot);
+				firstchild = false;
+			}
+			else // add next childs to the dropZone
+				DragDropSystem.instance.addItemOnDropArea(child, dropZone);
 		}
+	}
+
+	// Transforme le noeux d'action XML en gameObject élément/opérator
+	private GameObject readXMLCondition(XmlNode conditionNode) {
+		GameObject obj = null;
+		ReplacementSlot[] slots = null;
+		switch (conditionNode.Name)
+        {
+			case "operator":
+				switch (conditionNode.Attributes.GetNamedItem("type").Value)
+                {
+					case "AndOperator":
+						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("AndOperator"));
+						slots = obj.GetComponentsInChildren<ReplacementSlot>();
+						if (conditionNode.HasChildNodes)
+						{
+							GameObject emptyZone = null;
+							foreach (XmlNode andNode in conditionNode.ChildNodes)
+							{
+								if (andNode.Attributes.GetNamedItem("type").Value == "Left")
+									// The Left slot is the second ReplacementSlot (first is the And operator)
+									emptyZone = slots[1].gameObject;
+								if (andNode.Attributes.GetNamedItem("type").Value == "Right")
+									// The Right slot is the third ReplacementSlot
+									emptyZone = slots[2].gameObject;
+								if (emptyZone != null && andNode.HasChildNodes)
+								{
+									// Parse xml condition
+									GameObject child = readXMLCondition(andNode.FirstChild);
+									// Add child to empty zone
+									DragDropSystem.instance.addItemOnDropArea(child, emptyZone);
+								}
+								emptyZone = null;
+							}
+						}
+						break;
+
+					case "OrOperator":
+						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("OrOperator"));
+						slots = obj.GetComponentsInChildren<ReplacementSlot>();
+						if (conditionNode.HasChildNodes)
+						{
+							GameObject emptyZone = null;
+							foreach (XmlNode orNode in conditionNode.ChildNodes)
+							{
+								if (orNode.Attributes.GetNamedItem("type").Value == "Left")
+									// The Left slot is the second ReplacementSlot (first is the And operator)
+									emptyZone = slots[1].gameObject;
+								if (orNode.Attributes.GetNamedItem("type").Value == "Right")
+									// The Right slot is the third ReplacementSlot
+									emptyZone = slots[2].gameObject;
+								if (emptyZone != null && orNode.HasChildNodes)
+								{
+									// Parse xml condition
+									GameObject child = readXMLCondition(orNode.FirstChild);
+									// Add child to empty zone
+									DragDropSystem.instance.addItemOnDropArea(child, emptyZone);
+								}
+								emptyZone = null;
+							}
+						}
+						break;
+
+					case "NotOperator":
+						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("NotOperator"));
+						if (conditionNode.HasChildNodes)
+						{
+							GameObject emptyZone = obj.transform.Find("Container").GetChild(1).gameObject;
+							GameObject child = readXMLCondition(conditionNode.FirstChild);
+							// Add child to empty zone
+							DragDropSystem.instance.addItemOnDropArea(child, emptyZone);
+						}
+						break;
+				}
+				break;
+			case "captor":
+				obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find(conditionNode.Attributes.GetNamedItem("type").Value));
+				break;
+        }
 
 		return obj;
 	}
@@ -782,7 +653,7 @@ public class LevelGenerator : FSystem {
 			if(child.GetComponent<IfControl>() || child.GetComponent<ForControl>())
             {
 				computeNext(child.transform.Find("Container").gameObject);
-                // Si c'est un esle il ne faut pas oublier le container else
+                // Si c'est un else il ne faut pas oublier le container else
                 if (child.GetComponent<IfElseControl>())
                 {
 					computeNext(child.transform.Find("ElseContainer").gameObject);

@@ -49,6 +49,8 @@ public class BlocLimitationManager : FSystem {
 			return "For";
 		else if (action is WhileControl)
 			return "While";
+		else if (action is ForeverControl)
+			return "Forever";
 		else if (action is BaseOperator)
 			return ((BaseOperator)action).operatorType.ToString();
 		else if (action is BaseCaptor)

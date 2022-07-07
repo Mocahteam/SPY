@@ -32,7 +32,7 @@ public class HighLightSystem : FSystem {
 		if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>().material.color;
 			if(go.GetComponent<ScriptRef>()){
-				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Container").GetComponent<Image>();
+				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Scroll View").GetComponent<Image>();
 				img.GetComponent<Highlightable>().baseColor = img.color;	
 			}			
 		}
@@ -72,7 +72,7 @@ public class HighLightSystem : FSystem {
 		else if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().highlightedColor;
 			if(go.GetComponent<ScriptRef>()){
-				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Container").GetComponent<Image>();
+				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Scroll View").GetComponent<Image>();
 				img.color = img.GetComponent<Highlightable>().highlightedColor;
 			}
 		}
@@ -97,7 +97,7 @@ public class HighLightSystem : FSystem {
 		else if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().baseColor;
 			if(go.GetComponent<ScriptRef>()){
-				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Container").GetComponent<Image>();
+				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Scroll View").GetComponent<Image>();
 				img.color = img.GetComponent<Highlightable>().baseColor;
 			}
 		}
