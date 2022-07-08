@@ -4,12 +4,10 @@ using System.Collections.Generic;
 public class Competence : MenuComp {
 	// Compétence implémenté
 	public bool active = true;
-	// Liste des niveaux contenant la compétence
-	public List<string> listLevel;
-	// Quel competence coché si celle-ci est selectionner
-	public List<string> compLink;
-	// Quel compétence griser si celle-ci est coché
-	public List<string> compNoPossible;
-	// Quel compétence décoché si celle-ci est décoché
-	public List<string> compLinkUnselect;
+	// A quel fonction est lié la compétence
+	public List<string> compLinkWhitFunc = new List<string>();
+	// A quel comp est lié la compétence
+	public List<string> compLinkWhitComp = new List<string>();
+	// List des comp dont au moins une doit être selectionné
+	public List<string> listSelectMinOneComp = new List<string>();
 }

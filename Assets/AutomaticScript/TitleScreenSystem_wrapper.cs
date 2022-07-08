@@ -9,6 +9,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject quitButton;
 	public UnityEngine.GameObject backButton;
 	public UnityEngine.GameObject cList;
+	public System.String pathFileParamFunct;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -18,6 +19,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
 		MainLoop.initAppropriateSystemField (system, "backButton", backButton);
 		MainLoop.initAppropriateSystemField (system, "cList", cList);
+		MainLoop.initAppropriateSystemField (system, "pathFileParamFunct", pathFileParamFunct);
 	}
 
 	public void showCampagneMenu()

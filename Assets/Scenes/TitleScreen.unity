@@ -2507,6 +2507,12 @@ PrefabInstance:
     - {fileID: 6592150674149379878, guid: d95b7150b03a41b45be0c429720941da, type: 3}
     - {fileID: 6592150674149379874, guid: d95b7150b03a41b45be0c429720941da, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d95b7150b03a41b45be0c429720941da, type: 3}
+--- !u!1 &533234404 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5551541958933558918, guid: a3a754e0e3ad7ba48b606f457784c1d1,
+    type: 3}
+  m_PrefabInstance: {fileID: 1757982235}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &535574237
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6505,6 +6511,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 305197054}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1589537340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6937,6 +6955,7 @@ MonoBehaviour:
   quitButton: {fileID: 1170870589}
   backButton: {fileID: 1880403777}
   cList: {fileID: 2087945181}
+  pathFileParamFunct: /StreamingAssets/ParamCompFunc/FunctionConstraint.csv
 --- !u!114 &1645587986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7012,10 +7031,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelSelectComp: {fileID: 1757982241}
-  panelInfoComp: {fileID: 1757982238}
+  panelInfoComp: {fileID: 533234404}
   panelInfoUser: {fileID: 1757982239}
   scrollViewComp: {fileID: 1757982240}
-  pathParamComp: /StreamingAssets/ParamPrefab/ParamCompetence.csv
+  pathParamComp: /StreamingAssets/ParamCompFunc/ParamCompetence.csv
   prefabCateComp: {fileID: 2122203360818857131, guid: 91626b1ceccb0c74c8e262a420ad75a5,
     type: 3}
   prefabComp: {fileID: 1219861198870165607, guid: ee4f2308b6bfd17479355d31757662ad,
@@ -7629,12 +7648,6 @@ RectTransform:
 --- !u!1 &1757982237 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7058834408977269838, guid: a3a754e0e3ad7ba48b606f457784c1d1,
-    type: 3}
-  m_PrefabInstance: {fileID: 1757982235}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1757982238 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7058834409098034665, guid: a3a754e0e3ad7ba48b606f457784c1d1,
     type: 3}
   m_PrefabInstance: {fileID: 1757982235}
   m_PrefabAsset: {fileID: 0}
@@ -9337,7 +9350,7 @@ PrefabInstance:
     - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
         type: 3}
@@ -9346,12 +9359,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
         type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
+        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1645587985}
     - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
         type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 305197054}
+    - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
+        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
@@ -9361,12 +9389,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
         type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SetActive
+      objectReference: {fileID: 0}
+    - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
+        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: TitleScreenSystem_wrapper, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
         type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: UnityEngine.GameObject, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
+        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4866484641650759572, guid: d6527149b979027408a3d90fe769acdf,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7305434440870733162, guid: d6527149b979027408a3d90fe769acdf,

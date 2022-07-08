@@ -39,12 +39,12 @@ public class LevelGenerator : FSystem {
 			{
 				MainLoop.instance.StartCoroutine(GetLevelWebRequest(doc));
 				doc.LoadXml(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
-				XmlToLevel(doc);
+				XmlToLevel(doc, gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
 			}
 			else
 			{
 				doc.Load(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
-				XmlToLevel(doc);
+				XmlToLevel(doc, gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
 			}
 			levelName.text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
 		}
@@ -60,7 +60,7 @@ public class LevelGenerator : FSystem {
 		else
 		{
 			doc.LoadXml(www.downloadHandler.text);
-			XmlToLevel(doc);
+			XmlToLevel(doc, gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
 		}
 	}
 
@@ -242,7 +242,7 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
-	public void XmlToLevel(XmlDocument doc)
+	public void XmlToLevel(XmlDocument doc, string nameLevel)
 	{
 
 		gameData.totalActionBloc = 0;
@@ -269,9 +269,6 @@ public class LevelGenerator : FSystem {
 					break;
 				case "actionBlocLimit":
 					readXMLLimits(child);
-					break;
-				case "competence":
-					readXMLCompetence(child);
 					break;
 				case "coin":
 					createCoin(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value));
@@ -318,16 +315,6 @@ public class LevelGenerator : FSystem {
 			map.Add(line);
 		}
 	}
-
-	private void readXMLCompetence(XmlNode competenceNode)
-    {
-		for(int i = 0; i < competenceNode.ChildNodes.Count; i++)
-        {
-			if(competenceNode.ChildNodes[i].Attributes.GetNamedItem("presence").Value == "1"){
-				gameData.GetComponent<CompetenceInLevel>().competencPossible[competenceNode.ChildNodes[i].Attributes.GetNamedItem("name").Value] = true;
-            }
-        }
-    }
 
 	private void readXMLLimits(XmlNode limitsNode){
 		string actionName = null;

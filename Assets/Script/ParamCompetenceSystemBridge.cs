@@ -7,21 +7,10 @@ using UnityEngine.UI;
 public class ParamCompetenceSystemBridge : MonoBehaviour
 {
     public bool closePanelParamComp = false;
-    public GameObject scrollViewComp;
-
-    private void Start()
-    {
-        scrollViewComp = GameObject.Find("Scroll View Comp");
-    }
 
     public void startLevel()
     {
-        ParamCompetenceSystem.instance.startLevel();
-    }
-
-    public void onScroll(BaseEventData ev)
-    {
-        ExecuteEvents.ExecuteHierarchy(scrollViewComp, ev, ExecuteEvents.scrollHandler);
+        ParamCompetenceSystem.instance.verificationSelectedComp();
     }
 
     public void infoCompetence(GameObject target)

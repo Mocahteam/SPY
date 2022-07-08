@@ -29,6 +29,11 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "openPanelSelectComp", null);
 	}
 
+	public void verificationSelectedComp()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "verificationSelectedComp", null);
+	}
+
 	public void startLevel()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "startLevel", null);
