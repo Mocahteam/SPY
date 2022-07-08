@@ -25,10 +25,9 @@ public class BlocLimitationManager : FSystem {
 				// On récupére le préfab de l'élément
 				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
                 // get action key depending on prefab type
-                // Si c'est un bloc action
 				string key = getActionKey(prefab.GetComponent<Highlightable>());
-				// Si c'est un bloc pour les conditions
-
+				// default => hide go
+				GameObjectManager.setGameObjectState(go, false);
 				// update counter et active les block necessaire
 				updateBlocLimit(key, go);
 			}
@@ -49,6 +48,8 @@ public class BlocLimitationManager : FSystem {
 			return "For";
 		else if (action is WhileControl)
 			return "While";
+		else if (action is ForeverControl)
+			return "Forever";
 		else if (action is BaseOperator)
 			return ((BaseOperator)action).operatorType.ToString();
 		else if (action is BaseCaptor)
@@ -70,17 +71,22 @@ public class BlocLimitationManager : FSystem {
 	// Le désactive si la limite est atteinte
 	// Met à jour le compteur
 	private void updateBlocLimit(string keyName, GameObject draggableGO){
-		bool isActive = gameData.actionBlocLimit[keyName] != 0; // negative means no limit
-		GameObjectManager.setGameObjectState(draggableGO, isActive);
-		if(isActive){
-			if(gameData.actionBlocLimit[keyName] < 0)
-				// unlimited action => hide counter
-				GameObjectManager.setGameObjectState(draggableGO.transform.GetChild(1).gameObject, false);
-			else{
-				// limited action => init and show counter
-				GameObject counterText = draggableGO.transform.GetChild(1).gameObject;
-				counterText.GetComponent<TextMeshProUGUI>().text = "Reste " + gameData.actionBlocLimit[keyName].ToString();
-				GameObjectManager.setGameObjectState(counterText, true);
+		if (gameData.actionBlocLimit.ContainsKey(keyName))
+		{
+			bool isActive = gameData.actionBlocLimit[keyName] != 0; // negative means no limit
+			GameObjectManager.setGameObjectState(draggableGO, isActive);
+			if (isActive)
+			{
+				if (gameData.actionBlocLimit[keyName] < 0)
+					// unlimited action => hide counter
+					GameObjectManager.setGameObjectState(draggableGO.transform.GetChild(1).gameObject, false);
+				else
+				{
+					// limited action => init and show counter
+					GameObject counterText = draggableGO.transform.GetChild(1).gameObject;
+					counterText.GetComponent<TextMeshProUGUI>().text = "Reste " + gameData.actionBlocLimit[keyName].ToString();
+					GameObjectManager.setGameObjectState(counterText, true);
+				}
 			}
 		}
 	}

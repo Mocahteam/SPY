@@ -109,20 +109,20 @@
   <player posX="1" posZ="1" direction="0" />
   <enemy posX="4" posZ="6" direction="3" range="3" selfRange="False" typeRange="0">
     <script>
-      <action actionType="Forever">
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
-        <action actionType="TurnLeft"/>
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
-        <action actionType="TurnLeft"/>
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
-        <action actionType="TurnRight"/>
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
-        <action actionType="TurnRight"/>
-      </action>
+      <control type="Forever">
+        <action type="Wait"/>
+        <action type="Wait"/>
+        <action type="TurnLeft"/>
+        <action type="Wait"/>
+        <action type="Wait"/>
+        <action type="TurnLeft"/>
+        <action type="Wait"/>
+        <action type="Wait"/>
+        <action type="TurnRight"/>
+        <action type="Wait"/>
+        <action type="Wait"/>
+        <action type="TurnRight"/>
+      </control>
     </script>
   </enemy>
 </level>

@@ -58,6 +58,7 @@
     <limit actionType="Else" limit="0" />
     <limit actionType="For" limit="-1" />
     <limit actionType="While" limit="0" />
+    <limit actionType="Forever" limit="0" />
     <limit actionType="AndOperator" limit="0" />
     <limit actionType="OrOperator" limit="0" />
     <limit actionType="NotOperator" limit="0" />
@@ -70,15 +71,15 @@
   <player posX="4" posZ="2" direction="3" />
   <enemy posX="3" posZ="1" direction="0" range="1" selfRange="True" typeRange="0">
     <script>
-      <action actionType="Forever">
-        <action actionType="Forward"/>
-        <action actionType="Forward"/>
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
-        <action actionType="TurnLeft"/>
-        <action actionType="TurnLeft"/>
-      </action>
+      <control type="Forever">
+        <action type="Forward"/>
+        <action type="Forward"/>
+        <action type="Wait"/>
+        <action type="Wait"/>
+        <action type="Wait"/>
+        <action type="TurnLeft"/>
+        <action type="TurnLeft"/>
+      </control>
     </script>
   </enemy>
   <score twoStars="3071" threeStars="4071"/>

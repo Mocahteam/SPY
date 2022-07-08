@@ -55,7 +55,7 @@ public class DragDropSystem : FSystem
 	}
 
 
-	// Besoin d'attendre l'update pour effectuer le recalcule de la taille des container
+	// Besoin d'attendre l'update pour effectuer le recalcul de la taille des container
 	public IEnumerator forceUIRefresh(RectTransform bloc)
 	{
 		yield return null;
@@ -63,20 +63,17 @@ public class DragDropSystem : FSystem
 	}
 
 
-	// On active toutes les drop zone qui n'ont pas de voisin ReplacementSlot actif
+	// On active toutes les drop zone qui n'ont pas de voisin ReplacementSlot
 	private void setDropZoneState(bool value)
 	{
 		foreach (GameObject Dp in dropZone_f)
 		{
-			// if a drop zone is a neighbor of an enabled empty slot => don't enable it
+			// if a drop zone is not a neighbor of an empty slot => toggle it
 			GameObject neighbor = Dp.transform.parent.GetChild(Mathf.Min(Dp.transform.GetSiblingIndex()+1, Dp.transform.parent.childCount-1)).gameObject;
-			if (neighbor != null && (!neighbor.activeInHierarchy || !neighbor.GetComponent<ReplacementSlot>()))
+			if (neighbor != null && !neighbor.GetComponent<ReplacementSlot>())
 			{
 				GameObjectManager.setGameObjectState(Dp, value);
 				Dp.transform.GetChild(0).gameObject.SetActive(false); // Be sure the red bar is disabled
-				// refresh hierachy only for the deepest zones
-				if (Dp.transform.parent.GetComponentsInChildren<DropZone>(true).Length == 1)
-					refreshHierarchyContainers(Dp);
 			}
 		}
 	}
@@ -135,7 +132,14 @@ public class DragDropSystem : FSystem
 			// On active les drops zone 
 			setDropZoneState(true);
 			// On créer le block action associé à l'élément
-			creationActionBlock(element.selectedObject);
+			itemDragged = createEditableBlockFromLibrary(element.selectedObject);
+			// exclude this GameObject from the EventSystem
+			itemDragged.GetComponent<Image>().raycastTarget = false;
+			// and all his child who can disturb the drag
+			foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
+				child.raycastTarget = false;
+			foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>())
+				child.raycastTarget = false;
 		}
 
 	}
@@ -149,6 +153,7 @@ public class DragDropSystem : FSystem
 		if ((element as PointerEventData).button == PointerEventData.InputButton.Left && element.selectedObject != null)
 		{
 			itemDragged = element.selectedObject;
+			Transform parent = itemDragged.transform.parent;
 
 			// On active les drops zone 
 			setDropZoneState(true);
@@ -175,6 +180,8 @@ public class DragDropSystem : FSystem
 
 			// Rend le bouton d'execution actif (ou non)
 			UISystem.instance.startUpdatePlayButton();
+
+			refreshHierarchyContainers(parent.gameObject);
 		}
 	}
 
@@ -240,7 +247,16 @@ public class DragDropSystem : FSystem
 					return;
 				}
 
-				addDraggedItemOnDropZone(dropArea);
+				if (addDraggedItemOnDropZone(dropArea))
+				{
+					// We restore this GameObject inside the EventSystem
+					itemDragged.GetComponent<Image>().raycastTarget = true;
+					// and its childrens
+					foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
+						child.raycastTarget = true;
+					foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>())
+						child.raycastTarget = true;
+				}
 			}
 			// Rafraichissement de l'UI
 			UISystem.instance.startUpdatePlayButton();
@@ -249,19 +265,36 @@ public class DragDropSystem : FSystem
 		}
 	}
 
-	// Add the dragger item on the drop area
-	private void addDraggedItemOnDropZone (GameObject dropArea)
+	// Add the dragged item on the drop area
+	public bool addDraggedItemOnDropZone (GameObject dropArea)
     {
+		if (!addItemOnDropArea(itemDragged, dropArea))
+		{
+			undoDrop();
+			return false;
+		}
+
+		// refresh all the hierarchy of parent containers
+		refreshHierarchyContainers(itemDragged);
+		// Update size of parent GameObject
+		MainLoop.instance.StartCoroutine(UISystem.instance.setEditableSize());
+
+		// Lance le son de dépôt du block d'action
+		audioSource.Play();
+		return true;
+	}
+
+	// Add an item on a drop area
+	// return true if the item was added and false otherwise
+	public bool addItemOnDropArea(GameObject item, GameObject dropArea)
+	{
 		if (dropArea.GetComponent<DropZone>())
 		{
-			// if itemDragged is not a BaseElement (BasicAction or ControlElement) undo drop
-			if (!itemDragged.GetComponent<BaseElement>())
-			{
-				undoDrop();
-				return;
-			}
+			// if item is not a BaseElement (BasicAction or ControlElement) cancel actionundo drop
+			if (!item.GetComponent<BaseElement>())
+				return false;
 
-			// the itemDragged is compatible with dropZone
+			// the item is compatible with dropZone
 			Transform targetContainer = null;
 			int siblingIndex = 0;
 			if (dropArea.transform.parent.GetComponent<UIRootContainer>()) // The main container (the one associated to the agent)
@@ -287,45 +320,43 @@ public class DragDropSystem : FSystem
 			else
 			{
 				Debug.LogError("Warning! Unknown case: the drop zone is not in the correct context");
-				undoDrop();
-				return;
+				return false;
 			}
 			lastDropZoneUsed = dropArea;
 			// On associe l'element au container
-			itemDragged.transform.SetParent(targetContainer);
+			item.transform.SetParent(targetContainer);
 			// On met l'élément à la position voulue
-			itemDragged.transform.SetSiblingIndex(siblingIndex);
+			item.transform.SetSiblingIndex(siblingIndex);
 		}
-		else if (dropArea.GetComponent<ReplacementSlot>()) // we replace the replacementSlot by the dragged item
+		else if (dropArea.GetComponent<ReplacementSlot>()) // we replace the replacementSlot by the item
 		{
-			// If replacement slot is not in the same type of item dragged => undo drop
+			// If replacement slot is not in the same type of item => cancel action
 			ReplacementSlot repSlot = dropArea.GetComponent<ReplacementSlot>();
-			if ((repSlot.slotType == ReplacementSlot.SlotType.BaseElement && !itemDragged.GetComponent<BaseElement>()) ||
-				(repSlot.slotType == ReplacementSlot.SlotType.BaseCondition && !itemDragged.GetComponent<BaseCondition>()))
-			{
-				undoDrop();
-				return;
-			}
-			// if replacement slot is for base element => insert item dragged and hide replacement slot
+			if ((repSlot.slotType == ReplacementSlot.SlotType.BaseElement && !item.GetComponent<BaseElement>()) ||
+				(repSlot.slotType == ReplacementSlot.SlotType.BaseCondition && !item.GetComponent<BaseCondition>()))
+				return false;
+			// if replacement slot is for base element => insert item, hide replacement slot and enable dropZone
 			if (repSlot.slotType == ReplacementSlot.SlotType.BaseElement)
 			{
 				// On associe l'element au container
-				itemDragged.transform.SetParent(dropArea.transform.parent);
+				item.transform.SetParent(dropArea.transform.parent);
 				// On met l'élément à la position voulue
-				itemDragged.transform.SetSiblingIndex(dropArea.transform.GetSiblingIndex() - 1); // the empty zone is preceded by the drop zone, so we add the item at the position of the drop zone (reason of -1)	
-																								 // disable empty slot
+				item.transform.SetSiblingIndex(dropArea.transform.GetSiblingIndex() - 1); // the empty zone is preceded by the drop zone, so we add the item at the position of the drop zone (reason of -1)	
+				// disable empty slot
 				dropArea.GetComponent<Outline>().enabled = false;
 				GameObjectManager.setGameObjectState(dropArea, false);
 				// define last drop zone to the drop zone associated to this replacement slot
 				lastDropZoneUsed = dropArea.transform.parent.GetChild(dropArea.transform.GetSiblingIndex() - 1).gameObject;
+				// enable dropZone
+				GameObjectManager.setGameObjectState(lastDropZoneUsed, true);
 			}
 			// if replacement slot is for base condition => two case fill an empty zone or replace existing condition
 			else if (repSlot.slotType == ReplacementSlot.SlotType.BaseCondition)
 			{
 				// On associe l'element au container
-				itemDragged.transform.SetParent(dropArea.transform.parent);
+				item.transform.SetParent(dropArea.transform.parent);
 				// On met l'élément à la position voulue
-				itemDragged.transform.SetSiblingIndex(dropArea.transform.GetSiblingIndex());
+				item.transform.SetSiblingIndex(dropArea.transform.GetSiblingIndex());
 				// check if the replacement slot is an empty zone (doesn't contain a condition)
 				if (!repSlot.GetComponent<BaseCondition>())
 				{
@@ -345,34 +376,19 @@ public class DragDropSystem : FSystem
 		else
 		{
 			Debug.LogError("Warning! Unknown case: the drop area is not a drop zone or a replacement zone");
-			undoDrop();
-			return;
+			return false;
 		}
 		// We secure the scale
-		itemDragged.transform.localScale = new Vector3(1, 1, 1);
-		// We restore this GameObject inside the EventSystem
-		itemDragged.GetComponent<Image>().raycastTarget = true;
-		// and its childrens
-		foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
-			child.raycastTarget = true;
-		foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>())
-			child.raycastTarget = true;
+		item.transform.localScale = new Vector3(1, 1, 1);
 
 		// update limit bloc
-		foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
+		foreach (BaseElement actChild in item.GetComponentsInChildren<BaseElement>())
 			GameObjectManager.addComponent<Dropped>(actChild.gameObject);
-		foreach (BaseCondition condChild in itemDragged.GetComponentsInChildren<BaseCondition>())
+		foreach (BaseCondition condChild in item.GetComponentsInChildren<BaseCondition>())
 			GameObjectManager.addComponent<Dropped>(condChild.gameObject);
 
-		// Lance le son de dépôt du block d'action
-		audioSource.Play();
-
-		// refresh all the hierarchy of parent containers
-		refreshHierarchyContainers(itemDragged);
-		// Update size of parent GameObject
-		MainLoop.instance.StartCoroutine(UISystem.instance.setEditableSize());
-
 		UISystem.instance.startUpdatePlayButton();
+		return true;
 	}
 
 	private void undoDrop()
@@ -384,30 +400,24 @@ public class DragDropSystem : FSystem
 		itemDragged = null;
 	}
 
-	// On créer l'action block en fonction de l'element reçu
-	private void creationActionBlock(GameObject element)
+	// On crée l'objet dragged à partir d'un item de la bibliothèque
+	public GameObject createEditableBlockFromLibrary(GameObject element)
     {
-		// On récupére le pref fab associé à l'action de la libriaire
+		// On récupére le prefab associé à l'action de la librairie
 		GameObject prefab = element.GetComponent<ElementToDrag>().actionPrefab;
 		// Create a dragged GameObject
-		itemDragged = UnityEngine.Object.Instantiate<GameObject>(prefab, element.transform);
+		GameObject newItem = UnityEngine.Object.Instantiate<GameObject>(prefab, element.transform);
 		//On l'attache au canvas pour le drag ou l'on veux
-		itemDragged.transform.SetParent(mainCanvas.transform);
+		newItem.transform.SetParent(mainCanvas.transform);
 		// Si c'est un basic action
-		if(itemDragged.GetComponent<Highlightable>() is BasicAction)
+		if(newItem.GetComponent<Highlightable>() is BasicAction)
         {
-			BaseElement action = itemDragged.GetComponent<BaseElement>();
-			itemDragged.GetComponent<LibraryItemRef>().linkedTo = element;
+			BaseElement action = newItem.GetComponent<BaseElement>();
+			newItem.GetComponent<LibraryItemRef>().linkedTo = element;
 		}
 		// On l'ajoute au famille de FYFY
-		GameObjectManager.bind(itemDragged);
-		// exclude this GameObject from the EventSystem
-		itemDragged.GetComponent<Image>().raycastTarget = false;
-		// and all his child who can disturb the drag
-		foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
-			child.raycastTarget = false;
-		foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>())
-			child.raycastTarget = false;
+		GameObjectManager.bind(newItem);
+		return newItem;
 	}
 
 
@@ -438,27 +448,22 @@ public class DragDropSystem : FSystem
 		}
 	}
 
-
 	// Si double click sur l'élément, ajoute le block d'action au dernier container utilisé
 	public void checkDoubleClick(BaseEventData element)
     {
 		if (doubleClick() && lastDropZoneUsed != null)
 		{
+
 			// if last drop zone used is the neighbor of enabled replacement slot => disable this replacement slot
 			GameObject neighbor = lastDropZoneUsed.transform.parent.GetChild(Mathf.Min(lastDropZoneUsed.transform.GetSiblingIndex() + 1, lastDropZoneUsed.transform.parent.childCount - 1)).gameObject;
 			if (neighbor != null && neighbor.activeInHierarchy && neighbor.GetComponent<ReplacementSlot>())
 				GameObjectManager.setGameObjectState(neighbor, false);
 			// On crée le block action
-			creationActionBlock(element.selectedObject);
+			itemDragged = createEditableBlockFromLibrary(element.selectedObject);
 			// On l'envoie sur la dernière dropzone utilisée
 			addDraggedItemOnDropZone(lastDropZoneUsed);
 			// refresh all the hierarchy of parent containers
-			Transform parent = lastDropZoneUsed.transform.parent;
-			while (parent is RectTransform)
-			{
-				MainLoop.instance.StartCoroutine(forceUIRefresh((RectTransform)parent));
-				parent = parent.parent;
-			}
+			refreshHierarchyContainers(lastDropZoneUsed);
 			// Rafraichissement de l'UI
 			UISystem.instance.startUpdatePlayButton();
 			itemDragged = null;
@@ -490,12 +495,12 @@ public class DragDropSystem : FSystem
     {
 		if (ele.GetComponent<BaseCondition>())
         {
-			// enable last child of the container
-			GameObjectManager.setGameObjectState(ele.transform.parent.GetChild(ele.transform.parent.childCount-1).gameObject, true);
+			// enable the next last child of the container
+			GameObjectManager.setGameObjectState(ele.transform.parent.GetChild(ele.transform.GetSiblingIndex()+1).gameObject, true);
         }
 		else if (ele.GetComponent<BaseElement>())
         {
-			// We have to enable empty zone if no other BaseElement exists inside the container
+			// We have to disable dropZone and enable empty zone if no other BaseElement exists inside the container
 			// We count the number of brother (including this) that is a BaseElement
 			int cpt = 0;
 			foreach (Transform brother in ele.transform.parent)

@@ -123,7 +123,6 @@ public class UISystem : FSystem {
 				buttonPlay.GetComponent<Button>().interactable = true;
 			}
 		}
-		DragDropSystem.instance.forceUIRefresh((RectTransform)EditableCanvas.transform.Find("EditableContainers"));
 	}
 
 
@@ -268,7 +267,7 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(EditableCanvas.transform.parent.Find("Scrollbar Vertical").gameObject, !value);
 		GameObjectManager.setGameObjectState(EditableCanvas.transform.parent.Find("Scrollbar Horizontal").gameObject, !value);
 		// Toggle execution panel
-		GameObjectManager.setGameObjectState(canvas.transform.Find("AgentCanvas").gameObject, value);
+		GameObjectManager.setGameObjectState(canvas.transform.Find("ExecutableCanvas").gameObject, value);
 	}
 	
 
@@ -460,17 +459,18 @@ public class UISystem : FSystem {
 	// Empty the script window
 	// See ResetButton in editor
 	public void resetScriptContainer(bool refund = false){
-		// On récupére le contenaire pointer lors du clique poubelle
+		// On récupére le contenair pointé lors du clique de la balayette
 		GameObject scriptContainerPointer = viewportContainerPointed_f.First().transform.Find("ScriptContainer").gameObject;
 
-		// On parcourt le script container pour détruire toutes les actions
-		for (int i = 0 ; i < scriptContainerPointer.transform.childCount ; i++){
+		// On parcourt le script container pour détruire toutes les instructions
+		for (int i = scriptContainerPointer.transform.childCount-1; i >= 0 ; i--){
 			if (scriptContainerPointer.transform.GetChild(i).GetComponent<BaseElement>()){
 				DragDropSystem.instance.deleteElement(scriptContainerPointer.transform.GetChild(i).gameObject);				
 			}
 		}
-		// Enable the last emptySlot
+		// Enable the last emptySlot and disable dropZone
 		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 1).gameObject, true);
+		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 2).gameObject, false);
 	}
 
 
@@ -880,9 +880,9 @@ public class UISystem : FSystem {
 		addSpecificContainer();
 	}
 
-	// Ajout un container à la scéne
-	public void addSpecificContainer(string name = "", AgentEdit.EditMode editState = AgentEdit.EditMode.Editable)
-    {
+	// Ajouter un container à la scéne
+	public void addSpecificContainer(string name = "", AgentEdit.EditMode editState = AgentEdit.EditMode.Editable, List<GameObject> script = null)
+	{
 		// On clone le prefab
 		GameObject cloneContainer = Object.Instantiate(prefabViewportScriptContainer);
 		Transform editableContainers = EditableCanvas.transform.Find("EditableContainers");
@@ -892,8 +892,6 @@ public class UISystem : FSystem {
 		cloneContainer.transform.localScale = new Vector3(1, 1, 1);
 		// On regarde combien de viewport container contient l'éditable pour mettre le nouveau viewport à la bonne position
 		cloneContainer.transform.SetSiblingIndex(EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer);
-		// ask to refresh Container
-		MainLoop.instance.StartCoroutine(DragDropSystem.instance.forceUIRefresh((RectTransform)EditableCanvas.transform));
 		// Puis on imcrémente le nombre de viewport contenue dans l'éditable
 		EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
 		// On ajoute le nouveau viewport container à FYFY
@@ -933,6 +931,17 @@ public class UISystem : FSystem {
 			cloneContainer.GetComponentInChildren<TMP_InputField>().interactable = false;
 			cloneContainer.transform.Find("ScriptContainer").Find("Header").Find("CloseButton").GetComponent<Button>().interactable = false;
 		}
+
+		// ajout du script par défaut
+		GameObject dropArea = cloneContainer.GetComponentInChildren<ReplacementSlot>().gameObject;
+		if (script != null && dropArea != null)
+			for (int k = 0; k < script.Count; k++)
+			{
+				DragDropSystem.instance.addItemOnDropArea(script[k], dropArea);
+				// refresh all the hierarchy of parent containers
+				DragDropSystem.instance.refreshHierarchyContainers(dropArea);
+			}
+
 		// Update size of parent GameObject
 		MainLoop.instance.StartCoroutine(setEditableSize());
 	}
@@ -959,8 +968,6 @@ public class UISystem : FSystem {
     {
 		GameObjectManager.unbind(container);
 		Object.Destroy(container);
-		// ask to refresh Container
-		MainLoop.instance.StartCoroutine(DragDropSystem.instance.forceUIRefresh((RectTransform)EditableCanvas.transform));
 		// Update size of parent GameObject
 		MainLoop.instance.StartCoroutine(setEditableSize());
 	}

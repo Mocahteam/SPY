@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 798324812124307841}
   - component: {fileID: 8879046373836919291}
   - component: {fileID: 1143203723681373708}
+  - component: {fileID: 4861463834424595646}
   m_Layer: 5
   m_Name: DropZone
   m_TagString: Untagged
@@ -79,6 +80,22 @@ MonoBehaviour:
           m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_MethodName: SetActive
           m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 7
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 4861463834424595646}
+          m_TargetAssemblyTypeName: BubbleScrollEvent, Assembly-CSharp
+          m_MethodName: onScroll
+          m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -159,6 +176,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44c1ecbb4c96ca841badb3b0d50e5bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4861463834424595646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4385548912209064310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50838c88540be0d47b943f08efeafafb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8584057427495514601
