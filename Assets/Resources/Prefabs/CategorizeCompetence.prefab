@@ -621,6 +621,7 @@ GameObject:
   - component: {fileID: 2122203360818857132}
   - component: {fileID: 1377314668283381775}
   - component: {fileID: 2358971852664173922}
+  - component: {fileID: -4070940729250951096}
   m_Layer: 5
   m_Name: CategorizeCompetence
   m_TagString: Untagged
@@ -785,8 +786,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1377314668283381775}
-          m_TargetAssemblyTypeName: ParamCompetenceSystemBridge, Assembly-CSharp
+        - m_Target: {fileID: -4070940729250951096}
+          m_TargetAssemblyTypeName: BubbleScrollEvent, Assembly-CSharp
           m_MethodName: onScroll
           m_Mode: 0
           m_Arguments:
@@ -859,3 +860,15 @@ MonoBehaviour:
   catParent: 
   listAttachedElement: []
   hideList: 0
+--- !u!114 &-4070940729250951096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2122203360818857131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50838c88540be0d47b943f08efeafafb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

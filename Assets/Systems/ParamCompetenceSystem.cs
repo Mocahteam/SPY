@@ -23,7 +23,7 @@ public class ParamCompetenceSystem : FSystem
 	public GameObject panelInfoComp; // Panneau d'information des compétences
 	public GameObject panelInfoUser; // Panneau pour informer le joueur (erreurs de chargement, conflit dans la selection des compétences etc...)
 	public GameObject scrollViewComp; // Le controleur du scroll pour les compétences
-	public string pathParamComp = "/StreamingAssets/ParamPrefab/ParamCompetence.csv"; // Chemin d'acces du fichier CSV contenant les info à charger des competences
+	public string pathParamComp = "/StreamingAssets/ParamCompFunc/ParamCompetence.csv"; // Chemin d'acces du fichier CSV contenant les info à charger des competences
 	public GameObject prefabCateComp; // Prefab de l'affichage d'une catégorie de competence
 	public GameObject prefabComp; // Prefab de l'affichage d'une competence
 	public GameObject ContentCompMenu; // Panneau qui contient la liste des catégories et compétences
@@ -50,7 +50,8 @@ public class ParamCompetenceSystem : FSystem
 
 		listCompSelectUser = new List<string>(listCompSelectUserSave);
 		resetSelectComp();
-		foreach(string level in listCompSelectUserSave)
+		desactiveToogleComp();
+		foreach (string level in listCompSelectUserSave)
         {
 			foreach(GameObject c in competence_f)
             {
@@ -98,11 +99,14 @@ public class ParamCompetenceSystem : FSystem
 	{
 		try
 		{
+			// Note pour chaque fonction les niveaux ou elle sont présentes
+			readXMLinfo();
+			Debug.Log("Info function chargé !");
 			// On charge les données pour chaque compétence
 			loadParamComp();
-			// Note pour chaque compétence les niveaux ou elle est présente
-			readXMLinfo();
+			Debug.Log("Chargement des parametre des compétences ok");
 			MainLoop.instance.StartCoroutine(startAfterFamillyOk());
+			Debug.Log("Menu selection compétence ok !");
 			// On demare la corroutine pour attacher chaque competence et sous-categorie et leur catégorie
 			MainLoop.instance.StartCoroutine(attacheComptWithCat());
 		}
@@ -139,13 +143,13 @@ public class ParamCompetenceSystem : FSystem
 			else if(data[0] == "Cat"){
 				createCatObject(data);
 			}
-			
 		}
 	}
 
 	// Instancie et parametre la compétence à afficher
 	public void createCatObject(string[] data)
     {
+		Debug.Log("Création category");
 		// On instancie la catégorie
 		GameObject category = UnityEngine.Object.Instantiate(prefabCateComp);
 		// On l'attache au content
@@ -166,6 +170,7 @@ public class ParamCompetenceSystem : FSystem
 	// Instancie et parametre la sous-compétence à afficher
 	public void createCompObject(string[] data)
 	{
+		Debug.Log("Création comp");
 		// On instancie la catégorie
 		GameObject competence = UnityEngine.Object.Instantiate(prefabComp);
 		// On signal à quel catégori la compétence appartien
@@ -178,25 +183,17 @@ public class ParamCompetenceSystem : FSystem
 		competence.transform.Find("Label").GetComponent<TMP_Text>().alignment = TMPro.TextAlignmentOptions.MidlineLeft;
 		// On charge les info de la compétence qui sera affiché lorsque l'on survolera celle-ci avec la souris
 		competence.GetComponent<Competence>().info = data[4];
-		// (temporaire) On charge si la compétence peut être selectionnée (est-elle implémentée)
-		competence.GetComponent<Competence>().active = Convert.ToBoolean(data[5]);
-		// On charge le vecteur des compétences qui seront automatiquement selectionnées si la compétence est séléctionnée
-		var data_link = data[6].Split(',');
+		// On charge le vecteur des Fonction lié à la compétence
+		var data_link = data[5].Split(',');
 		foreach (string value in data_link)
 		{
-			competence.GetComponent<Competence>().compLink.Add(value);
+			competence.GetComponent<Competence>().compLinkWhitFunc.Add(value);
 		}
-		// On charge le vecteur des compétences qui seront automatiquement grisées si la compétence est séléctionnée
-		var data_noPossible = data[7].Split(',');
-		foreach (string value in data_noPossible)
+		// On charge le vecteur des compétences qui seront automatiquement selectionnées si la compétence est séléctionnée
+		data_link = data[6].Split(',');
+		foreach (string value in data_link)
 		{
-			competence.GetComponent<Competence>().compNoPossible.Add(value);
-		}
-		// On charge le vecteur des compétences qui seront automatiquement deselectionné si la compétence est déséléctionnée
-		var data_unlink = data[8].Split(',');
-		foreach (string value in data_unlink)
-		{
-			competence.GetComponent<Competence>().compLinkUnselect.Add(value);
+			competence.GetComponent<Competence>().compLinkWhitComp.Add(value);
 		}
 
 		GameObjectManager.bind(competence);
@@ -274,7 +271,7 @@ public class ParamCompetenceSystem : FSystem
 					{
 						switch (infoNode.Name)
 						{
-							case "comp":
+							case "func":
 								addInfo(infoNode, namelevel);
 								break;
 						}
@@ -287,74 +284,153 @@ public class ParamCompetenceSystem : FSystem
 	// Associe à chaque compétence renseigner sa présence dans le niveau
 	private void addInfo(XmlNode node, string namelevel)
 	{
-		foreach (GameObject comp in competence_f)
-		{
-			if (node.Attributes.GetNamedItem("name").Value == comp.name)
-			{
-				comp.GetComponent<Competence>().listLevel.Add(namelevel);
-			}
-		}
+		// On récupére la liste déjà présente
+		List<string> listLevelForFunc = gameData.GetComponent<FunctionalityInLevel>().levelByFunc[node.Attributes.GetNamedItem("name").Value];
+		// On ajoute le niveau à la liste
+		listLevelForFunc.Add(namelevel);
 	}
 
 	// Désactive les toogles pas encore implémenté
 	private void desactiveToogleComp()
 	{
-		foreach (GameObject comp in competence_f)
-		{
-			if (!comp.GetComponent<Competence>().active)
+
+		foreach(string nameFunc in gameData.GetComponent<FunctionParam>().active.Keys)
+        {
+			if (!gameData.GetComponent<FunctionParam>().active[nameFunc])
 			{
-				comp.GetComponent<Toggle>().interactable = false;
+				foreach (GameObject comp in competence_f)
+				{
+					if (comp.GetComponent<Competence>().compLinkWhitFunc.Contains(nameFunc) && comp.GetComponent<Toggle>().interactable)
+					{
+						comp.GetComponent<Toggle>().interactable = false;
+						comp.GetComponent<Competence>().active = false;
+					}
+				}
 			}
-		}
+        }
 	}
+
+	// Vérification que les compétences qui demande une selection (au choix) d'autre compétence à bien été faite
+	public void verificationSelectedComp()
+    {
+		bool verif = true;
+
+        //On verifi
+
+
+        if (verif)
+        {
+			startLevel();
+        }
+        else
+        {
+			// Message au User en lui signalant qu'elle competence il doit choisir 
+        }
+    }
 
 	public void startLevel()
     {
 		// On parcourt tous les levels disponible pour les copier dans une liste temporaire
 		List<string> copyLevel = new List<string>();
-		foreach(List<string> levels in gameData.levelList.Values)
-		{
-			// On créer une copie de la liste des niveaux disponible
-			foreach(string level in levels)
-			copyLevel.Add(level);
-		}
-
+		List<string> funcSelected = new List<string>();
 		int nbCompActive = 0;
+		bool conditionStartLevelOk = true;
 
-		// On parcours chaque compétence selectionner
+		bool levelLD = false;
+		// On regarde si des competence concernant le level design on été selectionné
 		foreach (GameObject comp in competence_f)
 		{
-			// Si La compétence est activé
-			if (comp.GetComponent<Toggle>().isOn)
-			{
+            if (comp.GetComponent<Toggle>().isOn)
+            {
 				nbCompActive += 1;
-				// On parcourt ce qui reste des niveaux possible et pour chaque niveau on regarde si il est présent dans la compétence selectionnée
-				// Si se n'est pas le cas on le supprime de la liste
-				for(int i = 0; i < copyLevel.Count;) {
-					bool levelOk = false;
-					foreach(string level in comp.GetComponent<Competence>().listLevel)
+				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFunc.Keys)
+				{
+                    if (!funcSelected.Contains(f_key) && comp.GetComponent<Competence>().compLinkWhitFunc.Contains(f_key))
                     {
-						if(level == copyLevel[i])
-                        {
-							levelOk = true;
-						}
-                    }
-
-                    if (levelOk)
-                    {
-						i++;
-                    }
-                    else
-                    {
-						copyLevel.Remove(copyLevel[i]);
+						funcSelected.Add(f_key);
 					}
-                }
+					if (comp.GetComponent<Competence>().compLinkWhitFunc.Contains(f_key))
+                    {
+						levelLD = true;
+                    }
+				}
 			}
+		}
+
+        // Si aucune compétence n'a été selectionné on ne chargera pas de niveau
+        if (nbCompActive <= 0)
+        {
+			conditionStartLevelOk = false;
+		}
+
+        if (conditionStartLevelOk)
+        {
+			// 2 cas de figures : 
+			// Demande de niveau spécial pour la compétence
+			// Demande de niveau sans competence LD
+			if (levelLD)
+			{
+				// On parcourt le dictionnaires des fonctionnalités de level design
+				// Si elle fait partie des fonctionnalités selectionné, alors on enregistre les levels associé à la fonctionnalité
+				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFunc.Keys)
+				{
+                    if (funcSelected.Contains(f_key))
+                    {
+						foreach(string level in gameData.GetComponent<FunctionalityInLevel>().levelByFunc[f_key])
+                        {
+							copyLevel.Add(level);
+						}
+					}
+				}
+				// On garde ensuite les niveaux qui contient exclusivement toutes les fonctionalités selectionné
+				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFunc.Keys)
+				{
+					if (funcSelected.Contains(f_key))
+					{
+						Debug.Log("Func select : " + f_key);
+						for(int i = 0; i < copyLevel.Count;)
+                        {
+                            if (!gameData.GetComponent<FunctionalityInLevel>().levelByFunc[f_key].Contains(copyLevel[i]))
+                            {
+								copyLevel.Remove(copyLevel[i]);
+                            }
+                            else
+                            {
+								i++;
+                            }
+                        }
+					}
+				}
+			}
+			else if (!levelLD)
+			{
+				// On parcourt le dictionnaire des fonctionnalités level design
+				// On supprime de la liste des niveaux possible tous les niveaux appellent des fonctionnalités de level design
+				foreach (List<string> levels in gameData.levelList.Values)
+				{
+					// On créer une copie de la liste des niveaux disponible
+					foreach (string level in levels)
+						copyLevel.Add(level);
+				}
+
+				foreach (List<string> levels in gameData.GetComponent<FunctionalityInLevel>().levelByFunc.Values)
+				{
+					foreach(string level in levels)
+                    {
+						copyLevel.Remove(level);
+                    }
+				}
+			}
+		}
+        else
+        {
+			string message = "Erreur, pas de compétence sélectionné!";
+			displayMessageUser(message);
 		}
 
 		// Si on a au moins une compétence activé et un niveau en commun
 		// On lance un niveau selectionné aléatoirement parmis la liste des niveaux restant
-		if (nbCompActive != 0 && copyLevel.Count != 0)
+		if (copyLevel.Count != 0)
         {
 			if (copyLevel.Count > 1)
             {
@@ -379,20 +455,7 @@ public class ParamCompetenceSystem : FSystem
 		}
 		else // Sinon on signal que aucune compétence n'est selectionné ou que aucun niveau n'est disponible
         {
-			string message = "";
-			// Si pas de competence selectionnée
-			if (nbCompActive == 0)
-            {
-				message = "Pas de compétence sélectionnée";
-            }
-			else if (copyLevel.Count == 0) // Si pas de niveau dispo
-            {
-				message = "Pas de niveau disponible pour l'ensemble des compétences selectionnées";
-			}
-            else
-            {
-				message = "Erreur run level ";
-			}
+			string message = "Pas de niveau disponible pour l'ensemble des compétences selectionnées";
 			displayMessageUser(message);
 		}
 	}
@@ -454,43 +517,92 @@ public class ParamCompetenceSystem : FSystem
 
 		bool error = false;
 
-		foreach (string compSelect in comp.GetComponent<Competence>().compLink)
+		// On parcourt la liste des fonctions a activé pour la compétence
+		foreach (string funcNameActive in comp.GetComponent<Competence>().compLinkWhitFunc)
 		{
-			foreach (GameObject c in competence_f)
+			//Pour chaque fonction on regarde si cela empeche une compétence d'être selectionné
+			foreach (string funcNameDesactive in gameData.GetComponent<FunctionParam>().enableFunc[funcNameActive])
 			{
-				if (c.name == compSelect && comp.GetComponent<Competence>().active)
+				// Pour chaque fonction non possible, on regarde les compétence les utilisant pour en désactivé la selection
+				foreach (GameObject c in competence_f)
 				{
-					if (c.GetComponent<Toggle>().interactable)
+					if (c.GetComponent<Competence>().compLinkWhitFunc.Contains(funcNameDesactive))
 					{
-						selectComp(c, false);
-					}
-					else
-					{
-						error = true;
-						break;
+						if (!c.GetComponent<Toggle>().isOn)
+						{
+							c.GetComponent<Toggle>().interactable = false;
+						}
+						else
+						{
+							error = true;
+							break;
+						}
 					}
 				}
 			}
-		}
 
-
-		foreach (string compSelect in comp.GetComponent<Competence>().compNoPossible)
-		{
-			foreach (GameObject c in competence_f)
-			{
-				if (c.name == compSelect)
-				{
-					if (!c.GetComponent<Toggle>().isOn)
-					{
-						c.GetComponent<Toggle>().interactable = false;
+			foreach(string nameComp in comp.GetComponent<Competence>().compLinkWhitComp)
+            {
+				foreach(GameObject c in competence_f)
+                {
+					if(c.name == nameComp)
+                    {
+						// Les compétences non active sont les compétences dont au moins une des fonctionalités n'est pas encore implémenté
+						// Pour éviter tous bug (comme être considérer comme inactive à cause d'une autre compétence séléctionné) on test si la compétence est désactivé par le biais d'un manque de fonction ou non
+						if (c.GetComponent<Competence>().active)
+						{
+							if (c.GetComponent<Toggle>().interactable)
+							{
+								// Pour éviter les boucles infini, si la compétence est déjà activé, alors la récursive à déjà eu lieu
+								if (!c.GetComponent<Toggle>().isOn)
+								{
+									selectComp(c, false);
+								}
+							}
+							else
+							{
+								Debug.Log("error");
+								error = true;
+								break;
+							}
+						}
 					}
-					else
+                }
+            }
+
+			/*
+			 * JE GARDE LE TEMP DE VALIDR AVEC MATHIEU
+			//Pour chaque fonction on regarde les autre fonctions à activé obligatoirement
+			foreach (string funcName in gameData.GetComponent<FunctionParam>().activeFunc[funcNameActive])
+			{
+				// Pour chaque fonction obligatoire, on regarde les compétences les utilisant pour en activé la selection
+				foreach (GameObject c in competence_f)
+				{
+					if (c.GetComponent<Competence>().compLinkWhitFunc.Contains(funcName) && gameData.GetComponent<FunctionParam>().active[funcName])
 					{
-						error = true;
-						break;
+						// Les compétences non active sont les compétences dont au moins une des fonctionalités n'est pas encore implémenté
+						// Pour éviter tous bug (comme être considérer comme inactive à cause d'une autre compétence séléctionné) on test si la compétence est désactivé par le biais d'un manque de fonction ou non
+                        if (c.GetComponent<Competence>().active)
+                        {
+							if (c.GetComponent<Toggle>().interactable)
+							{
+                                // Pour éviter les boucles infini, si la compétence est déjà activé, alors la récursive à déjà eu lieu
+                                if (!c.GetComponent<Toggle>().isOn)
+                                {
+									selectComp(c, false);
+								}
+							}
+							else
+							{
+								Debug.Log("error");
+								error = true;
+								break;
+							}
+						}
 					}
 				}
 			}
+			*/
 		}
 
         if (error)
@@ -507,6 +619,7 @@ public class ParamCompetenceSystem : FSystem
 		MainLoop.instance.StartCoroutine(noSelect(comp));
 	}
 
+	//Lors de la deselection d'une compétence on désélectionne toutes les compétences reliées
 	public void unselectComp(GameObject comp, bool userUnselect)
     {
         if (!userUnselect)
@@ -514,30 +627,16 @@ public class ParamCompetenceSystem : FSystem
 			comp.GetComponent<Toggle>().isOn = false;
 		}
 
-		foreach(GameObject competence in competence_f)
+		// On parcourt les compétence, et si la comp en parametre est présente en lien avec une des compétences,
+		// On déselectionne aussi cette compétence par récursivité
+		foreach(GameObject c in competence_f)
         {
-			foreach(string compName in comp.GetComponent<Competence>().compLinkUnselect)
+			if(c.GetComponent<Toggle>().interactable && c.GetComponent<Toggle>().isOn && c.GetComponent<Competence>().compLinkWhitComp.Contains(comp.name))
             {
-				if(compName == competence.name)
-                {
-					unselectComp(competence, false);
-				}
+				unselectComp(c, false);
 			}
+        }
 
-			foreach (string compName in comp.GetComponent<Competence>().compNoPossible)
-			{
-				if (compName == competence.name)
-				{
-					competence.GetComponent<Toggle>().interactable = true;
-                    if (competence.GetComponent<Toggle>().isOn)
-                    {
-						unselectComp(competence, false);
-					}
-				}
-			}
-		}
-
-		desactiveToogleComp();
 		addOrRemoveCompSelect(comp, false);
 	}
 
@@ -567,6 +666,7 @@ public class ParamCompetenceSystem : FSystem
 		foreach (GameObject comp in competence_f)
 		{
 			comp.GetComponent<Toggle>().isOn = false;
+			comp.GetComponent<Toggle>().interactable = true;
 		}
 	}
 

@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using System.IO;
 using TMPro;
 using System.Xml;
+using System;
+using Object = UnityEngine.Object;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -17,7 +19,8 @@ public class TitleScreenSystem : FSystem {
 	public GameObject quitButton;
 	public GameObject backButton;
 	public GameObject cList;
-	
+	public string pathFileParamFunct = "/StreamingAssets/ParamCompFunc/FunctionConstraint.csv"; // Chemin d'acces pour la chargement des paramétres des functions
+
 	private Dictionary<GameObject, List<GameObject>> levelButtons; //key = directory button,  value = list of level buttons
 
     protected override void onStart()
@@ -26,6 +29,7 @@ public class TitleScreenSystem : FSystem {
         {
 			gameData = UnityEngine.Object.Instantiate(prefabGameData);
 			gameData.name = "GameData";
+			paramFunction();
 			GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
 		}
         else
@@ -182,6 +186,45 @@ public class TitleScreenSystem : FSystem {
 					GameObjectManager.setGameObjectState(go, false);
 				}
 			}
+		}
+	}
+
+	// Initialise tous ce qui concerne les fonctionalités
+	private void paramFunction()
+    {
+		loadConstraintFunction();
+	}
+
+    // Charge les différentes contraintes qui existe entre les fonctionalités
+    private void loadConstraintFunction()
+    {
+		StreamReader reader = new StreamReader("" + Application.dataPath + pathFileParamFunct);
+		bool endOfFile = false;
+		while (!endOfFile)
+		{
+			string data_string = reader.ReadLine();
+			if (data_string == null)
+			{
+				endOfFile = true;
+				break;
+			}
+			string[] data = data_string.Split(';');
+			gameData.GetComponent<FunctionParam>().active.Add(data[0], Convert.ToBoolean(data[4]));
+			gameData.GetComponent<FunctionParam>().levelDesign.Add(data[0], Convert.ToBoolean(data[3]));
+			List<string> tmp = new List<string>();
+			var data_link = data[1].Split(',');
+			foreach (string value in data_link)
+			{
+				tmp.Add(value);
+			}
+			gameData.GetComponent<FunctionParam>().activeFunc.Add(data[0], new List<string>(tmp));
+			tmp = new List<string>();
+			data_link = data[2].Split(',');
+			foreach (string value in data_link)
+			{
+				tmp.Add(value);
+			}
+			gameData.GetComponent<FunctionParam>().enableFunc.Add(data[0], new List<string>(tmp));
 		}
 	}
 

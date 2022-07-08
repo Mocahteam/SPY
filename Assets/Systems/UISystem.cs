@@ -594,14 +594,6 @@ public class UISystem : FSystem {
 		gameData.totalCoin = 0;
 		gameData.levelToLoadScore = null;
 		gameData.dialogMessage = new List<(string, string)>();
-		gameData.GetComponent<CompetenceInLevel>().competencPossible =
-		new Dictionary<string, bool>() {
-			{"1.6", false },
-			{"3.1", false },
-			{"3.2", false },
-			{"3.3", false },
-			{"3.4", false }
-		};
 }
 
 
