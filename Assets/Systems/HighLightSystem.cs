@@ -32,7 +32,7 @@ public class HighLightSystem : FSystem {
 		if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>().material.color;
 			if(go.GetComponent<ScriptRef>()){
-				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Scroll View").GetComponent<Image>();
+				Image img = go.GetComponent<ScriptRef>().executablePanel.transform.Find("Scroll View").GetComponent<Image>();
 				img.GetComponent<Highlightable>().baseColor = img.color;	
 			}			
 		}
@@ -43,7 +43,7 @@ public class HighLightSystem : FSystem {
 		GameObject highLightedItem = highlightedGO.First();
 		//If click on highlighted item and item has a script, then show its script in the 2nd script window
 		if(highLightedItem && Input.GetMouseButtonUp(0) && highLightedItem.GetComponent<ScriptRef>()){
-			GameObject go = highLightedItem.GetComponent<ScriptRef>().uiContainer;
+			GameObject go = highLightedItem.GetComponent<ScriptRef>().executablePanel;
 			GameObjectManager.setGameObjectState(go,!go.activeInHierarchy);
 			MainLoop.instance.GetComponent<AudioSource>().Play();
 		}
@@ -72,7 +72,7 @@ public class HighLightSystem : FSystem {
 		else if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().highlightedColor;
 			if(go.GetComponent<ScriptRef>()){
-				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Scroll View").GetComponent<Image>();
+				Image img = go.GetComponent<ScriptRef>().executablePanel.transform.Find("Scroll View").GetComponent<Image>();
 				img.color = img.GetComponent<Highlightable>().highlightedColor;
 			}
 		}
@@ -97,7 +97,7 @@ public class HighLightSystem : FSystem {
 		else if (go.GetComponentInChildren<Renderer>()){
 			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().baseColor;
 			if(go.GetComponent<ScriptRef>()){
-				Image img = go.GetComponent<ScriptRef>().uiContainer.transform.Find("Scroll View").GetComponent<Image>();
+				Image img = go.GetComponent<ScriptRef>().executablePanel.transform.Find("Scroll View").GetComponent<Image>();
 				img.color = img.GetComponent<Highlightable>().baseColor;
 			}
 		}
