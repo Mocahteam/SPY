@@ -149,7 +149,6 @@ public class ParamCompetenceSystem : FSystem
 	// Instancie et parametre la compétence à afficher
 	public void createCatObject(string[] data)
     {
-		Debug.Log("Création category");
 		// On instancie la catégorie
 		GameObject category = UnityEngine.Object.Instantiate(prefabCateComp);
 		// On l'attache au content
@@ -170,7 +169,6 @@ public class ParamCompetenceSystem : FSystem
 	// Instancie et parametre la sous-compétence à afficher
 	public void createCompObject(string[] data)
 	{
-		Debug.Log("Création comp");
 		// On instancie la catégorie
 		GameObject competence = UnityEngine.Object.Instantiate(prefabComp);
 		// On signal à quel catégori la compétence appartien
@@ -194,6 +192,12 @@ public class ParamCompetenceSystem : FSystem
 		foreach (string value in data_link)
 		{
 			competence.GetComponent<Competence>().compLinkWhitComp.Add(value);
+		}
+		// On charge le vecteur des compétences dont au moins l'une devra être selectionné en m^me temps que celle selectionné actuellement
+		data_link = data[7].Split(',');
+		foreach (string value in data_link)
+		{
+			competence.GetComponent<Competence>().listSelectMinOneComp.Add(value);
 		}
 
 		GameObjectManager.bind(competence);
@@ -294,9 +298,9 @@ public class ParamCompetenceSystem : FSystem
 	private void desactiveToogleComp()
 	{
 
-		foreach(string nameFunc in gameData.GetComponent<FunctionParam>().active.Keys)
+		foreach(string nameFunc in gameData.GetComponent<FunctionalityParam>().active.Keys)
         {
-			if (!gameData.GetComponent<FunctionParam>().active[nameFunc])
+			if (!gameData.GetComponent<FunctionalityParam>().active[nameFunc])
 			{
 				foreach (GameObject comp in competence_f)
 				{
@@ -465,6 +469,21 @@ public class ParamCompetenceSystem : FSystem
 		panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text = comp.GetComponent<MenuComp>().info;
 		comp.transform.Find("Label").GetComponent<TMP_Text>().fontStyle = TMPro.FontStyles.Bold;
 
+		// Si la compétence enclanche la selection d'autre compétence, on l'afiche dans les infos
+		if(comp.GetComponent<Competence>() && comp.GetComponent<Competence>().compLinkWhitComp[0] != "")
+        {
+			Debug.Log("Comp " + comp.name + " " + comp.GetComponent<Competence>().compLinkWhitComp.Count);
+			string infoMsg = panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text;
+			infoMsg += "\n\nCompetence selectionné automatiquement : \n";
+			foreach(string nameComp in comp.GetComponent<Competence>().compLinkWhitComp)
+            {
+				infoMsg += nameComp + " ";
+				Debug.Log("name : " + nameComp);
+			}
+			panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text = infoMsg;
+		}
+
+		// Si on survole une category, on change la couleur du bouton
         if (comp.GetComponent<Category>())
         {
 			foreach(Transform child in comp.transform){
@@ -487,7 +506,6 @@ public class ParamCompetenceSystem : FSystem
 
 	public void resetViewInfoCompetence(GameObject comp)
     {
-		panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text = "";
 		comp.transform.Find("Label").GetComponent<TMP_Text>().fontStyle = TMPro.FontStyles.Normal;
 
 		if (comp.GetComponent<Category>()){
@@ -521,7 +539,7 @@ public class ParamCompetenceSystem : FSystem
 		foreach (string funcNameActive in comp.GetComponent<Competence>().compLinkWhitFunc)
 		{
 			//Pour chaque fonction on regarde si cela empeche une compétence d'être selectionné
-			foreach (string funcNameDesactive in gameData.GetComponent<FunctionParam>().enableFunc[funcNameActive])
+			foreach (string funcNameDesactive in gameData.GetComponent<FunctionalityParam>().enableFunc[funcNameActive])
 			{
 				// Pour chaque fonction non possible, on regarde les compétence les utilisant pour en désactivé la selection
 				foreach (GameObject c in competence_f)
@@ -569,40 +587,6 @@ public class ParamCompetenceSystem : FSystem
 					}
                 }
             }
-
-			/*
-			 * JE GARDE LE TEMP DE VALIDR AVEC MATHIEU
-			//Pour chaque fonction on regarde les autre fonctions à activé obligatoirement
-			foreach (string funcName in gameData.GetComponent<FunctionParam>().activeFunc[funcNameActive])
-			{
-				// Pour chaque fonction obligatoire, on regarde les compétences les utilisant pour en activé la selection
-				foreach (GameObject c in competence_f)
-				{
-					if (c.GetComponent<Competence>().compLinkWhitFunc.Contains(funcName) && gameData.GetComponent<FunctionParam>().active[funcName])
-					{
-						// Les compétences non active sont les compétences dont au moins une des fonctionalités n'est pas encore implémenté
-						// Pour éviter tous bug (comme être considérer comme inactive à cause d'une autre compétence séléctionné) on test si la compétence est désactivé par le biais d'un manque de fonction ou non
-                        if (c.GetComponent<Competence>().active)
-                        {
-							if (c.GetComponent<Toggle>().interactable)
-							{
-                                // Pour éviter les boucles infini, si la compétence est déjà activé, alors la récursive à déjà eu lieu
-                                if (!c.GetComponent<Toggle>().isOn)
-                                {
-									selectComp(c, false);
-								}
-							}
-							else
-							{
-								Debug.Log("error");
-								error = true;
-								break;
-							}
-						}
-					}
-				}
-			}
-			*/
 		}
 
         if (error)

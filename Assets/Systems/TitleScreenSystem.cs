@@ -209,22 +209,22 @@ public class TitleScreenSystem : FSystem {
 				break;
 			}
 			string[] data = data_string.Split(';');
-			gameData.GetComponent<FunctionParam>().active.Add(data[0], Convert.ToBoolean(data[4]));
-			gameData.GetComponent<FunctionParam>().levelDesign.Add(data[0], Convert.ToBoolean(data[3]));
+			gameData.GetComponent<FunctionalityParam>().active.Add(data[0], Convert.ToBoolean(data[4]));
+			gameData.GetComponent<FunctionalityParam>().levelDesign.Add(data[0], Convert.ToBoolean(data[3]));
 			List<string> tmp = new List<string>();
 			var data_link = data[1].Split(',');
 			foreach (string value in data_link)
 			{
 				tmp.Add(value);
 			}
-			gameData.GetComponent<FunctionParam>().activeFunc.Add(data[0], new List<string>(tmp));
+			gameData.GetComponent<FunctionalityParam>().activeFunc.Add(data[0], new List<string>(tmp));
 			tmp = new List<string>();
 			data_link = data[2].Split(',');
 			foreach (string value in data_link)
 			{
 				tmp.Add(value);
 			}
-			gameData.GetComponent<FunctionParam>().enableFunc.Add(data[0], new List<string>(tmp));
+			gameData.GetComponent<FunctionalityParam>().enableFunc.Add(data[0], new List<string>(tmp));
 		}
 	}
 
