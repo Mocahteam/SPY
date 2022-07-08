@@ -60,14 +60,14 @@
   <player posX="3" posZ="1" direction="3" />
   <enemy posX="1" posZ="1" direction="2" range="1" selfRange="False" typeRange="0">
     <script>
-      <action actionType="Forever">
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
-        <action actionType="TurnLeft"/>
-        <action actionType="Wait"/>
-        <action actionType="Wait"/>
-        <action actionType="TurnRight"/>
-      </action>
+      <control type="Forever">
+        <action type="Wait"/>
+        <action type="Wait"/>
+        <action type="TurnLeft"/>
+        <action type="Wait"/>
+        <action type="Wait"/>
+        <action type="TurnRight"/>
+      </control>
     </script>
   </enemy>
   <score twoStars="3875" threeStars="4875"/>

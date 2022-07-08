@@ -70,21 +70,21 @@
   <player posX="4" posZ="1" direction="3" />
   <enemy posX="2" posZ="1" direction="0" range="2" selfRange="False" typeRange="0">
     <script>
-      <action actionType="For" nbFor="10">
-        <action actionType="IfElse">
-          <action container="Condition">
-            <action actionType="NotOperator" element="1">
-              <action actionType="Wall"/>
-            </action>
-          </action>
-          <action container="ThenContainer">
-            <action actionType="Forward"/>
-          </action>
-          <action container="ElseContainer">
-            <action actionType="TurnBack"/>
-          </action>
-        </action>
-      </action>
+      <control type="For" nbFor="10">
+        <control type="IfElse">
+          <condition>
+            <operator type="NotOperator">
+              <captor type="Wall"/>
+            </operator>
+          </condition>
+          <container type="ThenContainer">
+            <action type="Forward"/>
+          </container>
+          <container type="ElseContainer">
+            <action type="TurnBack"/>
+          </container>
+        </control>
+      </control>
     </script>
   </enemy>
   <score twoStars="3875" threeStars="4875"/>

@@ -67,11 +67,11 @@
   <player posX="4" posZ="2" direction="3" />
   <enemy posX="3" posZ="1" direction="0" range="1" selfRange="False" typeRange="0">
     <script>
-      <action actionType="Forever">
-        <action actionType="Forward"/>
-        <action actionType="Forward"/>
-        <action actionType="TurnLeft"/>
-      </action>
+      <control type="Forever">
+        <action type="Forward"/>
+        <action type="Forward"/>
+        <action type="TurnLeft"/>
+      </control>
     </script>
   </enemy>
   <score twoStars="4459" threeStars="5459"/>
