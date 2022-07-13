@@ -100,6 +100,12 @@ public class LevelGenerator : FSystem {
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.Level.transform.position + new Vector3(i*3,5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				break;
 		}
+        // Si la function permettant de changer le nom de l'agent est activé
+        if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F9"))
+        {
+			entity.GetComponent<AgentEdit>().editState = AgentEdit.EditMode.Synch;
+		}
+
 		// Charger l'agent aux bonnes coordonées dans la bonne direction
 		entity.GetComponent<Position>().x = i;
 		entity.GetComponent<Position>().z = j;
@@ -263,6 +269,9 @@ public class LevelGenerator : FSystem {
 		XmlNode root = doc.ChildNodes[1];
 		foreach(XmlNode child in root.ChildNodes){
 			switch(child.Name){
+				case "info":
+					readXMLInfos(child);
+					break;
 				case "map":
 					readXMLMap(child);
 					break;
@@ -312,6 +321,55 @@ public class LevelGenerator : FSystem {
         GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
 	}
 
+	// Si le niveau n'a pas était lancer par la selection de compétence,
+	// Alors on va noté les fonctionnalité (hors level design) qui doivent être activé dans le niveau
+	private void readXMLInfos(XmlNode infoNode){
+        if (!gameData.GetComponent<GameData>().executeLvlByComp){
+			foreach (XmlNode child in infoNode){
+				switch(child.Name)
+                {
+					case "func":
+						readFunc(child);
+						break;
+					default:
+						break;
+                }
+			}
+		}
+	}
+
+	// Ajoute la fonction parametrée dans le niveau dans la liste des fonctions selectionnées dans le gameData si celle ci ne si trouve pas déjà
+	private void readFunc(XmlNode FuncNode)
+    {
+        if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(FuncNode.Attributes.GetNamedItem("name").Value))
+        {
+			gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(FuncNode.Attributes.GetNamedItem("name").Value);
+		}
+		 // tester si func associer et réitérer
+		foreach(string funcName in gameData.GetComponent<FunctionalityParam>().activeFunc[FuncNode.Attributes.GetNamedItem("name").Value])
+        {
+			if(funcName != "")
+            {
+				selectFuncAssociate(funcName);
+			}
+        }
+    }
+
+	private void selectFuncAssociate(string functionnalityName)
+    {
+		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(functionnalityName))
+        {
+			gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(functionnalityName);
+			foreach (string funcName in gameData.GetComponent<FunctionalityParam>().activeFunc[functionnalityName])
+			{
+				if (funcName != "")
+				{
+					selectFuncAssociate(funcName);
+				}
+			}
+		}
+	}
+
 	private void readXMLMap(XmlNode mapNode){
 		foreach(XmlNode lineNode in mapNode.ChildNodes){
 			List<int> line = new List<int>();
@@ -324,11 +382,43 @@ public class LevelGenerator : FSystem {
 
 	private void readXMLLimits(XmlNode limitsNode){
 		string actionName = null;
-		foreach(XmlNode limitNode in limitsNode.ChildNodes){
-			//gameData.actionBlocLimit.Add(int.Parse(limitNode.Attributes.GetNamedItem("limit").Value));
+		List<string> listFuncGD = gameData.GetComponent<FunctionalityParam>().funcActiveInLevel;
+		foreach (XmlNode limitNode in limitsNode.ChildNodes){
 			actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
+			int limit = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
+			// On vérifie qu'il n'y a pas d'erreur dans la saisie limite des block concernant le level design
+			if (listFuncGD.Contains("F6") && actionName == "For")
+            {
+				if(limit == 0)
+                {
+					limit = -1;
+                }
+			}
+			else if (listFuncGD.Contains("F7") && (actionName == "If" || actionName == "Else"))
+			{
+				if (limit == 0)
+				{
+					limit = -1;
+				}
+			}
+			else if (listFuncGD.Contains("F18") && actionName == "While")
+			{
+				if (limit == 0)
+				{
+					limit = -1;
+				}
+			}
+			else if (listFuncGD.Contains("F19") && (actionName == "AndOperator" || actionName == "OrOperator" || actionName == "NotOperator" || actionName == "Wall" || actionName == "Enemie" || actionName == "RedArea" || actionName == "FieldGate" || actionName == "Terminal"))
+			{
+				if (limit == 0)
+				{
+					limit = -1;
+				}
+			}
+
+
 			if (!gameData.actionBlocLimit.ContainsKey(actionName)){
-				gameData.actionBlocLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
+				gameData.actionBlocLimit[actionName] = limit;
 			}
 		}
 	}

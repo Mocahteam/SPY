@@ -10,4 +10,6 @@ public class FunctionalityParam : MonoBehaviour {
 	public Dictionary<string, List<string>> activeFunc = new Dictionary<string, List<string>>();
 	// Quel sont les fonctionalités à desactivé si on active celle-ci
 	public Dictionary<string, List<string>> enableFunc = new Dictionary<string, List<string>>();
+	// Quel sont les fonctionnalités qui doivent être activées dans le niveau selon les compétences selectionnées par l'utilisateur
+	public List<string> funcActiveInLevel = new List<string>();
 }

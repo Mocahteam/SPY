@@ -41,13 +41,15 @@ public class BlocLimitationManager : FSystem {
 		if (action is BasicAction)
 			return ((BasicAction)action).actionType.ToString();
 		else if (action is IfControl)
-			return "If";
-		else if (action is IfElseControl)
-			return "Else";
+			if(action is IfElseControl)
+				return "Else";
+			else
+				return "If";
 		else if (action is ForControl)
-			return "For";
-		else if (action is WhileControl)
-			return "While";
+			if (action is WhileControl)
+				return "While";
+			else
+				return "For";
 		else if (action is ForeverControl)
 			return "Forever";
 		else if (action is BaseOperator)
@@ -115,9 +117,6 @@ public class BlocLimitationManager : FSystem {
 			gameData.actionBlocLimit[actionKey] += addOnes.Length;
 			GameObject draggableModel = getDraggableElement(actionKey);
 			updateBlocLimit(actionKey, draggableModel);
-		}
-		foreach(AddOne a in addOnes){
-			GameObjectManager.removeComponent(a);	
 		}
 	}
 }

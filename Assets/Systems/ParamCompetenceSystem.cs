@@ -101,12 +101,9 @@ public class ParamCompetenceSystem : FSystem
 		{
 			// Note pour chaque fonction les niveaux ou elle sont présentes
 			readXMLinfo();
-			Debug.Log("Info function chargé !");
 			// On charge les données pour chaque compétence
 			loadParamComp();
-			Debug.Log("Chargement des parametre des compétences ok");
 			MainLoop.instance.StartCoroutine(startAfterFamillyOk());
-			Debug.Log("Menu selection compétence ok !");
 			// On demare la corroutine pour attacher chaque competence et sous-categorie et leur catégorie
 			MainLoop.instance.StartCoroutine(attacheComptWithCat());
 		}
@@ -227,6 +224,8 @@ public class ParamCompetenceSystem : FSystem
 		}
     }
 
+	// Fonction pouvant être apellé par récusrcivité
+	// Permet de renvyer à qu'elle profondeur dans la hiérarchie Categorie de la selection des compétences l'élément se trouve
 	private int nbParentInHierarchiComp(GameObject element)
     {
 		int nbParent = 1;
@@ -240,7 +239,7 @@ public class ParamCompetenceSystem : FSystem
 			return nbParent;
     }
 
-	// Lis tous les fichiers XML des niveaux de chaque dossier afin de charger quelle compétence se trouve dans quel niveau  
+	// Lis tous les fichiers XML des niveaux de chaque dossier afin de charger quelle fonctionalité se trouve dans quel niveau  
 	private void readXMLinfo()
 	{
 		foreach (List<string> levels in gameData.levelList.Values)
@@ -285,13 +284,31 @@ public class ParamCompetenceSystem : FSystem
 		}
 	}
 
-	// Associe à chaque compétence renseigner sa présence dans le niveau
+	// Associe à chaque fonctionalité renseigné sa présence dans le niveau
 	private void addInfo(XmlNode node, string namelevel)
 	{
-		// On récupére la liste déjà présente
-		List<string> listLevelForFunc = gameData.GetComponent<FunctionalityInLevel>().levelByFunc[node.Attributes.GetNamedItem("name").Value];
-		// On ajoute le niveau à la liste
-		listLevelForFunc.Add(namelevel);
+		if(gameData.GetComponent<FunctionalityParam>().levelDesign[node.Attributes.GetNamedItem("name").Value])
+        {
+			// Si la fonctionnalité n'est pas encore connue dans le dictionnaire, on l'ajoute
+			if (!gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign.ContainsKey(node.Attributes.GetNamedItem("name").Value))
+			{
+				gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign.Add(node.Attributes.GetNamedItem("name").Value, new List<string>());
+			}
+			// On récupére la liste déjà présente
+			List<string> listLevelForFuncLevelDesign = gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign[node.Attributes.GetNamedItem("name").Value];
+			listLevelForFuncLevelDesign.Add(namelevel);
+		}
+        else
+        {
+			// Si la fonctionnalité n'est pas encore connue dans le dictionnaire, on l'ajoute
+			if (!gameData.GetComponent<FunctionalityInLevel>().levelByFunc.ContainsKey(node.Attributes.GetNamedItem("name").Value))
+			{
+				gameData.GetComponent<FunctionalityInLevel>().levelByFunc.Add(node.Attributes.GetNamedItem("name").Value, new List<string>());
+			}
+			// On récupére la liste déjà présente
+			List<string> listLevelForFunc = gameData.GetComponent<FunctionalityInLevel>().levelByFunc[node.Attributes.GetNamedItem("name").Value];
+			listLevelForFunc.Add(namelevel);
+		}
 	}
 
 	// Désactive les toogles pas encore implémenté
@@ -314,29 +331,68 @@ public class ParamCompetenceSystem : FSystem
         }
 	}
 
-	// Vérification que les compétences qui demande une selection (au choix) d'autre compétence à bien été faite
+	// Pour certaine compétence il est indispensable que d'autre soit aussi selectionné
+	// Cette fonction vérifie que c'est bien le cas avant de lancer la selection de niveau auto
+	// Sinon il signale au User qu'elle compétence pause probléme ainsi qu'une compétence minimum qu'il doit cocher parmit la liste proposé
 	public void verificationSelectedComp()
     {
 		bool verif = true;
+		List<GameObject> listCompSelect = new List<GameObject>();
+		List<string> listNameCompSelect = new List<string>();
+		GameObject errorSelectComp = null;
 
-        //On verifi
+		//On verifi
+		foreach (GameObject comp in competence_f)
+        {
+            // Si la compétence est séléctionné on le note
+            if (comp.GetComponent<Toggle>().isOn)
+            {
+				// Si la compétence demande à avoir une autre comp
+				listCompSelect.Add(comp);
+				listNameCompSelect.Add(comp.name);
+			}
+        }
 
+		foreach(GameObject comp in listCompSelect)
+        {
+			if(comp.GetComponent<Competence>().listSelectMinOneComp[0] != "")
+            {
+				verif = false;
+				foreach (string nameComp in comp.GetComponent<Competence>().listSelectMinOneComp)
+                {
+                    if (listNameCompSelect.Contains(nameComp))
+                    {
+						verif = true;
+					}
+                }
+                if (!verif)
+                {
+					errorSelectComp = comp;
+				}
+            }
+        }
 
+		// Si tous va bien on lance la selection du niveau
         if (verif)
         {
 			startLevel();
         }
-        else
+        else // Sinon on signal au joueur l'erreur
         {
 			// Message au User en lui signalant qu'elle competence il doit choisir 
-        }
+			string message = "Pour la compétence " + errorSelectComp + " Il faut aussi selectionner une de ces compétences :\n";
+			foreach(string comp in errorSelectComp.GetComponent<Competence>().listSelectMinOneComp)
+            {
+				message += comp + " ";
+            }
+			displayMessageUser(message);
+		}
     }
 
 	public void startLevel()
     {
 		// On parcourt tous les levels disponible pour les copier dans une liste temporaire
 		List<string> copyLevel = new List<string>();
-		List<string> funcSelected = new List<string>();
 		int nbCompActive = 0;
 		bool conditionStartLevelOk = true;
 
@@ -347,16 +403,25 @@ public class ParamCompetenceSystem : FSystem
             if (comp.GetComponent<Toggle>().isOn)
             {
 				nbCompActive += 1;
-				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFunc.Keys)
+				// On fait ça avec le level design
+				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign.Keys)
 				{
-                    if (!funcSelected.Contains(f_key) && comp.GetComponent<Competence>().compLinkWhitFunc.Contains(f_key))
+                    if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_key) && comp.GetComponent<Competence>().compLinkWhitFunc.Contains(f_key))
                     {
-						funcSelected.Add(f_key);
+						gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(f_key);
 					}
 					if (comp.GetComponent<Competence>().compLinkWhitFunc.Contains(f_key))
                     {
 						levelLD = true;
                     }
+				}
+				// Et les autres fonctions
+				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFunc.Keys)
+				{
+					if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_key) && comp.GetComponent<Competence>().compLinkWhitFunc.Contains(f_key))
+					{
+						gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(f_key);
+					}
 				}
 			}
 		}
@@ -369,6 +434,8 @@ public class ParamCompetenceSystem : FSystem
 
         if (conditionStartLevelOk)
         {
+			// On signal que la séléction de niveau se fait par les compétences (et donc que les info des fonctionnalité du niveau ne doivent pas être chargé)
+			gameData.GetComponent<GameData>().executeLvlByComp = true;
 			// 2 cas de figures : 
 			// Demande de niveau spécial pour la compétence
 			// Demande de niveau sans competence LD
@@ -376,25 +443,24 @@ public class ParamCompetenceSystem : FSystem
 			{
 				// On parcourt le dictionnaires des fonctionnalités de level design
 				// Si elle fait partie des fonctionnalités selectionné, alors on enregistre les levels associé à la fonctionnalité
-				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFunc.Keys)
+				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign.Keys)
 				{
-                    if (funcSelected.Contains(f_key))
+                    if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_key))
                     {
-						foreach(string level in gameData.GetComponent<FunctionalityInLevel>().levelByFunc[f_key])
+						foreach(string level in gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign[f_key])
                         {
 							copyLevel.Add(level);
 						}
 					}
 				}
 				// On garde ensuite les niveaux qui contient exclusivement toutes les fonctionalités selectionné
-				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFunc.Keys)
+				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign.Keys)
 				{
-					if (funcSelected.Contains(f_key))
+					if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_key))
 					{
-						Debug.Log("Func select : " + f_key);
 						for(int i = 0; i < copyLevel.Count;)
                         {
-                            if (!gameData.GetComponent<FunctionalityInLevel>().levelByFunc[f_key].Contains(copyLevel[i]))
+                            if (!gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign[f_key].Contains(copyLevel[i]))
                             {
 								copyLevel.Remove(copyLevel[i]);
                             }
@@ -417,7 +483,7 @@ public class ParamCompetenceSystem : FSystem
 						copyLevel.Add(level);
 				}
 
-				foreach (List<string> levels in gameData.GetComponent<FunctionalityInLevel>().levelByFunc.Values)
+				foreach (List<string> levels in gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign.Values)
 				{
 					foreach(string level in levels)
                     {
@@ -472,13 +538,11 @@ public class ParamCompetenceSystem : FSystem
 		// Si la compétence enclanche la selection d'autre compétence, on l'afiche dans les infos
 		if(comp.GetComponent<Competence>() && comp.GetComponent<Competence>().compLinkWhitComp[0] != "")
         {
-			Debug.Log("Comp " + comp.name + " " + comp.GetComponent<Competence>().compLinkWhitComp.Count);
 			string infoMsg = panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text;
 			infoMsg += "\n\nCompetence selectionné automatiquement : \n";
 			foreach(string nameComp in comp.GetComponent<Competence>().compLinkWhitComp)
             {
 				infoMsg += nameComp + " ";
-				Debug.Log("name : " + nameComp);
 			}
 			panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text = infoMsg;
 		}
@@ -504,6 +568,7 @@ public class ParamCompetenceSystem : FSystem
         }
 	}
 
+	// Lorsque la souris sort de la zone de text de la compétence ou catégorie, on remet le text à son état initial
 	public void resetViewInfoCompetence(GameObject comp)
     {
 		comp.transform.Find("Label").GetComponent<TMP_Text>().fontStyle = TMPro.FontStyles.Normal;

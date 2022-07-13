@@ -15,6 +15,7 @@ public class TitleScreenSystem : FSystem {
 	private GameData gameData;
 	public GameData prefabGameData;
 	public GameObject campagneMenu;
+	public GameObject compLevelButton;
 	public GameObject playButton;
 	public GameObject quitButton;
 	public GameObject backButton;
@@ -120,6 +121,7 @@ public class TitleScreenSystem : FSystem {
 		}
 		GameObjectManager.setGameObjectState(playButton, false);
 		GameObjectManager.setGameObjectState(quitButton, false);
+		GameObjectManager.setGameObjectState(compLevelButton,false);
 		GameObjectManager.setGameObjectState(backButton, true);
 	}
 
@@ -176,6 +178,7 @@ public class TitleScreenSystem : FSystem {
 				GameObjectManager.setGameObjectState(playButton, true);
 				GameObjectManager.setGameObjectState(quitButton, true);
 				GameObjectManager.setGameObjectState(backButton, false);
+				GameObjectManager.setGameObjectState(compLevelButton, true);
 				break;
 			}
 			else{
