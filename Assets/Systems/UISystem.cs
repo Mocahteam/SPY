@@ -73,7 +73,11 @@ public class UISystem : FSystem {
 		displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
 		actions.addEntryCallback(linkTo);
 		newEnd_f.addEntryCallback(levelFinished);
-		resetBlocLimit_f.addEntryCallback(delegate (GameObject go) { destroyScript(go, true); });
+		resetBlocLimit_f.addEntryCallback(delegate (GameObject go) {
+			destroyScript(go, true);
+			GameObjectManager.unbind(go);
+			UnityEngine.Object.Destroy(go);
+		});
 		scriptIsRunning.addExitCallback(delegate { setExecutionState(true); });
 		scriptIsRunning.addExitCallback(saveHistory);
 		emptyPlayerExecution.addEntryCallback(delegate { setExecutionState(true); });
@@ -351,16 +355,25 @@ public class UISystem : FSystem {
 	}
 
 
-	// ?????
+	// Find item in library to hook to this GameObject
 	private void linkTo(GameObject go){
 		if(go.GetComponent<LibraryItemRef>().linkedTo == null){
-			if(go.GetComponent<BasicAction>()){
+			if(go.GetComponent<BasicAction>())
 				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find(go.GetComponent<BasicAction>().actionType.ToString());
-			}			
+			else if (go.GetComponent<BaseCaptor>())
+				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find(go.GetComponent<BaseCaptor>().captorType.ToString());
+			else if (go.GetComponent<BaseOperator>())
+				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find(go.GetComponent<BaseOperator>().operatorType.ToString());
+			else if (go.GetComponent<WhileControl>())
+				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("While");
+			else if (go.GetComponent<ForeverControl>())
+				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("Forever");
+			else if (go.GetComponent<ForControl>())
+				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("For");
+			else if (go.GetComponent<IfElseControl>())
+				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("IfElse");
 			else if(go.GetComponent<IfControl>())
 				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("If");
-			else if(go.GetComponent<ForControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("For");
 		}
 	}
 
@@ -476,10 +489,17 @@ public class UISystem : FSystem {
 
 	//Recursive script destroyer
 	private void destroyScript(GameObject go,  bool refund = false){
-		GameObjectManager.unbind(go);
-		UnityEngine.Object.Destroy(go);
-	}
+		if (go.GetComponent<LibraryItemRef>())
+		{
+			if (!refund)
+				gameData.totalActionBloc++;
+			else
+				GameObjectManager.addComponent<AddOne>(go.GetComponent<LibraryItemRef>().linkedTo);
+		}
 
+		foreach (Transform child in go.transform)
+			destroyScript(child.gameObject, refund);
+	}
 
 	// Affiche l'image associée au dialogue
 	public void setImageSprite(Image img, string path){

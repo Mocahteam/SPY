@@ -15,7 +15,6 @@ public class LevelGenerator : FSystem {
 
 	// Famille contenant les agents editables
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
-	private Family actions = FamilyManager.getFamily(new AnyOfComponents(typeof(BasicAction)));
 	private List<List<int>> map;
 	private GameData gameData;
 	private int nbAgent = 0; // Nombre d'agent créer
@@ -319,9 +318,9 @@ public class LevelGenerator : FSystem {
 	private void readXMLLimits(XmlNode limitsNode){
 		string actionName = null;
 		foreach(XmlNode limitNode in limitsNode.ChildNodes){
-			//gameData.actionBlocLimit.Add(int.Parse(limitNode.Attributes.GetNamedItem("limit").Value));
 			actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
-			if (!gameData.actionBlocLimit.ContainsKey(actionName)){
+			// check if a GameObject exists with the same name
+			if (GameObject.Find(actionName) && !gameData.actionBlocLimit.ContainsKey(actionName)){
 				gameData.actionBlocLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
 			}
 		}

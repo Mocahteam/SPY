@@ -175,10 +175,10 @@ public class DragDropSystem : FSystem
 				child.raycastTarget = false;
 			// Restore action and subactions to inventory
 			foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
-				GameObjectManager.addComponent<AddOne>(actChild.gameObject);
+				GameObjectManager.addComponent<AddOne>(actChild.GetComponent<LibraryItemRef>().linkedTo);
 			// Restore conditions to inventory
 			foreach (BaseCondition condChild in itemDragged.GetComponentsInChildren<BaseCondition>())
-				GameObjectManager.addComponent<AddOne>(condChild.gameObject);
+				GameObjectManager.addComponent<AddOne>(condChild.GetComponent<LibraryItemRef>().linkedTo);
 
 			// Rend le bouton d'execution actif (ou non)
 			UISystem.instance.startUpdatePlayButton();
