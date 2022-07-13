@@ -10,6 +10,7 @@ public class ConditionManagement : FSystem {
 	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
 	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
 	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)));
+	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
 
 	public GameObject endPanel;
 
@@ -169,6 +170,12 @@ public class ConditionManagement : FSystem {
 				break;
 			case "RedArea": // detectors
 				foreach (GameObject go in redDetectorGO)
+					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
+					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+						ifok = true;
+				break;
+			case "Exit": // exits
+				foreach (GameObject go in exitGO)
 					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
 					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
 						ifok = true;

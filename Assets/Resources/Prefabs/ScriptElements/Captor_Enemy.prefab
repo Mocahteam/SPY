@@ -58,14 +58,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a1afda0abac7c194694e7a4e1db59725, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c663715e1ad3cfd409630b7a447bd001, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -86,17 +86,17 @@ GameObject:
   - component: {fileID: 1287668610196765305}
   - component: {fileID: 2879988938275225446}
   - component: {fileID: 5977990777959337957}
-  - component: {fileID: 982562335446983216}
+  - component: {fileID: 1837918282546263856}
   - component: {fileID: 7281793342713614650}
   - component: {fileID: 3221113927477367202}
   - component: {fileID: 2559671865773975778}
   - component: {fileID: 1721759257969761979}
-  - component: {fileID: 505374274998869490}
-  - component: {fileID: 6019234653186228654}
-  - component: {fileID: 517783866763835998}
-  - component: {fileID: 2696647137995572884}
+  - component: {fileID: 814901546956257799}
+  - component: {fileID: 3800860069042188489}
+  - component: {fileID: 2891922487328582510}
+  - component: {fileID: 6409892696676387547}
   m_Layer: 5
-  m_Name: TerminalElement
+  m_Name: Captor_Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -160,7 +160,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 20
---- !u!114 &982562335446983216
+--- !u!114 &1837918282546263856
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -174,7 +174,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 1, g: 1, b: 1, a: 1}
   highlightedColor: {r: 0.36078432, g: 0.69411767, b: 0.8392157, a: 0.78431374}
-  captorType: 4
+  captorType: 1
 --- !u!114 &7281793342713614650
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -312,7 +312,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2696647137995572884}
+        - m_Target: {fileID: 6409892696676387547}
           m_TargetAssemblyTypeName: BubbleScrollEvent, Assembly-CSharp
           m_MethodName: onScroll
           m_Mode: 0
@@ -365,7 +365,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 5977990777959337957}
---- !u!114 &505374274998869490
+--- !u!114 &814901546956257799
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -378,7 +378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   linkedTo: {fileID: 0}
---- !u!114 &6019234653186228654
+--- !u!114 &3800860069042188489
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -393,7 +393,7 @@ MonoBehaviour:
   m_EffectColor: {r: 1, g: 0.02745098, b: 0, a: 1}
   m_EffectDistance: {x: 3, y: -3}
   m_UseGraphicAlpha: 1
---- !u!114 &517783866763835998
+--- !u!114 &2891922487328582510
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -406,7 +406,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slotType: 1
---- !u!114 &2696647137995572884
+--- !u!114 &6409892696676387547
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
