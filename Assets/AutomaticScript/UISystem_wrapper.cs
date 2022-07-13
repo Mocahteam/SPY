@@ -121,6 +121,11 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "stopScript", null);
 	}
 
+	public void fillExecutablePanel()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "fillExecutablePanel", null);
+	}
+
 	public void applyScriptToPlayer()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "applyScriptToPlayer", null);

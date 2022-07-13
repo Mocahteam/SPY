@@ -69,7 +69,7 @@ public class EditAgentSystem : FSystem
 			// On annule la saisie si l'agent est locked ou s'il est synchro et que le nouveau nom choisi est un nom de container editable déjà défini. En effet changer le nom du robot implique de changer aussi le nom du container mais attention il ne peut y avoir de doublons dans les noms des containers editables donc il faut s'assurer que le renommage du container editable a été accepté pour pouvoir valider le nouveau nom de l'agent.
 			if (agentSelected.GetComponent<AgentEdit>().editState == AgentEdit.EditMode.Locked || (agentSelected.GetComponent<AgentEdit>().editState == AgentEdit.EditMode.Synch && UISystem.instance.nameContainerUsed(newName)))
             { // on annule la saisie
-				agentSelected.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().text = agentSelected.GetComponent<AgentEdit>().agentName;
+				agentSelected.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().text = agentSelected.GetComponent<AgentEdit>().agentName;
 			}
 			else
 			{
@@ -80,7 +80,7 @@ public class EditAgentSystem : FSystem
 						if (agent.GetComponent<AgentEdit>().agentName == oldName)
 						{
 							agent.GetComponent<AgentEdit>().agentName = newName;
-							agent.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().text = newName;
+							agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().text = newName;
 						}
 					// Puis on demande la mise à jour du nom du container éditable
 					UISystem.instance.setContainerName(oldName, newName);
@@ -90,7 +90,7 @@ public class EditAgentSystem : FSystem
 					// on ne modifie que l'agent selectionné
 					agentSelected.GetComponent<AgentEdit>().agentName = newName;
 				}
-				agentSelected.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().text = newName;
+				agentSelected.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().text = newName;
 			}
 
 			// On vérifie si on a une association avec les container éditables

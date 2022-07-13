@@ -31,14 +31,15 @@ public class ConditionManagement : FSystem {
 			BaseOperator bo;
 			if (condition.TryGetComponent<BaseOperator>(out bo))
 			{
+				Transform conditionContainer = bo.transform.GetChild(0);
 				// Si c'est une négation on met "!" puis on fait une récursive sur le container et on renvoie le tous traduit en string
 				if (bo.operatorType == BaseOperator.OperatorType.NotOperator)
 				{
-					// On vérifie qu'il y a bien un élément présent
-					if (condition.transform.GetChild(1).gameObject.GetComponent<BaseCondition>())
+					// On vérifie qu'il y a bien un élément présent, son container doit contenir 3 enfants (icone, une BaseCondition et le ReplacementSlot)
+					if (conditionContainer.childCount == 3)
 					{
 						chaine.Add("NOT");
-						convertionConditionSequence(condition.transform.GetChild(1).gameObject, chaine);
+						convertionConditionSequence(conditionContainer.GetComponentInChildren<BaseCondition>().gameObject, chaine);
 					}
 					else
 					{
@@ -47,13 +48,13 @@ public class ConditionManagement : FSystem {
 				}
 				else if (bo.operatorType == BaseOperator.OperatorType.AndOperator)
 				{
-					// Si les côtés de l'opérateur sont remplis, alors il compte 5 childs, sinon cela veux dire que il manque des conditions
-					if (condition.transform.childCount == 5)
+					// Si les côtés de l'opérateur sont remplis, alors il compte 5 childs (2 ReplacementSlots, 2 BaseCondition et 1 icone), sinon cela veux dire que il manque des conditions
+					if (conditionContainer.childCount == 5)
 					{
 						chaine.Add("(");
-						convertionConditionSequence(condition.transform.GetChild(0).gameObject, chaine);
+						convertionConditionSequence(conditionContainer.GetChild(0).gameObject, chaine);
 						chaine.Add("AND");
-						convertionConditionSequence(condition.transform.GetChild(3).gameObject, chaine);
+						convertionConditionSequence(conditionContainer.GetChild(3).gameObject, chaine);
 						chaine.Add(")");
 					}
 					else
@@ -64,12 +65,12 @@ public class ConditionManagement : FSystem {
 				else if (bo.operatorType == BaseOperator.OperatorType.OrOperator)
 				{
 					// Si les côtés de l'opérateur sont remplis, alors il compte 5 childs, sinon cela veux dire que il manque des conditions
-					if (condition.transform.childCount == 5)
+					if (conditionContainer.childCount == 5)
 					{
 						chaine.Add("(");
-						convertionConditionSequence(condition.transform.GetChild(0).gameObject, chaine);
+						convertionConditionSequence(conditionContainer.GetChild(0).gameObject, chaine);
 						chaine.Add("OR");
-						convertionConditionSequence(condition.transform.GetChild(3).gameObject, chaine);
+						convertionConditionSequence(conditionContainer.GetChild(3).gameObject, chaine);
 						chaine.Add(")");
 					}
 					else

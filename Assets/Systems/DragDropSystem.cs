@@ -133,6 +133,8 @@ public class DragDropSystem : FSystem
 			setDropZoneState(true);
 			// On créer le block action associé à l'élément
 			itemDragged = createEditableBlockFromLibrary(element.selectedObject);
+			// On l'ajoute au famille de FYFY
+			GameObjectManager.bind(itemDragged);
 			// exclude this GameObject from the EventSystem
 			itemDragged.GetComponent<Image>().raycastTarget = false;
 			// and all his child who can disturb the drag
@@ -274,6 +276,12 @@ public class DragDropSystem : FSystem
 			return false;
 		}
 
+		// update limit bloc
+		foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
+			GameObjectManager.addComponent<Dropped>(actChild.gameObject);
+		foreach (BaseCondition condChild in itemDragged.GetComponentsInChildren<BaseCondition>())
+			GameObjectManager.addComponent<Dropped>(condChild.gameObject);
+
 		// refresh all the hierarchy of parent containers
 		refreshHierarchyContainers(itemDragged);
 		// Update size of parent GameObject
@@ -344,11 +352,17 @@ public class DragDropSystem : FSystem
 				item.transform.SetSiblingIndex(dropArea.transform.GetSiblingIndex() - 1); // the empty zone is preceded by the drop zone, so we add the item at the position of the drop zone (reason of -1)	
 				// disable empty slot
 				dropArea.GetComponent<Outline>().enabled = false;
-				GameObjectManager.setGameObjectState(dropArea, false);
+
+				// Because this function can be call for binded GO or not
+				if (GameObjectManager.isBound(dropArea)) GameObjectManager.setGameObjectState(dropArea, false);
+				else dropArea.SetActive(false);
+
 				// define last drop zone to the drop zone associated to this replacement slot
 				lastDropZoneUsed = dropArea.transform.parent.GetChild(dropArea.transform.GetSiblingIndex() - 1).gameObject;
-				// enable dropZone
-				GameObjectManager.setGameObjectState(lastDropZoneUsed, true);
+
+				// Because this function can be call for binded GO or not
+				if (GameObjectManager.isBound(lastDropZoneUsed)) GameObjectManager.setGameObjectState(lastDropZoneUsed, true);
+				else lastDropZoneUsed.SetActive(true);
 			}
 			// if replacement slot is for base condition => two case fill an empty zone or replace existing condition
 			else if (repSlot.slotType == ReplacementSlot.SlotType.BaseCondition)
@@ -362,12 +376,18 @@ public class DragDropSystem : FSystem
 				{
 					// disable empty slot
 					dropArea.GetComponent<Outline>().enabled = false;
-					GameObjectManager.setGameObjectState(dropArea, false);
+
+					// Because this function can be call for binded GO or not
+					if (GameObjectManager.isBound(dropArea)) GameObjectManager.setGameObjectState(dropArea, false);
+					else dropArea.SetActive(false);
 				}
 				else
 				{
-					// Remove old condition from FYFY
-					GameObjectManager.unbind(dropArea);
+					// Because this function can be call for binded GO or not
+					if (GameObjectManager.isBound(dropArea))
+						// Remove old condition from FYFY
+						GameObjectManager.unbind(dropArea);
+
 					// Destroy it
 					UnityEngine.Object.Destroy(dropArea);
 				}
@@ -380,12 +400,6 @@ public class DragDropSystem : FSystem
 		}
 		// We secure the scale
 		item.transform.localScale = new Vector3(1, 1, 1);
-
-		// update limit bloc
-		foreach (BaseElement actChild in item.GetComponentsInChildren<BaseElement>())
-			GameObjectManager.addComponent<Dropped>(actChild.gameObject);
-		foreach (BaseCondition condChild in item.GetComponentsInChildren<BaseCondition>())
-			GameObjectManager.addComponent<Dropped>(condChild.gameObject);
 
 		UISystem.instance.startUpdatePlayButton();
 		return true;
@@ -400,7 +414,7 @@ public class DragDropSystem : FSystem
 		itemDragged = null;
 	}
 
-	// On crée l'objet dragged à partir d'un item de la bibliothèque
+	// On crée l'objet dragged à partir d'un item de la bibliothèque sans le bind à FYFY. C'est en fonction du contexte d'appel que l'objet doit être bind ou pas
 	public GameObject createEditableBlockFromLibrary(GameObject element)
     {
 		// On récupére le prefab associé à l'action de la librairie
@@ -415,8 +429,6 @@ public class DragDropSystem : FSystem
 			BaseElement action = newItem.GetComponent<BaseElement>();
 			newItem.GetComponent<LibraryItemRef>().linkedTo = element;
 		}
-		// On l'ajoute au famille de FYFY
-		GameObjectManager.bind(newItem);
 		return newItem;
 	}
 
@@ -461,6 +473,8 @@ public class DragDropSystem : FSystem
 				GameObjectManager.setGameObjectState(neighbor, false);
 			// On crée le block action
 			itemDragged = createEditableBlockFromLibrary(element.selectedObject);
+			// On l'ajoute au famille de FYFY
+			GameObjectManager.bind(itemDragged);
 			// On l'envoie sur la dernière dropzone utilisée
 			addDraggedItemOnDropZone(lastDropZoneUsed);
 			// refresh all the hierarchy of parent containers

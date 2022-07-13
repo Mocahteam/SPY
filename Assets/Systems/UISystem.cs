@@ -157,9 +157,9 @@ public class UISystem : FSystem {
 
 			// Si même nom trouver on met l'arriére transparent
 			if (nameSame)
-				agent.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 1f, 1f, 1f);
+				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 1f, 1f, 1f);
 			else // sinon rouge 
-				agent.GetComponent<ScriptRef>().uiContainer.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
+				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
 		}
 	}
 
@@ -644,6 +644,31 @@ public class UISystem : FSystem {
 		}		
 	}
 
+	public void fillExecutablePanel(GameObject srcScript, GameObject targetContainer, string agentTag)
+    {
+		// On va copier la sequence créé par le joueur dans le container de la fenêtre du robot
+		// On commence par créer une copie du container ou se trouve la sequence
+		GameObject containerCopy = CopyActionsFromAndInitFirstChild(srcScript, false, agentTag);
+		// On copie les actions dedans 
+		for (int i = 0; i < containerCopy.transform.childCount; i++)
+		{
+			// On ne conserve que les BaseElement et on les nettoie
+			if (containerCopy.transform.GetChild(i).GetComponent<BaseElement>())
+			{
+				Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i)); ;
+				// Si c'est un block special (for, if...)
+				if (child.GetComponent<ControlElement>())
+					CleanControlBlock(child);
+				child.SetParent(targetContainer.transform, false);
+			}
+		}
+		// Va linker les blocs ensemble
+		// C'est à dire qu'il va définir pour chaque bloc, qu'elle est le suivant à exécuter
+		LevelGenerator.computeNext(targetContainer);
+		// On détruit la copy de la sequence d'action
+		UnityEngine.Object.Destroy(containerCopy);
+	}
+
 	// See ExecuteButton in editor
 	// Copie les blocks d'actions dans le container du robot associer
 	public void applyScriptToPlayer(){
@@ -653,8 +678,9 @@ public class UISystem : FSystem {
 			gameData.totalExecute++;
 			//clean container for each robot and copy the new sequence
 			foreach (GameObject robot in playerGO) {
+				GameObject executableScript = robot.GetComponent<ScriptRef>().executableScript;
 				// Clean robot container
-				foreach (Transform child in robot.GetComponent<ScriptRef>().scriptContainer.transform) {
+				foreach (Transform child in executableScript.transform) {
 					GameObjectManager.unbind(child.gameObject);
 					GameObject.Destroy(child.gameObject);
 				}
@@ -672,46 +698,23 @@ public class UISystem : FSystem {
 					}
 				}
 				// Si on a bien trouvé un container associer
-				if(containerAssocied != null)
-                {
-					// On va copier la sequence créer par le joueur dans le container de la fenêtre du robot
-					// On commence par créer une copie du container ou se trouve la sequence
-					GameObject containerCopy = CopyActionsFromAndInitFirstChild(containerAssocied, false, robot);
-					// On recupere le container de la fenêtre du robot qui contiendra la sequence à executer
-					GameObject targetContainer = robot.GetComponent<ScriptRef>().scriptContainer;
+				if (containerAssocied != null)
+				{
+					fillExecutablePanel(containerAssocied, executableScript, robot.tag);
+					// bind all child
+					foreach (Transform child in executableScript.transform)
+						GameObjectManager.bind(child.gameObject);
 					// On fait apparaitre le panneau du robot
-					robot.GetComponent<ScriptRef>().uiContainer.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
-					// On copie les actions dedans 
-					for (int i = 0; i < containerCopy.transform.childCount; i++)
-					{
-						// On ne conserve que les BaseElement et on les nettoie
-						if (containerCopy.transform.GetChild(i).GetComponent<BaseElement>())
-						{
-							Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i)); ;
-							// Si c'est un block special (for, if...)
-							if (child.GetComponent<ControlElement>())
-								CleanControlBlock(child);
-							child.SetParent(targetContainer.transform);
-							GameObjectManager.bind(child.gameObject);
-							GameObjectManager.refresh(targetContainer);
-						}
-
-					}
-					// Va linker les blocs ensemble
-					// C'est à dire qu'il va définir pour chaque bloc, qu'elle est le suivant à exécuter
-					LevelGenerator.computeNext(targetContainer);
-					// On détruit la copy de la sequence d'action
-					UnityEngine.Object.Destroy(containerCopy);
+					robot.GetComponent<ScriptRef>().executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
 				}
-
 			}
 			// Lancement du son 
 			buttonPlay.GetComponent<AudioSource>().Play();
 			// On harmonise l'affichage de l'UI container de l'agent
 			foreach(GameObject go in agents){
-				LayoutRebuilder.ForceRebuildLayoutImmediate(go.GetComponent<ScriptRef>().uiContainer.GetComponent<RectTransform>());
+				LayoutRebuilder.ForceRebuildLayoutImmediate(go.GetComponent<ScriptRef>().executablePanel.GetComponent<RectTransform>());
 				if(go.CompareTag("Player")){				
-					GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().uiContainer,true);				
+					GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().executablePanel,true);				
 				}
 			}
 		}
@@ -725,7 +728,7 @@ public class UISystem : FSystem {
 	 *	agent (GameObject) : L'agent sur qui l'on va copier la sequence (pour définir la couleur)
 	 * 
 	 **/
-	public GameObject CopyActionsFromAndInitFirstChild(GameObject container, bool isInteractable, GameObject agent){
+	public GameObject CopyActionsFromAndInitFirstChild(GameObject container, bool isInteractable, string agentTag){
 		// On va travailler avec une copy du container
 		GameObject copyGO = GameObject.Instantiate(container); 
 		//Pour tous les élément interactible, on va les désactiver/activer selon le paramétrage
@@ -738,7 +741,7 @@ public class UISystem : FSystem {
 
 		// Pour chaque bloc for
 		foreach(ForControl forAct in copyGO.GetComponentsInChildren<ForControl>()){
-			// Si activer, on note combien a quel boucle on est sur combien de boucle à faire
+			// Si activé, on note le nombre de tour de boucle à faire
 			if(!isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
 			{
 				forAct.nbFor = int.Parse(forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text);
@@ -818,7 +821,8 @@ public class UISystem : FSystem {
 
 		// On défini la couleur de l'action selon l'agent à qui appartiendra la script
 		Color actionColor;
-		switch(agent.tag){
+		switch(agentTag)
+		{
 			case "Player":
 				actionColor = MainLoop.instance.GetComponent<AgentColor>().playerAction;
 				break;
@@ -852,10 +856,14 @@ public class UISystem : FSystem {
 			Transform container = specialBlock.transform.Find("Container");
 			// remove the last child, the emptyZone
 			GameObject emptySlot = container.GetChild(container.childCount - 1).gameObject;
+			if (GameObjectManager.isBound(emptySlot))
+				GameObjectManager.unbind(emptySlot);
 			emptySlot.transform.SetParent(null);
 			GameObject.Destroy(emptySlot);
 			// remove the new last child, the dropzone
 			GameObject dropZone = container.GetChild(container.childCount - 1).gameObject;
+			if (GameObjectManager.isBound(emptySlot))
+				GameObjectManager.unbind(dropZone);
 			dropZone.transform.SetParent(null);
 			GameObject.Destroy(dropZone);
 
@@ -866,10 +874,14 @@ public class UISystem : FSystem {
 				Transform elseContainer = specialBlock.transform.Find("ElseContainer");
 				// remove the last child, the emptyZone
 				emptySlot = elseContainer.GetChild(elseContainer.childCount - 1).gameObject;
+				if (GameObjectManager.isBound(emptySlot))
+					GameObjectManager.unbind(emptySlot);
 				emptySlot.transform.SetParent(null);
 				GameObject.Destroy(emptySlot);
 				// remove the new last child, the dropzone
 				dropZone = elseContainer.GetChild(elseContainer.childCount - 1).gameObject;
+				if (GameObjectManager.isBound(emptySlot))
+					GameObjectManager.unbind(dropZone);
 				dropZone.transform.SetParent(null);
 				GameObject.Destroy(dropZone);
 			}
@@ -902,8 +914,6 @@ public class UISystem : FSystem {
 		cloneContainer.transform.SetSiblingIndex(EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer);
 		// Puis on imcrémente le nombre de viewport contenue dans l'éditable
 		EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
-		// On ajoute le nouveau viewport container à FYFY
-		GameObjectManager.bind(cloneContainer);
 
 		// Lance le son de l'ajout d'un container
 		cloneContainer.GetComponent<AudioSource>().Play();
@@ -949,6 +959,9 @@ public class UISystem : FSystem {
 				// refresh all the hierarchy of parent containers
 				DragDropSystem.instance.refreshHierarchyContainers(dropArea);
 			}
+
+		// On ajoute le nouveau viewport container à FYFY
+		GameObjectManager.bind(cloneContainer);
 
 		// Update size of parent GameObject
 		MainLoop.instance.StartCoroutine(setEditableSize());

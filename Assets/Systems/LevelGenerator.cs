@@ -15,6 +15,7 @@ public class LevelGenerator : FSystem {
 
 	// Famille contenant les agents editables
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
+	private Family actions = FamilyManager.getFamily(new AnyOfComponents(typeof(BasicAction)));
 	private List<List<int>> map;
 	private GameData gameData;
 	private int nbAgent = 0; // Nombre d'agent créer
@@ -113,13 +114,13 @@ public class LevelGenerator : FSystem {
 		
 		//add new container to entity
 		ScriptRef scriptref = entity.GetComponent<ScriptRef>();
-		GameObject containerParent = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/ExecutablePanel") as GameObject, scriptContainer.gameObject.transform, false);
+		GameObject executablePanel = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/ExecutablePanel") as GameObject, scriptContainer.gameObject.transform, false);
 		// Associer à l'agent l'UI container
-		scriptref.uiContainer = containerParent;
+		scriptref.executablePanel = executablePanel;
 		// Associer à l'agent le script container
-		scriptref.scriptContainer = containerParent.transform.Find("Scroll View").Find("Viewport").Find("ScriptContainer").gameObject;
+		scriptref.executableScript = executablePanel.transform.Find("Scroll View").Find("Viewport").Find("ScriptContainer").gameObject;
 		// Association de l'agent au script de gestion des fonctions
-		containerParent.GetComponentInChildren<EditAgentSystemBridge>().agent = entity;
+		executablePanel.GetComponentInChildren<EditAgentSystemBridge>().agent = entity;
 
 		// On va charger l'image et le nom de l'agent selon l'agent (robot, enemie etc...)
 		if (type == "player")
@@ -134,46 +135,39 @@ public class LevelGenerator : FSystem {
 				UISystem.instance.addSpecificContainer(agentEdit.agentName, agentEdit.editState, script);
 
 			// Chargement de l'icône de l'agent sur la localisation
-			containerParent.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
+			executablePanel.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
-			containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = entity.GetComponent<AgentEdit>().agentName;
+			executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = entity.GetComponent<AgentEdit>().agentName;
 			// Si on autorise le changement de nom on dévérouille la possibilité d'écrire dans la zone de nom du robot
 			if (entity.GetComponent<AgentEdit>().editState != AgentEdit.EditMode.Locked)
 			{
-				containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().interactable = true;
+				executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().interactable = true;
 			}
 		}
 		else if (type == "enemy")
 		{
 			// Chargement de l'icône de l'agent sur la localisation
-			containerParent.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
+			executablePanel.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
-			containerParent.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = "Drone";
+			executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = "Drone";
 
 			if (script != null)
 			{
-				GameObject targetContainer = entity.GetComponent<ScriptRef>().scriptContainer;
+				GameObject tmpContainer = GameObject.Instantiate(scriptref.executableScript);
 				foreach (GameObject go in script)
-				{
-					go.transform.SetParent(targetContainer.transform); //add actions to container
-					List<GameObject> basicActionGO = getBasicActionGO(go);
-					foreach (GameObject baGO in basicActionGO)
-					{
-						baGO.GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().droneAction;
-						if (baGO.GetComponent<Selectable>() != null)
-							baGO.GetComponent<Selectable>().interactable = false;
-					}
-				}
-				//TODO : calculer les firstchild, stringifier les conditions...
-				computeNext(scriptref.scriptContainer);
+					go.transform.SetParent(tmpContainer.transform, false); //add actions to container
+				UISystem.instance.fillExecutablePanel(tmpContainer, scriptref.executableScript, entity.tag);
+				// On fait apparaitre le panneau du robot
+				scriptref.executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
+				Object.Destroy(tmpContainer);
 			}
 		}
 
 		AgentColor ac = MainLoop.instance.GetComponent<AgentColor>();
-		scriptref.uiContainer.transform.Find("Scroll View").GetComponent<Image>().color = (type == "player" ? ac.playerBackground : ac.droneBackground);
+		scriptref.executablePanel.transform.Find("Scroll View").GetComponent<Image>().color = (type == "player" ? ac.playerBackground : ac.droneBackground);
 
-		containerParent.SetActive(false);
-		GameObjectManager.bind(containerParent);
+		executablePanel.SetActive(false);
+		GameObjectManager.bind(executablePanel);
 		GameObjectManager.bind(entity);
 		return entity;
 	}

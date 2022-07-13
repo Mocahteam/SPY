@@ -53,7 +53,7 @@ public class CurrentActionManager : FSystem
 		// init currentAction on the first action of ennemies
 		bool forceNewStep = false;
 		foreach (GameObject drone in droneGO)
-			if (!drone.GetComponent<ScriptRef>().scriptContainer.GetComponentInChildren<CurrentAction>() && !drone.GetComponent<ScriptRef>().scriptFinished)
+			if (!drone.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>() && !drone.GetComponent<ScriptRef>().scriptFinished)
 				addCurrentActionOnFirstAction(drone);
 			else
 				forceNewStep = true; // will move currentAction on next action
@@ -66,7 +66,7 @@ public class CurrentActionManager : FSystem
     {
 		GameObject firstAction = null;
 		// try to get the first action
-		Transform container = agent.GetComponent<ScriptRef>().scriptContainer.transform;
+		Transform container = agent.GetComponent<ScriptRef>().executableScript.transform;
 		if (container.childCount > 0)
 			firstAction = getFirstActionOf(container.GetChild(0).gameObject, agent);
 
