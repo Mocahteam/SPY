@@ -759,13 +759,15 @@ public class LevelGenerator : FSystem {
 			library.SetActive(false);
 		}
 		// Si F3 désactivé, on désactive le systéme DragDropSystem
-		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F2"))
+		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F3"))
         {
-			MainLoop.instance.StartCoroutine(DragDropSystem.instance.pauseSystem());
+			DragDropSystem.instance.Pause = true;
 		}
 		// Si F5 est désactivé, le bouton pour que le robot effectue une sequence d'action pas à pas n'est plus disponible
 		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F5"))
 		{
+			////////////////////////////////////////////
+			// PRINCIPE DES HISTORIQUES DOIT ETRE RESTAURE
 			UISystem.instance.buttonStep.SetActive(false);
 		}
 		// Si F8 est désactivé, le bouton pour que le robot effectue une sequence d'action n'est plus disponible
