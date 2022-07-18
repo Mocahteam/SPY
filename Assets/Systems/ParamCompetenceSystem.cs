@@ -331,11 +331,29 @@ public class ParamCompetenceSystem : FSystem
         }
 	}
 
+	// Permet de selectionné aussi les functionnalité linker avec la fonctionalité selectionné
+	private void addSelectFuncLinkbyFunc(string nameFunc)
+    {
+		foreach(string f_name in gameData.GetComponent<FunctionalityParam>().activeFunc[nameFunc])
+        {
+			Debug.Log("Func link : " + f_name);
+            // Si la fonction na pas encore été selectionné
+			// alors on l'ajoute à la séléction et on récurcive dessus
+            if (f_name != "" && !gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_name))
+            {
+				Debug.Log("Func link add");
+				gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(f_name);
+				addSelectFuncLinkbyFunc(f_name);
+			}
+        }
+    }
+
 	// Pour certaine compétence il est indispensable que d'autre soit aussi selectionné
 	// Cette fonction vérifie que c'est bien le cas avant de lancer la selection de niveau auto
 	// Sinon il signale au User qu'elle compétence pause probléme ainsi qu'une compétence minimum qu'il doit cocher parmit la liste proposé
 	public void verificationSelectedComp()
     {
+		saveListUser();
 		bool verif = true;
 		List<GameObject> listCompSelect = new List<GameObject>();
 		List<string> listNameCompSelect = new List<string>();
@@ -404,24 +422,19 @@ public class ParamCompetenceSystem : FSystem
             {
 				nbCompActive += 1;
 				// On fait ça avec le level design
-				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign.Keys)
+				foreach (string f_key in gameData.GetComponent<FunctionalityParam>().levelDesign.Keys)
 				{
+					Debug.Log("Func level design : " + f_key);
                     if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_key) && comp.GetComponent<Competence>().compLinkWhitFunc.Contains(f_key))
                     {
+						Debug.Log("Func add selection");
 						gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(f_key);
+						addSelectFuncLinkbyFunc(f_key);
 					}
-					if (comp.GetComponent<Competence>().compLinkWhitFunc.Contains(f_key))
+					if (comp.GetComponent<Competence>().compLinkWhitFunc.Contains(f_key) && gameData.GetComponent<FunctionalityParam>().levelDesign[f_key])
                     {
 						levelLD = true;
                     }
-				}
-				// Et les autres fonctions
-				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFunc.Keys)
-				{
-					if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_key) && comp.GetComponent<Competence>().compLinkWhitFunc.Contains(f_key))
-					{
-						gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(f_key);
-					}
 				}
 			}
 		}

@@ -62,6 +62,22 @@ public class DragDropSystem : FSystem
 		LayoutRebuilder.ForceRebuildLayoutImmediate(bloc);
 	}
 
+	// Met le système en pause
+	public IEnumerator pauseSystem()
+    {
+		yield return null;
+		Pause = true;
+		MainLoop.instance.StopCoroutine(pauseSystem());
+	}
+
+	// Active le système
+	public IEnumerator startSystem()
+	{
+		yield return null;
+		Pause = false;
+		MainLoop.instance.StopCoroutine(startSystem());
+	}
+
 
 	// On active toutes les drop zone qui n'ont pas de voisin ReplacementSlot
 	private void setDropZoneState(bool value)

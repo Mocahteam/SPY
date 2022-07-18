@@ -22,6 +22,8 @@ public class LevelGenerator : FSystem {
 	public GameObject camera;
 	public GameObject editableCanvas;// Le container qui contient les Viewport/script container
 	public GameObject scriptContainer;
+	public GameObject library; // Le viewport qui contient la librairie
+	public GameObject EditableContenair; // Le container qui contient les séquences éditables
 	public TMP_Text levelName;
 	public GameObject canvas;
 
@@ -312,6 +314,7 @@ public class LevelGenerator : FSystem {
 
 		eraseMap();
 		generateMap();
+		activeDesactiveFunctionality();
         GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
 	}
 
@@ -375,46 +378,57 @@ public class LevelGenerator : FSystem {
 	}
 
 	private void readXMLLimits(XmlNode limitsNode){
-		string actionName = null;
 		List<string> listFuncGD = gameData.GetComponent<FunctionalityParam>().funcActiveInLevel;
-		foreach (XmlNode limitNode in limitsNode.ChildNodes){
-			actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
-			int limit = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
-			// On vérifie qu'il n'y a pas d'erreur dans la saisie limite des block concernant le level design
-			if (listFuncGD.Contains("F6") && actionName == "For")
-            {
-				if(limit == 0)
-                {
-					limit = -1;
-                }
-			}
-			else if (listFuncGD.Contains("F7") && (actionName == "If" || actionName == "Else"))
+		// Si l'option F2 est activé
+		if (listFuncGD.Contains("F2"))
+        {
+			string actionName = null;
+			foreach (XmlNode limitNode in limitsNode.ChildNodes)
 			{
-				if (limit == 0)
+				actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
+				int limit = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
+				// On vérifie qu'il n'y a pas d'erreur dans la saisie limite des block concernant le level design
+				if (listFuncGD.Contains("F6") && actionName == "For")
 				{
-					limit = -1;
+					if (limit == 0)
+					{
+						limit = -1;
+					}
 				}
-			}
-			else if (listFuncGD.Contains("F18") && actionName == "While")
-			{
-				if (limit == 0)
+				else if (listFuncGD.Contains("F7") && (actionName == "If" || actionName == "Else"))
 				{
-					limit = -1;
+					if (limit == 0)
+					{
+						limit = -1;
+					}
 				}
-			}
-			else if (listFuncGD.Contains("F19") && (actionName == "AndOperator" || actionName == "OrOperator" || actionName == "NotOperator" || actionName == "Wall" || actionName == "Enemie" || actionName == "RedArea" || actionName == "FieldGate" || actionName == "Terminal"))
-			{
-				if (limit == 0)
+				else if (listFuncGD.Contains("F18") && actionName == "While")
 				{
-					limit = -1;
+					if (limit == 0)
+					{
+						limit = -1;
+					}
 				}
-			}
-
-
-			if (!gameData.actionBlocLimit.ContainsKey(actionName)){
+				else if (listFuncGD.Contains("F19") && (actionName == "AndOperator" || actionName == "OrOperator" || actionName == "NotOperator" || actionName == "Wall" || actionName == "Enemie" || actionName == "RedArea" || actionName == "FieldGate" || actionName == "Terminal"))
+				{
+					if (limit == 0)
+					{
+						limit = -1;
+					}
+				}
+				
 				gameData.actionBlocLimit[actionName] = limit;
+				
+			}
+		} // Sinon on met toutes les limites de block à 0
+        else
+        {
+			foreach(string nameFunc in gameData.actionBlocLimit.Keys)
+            {
+				gameData.actionBlocLimit[nameFunc] = 0;
 			}
 		}
+		
 	}
 
 	private void readXMLActivable(XmlNode activableNode){
@@ -734,6 +748,30 @@ public class LevelGenerator : FSystem {
             {
 				computeNext(child.transform.Find("Container").gameObject);
 			}
+		}
+	}
+
+	private void activeDesactiveFunctionality()
+    {
+        // Si F1 désactivé, on désactive la librairie
+        if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F1"))
+        {
+			library.SetActive(false);
+		}
+		// Si F3 désactivé, on désactive le systéme DragDropSystem
+		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F2"))
+        {
+			MainLoop.instance.StartCoroutine(DragDropSystem.instance.pauseSystem());
+		}
+		// Si F5 est désactivé, le bouton pour que le robot effectue une sequence d'action pas à pas n'est plus disponible
+		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F5"))
+		{
+			UISystem.instance.buttonStep.SetActive(false);
+		}
+		// Si F8 est désactivé, le bouton pour que le robot effectue une sequence d'action n'est plus disponible
+		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F8"))
+		{
+			UISystem.instance.buttonPlay.SetActive(false);
 		}
 	}
 }
