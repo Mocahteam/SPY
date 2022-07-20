@@ -12,4 +12,8 @@ public class FunctionalityParam : MonoBehaviour {
 	public Dictionary<string, List<string>> enableFunc = new Dictionary<string, List<string>>();
 	// Quel sont les fonctionnalités qui doivent être activées dans le niveau selon les compétences selectionnées par l'utilisateur
 	public List<string> funcActiveInLevel = new List<string>();
+	// Lors de l'activation de certaine fonction, quel sont les éléments dont les limites sont à vérifié
+	public Dictionary<string, List<string>> elementRequiermentLibrary= new Dictionary<string, List<string>>();
+	// List des capteurs
+	public List<string> listCaptor = new List<string>();
 }

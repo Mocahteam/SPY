@@ -7,6 +7,7 @@ using TMPro;
 using System.Xml;
 using System;
 using Object = UnityEngine.Object;
+using UnityEngine.Networking;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -21,20 +22,21 @@ public class TitleScreenSystem : FSystem {
 	public GameObject backButton;
 	public GameObject cList;
 	public string pathFileParamFunct = "/StreamingAssets/ParamCompFunc/FunctionConstraint.csv"; // Chemin d'acces pour la chargement des paramétres des functions
+	public string pathFileParamRequiermentLibrary = "/StreamingAssets/ParamCompFunc/FunctionalityRequiermentLibrairy.xml"; // Chemin d'acces pour la chargement des paramétres des functions
 
 	private Dictionary<GameObject, List<GameObject>> levelButtons; //key = directory button,  value = list of level buttons
 
-    protected override void onStart()
-    {
-        if (!GameObject.Find("GameData"))
-        {
+	protected override void onStart()
+	{
+		if (!GameObject.Find("GameData"))
+		{
 			gameData = UnityEngine.Object.Instantiate(prefabGameData);
 			gameData.name = "GameData";
 			paramFunction();
 			GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
 		}
-        else
-        {
+		else
+		{
 			gameData = GameObject.Find("GameData").GetComponent<GameData>();
 		}
 
@@ -86,68 +88,68 @@ public class TitleScreenSystem : FSystem {
 		}
 	}
 
-    private List<string> readScenario(string repositoryPath){
-		if(File.Exists(repositoryPath+Path.DirectorySeparatorChar+"Scenario.xml")){
+	private List<string> readScenario(string repositoryPath) {
+		if (File.Exists(repositoryPath + Path.DirectorySeparatorChar + "Scenario.xml")) {
 			List<string> levelList = new List<string>();
 			XmlDocument doc = new XmlDocument();
-			doc.Load(repositoryPath+Path.DirectorySeparatorChar+"Scenario.xml");
+			doc.Load(repositoryPath + Path.DirectorySeparatorChar + "Scenario.xml");
 			XmlNode root = doc.ChildNodes[1]; //root = <scenario/>
-			foreach(XmlNode child in root.ChildNodes){
-				if (child.Name.Equals("level")){
+			foreach (XmlNode child in root.ChildNodes) {
+				if (child.Name.Equals("level")) {
 					levelList.Add(repositoryPath + Path.DirectorySeparatorChar + (child.Attributes.GetNamedItem("name").Value));
 				}
 			}
-			return levelList;			
+			return levelList;
 		}
 		return null;
 	}
 
 	protected override void onProcess(int familiesUpdateCount) {
-		if(Input.GetButtonDown("Cancel")){
+		if (Input.GetButtonDown("Cancel")) {
 			Application.Quit();
 		}
 	}
 
 	// See Jouer button in editor
-	public void showCampagneMenu(){
+	public void showCampagneMenu() {
 		GameObjectManager.setGameObjectState(campagneMenu, true);
-		foreach(GameObject directory in levelButtons.Keys){
+		foreach (GameObject directory in levelButtons.Keys) {
 			//show directory buttons
 			GameObjectManager.setGameObjectState(directory, true);
 			//hide level buttons
-			foreach(GameObject level in levelButtons[directory]){
+			foreach (GameObject level in levelButtons[directory]) {
 				GameObjectManager.setGameObjectState(level, false);
 			}
 		}
 		GameObjectManager.setGameObjectState(playButton, false);
 		GameObjectManager.setGameObjectState(quitButton, false);
-		GameObjectManager.setGameObjectState(compLevelButton,false);
+		GameObjectManager.setGameObjectState(compLevelButton, false);
 		GameObjectManager.setGameObjectState(backButton, true);
 	}
 
-	private void showLevels(GameObject levelDirectory){
+	private void showLevels(GameObject levelDirectory) {
 		//show/hide levels
-		foreach(GameObject directory in levelButtons.Keys){
+		foreach (GameObject directory in levelButtons.Keys) {
 			//hide level directories
 			GameObjectManager.setGameObjectState(directory, false);
 			//show levels
-			if(directory.Equals(levelDirectory)){
+			if (directory.Equals(levelDirectory)) {
 				//foreach(GameObject go in levelButtons[directory]){
-				for(int i = 0 ; i < levelButtons[directory].Count ; i ++){
+				for (int i = 0; i < levelButtons[directory].Count; i++) {
 					GameObjectManager.setGameObjectState(levelButtons[directory][i], true);
 
 					string directoryName = levelDirectory.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text;
 					//locked levels
-					if(i > PlayerPrefs.GetInt(directoryName, 0)) //by default first level of directory is the only unlocked level of directory
+					if (i > PlayerPrefs.GetInt(directoryName, 0)) //by default first level of directory is the only unlocked level of directory
 						levelButtons[directory][i].transform.Find("Button").GetComponent<Button>().interactable = true;
 					//unlocked levels
-					else{
+					else {
 						levelButtons[directory][i].transform.Find("Button").GetComponent<Button>().interactable = true;
 						//scores
 						int scoredStars = PlayerPrefs.GetInt(directoryName + Path.DirectorySeparatorChar + i + gameData.scoreKey, 0); //0 star by default
 						Transform scoreCanvas = levelButtons[directory][i].transform.Find("ScoreCanvas");
-						for (int nbStar = 0 ; nbStar < 4 ; nbStar++){
-							if(nbStar == scoredStars)
+						for (int nbStar = 0; nbStar < 4; nbStar++) {
+							if (nbStar == scoredStars)
 								GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, true);
 							else
 								GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, false);
@@ -156,23 +158,23 @@ public class TitleScreenSystem : FSystem {
 				}
 			}
 			//hide other levels
-			else{
-				foreach(GameObject go in levelButtons[directory]){
+			else {
+				foreach (GameObject go in levelButtons[directory]) {
 					GameObjectManager.setGameObjectState(go, false);
 				}
 			}
 		}
 	}
 
-	public void launchLevel(string levelDirectory, int level){
-		gameData.levelToLoad = (levelDirectory,level);
+	public void launchLevel(string levelDirectory, int level) {
+		gameData.levelToLoad = (levelDirectory, level);
 		GameObjectManager.loadScene("MainScene");
 	}
 
 	// See Retour button in editor
-	public void backFromCampagneMenu(){
-		foreach(GameObject directory in levelButtons.Keys){
-			if(directory.activeSelf){
+	public void backFromCampagneMenu() {
+		foreach (GameObject directory in levelButtons.Keys) {
+			if (directory.activeSelf) {
 				//main menu
 				GameObjectManager.setGameObjectState(campagneMenu, false);
 				GameObjectManager.setGameObjectState(playButton, true);
@@ -181,11 +183,11 @@ public class TitleScreenSystem : FSystem {
 				GameObjectManager.setGameObjectState(compLevelButton, true);
 				break;
 			}
-			else{
+			else {
 				//show directory buttons
 				GameObjectManager.setGameObjectState(directory, true);
 				//hide level buttons
-				foreach(GameObject go in levelButtons[directory]){
+				foreach (GameObject go in levelButtons[directory]) {
 					GameObjectManager.setGameObjectState(go, false);
 				}
 			}
@@ -194,13 +196,14 @@ public class TitleScreenSystem : FSystem {
 
 	// Initialise tous ce qui concerne les fonctionalités
 	private void paramFunction()
-    {
+	{
 		loadConstraintFunction();
+		loadRequiermentLibrairy();
 	}
 
-    // Charge les différentes contraintes qui existe entre les fonctionalités
-    private void loadConstraintFunction()
-    {
+	// Charge les différentes contraintes qui existe entre les fonctionalités
+	private void loadConstraintFunction()
+	{
 		StreamReader reader = new StreamReader("" + Application.dataPath + pathFileParamFunct);
 		bool endOfFile = false;
 		while (!endOfFile)
@@ -228,6 +231,58 @@ public class TitleScreenSystem : FSystem {
 				tmp.Add(value);
 			}
 			gameData.GetComponent<FunctionalityParam>().enableFunc.Add(data[0], new List<string>(tmp));
+		}
+	}
+
+	private void loadRequiermentLibrairy(){
+		XmlDocument doc = new XmlDocument();
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			LevelGenerator.instance.startReadDocXML(doc);
+			doc.LoadXml("" + Application.dataPath + pathFileParamRequiermentLibrary);
+			XMLRequiermentLibrary(doc);
+		}
+		else
+		{
+			doc.Load("" + Application.dataPath + pathFileParamRequiermentLibrary);
+			XMLRequiermentLibrary(doc);
+		}
+	}
+
+	private void XMLRequiermentLibrary(XmlDocument doc)
+    {
+		XmlNode root = doc.ChildNodes[1];
+		foreach (XmlNode child in root.ChildNodes)
+		{
+            if (child.Name == "CaptorList")
+            {
+				foreach (XmlNode childEle in child)
+                {
+					gameData.GetComponent<FunctionalityParam>().listCaptor.Add(childEle.Attributes.GetNamedItem("name").Value);
+				}
+			}
+			else if(child.Name == "func")
+            {
+				List<string> listEleTemp = new List<string>();
+				foreach (XmlNode childEle in child)
+				{
+					listEleTemp.Add(childEle.Attributes.GetNamedItem("name").Value);
+					/*
+					if (childEle.Attributes.GetNamedItem("name").Value != "Captor")
+					{
+						listEleTemp.Add(childEle.Attributes.GetNamedItem("name").Value);
+					}
+					else
+					{
+						for (int i = 0; i < gameData.GetComponent<FunctionalityParam>().listCaptor.Count; i++)
+						{
+							listEleTemp.Add(gameData.GetComponent<FunctionalityParam>().listCaptor[i]);
+						}
+					}
+					*/
+				}
+				gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary.Add(child.Attributes.GetNamedItem("name").Value, listEleTemp);
+			}
 		}
 	}
 

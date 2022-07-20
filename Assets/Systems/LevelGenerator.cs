@@ -13,6 +13,8 @@ using UnityEngine.Networking;
 /// </summary>
 public class LevelGenerator : FSystem {
 
+	public static LevelGenerator instance;
+
 	// Famille contenant les agents editables
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
 	private Family actions = FamilyManager.getFamily(new AnyOfComponents(typeof(BasicAction)));
@@ -26,6 +28,11 @@ public class LevelGenerator : FSystem {
 	public GameObject EditableContenair; // Le container qui contient les séquences éditables
 	public TMP_Text levelName;
 	public GameObject canvas;
+
+	public LevelGenerator()
+	{
+		instance = this;
+	}
 
 	protected override void onStart()
     {
@@ -61,9 +68,13 @@ public class LevelGenerator : FSystem {
 			Debug.Log(www.error);
 		else
 		{
-			doc.LoadXml(www.downloadHandler.text);
-			XmlToLevel(doc, gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+			doc.LoadXml(www.downloadHandler.text);		
 		}
+	}
+
+	public void startReadDocXML(XmlDocument doc)
+    {
+		MainLoop.instance.StartCoroutine(GetLevelWebRequest(doc));
 	}
 
 	private void generateMap(){
@@ -382,44 +393,11 @@ public class LevelGenerator : FSystem {
 		// Si l'option F2 est activé
 		if (listFuncGD.Contains("F2"))
         {
-			string actionName = null;
 			foreach (XmlNode limitNode in limitsNode.ChildNodes)
 			{
-				actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
-				int limit = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
-				// On vérifie qu'il n'y a pas d'erreur dans la saisie limite des block concernant le level design
-				if (listFuncGD.Contains("F6") && actionName == "For")
-				{
-					if (limit == 0)
-					{
-						limit = -1;
-					}
-				}
-				else if (listFuncGD.Contains("F7") && (actionName == "If" || actionName == "Else"))
-				{
-					if (limit == 0)
-					{
-						limit = -1;
-					}
-				}
-				else if (listFuncGD.Contains("F18") && actionName == "While")
-				{
-					if (limit == 0)
-					{
-						limit = -1;
-					}
-				}
-				else if (listFuncGD.Contains("F19") && (actionName == "AndOperator" || actionName == "OrOperator" || actionName == "NotOperator" || actionName == "Wall" || actionName == "Enemie" || actionName == "RedArea" || actionName == "FieldGate" || actionName == "Terminal"))
-				{
-					if (limit == 0)
-					{
-						limit = -1;
-					}
-				}
-				
-				gameData.actionBlocLimit[actionName] = limit;
-				
+				gameData.actionBlocLimit[limitNode.Attributes.GetNamedItem("actionType").Value] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
 			}
+			tcheckRequierement();
 		} // Sinon on met toutes les limites de block à 0
         else
         {
@@ -429,6 +407,70 @@ public class LevelGenerator : FSystem {
 			}
 		}
 		
+	}
+
+	private void tcheckRequierement()
+    {
+		// Besoin de reagrder si les capteurs sont correctement parametré
+		bool prgOkCaptor = tcheckCaptorProgramationValide();
+
+		foreach (string funcName in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary.Keys)
+        {
+            if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(funcName))
+            {
+				bool errorPrgFunc = true;
+				foreach (string element in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary[funcName])
+				{
+					//On regarde si c'est un capteur ou non
+					if (element != "Captor")
+					{
+						if (gameData.actionBlocLimit[element] != 0)
+						{
+							errorPrgFunc = false;
+						}
+					}
+				}
+
+                if (errorPrgFunc || !prgOkCaptor)
+                {
+					foreach (string element in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary[funcName])
+					{
+						//On regarde si c'est une erreur de programtion capteur (et si l'element est un capteur)
+						if (!prgOkCaptor)
+						{
+							// On passe tous les capteur à -1
+							foreach(string captor in gameData.GetComponent<FunctionalityParam>().listCaptor)
+                            {
+								gameData.actionBlocLimit[captor] = -1;
+							}
+						}
+
+						if(errorPrgFunc && element != "Captor")
+						{
+							gameData.actionBlocLimit[element] = -1;
+						}
+					}
+				}
+			}
+        }
+	}
+
+	private bool tcheckCaptorProgramationValide()
+    {
+		bool tcheck = false;
+		foreach(string ele in gameData.actionBlocLimit.Keys)
+        {
+            if (gameData.GetComponent<FunctionalityParam>().listCaptor.Contains(ele))
+            {
+				// Si au moins un des capteurs est présent dans les limitation (autre que 0)
+				// On considére qu'il n'y a pas d'erreur de programation du niveau pour les capteurs
+				if(gameData.actionBlocLimit[ele] != 0)
+                {
+					tcheck = true;
+				}
+            }
+        }
+		return tcheck;
 	}
 
 	private void readXMLActivable(XmlNode activableNode){
