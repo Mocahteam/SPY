@@ -101,11 +101,15 @@ public class ParamCompetenceSystem : FSystem
 		{
 			// Note pour chaque fonction les niveaux ou elle sont présentes
 			readXMLinfo();
+			Debug.Log(" ok etape 1");
 			// On charge les données pour chaque compétence
 			loadParamComp();
+			Debug.Log(" ok etape 2");
 			MainLoop.instance.StartCoroutine(startAfterFamillyOk());
+			Debug.Log(" ok etape 3");
 			// On demare la corroutine pour attacher chaque competence et sous-categorie et leur catégorie
 			MainLoop.instance.StartCoroutine(attacheComptWithCat());
+			Debug.Log(" ok etape 4");
 		}
 		catch
 		{
@@ -264,6 +268,7 @@ public class ParamCompetenceSystem : FSystem
 	// Parcourt le noeud d'information est apelle les bonnes fonctions pour traiter l'information du niveau
 	private void loadInfo(XmlDocument doc, string namelevel)
 	{
+		Debug.Log("Lecture lvl : " + namelevel);
 		XmlNode root = doc.ChildNodes[1];
 		foreach (XmlNode child in root.ChildNodes)
 		{
