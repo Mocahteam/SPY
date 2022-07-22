@@ -2,6 +2,8 @@
 <level>
   <info>
     <func name="F4"/>
+    <func name="F7"/>
+    <func name="F6"/>
   </info>
   <map>
     <line>
@@ -77,9 +79,9 @@
     <limit actionType="For" limit="1" />
     <limit actionType="Forever" limit="0" />
     <limit actionType="While" limit="0" />
-    <limit actionType="AndOperator" limit="1" />
-    <limit actionType="OrOperator" limit="1" />
-    <limit actionType="NotOperator" limit="1" />
+    <limit actionType="AndOperator" limit="0" />
+    <limit actionType="OrOperator" limit="0" />
+    <limit actionType="NotOperator" limit="0" />
     <limit actionType="Wall" limit="2" />
     <limit actionType="Enemie" limit="0" />
     <limit actionType="RedArea" limit="0" />
@@ -88,7 +90,7 @@
   </actionBlocLimit>
   <player posX="2" posZ="1" direction="3" />
   <script>
-    <control type="For" nbFor="11">
+    <control type="For" nbFor="0">
       <control type="IfElse">
         <condition>
         </condition>

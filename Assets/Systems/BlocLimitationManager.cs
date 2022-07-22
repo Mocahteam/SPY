@@ -76,7 +76,10 @@ public class BlocLimitationManager : FSystem {
 		if (gameData.actionBlocLimit.ContainsKey(keyName))
 		{
 			bool isActive = gameData.actionBlocLimit[keyName] != 0; // negative means no limit
-			GameObjectManager.setGameObjectState(draggableGO, isActive);
+			if(draggableGO != null)
+            {
+				GameObjectManager.setGameObjectState(draggableGO, isActive);
+			}
 			if (isActive)
 			{
 				if (gameData.actionBlocLimit[keyName] < 0)
