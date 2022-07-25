@@ -13,7 +13,7 @@ public class DetectorManager : FSystem {
 	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody)));
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
     private Family gameLoaded_f = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
-    private Family newStep_f = FamilyManager.getFamily(new AnyOfComponents(typeof(NewStep), typeof(FirstStep)));
+    private Family enemyMoved_f = FamilyManager.getFamily(new AnyOfComponents(typeof(Moved), typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
     private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
     private GameData gameData;
     private bool activeRedDetector;
@@ -26,8 +26,8 @@ public class DetectorManager : FSystem {
         GameObject go = GameObject.Find("GameData");
         if (go != null)
             gameData = go.GetComponent<GameData>();
-        gameLoaded_f.addEntryCallback(delegate { updateDetector(); });
-        newStep_f.addEntryCallback(delegate { updateDetector(); });
+        gameLoaded_f.addEntryCallback(delegate { updateDetectors(); });
+        enemyMoved_f.addEntryCallback(updateDetector);
         robotcollision_f.addEntryCallback(onNewCollision);
 
         
@@ -51,137 +51,140 @@ public class DetectorManager : FSystem {
 		activeRedDetector = on;
     }
 
-    // See StopButton and ReloadState buttons in editor
-    public void updateDetector()
+    public void updateDetectors()
     {
-        MainLoop.instance.StartCoroutine(delayUpdateDetector());
+        foreach (GameObject detect in enemyGO)
+            updateDetector(detect);
     }
 
-    private IEnumerator delayUpdateDetector(){
-        yield return null; // On NewStep currentAction is moved to the next action
-        yield return null; // Following frame CurrentAction is available in families and action is executed (for exemple drone rotation)
-        // then we can update detectors
+    // See StopButton and ReloadState buttons in editor
+    public void updateDetector(GameObject drone)
+    {
+        foreach (Moved moved in drone.GetComponents<Moved>())
+            GameObjectManager.removeComponent(moved);
 
         //Destroy detection cells
         foreach (GameObject detector in detectorGO)
         {
-            // Reset positions (because GameObject is not destroyed immediate)
-            Position pos = detector.GetComponent<Position>();
-            pos.x = -1;
-            pos.z = -1;
-            GameObjectManager.unbind(detector);
-            Object.Destroy(detector);
+            if (detector.GetComponent<Detector>().owner == drone)
+            {
+                // Reset positions (because GameObject is not destroyed immediate)
+                Position pos = detector.GetComponent<Position>();
+                pos.x = -1;
+                pos.z = -1;
+                GameObjectManager.unbind(detector);
+                Object.Destroy(detector);
+            }
         }
 
         bool stop = false;
         //Generate detection cells
-        foreach (GameObject detect in enemyGO)
+        DetectRange dr = drone.GetComponent<DetectRange>();
+        Position drone_pos = drone.GetComponent<Position>();
+        switch (dr.type)
         {
-            switch (detect.GetComponent<DetectRange>().type)
-            {
-                //Line type
-                case DetectRange.Type.Line:
-                    if (detect.GetComponent<DetectRange>().selfRange)
-                    {
-                        GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(detect.GetComponent<Position>().x * 3, 1.5f, detect.GetComponent<Position>().z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
-                        obj.GetComponent<Position>().x = detect.GetComponent<Position>().x;
-                        obj.GetComponent<Position>().z = detect.GetComponent<Position>().z;
-                        obj.GetComponent<Detector>().owner = detect;
-                        GameObjectManager.bind(obj);
-                    }
-                    switch (detect.GetComponent<Direction>().direction)
-                    {
-                        case Direction.Dir.North:
-                            stop = false;
-                            for (int i = 0; i < detect.GetComponent<DetectRange>().range; i++)
+            //Line type
+            case DetectRange.Type.Line:
+                if (dr.selfRange)
+                {
+                    GameObject newRedArea = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(drone_pos.x * 3, 1.5f, drone_pos.z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+                    newRedArea.GetComponent<Position>().x = drone_pos.x;
+                    newRedArea.GetComponent<Position>().z = drone_pos.z;
+                    newRedArea.GetComponent<Detector>().owner = drone;
+                    GameObjectManager.bind(newRedArea);
+                }
+                switch (drone.GetComponent<Direction>().direction)
+                {
+                    case Direction.Dir.North:
+                        stop = false;
+                        for (int i = 0; i < dr.range; i++)
+                        {
+                            int x = drone_pos.x;
+                            int z = drone_pos.z + i + 1;
+                            foreach (GameObject wall in wallGO)
+                                if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
+                                    stop = true;
+                            if (stop)
+                                break;
+                            else
                             {
-                                int x = detect.GetComponent<Position>().x;
-                                int z = detect.GetComponent<Position>().z + i + 1;
-                                foreach (GameObject wall in wallGO)
-                                    if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
-                                        stop = true;
-                                if (stop)
-                                    break;
-                                else
-                                {
-                                    GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
-                                    obj.GetComponent<Position>().x = x;
-                                    obj.GetComponent<Position>().z = z;
-                                    obj.GetComponent<Detector>().owner = detect;
-                                    GameObjectManager.bind(obj);
-                                }
+                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+                                obj.GetComponent<Position>().x = x;
+                                obj.GetComponent<Position>().z = z;
+                                obj.GetComponent<Detector>().owner = drone;
+                                GameObjectManager.bind(obj);
                             }
-                            break;
-                        case Direction.Dir.West:
-                            stop = false;
-                            for (int i = 0; i < detect.GetComponent<DetectRange>().range; i++)
+                        }
+                        break;
+                    case Direction.Dir.West:
+                        stop = false;
+                        for (int i = 0; i < dr.range; i++)
+                        {
+                            int x = drone_pos.x - i - 1;
+                            int z = drone_pos.z;
+                            foreach (GameObject wall in wallGO)
+                                if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
+                                    stop = true;
+                            if (stop)
+                                break;
+                            else
                             {
-                                int x = detect.GetComponent<Position>().x - i - 1;
-                                int z = detect.GetComponent<Position>().z;
-                                foreach (GameObject wall in wallGO)
-                                    if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
-                                        stop = true;
-                                if (stop)
-                                    break;
-                                else
-                                {
-                                    GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
-                                    obj.GetComponent<Position>().x = x;
-                                    obj.GetComponent<Position>().z = z;
-                                    obj.GetComponent<Detector>().owner = detect;
-                                    GameObjectManager.bind(obj);
-                                }
+                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+                                obj.GetComponent<Position>().x = x;
+                                obj.GetComponent<Position>().z = z;
+                                obj.GetComponent<Detector>().owner = drone;
+                                GameObjectManager.bind(obj);
                             }
-                            break;
-                        case Direction.Dir.South:
-                            stop = false;
-                            for (int i = 0; i < detect.GetComponent<DetectRange>().range; i++)
+                        }
+                        break;
+                    case Direction.Dir.South:
+                        stop = false;
+                        for (int i = 0; i < dr.range; i++)
+                        {
+                            int x = drone_pos.x;
+                            int z = drone_pos.z - i - 1;
+                            foreach (GameObject wall in wallGO)
+                                if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
+                                    stop = true;
+                            if (stop)
+                                break;
+                            else
                             {
-                                int x = detect.GetComponent<Position>().x;
-                                int z = detect.GetComponent<Position>().z - i - 1;
-                                foreach (GameObject wall in wallGO)
-                                    if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
-                                        stop = true;
-                                if (stop)
-                                    break;
-                                else
-                                {
-                                    GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
-                                    obj.GetComponent<Position>().x = x;
-                                    obj.GetComponent<Position>().z = z;
-                                    obj.GetComponent<Detector>().owner = detect;
-                                    GameObjectManager.bind(obj);
-                                }
+                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+                                obj.GetComponent<Position>().x = x;
+                                obj.GetComponent<Position>().z = z;
+                                obj.GetComponent<Detector>().owner = drone;
+                                GameObjectManager.bind(obj);
                             }
-                            break;
-                        case Direction.Dir.East:
-                            stop = false;
-                            for (int i = 0; i < detect.GetComponent<DetectRange>().range; i++)
+                        }
+                        break;
+                    case Direction.Dir.East:
+                        stop = false;
+                        for (int i = 0; i < dr.range; i++)
+                        {
+                            int x = drone_pos.x + i + 1;
+                            int z = drone_pos.z;
+                            foreach (GameObject wall in wallGO)
+                                if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
+                                    stop = true;
+                            if (stop)
+                                break;
+                            else
                             {
-                                int x = detect.GetComponent<Position>().x + i + 1;
-                                int z = detect.GetComponent<Position>().z;
-                                foreach (GameObject wall in wallGO)
-                                    if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
-                                        stop = true;
-                                if (stop)
-                                    break;
-                                else
-                                {
-                                    GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
-                                    obj.GetComponent<Position>().x = x;
-                                    obj.GetComponent<Position>().z = z;
-                                    obj.GetComponent<Detector>().owner = detect;
-                                    GameObjectManager.bind(obj);
-                                }
+                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+                                obj.GetComponent<Position>().x = x;
+                                obj.GetComponent<Position>().z = z;
+                                obj.GetComponent<Detector>().owner = drone;
+                                GameObjectManager.bind(obj);
                             }
-                            break;
-                    }
-                    break;
-                case DetectRange.Type.Cone:
-                    break;
-                case DetectRange.Type.Around:
-                    break;
-            }
+                        }
+                        break;
+                }
+                break;
+            case DetectRange.Type.Cone:
+                break;
+            case DetectRange.Type.Around:
+                break;
         }       
     }
 }

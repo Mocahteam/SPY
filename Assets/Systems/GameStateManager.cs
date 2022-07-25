@@ -2,9 +2,9 @@ using UnityEngine;
 using FYFY;
 
 /// <summary>
-/// Manage game state
+/// This manager enables to save the game state and to restore it on demand
 /// </summary>
-public class SaveManager : FSystem {
+public class GameStateManager : FSystem {
 
     private Family f_coins = FamilyManager.getFamily(new AnyOfTags("Coin"));
     private Family f_doors = FamilyManager.getFamily(new AnyOfTags("Door"));
@@ -17,9 +17,9 @@ public class SaveManager : FSystem {
 
     private string currentContent;
 
-    public static SaveManager instance;
+    public static GameStateManager instance;
 
-    public SaveManager()
+    public GameStateManager()
 	{
 		instance = this;
 	}
@@ -29,33 +29,30 @@ public class SaveManager : FSystem {
     }
 
     // See ExecuteButton in editor
-    public void SaveState(GameObject buttonStop)
+    public void SaveState()
 	{
-        if(!buttonStop.activeInHierarchy){
-            //reset save
-            save.rawSave.coinsState.Clear();
-            foreach (GameObject coin in f_coins)
-                save.rawSave.coinsState.Add(coin.activeSelf);
-            save.rawSave.doorsState.Clear();
-            foreach (GameObject door in f_doors)
-                save.rawSave.doorsState.Add(door.activeSelf);
-            save.rawSave.directions.Clear();
-            foreach (GameObject dir in f_directions)
-                save.rawSave.directions.Add(dir.GetComponent<Direction>().direction);
-            save.rawSave.positions.Clear();
-            foreach (GameObject pos in f_positions)
-                save.rawSave.positions.Add(new SaveContent.RawPosition(pos.GetComponent<Position>()));
-            save.rawSave.activables.Clear();
-            foreach (GameObject act in f_activables)
-                save.rawSave.activables.Add(new SaveContent.RawActivable(act.GetComponent<Activable>()));
-            save.rawSave.currentDroneActions.Clear();    
-            foreach(GameObject go in f_currentActions)
-                if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
-                    save.rawSave.currentDroneActions.Add(new SaveContent.RawCurrentAction(go));
+        //reset save
+        save.rawSave.coinsState.Clear();
+        foreach (GameObject coin in f_coins)
+            save.rawSave.coinsState.Add(coin.activeSelf);
+        save.rawSave.doorsState.Clear();
+        foreach (GameObject door in f_doors)
+            save.rawSave.doorsState.Add(door.activeSelf);
+        save.rawSave.directions.Clear();
+        foreach (GameObject dir in f_directions)
+            save.rawSave.directions.Add(dir.GetComponent<Direction>().direction);
+        save.rawSave.positions.Clear();
+        foreach (GameObject pos in f_positions)
+            save.rawSave.positions.Add(new SaveContent.RawPosition(pos.GetComponent<Position>()));
+        save.rawSave.activables.Clear();
+        foreach (GameObject act in f_activables)
+            save.rawSave.activables.Add(new SaveContent.RawActivable(act.GetComponent<Activable>()));
+        save.rawSave.currentDroneActions.Clear();    
+        foreach(GameObject go in f_currentActions)
+            if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
+                save.rawSave.currentDroneActions.Add(new SaveContent.RawCurrentAction(go));
 
-            currentContent = JsonUtility.ToJson(save.rawSave);
-        }
-
+        currentContent = JsonUtility.ToJson(save.rawSave);
     }
 
     // See StopButton and ReloadState buttons in editor

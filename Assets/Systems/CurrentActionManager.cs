@@ -9,12 +9,12 @@ using System.Collections;
 /// </summary>
 public class CurrentActionManager : FSystem
 {
-	private Family firstStep = FamilyManager.getFamily(new AllOfComponents(typeof(FirstStep)));
+	private Family executionReady = FamilyManager.getFamily(new AllOfComponents(typeof(ExecutablePanelReady)));
 	private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(LibraryItemRef), typeof(CurrentAction)));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
-	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
+	private Family playerScriptEnds = FamilyManager.getFamily(new NoneOfComponents(typeof(Moved)), new AnyOfTags("Player"));
 
 	public static CurrentActionManager instance;
 
@@ -25,27 +25,13 @@ public class CurrentActionManager : FSystem
 
 	protected override void onStart()
     {
-		firstStep.addEntryCallback(initFirstActions);
-		newStep_f.addEntryCallback(delegate (GameObject unused) { onNewStep(); });
-		scriptIsRunning.addExitCallback(removePlayersCurrentActions);
+		executionReady.addEntryCallback(initFirstsActions);
+		newStep_f.addEntryCallback(delegate { onNewStep(); });
+		playerScriptEnds.addEntryCallback(removePlayersCurrentActions);
 	}
 
-	// See ExecuteButton in editor (launch execution process by adding FirstStep)
-	public void firstAction(GameObject buttonStop)
+	private void initFirstsActions(GameObject go)
 	{
-		if (!buttonStop.activeInHierarchy)
-			GameObjectManager.addComponent<FirstStep>(MainLoop.instance.gameObject);
-	}
-
-	private void initFirstActions(GameObject unused)
-	{
-		MainLoop.instance.StartCoroutine(delayInitFirstsActions());
-	}
-
-	private IEnumerator delayInitFirstsActions()
-	{
-		yield return null; // wait editable script was copied to executable panels
-
 		// init currentAction on the first action of players
 		foreach (GameObject player in playerGO)
 			addCurrentActionOnFirstAction(player);
@@ -60,6 +46,8 @@ public class CurrentActionManager : FSystem
 
 		if (forceNewStep)
 			onNewStep();
+
+		GameObjectManager.removeComponent<ExecutablePanelReady>(go);
 	}
 
 	private void addCurrentActionOnFirstAction(GameObject agent)
@@ -74,11 +62,10 @@ public class CurrentActionManager : FSystem
 			// Set this action as CurrentAction
 			GameObjectManager.addComponent<CurrentAction>(firstAction, new { agent = agent });
 		else
-			GameObjectManager.addComponent<EmptyExecution>(MainLoop.instance.gameObject);
+			GameObjectManager.addComponent<EmptyExecution>(agent);
 	}
 
 	// get first action inside "action", it could be control structure (if, for...) => recursive call
-	// Si mon script commence par un if
 	public GameObject getFirstActionOf(GameObject action, GameObject agent)
 	{
 		if (action == null)
@@ -315,12 +302,24 @@ public class CurrentActionManager : FSystem
 		GameObjectManager.addComponent<CurrentAction>(nextAction, new { agent = agent });
 	}
 
-	private void removePlayersCurrentActions(int unused)
+	private void removePlayersCurrentActions(GameObject agent)
 	{
 		foreach (GameObject currentAction in currentActions)
 		{
-			if (currentAction.GetComponent<CurrentAction>().agent.CompareTag("Player"))
+			if (currentAction.GetComponent<CurrentAction>().agent == agent)
 				GameObjectManager.removeComponent<CurrentAction>(currentAction);
+		}
+	}
+
+	// See StopButton in editor
+	public void removeAllCurrentActions()
+	{
+		CurrentAction act;
+		foreach (GameObject go in currentActions)
+		{
+			act = go.GetComponent<CurrentAction>();
+			if (act.agent.CompareTag("Player"))
+				GameObjectManager.removeComponent<CurrentAction>(go);
 		}
 	}
 }

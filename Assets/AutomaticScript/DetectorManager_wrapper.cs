@@ -15,9 +15,14 @@ public class DetectorManager_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "detectCollision", on);
 	}
 
-	public void updateDetector()
+	public void updateDetectors()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "updateDetector", null);
+		MainLoop.callAppropriateSystemMethod (system, "updateDetectors", null);
+	}
+
+	public void updateDetector(UnityEngine.GameObject drone)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "updateDetector", drone);
 	}
 
 }

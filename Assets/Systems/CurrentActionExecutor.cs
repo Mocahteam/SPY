@@ -17,12 +17,6 @@ public class CurrentActionExecutor : FSystem {
 	// each time a new currentAction is added, 
 	private void onNewCurrentAction(GameObject currentAction) {
 		CurrentAction ca = currentAction.GetComponent<CurrentAction>();	
-		if(ca.agent.CompareTag("Player")){
-			// We notify that player is moving
-			if(!MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>()){
-				GameObjectManager.addComponent<PlayerIsMoving>(MainLoop.instance.gameObject);
-			}
-		}
 
 		// process action depending on action type
 		switch (currentAction.GetComponent<BasicAction>().actionType){
@@ -53,6 +47,9 @@ public class CurrentActionExecutor : FSystem {
 				}
 				break;
 		}
+		// notify agent moving
+		if (!ca.agent.GetComponent<Moved>())
+			GameObjectManager.addComponent<Moved>(ca.agent);
 	}
 
 	private void ApplyForward(GameObject go){

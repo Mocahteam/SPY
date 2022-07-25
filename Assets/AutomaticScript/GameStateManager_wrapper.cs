@@ -1,16 +1,16 @@
 using UnityEngine;
 using FYFY;
 
-public class SaveManager_wrapper : BaseWrapper
+public class GameStateManager_wrapper : BaseWrapper
 {
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void SaveState(UnityEngine.GameObject buttonStop)
+	public void SaveState()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "SaveState", buttonStop);
+		MainLoop.callAppropriateSystemMethod (system, "SaveState", null);
 	}
 
 	public void LoadState()

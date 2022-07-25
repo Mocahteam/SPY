@@ -8,6 +8,11 @@ public class StepSystem_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
+	public void countNewExecution()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "countNewExecution", null);
+	}
+
 	public void autoExecuteStep(System.Boolean on)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "autoExecuteStep", on);

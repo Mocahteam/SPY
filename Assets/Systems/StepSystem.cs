@@ -8,10 +8,10 @@ using System.Collections;
 public class StepSystem : FSystem {
 
     private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
-    private Family firstStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(FirstStep)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
-	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
+	private Family playerScriptEnds = FamilyManager.getFamily(new NoneOfComponents(typeof(Moved)), new AnyOfTags("Player"));
+    private Family movingAgents = FamilyManager.getFamily(new AllOfComponents(typeof(Moved)));
     private float timeStepCpt;
     private static float defaultTimeStep = 1.5f; 
 	private static float timeStep = defaultTimeStep;
@@ -28,9 +28,17 @@ public class StepSystem : FSystem {
             gameData = go.GetComponent<GameData>();
         timeStepCpt = timeStep;
         newStep_f.addEntryCallback(onNewStep);
-        firstStep_f.addEntryCallback(onFirstStep);
         //reset nbstep on execution end
-        scriptIsRunning.addExitCallback(delegate { nbStep = 0; });
+        playerScriptEnds.addExitCallback(delegate { nbStep = 0; });
+    }
+
+    // See ExecuteButton in editor (launch execution process by adding FirstStep)
+    public void countNewExecution()
+    {
+        gameData.totalExecute++;
+        timeStepCpt = timeStep;
+        gameData.totalStep++;
+        nbStep++;
     }
 
 
@@ -38,13 +46,6 @@ public class StepSystem : FSystem {
     {
         GameObjectManager.removeComponent(go.GetComponent<NewStep>());  
         timeStepCpt = timeStep;
-    }
-    private void onFirstStep(GameObject go)
-    {
-        GameObjectManager.removeComponent(go.GetComponent<FirstStep>());
-        timeStepCpt = timeStep;
-        gameData.totalStep++;
-        nbStep++;
     }
 
     // Use to process your families.
@@ -79,12 +80,9 @@ public class StepSystem : FSystem {
     }
 
     private void stopExecution(){
-        if(MainLoop.instance.gameObject.GetComponent<PlayerIsMoving>()){
-            //quick fix for several PlayerIsMoving
-            foreach(PlayerIsMoving p in MainLoop.instance.GetComponents<PlayerIsMoving>())
-                GameObjectManager.removeComponent<PlayerIsMoving>(MainLoop.instance.gameObject);
-            Pause = true;
-        }
+        foreach(GameObject movingAgent in movingAgents)
+            GameObjectManager.removeComponent<Moved>(movingAgent);
+        Pause = true;
     }
 
     private bool playerHasNextAction(){

@@ -13,7 +13,6 @@ public class UISystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject endPanel;
 	public UnityEngine.GameObject dialogPanel;
 	public UnityEngine.GameObject canvas;
-	public UnityEngine.GameObject editableScriptContainer;
 	public UnityEngine.GameObject libraryPanel;
 	public UnityEngine.GameObject EditableCanvas;
 	public UnityEngine.GameObject prefabViewportScriptContainer;
@@ -30,7 +29,6 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "endPanel", endPanel);
 		MainLoop.initAppropriateSystemField (system, "dialogPanel", dialogPanel);
 		MainLoop.initAppropriateSystemField (system, "canvas", canvas);
-		MainLoop.initAppropriateSystemField (system, "editableScriptContainer", editableScriptContainer);
 		MainLoop.initAppropriateSystemField (system, "libraryPanel", libraryPanel);
 		MainLoop.initAppropriateSystemField (system, "EditableCanvas", EditableCanvas);
 		MainLoop.initAppropriateSystemField (system, "prefabViewportScriptContainer", prefabViewportScriptContainer);
@@ -46,9 +44,9 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "refreshUINameContainer", null);
 	}
 
-	public void setExecutionState(System.Boolean value)
+	public void setExecutionView(System.Boolean value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setExecutionState", value);
+		MainLoop.callAppropriateSystemMethod (system, "setExecutionView", value);
 	}
 
 	public void resetScriptContainer(System.Boolean refund)
@@ -116,19 +114,14 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "reloadState", null);
 	}
 
-	public void stopScript()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "stopScript", null);
-	}
-
 	public void fillExecutablePanel()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "fillExecutablePanel", null);
 	}
 
-	public void applyScriptToPlayer()
+	public void copyEditableScriptsToExecutablePanels()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "applyScriptToPlayer", null);
+		MainLoop.callAppropriateSystemMethod (system, "copyEditableScriptsToExecutablePanels", null);
 	}
 
 	public void CleanControlBlock(UnityEngine.Transform specialBlock)

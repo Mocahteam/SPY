@@ -8,9 +8,9 @@ public class CurrentActionManager_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void firstAction(UnityEngine.GameObject buttonStop)
+	public void removeAllCurrentActions()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "firstAction", buttonStop);
+		MainLoop.callAppropriateSystemMethod (system, "removeAllCurrentActions", null);
 	}
 
 }

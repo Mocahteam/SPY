@@ -23,7 +23,7 @@ public class UISystem : FSystem {
 	private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction), typeof(LibraryItemRef), typeof(CurrentAction)));
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
-	private Family scriptIsRunning = FamilyManager.getFamily(new AllOfComponents(typeof(PlayerIsMoving)));
+	private Family playerScriptEnds = FamilyManager.getFamily(new NoneOfComponents(typeof(Moved)), new AnyOfTags("Player"));
 	private Family emptyPlayerExecution = FamilyManager.getFamily(new AllOfComponents(typeof(EmptyExecution)));
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private Family viewportContainerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les container éditable
@@ -36,7 +36,6 @@ public class UISystem : FSystem {
 
 	private GameData gameData;
 	private int nDialog = 0;
-	private GameObject lastEditedScript;
 
 	public GameObject buttonPlay;
 	public GameObject buttonContinue;
@@ -48,7 +47,6 @@ public class UISystem : FSystem {
 	public GameObject endPanel;
 	public GameObject dialogPanel;
 	public GameObject canvas;
-	public GameObject editableScriptContainer;
 	public GameObject libraryPanel;
 	public GameObject EditableCanvas;
 	public GameObject prefabViewportScriptContainer;
@@ -78,17 +76,15 @@ public class UISystem : FSystem {
 			GameObjectManager.unbind(go);
 			UnityEngine.Object.Destroy(go);
 		});
-		scriptIsRunning.addExitCallback(delegate { setExecutionState(true); });
-		scriptIsRunning.addExitCallback(saveHistory);
-		emptyPlayerExecution.addEntryCallback(delegate { setExecutionState(true); });
+		playerScriptEnds.addEntryCallback(delegate { setExecutionView(false); });
+		playerScriptEnds.addEntryCallback(saveHistory);
+		emptyPlayerExecution.addEntryCallback(delegate { setExecutionView(true); });
 		emptyPlayerExecution.addEntryCallback(delegate { GameObjectManager.removeComponent<EmptyExecution>(MainLoop.instance.gameObject); });
 		
 		currentActions.addEntryCallback(onNewCurrentAction);
 
 		inventoryBlocks.addEntryCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
 		inventoryBlocks.addExitCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
-
-		lastEditedScript = null;
 
 		loadHistory();
 
@@ -263,56 +259,92 @@ public class UISystem : FSystem {
     }
 
 	// On affiche ou non la partie librairie/programmation sequence en fonction de la valeur reçue
-	public void setExecutionState(bool value){
-		// Toggle library panel
-		GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.gameObject, !value);
-		// Toggle editable panel
-		GameObjectManager.setGameObjectState(EditableCanvas, !value);
-		GameObjectManager.setGameObjectState(EditableCanvas.transform.parent.Find("Scrollbar Vertical").gameObject, !value);
-		GameObjectManager.setGameObjectState(EditableCanvas.transform.parent.Find("Scrollbar Horizontal").gameObject, !value);
+	public void setExecutionView(bool value){
+		// Toggle library and editable panel
+		GameObjectManager.setGameObjectState(canvas.transform.Find("LeftPanel").gameObject, !value);
 		// Toggle execution panel
 		GameObjectManager.setGameObjectState(canvas.transform.Find("ExecutableCanvas").gameObject, value);
 	}
 	
 
-	// Permet de sauvegarder l'historique de la sequence créée
-	private void saveHistory(int unused = 0){
+	// Add the executed scripts to the containers history
+	private void saveHistory(GameObject unused){
 		if(gameData.actionsHistory == null){
-			gameData.actionsHistory = lastEditedScript;
+			// set history as a copy of editable canvas
+			gameData.actionsHistory = GameObject.Instantiate(EditableCanvas.transform.GetChild(0).transform).gameObject;
+			gameData.actionsHistory.SetActive(false); // keep this gameObject as a ghost
+			// We don't bind the history to FYFY
 		}
 		else{
-			foreach(Transform child in lastEditedScript.transform){
-				Transform copy = UnityEngine.GameObject.Instantiate(child);
-				copy.SetParent(gameData.actionsHistory.transform);
-				GameObjectManager.bind(copy.gameObject);				
+			// parse all containers inside editable canvas
+			for(int containerCpt = 0; containerCpt < EditableCanvas.transform.GetChild(0).childCount; containerCpt++){
+				Transform viewportForEditableContainer = EditableCanvas.transform.GetChild(0).GetChild(containerCpt);
+				// the first child is the script container that contains script elements
+				foreach (Transform child in viewportForEditableContainer.GetChild(0))
+                {
+					if (child.GetComponent<BaseElement>())
+                    {
+						// copy this child inside the appropriate history
+						GameObject.Instantiate(child, gameData.actionsHistory.transform.GetChild(containerCpt));
+						// We don't bind the history to FYFY
+					}
+				}
 			}
-			GameObjectManager.refresh(gameData.actionsHistory);
-		}	
+		}
+		// Erase all editable containers
+		foreach (Transform viewportForEditableContainer in EditableCanvas.transform.GetChild(0))
+			foreach (Transform child in viewportForEditableContainer.GetChild(0))
+				if (child.GetComponent<BaseElement>())
+				{
+					GameObjectManager.unbind(child.gameObject);
+					GameObject.Destroy(child);
+				}
 	}
 
 
-	// Charge la sequence d'action sauvegarder dans le script container
+	// Restore saved scripts in history inside editable script containers
 	private void loadHistory(){
-		if(gameData != null && gameData.actionsHistory != null){
-			for(int i = 0 ; i < gameData.actionsHistory.transform.childCount ; i++){
-				Transform child = UnityEngine.GameObject.Instantiate(gameData.actionsHistory.transform.GetChild(i));
-				child.SetParent(editableScriptContainer.transform);
-				GameObjectManager.bind(child.gameObject);
-				GameObjectManager.refresh(editableScriptContainer);
+		if(gameData != null && gameData.actionsHistory != null)
+		{
+			// For security, erase all editable containers
+			foreach (Transform viewportForEditableContainer in EditableCanvas.transform.GetChild(0))
+				foreach (Transform child in viewportForEditableContainer.GetChild(0))
+					if (child.GetComponent<BaseElement>())
+					{
+						GameObjectManager.unbind(child.gameObject);
+						GameObject.Destroy(child);
+					}
+			// Restore history
+			for (int i = 0 ; i < gameData.actionsHistory.transform.childCount ; i++){
+				Transform history_viewportForEditableContainer = gameData.actionsHistory.transform.GetChild(i);
+				// the first child is the script container that contains script elements
+				foreach (Transform history_child in history_viewportForEditableContainer.GetChild(0))
+				{
+					if (history_child.GetComponent<BaseElement>())
+					{
+						// copy this child inside the appropriate editable container
+						Transform history_childCopy = GameObject.Instantiate(history_child, EditableCanvas.transform.GetChild(0).GetChild(i));
+						// Place this child copy at the end of the container
+						history_childCopy.SetAsFirstSibling();
+						history_childCopy.SetSiblingIndex(history_childCopy.parent.childCount - 2);
+						GameObjectManager.bind(history_childCopy.gameObject);
+					}
+				}
 			}
-			LevelGenerator.computeNext(gameData.actionsHistory);
-			foreach(BaseElement act in editableScriptContainer.GetComponentsInChildren<BaseElement>()){
-				GameObjectManager.addComponent<Dropped>(act.gameObject);
-			}
+			// Count used elements
+			foreach (Transform viewportForEditableContainer in EditableCanvas.transform.GetChild(0))
+				foreach (BaseElement act in viewportForEditableContainer.GetComponentsInChildren<BaseElement>())
+					GameObjectManager.addComponent<Dropped>(act.gameObject);
 			//destroy history
 			GameObject.Destroy(gameData.actionsHistory);
-			LayoutRebuilder.ForceRebuildLayoutImmediate(editableScriptContainer.GetComponent<RectTransform>());
+			LayoutRebuilder.ForceRebuildLayoutImmediate(EditableCanvas.GetComponent<RectTransform>());
 		}
 	}
 
 
 	// ????
 	private void restoreLastEditedScript(){
+		/* TODO => reprendre ça
 		List<Transform> childrenList = new List<Transform>();
 		if(lastEditedScript != null)
         {
@@ -326,14 +358,14 @@ public class UISystem : FSystem {
 				GameObjectManager.bind(child.gameObject);
 			}
 			GameObjectManager.refresh(editableScriptContainer);
-		}
+		}*/
 	}
 
 
 	// Lors d'une fin d'exécution de séquence, gére les différents éléments à ré-afficher ou si il faut sauvegarder que la progression du joueur
 	private void levelFinished (GameObject go){
 		// On réaffiche les différent panel pour la création de séquence
-		setExecutionState(true);
+		setExecutionView(true);
 
 		// En cas de fin de niveau
 		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
@@ -643,19 +675,6 @@ public class UISystem : FSystem {
 		GameObjectManager.removeComponent<NewEnd>(endPanel);
 	}
 
-	// See StopButton in editor
-	// ??????
-	public void stopScript(){
-		restoreLastEditedScript();
-		setExecutionState(true);
-		CurrentAction act;
-		foreach(GameObject go in currentActions){
-			act = go.GetComponent<CurrentAction>();
-			if(act.agent.CompareTag("Player"))
-				GameObjectManager.removeComponent<CurrentAction>(go);
-		}		
-	}
-
 	public void fillExecutablePanel(GameObject srcScript, GameObject targetContainer, string agentTag)
     {
 		// On va copier la sequence créé par le joueur dans le container de la fenêtre du robot
@@ -679,55 +698,48 @@ public class UISystem : FSystem {
 		LevelGenerator.computeNext(targetContainer);
 		// On détruit la copy de la sequence d'action
 		UnityEngine.Object.Destroy(containerCopy);
+		// On notifie les systèmes comme quoi le panneau d'execution est rempli
+		GameObjectManager.addComponent<ExecutablePanelReady>(MainLoop.instance.gameObject);
 	}
 
 	// See ExecuteButton in editor
-	// Copie les blocks d'actions dans le container du robot associer
-	public void applyScriptToPlayer(){
-		//if first click on play button
-		if (!buttonStop.activeInHierarchy) {
-			// On note une tentative d'execution en plus
-			gameData.totalExecute++;
-			//clean container for each robot and copy the new sequence
-			foreach (GameObject robot in playerGO) {
-				GameObject executableScript = robot.GetComponent<ScriptRef>().executableScript;
-				// Clean robot container
-				foreach (Transform child in executableScript.transform) {
-					GameObjectManager.unbind(child.gameObject);
-					GameObject.Destroy(child.gameObject);
-				}
-
-				//copy editable script
-				GameObject containerAssocied = null;
-				// On parcourt les script container pour identifer celui associé au robot 
-				foreach (GameObject container in viewportContainer_f)
-				{
-					// Si le container comporte le même nom que le robot
-					if (container.GetComponentInChildren<UIRootContainer>().associedAgentName == robot.GetComponent<AgentEdit>().agentName)
-                    {
-						// On recupére le container qui contiend le script à associer au robot
-						containerAssocied = container.transform.Find("ScriptContainer").gameObject;
-					}
-				}
-				// Si on a bien trouvé un container associer
-				if (containerAssocied != null)
-				{
-					fillExecutablePanel(containerAssocied, executableScript, robot.tag);
-					// bind all child
-					foreach (Transform child in executableScript.transform)
-						GameObjectManager.bind(child.gameObject);
-					// On fait apparaitre le panneau du robot
-					robot.GetComponent<ScriptRef>().executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
-				}
+	// Copie les blocks du panneau d'édition dans le panneau d'exécution
+	public void copyEditableScriptsToExecutablePanels(){
+		//clean container for each robot and copy the new sequence
+		foreach (GameObject robot in playerGO) {
+			GameObject executableContainer = robot.GetComponent<ScriptRef>().executableScript;
+			// Clean robot container
+			foreach (Transform child in executableContainer.transform) {
+				GameObjectManager.unbind(child.gameObject);
+				GameObject.Destroy(child.gameObject);
 			}
-			// Lancement du son 
-			buttonPlay.GetComponent<AudioSource>().Play();
-			// On harmonise l'affichage de l'UI container de l'agent
-			foreach(GameObject go in agents){
-				LayoutRebuilder.ForceRebuildLayoutImmediate(go.GetComponent<ScriptRef>().executablePanel.GetComponent<RectTransform>());
-				if(go.CompareTag("Player")){				
-					GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().executablePanel,true);				
-				}
+
+			//copy editable script
+			GameObject editableContainer = null;
+			// On parcourt les script container pour identifer celui associé au robot 
+			foreach (GameObject container in viewportContainer_f)
+				// Si le container comporte le même nom que le robot
+				if (container.GetComponentInChildren<UIRootContainer>().associedAgentName == robot.GetComponent<AgentEdit>().agentName)
+					// On recupére le container qui contient le script à associer au robot
+					editableContainer = container.transform.Find("ScriptContainer").gameObject;
+
+			// Si on a bien trouvé un container associé
+			if (editableContainer != null)
+			{
+				// we fill the executable container with actions of the editable container
+				fillExecutablePanel(editableContainer, executableContainer, robot.tag);
+				// bind all child
+				foreach (Transform child in executableContainer.transform)
+					GameObjectManager.bind(child.gameObject);
+				// On développe le panneau au cas où il aurait été réduit
+				robot.GetComponent<ScriptRef>().executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
+			}
+		}
+		// On harmonise l'affichage de l'UI container des agents
+		foreach(GameObject go in agents){
+			LayoutRebuilder.ForceRebuildLayoutImmediate(go.GetComponent<ScriptRef>().executablePanel.GetComponent<RectTransform>());
+			if(go.CompareTag("Player")){				
+				GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().executablePanel, true);				
 			}
 		}
 	}
