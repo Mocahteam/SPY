@@ -21,6 +21,7 @@ public class BlocLimitationManager : FSystem {
 			// Initialisation des block à afficher dans l'inventaire
 			foreach (GameObject go in draggableElement)
 			{
+				Debug.Log("Draggeble Element : " + go.name);
 				// get prefab associated to this draggable element
 				// On récupére le préfab de l'élément
 				GameObject prefab = go.GetComponent<ElementToDrag>().actionPrefab;
@@ -28,6 +29,7 @@ public class BlocLimitationManager : FSystem {
 				string key = getActionKey(prefab.GetComponent<Highlightable>());
 				// default => hide go
 				GameObjectManager.setGameObjectState(go, false);
+				Debug.Log("Draggeble Element afer change state: " + go.name);
 				// update counter et active les block necessaire
 				updateBlocLimit(key, go);
 			}
@@ -61,7 +63,9 @@ public class BlocLimitationManager : FSystem {
 	}
 
 	private GameObject getDraggableElement (string name){
+		Debug.Log("Get draggable Element : " + name);
 		foreach(GameObject go in draggableElement){
+			Debug.Log("Go : " + go.name);
 			if (go.name.Equals(name)){
 				return go;
 			}
@@ -73,6 +77,8 @@ public class BlocLimitationManager : FSystem {
 	// Le désactive si la limite est atteinte
 	// Met à jour le compteur
 	private void updateBlocLimit(string keyName, GameObject draggableGO){
+		Debug.Log("Update limite bloc : " + keyName);
+		Debug.Log("Draggable GO name : " + draggableGO.name);
 		if (gameData.actionBlocLimit.ContainsKey(keyName))
 		{
 			bool isActive = gameData.actionBlocLimit[keyName] != 0; // negative means no limit
@@ -97,8 +103,18 @@ public class BlocLimitationManager : FSystem {
 	}
 
 	private void useAction(GameObject go){
-		string actionKey = getActionKey(go.GetComponent<BaseElement>());
-		if(actionKey != null){
+		string actionKey = null;
+		// Base element, base condition
+		if (go.GetComponent<BaseElement>())
+        {
+			actionKey = getActionKey(go.GetComponent<BaseElement>());
+		}
+		else if (go.GetComponent<BaseCondition>())
+		{
+			actionKey = getActionKey(go.GetComponent<BaseCondition>());
+		}
+		Debug.Log("useAction activate action key: " + actionKey);
+		if (actionKey != null){
 			gameData.actionBlocLimit[actionKey] -= 1;
 			GameObject draggableModel = getDraggableElement(actionKey);
 			updateBlocLimit(actionKey, draggableModel);		

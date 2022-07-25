@@ -101,20 +101,28 @@ public class ParamCompetenceSystem : FSystem
 		{
 			// Note pour chaque fonction les niveaux ou elle sont présentes
 			readXMLinfo();
-			Debug.Log(" ok etape 1");
+		}
+		catch
+		{
+			string message = "Erreur chargement fichiers de niveaux!\n";
+			message += "Vérifié que les fichiers existent ou sont bien au format XML";
+			displayMessageUser(message);
+			// Permetra de fermer le panel de selection des competence lorsque le user apuie sur le bouton ok du message d'erreur
+			panelSelectComp.GetComponent<ParamCompetenceSystemBridge>().closePanelParamComp = true;
+		}
+
+		try
+		{
 			// On charge les données pour chaque compétence
 			loadParamComp();
-			Debug.Log(" ok etape 2");
 			MainLoop.instance.StartCoroutine(startAfterFamillyOk());
-			Debug.Log(" ok etape 3");
 			// On demare la corroutine pour attacher chaque competence et sous-categorie et leur catégorie
 			MainLoop.instance.StartCoroutine(attacheComptWithCat());
-			Debug.Log(" ok etape 4");
 		}
 		catch
 		{
 			string message = "Erreur chargement fichier de parametrage des compétences!\n";
-			message += "Vérifier que le fichier csv et les informations contenues sont au bon format";
+			message += "Vérifié que le fichier csv et les informations contenues sont au bon format";
 			displayMessageUser(message);
 			// Permetra de fermer le panel de selection des competence lorsque le user apuie sur le bouton ok du message d'erreur
 			panelSelectComp.GetComponent<ParamCompetenceSystemBridge>().closePanelParamComp = true;
