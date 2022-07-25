@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<level>
+  <info>
+    <func name="F17"/>
+    <func name="F7"/>
+    <func name="F6"/>
+    <func name="F19"/>
+  </info>
+  <map>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="3" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="2" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+  </map>
+  <actionBlocLimit>
+    <limit actionType="Forward" limit="1" />
+    <limit actionType="TurnLeft" limit="1" />
+    <limit actionType="TurnRight" limit="1" />
+    <limit actionType="TurnBack" limit="1" />
+    <limit actionType="Activate" limit="1" />
+    <limit actionType="Wait" limit="1" />
+    <limit actionType="If" limit="1" />
+    <limit actionType="Else" limit="1" />
+    <limit actionType="For" limit="1" />
+    <limit actionType="Forever" limit="0" />
+    <limit actionType="While" limit="0" />
+    <limit actionType="AndOperator" limit="1" />
+    <limit actionType="OrOperator" limit="1" />
+    <limit actionType="NotOperator" limit="1" />
+    <limit actionType="Wall" limit="1" />
+    <limit actionType="Enemie" limit="0" />
+    <limit actionType="RedArea" limit="0" />
+    <limit actionType="FieldGate" limit="1" />
+    <limit actionType="Terminal" limit="1" />
+  </actionBlocLimit>
+  <player posX="1" posZ="1" direction="4" />
+  <script>
+    <control type="For" nbFor="1">
+      <control type="IfElse">
+        <condition>
+          <captor type="Terminal"/>
+        </condition>
+        <container type="ThenContainer">
+          <action type="Activate"/>
+        </container>
+        <container type="ElseContainer">
+          <action type="Forward"/>
+        </container>
+      </control>
+      <control type="If">
+        <condition>
+          <operator type="NotOperator">
+            <captor type="Wall"/>
+          </operator>
+        </condition>
+        <container type="ThenContainer">
+          <action type="TurnRight"/>
+        </container>
+      </control>
+    </control>
+  </script>
+  <activable posX="1" posZ="2" direction="3">
+    <slot slot="0" />
+  </activable>
+  <door posX="1" posZ="3" slot="0" direction="4" />
+  <activable posX="2" posZ="5" direction="1">
+    <slot slot="1" />
+  </activable>
+  <door posX="3" posZ="5" slot="1" direction="3" />
+  <activable posX="4" posZ="3" direction="3">
+    <slot slot="2" />
+  </activable>
+  <door posX="4" posZ="2" slot="2" direction="4" />
+  <score twoStars="3875" threeStars="4875"/>
+</level>

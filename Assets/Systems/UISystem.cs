@@ -646,6 +646,7 @@ public class UISystem : FSystem {
 		gameData.totalCoin = 0;
 		gameData.levelToLoadScore = null;
 		gameData.dialogMessage = new List<(string, string)>();
+		resetGameData();
 }
 
 
@@ -658,6 +659,13 @@ public class UISystem : FSystem {
 		gameData.actionsHistory = null;
 		// On recharge la scéne (mais avec le nouveau numéro de niveau)
 		restartScene();
+	}
+
+	// Reset les données du gameData pour la gestion des fonctionalités dans les niveaux
+	private void resetGameData()
+	{
+		gameData.GetComponent<FunctionalityParam>().funcActiveInLevel = new List<string>();
+		gameData.GetComponent<GameData>().executeLvlByComp = false;
 	}
 
 

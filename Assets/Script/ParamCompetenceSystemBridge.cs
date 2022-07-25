@@ -26,14 +26,17 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
     public void MAJLinkCompetence(GameObject target)
     {
         ParamCompetenceSystem.instance.saveListUser();
-        // Si il n'est pas selectionner, il va le devenir donc on active se qu'il faut
-        if (!target.GetComponent<Toggle>().isOn)
+        if(target.GetComponent<Toggle>().interactable)
         {
-            ParamCompetenceSystem.instance.selectComp(target, true);
-        }
-        else
-        {
-            ParamCompetenceSystem.instance.unselectComp(target, true);
+            // Si il n'est pas selectionner, il va le devenir donc on active se qu'il faut
+            if (!target.GetComponent<Toggle>().isOn)
+            {
+                ParamCompetenceSystem.instance.selectComp(target, true);
+            }
+            else
+            {
+                ParamCompetenceSystem.instance.unselectComp(target, true);
+            }
         }
     }
 

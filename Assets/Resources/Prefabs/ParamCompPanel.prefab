@@ -147,10 +147,10 @@ RectTransform:
   m_Father: {fileID: 7058834408463095425}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -5, y: -35}
-  m_SizeDelta: {x: 255, y: 330}
+  m_SizeDelta: {x: -445, y: -70}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &5452213795965405353
 CanvasRenderer:
@@ -430,8 +430,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1390281686951260454}
   m_HandleRect: {fileID: 4755081049300124568}
   m_Direction: 0
-  m_Value: 1.00005
-  m_Size: 0.9552838
+  m_Value: 0
+  m_Size: 0.90384614
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -887,8 +887,7 @@ GameObject:
   - component: {fileID: 7058834408030605724}
   - component: {fileID: 7058834408030605714}
   - component: {fileID: 7058834408030605715}
-  - component: {fileID: 3213744026547926768}
-  - component: {fileID: 1300300651068593482}
+  - component: {fileID: 7429810356494417198}
   m_Layer: 5
   m_Name: InfoText
   m_TagString: Untagged
@@ -910,10 +909,10 @@ RectTransform:
   m_Father: {fileID: 3579792767916245892}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -11.000721, y: -0.0005728533}
-  m_SizeDelta: {x: 11.000183, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 25, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &7058834408030605714
 CanvasRenderer:
@@ -1006,42 +1005,13 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 2.734375, y: 0, z: 26.363281, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &3213744026547926768
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7058834408030605725}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 7
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 7820492344821310996}
-          m_TargetAssemblyTypeName: BubbleScrollEvent, Assembly-CSharp
-          m_MethodName: onScroll
-          m_Mode: 0
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
---- !u!114 &1300300651068593482
+--- !u!114 &7429810356494417198
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1054,7 +1024,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
-  m_VerticalFit: 1
+  m_VerticalFit: 2
 --- !u!1 &7058834408304749951
 GameObject:
   m_ObjectHideFlags: 0
@@ -2939,7 +2909,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1125177059029375734}
   m_Direction: 2
   m_Value: 1
-  m_Size: 1
+  m_Size: 0.5911118
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

@@ -62,7 +62,6 @@ public class DragDropSystem : FSystem
 		LayoutRebuilder.ForceRebuildLayoutImmediate(bloc);
 	}
 
-
 	// On active toutes les drop zone qui n'ont pas de voisin ReplacementSlot
 	private void setDropZoneState(bool value)
 	{
@@ -439,8 +438,53 @@ public class DragDropSystem : FSystem
 		// On vérifie qu'il y a bien un objet pointé pour la suppression
 		if(elementToDelete != null)
         {
+			GameObject conditionContainer = null;
+			GameObject containerAction = null;
+			GameObject elseContainer = null;
+
+			// On regarde si l'objet contien des enfants, si oui, on parcourt les enfants pour les supprimer aussi
+            if (elementToDelete.GetComponent<IfControl>())
+            {
+				conditionContainer = elementToDelete.transform.Find("ConditionContainer").gameObject;
+				containerAction = elementToDelete.transform.Find("Container").gameObject;
+				if (elementToDelete.GetComponent<IfElseControl>())
+                {
+					elseContainer = elementToDelete.transform.Find("ElseContainer").gameObject;
+				}
+			}
+			else if (elementToDelete.GetComponent<ForControl>())
+            {
+				containerAction = elementToDelete.transform.Find("Container").gameObject;
+				if (elementToDelete.GetComponent<WhileControl>())
+				{
+					conditionContainer = elementToDelete.transform.Find("ConditionContainer").gameObject;
+				}
+			}
+
+			if(conditionContainer != null)
+            {
+				foreach(Transform child in conditionContainer.transform)
+                {
+					Debug.Log("Child name : " + child.name);
+					if(child.name != "EmptyConditionalSlot")
+                    {
+						Debug.Log("Delete : " + child.name);
+						deleteElement(child.gameObject);
+					}
+                }
+			}
+			if(containerAction != null)
+            {
+
+            }
+			if(elseContainer != null)
+            {
+
+            }
+
 			// Réactivation d'une EmptyZone si nécessaire
 			manageEmptyZone(elementToDelete);
+			GameObjectManager.addComponent<AddOne>(elementToDelete);
 			//On associe à l'élément le component ResetBlocLimit pour déclancher le script de destruction de l'élément
 			GameObjectManager.addComponent<ResetBlocLimit>(elementToDelete);
 			UISystem.instance.startUpdatePlayButton();

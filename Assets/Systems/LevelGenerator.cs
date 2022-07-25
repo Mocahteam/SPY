@@ -13,6 +13,8 @@ using UnityEngine.Networking;
 /// </summary>
 public class LevelGenerator : FSystem {
 
+	public static LevelGenerator instance;
+
 	// Famille contenant les agents editables
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
 	private List<List<int>> map;
@@ -21,8 +23,15 @@ public class LevelGenerator : FSystem {
 	public GameObject camera;
 	public GameObject editableCanvas;// Le container qui contient les Viewport/script container
 	public GameObject scriptContainer;
+	public GameObject library; // Le viewport qui contient la librairie
+	public GameObject EditableContenair; // Le container qui contient les séquences éditables
 	public TMP_Text levelName;
 	public GameObject canvas;
+
+	public LevelGenerator()
+	{
+		instance = this;
+	}
 
 	protected override void onStart()
     {
@@ -63,6 +72,11 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
+	public void startReadDocXML(XmlDocument doc)
+    {
+		MainLoop.instance.StartCoroutine(GetLevelWebRequest(doc));
+	}
+
 	private void generateMap(){
 		for(int i = 0; i< map.Count; i++){
 			for(int j = 0; j < map[i].Count; j++){
@@ -100,6 +114,12 @@ public class LevelGenerator : FSystem {
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.Level.transform.position + new Vector3(i*3,5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				break;
 		}
+        // Si la function permettant de changer le nom de l'agent est activé
+        if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F9"))
+        {
+			entity.GetComponent<AgentEdit>().editState = AgentEdit.EditMode.Synch;
+		}
+
 		// Charger l'agent aux bonnes coordonées dans la bonne direction
 		entity.GetComponent<Position>().x = i;
 		entity.GetComponent<Position>().z = j;
@@ -256,6 +276,9 @@ public class LevelGenerator : FSystem {
 		XmlNode root = doc.ChildNodes[1];
 		foreach(XmlNode child in root.ChildNodes){
 			switch(child.Name){
+				case "info":
+					readXMLInfos(child);
+					break;
 				case "map":
 					readXMLMap(child);
 					break;
@@ -302,7 +325,57 @@ public class LevelGenerator : FSystem {
 
 		eraseMap();
 		generateMap();
+		activeDesactiveFunctionality();
         GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
+	}
+
+	// Si le niveau n'a pas était lancer par la selection de compétence,
+	// Alors on va noté les fonctionnalité (hors level design) qui doivent être activé dans le niveau
+	private void readXMLInfos(XmlNode infoNode){
+        if (!gameData.GetComponent<GameData>().executeLvlByComp){
+			foreach (XmlNode child in infoNode){
+				switch(child.Name)
+                {
+					case "func":
+						readFunc(child);
+						break;
+					default:
+						break;
+                }
+			}
+		}
+	}
+
+	// Ajoute la fonction parametrée dans le niveau dans la liste des fonctions selectionnées dans le gameData si celle ci ne si trouve pas déjà
+	private void readFunc(XmlNode FuncNode)
+    {
+        if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(FuncNode.Attributes.GetNamedItem("name").Value))
+        {
+			gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(FuncNode.Attributes.GetNamedItem("name").Value);
+		}
+		 // tester si func associer et réitérer
+		foreach(string funcName in gameData.GetComponent<FunctionalityParam>().activeFunc[FuncNode.Attributes.GetNamedItem("name").Value])
+        {
+			if(funcName != "")
+            {
+				selectFuncAssociate(funcName);
+			}
+        }
+    }
+
+	private void selectFuncAssociate(string functionnalityName)
+    {
+		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(functionnalityName))
+        {
+			gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(functionnalityName);
+			foreach (string funcName in gameData.GetComponent<FunctionalityParam>().activeFunc[functionnalityName])
+			{
+				if (funcName != "")
+				{
+					selectFuncAssociate(funcName);
+				}
+			}
+		}
 	}
 
 	private void readXMLMap(XmlNode mapNode){
@@ -316,14 +389,93 @@ public class LevelGenerator : FSystem {
 	}
 
 	private void readXMLLimits(XmlNode limitsNode){
-		string actionName = null;
-		foreach(XmlNode limitNode in limitsNode.ChildNodes){
-			actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
-			// check if a GameObject exists with the same name
-			if (GameObject.Find(actionName) && !gameData.actionBlocLimit.ContainsKey(actionName)){
-				gameData.actionBlocLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
+		List<string> listFuncGD = gameData.GetComponent<FunctionalityParam>().funcActiveInLevel;
+		// Si l'option F2 est activé
+		if (listFuncGD.Contains("F2"))
+        {
+			string actionName = null;
+			foreach (XmlNode limitNode in limitsNode.ChildNodes)
+			{
+				actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
+				// check if a GameObject exists with the same name
+				if (GameObject.Find(actionName) && !gameData.actionBlocLimit.ContainsKey(actionName)){
+					gameData.actionBlocLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
+				}
+			}
+			tcheckRequierement();
+		} // Sinon on met toutes les limites de block à 0
+        else
+        {
+			foreach(string nameFunc in gameData.actionBlocLimit.Keys)
+            {
+				gameData.actionBlocLimit[nameFunc] = 0;
 			}
 		}
+		
+	}
+
+	private void tcheckRequierement()
+    {
+		// Besoin de reagrder si les capteurs sont correctement parametré
+		bool prgOkCaptor = tcheckCaptorProgramationValide();
+
+		foreach (string funcName in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary.Keys)
+        {
+            if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(funcName))
+            {
+				bool errorPrgFunc = true;
+				foreach (string element in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary[funcName])
+				{
+					//On regarde si c'est un capteur ou non
+					if (element != "Captor")
+					{
+						if (gameData.actionBlocLimit[element] != 0)
+						{
+							errorPrgFunc = false;
+						}
+					}
+				}
+
+                if (errorPrgFunc || !prgOkCaptor)
+                {
+					foreach (string element in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary[funcName])
+					{
+						//On regarde si c'est une erreur de programtion capteur (et si l'element est un capteur)
+						if (!prgOkCaptor)
+						{
+							// On passe tous les capteur à -1
+							foreach(string captor in gameData.GetComponent<FunctionalityParam>().listCaptor)
+                            {
+								gameData.actionBlocLimit[captor] = -1;
+							}
+						}
+
+						if(errorPrgFunc && element != "Captor")
+						{
+							gameData.actionBlocLimit[element] = -1;
+						}
+					}
+				}
+			}
+        }
+	}
+
+	private bool tcheckCaptorProgramationValide()
+    {
+		bool tcheck = false;
+		foreach(string ele in gameData.actionBlocLimit.Keys)
+        {
+            if (gameData.GetComponent<FunctionalityParam>().listCaptor.Contains(ele))
+            {
+				// Si au moins un des capteurs est présent dans les limitation (autre que 0)
+				// On considére qu'il n'y a pas d'erreur de programation du niveau pour les capteurs
+				if(gameData.actionBlocLimit[ele] != 0)
+                {
+					tcheck = true;
+				}
+            }
+        }
+		return tcheck;
 	}
 
 	private void readXMLActivable(XmlNode activableNode){
@@ -643,6 +795,32 @@ public class LevelGenerator : FSystem {
             {
 				computeNext(child.transform.Find("Container").gameObject);
 			}
+		}
+	}
+
+	private void activeDesactiveFunctionality()
+    {
+        // Si F1 désactivé, on désactive la librairie
+        if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F1"))
+        {
+			library.SetActive(false);
+		}
+		// Si F3 désactivé, on désactive le systéme DragDropSystem
+		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F3"))
+        {
+			DragDropSystem.instance.Pause = true;
+		}
+		// Si F5 est désactivé, le bouton pour que le robot effectue une sequence d'action pas à pas n'est plus disponible
+		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F5"))
+		{
+			////////////////////////////////////////////
+			// PRINCIPE DES HISTORIQUES DOIT ETRE RESTAURE
+			UISystem.instance.buttonStep.SetActive(false);
+		}
+		// Si F8 est désactivé, le bouton pour que le robot effectue une sequence d'action n'est plus disponible
+		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F8"))
+		{
+			UISystem.instance.buttonPlay.SetActive(false);
 		}
 	}
 }

@@ -6,6 +6,8 @@ public class LevelGenerator_wrapper : BaseWrapper
 	public UnityEngine.GameObject camera;
 	public UnityEngine.GameObject editableCanvas;
 	public UnityEngine.GameObject scriptContainer;
+	public UnityEngine.GameObject library;
+	public UnityEngine.GameObject EditableContenair;
 	public TMPro.TMP_Text levelName;
 	public UnityEngine.GameObject canvas;
 	private void Start()
@@ -14,6 +16,8 @@ public class LevelGenerator_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "camera", camera);
 		MainLoop.initAppropriateSystemField (system, "editableCanvas", editableCanvas);
 		MainLoop.initAppropriateSystemField (system, "scriptContainer", scriptContainer);
+		MainLoop.initAppropriateSystemField (system, "library", library);
+		MainLoop.initAppropriateSystemField (system, "EditableContenair", EditableContenair);
 		MainLoop.initAppropriateSystemField (system, "levelName", levelName);
 		MainLoop.initAppropriateSystemField (system, "canvas", canvas);
 	}
