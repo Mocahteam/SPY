@@ -77,7 +77,7 @@ public class UISystem : FSystem {
 			UnityEngine.Object.Destroy(go);
 		});
 		playerScriptEnds.addEntryCallback(delegate { setExecutionView(false); });
-		playerScriptEnds.addEntryCallback(saveHistory);
+		//playerScriptEnds.addEntryCallback(saveHistory);
 		emptyPlayerExecution.addEntryCallback(delegate { setExecutionView(true); });
 		emptyPlayerExecution.addEntryCallback(delegate { GameObjectManager.removeComponent<EmptyExecution>(MainLoop.instance.gameObject); });
 		
