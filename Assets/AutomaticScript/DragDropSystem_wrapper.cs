@@ -63,4 +63,9 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "checkDoubleClick", element);
 	}
 
+	public void manageEmptyZone(UnityEngine.GameObject ele)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "manageEmptyZone", ele);
+	}
+
 }

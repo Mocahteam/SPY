@@ -15,6 +15,10 @@ public class DetectorManager : FSystem {
     private Family gameLoaded_f = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
     private Family enemyMoved_f = FamilyManager.getFamily(new AnyOfComponents(typeof(Moved), typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
     private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
+
+    private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+
     private GameData gameData;
     private bool activeRedDetector;
 
@@ -22,7 +26,7 @@ public class DetectorManager : FSystem {
 
     protected override void onStart()
     {
-        activeRedDetector = true;
+        activeRedDetector = false;
         GameObject go = GameObject.Find("GameData");
         if (go != null)
             gameData = go.GetComponent<GameData>();
@@ -30,7 +34,14 @@ public class DetectorManager : FSystem {
         enemyMoved_f.addEntryCallback(updateDetector);
         robotcollision_f.addEntryCallback(onNewCollision);
 
-        
+        playingMode_f.addEntryCallback(delegate {
+            activeRedDetector = true;
+            updateDetectors();
+        });
+        editingMode_f.addEntryCallback(delegate {
+            activeRedDetector = false;
+            updateDetectors();
+        });
     }
 
     private void onNewCollision(GameObject robot){
@@ -46,19 +57,13 @@ public class DetectorManager : FSystem {
 		}
     }
 
-    // See ExecuteButton, StopButton and ReloadState buttons in editor
-	public void detectCollision(bool on){
-		activeRedDetector = on;
-    }
-
-    public void updateDetectors()
+    private void updateDetectors()
     {
         foreach (GameObject detect in enemyGO)
             updateDetector(detect);
     }
 
-    // See StopButton and ReloadState buttons in editor
-    public void updateDetector(GameObject drone)
+    private void updateDetector(GameObject drone)
     {
         foreach (Moved moved in drone.GetComponents<Moved>())
             GameObjectManager.removeComponent(moved);

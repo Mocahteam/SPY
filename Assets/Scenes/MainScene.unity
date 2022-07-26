@@ -4702,6 +4702,8 @@ GameObject:
   - component: {fileID: 361349220}
   - component: {fileID: 361349236}
   - component: {fileID: 361349237}
+  - component: {fileID: 361349238}
+  - component: {fileID: 361349239}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -4748,7 +4750,7 @@ MonoBehaviour:
   mainCanvas: {fileID: 1410401867}
   lastDropZoneUsed: {fileID: 0}
   audioSource: {fileID: 451020368}
-  buttonPlay: {fileID: 1504297949}
+  buttonPlay: {fileID: 0}
   catchTime: 0.25
 --- !u!114 &361349219
 MonoBehaviour:
@@ -4778,6 +4780,8 @@ MonoBehaviour:
   camera: {fileID: 963194225}
   editableCanvas: {fileID: 451020363}
   scriptContainer: {fileID: 1273315146}
+  library: {fileID: 0}
+  EditableContenair: {fileID: 0}
   levelName: {fileID: 278433493}
   canvas: {fileID: 1410401867}
 --- !u!114 &361349221
@@ -4792,12 +4796,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2b99b2b8b7c1e84c864f9738c5cadde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonPlay: {fileID: 1504297949}
-  buttonContinue: {fileID: 30024878}
-  buttonStop: {fileID: 1684333869}
+  buttonExecute: {fileID: 1504297949}
   buttonPause: {fileID: 768015838}
-  buttonStep: {fileID: 624363071}
+  buttonNextStep: {fileID: 624363071}
+  buttonContinue: {fileID: 30024878}
   buttonSpeed: {fileID: 121265415}
+  buttonStop: {fileID: 1684333869}
   menuEchap: {fileID: 989566791}
   endPanel: {fileID: 1306532945}
   dialogPanel: {fileID: 2103625724}
@@ -4963,6 +4967,10 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: DetectorManager, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: DetectorManager
+    _pause: 0
+  - _typeAssemblyQualifiedName: ModeManager, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    _typeFullName: ModeManager
     _pause: 0
   _forceUpdateInspector: 0
   _loadingState: 0
@@ -5179,6 +5187,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   endPanel: {fileID: 1306532945}
+--- !u!114 &361349238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3801d6d76f4570a4492a6e8311c94988, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &361349239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89ad2e985fc34264ca591497f2e2c403, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &374158249
 GameObject:
   m_ObjectHideFlags: 0
@@ -17485,177 +17517,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361349221}
-        m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
-        m_MethodName: copyEditableScriptsToExecutablePanels
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349216}
-        m_TargetAssemblyTypeName: StepSystem_wrapper, Assembly-CSharp
-        m_MethodName: countNewExecution
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349233}
-        m_TargetAssemblyTypeName: GameStateManager_wrapper, Assembly-CSharp
-        m_MethodName: SaveState
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1504297949}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 768015838}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 624363071}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 30024878}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 121265415}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 1684333869}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 361349216}
-        m_TargetAssemblyTypeName: StepSystem_wrapper, Assembly-CSharp
-        m_MethodName: autoExecuteStep
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 361349219}
-        m_TargetAssemblyTypeName: DetectorManager_wrapper, Assembly-CSharp
-        m_MethodName: detectCollision
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 361349222}
-        m_TargetAssemblyTypeName: CoinManager_wrapper, Assembly-CSharp
-        m_MethodName: detectCollision
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 361349216}
-        m_TargetAssemblyTypeName: StepSystem_wrapper, Assembly-CSharp
-        m_MethodName: setToDefaultTimeStep
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349221}
-        m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
-        m_MethodName: setExecutionView
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
       - m_Target: {fileID: 1504297952}
         m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
         m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 361349238}
+        m_TargetAssemblyTypeName: ModeManager_wrapper, Assembly-CSharp
+        m_MethodName: setPlayingMode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -19574,141 +19450,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1504297949}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 768015838}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 624363071}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 30024878}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 121265415}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1684333869}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349231}
-        m_TargetAssemblyTypeName: CurrentActionManager_wrapper, Assembly-CSharp
-        m_MethodName: removeAllCurrentActions
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349216}
-        m_TargetAssemblyTypeName: StepSystem_wrapper, Assembly-CSharp
-        m_MethodName: autoExecuteStep
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349219}
-        m_TargetAssemblyTypeName: DetectorManager_wrapper, Assembly-CSharp
-        m_MethodName: detectCollision
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349222}
-        m_TargetAssemblyTypeName: CoinManager_wrapper, Assembly-CSharp
-        m_MethodName: detectCollision
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349219}
-        m_TargetAssemblyTypeName: DetectorManager_wrapper, Assembly-CSharp
-        m_MethodName: updateDetectors
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349216}
-        m_TargetAssemblyTypeName: StepSystem_wrapper, Assembly-CSharp
-        m_MethodName: updateTotalStep
+      - m_Target: {fileID: 361349238}
+        m_TargetAssemblyTypeName: ModeManager_wrapper, Assembly-CSharp
+        m_MethodName: setEditMode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -19730,10 +19474,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 361349221}
-        m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
-        m_MethodName: setExecutionView
-        m_Mode: 6
+      - m_Target: {fileID: 361349216}
+        m_TargetAssemblyTypeName: StepSystem_wrapper, Assembly-CSharp
+        m_MethodName: cancelTotalStep
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -20394,9 +20138,33 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 361349238}
+        m_TargetAssemblyTypeName: ModeManager_wrapper, Assembly-CSharp
+        m_MethodName: setEditMode
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 361349233}
         m_TargetAssemblyTypeName: GameStateManager_wrapper, Assembly-CSharp
         m_MethodName: LoadState
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 361349216}
+        m_TargetAssemblyTypeName: StepSystem_wrapper, Assembly-CSharp
+        m_MethodName: cancelTotalStep
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -20420,55 +20188,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 361349221}
         m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
-        m_MethodName: reloadState
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349216}
-        m_TargetAssemblyTypeName: StepSystem_wrapper, Assembly-CSharp
-        m_MethodName: autoExecuteStep
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349219}
-        m_TargetAssemblyTypeName: DetectorManager_wrapper, Assembly-CSharp
-        m_MethodName: detectCollision
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349222}
-        m_TargetAssemblyTypeName: CoinManager_wrapper, Assembly-CSharp
-        m_MethodName: detectCollision
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 361349219}
-        m_TargetAssemblyTypeName: DetectorManager_wrapper, Assembly-CSharp
-        m_MethodName: updateDetectors
+        m_MethodName: cancelEnd
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

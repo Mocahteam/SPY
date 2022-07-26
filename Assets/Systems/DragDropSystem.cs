@@ -505,7 +505,7 @@ public class DragDropSystem : FSystem
 	}
 
 	// Réactive une end zone si besoin
-	private void manageEmptyZone(GameObject ele)
+	public void manageEmptyZone(GameObject ele)
     {
 		if (ele.GetComponent<BaseCondition>())
         {

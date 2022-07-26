@@ -13,6 +13,8 @@ public class GameStateManager : FSystem {
     private Family f_activables = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
 
+    private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+
     private SaveContent save;
 
     private string currentContent;
@@ -26,6 +28,7 @@ public class GameStateManager : FSystem {
     protected override void onStart()
     {
         save = new SaveContent();
+        playingMode_f.addEntryCallback(delegate { SaveState(); });
     }
 
     // See ExecuteButton in editor

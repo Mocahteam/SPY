@@ -8,9 +8,4 @@ public class CoinManager_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void detectCollision(System.Boolean on)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "detectCollision", on);
-	}
-
 }

@@ -3,12 +3,12 @@ using FYFY;
 
 public class UISystem_wrapper : BaseWrapper
 {
-	public UnityEngine.GameObject buttonPlay;
-	public UnityEngine.GameObject buttonContinue;
-	public UnityEngine.GameObject buttonStop;
+	public UnityEngine.GameObject buttonExecute;
 	public UnityEngine.GameObject buttonPause;
-	public UnityEngine.GameObject buttonStep;
+	public UnityEngine.GameObject buttonNextStep;
+	public UnityEngine.GameObject buttonContinue;
 	public UnityEngine.GameObject buttonSpeed;
+	public UnityEngine.GameObject buttonStop;
 	public UnityEngine.GameObject menuEchap;
 	public UnityEngine.GameObject endPanel;
 	public UnityEngine.GameObject dialogPanel;
@@ -19,12 +19,12 @@ public class UISystem_wrapper : BaseWrapper
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
-		MainLoop.initAppropriateSystemField (system, "buttonPlay", buttonPlay);
-		MainLoop.initAppropriateSystemField (system, "buttonContinue", buttonContinue);
-		MainLoop.initAppropriateSystemField (system, "buttonStop", buttonStop);
+		MainLoop.initAppropriateSystemField (system, "buttonExecute", buttonExecute);
 		MainLoop.initAppropriateSystemField (system, "buttonPause", buttonPause);
-		MainLoop.initAppropriateSystemField (system, "buttonStep", buttonStep);
+		MainLoop.initAppropriateSystemField (system, "buttonNextStep", buttonNextStep);
+		MainLoop.initAppropriateSystemField (system, "buttonContinue", buttonContinue);
 		MainLoop.initAppropriateSystemField (system, "buttonSpeed", buttonSpeed);
+		MainLoop.initAppropriateSystemField (system, "buttonStop", buttonStop);
 		MainLoop.initAppropriateSystemField (system, "menuEchap", menuEchap);
 		MainLoop.initAppropriateSystemField (system, "endPanel", endPanel);
 		MainLoop.initAppropriateSystemField (system, "dialogPanel", dialogPanel);
@@ -47,6 +47,11 @@ public class UISystem_wrapper : BaseWrapper
 	public void setExecutionView(System.Boolean value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setExecutionView", value);
+	}
+
+	public void saveHistory()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "saveHistory", null);
 	}
 
 	public void resetScriptContainer(System.Boolean refund)
@@ -109,9 +114,9 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "retry", null);
 	}
 
-	public void reloadState()
+	public void cancelEnd()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "reloadState", null);
+		MainLoop.callAppropriateSystemMethod (system, "cancelEnd", null);
 	}
 
 	public void fillExecutablePanel()

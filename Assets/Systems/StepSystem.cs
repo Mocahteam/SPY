@@ -10,8 +10,10 @@ public class StepSystem : FSystem {
     private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
     private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
-	private Family playerScriptEnds = FamilyManager.getFamily(new NoneOfComponents(typeof(Moved)), new AnyOfTags("Player"));
-    private Family movingAgents = FamilyManager.getFamily(new AllOfComponents(typeof(Moved)));
+
+    private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+
     private float timeStepCpt;
     private static float defaultTimeStep = 1.5f; 
 	private static float timeStep = defaultTimeStep;
@@ -28,19 +30,23 @@ public class StepSystem : FSystem {
             gameData = go.GetComponent<GameData>();
         timeStepCpt = timeStep;
         newStep_f.addEntryCallback(onNewStep);
-        //reset nbstep on execution end
-        playerScriptEnds.addExitCallback(delegate { nbStep = 0; });
-    }
 
-    // See ExecuteButton in editor (launch execution process by adding FirstStep)
-    public void countNewExecution()
-    {
-        gameData.totalExecute++;
-        timeStepCpt = timeStep;
-        gameData.totalStep++;
-        nbStep++;
-    }
+        playingMode_f.addEntryCallback(delegate
+        {
+            // count a new execution
+            gameData.totalExecute++;
+            gameData.totalStep++;
+            timeStepCpt = timeStep;
+            nbStep++;
+            Pause = false;
+            setToDefaultTimeStep();
+        });
 
+        editingMode_f.addEntryCallback(delegate
+        {
+            Pause = true;
+        });
+    }
 
     private void onNewStep(GameObject go)
     {
@@ -50,54 +56,58 @@ public class StepSystem : FSystem {
 
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
-		//Organize each steps
-		if(currentActions.Count > 0 && newEnd_f.Count == 0){
-            
+        //Organize each steps
+        if (newEnd_f.Count == 0 && (playerHasNextAction() || timeStepCpt > 0))
+        {
             //activate step
-            if (timeStepCpt <= 0 && playerHasNextAction())
+            if (timeStepCpt <= 0)
             {
                 GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
                 gameData.totalStep++;
                 nbStep++;
-                if(newStepAskedByPlayer){
+                if (newStepAskedByPlayer)
+                {
                     newStepAskedByPlayer = false;
                     Pause = true;
                 }
             }
             else
                 timeStepCpt -= Time.deltaTime;
-		}
-        else{
-            MainLoop.instance.StartCoroutine(delayCheckEnd());
         }
-	}
-
-    private IEnumerator delayCheckEnd(){
-        yield return null;
-        yield return null;
-        if(currentActions.Count == 0)
-            stopExecution();
+        else // newEnd_f.Count > 0 || (!playerHasNextAction && timeStep CPt <=0)
+        {
+            MainLoop.instance.StartCoroutine(delayCheckEnd());
+            Pause = true;
+        }
     }
 
-    private void stopExecution(){
-        foreach(GameObject movingAgent in movingAgents)
-            GameObjectManager.removeComponent<Moved>(movingAgent);
-        Pause = true;
+    private IEnumerator delayCheckEnd()
+    {
+        // wait a new possible current action
+        yield return null;
+        yield return null;
+        // If there are still no actions => end playing mode
+        if (!playerHasNextAction())
+        {
+            Pause = true;
+            ModeManager.instance.setEditMode();
+            UISystem.instance.saveHistory();
+        }
+        else
+            Pause = false;
     }
 
     private bool playerHasNextAction(){
 		CurrentAction act;
 		foreach(GameObject go in currentActions){
 			act = go.GetComponent<CurrentAction>();
-			if(act.agent != null && act.agent.CompareTag("Player") && act.GetComponent<BaseElement>().next != null){
-				return true;                
-            }
+			if(act.agent != null && act.agent.CompareTag("Player") && act.GetComponent<BaseElement>().next != null)
+				return true;
 		}
-        stopExecution();
         return false;
     }
 
-    // See PauseButton, ExecuteButton, ContinueButton, StopButton and ReloadState buttons in editor
+    // See PauseButton, ContinueButton in editor
     public void autoExecuteStep(bool on){
         Pause = !on;
     }
@@ -109,7 +119,7 @@ public class StepSystem : FSystem {
     }
 
     // See StopButton in editor
-    public void updateTotalStep(){ //on click on stop button
+    public void cancelTotalStep(){ //on click on stop button
         gameData.totalStep -= nbStep;
         nbStep = 0;
     }

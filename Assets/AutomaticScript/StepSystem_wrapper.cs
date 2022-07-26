@@ -8,11 +8,6 @@ public class StepSystem_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void countNewExecution()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "countNewExecution", null);
-	}
-
 	public void autoExecuteStep(System.Boolean on)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "autoExecuteStep", on);
@@ -23,9 +18,9 @@ public class StepSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "goToNextStep", null);
 	}
 
-	public void updateTotalStep()
+	public void cancelTotalStep()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "updateTotalStep", null);
+		MainLoop.callAppropriateSystemMethod (system, "cancelTotalStep", null);
 	}
 
 	public void speedTimeStep()

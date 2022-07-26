@@ -23,26 +23,26 @@ public class UISystem : FSystem {
 	private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction), typeof(LibraryItemRef), typeof(CurrentAction)));
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
-	private Family playerScriptEnds = FamilyManager.getFamily(new NoneOfComponents(typeof(Moved)), new AnyOfTags("Player"));
-	private Family emptyPlayerExecution = FamilyManager.getFamily(new AllOfComponents(typeof(EmptyExecution)));
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private Family viewportContainerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les container éditable
 	private Family viewportContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les containers viewport
 	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
 	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
-	private Family resetButton_f = FamilyManager.getFamily(new AnyOfTags("ResetButton")); // Les boutons reset
+	
+	private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 	private Family inventoryBlocks = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	private GameData gameData;
 	private int nDialog = 0;
 
-	public GameObject buttonPlay;
-	public GameObject buttonContinue;
-	public GameObject buttonStop;
+	public GameObject buttonExecute;
 	public GameObject buttonPause;
-	public GameObject buttonStep;
+	public GameObject buttonNextStep;
+	public GameObject buttonContinue;
 	public GameObject buttonSpeed;
+	public GameObject buttonStop;
 	public GameObject menuEchap;
 	public GameObject endPanel;
 	public GameObject dialogPanel;
@@ -76,12 +76,17 @@ public class UISystem : FSystem {
 			GameObjectManager.unbind(go);
 			UnityEngine.Object.Destroy(go);
 		});
-		playerScriptEnds.addEntryCallback(delegate { setExecutionView(false); });
-		//playerScriptEnds.addEntryCallback(saveHistory);
-		emptyPlayerExecution.addEntryCallback(delegate { setExecutionView(true); });
-		emptyPlayerExecution.addEntryCallback(delegate { GameObjectManager.removeComponent<EmptyExecution>(MainLoop.instance.gameObject); });
 		
 		currentActions.addEntryCallback(onNewCurrentAction);
+
+		playingMode_f.addEntryCallback(delegate {
+			copyEditableScriptsToExecutablePanels();
+			setExecutionView(true);
+		});
+
+		editingMode_f.addEntryCallback(delegate {
+			setExecutionView(false);
+		});
 
 		inventoryBlocks.addEntryCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
 		inventoryBlocks.addExitCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
@@ -115,12 +120,12 @@ public class UISystem : FSystem {
 	private IEnumerator updatePlayButton()
 	{
 		yield return null;
-		buttonPlay.GetComponent<Button>().interactable = false;
+		buttonExecute.GetComponent<Button>().interactable = false;
 		foreach (GameObject container in scriptContainer_f)
 		{
 			if (container.GetComponentsInChildren<BaseElement>().Length > 0)
 			{
-				buttonPlay.GetComponent<Button>().interactable = true;
+				buttonExecute.GetComponent<Button>().interactable = true;
 			}
 		}
 	}
@@ -264,26 +269,33 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(canvas.transform.Find("LeftPanel").gameObject, !value);
 		// Toggle execution panel
 		GameObjectManager.setGameObjectState(canvas.transform.Find("ExecutableCanvas").gameObject, value);
+		// Define Menu button states
+		GameObjectManager.setGameObjectState(buttonExecute, !value);
+		GameObjectManager.setGameObjectState(buttonPause, value);
+		GameObjectManager.setGameObjectState(buttonNextStep, false);
+		GameObjectManager.setGameObjectState(buttonContinue, false);
+		GameObjectManager.setGameObjectState(buttonSpeed, value);
+		GameObjectManager.setGameObjectState(buttonStop, value);
 	}
-	
+
 
 	// Add the executed scripts to the containers history
-	private void saveHistory(GameObject unused){
-		if(gameData.actionsHistory == null){
+	public void saveHistory() {
+		if (gameData.actionsHistory == null) {
 			// set history as a copy of editable canvas
 			gameData.actionsHistory = GameObject.Instantiate(EditableCanvas.transform.GetChild(0).transform).gameObject;
 			gameData.actionsHistory.SetActive(false); // keep this gameObject as a ghost
-			// We don't bind the history to FYFY
+													  // We don't bind the history to FYFY
 		}
-		else{
+		else {
 			// parse all containers inside editable canvas
-			for(int containerCpt = 0; containerCpt < EditableCanvas.transform.GetChild(0).childCount; containerCpt++){
+			for (int containerCpt = 0; containerCpt < EditableCanvas.transform.GetChild(0).childCount; containerCpt++) {
 				Transform viewportForEditableContainer = EditableCanvas.transform.GetChild(0).GetChild(containerCpt);
 				// the first child is the script container that contains script elements
 				foreach (Transform child in viewportForEditableContainer.GetChild(0))
-                {
+				{
 					if (child.GetComponent<BaseElement>())
-                    {
+					{
 						// copy this child inside the appropriate history
 						GameObject.Instantiate(child, gameData.actionsHistory.transform.GetChild(containerCpt));
 						// We don't bind the history to FYFY
@@ -293,12 +305,16 @@ public class UISystem : FSystem {
 		}
 		// Erase all editable containers
 		foreach (Transform viewportForEditableContainer in EditableCanvas.transform.GetChild(0))
-			foreach (Transform child in viewportForEditableContainer.GetChild(0))
+			for (int i = viewportForEditableContainer.GetChild(0).childCount - 1; i >= 0; i--) {
+				Transform child = viewportForEditableContainer.GetChild(0).GetChild(i);
 				if (child.GetComponent<BaseElement>())
 				{
+					DragDropSystem.instance.manageEmptyZone(child.gameObject);
 					GameObjectManager.unbind(child.gameObject);
-					GameObject.Destroy(child);
+					child.SetParent(null);
+					GameObject.Destroy(child.gameObject);
 				}
+			}
 	}
 
 
@@ -341,31 +357,10 @@ public class UISystem : FSystem {
 		}
 	}
 
-
-	// ????
-	private void restoreLastEditedScript(){
-		/* TODO => reprendre ça
-		List<Transform> childrenList = new List<Transform>();
-		if(lastEditedScript != null)
-        {
-			foreach (Transform child in lastEditedScript.transform)
-			{
-				childrenList.Add(child);
-			}
-			foreach (Transform child in childrenList)
-			{
-				child.SetParent(editableScriptContainer.transform);
-				GameObjectManager.bind(child.gameObject);
-			}
-			GameObjectManager.refresh(editableScriptContainer);
-		}*/
-	}
-
-
 	// Lors d'une fin d'exécution de séquence, gére les différents éléments à ré-afficher ou si il faut sauvegarder que la progression du joueur
 	private void levelFinished (GameObject go){
 		// On réaffiche les différent panel pour la création de séquence
-		setExecutionView(true);
+		setExecutionView(false);
 
 		// En cas de fin de niveau
 		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
@@ -376,13 +371,11 @@ public class UISystem : FSystem {
 			PlayerPrefs.Save();
 		}
 		else if(go.GetComponent<NewEnd>().endType == NewEnd.Detected){
-			//copy player container into editable container
-			restoreLastEditedScript();
+			
 		}
 		else if (go.GetComponent<NewEnd>().endType == NewEnd.BadCondition)
 		{
-			//copy player container into editable container
-			restoreLastEditedScript();
+			
 		}
 	}
 
@@ -678,8 +671,8 @@ public class UISystem : FSystem {
 	}
 	
 
-	// ????
-	public void reloadState(){
+	// Cancel End (see ReloadState button in editor)
+	public void cancelEnd(){
 		GameObjectManager.removeComponent<NewEnd>(endPanel);
 	}
 
@@ -706,8 +699,6 @@ public class UISystem : FSystem {
 		LevelGenerator.computeNext(targetContainer);
 		// On détruit la copy de la sequence d'action
 		UnityEngine.Object.Destroy(containerCopy);
-		// On notifie les systèmes comme quoi le panneau d'execution est rempli
-		GameObjectManager.addComponent<ExecutablePanelReady>(MainLoop.instance.gameObject);
 	}
 
 	// See ExecuteButton in editor
@@ -717,8 +708,10 @@ public class UISystem : FSystem {
 		foreach (GameObject robot in playerGO) {
 			GameObject executableContainer = robot.GetComponent<ScriptRef>().executableScript;
 			// Clean robot container
-			foreach (Transform child in executableContainer.transform) {
+			for(int i = executableContainer.transform.childCount - 1; i >= 0; i--) {
+				Transform child = executableContainer.transform.GetChild(i);
 				GameObjectManager.unbind(child.gameObject);
+				child.SetParent(null); // beacause destroying is not immediate, we remove this child from its parent, then Unity can take the time he wants to destroy GameObject
 				GameObject.Destroy(child.gameObject);
 			}
 
@@ -738,13 +731,19 @@ public class UISystem : FSystem {
 				fillExecutablePanel(editableContainer, executableContainer, robot.tag);
 				// bind all child
 				foreach (Transform child in executableContainer.transform)
+				{
 					GameObjectManager.bind(child.gameObject);
+				}
 				// On développe le panneau au cas où il aurait été réduit
 				robot.GetComponent<ScriptRef>().executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
 			}
 		}
+		
+		// On notifie les systèmes comme quoi le panneau d'execution est rempli
+		GameObjectManager.addComponent<ExecutablePanelReady>(MainLoop.instance.gameObject);
+
 		// On harmonise l'affichage de l'UI container des agents
-		foreach(GameObject go in agents){
+		foreach (GameObject go in agents){
 			LayoutRebuilder.ForceRebuildLayoutImmediate(go.GetComponent<ScriptRef>().executablePanel.GetComponent<RectTransform>());
 			if(go.CompareTag("Player")){				
 				GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().executablePanel, true);				

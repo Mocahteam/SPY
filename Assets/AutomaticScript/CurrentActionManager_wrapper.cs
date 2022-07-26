@@ -8,9 +8,4 @@ public class CurrentActionManager_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void removeAllCurrentActions()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "removeAllCurrentActions", null);
-	}
-
 }

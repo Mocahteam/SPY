@@ -815,12 +815,12 @@ public class LevelGenerator : FSystem {
 		{
 			////////////////////////////////////////////
 			// PRINCIPE DES HISTORIQUES DOIT ETRE RESTAURE
-			UISystem.instance.buttonStep.SetActive(false);
+			UISystem.instance.buttonNextStep.SetActive(false);
 		}
 		// Si F8 est désactivé, le bouton pour que le robot effectue une sequence d'action n'est plus disponible
 		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F8"))
 		{
-			UISystem.instance.buttonPlay.SetActive(false);
+			UISystem.instance.buttonExecute.SetActive(false);
 		}
 	}
 }

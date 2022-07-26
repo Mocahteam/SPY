@@ -8,16 +8,23 @@ using FYFY_plugins.TriggerManager;
 /// </summary>
 public class CoinManager : FSystem {
     private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
+
+	private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+
 	private GameData gameData;
     private bool activeCoin;
 
 	protected override void onStart()
     {
-		activeCoin = true;
+		activeCoin = false;
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
 		robotcollision_f.addEntryCallback(onNewCollision);
+
+		playingMode_f.addEntryCallback(delegate { activeCoin = true; });
+		editingMode_f.addEntryCallback(delegate { activeCoin = false; });
 	}
 
 	private void onNewCollision(GameObject robot){
@@ -33,12 +40,6 @@ public class CoinManager : FSystem {
 			}			
 		}
     }
-
-	// See ExecuteButton, StopButton and Re
-	// buttons in editor
-	public void detectCollision(bool on){
-		activeCoin = on;
-	}
 
 	private IEnumerator coinDestroy(GameObject go){
 		go.GetComponent<ParticleSystem>().Play();

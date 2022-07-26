@@ -10,19 +10,4 @@ public class DetectorManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "endPanel", endPanel);
 	}
 
-	public void detectCollision(System.Boolean on)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "detectCollision", on);
-	}
-
-	public void updateDetectors()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "updateDetectors", null);
-	}
-
-	public void updateDetector(UnityEngine.GameObject drone)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "updateDetector", drone);
-	}
-
 }

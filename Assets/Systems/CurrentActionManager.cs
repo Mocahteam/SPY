@@ -14,7 +14,9 @@ public class CurrentActionManager : FSystem
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(LibraryItemRef), typeof(CurrentAction)));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
-	private Family playerScriptEnds = FamilyManager.getFamily(new NoneOfComponents(typeof(Moved)), new AnyOfTags("Player"));
+
+	private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+
 
 	public static CurrentActionManager instance;
 
@@ -24,33 +26,47 @@ public class CurrentActionManager : FSystem
 	}
 
 	protected override void onStart()
-    {
+	{
 		executionReady.addEntryCallback(initFirstsActions);
 		newStep_f.addEntryCallback(delegate { onNewStep(); });
-		playerScriptEnds.addEntryCallback(removePlayersCurrentActions);
+		editingMode_f.addEntryCallback(delegate {
+			// remove all player's current actions
+			foreach (GameObject currentAction in currentActions)
+				if (currentAction.GetComponent<CurrentAction>().agent.CompareTag("Player"))
+					GameObjectManager.removeComponent<CurrentAction>(currentAction);
+		});
 	}
 
 	private void initFirstsActions(GameObject go)
 	{
 		// init currentAction on the first action of players
+		bool atLeastOneFirstAction = false;
 		foreach (GameObject player in playerGO)
-			addCurrentActionOnFirstAction(player);
+			if (addCurrentActionOnFirstAction(player) != null)
+				atLeastOneFirstAction = true;
+		if (!atLeastOneFirstAction)
+		{
+			ModeManager.instance.setEditMode();
+			// TODO : afficher un message pour dire qu'aucune action n'est accessible
+		}
+		else
+		{
+			// init currentAction on the first action of ennemies
+			bool forceNewStep = false;
+			foreach (GameObject drone in droneGO)
+				if (!drone.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>() && !drone.GetComponent<ScriptRef>().scriptFinished)
+					addCurrentActionOnFirstAction(drone);
+				else
+					forceNewStep = true; // will move currentAction on next action
 
-		// init currentAction on the first action of ennemies
-		bool forceNewStep = false;
-		foreach (GameObject drone in droneGO)
-			if (!drone.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>() && !drone.GetComponent<ScriptRef>().scriptFinished)
-				addCurrentActionOnFirstAction(drone);
-			else
-				forceNewStep = true; // will move currentAction on next action
+			if (forceNewStep)
+				onNewStep();
 
-		if (forceNewStep)
-			onNewStep();
-
-		GameObjectManager.removeComponent<ExecutablePanelReady>(go);
+			GameObjectManager.removeComponent<ExecutablePanelReady>(go);
+		}
 	}
 
-	private void addCurrentActionOnFirstAction(GameObject agent)
+	private GameObject addCurrentActionOnFirstAction(GameObject agent)
     {
 		GameObject firstAction = null;
 		// try to get the first action
@@ -59,10 +75,12 @@ public class CurrentActionManager : FSystem
 			firstAction = getFirstActionOf(container.GetChild(0).gameObject, agent);
 
 		if (firstAction != null)
+		{
 			// Set this action as CurrentAction
 			GameObjectManager.addComponent<CurrentAction>(firstAction, new { agent = agent });
-		else
-			GameObjectManager.addComponent<EmptyExecution>(agent);
+		}
+
+		return firstAction;
 	}
 
 	// get first action inside "action", it could be control structure (if, for...) => recursive call
@@ -300,26 +318,5 @@ public class CurrentActionManager : FSystem
 	{
 		yield return null; // we add new CurrentAction next frame otherwise families are not notified to this adding because at the begining of this frame GameObject already contains CurrentAction
 		GameObjectManager.addComponent<CurrentAction>(nextAction, new { agent = agent });
-	}
-
-	private void removePlayersCurrentActions(GameObject agent)
-	{
-		foreach (GameObject currentAction in currentActions)
-		{
-			if (currentAction.GetComponent<CurrentAction>().agent == agent)
-				GameObjectManager.removeComponent<CurrentAction>(currentAction);
-		}
-	}
-
-	// See StopButton in editor
-	public void removeAllCurrentActions()
-	{
-		CurrentAction act;
-		foreach (GameObject go in currentActions)
-		{
-			act = go.GetComponent<CurrentAction>();
-			if (act.agent.CompareTag("Player"))
-				GameObjectManager.removeComponent<CurrentAction>(go);
-		}
 	}
 }
