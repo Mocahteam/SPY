@@ -4,7 +4,6 @@ using UnityEngine;
 public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public string text;
-    public bool agentNameActiveTooltip;
     private Tooltip tooltip;
 
     private bool isOver = false;
@@ -16,14 +15,9 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if(agentNameActiveTooltip)
-        {
-            tooltip.ShowTooltip(GetComponent<AgentEdit>().agentName);
-        }
-        else
-        {
-            tooltip.ShowTooltip(text);
-        }
+        if(text.Contains("#agentName"))
+            text = text.Replace("#agentName", GetComponent<AgentEdit>().agentName);
+        tooltip.ShowTooltip(text);
         isOver = true;
     }
 

@@ -10,6 +10,7 @@ public class UISystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject buttonSpeed;
 	public UnityEngine.GameObject buttonStop;
 	public UnityEngine.GameObject menuEchap;
+	public UnityEngine.GameObject buttonAddEditableContainer;
 	public UnityEngine.GameObject endPanel;
 	public UnityEngine.GameObject dialogPanel;
 	public UnityEngine.GameObject canvas;
@@ -26,6 +27,7 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "buttonSpeed", buttonSpeed);
 		MainLoop.initAppropriateSystemField (system, "buttonStop", buttonStop);
 		MainLoop.initAppropriateSystemField (system, "menuEchap", menuEchap);
+		MainLoop.initAppropriateSystemField (system, "buttonAddEditableContainer", buttonAddEditableContainer);
 		MainLoop.initAppropriateSystemField (system, "endPanel", endPanel);
 		MainLoop.initAppropriateSystemField (system, "dialogPanel", dialogPanel);
 		MainLoop.initAppropriateSystemField (system, "canvas", canvas);

@@ -10,6 +10,7 @@ using System.Collections;
 public class CurrentActionManager : FSystem
 {
 	private Family executionReady = FamilyManager.getFamily(new AllOfComponents(typeof(ExecutablePanelReady)));
+	private Family ends_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(LibraryItemRef), typeof(CurrentAction)));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
@@ -39,31 +40,35 @@ public class CurrentActionManager : FSystem
 
 	private void initFirstsActions(GameObject go)
 	{
-		// init currentAction on the first action of players
-		bool atLeastOneFirstAction = false;
-		foreach (GameObject player in playerGO)
-			if (addCurrentActionOnFirstAction(player) != null)
-				atLeastOneFirstAction = true;
-		if (!atLeastOneFirstAction)
+		// init first action if no ends occur (possible for scripts with bad condition)
+		if (ends_f.Count <= 0)
 		{
-			ModeManager.instance.setEditMode();
-			// TODO : afficher un message pour dire qu'aucune action n'est accessible
-		}
-		else
-		{
-			// init currentAction on the first action of ennemies
-			bool forceNewStep = false;
-			foreach (GameObject drone in droneGO)
-				if (!drone.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>() && !drone.GetComponent<ScriptRef>().scriptFinished)
-					addCurrentActionOnFirstAction(drone);
-				else
-					forceNewStep = true; // will move currentAction on next action
+			// init currentAction on the first action of players
+			bool atLeastOneFirstAction = false;
+			foreach (GameObject player in playerGO)
+				if (addCurrentActionOnFirstAction(player) != null)
+					atLeastOneFirstAction = true;
+			if (!atLeastOneFirstAction)
+			{
+				ModeManager.instance.setEditMode();
+				// TODO : afficher un message pour dire qu'aucune action n'est accessible
+			}
+			else
+			{
+				// init currentAction on the first action of ennemies
+				bool forceNewStep = false;
+				foreach (GameObject drone in droneGO)
+					if (!drone.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>() && !drone.GetComponent<ScriptRef>().scriptFinished)
+						addCurrentActionOnFirstAction(drone);
+					else
+						forceNewStep = true; // will move currentAction on next action
 
-			if (forceNewStep)
-				onNewStep();
-
-			GameObjectManager.removeComponent<ExecutablePanelReady>(go);
+				if (forceNewStep)
+					onNewStep();
+			}
 		}
+
+		GameObjectManager.removeComponent<ExecutablePanelReady>(go);
 	}
 
 	private GameObject addCurrentActionOnFirstAction(GameObject agent)

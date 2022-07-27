@@ -582,7 +582,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Ex\xE9cuter le script"
-  agentNameActiveTooltip: 0
 --- !u!82 &30024880
 AudioSource:
   m_ObjectHideFlags: 0
@@ -858,7 +857,7 @@ RectTransform:
   m_Children:
   - {fileID: 1198960392}
   m_Father: {fileID: 1339828889}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -1606,7 +1605,7 @@ RectTransform:
   m_Children:
   - {fileID: 2083581399}
   m_Father: {fileID: 1339828889}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -1626,7 +1625,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Acc\xE9l\xE9rer l'ex\xE9cution"
-  agentNameActiveTooltip: 0
 --- !u!82 &121265418
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2201,7 +2199,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Ou
-  agentNameActiveTooltip: 0
 --- !u!114 &134265736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2725,7 +2722,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Se retourner
-  agentNameActiveTooltip: 0
 --- !u!114 &148128132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3415,7 +3411,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Si
-  agentNameActiveTooltip: 0
 --- !u!114 &238703573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4206,7 +4201,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Non
-  agentNameActiveTooltip: 0
 --- !u!114 &291200068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4803,6 +4797,7 @@ MonoBehaviour:
   buttonSpeed: {fileID: 121265415}
   buttonStop: {fileID: 1684333869}
   menuEchap: {fileID: 989566791}
+  buttonAddEditableContainer: {fileID: 2015004020}
   endPanel: {fileID: 1306532945}
   dialogPanel: {fileID: 2103625724}
   canvas: {fileID: 1410401867}
@@ -5611,7 +5606,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Avancer d'une case
-  agentNameActiveTooltip: 0
 --- !u!114 &412377542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6755,7 +6749,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Attendre
-  agentNameActiveTooltip: 0
 --- !u!114 &490968338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7300,6 +7293,7 @@ RectTransform:
   - {fileID: 451020364}
   - {fileID: 91740665}
   - {fileID: 1696905609}
+  - {fileID: 2015004021}
   m_Father: {fileID: 1173253400}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7872,7 +7866,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Si/Sinon
-  agentNameActiveTooltip: 0
 --- !u!114 &605154219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8122,7 +8115,7 @@ RectTransform:
   m_Children:
   - {fileID: 1092169427}
   m_Father: {fileID: 1339828889}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -8142,7 +8135,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Ex\xE9cuter le pas suivant"
-  agentNameActiveTooltip: 0
 --- !u!82 &624363074
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9550,7 +9542,7 @@ RectTransform:
   m_Children:
   - {fileID: 306629138}
   m_Father: {fileID: 1339828889}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -9570,7 +9562,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Pause
-  agentNameActiveTooltip: 0
 --- !u!82 &768015841
 AudioSource:
   m_ObjectHideFlags: 0
@@ -10754,7 +10745,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Relancer le niveau et<br>recommencer \xE0 0 ?"
-  agentNameActiveTooltip: 0
 --- !u!114 &876796628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11024,7 +11014,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Mur d\xE9tect\xE9"
-  agentNameActiveTooltip: 0
 --- !u!114 &877772710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12086,7 +12075,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Et
-  agentNameActiveTooltip: 0
 --- !u!114 &973265659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13774,7 +13762,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "R\xE9p\xE9ter sans fin"
-  agentNameActiveTooltip: 0
 --- !u!114 &1101588934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14030,7 +14017,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Activer
-  agentNameActiveTooltip: 0
 --- !u!114 &1115831559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14354,7 +14340,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1139441805}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -15108,7 +15094,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Terminal d\xE9tect\xE9"
-  agentNameActiveTooltip: 0
 --- !u!114 &1250803502
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16015,7 +16000,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Sortie d\xE9tect\xE9e"
-  agentNameActiveTooltip: 0
 --- !u!114 &1337123948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16246,7 +16230,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1525018890}
-  - {fileID: 2015004021}
   - {fileID: 1504297950}
   - {fileID: 768015839}
   - {fileID: 624363072}
@@ -17215,7 +17198,7 @@ GameObject:
   - component: {fileID: 1493523086}
   - component: {fileID: 1493523089}
   m_Layer: 5
-  m_Name: InventorPanel
+  m_Name: LibraryPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17356,7 +17339,7 @@ RectTransform:
   m_Children:
   - {fileID: 453417787}
   m_Father: {fileID: 1339828889}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -17376,7 +17359,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Ex\xE9cuter le code"
-  agentNameActiveTooltip: 0
 --- !u!82 &1504297952
 AudioSource:
   m_ObjectHideFlags: 0
@@ -17904,7 +17886,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Tant que
-  agentNameActiveTooltip: 0
 --- !u!114 &1520034415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18060,7 +18041,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Menu
-  agentNameActiveTooltip: 0
 --- !u!114 &1525018894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19289,7 +19269,7 @@ RectTransform:
   m_Children:
   - {fileID: 1865417919}
   m_Father: {fileID: 1339828889}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -19309,7 +19289,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Arr\xEAter le script"
-  agentNameActiveTooltip: 0
 --- !u!82 &1684333872
 AudioSource:
   m_ObjectHideFlags: 0
@@ -19841,7 +19820,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Pivoter \xE0 droite"
-  agentNameActiveTooltip: 0
 --- !u!114 &1703199456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20093,7 +20071,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "R\xE9essayer la mission \xE0 partir<br>de la derni\xE8re ex\xE9cution ?"
-  agentNameActiveTooltip: 0
 --- !u!114 &1722249730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20411,7 +20388,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Ennemi d\xE9tect\xE9"
-  agentNameActiveTooltip: 0
 --- !u!114 &1743652250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22028,7 +22004,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Porte d\xE9tect\xE9e"
-  agentNameActiveTooltip: 0
 --- !u!114 &1927751268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22284,7 +22259,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Pivoter \xE0 gauche"
-  agentNameActiveTooltip: 0
 --- !u!114 &1944301450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22913,7 +22887,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Zone surveill\xE9e\\nd\xE9tect\xE9e"
-  agentNameActiveTooltip: 0
 --- !u!114 &1993543144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23175,14 +23148,14 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1339828889}
-  m_RootOrder: 1
+  m_Father: {fileID: 567685738}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &2015004022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23196,7 +23169,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Ajouter un programme
-  agentNameActiveTooltip: 0
 --- !u!82 &2015004023
 AudioSource:
   m_ObjectHideFlags: 0
@@ -24491,7 +24463,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "R\xE9p\xE9ter plusieurs fois"
-  agentNameActiveTooltip: 0
 --- !u!114 &2094373097
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -28,7 +28,8 @@ public class UISystem : FSystem {
 	private Family viewportContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les containers viewport
 	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
 	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
-	
+	private Family resetButton_f = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("ResetButton")); // Les petites balayettes de chaque panneau d'édition
+
 	private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
@@ -44,6 +45,7 @@ public class UISystem : FSystem {
 	public GameObject buttonSpeed;
 	public GameObject buttonStop;
 	public GameObject menuEchap;
+	public GameObject buttonAddEditableContainer;
 	public GameObject endPanel;
 	public GameObject dialogPanel;
 	public GameObject canvas;
@@ -285,7 +287,7 @@ public class UISystem : FSystem {
 			// set history as a copy of editable canvas
 			gameData.actionsHistory = GameObject.Instantiate(EditableCanvas.transform.GetChild(0).transform).gameObject;
 			gameData.actionsHistory.SetActive(false); // keep this gameObject as a ghost
-													  // We don't bind the history to FYFY
+			// We don't bind the history to FYFY
 		}
 		else {
 			// parse all containers inside editable canvas
@@ -297,7 +299,7 @@ public class UISystem : FSystem {
 					if (child.GetComponent<BaseElement>())
 					{
 						// copy this child inside the appropriate history
-						GameObject.Instantiate(child, gameData.actionsHistory.transform.GetChild(containerCpt));
+						GameObject.Instantiate(child, gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0));
 						// We don't bind the history to FYFY
 					}
 				}
@@ -311,10 +313,12 @@ public class UISystem : FSystem {
 				{
 					DragDropSystem.instance.manageEmptyZone(child.gameObject);
 					GameObjectManager.unbind(child.gameObject);
-					child.SetParent(null);
+					child.SetParent(null); // because destroying is not immediate
 					GameObject.Destroy(child.gameObject);
 				}
 			}
+		// Disable add container button
+		GameObjectManager.setGameObjectState(buttonAddEditableContainer, false);
 	}
 
 
@@ -339,11 +343,13 @@ public class UISystem : FSystem {
 					if (history_child.GetComponent<BaseElement>())
 					{
 						// copy this child inside the appropriate editable container
-						Transform history_childCopy = GameObject.Instantiate(history_child, EditableCanvas.transform.GetChild(0).GetChild(i));
+						Transform history_childCopy = GameObject.Instantiate(history_child, EditableCanvas.transform.GetChild(0).GetChild(i).GetChild(0));
 						// Place this child copy at the end of the container
 						history_childCopy.SetAsFirstSibling();
-						history_childCopy.SetSiblingIndex(history_childCopy.parent.childCount - 2);
+						history_childCopy.SetSiblingIndex(history_childCopy.parent.childCount - 3);
 						GameObjectManager.bind(history_childCopy.gameObject);
+						// Disable emptyzone
+						GameObjectManager.setGameObjectState(history_childCopy.parent.GetChild(history_childCopy.parent.childCount - 1).gameObject, false);
 					}
 				}
 			}
@@ -366,6 +372,15 @@ public class UISystem : FSystem {
 		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
 			// Affichage de l'historique de l'ensemble des actions exécutés
 			loadHistory();
+			// Hide library panel
+			GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.gameObject, false);
+			// Hide menu panel
+			GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, false);
+			// Inactive of each editable panel
+			foreach (GameObject brush in resetButton_f)
+				brush.GetComponent<Button>().interactable = false;
+			// Pause DragDrop system
+			DragDropSystem.instance.Pause = true;
 			// Sauvegarde de l'état d'avancement des niveaux pour le jour (niveau et étoile)
 			PlayerPrefs.SetInt(gameData.levelToLoad.Item1, gameData.levelToLoad.Item2+1);
 			PlayerPrefs.Save();
@@ -418,7 +433,7 @@ public class UISystem : FSystem {
     { 
         switch (endPanel.GetComponent<NewEnd>().endType)
         {
-            case 1:
+            case 1: // detected
                 endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Vous avez été repéré !";
                 GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
@@ -428,7 +443,7 @@ public class UISystem : FSystem {
                 endPanel.GetComponent<AudioSource>().loop = true;
                 endPanel.GetComponent<AudioSource>().Play();
                 break;
-            case 2: 
+            case 2: // win
 				int score = (10000 / (gameData.totalActionBloc + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
                 Transform verticalCanvas = endPanel.transform.Find("VerticalCanvas");
 				verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez gagné !\nScore: " + score;
@@ -447,7 +462,7 @@ public class UISystem : FSystem {
 					GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
 				}
                 break;
-			case 3:
+			case 3: // bad condition
 				endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Une condition est mal remplie !";
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, false);
@@ -497,7 +512,7 @@ public class UISystem : FSystem {
 	// Empty the script window
 	// See ResetButton in editor
 	public void resetScriptContainer(bool refund = false){
-		// On récupére le contenair pointé lors du clique de la balayette
+		// On récupére le contenair pointé lors du clic de la balayette
 		GameObject scriptContainerPointer = viewportContainerPointed_f.First().transform.Find("ScriptContainer").gameObject;
 
 		// On parcourt le script container pour détruire toutes les instructions
@@ -785,16 +800,10 @@ public class UISystem : FSystem {
 			}
 			else if (forAct is WhileControl)
             {
-				if (forAct.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<BaseCondition>())
-				{
-					// On traduit la condition en string
-					((WhileControl)forAct).condition = new List<string>();
-					ConditionManagement.instance.convertionConditionSequence(forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ((WhileControl)forAct).condition);
-				}
-				else
-				{
-					GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
-				}
+				// On traduit la condition en string
+				((WhileControl)forAct).condition = new List<string>();
+				ConditionManagement.instance.convertionConditionSequence(forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ((WhileControl)forAct).condition);
+				
 			}
 			// On parcourt les éléments présent dans le block action
 			foreach(BaseElement act in forAct.GetComponentsInChildren<BaseElement>()){
@@ -818,18 +827,10 @@ public class UISystem : FSystem {
 		}
 		// Pour chaque block if
 		foreach(IfControl ifAct in copyGO.GetComponentsInChildren<IfControl>()){
-			//On vérifie que le bloc condition comporte un élément ou un opérator
-			if (ifAct.transform.Find("ConditionContainer").GetChild(0).gameObject.GetComponent<BaseCondition>())
-			{
-				// On traduit la condition en string
-				ifAct.condition = new List<string>();
-				ConditionManagement.instance.convertionConditionSequence(ifAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ifAct.condition);
-			}
-            else
-            {
-				GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
-			}
-
+			// On traduit la condition en string
+			ifAct.condition = new List<string>();
+			ConditionManagement.instance.convertionConditionSequence(ifAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ifAct.condition);
+			
 			GameObject thenContainer = ifAct.transform.Find("Container").gameObject;
 			BaseElement firstThen = thenContainer.GetComponentInChildren<BaseElement>();
 			if (firstThen)
@@ -925,10 +926,21 @@ public class UISystem : FSystem {
 		}
 	}
 
-	// used on + button
+	// used on + button (see in Unity editor)
 	public void addContainer()
     {
 		addSpecificContainer();
+		MainLoop.instance.StartCoroutine(syncEditableScrollBars());
+	}
+	public IEnumerator syncEditableScrollBars()
+	{
+		// delay three times because we have to wait addSpecificContainer end (that call setEditableSize coroutine)
+		yield return null;
+		yield return null;
+		yield return null;
+		// move scroll bar on the last added container
+		EditableCanvas.GetComponentInParent<ScrollRect>().verticalScrollbar.value = 1;
+		EditableCanvas.GetComponentInParent<ScrollRect>().horizontalScrollbar.value = 1;
 	}
 
 	// Ajouter un container à la scéne
@@ -945,9 +957,6 @@ public class UISystem : FSystem {
 		cloneContainer.transform.SetSiblingIndex(EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer);
 		// Puis on imcrémente le nombre de viewport contenue dans l'éditable
 		EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
-
-		// Lance le son de l'ajout d'un container
-		cloneContainer.GetComponent<AudioSource>().Play();
 
 		// Affiche le bon nom
 		if (name != "")

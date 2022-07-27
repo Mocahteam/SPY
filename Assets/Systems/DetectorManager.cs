@@ -13,7 +13,7 @@ public class DetectorManager : FSystem {
 	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody)));
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
     private Family gameLoaded_f = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
-    private Family enemyMoved_f = FamilyManager.getFamily(new AnyOfComponents(typeof(Moved), typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
+    private Family enemyMoved_f = FamilyManager.getFamily(new AllOfComponents(typeof(Moved)), new AnyOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
     private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
 
     private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));

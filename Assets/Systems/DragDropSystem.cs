@@ -126,7 +126,7 @@ public class DragDropSystem : FSystem
 	public void beginDragElementFromLibrary(BaseEventData element)
     {
 		// On verifie si c'est un évènement généré par le bouton gauche de la souris
-		if ((element as PointerEventData).button == PointerEventData.InputButton.Left && element.selectedObject != null)
+		if (!Pause && (element as PointerEventData).button == PointerEventData.InputButton.Left && element.selectedObject != null)
 		{
 			// On active les drops zone 
 			setDropZoneState(true);
@@ -151,7 +151,7 @@ public class DragDropSystem : FSystem
 	public void beginDragElementFromEditableScript(BaseEventData element)
     {
 		// On verifie si c'est un évènement généré par le bouton gauche de la souris
-		if ((element as PointerEventData).button == PointerEventData.InputButton.Left && element.selectedObject != null)
+		if (!Pause && (element as PointerEventData).button == PointerEventData.InputButton.Left && element.selectedObject != null)
 		{
 			itemDragged = element.selectedObject;
 			Transform parent = itemDragged.transform.parent;
@@ -190,7 +190,7 @@ public class DragDropSystem : FSystem
 	// Pendant le drag d'un block, permet de lui faire suivre le mouvement de la souris
 	public void dragElement()
 	{
-		if(itemDragged != null) {
+		if(!Pause && itemDragged != null) {
 			itemDragged.transform.position = Input.mousePosition;
 		}
 	}
@@ -200,11 +200,11 @@ public class DragDropSystem : FSystem
 	// Détruire l'objet si lâché hors d'un container
 	public void endDragElement()
 	{
-		// On désactive les drop zone
-		setDropZoneState(false);
-
-		if (itemDragged != null)
+		if (!Pause && itemDragged != null)
 		{
+			// On désactive les drop zone
+			setDropZoneState(false);
+
 			// On commence par regarder s'il n'y a pas de container pointé, dans ce cas on supprime l'objet drag
 			if (viewportContainerPointed_f.Count <= 0 && focusedDropArea_f.Count <= 0)
 			{
@@ -436,7 +436,7 @@ public class DragDropSystem : FSystem
 	public void deleteElement(GameObject elementToDelete)
 	{
 		// On vérifie qu'il y a bien un objet pointé pour la suppression
-		if(elementToDelete != null)
+		if(!Pause && elementToDelete != null)
         {
 			// Réactivation d'une EmptyZone si nécessaire
 			manageEmptyZone(elementToDelete);

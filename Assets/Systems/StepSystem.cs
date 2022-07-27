@@ -91,7 +91,9 @@ public class StepSystem : FSystem {
         {
             Pause = true;
             ModeManager.instance.setEditMode();
-            UISystem.instance.saveHistory();
+            // We save history if no end or win
+            if (newEnd_f.Count <= 0 || newEnd_f.First().GetComponent<NewEnd>().endType == NewEnd.Win)
+                UISystem.instance.saveHistory();
         }
         else
             Pause = false;
