@@ -10,6 +10,7 @@ using UnityEngine.Networking;
 
 /// <summary>
 /// Read XML file and load level
+/// Need to be binded before UISystem
 /// </summary>
 public class LevelGenerator : FSystem {
 

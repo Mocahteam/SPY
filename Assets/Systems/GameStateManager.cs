@@ -1,5 +1,6 @@
 using UnityEngine;
 using FYFY;
+using TMPro;
 
 /// <summary>
 /// This manager enables to save the game state and to restore it on demand
@@ -12,6 +13,7 @@ public class GameStateManager : FSystem {
     private Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new NoneOfComponents(typeof(Detector)));
     private Family f_activables = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
+    private Family f_forControls = FamilyManager.getFamily(new AllOfComponents(typeof(ForControl)));
 
     private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 
@@ -54,6 +56,9 @@ public class GameStateManager : FSystem {
         foreach(GameObject go in f_currentActions)
             if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
                 save.rawSave.currentDroneActions.Add(new SaveContent.RawCurrentAction(go));
+        save.rawSave.currentLoopParams.Clear();
+        foreach (GameObject go in f_forControls)
+            save.rawSave.currentLoopParams.Add(new SaveContent.RawLoop(go.GetComponent<ForControl>()));
 
         currentContent = JsonUtility.ToJson(save.rawSave);
     }
@@ -85,14 +90,17 @@ public class GameStateManager : FSystem {
             Activable act = f_activables.getAt(i).GetComponent<Activable>();
             act.slotID = save.rawSave.activables[i].slotID;
         }
-        foreach(GameObject go in f_currentActions){
-            if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone")){
+        foreach(GameObject go in f_currentActions)
+            if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
                 GameObjectManager.removeComponent<CurrentAction>(go);
-            }
-
-        }
-        foreach(SaveContent.RawCurrentAction act in save.rawSave.currentDroneActions){
+        foreach(SaveContent.RawCurrentAction act in save.rawSave.currentDroneActions)
             GameObjectManager.addComponent<CurrentAction>(act.action, new{agent = act.agent});
+        for (int i = 0; i < f_forControls.Count && i < save.rawSave.currentLoopParams.Count; i++)
+        {
+            ForControl fc = f_forControls.getAt(i).GetComponent<ForControl>();
+            fc.currentFor = save.rawSave.currentLoopParams[i].currentFor;
+            fc.nbFor = save.rawSave.currentLoopParams[i].nbFor;
+            fc.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (fc.currentFor).ToString() + " / " + fc.nbFor.ToString();
         }
     }
 }

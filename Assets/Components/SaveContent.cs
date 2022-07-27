@@ -41,6 +41,18 @@ public class SaveContent {
     }
 
     [Serializable]
+    public class RawLoop
+    {
+        public int currentFor;
+        public int nbFor;
+        public RawLoop(ForControl fc)
+        {
+            currentFor = fc.currentFor;
+            nbFor = fc.nbFor;
+        }
+    }
+
+    [Serializable]
     public class RawSave
     {
         public List<bool> coinsState = new List<bool>();
@@ -49,6 +61,7 @@ public class SaveContent {
         public List<RawPosition> positions = new List<RawPosition>();
         public List<RawActivable> activables = new List<RawActivable>();
         public List<RawCurrentAction> currentDroneActions = new List<RawCurrentAction>();
+        public List<RawLoop> currentLoopParams = new List<RawLoop>();
     }
 
     public RawSave rawSave = new RawSave();

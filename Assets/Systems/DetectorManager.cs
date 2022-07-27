@@ -57,7 +57,7 @@ public class DetectorManager : FSystem {
 		}
     }
 
-    private void updateDetectors()
+    public void updateDetectors()
     {
         foreach (GameObject detect in enemyGO)
             updateDetector(detect);

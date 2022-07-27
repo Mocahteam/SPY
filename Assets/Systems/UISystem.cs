@@ -14,6 +14,7 @@ using UnityEngine.EventSystems;
 /// Manage InGame UI (Play/Pause/Stop, reset, go back to main menu...)
 /// Manage history
 /// Manage end panel (compute Score and stars)
+/// Need to be binded after LevelGenerator
 /// </summary>
 public class UISystem : FSystem {
 	private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
@@ -269,8 +270,9 @@ public class UISystem : FSystem {
 	public void setExecutionView(bool value){
 		// Toggle library and editable panel
 		GameObjectManager.setGameObjectState(canvas.transform.Find("LeftPanel").gameObject, !value);
-		// Toggle execution panel
-		GameObjectManager.setGameObjectState(canvas.transform.Find("ExecutableCanvas").gameObject, value);
+		// Toggle all execution panels
+		foreach (Transform executablePanel in canvas.transform.Find("ExecutableCanvas"))
+			GameObjectManager.setGameObjectState(executablePanel.gameObject, value);
 		// Define Menu button states
 		GameObjectManager.setGameObjectState(buttonExecute, !value);
 		GameObjectManager.setGameObjectState(buttonPause, value);
@@ -386,7 +388,7 @@ public class UISystem : FSystem {
 			PlayerPrefs.Save();
 		}
 		else if(go.GetComponent<NewEnd>().endType == NewEnd.Detected){
-			
+
 		}
 		else if (go.GetComponent<NewEnd>().endType == NewEnd.BadCondition)
 		{
@@ -688,7 +690,8 @@ public class UISystem : FSystem {
 
 	// Cancel End (see ReloadState button in editor)
 	public void cancelEnd(){
-		GameObjectManager.removeComponent<NewEnd>(endPanel);
+		foreach (NewEnd end in endPanel.GetComponents<NewEnd>())
+			GameObjectManager.removeComponent(end);
 	}
 
 	public void fillExecutablePanel(GameObject srcScript, GameObject targetContainer, string agentTag)

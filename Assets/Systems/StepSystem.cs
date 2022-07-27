@@ -87,9 +87,8 @@ public class StepSystem : FSystem {
         yield return null;
         yield return null;
         // If there are still no actions => end playing mode
-        if (!playerHasNextAction())
+        if (!playerHasNextAction() || newEnd_f.Count > 0)
         {
-            Pause = true;
             ModeManager.instance.setEditMode();
             // We save history if no end or win
             if (newEnd_f.Count <= 0 || newEnd_f.First().GetComponent<NewEnd>().endType == NewEnd.Win)

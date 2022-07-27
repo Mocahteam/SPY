@@ -10,4 +10,9 @@ public class DetectorManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "endPanel", endPanel);
 	}
 
+	public void updateDetectors()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "updateDetectors", null);
+	}
+
 }
