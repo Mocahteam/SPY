@@ -8,14 +8,27 @@ public class CurrentActionExecutor : FSystem {
 	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Door"));
 	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
     private Family newCurrentAction_f = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
+	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)), new AnyOfTags("Player"));
 
 	protected override void onStart()
     {
 		newCurrentAction_f.addEntryCallback(onNewCurrentAction);
+		Pause = true;
+	}
+
+	protected override void onProcess(int familiesUpdateCount)
+	{
+		// count inaction if a robot have no CurrentAction
+		foreach (GameObject robot in playerGO)
+			if (robot.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>() == null)
+				robot.GetComponent<ScriptRef>().nbOfInactions++;
+		Pause = true;
 	}
 
 	// each time a new currentAction is added, 
 	private void onNewCurrentAction(GameObject currentAction) {
+		Pause = false; // activates onProcess to identify inactive robots
+		
 		CurrentAction ca = currentAction.GetComponent<CurrentAction>();	
 
 		// process action depending on action type

@@ -420,14 +420,11 @@ public class DragDropSystem : FSystem
 		GameObject prefab = element.GetComponent<ElementToDrag>().actionPrefab;
 		// Create a dragged GameObject
 		GameObject newItem = UnityEngine.Object.Instantiate<GameObject>(prefab, element.transform);
-		//On l'attache au canvas pour le drag ou l'on veux
+		// On l'attache au canvas pour le drag ou l'on veux
 		newItem.transform.SetParent(mainCanvas.transform);
-		// Si c'est un basic action
-		if(newItem.GetComponent<Highlightable>() is BasicAction)
-        {
-			BaseElement action = newItem.GetComponent<BaseElement>();
+		// link with library
+		if(newItem.GetComponent<LibraryItemRef>())
 			newItem.GetComponent<LibraryItemRef>().linkedTo = element;
-		}
 		return newItem;
 	}
 

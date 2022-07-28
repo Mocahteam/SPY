@@ -17,6 +17,8 @@ public class UISystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject libraryPanel;
 	public UnityEngine.GameObject EditableCanvas;
 	public UnityEngine.GameObject prefabViewportScriptContainer;
+	public UnityEngine.GameObject libraryFor;
+	public UnityEngine.GameObject libraryWait;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -34,6 +36,8 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "libraryPanel", libraryPanel);
 		MainLoop.initAppropriateSystemField (system, "EditableCanvas", EditableCanvas);
 		MainLoop.initAppropriateSystemField (system, "prefabViewportScriptContainer", prefabViewportScriptContainer);
+		MainLoop.initAppropriateSystemField (system, "libraryFor", libraryFor);
+		MainLoop.initAppropriateSystemField (system, "libraryWait", libraryWait);
 	}
 
 	public void startUpdatePlayButton()

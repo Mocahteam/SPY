@@ -16,6 +16,8 @@ public class CurrentActionManager : FSystem
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
 
+
+	private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 
@@ -36,6 +38,11 @@ public class CurrentActionManager : FSystem
 				if (currentAction.GetComponent<CurrentAction>().agent.CompareTag("Player"))
 					GameObjectManager.removeComponent<CurrentAction>(currentAction);
 		});
+		playingMode_f.addEntryCallback(delegate {
+			// reset inaction counters
+			foreach (GameObject robot in playerGO)
+				robot.GetComponent<ScriptRef>().nbOfInactions = 0;
+		});
 	}
 
 	private void initFirstsActions(GameObject go)
@@ -51,7 +58,7 @@ public class CurrentActionManager : FSystem
 			if (!atLeastOneFirstAction)
 			{
 				ModeManager.instance.setEditMode();
-				// TODO : afficher un message pour dire qu'aucune action n'est accessible
+				// TODO : afficher un message pour dire qu'aucune action n'est accessible ?
 			}
 			else
 			{
@@ -97,43 +104,52 @@ public class CurrentActionManager : FSystem
 			return action;
 		else
 		{
-			// check if action is a ForAction
-			if (action.GetComponent<ForControl>())
+			// check if action is a IfControl
+			if (action.GetComponent<IfControl>())
 			{
-				ForControl forAct = action.GetComponent<ForControl>();
-                if (action.GetComponent<WhileControl>() && action.GetComponent<WhileControl>().firstChild != null)
-                {
-					return getFirstActionOf(action.GetComponent<WhileControl>().firstChild, agent);
-				}
-				// check if this ForAction include a child and nb iteration != 0 and end loop not reached
-				else if (action.GetComponent<ForControl>().firstChild != null && forAct.nbFor != 0 && forAct.currentFor < forAct.nbFor)
-				{
-					forAct.currentFor++;
-					forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+				IfControl ifCont = action.GetComponent<IfControl>();
+				// check if this IfControl include a child and if condition is evaluated to true
+				if (ifCont.firstChild != null && ConditionManagement.instance.ifValid(ifCont.condition, agent))
 					// get first action of its first child (could be if, for...)
-					return getFirstActionOf(action.GetComponent<ForControl>().firstChild, agent);
-				}
-				else
-					// this for doesn't contain action or nb iteration == 0 or end loop reached => get first action of next action (could be if, for...)
-					return getFirstActionOf(action.GetComponent<ForControl>().next, agent);
-			}
-			// check if action is a IfAction
-			else if (action.GetComponent<IfControl>())
-			{
-				// check if this IfAction include a child and if condition is evaluated to true
-				if (action.GetComponent<IfControl>().firstChild != null && ConditionManagement.instance.ifValid(action.GetComponent<IfControl>().condition, agent))
-					// get first action of its first child (could be if, for...)
-					return getFirstActionOf(action.GetComponent<IfControl>().firstChild, agent);
+					return getFirstActionOf(ifCont.firstChild, agent);
 				else if (action.GetComponent<IfElseControl>() && action.GetComponent<IfElseControl>().firstChild != null)
 					return getFirstActionOf(action.GetComponent<IfElseControl>().elseFirstChild, agent);
 				else
 					// this if doesn't contain action or its condition is false => get first action of next action (could be if, for...)
-					return getFirstActionOf(action.GetComponent<IfControl>().next, agent);
+					return getFirstActionOf(ifCont.next, agent);
 			}
-			// check if action is a ForeverAction
+			// check if action is a WhileControl
+			else if (action.GetComponent<WhileControl>())
+			{
+				WhileControl whileCont = action.GetComponent<WhileControl>();
+				// check if this WhileControl include a child and if condition is evaluated to true
+				if (whileCont.firstChild != null && ConditionManagement.instance.ifValid(whileCont.condition, agent))
+					// get first action of its first child (could be if, for...)
+					return getFirstActionOf(whileCont.firstChild, agent);
+				else
+					// this if doesn't contain action or its condition is false => get first action of next action (could be if, for...)
+					return getFirstActionOf(whileCont.next, agent);
+			}
+			// check if action is a ForControl
+			else if (action.GetComponent<ForControl>())
+			{
+				ForControl forCont = action.GetComponent<ForControl>();
+				// check if this ForControl include a child and nb iteration != 0 and end loop not reached
+				if (forCont.firstChild != null && forCont.nbFor != 0 && forCont.currentFor < forCont.nbFor)
+				{
+					forCont.currentFor++;
+					forCont.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
+					// get first action of its first child (could be if, for...)
+					return getFirstActionOf(forCont.firstChild, agent);
+				}
+				else
+					// this for doesn't contain action or nb iteration == 0 or end loop reached => get first action of next action (could be if, for...)
+					return getFirstActionOf(forCont.next, agent);
+			}
+			// check if action is a ForeverControl
 			else if (action.GetComponent<ForeverControl>())
 			{
-				// always return firstchild of this ForeverAction
+				// always return firstchild of this ForeverControl
 				return getFirstActionOf(action.GetComponent<ForeverControl>().firstChild, agent);
 			}
 		}

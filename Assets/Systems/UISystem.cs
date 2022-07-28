@@ -34,7 +34,8 @@ public class UISystem : FSystem {
 	private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
-	private Family inventoryBlocks = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private Family enabledinventoryBlocks = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private Family inventoryBlocks = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)));
 
 	private GameData gameData;
 	private int nDialog = 0;
@@ -53,6 +54,8 @@ public class UISystem : FSystem {
 	public GameObject libraryPanel;
 	public GameObject EditableCanvas;
 	public GameObject prefabViewportScriptContainer;
+	public GameObject libraryFor;
+	public GameObject libraryWait;
 	private UIRootContainer containerSelected; // Le container selectionné
 
 	public static UISystem instance;
@@ -91,8 +94,8 @@ public class UISystem : FSystem {
 			setExecutionView(false);
 		});
 
-		inventoryBlocks.addEntryCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
-		inventoryBlocks.addExitCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
+		enabledinventoryBlocks.addEntryCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
+		enabledinventoryBlocks.addExitCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
 
 		loadHistory();
 
@@ -319,6 +322,42 @@ public class UISystem : FSystem {
 					GameObject.Destroy(child.gameObject);
 				}
 			}
+		// Add Wait action for each inaction
+		for (int containerCpt = 0; containerCpt < EditableCanvas.transform.GetChild(0).childCount; containerCpt++)
+		{
+			// look for associated agent
+			string associatedAgent = EditableCanvas.transform.GetChild(0).GetChild(containerCpt).GetComponentInChildren<UIRootContainer>().associedAgentName;
+			foreach (GameObject agent in agent_f)
+				if (associatedAgent == agent.GetComponent<AgentEdit>().agentName)
+				{
+					ScriptRef sr = agent.GetComponent<ScriptRef>();
+					if (sr.nbOfInactions == 1)
+					{
+						GameObject newWait = DragDropSystem.instance.createEditableBlockFromLibrary(libraryWait);
+						newWait.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
+						newWait.transform.SetAsLastSibling();
+					}
+					else if (sr.nbOfInactions > 1)
+					{
+						// Create for control
+						ForControl forCont = DragDropSystem.instance.createEditableBlockFromLibrary(libraryFor).GetComponent<ForControl>();
+						forCont.currentFor = 0;
+						forCont.nbFor = sr.nbOfInactions;
+						forCont.transform.GetComponentInChildren<TMP_InputField>().text = forCont.nbFor.ToString();
+						forCont.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
+						// Create Wait action
+						Transform forContainer = forCont.transform.Find("Container");
+						GameObject newWait = DragDropSystem.instance.createEditableBlockFromLibrary(libraryWait);
+						newWait.transform.SetParent(forContainer, false);
+						newWait.transform.SetAsFirstSibling();
+						// Set drop/empty zone
+						forContainer.GetChild(forContainer.childCount - 2).gameObject.SetActive(true); // enable drop zone
+						forContainer.GetChild(forContainer.childCount - 1).gameObject.SetActive(false); // disable empty zone
+					}
+					sr.nbOfInactions = 0;
+				}
+		}
+
 		// Disable add container button
 		GameObjectManager.setGameObjectState(buttonAddEditableContainer, false);
 	}
@@ -330,12 +369,15 @@ public class UISystem : FSystem {
 		{
 			// For security, erase all editable containers
 			foreach (Transform viewportForEditableContainer in EditableCanvas.transform.GetChild(0))
-				foreach (Transform child in viewportForEditableContainer.GetChild(0))
+				for (int i = viewportForEditableContainer.GetChild(0).childCount -1; i >= 0; i--) {
+					Transform child = viewportForEditableContainer.GetChild(0).GetChild(i);
 					if (child.GetComponent<BaseElement>())
 					{
 						GameObjectManager.unbind(child.gameObject);
-						GameObject.Destroy(child);
+						child.transform.SetParent(null); // beacause destroying is not immediate, we remove this child from its parent, then Unity can take the time he wants to destroy GameObject
+						GameObject.Destroy(child.gameObject);
 					}
+				}
 			// Restore history
 			for (int i = 0 ; i < gameData.actionsHistory.transform.childCount ; i++){
 				Transform history_viewportForEditableContainer = gameData.actionsHistory.transform.GetChild(i);
@@ -373,6 +415,7 @@ public class UISystem : FSystem {
 		// En cas de fin de niveau
 		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
 			// Affichage de l'historique de l'ensemble des actions exécutés
+			saveHistory();
 			loadHistory();
 			// Hide library panel
 			GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.gameObject, false);
@@ -396,26 +439,33 @@ public class UISystem : FSystem {
 		}
 	}
 
+	private GameObject getLibraryItemByName(string name)
+    {
+		foreach(GameObject item in inventoryBlocks)
+			if (item.name == name)
+				return item;
+		return null;
+    }
 
 	// Find item in library to hook to this GameObject
 	private void linkTo(GameObject go){
 		if(go.GetComponent<LibraryItemRef>().linkedTo == null){
-			if(go.GetComponent<BasicAction>())
-				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find(go.GetComponent<BasicAction>().actionType.ToString());
+			if (go.GetComponent<BasicAction>())
+				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName(go.GetComponent<BasicAction>().actionType.ToString());
 			else if (go.GetComponent<BaseCaptor>())
-				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find(go.GetComponent<BaseCaptor>().captorType.ToString());
+				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName(go.GetComponent<BaseCaptor>().captorType.ToString());
 			else if (go.GetComponent<BaseOperator>())
-				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find(go.GetComponent<BaseOperator>().operatorType.ToString());
+				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName(go.GetComponent<BaseOperator>().operatorType.ToString());
 			else if (go.GetComponent<WhileControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("While");
+				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("While");
 			else if (go.GetComponent<ForeverControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("Forever");
+				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("Forever");
 			else if (go.GetComponent<ForControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("For");
+				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("For");
 			else if (go.GetComponent<IfElseControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("IfElse");
+				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("IfElse");
 			else if(go.GetComponent<IfControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = GameObject.Find("If");
+				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("If");
 		}
 	}
 
@@ -690,6 +740,7 @@ public class UISystem : FSystem {
 
 	// Cancel End (see ReloadState button in editor)
 	public void cancelEnd(){
+		// in case of several ends pop in the same time (for instance exit reached and detected)
 		foreach (NewEnd end in endPanel.GetComponents<NewEnd>())
 			GameObjectManager.removeComponent(end);
 	}
