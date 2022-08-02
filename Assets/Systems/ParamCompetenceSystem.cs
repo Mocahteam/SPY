@@ -191,22 +191,34 @@ public class ParamCompetenceSystem : FSystem
 		// On charge les info de la compétence qui sera affiché lorsque l'on survolera celle-ci avec la souris
 		competence.GetComponent<Competence>().info = data[4];
 		// On charge le vecteur des Fonction lié à la compétence
-		var data_link = data[5].Split(',');
-		foreach (string value in data_link)
-		{
-			competence.GetComponent<Competence>().compLinkWhitFunc.Add(value);
-		}
-		// On charge le vecteur des compétences qui seront automatiquement selectionnées si la compétence est séléctionnée
-		data_link = data[6].Split(',');
-		foreach (string value in data_link)
-		{
-			competence.GetComponent<Competence>().compLinkWhitComp.Add(value);
-		}
-		// On charge le vecteur des compétences dont au moins l'une devra être selectionné en m^me temps que celle selectionné actuellement
-		data_link = data[7].Split(',');
-		foreach (string value in data_link)
-		{
-			competence.GetComponent<Competence>().listSelectMinOneComp.Add(value);
+		Debug.Log("test1");
+		if (data.Length >= 6)
+        {
+			var data_link = data[5].Split(',');
+			foreach (string value in data_link)
+			{
+				competence.GetComponent<Competence>().compLinkWhitFunc.Add(value);
+			}
+			Debug.Log("test2");
+			if (data.Length >= 7)
+			{
+				// On charge le vecteur des compétences qui seront automatiquement selectionnées si la compétence est séléctionnée
+				data_link = data[6].Split(',');
+				foreach (string value in data_link)
+				{
+					competence.GetComponent<Competence>().compLinkWhitComp.Add(value);
+				}
+				Debug.Log("test3");
+				if (data.Length >= 8)
+				{
+					// On charge le vecteur des compétences dont au moins l'une devra être selectionné en m^me temps que celle selectionné actuellement
+					data_link = data[7].Split(',');
+					foreach (string value in data_link)
+					{
+						competence.GetComponent<Competence>().listSelectMinOneComp.Add(value);
+					}
+				}
+			}
 		}
 
 		GameObjectManager.bind(competence);
