@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
 using FYFY;
 using FYFY_plugins.PointerManager;
+using System.Collections;
 
 /// <summary>
 /// This system manages main camera (movement, rotation, focus on/follow agent...)
 /// </summary>
 public class CameraSystem : FSystem {
-	// Contains main camera
-	private Family cameraGO = FamilyManager.getFamily(new AllOfComponents(typeof(CameraComponent)), new AnyOfTags("MainCamera"));
 	// In games agents controlable by the eplayer
 	private Family playerGO = FamilyManager.getFamily(new AnyOfTags("Player"));
 	// Contains current UI focused
@@ -15,7 +14,18 @@ public class CameraSystem : FSystem {
 
 	private Transform target; // if defined camera follow this target
 	private float smoothSpeed = 0.125f;
-	private Vector3 offset = new Vector3(6,15,0);
+	private Vector3 offset = new Vector3(0, 2f, 0);
+
+	// Déplacement au touche du clavier
+	public float cameraMovingSpeed;
+	// Vitesse de Zoom
+	public float cameraZoomSpeed;
+	// Distance minimale de zoom
+	public float cameraZoomMin;
+	// Distance maximale de zoom
+	public float cameraZoomMax;
+	// Déplacement avec la molette
+	public float dragSpeed;
 
 	public static CameraSystem instance;
 
@@ -26,119 +36,114 @@ public class CameraSystem : FSystem {
 
 	protected override void onStart()
 	{
-		// Backup initial camera data
-		cameraGO.addEntryCallback(onNewCamera);
-		foreach (GameObject go in cameraGO)
-			onNewCamera(go);
-
 		// set current camera target (the first player)
-		playerGO.addEntryCallback(delegate (GameObject go) { target = go.transform; });
-	}
-
-	private void onNewCamera(GameObject go)
-	{
-        go.GetComponent<CameraComponent>().orbitH = go.GetComponent<CameraComponent>().transform.eulerAngles.y;
-        go.GetComponent<CameraComponent>().orbitV = go.GetComponent<CameraComponent>().transform.eulerAngles.x;
-        go.GetComponent<CameraComponent>().init_X = go.transform.position.x;
-        go.GetComponent<CameraComponent>().init_Y = go.transform.position.y;
-        go.GetComponent<CameraComponent>().init_Z = go.transform.position.z;
-        go.GetComponent<CameraComponent>().initRotation = go.transform.localRotation.eulerAngles;
+		playerGO.addEntryCallback(delegate (GameObject go) { focusOnAgent(go); });
 	}
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-		// manage all cameras
-		foreach( GameObject camera in cameraGO ){
-			// if target is defined move smoothy camera to it 
-			if(target){
-				camera.transform.position = Vector3.MoveTowards(camera.transform.position, (target.position+offset), smoothSpeed);
-				camera.transform.LookAt(target); 
-			}
+		// move camera front/back depending on Vertical axis
+		if (Input.GetAxis("Vertical") != 0)
+		{
+			Transform camera = Camera.main.transform;
+			Transform cameraTarget = Camera.main.transform.parent.parent;
+			cameraTarget.Translate(-Input.GetAxis("Vertical") * Time.deltaTime * cameraMovingSpeed, 0, 0);
+			unfocusAgent();
+		}
+		// move camera left/right de pending on Horizontal axis
+		if (Input.GetAxis("Horizontal") != 0)
+		{
+			Transform camera = Camera.main.transform;
+			Transform cameraTarget = Camera.main.transform.parent.parent;
+			cameraTarget.Translate(0, 0, Input.GetAxis("Horizontal") * Time.deltaTime * cameraMovingSpeed);
+			unfocusAgent();
+		}
 
-			// move camera front/back depending on Vertical axis
-			if (Input.GetAxis("Vertical") != 0)
-			{
-				camera.transform.position += new Vector3(camera.transform.forward.x + camera.transform.up.x, 0, camera.transform.forward.z + camera.transform.up.z) * Input.GetAxis("Vertical") * camera.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
-				target = null;
-			}
-			// move camera left/right de pending on Horizontal axis
-			if (Input.GetAxis("Horizontal") != 0)
-			{
-				camera.transform.position += new Vector3(camera.transform.right.x, 0, camera.transform.right.z) * Input.GetAxis("Horizontal") * camera.GetComponent<CameraComponent>().cameraSpeed * Time.deltaTime;
-				target = null;
-			}
+		// rotate camera with "A" and "E" keys
+		if (Input.GetKey(KeyCode.A))
+		{
+			rotateCamera(-1, 0);
+		}
+		else if (Input.GetKey(KeyCode.E))
+		{
+			rotateCamera(1, 0);
+		}
 
-			// rotate camera with "A" and "E" keys
-			if (Input.GetKey(KeyCode.A))
-			{
-				camera.transform.Rotate(Vector3.up * 90 * Time.deltaTime, Space.World);
-				target = null;
-			}
-			else if (Input.GetKey(KeyCode.E))
-			{
-				camera.transform.Rotate(-Vector3.up * 90 * Time.deltaTime, Space.World);
-				target = null;
-			}
+		// Move camera with wheel click
+	    if (Input.GetMouseButton(2))
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+	        Cursor.visible = false;
+			Transform cameraTarget = Camera.main.transform.parent.parent;
+			cameraTarget.Translate(-Input.GetAxisRaw("Mouse Y") * Time.deltaTime * dragSpeed, 0, Input.GetAxisRaw("Mouse X") * Time.deltaTime * dragSpeed);
+			unfocusAgent();
+		}
 
-			// Move camera with wheel click
-	        if (Input.GetMouseButton(2))
-            {
-            	Cursor.lockState = CursorLockMode.Locked;
-	        	Cursor.visible = false;
-                camera.transform.Translate(-Input.GetAxisRaw("Mouse X") * Time.deltaTime * camera.GetComponent<CameraComponent>().dragSpeed, -Input.GetAxisRaw("Mouse Y") * Time.deltaTime * camera.GetComponent<CameraComponent>().dragSpeed, 0);
-				target = null;
+		// Zoom with scroll wheel only if UI element is not focused
+		else if(Input.GetAxis("Mouse ScrollWheel") < 0 && UIfocused.Count == 0) // Zoom out
+	    {
+			// compute distance between camera position and camera target
+			Vector3 relativePos = Camera.main.transform.InverseTransformPoint(Camera.main.transform.parent.parent.position);
+			if (relativePos.z < cameraZoomMax)
+			{
+				Camera.main.transform.position -= new Vector3(Camera.main.transform.forward.x * cameraZoomSpeed, Camera.main.transform.forward.y * cameraZoomSpeed, Camera.main.transform.forward.z * cameraZoomSpeed);
 			}
-
-			// Zoom with scroll wheel only if UI element is not focused
-			else if(Input.GetAxis("Mouse ScrollWheel") < 0 && UIfocused.Count == 0)
-	        {
-	            if(camera.GetComponent<CameraComponent>().ScrollCount >= camera.GetComponent<CameraComponent>().ScrollWheelminPush && camera.GetComponent<CameraComponent>().ScrollCount < camera.GetComponent<CameraComponent>().ScrollWheelLimit)
-	            {
-	                camera.transform.position += new Vector3(0, camera.GetComponent<CameraComponent>().zoomSpeed, 0);
-	                camera.GetComponent<CameraComponent>().ScrollCount++;
-				}
-				target = null;
+		}
+	    else if(Input.GetAxis("Mouse ScrollWheel") > 0 && UIfocused.Count == 0) // Zoom in
+		{
+			// compute distance between camera position and camera target
+			Vector3 relativePos = Camera.main.transform.InverseTransformPoint(Camera.main.transform.parent.parent.position);
+			if (relativePos.z > cameraZoomMin)
+			{
+				Camera.main.transform.position += new Vector3(Camera.main.transform.forward.x * cameraZoomSpeed, Camera.main.transform.forward.y * cameraZoomSpeed, Camera.main.transform.forward.z * cameraZoomSpeed);
 			}
-	        else if(Input.GetAxis("Mouse ScrollWheel") > 0 && UIfocused.Count == 0)
-	        {
-	            if(camera.GetComponent<CameraComponent>().ScrollCount > camera.GetComponent<CameraComponent>().ScrollWheelminPush && camera.GetComponent<CameraComponent>().ScrollCount <= camera.GetComponent<CameraComponent>().ScrollWheelLimit)
-	            {
-	                camera.transform.position -= new Vector3(0, camera.GetComponent<CameraComponent>().zoomSpeed, 0);
-	                camera.GetComponent<CameraComponent>().ScrollCount--;
-				}
-				target = null;
-			}
+			// check if we don't go beyond the target
+			relativePos = Camera.main.transform.InverseTransformPoint(Camera.main.transform.parent.parent.position);
+			if (relativePos.z < 0)
+				Camera.main.transform.localPosition = Vector3.zero;
+		}
 	        
-            // Orbit rotation
-            else if (Input.GetMouseButton(1))
-            {
-            	camera.GetComponent<CameraComponent>().orbitH += camera.GetComponent<CameraComponent>().lookSpeedH * Input.GetAxis("Mouse X");
-                camera.GetComponent<CameraComponent>().orbitV -= camera.GetComponent<CameraComponent>().lookSpeedV * Input.GetAxis("Mouse Y");
-                camera.GetComponent<CameraComponent>().transform.eulerAngles = new Vector3(camera.GetComponent<CameraComponent>().orbitV, camera.GetComponent<CameraComponent>().orbitH, 0f);
-				target = null;
-			}
-	        else
-	        {
-	        	Cursor.lockState = CursorLockMode.None;
-	        	Cursor.visible = true;
-			}
+        // Orbit rotation
+        else if (Input.GetMouseButton(1))
+        {
+			rotateCamera(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+		}
+	    else
+	    {
+	        Cursor.lockState = CursorLockMode.None;
+	        Cursor.visible = true;
+		}
+	}
 
-			// Clamp camera position
-			float min_x = camera.GetComponent<CameraComponent>().init_X + camera.GetComponent<CameraComponent>().MIN_X;
-			float max_x = camera.GetComponent<CameraComponent>().init_X + camera.GetComponent<CameraComponent>().MAX_X;
-			float min_y = camera.GetComponent<CameraComponent>().init_Y + camera.GetComponent<CameraComponent>().MIN_Y;
-			float max_y = camera.GetComponent<CameraComponent>().init_Y + camera.GetComponent<CameraComponent>().MAX_Y;
-			float min_z = camera.GetComponent<CameraComponent>().init_Z + camera.GetComponent<CameraComponent>().MIN_Z;
-			float max_z = camera.GetComponent<CameraComponent>().init_Z + camera.GetComponent<CameraComponent>().MAX_Z;
-			camera.transform.position = new Vector3(
-			   Mathf.Clamp(Camera.main.transform.position.x, min_x, max_x),
-			   Mathf.Clamp(Camera.main.transform.position.y, min_y, max_y),
-			   Mathf.Clamp(Camera.main.transform.position.z, min_z, max_z));
-		}		
+	private void rotateCamera(float x, float y)
+	{
+		Camera.main.transform.parent.parent.Rotate(Vector3.up, 90f * x * Time.deltaTime);
+		Camera.main.transform.parent.Rotate(Vector3.back, 90f * y * Time.deltaTime);
 	}
 
 	public void focusOnAgent(GameObject agent)
     {
 		target = agent.transform;
+		GameObjectManager.setGameObjectParent(Camera.main.transform.parent.parent.gameObject, agent, true);
+		MainLoop.instance.StartCoroutine(travelingOnAgent());
 	}
+
+	private void unfocusAgent()
+    {
+		if (target != null)
+        {
+			GameObjectManager.setGameObjectParent(Camera.main.transform.parent.parent.gameObject, target.parent.gameObject, true);
+			target = null;
+		}
+    }
+
+	private IEnumerator travelingOnAgent()
+    {
+		while (target != null && Camera.main.transform.parent.parent.position != target.position)
+		{
+			Camera.main.transform.parent.parent.position = Vector3.MoveTowards(Camera.main.transform.parent.parent.position, target.position+offset, smoothSpeed);
+			Camera.main.transform.LookAt(Camera.main.transform.parent.parent);
+			yield return null;
+		}
+    }
 }
