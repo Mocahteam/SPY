@@ -30,6 +30,7 @@ public class UISystem : FSystem {
 	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
 	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
 	private Family resetButton_f = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("ResetButton")); // Les petites balayettes de chaque panneau d'édition
+	private Family removeButton_f = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton")); // Les petites poubelles de chaque panneau d'édition
 
 	private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
@@ -283,6 +284,9 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(buttonContinue, false);
 		GameObjectManager.setGameObjectState(buttonSpeed, value);
 		GameObjectManager.setGameObjectState(buttonStop, value);
+		if (gameData.actionsHistory != null)
+			foreach (GameObject trash in removeButton_f)
+				trash.GetComponent<Button>().interactable = false;
 	}
 
 
@@ -424,6 +428,8 @@ public class UISystem : FSystem {
 			// Inactive of each editable panel
 			foreach (GameObject brush in resetButton_f)
 				brush.GetComponent<Button>().interactable = false;
+			foreach (GameObject trash in removeButton_f)
+				trash.GetComponent<Button>().interactable = false;
 			// Pause DragDrop system
 			DragDropSystem.instance.Pause = true;
 			// Sauvegarde de l'état d'avancement des niveaux pour le jour (niveau et étoile)
@@ -1041,7 +1047,7 @@ public class UISystem : FSystem {
 		if (editState == AgentEdit.EditMode.Locked)
 		{
 			cloneContainer.GetComponentInChildren<TMP_InputField>().interactable = false;
-			cloneContainer.transform.Find("ScriptContainer").Find("Header").Find("CloseButton").GetComponent<Button>().interactable = false;
+			cloneContainer.transform.Find("ScriptContainer").Find("Header").Find("RemoveButton").GetComponent<Button>().interactable = false;
 		}
 
 		// ajout du script par défaut
