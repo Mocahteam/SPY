@@ -76,7 +76,7 @@
     <limit actionType="Activate" limit="0" />
     <limit actionType="Wait" limit="0" />
     <limit actionType="If" limit="1" />
-    <limit actionType="Else" limit="1" />
+    <limit actionType="IfElse" limit="1" />
     <limit actionType="For" limit="1" />
     <limit actionType="Forever" limit="0" />
     <limit actionType="While" limit="0" />
@@ -88,8 +88,9 @@
     <limit actionType="RedArea" limit="0" />
     <limit actionType="FieldGate" limit="0" />
     <limit actionType="Terminal" limit="0" />
+    <limit actionType="Exit" limit="-1" />
   </actionBlocLimit>
-  <player posX="2" posZ="1" direction="3" />
+  <player name="Agent 1" posX="2" posZ="1" direction="3" />
   <script>
     <control type="For" nbFor="10">
       <control type="IfElse">

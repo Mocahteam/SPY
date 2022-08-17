@@ -267,19 +267,6 @@ public class TitleScreenSystem : FSystem {
 				foreach (XmlNode childEle in child)
 				{
 					listEleTemp.Add(childEle.Attributes.GetNamedItem("name").Value);
-					/*
-					if (childEle.Attributes.GetNamedItem("name").Value != "Captor")
-					{
-						listEleTemp.Add(childEle.Attributes.GetNamedItem("name").Value);
-					}
-					else
-					{
-						for (int i = 0; i < gameData.GetComponent<FunctionalityParam>().listCaptor.Count; i++)
-						{
-							listEleTemp.Add(gameData.GetComponent<FunctionalityParam>().listCaptor[i]);
-						}
-					}
-					*/
 				}
 				gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary.Add(child.Attributes.GetNamedItem("name").Value, listEleTemp);
 			}

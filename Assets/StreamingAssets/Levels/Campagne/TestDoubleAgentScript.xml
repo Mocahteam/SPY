@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<level>
+  <info>
+    <func name="F6"/>
+    <func name="F7"/>
+  </info>
+  <map>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="3" />
+      <row value="1" />
+      <row value="3" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="0" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="2" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="2" />
+      <row value="1" />
+    </line>
+    <line>
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
+    </line>
+  </map>
+  <competence>
+    <comp name="1.6" presence="1"/>
+    <comp name="3.1" presence="0"/>
+    <comp name="3.2" presence="1"/>
+    <comp name="3.3" presence="0"/>
+    <comp name="3.4" presence="0"/>
+  </competence>
+  <actionBlocLimit>
+    <limit actionType="Forward" limit="-1" />
+    <limit actionType="TurnLeft" limit="1" />
+    <limit actionType="TurnRight" limit="1" />
+    <limit actionType="TurnBack" limit="1" />
+    <limit actionType="Activate" limit="1" />
+    <limit actionType="Wait" limit="1" />
+    <limit actionType="If" limit="1" />
+    <limit actionType="IfElse" limit="1" />
+    <limit actionType="For" limit="1" />
+    <limit actionType="Forever" limit="1" />
+    <limit actionType="While" limit="1" />
+    <limit actionType="AndOperator" limit="1" />
+    <limit actionType="OrOperator" limit="1" />
+    <limit actionType="NotOperator" limit="1" />
+    <limit actionType="Wall" limit="1" />
+    <limit actionType="Enemie" limit="1" />
+    <limit actionType="RedArea" limit="1" />
+    <limit actionType="FieldGate" limit="1" />
+    <limit actionType="Terminal" limit="1" />
+    <limit actionType="Exit" limit="1" />
+  </actionBlocLimit>
+  <player name="Agent 1" posX="4" posZ="1" direction="3">
+    <script>
+      <action type="Forward" />
+      <control type="If" >
+        <condition>
+          <operator type="OrOperator">
+            <condition type="Left">
+              <operator type="AndOperator">
+                <condition type="Left">
+                </condition>
+                <condition type="Right">
+                  <operator type="NotOperator">
+                  </operator>
+                </condition>
+              </operator>
+            </condition>
+            <condition type="Right">
+            </condition>
+          </operator>
+        </condition>
+        <container>
+          <action type="Forward" />
+        </container>
+      </control>
+      <control type="IfElse">
+        <condition>
+        </condition>
+        <container type="ThenContainer">
+          <action type="TurnRight" />
+        </container>
+        <container type="ElseContainer">
+          <action type="TurnLeft" />
+        </container>
+      </control>
+      <control type="For" nbFor="3">
+        <action type="TurnBack" />
+      </control>
+      <control type="While">
+        <condition>
+        </condition>
+        <container>
+          <action type="Activate" />
+        </container>
+      </control>
+      <control type="Forever">
+        <action type="Wait" />
+      </control>
+      <action type="Forward" />
+    </script>
+  </player>
+  <player name="Agent 2" posX="4" posZ="5" direction="3">
+    <script>
+      <control type="If" >
+        <condition>
+          <operator type="NotOperator">
+            <captor type="Wall" />
+          </operator>
+        </condition>
+        <container>
+        </container>
+      </control>
+      <control type="IfElse">
+        <condition>
+          <operator type="AndOperator">
+            <condition type="Left">
+              <captor type="FieldGate" />
+            </condition>
+            <condition type="Right">
+              <captor type="Terminal" />
+            </condition>
+          </operator>
+        </condition>
+        <container type="ThenContainer">
+        </container>
+        <container type="ElseContainer">
+        </container>
+      </control>
+      <control type="For" nbFor="3">
+      </control>
+      <control type="While">
+        <condition>
+          <operator type="OrOperator">
+            <condition type="Left">
+              <captor type="Enemie" />
+            </condition>
+            <condition type="Right">
+              <captor type="RedArea" />
+            </condition>
+          </operator>
+        </condition>
+        <container>
+        </container>
+      </control>
+      <control type="Forever">
+      </control>
+    </script>
+  </player>
+  <score twoStars="7999" threeStars="10500"/>
+</level>

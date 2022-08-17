@@ -20,7 +20,8 @@ public class LevelGenerator : FSystem {
 	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
 	private List<List<int>> map;
 	private GameData gameData;
-	private int nbAgent = 0; // Nombre d'agent créer
+	private int nbAgentCreate = 0; // Nombre d'agent créer
+
 	public GameObject camera;
 	public GameObject editableCanvas;// Le container qui contient les Viewport/script container
 	public GameObject scriptContainer;
@@ -105,7 +106,7 @@ public class LevelGenerator : FSystem {
 	}
 
 	// Creer une entité agent ou robot et y associe un panel container
-	private GameObject createEntity(int i, int j, Direction.Dir direction, string type, List<GameObject> script = null){
+	private GameObject createEntity(string nameAgent, int i, int j, Direction.Dir direction, string type, List<GameObject> script = null){
 		GameObject entity = null;
 		switch(type){
 			case "player": // Robot
@@ -118,7 +119,7 @@ public class LevelGenerator : FSystem {
         // Si la function permettant de changer le nom de l'agent est activé
         if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F9"))
         {
-			entity.GetComponent<AgentEdit>().editState = AgentEdit.EditMode.Synch;
+			entity.GetComponent<AgentEdit>().editState = AgentEdit.EditMode.Editable;
 		}
 
 		// Charger l'agent aux bonnes coordonées dans la bonne direction
@@ -139,10 +140,24 @@ public class LevelGenerator : FSystem {
 		// On va charger l'image et le nom de l'agent selon l'agent (robot, enemie etc...)
 		if (type == "player")
 		{
-			nbAgent++;
+			nbAgentCreate++;
 			// On nomme l'agent
 			AgentEdit agentEdit = entity.GetComponent<AgentEdit>();
-			agentEdit.agentName = "Script" + nbAgent;
+            if (nameAgent != "")
+            {
+				agentEdit.agentName = nameAgent;
+			}
+            else
+            {
+				if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F9"))
+				{
+					agentEdit.agentName = "Agent" + nbAgentCreate;
+				}
+				else
+				{
+					agentEdit.agentName = "Script " + nbAgentCreate;
+				}
+			}
 
 			// Si l'agent est en mode Locked ou Synchro ou qu'un script est défini, on crée une zone de programmation dédiée
 			if (agentEdit.editState == AgentEdit.EditMode.Locked || agentEdit.editState == AgentEdit.EditMode.Synch || script != null)
@@ -163,7 +178,14 @@ public class LevelGenerator : FSystem {
 			// Chargement de l'icône de l'agent sur la localisation
 			executablePanel.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
-			executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = "Drone";
+			if(nameAgent != "")
+            {
+				executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = nameAgent;
+			}
+            else
+            {
+				executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = "Drone";
+			}
 
 			if (script != null)
 			{
@@ -304,12 +326,21 @@ public class LevelGenerator : FSystem {
 					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), int.Parse(child.Attributes.GetNamedItem("slot").Value));
 					break;
 				case "player":
-					createEntity(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
+					string nameAgentByUser = "";
+					if(child.Attributes.GetNamedItem("name").Value != "")
+                    {
+						nameAgentByUser = child.Attributes.GetNamedItem("name").Value;
+					}
+					createEntity(nameAgentByUser, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
 					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),"player", readXMLScript(child.ChildNodes[0]));
-					break;
-				
+					break;		
 				case "enemy":
-					GameObject enemy = createEntity(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
+					string nameSentinelleByUser = "";
+					if (child.Attributes.GetNamedItem("name").Value != "")
+					{
+						nameSentinelleByUser = child.Attributes.GetNamedItem("name").Value;
+					}
+					GameObject enemy = createEntity(nameSentinelleByUser, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
 					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),"enemy", readXMLScript(child.ChildNodes[0]));
 					enemy.GetComponent<DetectRange>().range = int.Parse(child.Attributes.GetNamedItem("range").Value);
 					enemy.GetComponent<DetectRange>().selfRange = bool.Parse(child.Attributes.GetNamedItem("selfRange").Value);
@@ -417,12 +448,13 @@ public class LevelGenerator : FSystem {
 
 	private void tcheckRequierement()
     {
-		// Besoin de reagrder si les capteurs sont correctement parametré
+		// Besoin de regarder si les capteurs sont correctement parametrés
 		bool prgOkCaptor = tcheckCaptorProgramationValide();
 
 		foreach (string funcName in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary.Keys)
         {
-            if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(funcName))
+			Debug.Log("Func name : " + funcName);
+			if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(funcName))
             {
 				bool errorPrgFunc = true;
 				foreach (string element in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary[funcName])
@@ -430,6 +462,7 @@ public class LevelGenerator : FSystem {
 					//On regarde si c'est un capteur ou non
 					if (element != "Captor")
 					{
+						Debug.Log(element);
 						if (gameData.actionBlocLimit[element] != 0)
 						{
 							errorPrgFunc = false;
@@ -810,13 +843,6 @@ public class LevelGenerator : FSystem {
 		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F3"))
         {
 			DragDropSystem.instance.Pause = true;
-		}
-		// Si F5 est désactivé, le bouton pour que le robot effectue une sequence d'action pas à pas n'est plus disponible
-		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F5"))
-		{
-			////////////////////////////////////////////
-			// PRINCIPE DES HISTORIQUES DOIT ETRE RESTAURE
-			UISystem.instance.buttonNextStep.SetActive(false);
 		}
 		// Si F8 est désactivé, le bouton pour que le robot effectue une sequence d'action n'est plus disponible
 		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F8"))
