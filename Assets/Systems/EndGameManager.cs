@@ -7,10 +7,21 @@ using System.Collections;
 /// This system check if the end of the level is reached
 /// </summary>
 public class EndGameManager : FSystem {
+
+	public static EndGameManager instance;
+
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
     private Family newCurrentAction_f = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
 	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
+
 	public GameObject endPanel;
+	public GameObject badEndPanel;
+	public GameObject menuPanel;
+
+	public EndGameManager()
+	{
+		instance = this;
+	}
 
 	protected override void onStart()
     {
@@ -55,5 +66,11 @@ public class EndGameManager : FSystem {
 				}				
 			}				
 		}
+	}
+
+	public void badEnd()
+    {
+		badEndPanel.SetActive(true);
+		menuPanel.SetActive(false);
 	}
 }

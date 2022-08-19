@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <level>
   <info>
+    <func name="F5"/>
+    <func name="F6"/>
+    <func name="F7"/>
+    <func name="F8"/>
+    <func name="F18"/>
   </info>
   <map>
     <line>
@@ -10,54 +15,43 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
+      <row value="1" />
     </line>
     <line>
       <row value="1" />
-      <row value="0" />
       <row value="0" />
       <row value="3" />
       <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
+      <row value="3" />
       <row value="0" />
       <row value="1" />
     </line>
     <line>
       <row value="1" />
       <row value="0" />
-      <row value="0" />
-      <row value="0" />
+      <row value="1" />
+      <row value="1" />
+      <row value="1" />
       <row value="0" />
       <row value="1" />
     </line>
     <line>
       <row value="1" />
-      <row value="1" />
       <row value="0" />
       <row value="1" />
       <row value="1" />
       <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
       <row value="0" />
       <row value="1" />
-      <row value="1" />
-      <row value="1" />
     </line>
     <line>
-      <row value="1" />
       <row value="1" />
       <row value="2" />
       <row value="1" />
       <row value="1" />
       <row value="1" />
+      <row value="2" />
+      <row value="1" />
     </line>
     <line>
       <row value="1" />
@@ -66,23 +60,28 @@
       <row value="1" />
       <row value="1" />
       <row value="1" />
+      <row value="1" />
     </line>
-
   </map>
-  <dialogs dialog="Tu peux maintenant utiliser l'action attendre." img="WaitIcon.png"/>
-  <dialogs dialog ="Attention !&#xA;Observe bien le drone !&#xA;Il a lui aussi un script."/>
+  <competence>
+    <comp name="1.6" presence="1"/>
+    <comp name="3.1" presence="0"/>
+    <comp name="3.2" presence="1"/>
+    <comp name="3.3" presence="0"/>
+    <comp name="3.4" presence="0"/>
+  </competence>
   <actionBlocLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="-1" />
     <limit actionType="TurnRight" limit="-1" />
-    <limit actionType="Wait" limit="-1" />
-    <limit actionType="Activate" limit="-1" />
-    <limit actionType="TurnBack" limit="-1" />
+    <limit actionType="TurnBack" limit="0" />
+    <limit actionType="Activate" limit="0" />
+    <limit actionType="Wait" limit="0" />
     <limit actionType="If" limit="0" />
-    <limit actionType="IfElse" limit="0" />
-    <limit actionType="For" limit="0" />
-    <limit actionType="While" limit="0" />
+    <limit actionType="IfElse" limit="2" />
+    <limit actionType="For" limit="1" />
     <limit actionType="Forever" limit="0" />
+    <limit actionType="While" limit="1" />
     <limit actionType="AndOperator" limit="0" />
     <limit actionType="OrOperator" limit="0" />
     <limit actionType="NotOperator" limit="0" />
@@ -91,18 +90,15 @@
     <limit actionType="RedArea" limit="0" />
     <limit actionType="FieldGate" limit="0" />
     <limit actionType="Terminal" limit="0" />
-    <limit actionType="Exit" limit="0" />
+    <limit actionType="Exit" limit="1" />
   </actionBlocLimit>
-  <activable posX="5" posZ="2" direction="1">
-    <slot slot="0" />
-  </activable>
-  <door posX="4" posZ="2" slot="0" direction="3" />
-  <player name="Agent 1" posX="6" posZ="2" direction="3" />
-  <enemy name="Sentinelle 1" posX="3" posZ="4" direction="1" range="2" selfRange="False" typeRange="0">
-    <script>
-        <action type="Wait"/>
-        <action type="TurnRight"/>
-    </script>
-  </enemy>
-  <score twoStars="4142" threeStars="5142"/>
+  <player name="Agent 1" posX="4" posZ="1" direction="3">
+	<script>
+	</script>
+  </player>
+  <player name="Agent 2" posX="4" posZ="5" direction="3">
+	<script>
+	</script>
+  </player>
+  <score twoStars="7999" threeStars="10500"/>
 </level>

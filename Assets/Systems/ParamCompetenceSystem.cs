@@ -129,7 +129,7 @@ public class ParamCompetenceSystem : FSystem
 		}
 	}
 
-	// Chargement des parametre des compétences
+	// Chargement des parametres des compétences
 	private void loadParamComp()
 	{
 		StreamReader reader = new StreamReader("" + Application.dataPath + pathParamComp);
@@ -709,6 +709,7 @@ public class ParamCompetenceSystem : FSystem
 	//Lors de la deselection d'une compétence on désélectionne toutes les compétences reliées
 	public void unselectComp(GameObject comp, bool userUnselect)
     {
+		/*
         if (!userUnselect)
         {
 			comp.GetComponent<Toggle>().isOn = false;
@@ -723,8 +724,35 @@ public class ParamCompetenceSystem : FSystem
 				unselectComp(c, false);
 			}
         }
+		*/
 
+		// On retir la compétence de la liste des compétences séléctionnées
 		addOrRemoveCompSelect(comp, false);
+
+		// On reset l'affichage de toutes les compétences.
+		resetSelectComp();
+
+		// Le toogle va être désactivé automatique par le programme aprés le traitement de la fonction 
+		if (userUnselect)
+		{
+			comp.GetComponent<Toggle>().isOn = true;
+		}
+
+		//On désactive tous les toogle des comp pas implémenté
+		desactiveToogleComp();
+
+		// On reselectionne toutes les compétences
+		foreach (string compName in listCompSelectUser)
+		{
+			foreach (GameObject c in competence_f)
+			{
+				if (c.name == compName)
+				{
+					selectComp(c, false);
+				}
+			}
+		}
+
 	}
 
 	// Ajoute ou retire la compétence de la liste des compétences selectionner manuellement par l'utilisateur

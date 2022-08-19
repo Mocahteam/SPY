@@ -101,7 +101,7 @@ public class StepSystem : FSystem {
             }
             else
             {
-
+                EndGameManager.instance.badEnd();
             }
         }
         else
