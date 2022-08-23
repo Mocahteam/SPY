@@ -453,7 +453,6 @@ public class LevelGenerator : FSystem {
 
 		foreach (string funcName in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary.Keys)
         {
-			Debug.Log("Func name : " + funcName);
 			if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(funcName))
             {
 				bool errorPrgFunc = true;
@@ -462,7 +461,6 @@ public class LevelGenerator : FSystem {
 					//On regarde si c'est un capteur ou non
 					if (element != "Captor")
 					{
-						Debug.Log(element);
 						if (gameData.actionBlocLimit[element] != 0)
 						{
 							errorPrgFunc = false;
@@ -474,11 +472,12 @@ public class LevelGenerator : FSystem {
                 {
 					foreach (string element in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary[funcName])
 					{
-						//On regarde si c'est une erreur de programtion capteur (et si l'element est un capteur)
-						if (!prgOkCaptor)
+						//On regarde si c'est une erreur de programation capteur (et si l'element est un capteur)
+						// On vérifie aussi que l'élément à besoin de capteur
+						if (!prgOkCaptor && gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary[funcName].Contains("Captor"))
 						{
 							// On passe tous les capteur à -1
-							foreach(string captor in gameData.GetComponent<FunctionalityParam>().listCaptor)
+							foreach (string captor in gameData.GetComponent<FunctionalityParam>().listCaptor)
                             {
 								gameData.actionBlocLimit[captor] = -1;
 							}

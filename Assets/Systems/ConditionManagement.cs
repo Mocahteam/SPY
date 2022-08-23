@@ -181,18 +181,13 @@ public class ConditionManagement : FSystem {
 				break;
 			case "Exit": // exits
 				foreach (GameObject go in exitGO)
+				{
+					vec = new Vector2(0, 0);
 					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
 					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
 						ifok = true;
+				}
 				break;
-				/*
-			case 6: // coins
-				foreach (GameObject go in coinGO)
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
-						ifok = !ifAction.ifNot;
-				break;
-				*/
 		}
 		return ifok;
 		

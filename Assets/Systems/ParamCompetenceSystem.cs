@@ -709,23 +709,6 @@ public class ParamCompetenceSystem : FSystem
 	//Lors de la deselection d'une compétence on désélectionne toutes les compétences reliées
 	public void unselectComp(GameObject comp, bool userUnselect)
     {
-		/*
-        if (!userUnselect)
-        {
-			comp.GetComponent<Toggle>().isOn = false;
-		}
-
-		// On parcourt les compétence, et si la comp en parametre est présente en lien avec une des compétences,
-		// On déselectionne aussi cette compétence par récursivité
-		foreach(GameObject c in competence_f)
-        {
-			if(c.GetComponent<Toggle>().interactable && c.GetComponent<Toggle>().isOn && c.GetComponent<Competence>().compLinkWhitComp.Contains(comp.name))
-            {
-				unselectComp(c, false);
-			}
-        }
-		*/
-
 		// On retir la compétence de la liste des compétences séléctionnées
 		addOrRemoveCompSelect(comp, false);
 
