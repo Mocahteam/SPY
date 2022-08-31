@@ -191,7 +191,6 @@ public class ParamCompetenceSystem : FSystem
 		// On charge les info de la compétence qui sera affiché lorsque l'on survolera celle-ci avec la souris
 		competence.GetComponent<Competence>().info = data[4];
 		// On charge le vecteur des Fonction lié à la compétence
-		Debug.Log("test1");
 		if (data.Length >= 6)
         {
 			var data_link = data[5].Split(',');
@@ -199,7 +198,6 @@ public class ParamCompetenceSystem : FSystem
 			{
 				competence.GetComponent<Competence>().compLinkWhitFunc.Add(value);
 			}
-			Debug.Log("test2");
 			if (data.Length >= 7)
 			{
 				// On charge le vecteur des compétences qui seront automatiquement selectionnées si la compétence est séléctionnée
@@ -208,7 +206,6 @@ public class ParamCompetenceSystem : FSystem
 				{
 					competence.GetComponent<Competence>().compLinkWhitComp.Add(value);
 				}
-				Debug.Log("test3");
 				if (data.Length >= 8)
 				{
 					// On charge le vecteur des compétences dont au moins l'une devra être selectionné en m^me temps que celle selectionné actuellement
@@ -288,7 +285,6 @@ public class ParamCompetenceSystem : FSystem
 	// Parcourt le noeud d'information est apelle les bonnes fonctions pour traiter l'information du niveau
 	private void loadInfo(XmlDocument doc, string namelevel)
 	{
-		Debug.Log("Lecture lvl : " + namelevel);
 		XmlNode root = doc.ChildNodes[1];
 		foreach (XmlNode child in root.ChildNodes)
 		{
@@ -361,12 +357,10 @@ public class ParamCompetenceSystem : FSystem
     {
 		foreach(string f_name in gameData.GetComponent<FunctionalityParam>().activeFunc[nameFunc])
         {
-			Debug.Log("Func link : " + f_name);
             // Si la fonction na pas encore été selectionné
 			// alors on l'ajoute à la séléction et on récurcive dessus
             if (f_name != "" && !gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_name))
             {
-				Debug.Log("Func link add");
 				gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(f_name);
 				addSelectFuncLinkbyFunc(f_name);
 			}
@@ -449,10 +443,8 @@ public class ParamCompetenceSystem : FSystem
 				// On fait ça avec le level design
 				foreach (string f_key in gameData.GetComponent<FunctionalityParam>().levelDesign.Keys)
 				{
-					Debug.Log("Func level design : " + f_key);
                     if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_key) && comp.GetComponent<Competence>().compLinkWhitFunc.Contains(f_key))
                     {
-						Debug.Log("Func add selection");
 						gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(f_key);
 						addSelectFuncLinkbyFunc(f_key);
 					}
@@ -532,7 +524,7 @@ public class ParamCompetenceSystem : FSystem
 		}
         else
         {
-			string message = "Erreur, pas de compétence sélectionné!";
+			string message = "Erreur, pas de compétence sélectionnée!";
 			displayMessageUser(message);
 		}
 
@@ -577,7 +569,7 @@ public class ParamCompetenceSystem : FSystem
 		if(comp.GetComponent<Competence>() && comp.GetComponent<Competence>().compLinkWhitComp[0] != "")
         {
 			string infoMsg = panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text;
-			infoMsg += "\n\nCompetence selectionné automatiquement : \n";
+			infoMsg += "\n\nCompetence selectionnée automatiquement : \n";
 			foreach(string nameComp in comp.GetComponent<Competence>().compLinkWhitComp)
             {
 				infoMsg += nameComp + " ";
