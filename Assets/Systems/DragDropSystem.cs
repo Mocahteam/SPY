@@ -284,7 +284,7 @@ public class DragDropSystem : FSystem
 		// refresh all the hierarchy of parent containers
 		refreshHierarchyContainers(itemDragged);
 		// Update size of parent GameObject
-		MainLoop.instance.StartCoroutine(UISystem.instance.setEditableSize());
+		GameObjectManager.addComponent<RefreshSizeOfEditableContainer>(MainLoop.instance.gameObject);
 
 		// Lance le son de dépôt du block d'action
 		audioSource.Play();

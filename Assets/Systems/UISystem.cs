@@ -25,7 +25,6 @@ public class UISystem : FSystem {
 	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
-	private Family viewportContainerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les container éditable
 	private Family viewportContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les containers viewport
 	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
 	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
@@ -54,10 +53,8 @@ public class UISystem : FSystem {
 	public GameObject canvas;
 	public GameObject libraryPanel;
 	public GameObject EditableCanvas;
-	public GameObject prefabViewportScriptContainer;
 	public GameObject libraryFor;
 	public GameObject libraryWait;
-	private UIRootContainer containerSelected; // Le container selectionné
 
 	public static UISystem instance;
 
@@ -100,8 +97,6 @@ public class UISystem : FSystem {
 
 		loadHistory();
 
-		// Afin de mettre en rouge les noms qui ne sont pas en lien dés le début
-		MainLoop.instance.StartCoroutine(tcheckLinkName());
 		MainLoop.instance.StartCoroutine(forceLibraryRefresh());
 	}
 
@@ -137,45 +132,6 @@ public class UISystem : FSystem {
 		}
 	}
 
-
-	// Vérifie si les noms des containers correspond à un agent et vice-versa
-	// Si non, Fait apparaitre le nom en rouge
-	private IEnumerator tcheckLinkName()
-	{
-		yield return null;
-
-		// On parcours les containers et si aucun nom ne correspond alors on met leur nom en gras rouge
-		foreach (GameObject container in scriptContainer_f)
-		{
-			bool nameSame = false;
-			foreach (GameObject agent in agent_f)
-				if (container.GetComponent<UIRootContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
-					nameSame = true;
-
-			// Si même nom trouver on met l'arriére plan blanc
-			if (nameSame)
-				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().image.color = Color.white;
-			else // sinon rouge 
-				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
-		}
-
-		// On fait la même chose pour les agents
-		foreach (GameObject agent in agent_f)
-		{
-			bool nameSame = false;
-			foreach (GameObject container in scriptContainer_f)
-				if (container.GetComponent<UIRootContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
-					nameSame = true;
-
-			// Si même nom trouver on met l'arriére transparent
-			if (nameSame)
-				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 1f, 1f, 1f);
-			else // sinon rouge 
-				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
-		}
-	}
-
-
 	///  ????
 	IEnumerator GetTextureWebRequest(Image img, string path)
 	{
@@ -198,12 +154,6 @@ public class UISystem : FSystem {
 	public void startUpdatePlayButton()
     {
 		MainLoop.instance.StartCoroutine(updatePlayButton());
-	}
-
-	// Rafraichit le nom des containers
-	public void refreshUINameContainer()
-	{
-		MainLoop.instance.StartCoroutine(tcheckLinkName());
 	}
 
 	private IEnumerator forceLibraryRefresh()
@@ -566,25 +516,6 @@ public class UISystem : FSystem {
 		}
 	}
 
-
-	// Empty the script window
-	// See ResetButton in editor
-	public void resetScriptContainer(bool refund = false){
-		// On récupére le contenair pointé lors du clic de la balayette
-		GameObject scriptContainerPointer = viewportContainerPointed_f.First().transform.Find("ScriptContainer").gameObject;
-
-		// On parcourt le script container pour détruire toutes les instructions
-		for (int i = scriptContainerPointer.transform.childCount-1; i >= 0 ; i--){
-			if (scriptContainerPointer.transform.GetChild(i).GetComponent<BaseElement>()){
-				DragDropSystem.instance.deleteElement(scriptContainerPointer.transform.GetChild(i).gameObject);				
-			}
-		}
-		// Enable the last emptySlot and disable dropZone
-		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 1).gameObject, true);
-		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 2).gameObject, false);
-	}
-
-
 	//Recursive script destroyer
 	private void destroyScript(GameObject go,  bool refund = false){
 		if (go.GetComponent<LibraryItemRef>())
@@ -862,7 +793,7 @@ public class UISystem : FSystem {
             {
 				// On traduit la condition en string
 				((WhileControl)forAct).condition = new List<string>();
-				ConditionManagement.instance.convertionConditionSequence(forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ((WhileControl)forAct).condition);
+				convertionConditionSequence(forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ((WhileControl)forAct).condition);
 				
 			}
 			// On parcourt les éléments présent dans le block action
@@ -889,7 +820,7 @@ public class UISystem : FSystem {
 		foreach(IfControl ifAct in copyGO.GetComponentsInChildren<IfControl>()){
 			// On traduit la condition en string
 			ifAct.condition = new List<string>();
-			ConditionManagement.instance.convertionConditionSequence(ifAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ifAct.condition);
+			convertionConditionSequence(ifAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ifAct.condition);
 			
 			GameObject thenContainer = ifAct.transform.Find("Container").gameObject;
 			BaseElement firstThen = thenContainer.GetComponentInChildren<BaseElement>();
@@ -931,6 +862,80 @@ public class UISystem : FSystem {
 		}
 
 		return copyGO;
+	}
+
+
+	// Transforme une sequence de condition en une chaine de caractére
+	private void convertionConditionSequence(GameObject condition, List<string> chaine)
+	{
+		// Check if condition is a BaseCondition
+		if (condition.GetComponent<BaseCondition>())
+		{
+			// On regarde si la condition reçue est un élément ou bien un opérator
+			// Si c'est un élément, on le traduit en string et on le renvoie 
+			if (condition.GetComponent<BaseCaptor>())
+				chaine.Add("" + condition.GetComponent<BaseCaptor>().captorType);
+			else
+			{
+				BaseOperator bo;
+				if (condition.TryGetComponent<BaseOperator>(out bo))
+				{
+					Transform conditionContainer = bo.transform.GetChild(0);
+					// Si c'est une négation on met "!" puis on fait une récursive sur le container et on renvoie le tous traduit en string
+					if (bo.operatorType == BaseOperator.OperatorType.NotOperator)
+					{
+						// On vérifie qu'il y a bien un élément présent, son container doit contenir 3 enfants (icone, une BaseCondition et le ReplacementSlot)
+						if (conditionContainer.childCount == 3)
+						{
+							chaine.Add("NOT");
+							convertionConditionSequence(conditionContainer.GetComponentInChildren<BaseCondition>().gameObject, chaine);
+						}
+						else
+						{
+							GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
+						}
+					}
+					else if (bo.operatorType == BaseOperator.OperatorType.AndOperator)
+					{
+						// Si les côtés de l'opérateur sont remplis, alors il compte 5 childs (2 ReplacementSlots, 2 BaseCondition et 1 icone), sinon cela veux dire que il manque des conditions
+						if (conditionContainer.childCount == 5)
+						{
+							chaine.Add("(");
+							convertionConditionSequence(conditionContainer.GetChild(0).gameObject, chaine);
+							chaine.Add("AND");
+							convertionConditionSequence(conditionContainer.GetChild(3).gameObject, chaine);
+							chaine.Add(")");
+						}
+						else
+						{
+							GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
+						}
+					}
+					else if (bo.operatorType == BaseOperator.OperatorType.OrOperator)
+					{
+						// Si les côtés de l'opérateur sont remplis, alors il compte 5 childs, sinon cela veux dire que il manque des conditions
+						if (conditionContainer.childCount == 5)
+						{
+							chaine.Add("(");
+							convertionConditionSequence(conditionContainer.GetChild(0).gameObject, chaine);
+							chaine.Add("OR");
+							convertionConditionSequence(conditionContainer.GetChild(3).gameObject, chaine);
+							chaine.Add(")");
+						}
+						else
+						{
+							GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
+						}
+					}
+				}
+				else
+				{
+					Debug.LogError("Unknown BaseCondition!!!");
+				}
+			}
+		}
+		else
+			GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.BadCondition });
 	}
 
 	/**
@@ -983,180 +988,6 @@ public class UISystem : FSystem {
 				// Si c'est le cas on fait un appel récursif
 				if (block.GetComponent<ControlElement>())
 					CleanControlBlock(block);
-		}
-	}
-
-	// used on + button (see in Unity editor)
-	public void addContainer()
-    {
-		addSpecificContainer();
-		MainLoop.instance.StartCoroutine(syncEditableScrollBars());
-	}
-	public IEnumerator syncEditableScrollBars()
-	{
-		// delay three times because we have to wait addSpecificContainer end (that call setEditableSize coroutine)
-		yield return null;
-		yield return null;
-		yield return null;
-		// move scroll bar on the last added container
-		EditableCanvas.GetComponentInParent<ScrollRect>().verticalScrollbar.value = 1;
-		EditableCanvas.GetComponentInParent<ScrollRect>().horizontalScrollbar.value = 1;
-	}
-
-	// Ajouter un container à la scéne
-	public void addSpecificContainer(string name = "", AgentEdit.EditMode editState = AgentEdit.EditMode.Editable, List<GameObject> script = null)
-	{
-		// On clone le prefab
-		GameObject cloneContainer = Object.Instantiate(prefabViewportScriptContainer);
-		Transform editableContainers = EditableCanvas.transform.Find("EditableContainers");
-		// On l'ajoute à l'éditableContainer
-		cloneContainer.transform.SetParent(editableContainers, false);
-		// We secure the scale
-		cloneContainer.transform.localScale = new Vector3(1, 1, 1);
-		// On regarde combien de viewport container contient l'éditable pour mettre le nouveau viewport à la bonne position
-		cloneContainer.transform.SetSiblingIndex(EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer);
-		// Puis on imcrémente le nombre de viewport contenue dans l'éditable
-		EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
-
-		// Affiche le bon nom
-		if (name != "")
-		{
-			// On définie son nom à celui de l'agent
-			cloneContainer.GetComponentInChildren<UIRootContainer>().associedAgentName = name;
-			// On affiche le bon nom sur le container
-			cloneContainer.GetComponentInChildren<TMP_InputField>().text = name;
-		}
-		else
-		{
-			bool nameOk = false;
-			for (int i = EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer; !nameOk; i++)
-			{
-				// Si le nom n'est pas déjà utilisé on nomme le nouveau container de cette façon
-				if (!nameContainerUsed("Script" + i))
-				{
-					cloneContainer.GetComponentInChildren<UIRootContainer>().associedAgentName = "Script" + i;
-					// On affiche le bon nom sur le container
-					cloneContainer.GetComponentInChildren<TMP_InputField>().text = "Script" + i;
-					nameOk = true;
-				}
-			}
-			MainLoop.instance.StartCoroutine(tcheckLinkName());
-		}
-
-		// Si on est en mode Lock, on bloque l'édition et on interdit de supprimer le script
-		if (editState == AgentEdit.EditMode.Locked)
-		{
-			cloneContainer.GetComponentInChildren<TMP_InputField>().interactable = false;
-			cloneContainer.transform.Find("ScriptContainer").Find("Header").Find("RemoveButton").GetComponent<Button>().interactable = false;
-		}
-
-		// ajout du script par défaut
-		GameObject dropArea = cloneContainer.GetComponentInChildren<ReplacementSlot>().gameObject;
-		if (script != null && dropArea != null)
-			for (int k = 0; k < script.Count; k++)
-			{
-				DragDropSystem.instance.addItemOnDropArea(script[k], dropArea);
-				// refresh all the hierarchy of parent containers
-				DragDropSystem.instance.refreshHierarchyContainers(dropArea);
-			}
-
-		// On ajoute le nouveau viewport container à FYFY
-		GameObjectManager.bind(cloneContainer);
-
-		// Update size of parent GameObject
-		MainLoop.instance.StartCoroutine(setEditableSize());
-	}
-
-	public IEnumerator setEditableSize()
-    {
-		yield return null;
-		yield return null;
-		RectTransform editableContainers = (RectTransform)EditableCanvas.transform.Find("EditableContainers");
-		// Resolve bug when creating the first editable component, it is the child of the verticalLayout but not included inside!!!
-		// We just disable and enable it and force update rect
-		if (editableContainers.childCount > 0)
-		{
-			editableContainers.GetChild(0).gameObject.SetActive(false);
-			editableContainers.GetChild(0).gameObject.SetActive(true);
-		}
-		editableContainers.ForceUpdateRectTransforms();
-		yield return null;
-		// compute new size
-		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(215, editableContainers.rect.width));
-	}
-
-	public void removeContainer(GameObject container)
-    {
-		GameObjectManager.unbind(container);
-		Object.Destroy(container);
-		// Update size of parent GameObject
-		MainLoop.instance.StartCoroutine(setEditableSize());
-	}
-
-	public void selectContainer(UIRootContainer container)
-    {
-		containerSelected = container;
-	}
-
-	public UIRootContainer selectContainerByName(string name)
-	{
-		foreach (GameObject container in scriptContainer_f)
-		{
-			UIRootContainer uiContainer = container.GetComponent<UIRootContainer>();
-			if (uiContainer.associedAgentName == name)
-				return uiContainer;
-		}
-
-		return null;
-	}
-
-
-	// Vérifie si le nom proposé existe déjà ou non pour un script container
-	public bool nameContainerUsed(string nameTested) {
-		// On regarde en premier lieu si le nom n'existe pas déjà
-		foreach (GameObject container in scriptContainer_f)
-			if (container.GetComponent<UIRootContainer>().associedAgentName == nameTested)
-				return true;
-
-		return false;
-	}
-	
-	// Change le nom du container
-	public void newNameContainer(string newName)
-	{
-		string oldName = containerSelected.associedAgentName;
-		if (oldName != newName)
-		{
-			// Si le nom n'est pas utilisé
-			if (!nameContainerUsed(newName))
-			{
-				// On tente de récupérer un agent lié à l'ancien nom
-				AgentEdit linkedAgent = EditAgentSystem.instance.selectLinkedAgentByName(oldName);
-				// Si l'agent existe, on met à jour son lien (on supprime le lien actuelle)
-				if (linkedAgent)
-					EditAgentSystem.instance.setAgentName(newName);
-				// On change pour son nouveau nom
-				containerSelected.associedAgentName = newName;
-				containerSelected.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = newName;
-			}
-			else
-			{ // Sinon on annule le changement
-				containerSelected.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = oldName;
-			}
-		}
-		MainLoop.instance.StartCoroutine(tcheckLinkName());
-	}
-
-	// Utilisé surtout par les appels extérieurs au systéme
-	// Permet d'enregistrer le nom du container que l'on veux changé
-	// Et lui changer son nom 
-	public void setContainerName(string oldName, string newName)
-	{
-		UIRootContainer uiContainer = selectContainerByName(oldName);
-		if (uiContainer != null)
-		{
-			containerSelected = uiContainer;
-			newNameContainer(newName);
 		}
 	}
 

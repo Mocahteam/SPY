@@ -12,8 +12,8 @@ public class CameraSystemBridge : MonoBehaviour
         CameraSystem.instance.Pause = value;
     }
 
-    public void locateAgent(EditAgentSystemBridge agent)
+    public void locateAgent(LinkedWith agent)
     {
-        CameraSystem.instance.focusOnAgent(agent.agent);
+        CameraSystem.instance.focusOnAgent(agent.target);
     }
 }

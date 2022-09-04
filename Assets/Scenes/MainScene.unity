@@ -1661,7 +1661,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 649317142}
   m_HandleRect: {fileID: 649317141}
   m_Direction: 0
-  m_Value: 0.0000023365021
+  m_Value: 0.0000002861023
   m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -5615,10 +5615,9 @@ GameObject:
   - component: {fileID: 361349219}
   - component: {fileID: 361349232}
   - component: {fileID: 361349220}
-  - component: {fileID: 361349236}
-  - component: {fileID: 361349237}
   - component: {fileID: 361349238}
   - component: {fileID: 361349239}
+  - component: {fileID: 361349236}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -5724,8 +5723,6 @@ MonoBehaviour:
   canvas: {fileID: 1410401867}
   libraryPanel: {fileID: 1493523084}
   EditableCanvas: {fileID: 451020363}
-  prefabViewportScriptContainer: {fileID: 2876508349418875100, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
-    type: 3}
   libraryFor: {fileID: 2094373091}
   libraryWait: {fileID: 490968332}
 --- !u!114 &361349222
@@ -5864,13 +5861,9 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     _typeFullName: GameStateManager
     _pause: 0
-  - _typeAssemblyQualifiedName: EditAgentSystem, Assembly-CSharp, Version=0.0.0.0,
+  - _typeAssemblyQualifiedName: EditableContainerSystem, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-    _typeFullName: EditAgentSystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: ConditionManagement, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: ConditionManagement
+    _typeFullName: EditableContainerSystem
     _pause: 0
   _lateUpdateSystemDescriptions:
   - _typeAssemblyQualifiedName: HighLightSystem, Assembly-CSharp, Version=0.0.0.0,
@@ -6095,23 +6088,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 361349215}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2aa0511f528cf8d46888eb38ef84837e, type: 3}
+  m_Script: {fileID: 11500000, guid: 51c06974314b61340bb7bdc9124951b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   agentSelected: {fileID: 0}
---- !u!114 &361349237
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 361349215}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7cf3b28c369708a41a2d573ca9c4b2ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  endPanel: {fileID: 1306532945}
+  EditableCanvas: {fileID: 451020363}
+  prefabViewportScriptContainer: {fileID: 2876508349418875100, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
+    type: 3}
 --- !u!114 &361349238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8456,7 +8439,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 665381104}
   m_HandleRect: {fileID: 665381103}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -25367,8 +25350,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 361349221}
-        m_TargetAssemblyTypeName: UISystem_wrapper, Assembly-CSharp
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: EditableContainerSystem_wrapper, Assembly-CSharp
         m_MethodName: addContainer
         m_Mode: 1
         m_Arguments:

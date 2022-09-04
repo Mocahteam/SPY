@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using FYFY;
-using System.Collections;
 using FYFY_plugins.TriggerManager;
-using UnityEngine.UI;
 
 /// <summary>
 /// Manage detector areas

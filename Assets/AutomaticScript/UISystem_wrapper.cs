@@ -16,7 +16,6 @@ public class UISystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject canvas;
 	public UnityEngine.GameObject libraryPanel;
 	public UnityEngine.GameObject EditableCanvas;
-	public UnityEngine.GameObject prefabViewportScriptContainer;
 	public UnityEngine.GameObject libraryFor;
 	public UnityEngine.GameObject libraryWait;
 	private void Start()
@@ -35,7 +34,6 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "canvas", canvas);
 		MainLoop.initAppropriateSystemField (system, "libraryPanel", libraryPanel);
 		MainLoop.initAppropriateSystemField (system, "EditableCanvas", EditableCanvas);
-		MainLoop.initAppropriateSystemField (system, "prefabViewportScriptContainer", prefabViewportScriptContainer);
 		MainLoop.initAppropriateSystemField (system, "libraryFor", libraryFor);
 		MainLoop.initAppropriateSystemField (system, "libraryWait", libraryWait);
 	}
@@ -43,11 +41,6 @@ public class UISystem_wrapper : BaseWrapper
 	public void startUpdatePlayButton()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "startUpdatePlayButton", null);
-	}
-
-	public void refreshUINameContainer()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "refreshUINameContainer", null);
 	}
 
 	public void setExecutionView(System.Boolean value)
@@ -58,11 +51,6 @@ public class UISystem_wrapper : BaseWrapper
 	public void saveHistory()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "saveHistory", null);
-	}
-
-	public void resetScriptContainer(System.Boolean refund)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "resetScriptContainer", refund);
 	}
 
 	public void setImageSprite()
@@ -138,36 +126,6 @@ public class UISystem_wrapper : BaseWrapper
 	public void CleanControlBlock(UnityEngine.Transform specialBlock)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "CleanControlBlock", specialBlock);
-	}
-
-	public void addContainer()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "addContainer", null);
-	}
-
-	public void addSpecificContainer()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "addSpecificContainer", null);
-	}
-
-	public void removeContainer(UnityEngine.GameObject container)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "removeContainer", container);
-	}
-
-	public void selectContainer(UIRootContainer container)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "selectContainer", container);
-	}
-
-	public void newNameContainer(System.String newName)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "newNameContainer", newName);
-	}
-
-	public void setContainerName()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "setContainerName", null);
 	}
 
 	public void setActiveEscapeMenu()

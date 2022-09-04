@@ -135,7 +135,7 @@ public class LevelGenerator : FSystem {
 		// Associer à l'agent le script container
 		scriptref.executableScript = executablePanel.transform.Find("Scroll View").Find("Viewport").Find("ScriptContainer").gameObject;
 		// Association de l'agent au script de gestion des fonctions
-		executablePanel.GetComponentInChildren<EditAgentSystemBridge>().agent = entity;
+		executablePanel.GetComponentInChildren<LinkedWith>().target = entity;
 
 		// On va charger l'image et le nom de l'agent selon l'agent (robot, enemie etc...)
 		if (type == "player")
@@ -161,7 +161,7 @@ public class LevelGenerator : FSystem {
 
 			// Si l'agent est en mode Locked ou Synchro ou qu'un script est défini, on crée une zone de programmation dédiée
 			if (agentEdit.editState == AgentEdit.EditMode.Locked || agentEdit.editState == AgentEdit.EditMode.Synch || script != null)
-				UISystem.instance.addSpecificContainer(agentEdit.agentName, agentEdit.editState, script);
+				GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { name = agentEdit.agentName, editState = agentEdit.editState, script = script });
 
 			// Chargement de l'icône de l'agent sur la localisation
 			executablePanel.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;

@@ -1,7 +1,7 @@
 using UnityEngine;
 using FYFY;
 
-public class EditAgentSystem_wrapper : BaseWrapper
+public class EditableContainerSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject agentSelected;
 	public UnityEngine.GameObject EditableCanvas;

@@ -2,7 +2,8 @@ using UnityEngine;
 using FYFY;
 using TMPro;
 using System.Collections;
-
+using System.Collections.Generic;
+using System.Data;
 
 /// <summary>
 /// Manage CurrentAction components, parse scripts and define next CurrentActions
@@ -14,7 +15,13 @@ public class CurrentActionManager : FSystem
 	private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(LibraryItemRef), typeof(CurrentAction)));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
+
+	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
+	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
+	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
+	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)));
+	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
 
 
 	private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
@@ -95,6 +102,109 @@ public class CurrentActionManager : FSystem
 		return firstAction;
 	}
 
+	private bool ifValid(List<string> condition, GameObject scripted)
+	{
+
+		string cond = "";
+		for (int i = 0; i < condition.Count; i++)
+		{
+			if (condition[i] == "(" || condition[i] == ")" || condition[i] == "OR" || condition[i] == "AND" || condition[i] == "NOT")
+			{
+				cond = cond + condition[i] + " ";
+			}
+			else
+			{
+				cond = cond + verifCondition(condition[i], scripted) + " ";
+			}
+		}
+
+		DataTable dt = new DataTable();
+		var v = dt.Compute(cond, "");
+		bool result;
+		try
+		{
+			result = bool.Parse(v.ToString());
+		}
+		catch
+		{
+			result = false;
+		}
+		return result;
+	}
+
+	private bool verifCondition(string ele, GameObject scripted)
+	{
+
+		bool ifok = false;
+		// get absolute target position depending on player orientation and relative direction to observe
+		// On commence par identifier quelle case doit être regardé pour voir si la condition est respecté
+		Vector2 vec = new Vector2();
+		switch (scripted.GetComponent<Direction>().direction)
+		{
+			case Direction.Dir.North:
+				vec = new Vector2(0, 1);
+				break;
+			case Direction.Dir.South:
+				vec = new Vector2(0, -1);
+				break;
+			case Direction.Dir.East:
+				vec = new Vector2(1, 0);
+				break;
+			case Direction.Dir.West:
+				vec = new Vector2(-1, 0);
+				break;
+		}
+
+		// check target position
+		switch (ele)
+		{
+			case "Wall": // walls
+				foreach (GameObject go in wallGO)
+					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
+					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+						ifok = true;
+				break;
+			case "FieldGate": // doors
+				foreach (GameObject go in doorGO)
+					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
+					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+						ifok = true;
+				break;
+			case "Enemie": // ennemies
+				foreach (GameObject go in droneGO)
+					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
+						go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+						ifok = true;
+				break;
+			case "Terminal": // consoles
+				foreach (GameObject go in activableConsoleGO)
+				{
+					vec = new Vector2(0, 0);
+					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
+						go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+						ifok = true;
+				}
+				break;
+			case "RedArea": // detectors
+				foreach (GameObject go in redDetectorGO)
+					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
+					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+						ifok = true;
+				break;
+			case "Exit": // exits
+				foreach (GameObject go in exitGO)
+				{
+					vec = new Vector2(0, 0);
+					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
+					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+						ifok = true;
+				}
+				break;
+		}
+		return ifok;
+
+	}
+
 	// get first action inside "action", it could be control structure (if, for...) => recursive call
 	public GameObject getFirstActionOf(GameObject action, GameObject agent)
 	{
@@ -109,7 +219,7 @@ public class CurrentActionManager : FSystem
 			{
 				IfControl ifCont = action.GetComponent<IfControl>();
 				// check if this IfControl include a child and if condition is evaluated to true
-				if (ifCont.firstChild != null && ConditionManagement.instance.ifValid(ifCont.condition, agent))
+				if (ifCont.firstChild != null && ifValid(ifCont.condition, agent))
 					// get first action of its first child (could be if, for...)
 					return getFirstActionOf(ifCont.firstChild, agent);
 				else if (action.GetComponent<IfElseControl>() && action.GetComponent<IfElseControl>().firstChild != null)
@@ -123,7 +233,7 @@ public class CurrentActionManager : FSystem
 			{
 				WhileControl whileCont = action.GetComponent<WhileControl>();
 				// check if this WhileControl include a child and if condition is evaluated to true
-				if (whileCont.firstChild != null && ConditionManagement.instance.ifValid(whileCont.condition, agent))
+				if (whileCont.firstChild != null && ifValid(whileCont.condition, agent))
 					// get first action of its first child (could be if, for...)
 					return getFirstActionOf(whileCont.firstChild, agent);
 				else
@@ -239,7 +349,7 @@ public class CurrentActionManager : FSystem
 		}
 		else if (currentAction.GetComponent<WhileControl>())
         {
-			if(ConditionManagement.instance.ifValid(currentAction.GetComponent<WhileControl>().condition, agent))
+			if(ifValid(currentAction.GetComponent<WhileControl>().condition, agent))
             {
 				if (currentAction.GetComponent<WhileControl>().firstChild.GetComponent<BasicAction>())
 					return currentAction.GetComponent<WhileControl>().firstChild;
@@ -303,7 +413,7 @@ public class CurrentActionManager : FSystem
 		else if(currentAction.GetComponent<IfControl>()){
 			// check if IfAction has a first child and condition is true
 			IfControl ifAction = currentAction.GetComponent<IfControl>();
-			if (ifAction.firstChild != null && ConditionManagement.instance.ifValid(ifAction.condition, agent)){ 
+			if (ifAction.firstChild != null && ifValid(ifAction.condition, agent)){ 
 				// return first action
 				if(ifAction.firstChild.GetComponent<BasicAction>())
 					return ifAction.firstChild;
