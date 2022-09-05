@@ -93,11 +93,18 @@ public class UISystem : FSystem {
 
 		newEnd_f.addEntryCallback(levelFinished);
 
-		loadHistory();
+
+		MainLoop.instance.StartCoroutine(delayLoadHistory());
 
 		MainLoop.instance.StartCoroutine(forceLibraryRefresh());
 	}
 
+
+	private IEnumerator delayLoadHistory()
+    {
+		yield return null;// delay one frame time the editable container will be created
+		loadHistory();
+    }
 
 	// Lors d'une fin d'exécution de séquence, gére les différents éléments à ré-afficher ou si il faut sauvegarder la progression du joueur
 	private void levelFinished(GameObject go)
@@ -386,6 +393,8 @@ public class UISystem : FSystem {
 			//destroy history
 			GameObject.Destroy(gameData.actionsHistory);
 			LayoutRebuilder.ForceRebuildLayoutImmediate(EditableCanvas.GetComponent<RectTransform>());
+			//enable Play button
+			buttonExecute.GetComponent<Button>().interactable = true;
 		}
 	}
 
