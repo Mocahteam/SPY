@@ -18,19 +18,18 @@ public class StepSystem : FSystem {
     private static float defaultTimeStep = 1.5f; 
 	private static float timeStep = defaultTimeStep;
 	private GameData gameData;
-    private FunctionalityParam funcPram;
     private int nbStep;
     private bool newStepAskedByPlayer;
+
+    public GameObject endPanel;
 
     protected override void onStart()
     {
         nbStep = 0;
         newStepAskedByPlayer = false;
         GameObject go = GameObject.Find("GameData");
-        if (go != null) { 
+        if (go != null)
             gameData = go.GetComponent<GameData>();
-            funcPram = go.GetComponent<FunctionalityParam>();
-        }
         timeStepCpt = timeStep;
         newStep_f.addEntryCallback(onNewStep);
 
@@ -89,20 +88,13 @@ public class StepSystem : FSystem {
         // wait a new possible current action
         yield return null;
         yield return null;
-        // If there are still no actions => end playing mode
+        // If there are still no actions => return to edit mode
         if (!playerHasNextAction() || newEnd_f.Count > 0)
         {
-            if (funcPram.funcActiveInLevel.Contains("F5"))
-            {
-                ModeManager.instance.setEditMode();
-                // We save history if no end or win
-                if (newEnd_f.Count <= 0)
-                    UISystem.instance.saveHistory();
-            }
-            else
-            {
-                EndGameManager.instance.badEnd();
-            }
+            ModeManager.instance.setEditMode();
+            // We save history if no end or win
+            if (newEnd_f.Count <= 0)
+                UISystem.instance.saveHistory();
         }
         else
             Pause = false;

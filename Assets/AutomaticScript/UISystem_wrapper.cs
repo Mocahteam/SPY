@@ -108,11 +108,6 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "retry", null);
 	}
 
-	public void cancelEnd()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "cancelEnd", null);
-	}
-
 	public void fillExecutablePanel()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "fillExecutablePanel", null);

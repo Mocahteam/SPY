@@ -65,7 +65,6 @@ public class CurrentActionManager : FSystem
 			if (!atLeastOneFirstAction)
 			{
 				ModeManager.instance.setEditMode();
-				// TODO : afficher un message pour dire qu'aucune action n'est accessible ?
 			}
 			else
 			{

@@ -17,12 +17,9 @@ using UnityEngine.EventSystems;
 /// Need to be binded after LevelGenerator
 /// </summary>
 public class UISystem : FSystem {
-	private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-	private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Player"));
 	private Family actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(LibraryItemRef)));
 	private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction), typeof(LibraryItemRef), typeof(CurrentAction)));
-	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family resetBlocLimit_f = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
 	private Family agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private Family viewportContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les containers viewport
@@ -30,6 +27,8 @@ public class UISystem : FSystem {
 	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
 	private Family resetButton_f = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("ResetButton")); // Les petites balayettes de chaque panneau d'édition
 	private Family removeButton_f = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton")); // Les petites poubelles de chaque panneau d'édition
+
+	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 
 	private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
@@ -71,10 +70,7 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 
-		requireEndPanel.addEntryCallback(displayEndPanel);
-		displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
 		actions.addEntryCallback(linkTo);
-		newEnd_f.addEntryCallback(levelFinished);
 		resetBlocLimit_f.addEntryCallback(delegate (GameObject go) {
 			destroyScript(go, true);
 			GameObjectManager.unbind(go);
@@ -95,11 +91,43 @@ public class UISystem : FSystem {
 		enabledinventoryBlocks.addEntryCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
 		enabledinventoryBlocks.addExitCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
 
+		newEnd_f.addEntryCallback(levelFinished);
+
 		loadHistory();
 
 		MainLoop.instance.StartCoroutine(forceLibraryRefresh());
 	}
 
+
+	// Lors d'une fin d'exécution de séquence, gére les différents éléments à ré-afficher ou si il faut sauvegarder la progression du joueur
+	private void levelFinished(GameObject go)
+	{
+		// On réaffiche les différent panel pour la création de séquence
+		setExecutionView(false);
+
+		// En cas de fin de niveau
+		if (go.GetComponent<NewEnd>().endType == NewEnd.Win)
+		{
+			// Affichage de l'historique de l'ensemble des actions exécutés
+			saveHistory();
+			loadHistory();
+			// Hide library panel
+			GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.gameObject, false);
+			// Hide menu panel
+			GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, false);
+			// Inactive of each editable panel
+			foreach (GameObject brush in resetButton_f)
+				brush.GetComponent<Button>().interactable = false;
+			foreach (GameObject trash in removeButton_f)
+				trash.GetComponent<Button>().interactable = false;
+			// Pause DragDrop system
+			DragDropSystem.instance.Pause = true;
+			// Sauvegarde de l'état d'avancement des niveaux pour le jour (niveau et étoile)
+			PlayerPrefs.SetInt(gameData.levelToLoad.Item1, gameData.levelToLoad.Item2 + 1);
+			PlayerPrefs.Save();
+		}
+		// for other end type, nothing to do more
+	}
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount)
@@ -361,40 +389,6 @@ public class UISystem : FSystem {
 		}
 	}
 
-	// Lors d'une fin d'exécution de séquence, gére les différents éléments à ré-afficher ou si il faut sauvegarder que la progression du joueur
-	private void levelFinished (GameObject go){
-		// On réaffiche les différent panel pour la création de séquence
-		setExecutionView(false);
-
-		// En cas de fin de niveau
-		if(go.GetComponent<NewEnd>().endType == NewEnd.Win){
-			// Affichage de l'historique de l'ensemble des actions exécutés
-			saveHistory();
-			loadHistory();
-			// Hide library panel
-			GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.gameObject, false);
-			// Hide menu panel
-			GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, false);
-			// Inactive of each editable panel
-			foreach (GameObject brush in resetButton_f)
-				brush.GetComponent<Button>().interactable = false;
-			foreach (GameObject trash in removeButton_f)
-				trash.GetComponent<Button>().interactable = false;
-			// Pause DragDrop system
-			DragDropSystem.instance.Pause = true;
-			// Sauvegarde de l'état d'avancement des niveaux pour le jour (niveau et étoile)
-			PlayerPrefs.SetInt(gameData.levelToLoad.Item1, gameData.levelToLoad.Item2+1);
-			PlayerPrefs.Save();
-		}
-		else if(go.GetComponent<NewEnd>().endType == NewEnd.Detected){
-
-		}
-		else if (go.GetComponent<NewEnd>().endType == NewEnd.BadCondition)
-		{
-			
-		}
-	}
-
 	private GameObject getLibraryItemByName(string name)
     {
 		foreach(GameObject item in inventoryBlocks)
@@ -422,97 +416,6 @@ public class UISystem : FSystem {
 				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("IfElse");
 			else if(go.GetComponent<IfControl>())
 				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("If");
-		}
-	}
-
-
-	// Permet la gestion de l'affiche du panel de fin de niveau
-    private void displayEndPanel(GameObject endPanel)
-    {
-        GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, true);
-    }
-
-
-	// Permet de switcher entre les affichages différents de fin de niveau
-	// Cas 1 : Un ennemie à repéré le robot
-	// Cas 2 : Le robot est sortie du labyrinth
-	// Cas 3 : Le joueur à mal remplit une condition
-    private void onDisplayedEndPanel (GameObject endPanel)
-    { 
-        switch (endPanel.GetComponent<NewEnd>().endType)
-        {
-            case 1: // detected
-                endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Vous avez été repéré !";
-                GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
-				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
-				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
-				GameObjectManager.setGameObjectState(endPanel.transform.Find("ScreenTitle").gameObject, true);
-				endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
-                endPanel.GetComponent<AudioSource>().loop = true;
-                endPanel.GetComponent<AudioSource>().Play();
-                break;
-            case 2: // win
-				int score = (10000 / (gameData.totalActionBloc + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
-                Transform verticalCanvas = endPanel.transform.Find("VerticalCanvas");
-				verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez gagné !\nScore: " + score;
-                setScoreStars(score, verticalCanvas.Find("ScoreCanvas"));
-
-				endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
-                endPanel.GetComponent<AudioSource>().loop = false;
-                endPanel.GetComponent<AudioSource>().Play();
-				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, true);
-				GameObjectManager.setGameObjectState(endPanel.transform.Find("ScreenTitle").gameObject, true);
-				//End
-				if (gameData.levelToLoad.Item2 >= gameData.levelList[gameData.levelToLoad.Item1].Count - 1)
-                {
-                    GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
-					GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
-					GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
-				}
-                break;
-			case 3: // bad condition
-				endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Une condition est mal remplie !";
-				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
-				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, false);
-				GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
-				GameObjectManager.setGameObjectState(endPanel.transform.Find("ScreenTitle").gameObject, false);
-				endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
-				endPanel.GetComponent<AudioSource>().loop = true;
-				endPanel.GetComponent<AudioSource>().Play();
-				break;
-        }
-    }
-
-	// Gére le nombre d'étoile à afficher selon le score obtenue
-	private void setScoreStars(int score, Transform scoreCanvas){
-		// Détermine le nombre d'étoile à afficher
-		int scoredStars = 0;
-		if(gameData.levelToLoadScore != null){
-			//check 0, 1, 2 or 3 stars
-			if(score >= gameData.levelToLoadScore[0]){
-				scoredStars = 3;
-			}
-			else if(score >= gameData.levelToLoadScore[1]){
-				scoredStars = 2;
-			}
-			else {
-				scoredStars = 1;
-			}			
-		}
-		
-		// Affiche le nombre d'étoile désiré
-		for (int nbStar = 0 ; nbStar < 4 ; nbStar++){
-			if(nbStar == scoredStars)
-				GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, true);
-			else
-				GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, false);
-		}
-
-		//save score only if better score
-		int savedScore = PlayerPrefs.GetInt(gameData.levelToLoad.Item1+Path.DirectorySeparatorChar+gameData.levelToLoad.Item2+gameData.scoreKey, 0);
-		if(savedScore < scoredStars){
-			PlayerPrefs.SetInt(gameData.levelToLoad.Item1+Path.DirectorySeparatorChar+gameData.levelToLoad.Item2+gameData.scoreKey, scoredStars);
-			PlayerPrefs.Save();			
 		}
 	}
 
@@ -674,13 +577,6 @@ public class UISystem : FSystem {
 		restartScene();
 	}
 	
-
-	// Cancel End (see ReloadState button in editor)
-	public void cancelEnd(){
-		// in case of several ends pop in the same time (for instance exit reached and detected)
-		foreach (NewEnd end in endPanel.GetComponents<NewEnd>())
-			GameObjectManager.removeComponent(end);
-	}
 
 	public void fillExecutablePanel(GameObject srcScript, GameObject targetContainer, string agentTag)
     {
