@@ -371,7 +371,7 @@ public class CurrentActionManager : FSystem
 			if (!forAct.gameObject.GetComponent<WhileControl>() && forAct.currentFor >= forAct.nbFor){
 				// reset nb iteration to 0
 				forAct.currentFor = 0;
-				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+				forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 				// return next action
 				if(forAct.next == null || forAct.next.GetComponent<BasicAction>())
 					return forAct.next;
@@ -386,7 +386,7 @@ public class CurrentActionManager : FSystem
 					if (!forAct.gameObject.GetComponent<WhileControl>()) {
 					// reset nb iteration to 0
 					forAct.currentFor = 0;
-					forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+					forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 					}
 					// return next action
 					if (forAct.next == null || forAct.next.GetComponent<BasicAction>())
@@ -399,7 +399,7 @@ public class CurrentActionManager : FSystem
 				{
 					// add one iteration
 					forAct.currentFor++;
-					forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+					forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 					// return first child
 					if (forAct.firstChild.GetComponent<BasicAction>())
 						return forAct.firstChild;

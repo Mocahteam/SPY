@@ -254,7 +254,8 @@ public class DragDropSystem : FSystem
 					itemDragged.GetComponent<Image>().raycastTarget = true;
 					// and its childrens
 					foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
-						child.raycastTarget = true;
+						if (child.name != "3DEffect") // except 3DEffect child
+							child.raycastTarget = true;
 					foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>())
 						child.raycastTarget = true;
 				}

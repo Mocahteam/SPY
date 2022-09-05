@@ -677,13 +677,13 @@ public class UISystem : FSystem {
 			// Si activé, on note le nombre de tour de boucle à faire
 			if(!isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
 			{
-				forAct.nbFor = int.Parse(forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text);
-				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();		
+				forAct.nbFor = int.Parse(forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text);
+				forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();		
 			}// Sinon on met tout à 0
 			else if(isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
 			{
 				forAct.currentFor = 0;
-				forAct.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
+				forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
 			}
 			else if (forAct is WhileControl)
             {
