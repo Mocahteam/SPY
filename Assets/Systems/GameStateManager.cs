@@ -100,7 +100,7 @@ public class GameStateManager : FSystem {
             ForControl fc = f_forControls.getAt(i).GetComponent<ForControl>();
             fc.currentFor = save.rawSave.currentLoopParams[i].currentFor;
             fc.nbFor = save.rawSave.currentLoopParams[i].nbFor;
-            fc.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (fc.currentFor).ToString() + " / " + fc.nbFor.ToString();
+            fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (fc.currentFor).ToString() + " / " + fc.nbFor.ToString();
         }
     }
 }

@@ -247,7 +247,7 @@ public class CurrentActionManager : FSystem
 				if (forCont.firstChild != null && forCont.nbFor != 0 && forCont.currentFor < forCont.nbFor)
 				{
 					forCont.currentFor++;
-					forCont.transform.GetChild(0).GetChild(1).GetComponent<TMP_InputField>().text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
+					forCont.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
 					// get first action of its first child (could be if, for...)
 					return getFirstActionOf(forCont.firstChild, agent);
 				}
