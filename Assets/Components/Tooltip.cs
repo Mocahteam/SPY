@@ -30,8 +30,7 @@ public class Tooltip : MonoBehaviour
         tooltipText.enabled = true;
 
         tooltipText.text = tooltipString;
-        float textPaddingSize = 4f;
-        Vector2 backgroundSize = new Vector2(tooltipText.preferredWidth+textPaddingSize*2, tooltipText.preferredHeight+textPaddingSize*2);
+        Vector2 backgroundSize = new Vector2(tooltipText.preferredWidth+8, tooltipText.preferredHeight+8);
         backgroundRectTransform.sizeDelta = backgroundSize;
     }
 
@@ -47,14 +46,14 @@ public class Tooltip : MonoBehaviour
 
         // recaller la position du tooltip pour qu'il soit dirigé vers le centre de l'écran
         if (mousePos.x > Screen.width / 2)
-            mousePos.x -= (10 + backgroundRectTransform.sizeDelta.x / 2);
+            mousePos.x -= (10 + (backgroundRectTransform.sizeDelta.x*backgroundRectTransform.parent.localScale.x) / 2);
         else
-            mousePos.x += (10 + backgroundRectTransform.sizeDelta.x / 2);
+            mousePos.x += (10 + (backgroundRectTransform.sizeDelta.x * backgroundRectTransform.parent.localScale.x) / 2);
 
         if (mousePos.y > Screen.height / 2)
-            mousePos.y -= (10 + backgroundRectTransform.sizeDelta.y / 2);
+            mousePos.y -= (10 + (backgroundRectTransform.sizeDelta.y * backgroundRectTransform.parent.localScale.y) / 2);
         else
-            mousePos.y += (10 + backgroundRectTransform.sizeDelta.y / 2);
+            mousePos.y += (10 + (backgroundRectTransform.sizeDelta.y * backgroundRectTransform.parent.localScale.y) / 2);
 
         transform.position = mousePos;
     }

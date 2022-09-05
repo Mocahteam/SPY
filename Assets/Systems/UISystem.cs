@@ -348,7 +348,8 @@ public class UISystem : FSystem {
 		}
 
 		// Disable add container button
-		GameObjectManager.setGameObjectState(buttonAddEditableContainer, false);
+		buttonAddEditableContainer.GetComponent<Button>().interactable = false;
+		buttonAddEditableContainer.GetComponent<TooltipContent>().text = "Ajout impossible après avoir\ncommencé à résoudre le niveau";
 	}
 
 
@@ -383,6 +384,8 @@ public class UISystem : FSystem {
 						GameObjectManager.bind(history_childCopy.gameObject);
 						// Disable emptyzone
 						GameObjectManager.setGameObjectState(history_childCopy.parent.GetChild(history_childCopy.parent.childCount - 1).gameObject, false);
+						// Enable dropzone
+						GameObjectManager.setGameObjectState(history_childCopy.parent.GetChild(history_childCopy.parent.childCount - 2).gameObject, false);
 					}
 				}
 			}
@@ -537,7 +540,7 @@ public class UISystem : FSystem {
 	}
 
 
-	// See TitleScreen and ScreenTitle buttons in editor
+	// See TitleScreen and MainMenu buttons in editor
 	// Permet de revenir à la scéne titre
 	public void returnToTitleScreen(){
 		initZeroVariableLevel();

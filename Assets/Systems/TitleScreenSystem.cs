@@ -238,7 +238,6 @@ public class TitleScreenSystem : FSystem {
 		XmlDocument doc = new XmlDocument();
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-			LevelGenerator.instance.startReadDocXML(doc);
 			doc.LoadXml("" + Application.dataPath + pathFileParamRequiermentLibrary);
 			XMLRequiermentLibrary(doc);
 		}

@@ -112,7 +112,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScreenTitle").gameObject, true);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -128,7 +128,7 @@ public class EndGameManager : FSystem {
 			endPanel.GetComponent<AudioSource>().loop = false;
 			endPanel.GetComponent<AudioSource>().Play();
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, true);
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScreenTitle").gameObject, true);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
 			//Check if next level exists in campaign
@@ -143,7 +143,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScreenTitle").gameObject, false);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, false);
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -153,7 +153,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScreenTitle").gameObject, true);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();

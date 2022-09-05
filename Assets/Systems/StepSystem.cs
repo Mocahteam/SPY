@@ -91,7 +91,7 @@ public class StepSystem : FSystem {
         // If there are still no actions => return to edit mode
         if (!playerHasNextAction() || newEnd_f.Count > 0)
         {
-            ModeManager.instance.setEditMode();
+            GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
             // We save history if no end or win
             if (newEnd_f.Count <= 0)
                 UISystem.instance.saveHistory();

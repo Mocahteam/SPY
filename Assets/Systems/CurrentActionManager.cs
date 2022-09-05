@@ -64,7 +64,7 @@ public class CurrentActionManager : FSystem
 					atLeastOneFirstAction = true;
 			if (!atLeastOneFirstAction)
 			{
-				ModeManager.instance.setEditMode();
+				GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
 			}
 			else
 			{
