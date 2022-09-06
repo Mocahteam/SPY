@@ -101,13 +101,8 @@ public static class DropAreaUtility
 				}
 				else
 				{
-					// Because this function can be call for binded GO or not
-					if (GameObjectManager.isBound(dropArea))
-						// Remove old condition from FYFY
-						GameObjectManager.unbind(dropArea);
-
-					// Destroy it
-					UnityEngine.Object.Destroy(dropArea);
+					// ResetBlocLimit will restore library and remove dropArea and children
+					GameObjectManager.addComponent<ResetBlocLimit>(dropArea);
 				}
 			}
 		}

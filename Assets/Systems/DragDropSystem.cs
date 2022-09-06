@@ -342,7 +342,6 @@ public class DragDropSystem : FSystem
         {
 			// Réactivation d'une EmptyZone si nécessaire
 			manageEmptyZone(elementToDelete);
-			GameObjectManager.addComponent<AddOne>(elementToDelete);
 			//On associe à l'élément le component ResetBlocLimit pour déclancher le script de destruction de l'élément
 			GameObjectManager.addComponent<ResetBlocLimit>(elementToDelete);
 			UISystem.instance.startUpdatePlayButton();
