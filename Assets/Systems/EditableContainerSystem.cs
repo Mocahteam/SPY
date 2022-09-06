@@ -164,16 +164,18 @@ public class EditableContainerSystem : FSystem
 		// ajout du script par défaut
 		GameObject dropArea = cloneContainer.GetComponentInChildren<ReplacementSlot>().gameObject;
 		if (script != null && dropArea != null)
+		{
 			for (int k = 0; k < script.Count; k++)
-			{
 				DropAreaUtility.addItemOnDropArea(script[k], dropArea);
-				UISystem.instance.startUpdatePlayButton();
-				// refresh all the hierarchy of parent containers
-				//DragDropSystem.instance.refreshHierarchyContainers(dropArea);
-			}
+			UISystem.instance.startUpdatePlayButton();
+		}
 
 		// On ajoute le nouveau viewport container à FYFY
 		GameObjectManager.bind(cloneContainer);
+
+		if (script != null && dropArea != null)
+			// refresh all the hierarchy of parent containers
+			GameObjectManager.addComponent<NeedToRefresh>(dropArea);
 
 		// Update size of parent GameObject
 		MainLoop.instance.StartCoroutine(setEditableSize());

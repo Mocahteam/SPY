@@ -36,6 +36,7 @@ public class DragDropSystem : FSystem
 	private Family dropZone_f = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone))); // Les drops zones
 	private Family focusedDropArea_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(ReplacementSlot), typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // the drop area under mouse cursor
 	private Family elementToDelete_f = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToDelete)));
+	private Family elementToRefresh_f = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToRefresh)));
 	private Family defaultDropZone_f = FamilyManager.getFamily(new AllOfComponents(typeof(Selected)));
 
 	// Les variables
@@ -60,6 +61,12 @@ public class DragDropSystem : FSystem
     {
 		elementToDelete_f.addEntryCallback(deleteElement);
 		defaultDropZone_f.addEntryCallback(selectNewDefaultDropZone);
+		elementToRefresh_f.addEntryCallback(delegate (GameObject go)
+		{
+			refreshHierarchyContainers(go);
+			foreach (NeedToRefresh ntr in go.GetComponents<NeedToRefresh>())
+				GameObjectManager.removeComponent(ntr);
+		});
 	}
 
     // Besoin d'attendre l'update pour effectuer le recalcul de la taille des container
