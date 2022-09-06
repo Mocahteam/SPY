@@ -35,6 +35,7 @@ public class DragDropSystem : FSystem
     private Family viewportContainerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les container éditable
 	private Family dropZone_f = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone))); // Les drops zones
 	private Family focusedDropArea_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(ReplacementSlot), typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // the drop area under mouse cursor
+	private Family elementToDelete_f = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToDelete)));
 
 	// Les variables
 	private GameObject itemDragged; // L'item (ici block d'action) en cours de drag
@@ -54,9 +55,14 @@ public class DragDropSystem : FSystem
 		instance = this;
 	}
 
+    protected override void onStart()
+    {
+		elementToDelete_f.addEntryCallback(deleteElement);
+	}
 
-	// Besoin d'attendre l'update pour effectuer le recalcul de la taille des container
-	public IEnumerator forceUIRefresh(RectTransform bloc)
+
+    // Besoin d'attendre l'update pour effectuer le recalcul de la taille des container
+    public IEnumerator forceUIRefresh(RectTransform bloc)
 	{
 		yield return null;
 		LayoutRebuilder.ForceRebuildLayoutImmediate(bloc);

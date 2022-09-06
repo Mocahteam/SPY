@@ -205,12 +205,8 @@ public class EditableContainerSystem : FSystem
 
 		// On parcourt le script container pour détruire toutes les instructions
 		for (int i = scriptContainerPointer.transform.childCount - 1; i >= 0; i--)
-		{
 			if (scriptContainerPointer.transform.GetChild(i).GetComponent<BaseElement>())
-			{
-				DragDropSystem.instance.deleteElement(scriptContainerPointer.transform.GetChild(i).gameObject);
-			}
-		}
+				GameObjectManager.addComponent<NeedToDelete>(scriptContainerPointer.transform.GetChild(i).gameObject);
 		// Enable the last emptySlot and disable dropZone
 		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 1).gameObject, true);
 		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 2).gameObject, false);
