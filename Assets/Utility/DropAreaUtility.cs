@@ -27,12 +27,12 @@ public static class DropAreaUtility
 				targetContainer = dropArea.transform.parent.parent; // target is the grandparent
 				siblingIndex = dropArea.transform.parent.GetSiblingIndex();
 			}
-			else if (dropArea.transform.parent.parent.GetComponent<ControlElement>() && dropArea.transform.parent.GetSiblingIndex() == 0) // the dropArea of the first child of a Control block
+			else if (dropArea.transform.parent.parent.GetComponent<ControlElement>() && dropArea.transform.parent.GetSiblingIndex() == 1) // the dropArea of the first child of a Control block
 			{
 				targetContainer = dropArea.transform.parent.parent.parent; // target is the grandgrandparent
 				siblingIndex = dropArea.transform.parent.parent.GetSiblingIndex();
 			}
-			else if (dropArea.transform.parent.parent.GetComponent<ControlElement>() && dropArea.transform.parent.GetSiblingIndex() != 0) // the dropArea of another child of a Control block
+			else if (dropArea.transform.parent.parent.GetComponent<ControlElement>() && dropArea.transform.parent.GetSiblingIndex() > 1) // the dropArea of another child of a Control block
 			{
 				targetContainer = dropArea.transform.parent; // target is the parent
 				siblingIndex = dropArea.transform.GetSiblingIndex();

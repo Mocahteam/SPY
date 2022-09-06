@@ -169,7 +169,7 @@ public class EditableContainerSystem : FSystem
 				DropAreaUtility.addItemOnDropArea(script[k], dropArea);
 				UISystem.instance.startUpdatePlayButton();
 				// refresh all the hierarchy of parent containers
-				DragDropSystem.instance.refreshHierarchyContainers(dropArea);
+				//DragDropSystem.instance.refreshHierarchyContainers(dropArea);
 			}
 
 		// On ajoute le nouveau viewport container à FYFY
