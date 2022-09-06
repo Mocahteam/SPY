@@ -53,6 +53,11 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "deleteElement", elementToDelete);
 	}
 
+	public void selectNewDefaultDropZone(UnityEngine.GameObject newDropZone)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "selectNewDefaultDropZone", newDropZone);
+	}
+
 	public void refreshHierarchyContainers(UnityEngine.GameObject elementToRefresh)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "refreshHierarchyContainers", elementToRefresh);

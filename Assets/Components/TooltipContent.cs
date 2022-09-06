@@ -1,5 +1,6 @@
 ﻿using UnityEngine.EventSystems;
 using UnityEngine;
+using FYFY;
 
 public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -10,7 +11,14 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void Start()
     {
-        tooltip = GameObject.Find("TooltipUI").GetComponent<Tooltip>();
+        GameObject tooltipGO = GameObject.Find("TooltipUI");
+        if (!tooltipGO)
+        {
+            GameObjectManager.unbind(gameObject);
+            GameObject.Destroy(this);
+        }
+        else
+            tooltip = tooltipGO.GetComponent<Tooltip>();
     }
 
     public void OnPointerEnter(PointerEventData eventData)

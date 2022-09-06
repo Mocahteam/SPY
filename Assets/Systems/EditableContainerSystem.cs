@@ -166,7 +166,8 @@ public class EditableContainerSystem : FSystem
 		if (script != null && dropArea != null)
 			for (int k = 0; k < script.Count; k++)
 			{
-				DragDropSystem.instance.addItemOnDropArea(script[k], dropArea);
+				DropAreaUtility.addItemOnDropArea(script[k], dropArea);
+				UISystem.instance.startUpdatePlayButton();
 				// refresh all the hierarchy of parent containers
 				DragDropSystem.instance.refreshHierarchyContainers(dropArea);
 			}

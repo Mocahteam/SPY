@@ -566,7 +566,7 @@ public class LevelGenerator : FSystem {
 									// Parse xml condition
 									GameObject child = readXMLCondition(containerNode.FirstChild);
 									// Add child to empty zone
-									DragDropSystem.instance.addItemOnDropArea(child, emptyZone);
+									DropAreaUtility.addItemOnDropArea(child, emptyZone);
 								}
 							}
 							else if (containerNode.Name == "container")
@@ -597,7 +597,7 @@ public class LevelGenerator : FSystem {
 									// Parse xml condition
 									GameObject child = readXMLCondition(containerNode.FirstChild);
 									// Add child to empty zone
-									DragDropSystem.instance.addItemOnDropArea(child, emptyZone);
+									DropAreaUtility.addItemOnDropArea(child, emptyZone);
 								}
 							}
 							else if (containerNode.Name == "container" && containerNode.Attributes.GetNamedItem("type").Value == "ThenContainer")
@@ -644,7 +644,7 @@ public class LevelGenerator : FSystem {
 									// Parse xml condition
 									GameObject child = readXMLCondition(containerNode.FirstChild);
 									// Add child to empty zone
-									DragDropSystem.instance.addItemOnDropArea(child, emptyZone);
+									DropAreaUtility.addItemOnDropArea(child, emptyZone);
 								}
 							}
 							else if (containerNode.Name == "container")
@@ -683,11 +683,11 @@ public class LevelGenerator : FSystem {
 			GameObject child = readXMLInstruction(eleNode);
 			if (firstchild) // add the first child to the emptySlot
 			{
-				DragDropSystem.instance.addItemOnDropArea(child, emptySlot);
+				DropAreaUtility.addItemOnDropArea(child, emptySlot);
 				firstchild = false;
 			}
 			else // add next childs to the dropZone
-				DragDropSystem.instance.addItemOnDropArea(child, dropZone);
+				DropAreaUtility.addItemOnDropArea(child, dropZone);
 		}
 	}
 
@@ -719,7 +719,7 @@ public class LevelGenerator : FSystem {
 									// Parse xml condition
 									GameObject child = readXMLCondition(andNode.FirstChild);
 									// Add child to empty zone
-									DragDropSystem.instance.addItemOnDropArea(child, emptyZone);
+									DropAreaUtility.addItemOnDropArea(child, emptyZone);
 								}
 								emptyZone = null;
 							}
@@ -745,7 +745,7 @@ public class LevelGenerator : FSystem {
 									// Parse xml condition
 									GameObject child = readXMLCondition(orNode.FirstChild);
 									// Add child to empty zone
-									DragDropSystem.instance.addItemOnDropArea(child, emptyZone);
+									DropAreaUtility.addItemOnDropArea(child, emptyZone);
 								}
 								emptyZone = null;
 							}
@@ -759,7 +759,7 @@ public class LevelGenerator : FSystem {
 							GameObject emptyZone = obj.transform.Find("Container").GetChild(1).gameObject;
 							GameObject child = readXMLCondition(conditionNode.FirstChild);
 							// Add child to empty zone
-							DragDropSystem.instance.addItemOnDropArea(child, emptyZone);
+							DropAreaUtility.addItemOnDropArea(child, emptyZone);
 						}
 						break;
 				}
