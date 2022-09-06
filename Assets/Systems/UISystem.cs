@@ -127,8 +127,6 @@ public class UISystem : FSystem {
 				brush.GetComponent<Button>().interactable = false;
 			foreach (GameObject trash in removeButton_f)
 				trash.GetComponent<Button>().interactable = false;
-			// Pause DragDrop system
-			DragDropSystem.instance.Pause = true;
 			// Sauvegarde de l'état d'avancement des niveaux pour le jour (niveau et étoile)
 			PlayerPrefs.SetInt(gameData.levelToLoad.Item1, gameData.levelToLoad.Item2 + 1);
 			PlayerPrefs.Save();
@@ -305,7 +303,7 @@ public class UISystem : FSystem {
 				Transform child = viewportForEditableContainer.GetChild(0).GetChild(i);
 				if (child.GetComponent<BaseElement>())
 				{
-					DragDropSystem.instance.manageEmptyZone(child.gameObject);
+					EditingUtility.manageEmptyZone(child.gameObject);
 					GameObjectManager.unbind(child.gameObject);
 					child.SetParent(null); // because destroying is not immediate
 					GameObject.Destroy(child.gameObject);
@@ -322,21 +320,21 @@ public class UISystem : FSystem {
 					ScriptRef sr = agent.GetComponent<ScriptRef>();
 					if (sr.nbOfInactions == 1)
 					{
-						GameObject newWait = DragDropSystem.instance.createEditableBlockFromLibrary(libraryWait);
+						GameObject newWait = EditingUtility.createEditableBlockFromLibrary(libraryWait, canvas);
 						newWait.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
 						newWait.transform.SetAsLastSibling();
 					}
 					else if (sr.nbOfInactions > 1)
 					{
 						// Create for control
-						ForControl forCont = DragDropSystem.instance.createEditableBlockFromLibrary(libraryFor).GetComponent<ForControl>();
+						ForControl forCont = EditingUtility.createEditableBlockFromLibrary(libraryFor, canvas).GetComponent<ForControl>();
 						forCont.currentFor = 0;
 						forCont.nbFor = sr.nbOfInactions;
 						forCont.transform.GetComponentInChildren<TMP_InputField>().text = forCont.nbFor.ToString();
 						forCont.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
 						// Create Wait action
 						Transform forContainer = forCont.transform.Find("Container");
-						GameObject newWait = DragDropSystem.instance.createEditableBlockFromLibrary(libraryWait);
+						GameObject newWait = EditingUtility.createEditableBlockFromLibrary(libraryWait, canvas);
 						newWait.transform.SetParent(forContainer, false);
 						newWait.transform.SetAsFirstSibling();
 						// Set drop/empty zone

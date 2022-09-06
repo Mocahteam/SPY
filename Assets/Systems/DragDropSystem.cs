@@ -39,6 +39,8 @@ public class DragDropSystem : FSystem
 	private Family elementToRefresh_f = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToRefresh)));
 	private Family defaultDropZone_f = FamilyManager.getFamily(new AllOfComponents(typeof(Selected)));
 
+	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+
 	// Les variables
 	private GameObject itemDragged; // L'item (ici block d'action) en cours de drag
 	public GameObject mainCanvas; // Le canvas principal
@@ -66,6 +68,9 @@ public class DragDropSystem : FSystem
 			refreshHierarchyContainers(go);
 			foreach (NeedToRefresh ntr in go.GetComponents<NeedToRefresh>())
 				GameObjectManager.removeComponent(ntr);
+		});
+		newEnd_f.addEntryCallback(delegate {
+			Pause = true;
 		});
 	}
 
@@ -146,7 +151,7 @@ public class DragDropSystem : FSystem
 			// On active les drops zone 
 			setDropZoneState(true);
 			// On créer le block action associé à l'élément
-			itemDragged = createEditableBlockFromLibrary(element.selectedObject);
+			itemDragged = EditingUtility.createEditableBlockFromLibrary(element.selectedObject, mainCanvas);
 			// On l'ajoute au famille de FYFY
 			GameObjectManager.bind(itemDragged);
 			// exclude this GameObject from the EventSystem
@@ -175,7 +180,7 @@ public class DragDropSystem : FSystem
 			setDropZoneState(true);
 
 			// Update empty zone if required
-			manageEmptyZone(itemDragged);
+			EditingUtility.manageEmptyZone(itemDragged);
 
 			// On l'associe (temporairement) au Canvas Main
 			GameObjectManager.setGameObjectParent(itemDragged, mainCanvas, true);
@@ -285,7 +290,7 @@ public class DragDropSystem : FSystem
 	// Add the dragged item on the drop area
 	public bool addDraggedItemOnDropZone (GameObject dropArea)
     {
-		if (!DropAreaUtility.addItemOnDropArea(itemDragged, dropArea))
+		if (!EditingUtility.addItemOnDropArea(itemDragged, dropArea))
 		{
 			undoDrop();
 			return false;
@@ -318,22 +323,6 @@ public class DragDropSystem : FSystem
 		itemDragged = null;
 	}
 
-	// On crée l'objet dragged à partir d'un item de la bibliothèque sans le bind à FYFY. C'est en fonction du contexte d'appel que l'objet doit être bind ou pas
-	public GameObject createEditableBlockFromLibrary(GameObject element)
-    {
-		// On récupére le prefab associé à l'action de la librairie
-		GameObject prefab = element.GetComponent<ElementToDrag>().actionPrefab;
-		// Create a dragged GameObject
-		GameObject newItem = UnityEngine.Object.Instantiate<GameObject>(prefab, element.transform);
-		// On l'attache au canvas pour le drag ou l'on veux
-		newItem.transform.SetParent(mainCanvas.transform);
-		// link with library
-		if(newItem.GetComponent<LibraryItemRef>())
-			newItem.GetComponent<LibraryItemRef>().linkedTo = element;
-		return newItem;
-	}
-
-
 	// Supprime l'element
 	public void deleteElement(GameObject elementToDelete)
 	{
@@ -341,7 +330,7 @@ public class DragDropSystem : FSystem
 		if(!Pause && elementToDelete != null)
         {
 			// Réactivation d'une EmptyZone si nécessaire
-			manageEmptyZone(elementToDelete);
+			EditingUtility.manageEmptyZone(elementToDelete);
 			//On associe à l'élément le component ResetBlocLimit pour déclancher le script de destruction de l'élément
 			GameObjectManager.addComponent<ResetBlocLimit>(elementToDelete);
 			UISystem.instance.startUpdatePlayButton();
@@ -383,7 +372,7 @@ public class DragDropSystem : FSystem
 			if (neighbor != null && neighbor.activeInHierarchy && neighbor.GetComponent<ReplacementSlot>())
 				GameObjectManager.setGameObjectState(neighbor, false);
 			// On crée le block action
-			itemDragged = createEditableBlockFromLibrary(element.selectedObject);
+			itemDragged = EditingUtility.createEditableBlockFromLibrary(element.selectedObject, mainCanvas);
 			// On l'ajoute au famille de FYFY
 			GameObjectManager.bind(itemDragged);
 			// On l'envoie sur la dernière dropzone utilisée
@@ -413,33 +402,5 @@ public class DragDropSystem : FSystem
 			lastClickTime = Time.time;
 			return false;
 		}
-
-	}
-
-	// Réactive une end zone si besoin
-	public void manageEmptyZone(GameObject ele)
-    {
-		if (ele.GetComponent<BaseCondition>())
-        {
-			// enable the next last child of the container
-			GameObjectManager.setGameObjectState(ele.transform.parent.GetChild(ele.transform.GetSiblingIndex()+1).gameObject, true);
-        }
-		else if (ele.GetComponent<BaseElement>())
-        {
-			// We have to disable dropZone and enable empty zone if no other BaseElement exists inside the container
-			// We count the number of brother (including this) that is a BaseElement
-			int cpt = 0;
-			foreach (Transform brother in ele.transform.parent)
-				if (brother.GetComponent<BaseElement>())
-					cpt++;
-			// if the container contains only 1 child (the element we are removing) => enable EmptyZone and disable dropZone
-			if (cpt <= 1)
-            {
-				// enable EmptyZone
-				GameObjectManager.setGameObjectState(ele.transform.parent.GetChild(ele.transform.parent.childCount - 1).gameObject, true);
-				// disable DropZone
-				GameObjectManager.setGameObjectState(ele.transform.parent.GetChild(ele.transform.parent.childCount - 2).gameObject, false);
-			}
-        }
 	}
 }

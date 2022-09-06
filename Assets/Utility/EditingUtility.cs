@@ -2,7 +2,7 @@ using FYFY;
 using UnityEngine;
 using UnityEngine.UI;
 
-public static class DropAreaUtility
+public static class EditingUtility
 {
 	// Add an item on a drop area
 	// return true if the item was added and false otherwise
@@ -115,5 +115,47 @@ public static class DropAreaUtility
 		item.transform.localScale = new Vector3(1, 1, 1);
 
 		return true;
+	}
+
+	// We create the an editable block from a library item (without binded it to FYFY, depending on context the object has to be binded or not)
+	public static GameObject createEditableBlockFromLibrary(GameObject element, GameObject targetCanvas)
+	{
+		// On récupére le prefab associé à l'action de la librairie
+		GameObject prefab = element.GetComponent<ElementToDrag>().actionPrefab;
+		// Create a dragged GameObject
+		GameObject newItem = UnityEngine.Object.Instantiate<GameObject>(prefab, element.transform);
+		// On l'attache au canvas pour le drag ou l'on veux
+		newItem.transform.SetParent(targetCanvas.transform);
+		// link with library
+		if (newItem.GetComponent<LibraryItemRef>())
+			newItem.GetComponent<LibraryItemRef>().linkedTo = element;
+		return newItem;
+	}
+
+	// elementToDelete will be deleted then manage empty zone accordingly
+	public static void manageEmptyZone(GameObject elementToDelete)
+	{
+		if (elementToDelete.GetComponent<BaseCondition>())
+		{
+			// enable the next last child of the container
+			GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.GetSiblingIndex() + 1).gameObject, true);
+		}
+		else if (elementToDelete.GetComponent<BaseElement>())
+		{
+			// We have to disable dropZone and enable empty zone if no other BaseElement exists inside the container
+			// We count the number of brother (including this) that is a BaseElement
+			int cpt = 0;
+			foreach (Transform brother in elementToDelete.transform.parent)
+				if (brother.GetComponent<BaseElement>())
+					cpt++;
+			// if the container contains only 1 child (the element we are removing) => enable EmptyZone and disable dropZone
+			if (cpt <= 1)
+			{
+				// enable EmptyZone
+				GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.parent.childCount - 1).gameObject, true);
+				// disable DropZone
+				GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.parent.childCount - 2).gameObject, false);
+			}
+		}
 	}
 }

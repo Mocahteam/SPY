@@ -547,7 +547,7 @@ public class LevelGenerator : FSystem {
 				switch (actionNode.Attributes.GetNamedItem("type").Value)
                 {
 					case "If":
-						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("If"));
+						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("If"), canvas);
 
 						conditionContainer = obj.transform.Find("ConditionContainer");
 						firstContainerBloc = obj.transform.Find("Container");
@@ -566,7 +566,7 @@ public class LevelGenerator : FSystem {
 									// Parse xml condition
 									GameObject child = readXMLCondition(containerNode.FirstChild);
 									// Add child to empty zone
-									DropAreaUtility.addItemOnDropArea(child, emptyZone);
+									EditingUtility.addItemOnDropArea(child, emptyZone);
 								}
 							}
 							else if (containerNode.Name == "container")
@@ -578,7 +578,7 @@ public class LevelGenerator : FSystem {
 						break;
 
 					case "IfElse":
-						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("IfElse"));
+						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("IfElse"), canvas);
 						conditionContainer = obj.transform.Find("ConditionContainer");
 						firstContainerBloc = obj.transform.Find("Container");
 						secondContainerBloc = obj.transform.Find("ElseContainer");
@@ -597,7 +597,7 @@ public class LevelGenerator : FSystem {
 									// Parse xml condition
 									GameObject child = readXMLCondition(containerNode.FirstChild);
 									// Add child to empty zone
-									DropAreaUtility.addItemOnDropArea(child, emptyZone);
+									EditingUtility.addItemOnDropArea(child, emptyZone);
 								}
 							}
 							else if (containerNode.Name == "container" && containerNode.Attributes.GetNamedItem("type").Value == "ThenContainer")
@@ -614,7 +614,7 @@ public class LevelGenerator : FSystem {
 						break;
 
 					case "For":
-						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("For"));
+						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("For"), canvas);
 						firstContainerBloc = obj.transform.Find("Container");
 						action = obj.GetComponent<ForControl>();
 
@@ -626,7 +626,7 @@ public class LevelGenerator : FSystem {
 						break;
 
 					case "While":
-						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("While"));
+						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("While"), canvas);
 						firstContainerBloc = obj.transform.Find("Container");
 						conditionContainer = obj.transform.Find("ConditionContainer");
 						action = obj.GetComponent<WhileControl>();
@@ -644,7 +644,7 @@ public class LevelGenerator : FSystem {
 									// Parse xml condition
 									GameObject child = readXMLCondition(containerNode.FirstChild);
 									// Add child to empty zone
-									DropAreaUtility.addItemOnDropArea(child, emptyZone);
+									EditingUtility.addItemOnDropArea(child, emptyZone);
 								}
 							}
 							else if (containerNode.Name == "container")
@@ -656,7 +656,7 @@ public class LevelGenerator : FSystem {
 						break;
 
 					case "Forever":
-						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("Forever"));
+						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("Forever"), canvas);
 						firstContainerBloc = obj.transform.Find("Container");
 
 						if (actionNode.HasChildNodes)
@@ -665,7 +665,7 @@ public class LevelGenerator : FSystem {
 				}
 				break;
 			case "action":
-				obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find(actionNode.Attributes.GetNamedItem("type").Value));
+				obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find(actionNode.Attributes.GetNamedItem("type").Value), canvas);
 				break;
         }
 
@@ -683,11 +683,11 @@ public class LevelGenerator : FSystem {
 			GameObject child = readXMLInstruction(eleNode);
 			if (firstchild) // add the first child to the emptySlot
 			{
-				DropAreaUtility.addItemOnDropArea(child, emptySlot);
+				EditingUtility.addItemOnDropArea(child, emptySlot);
 				firstchild = false;
 			}
 			else // add next childs to the dropZone
-				DropAreaUtility.addItemOnDropArea(child, dropZone);
+				EditingUtility.addItemOnDropArea(child, dropZone);
 		}
 	}
 
@@ -701,7 +701,7 @@ public class LevelGenerator : FSystem {
 				switch (conditionNode.Attributes.GetNamedItem("type").Value)
                 {
 					case "AndOperator":
-						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("AndOperator"));
+						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("AndOperator"), canvas);
 						slots = obj.GetComponentsInChildren<ReplacementSlot>();
 						if (conditionNode.HasChildNodes)
 						{
@@ -719,7 +719,7 @@ public class LevelGenerator : FSystem {
 									// Parse xml condition
 									GameObject child = readXMLCondition(andNode.FirstChild);
 									// Add child to empty zone
-									DropAreaUtility.addItemOnDropArea(child, emptyZone);
+									EditingUtility.addItemOnDropArea(child, emptyZone);
 								}
 								emptyZone = null;
 							}
@@ -727,7 +727,7 @@ public class LevelGenerator : FSystem {
 						break;
 
 					case "OrOperator":
-						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("OrOperator"));
+						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("OrOperator"), canvas);
 						slots = obj.GetComponentsInChildren<ReplacementSlot>();
 						if (conditionNode.HasChildNodes)
 						{
@@ -745,7 +745,7 @@ public class LevelGenerator : FSystem {
 									// Parse xml condition
 									GameObject child = readXMLCondition(orNode.FirstChild);
 									// Add child to empty zone
-									DropAreaUtility.addItemOnDropArea(child, emptyZone);
+									EditingUtility.addItemOnDropArea(child, emptyZone);
 								}
 								emptyZone = null;
 							}
@@ -753,19 +753,19 @@ public class LevelGenerator : FSystem {
 						break;
 
 					case "NotOperator":
-						obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find("NotOperator"));
+						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("NotOperator"), canvas);
 						if (conditionNode.HasChildNodes)
 						{
 							GameObject emptyZone = obj.transform.Find("Container").GetChild(1).gameObject;
 							GameObject child = readXMLCondition(conditionNode.FirstChild);
 							// Add child to empty zone
-							DropAreaUtility.addItemOnDropArea(child, emptyZone);
+							EditingUtility.addItemOnDropArea(child, emptyZone);
 						}
 						break;
 				}
 				break;
 			case "captor":
-				obj = DragDropSystem.instance.createEditableBlockFromLibrary(GameObject.Find(conditionNode.Attributes.GetNamedItem("type").Value));
+				obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find(conditionNode.Attributes.GetNamedItem("type").Value), canvas);
 				break;
         }
 

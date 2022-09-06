@@ -166,7 +166,7 @@ public class EditableContainerSystem : FSystem
 		if (script != null && dropArea != null)
 		{
 			for (int k = 0; k < script.Count; k++)
-				DropAreaUtility.addItemOnDropArea(script[k], dropArea);
+				EditingUtility.addItemOnDropArea(script[k], dropArea);
 			UISystem.instance.startUpdatePlayButton();
 		}
 
