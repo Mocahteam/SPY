@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using FYFY;
 using TMPro;
 using System.IO;
-using System;
 using System.Xml;
 using System.Collections.Generic;
 using System.Collections;
@@ -14,9 +13,9 @@ public class ParamCompetenceSystem : FSystem
 	public static ParamCompetenceSystem instance;
 
 	// Famille
-	private Family competence_f = FamilyManager.getFamily(new AllOfComponents(typeof(Competence))); // Les Toogles compétence
-	private Family menuElement_f = FamilyManager.getFamily(new AnyOfComponents(typeof(Competence), typeof(Category))); // Les Toogles compétences et les Catégories qui les réunnis en groupes
-	private Family category_f = FamilyManager.getFamily(new AllOfComponents(typeof(Category))); // Les category qui contiendra des sous category ou des competences
+	private Family f_competence = FamilyManager.getFamily(new AllOfComponents(typeof(Competence))); // Les Toogles compétence
+	private Family f_menuElement = FamilyManager.getFamily(new AnyOfComponents(typeof(Competence), typeof(Category))); // Les Toogles compétences et les Catégories qui les réunnis en groupes
+	private Family f_category = FamilyManager.getFamily(new AllOfComponents(typeof(Category))); // Les category qui contiendra des sous category ou des competences
 
 	// Variable
 	public GameObject panelSelectComp; // Panneau de selection des compétences
@@ -44,7 +43,7 @@ public class ParamCompetenceSystem : FSystem
 		messageForUser = panelInfoUser.transform.Find("Panel").Find("Message").GetComponent<TMP_Text>(); 
 	}
 
-    IEnumerator noSelect(GameObject comp)
+    private IEnumerator noSelect(GameObject comp)
     {
 		yield return null;
 
@@ -53,7 +52,7 @@ public class ParamCompetenceSystem : FSystem
 		desactiveToogleComp();
 		foreach (string level in listCompSelectUserSave)
         {
-			foreach(GameObject c in competence_f)
+			foreach(GameObject c in f_competence)
             {
 				if(c.name == level)
                 {
@@ -65,13 +64,13 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	// Permet d'attacher à chaque catégorie les sous-categorie et compétences qui la compose
-	IEnumerator attacheComptWithCat()
+	private IEnumerator attacheComptWithCat()
     {
 		yield return null;
 
-		foreach (GameObject cat in category_f)
+		foreach (GameObject cat in f_category)
 		{
-			foreach(GameObject element in menuElement_f)
+			foreach(GameObject element in f_menuElement)
             {
 				if (element.GetComponent<MenuComp>().catParent == cat.name)
 				{
@@ -84,7 +83,7 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	// Permet de lancer les différentes fonctions que l'on a besoin pour le démarrage APRES que les familles soient mise à jours
-	IEnumerator startAfterFamillyOk() {
+	private IEnumerator startAfterFamillyOk() {
 		yield return null;
 
 		// On désactive les compétences pas encore implémenté
@@ -95,6 +94,7 @@ public class ParamCompetenceSystem : FSystem
 		MainLoop.instance.StopCoroutine(startAfterFamillyOk());
 	}
 
+	// used on TitleScreen scene
 	public void openPanelSelectComp()
 	{
 		try
@@ -156,7 +156,7 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	// Instancie et parametre la compétence à afficher
-	public void createCatObject(string[] data)
+	private void createCatObject(string[] data)
     {
 		// On instancie la catégorie
 		GameObject category = UnityEngine.Object.Instantiate(prefabCateComp);
@@ -176,7 +176,7 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	// Instancie et parametre la sous-compétence à afficher
-	public void createCompObject(string[] data)
+	private void createCompObject(string[] data)
 	{
 		// On instancie la catégorie
 		GameObject competence = UnityEngine.Object.Instantiate(prefabComp);
@@ -224,7 +224,7 @@ public class ParamCompetenceSystem : FSystem
 	// Mise en place décaler les sous-categories et compétences
 	private void displayCatAndComp()
     {
-		foreach(GameObject element in menuElement_f) { 
+		foreach(GameObject element in f_menuElement) { 
 			// Si l'élément à un parent
 			if(element.GetComponent<MenuComp>().catParent != "")
             {
@@ -251,7 +251,7 @@ public class ParamCompetenceSystem : FSystem
     {
 		int nbParent = 1;
 
-		foreach (GameObject ele in menuElement_f){ 
+		foreach (GameObject ele in f_menuElement){ 
 			if(ele.name == element.GetComponent<MenuComp>().catParent && ele.GetComponent<MenuComp>().catParent != "")
             {
 				nbParent += nbParentInHierarchiComp(ele);
@@ -340,7 +340,7 @@ public class ParamCompetenceSystem : FSystem
         {
 			if (!gameData.GetComponent<FunctionalityParam>().active[nameFunc])
 			{
-				foreach (GameObject comp in competence_f)
+				foreach (GameObject comp in f_competence)
 				{
 					if (comp.GetComponent<Competence>().compLinkWhitFunc.Contains(nameFunc) && comp.GetComponent<Toggle>().interactable)
 					{
@@ -379,7 +379,7 @@ public class ParamCompetenceSystem : FSystem
 		GameObject errorSelectComp = null;
 
 		//On verifi
-		foreach (GameObject comp in competence_f)
+		foreach (GameObject comp in f_competence)
         {
             // Si la compétence est séléctionné on le note
             if (comp.GetComponent<Toggle>().isOn)
@@ -426,6 +426,7 @@ public class ParamCompetenceSystem : FSystem
 		}
     }
 
+	// Use in ButtonStartLevel in ParamCompPanel prefab
 	public void startLevel()
     {
 		// On parcourt tous les levels disponible pour les copier dans une liste temporaire
@@ -435,7 +436,7 @@ public class ParamCompetenceSystem : FSystem
 
 		bool levelLD = false;
 		// On regarde si des competence concernant le level design on été selectionné
-		foreach (GameObject comp in competence_f)
+		foreach (GameObject comp in f_competence)
 		{
             if (comp.GetComponent<Toggle>().isOn)
             {
@@ -560,6 +561,7 @@ public class ParamCompetenceSystem : FSystem
 		}
 	}
 
+	// Used when PointerOver CategorizeCompetence prefab (see in editor)
 	public void infoCompetence(GameObject comp)
 	{
 		panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text = comp.GetComponent<MenuComp>().info;
@@ -637,7 +639,7 @@ public class ParamCompetenceSystem : FSystem
 			foreach (string funcNameDesactive in gameData.GetComponent<FunctionalityParam>().enableFunc[funcNameActive])
 			{
 				// Pour chaque fonction non possible, on regarde les compétence les utilisant pour en désactivé la selection
-				foreach (GameObject c in competence_f)
+				foreach (GameObject c in f_competence)
 				{
 					if (c.GetComponent<Competence>().compLinkWhitFunc.Contains(funcNameDesactive))
 					{
@@ -656,7 +658,7 @@ public class ParamCompetenceSystem : FSystem
 
 			foreach(string nameComp in comp.GetComponent<Competence>().compLinkWhitComp)
             {
-				foreach(GameObject c in competence_f)
+				foreach(GameObject c in f_competence)
                 {
 					if(c.name == nameComp)
                     {
@@ -719,7 +721,7 @@ public class ParamCompetenceSystem : FSystem
 		// On reselectionne toutes les compétences
 		foreach (string compName in listCompSelectUser)
 		{
-			foreach (GameObject c in competence_f)
+			foreach (GameObject c in f_competence)
 			{
 				if (c.name == compName)
 				{
@@ -753,7 +755,7 @@ public class ParamCompetenceSystem : FSystem
 	// Reset toutes les compétences en "non selectionné"
 	private void resetSelectComp()
     {
-		foreach (GameObject comp in competence_f)
+		foreach (GameObject comp in f_competence)
 		{
 			comp.GetComponent<Toggle>().isOn = false;
 			comp.GetComponent<Toggle>().interactable = true;
@@ -789,7 +791,7 @@ public class ParamCompetenceSystem : FSystem
     {
 		category.GetComponent<Category>().hideList = !category.GetComponent<Category>().hideList;
 
-		foreach (GameObject element in menuElement_f)
+		foreach (GameObject element in f_menuElement)
         {
             if (category.GetComponent<Category>().listAttachedElement.Contains(element.name))
             {

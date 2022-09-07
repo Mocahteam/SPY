@@ -2,11 +2,6 @@ using UnityEngine;
 
 public class EditableContainerSystemBridge : MonoBehaviour
 {
-    // Methode appellée pour changer le nom de l'agent
-    public void setAgentName(string newName)
-	{
-		EditableContainerSystem.instance.setAgentName(newName);
-	}
 	public void resetScriptContainer()
 	{
 		EditableContainerSystem.instance.resetScriptContainer();

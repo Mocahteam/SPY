@@ -7,10 +7,10 @@ using FYFY_plugins.TriggerManager;
 /// Manage collision between player agents and Coins
 /// </summary>
 public class CoinManager : FSystem {
-    private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
+    private Family f_robotcollision = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
 
-	private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-	private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 	private GameData gameData;
     private bool activeCoin;
@@ -21,10 +21,10 @@ public class CoinManager : FSystem {
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
-		robotcollision_f.addEntryCallback(onNewCollision);
+		f_robotcollision.addEntryCallback(onNewCollision);
 
-		playingMode_f.addEntryCallback(delegate { activeCoin = true; });
-		editingMode_f.addEntryCallback(delegate { activeCoin = false; });
+		f_playingMode.addEntryCallback(delegate { activeCoin = true; });
+		f_editingMode.addEntryCallback(delegate { activeCoin = false; });
 	}
 
 	private void onNewCollision(GameObject robot){

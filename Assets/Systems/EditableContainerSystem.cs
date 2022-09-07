@@ -29,11 +29,11 @@ using FYFY_plugins.PointerManager;
 public class EditableContainerSystem : FSystem 
 {
 	// Les familles
-	private Family agent_f = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
-	private Family viewportContainerPointed_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les container éditable
-	private Family scriptContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
-	private Family refreshSize_f = FamilyManager.getFamily(new AllOfComponents(typeof(RefreshSizeOfEditableContainer)));
-	private Family addSpecificContainer_f = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
+	private Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
+	private Family f_viewportContainerPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les container éditable
+	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
+	private Family f_refreshSize = FamilyManager.getFamily(new AllOfComponents(typeof(RefreshSizeOfEditableContainer)));
+	private Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
 	
 	// Les variables
 	public GameObject agentSelected = null;
@@ -55,16 +55,16 @@ public class EditableContainerSystem : FSystem
 
     protected override void onProcess(int familiesUpdateCount)
     {
-        if (refreshSize_f.Count > 0) // better to process like this than callback on family (here we ar sure to process all components
+        if (f_refreshSize.Count > 0) // better to process like this than callback on family (here we are sure to process all components
         {
 			// Update size of parent GameObject
 			MainLoop.instance.StartCoroutine(setEditableSize());
-			foreach(GameObject go in refreshSize_f)
+			foreach(GameObject go in f_refreshSize)
 				foreach (RefreshSizeOfEditableContainer trigger in go.GetComponents<RefreshSizeOfEditableContainer>())
 					GameObjectManager.removeComponent(trigger);
 		}
-		if (addSpecificContainer_f.Count > 0)
-			foreach (GameObject go in addSpecificContainer_f)
+		if (f_addSpecificContainer.Count > 0)
+			foreach (GameObject go in f_addSpecificContainer)
 				foreach (AddSpecificContainer asc in go.GetComponents<AddSpecificContainer>())
 				{
 					addSpecificContainer(asc.name, asc.editState, asc.script);
@@ -72,6 +72,7 @@ public class EditableContainerSystem : FSystem
 				}
     }
 
+	// utilisé sur le OnSelect du ContainerName dans le prefab ViewportScriptContainer
     public void selectContainer(UIRootContainer container)
 	{
 		containerSelected = container;
@@ -90,6 +91,7 @@ public class EditableContainerSystem : FSystem
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
 	}
 
+	// Move editable view on the last editable container
 	private IEnumerator syncEditableScrollBars()
 	{
 		// delay three times because we have to wait addSpecificContainer end (that call setEditableSize coroutine)
@@ -101,21 +103,8 @@ public class EditableContainerSystem : FSystem
 		EditableCanvas.GetComponentInParent<ScrollRect>().horizontalScrollbar.value = 1;
 	}
 
-	// Utilisé surtout par les appels extérieurs au systéme
-	// Permet d'enregistrer le nom du container que l'on veux changé
-	// Et lui changer son nom 
-	public void setContainerName(string oldName, string newName)
-	{
-		UIRootContainer uiContainer = selectContainerByName(oldName);
-		if (uiContainer != null)
-		{
-			containerSelected = uiContainer;
-			newNameContainer(newName);
-		}
-	}
-
 	// Ajouter un container à la scéne
-	public void addSpecificContainer(string name = "", AgentEdit.EditMode editState = AgentEdit.EditMode.Editable, List<GameObject> script = null)
+	private void addSpecificContainer(string name = "", AgentEdit.EditMode editState = AgentEdit.EditMode.Editable, List<GameObject> script = null)
 	{
 		// On clone le prefab
 		GameObject cloneContainer = Object.Instantiate(prefabViewportScriptContainer);
@@ -200,11 +189,11 @@ public class EditableContainerSystem : FSystem
 	}
 
 	// Empty the script window
-	// See ResetButton in editor
+	// See ResetButton in ViewportScriptContainer prefab in editor
 	public void resetScriptContainer(bool refund = false)
 	{
 		// On récupére le contenair pointé lors du clic de la balayette
-		GameObject scriptContainerPointer = viewportContainerPointed_f.First().transform.Find("ScriptContainer").gameObject;
+		GameObject scriptContainerPointer = f_viewportContainerPointed.First().transform.Find("ScriptContainer").gameObject;
 
 		// On parcourt le script container pour détruire toutes les instructions
 		for (int i = scriptContainerPointer.transform.childCount - 1; i >= 0; i--)
@@ -215,6 +204,8 @@ public class EditableContainerSystem : FSystem
 		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 2).gameObject, false);
 	}
 
+	// Remove the script window
+	// See RemoveButton in ViewportScriptContainer prefab in editor
 	public void removeContainer(GameObject container)
 	{
 		GameObjectManager.unbind(container);
@@ -223,9 +214,10 @@ public class EditableContainerSystem : FSystem
 		MainLoop.instance.StartCoroutine(setEditableSize());
 	}
 
+	// return the container associated to the name. return null if no container with this name axists
 	private UIRootContainer selectContainerByName(string name)
 	{
-		foreach (GameObject container in scriptContainer_f)
+		foreach (GameObject container in f_scriptContainer)
 		{
 			UIRootContainer uiContainer = container.GetComponent<UIRootContainer>();
 			if (uiContainer.associedAgentName == name)
@@ -235,7 +227,8 @@ public class EditableContainerSystem : FSystem
 		return null;
 	}
 
-	// Change le nom du container
+	// Rename the script window
+	// See VontainmerName in ViewportScriptContainer prefab in editor
 	public void newNameContainer(string newName)
 	{
 		string oldName = containerSelected.associedAgentName;
@@ -245,10 +238,45 @@ public class EditableContainerSystem : FSystem
 			if (!nameContainerUsed(newName))
 			{
 				// On tente de récupérer un agent lié à l'ancien nom
-				AgentEdit linkedAgent = EditableContainerSystem.instance.selectLinkedAgentByName(oldName);
+				AgentEdit linkedAgent = selectLinkedAgentByName(oldName);
 				// Si l'agent existe, on met à jour son lien (on supprime le lien actuelle)
 				if (linkedAgent)
-					EditableContainerSystem.instance.setAgentName(newName);
+                {
+					// On annule la saisie si l'agent est locked ou s'il est synchro et que le nouveau nom choisi est un nom de container editable déjà défini. En effet changer le nom du robot implique de changer aussi le nom du container mais attention il ne peut y avoir de doublons dans les noms des containers editables donc il faut s'assurer que le renommage du container editable a été accepté pour pouvoir valider le nouveau nom de l'agent.
+					if (agentSelected.GetComponent<AgentEdit>().editState == AgentEdit.EditMode.Locked || (agentSelected.GetComponent<AgentEdit>().editState == AgentEdit.EditMode.Synch && nameContainerUsed(newName)))
+					{ // on annule la saisie
+						agentSelected.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().text = agentSelected.GetComponent<AgentEdit>().agentName;
+					}
+					else
+					{
+						if (agentSelected.GetComponent<AgentEdit>().editState == AgentEdit.EditMode.Synch)
+						{
+							// On met à jours le nom de tous les agents qui auraient le même nom pour garder l'association avec le container editable
+							foreach (GameObject agent in f_agent)
+								if (agent.GetComponent<AgentEdit>().agentName == oldName)
+								{
+									agent.GetComponent<AgentEdit>().agentName = newName;
+									agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().text = newName;
+								}
+							// Puis on met à jour le nom du container éditable
+							UIRootContainer uiContainer = selectContainerByName(oldName);
+							if (uiContainer != null)
+							{
+								containerSelected = uiContainer;
+								newNameContainer(newName);
+							}
+						}
+						else
+						{
+							// on ne modifie que l'agent selectionné
+							agentSelected.GetComponent<AgentEdit>().agentName = newName;
+						}
+						agentSelected.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().text = newName;
+					}
+
+					// On vérifie si on a une association avec les container éditables
+					refreshUINameContainer();
+				}
 				// On change pour son nouveau nom
 				containerSelected.associedAgentName = newName;
 				containerSelected.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = newName;
@@ -262,22 +290,21 @@ public class EditableContainerSystem : FSystem
 	}
 
 	// Vérifie si le nom proposé existe déjà ou non pour un script container
-	public bool nameContainerUsed(string nameTested)
+	private bool nameContainerUsed(string nameTested)
 	{
 		// On regarde en premier lieu si le nom n'existe pas déjà
-		foreach (GameObject container in scriptContainer_f)
+		foreach (GameObject container in f_scriptContainer)
 			if (container.GetComponent<UIRootContainer>().associedAgentName == nameTested)
 				return true;
 
 		return false;
 	}
 
-	// Utilisé principalement par les systémes extérieurs
 	// Définie l'agent sur lequel les modifications seront opporté
 	// Renvoie le composant AgentEdit de l'agent sélectionné s'il a été trouvé, sinon null
 	private AgentEdit selectLinkedAgentByName(string nameAgent)
     {
-		foreach (GameObject agent in agent_f)
+		foreach (GameObject agent in f_agent)
         {
 			AgentEdit ae = agent.GetComponent<AgentEdit>();
 			if (ae.agentName == nameAgent && ae.editState == AgentEdit.EditMode.Synch)
@@ -290,48 +317,6 @@ public class EditableContainerSystem : FSystem
 	}
 
 
-	// Associe le nouveau nom reçue à l'agent selectionné
-	// Met à jours son affichage dans ça fiche
-	// Met à jours le lien qu'il a avec le script container du même nom
-	public void setAgentName(string newName)
-    {
-		string oldName = agentSelected.GetComponent<AgentEdit>().agentName;
-
-		if (agentSelected.GetComponent<AgentEdit>().editState != AgentEdit.EditMode.Locked && newName != oldName)
-        {
-			// On annule la saisie si l'agent est locked ou s'il est synchro et que le nouveau nom choisi est un nom de container editable déjà défini. En effet changer le nom du robot implique de changer aussi le nom du container mais attention il ne peut y avoir de doublons dans les noms des containers editables donc il faut s'assurer que le renommage du container editable a été accepté pour pouvoir valider le nouveau nom de l'agent.
-			if (agentSelected.GetComponent<AgentEdit>().editState == AgentEdit.EditMode.Locked || (agentSelected.GetComponent<AgentEdit>().editState == AgentEdit.EditMode.Synch && nameContainerUsed(newName)))
-            { // on annule la saisie
-				agentSelected.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().text = agentSelected.GetComponent<AgentEdit>().agentName;
-			}
-			else
-			{
-				if (agentSelected.GetComponent<AgentEdit>().editState == AgentEdit.EditMode.Synch)
-				{
-					// On met à jours le nom de tous les agents qui auraient le même nom pour garder l'association avec le container editable
-					foreach (GameObject agent in agent_f)
-						if (agent.GetComponent<AgentEdit>().agentName == oldName)
-						{
-							agent.GetComponent<AgentEdit>().agentName = newName;
-							agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().text = newName;
-						}
-					// Puis on demande la mise à jour du nom du container éditable
-					setContainerName(oldName, newName);
-				}
-                else
-				{
-					// on ne modifie que l'agent selectionné
-					agentSelected.GetComponent<AgentEdit>().agentName = newName;
-				}
-				agentSelected.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().text = newName;
-			}
-
-			// On vérifie si on a une association avec les container éditables
-			refreshUINameContainer();
-		}
-	}
-
-
 	// Vérifie si les noms des containers correspond à un agent et vice-versa
 	// Si non, Fait apparaitre le nom en rouge
 	private IEnumerator tcheckLinkName()
@@ -339,10 +324,10 @@ public class EditableContainerSystem : FSystem
 		yield return null;
 
 		// On parcours les containers et si aucun nom ne correspond alors on met leur nom en gras rouge
-		foreach (GameObject container in scriptContainer_f)
+		foreach (GameObject container in f_scriptContainer)
 		{
 			bool nameSame = false;
-			foreach (GameObject agent in agent_f)
+			foreach (GameObject agent in f_agent)
 				if (container.GetComponent<UIRootContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
 					nameSame = true;
 
@@ -354,10 +339,10 @@ public class EditableContainerSystem : FSystem
 		}
 
 		// On fait la même chose pour les agents
-		foreach (GameObject agent in agent_f)
+		foreach (GameObject agent in f_agent)
 		{
 			bool nameSame = false;
-			foreach (GameObject container in scriptContainer_f)
+			foreach (GameObject container in f_scriptContainer)
 				if (container.GetComponent<UIRootContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
 					nameSame = true;
 

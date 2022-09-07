@@ -1,18 +1,18 @@
-﻿using UnityEngine;
-using FYFY;
+﻿using FYFY;
 using System.Collections;
+using UnityEngine;
 
 /// <summary>
 /// Manage steps (automatic simulation or controled by player)
 /// </summary>
 public class StepSystem : FSystem {
 
-    private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
-    private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
-    private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
+    private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+    private Family f_newStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+    private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
 
-    private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-    private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+    private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
     private float timeStepCpt;
     private static float defaultTimeStep = 1.5f; 
@@ -29,9 +29,9 @@ public class StepSystem : FSystem {
         if (go != null)
             gameData = go.GetComponent<GameData>();
         timeStepCpt = timeStep;
-        newStep_f.addEntryCallback(onNewStep);
+        f_newStep.addEntryCallback(onNewStep);
 
-        playingMode_f.addEntryCallback(delegate
+        f_playingMode.addEntryCallback(delegate
         {
             // count a new execution
             gameData.totalExecute++;
@@ -42,7 +42,7 @@ public class StepSystem : FSystem {
             setToDefaultTimeStep();
         });
 
-        editingMode_f.addEntryCallback(delegate
+        f_editingMode.addEntryCallback(delegate
         {
             Pause = true;
         });
@@ -57,7 +57,7 @@ public class StepSystem : FSystem {
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
         //Organize each steps
-        if (newEnd_f.Count == 0 && (playerHasNextAction() || timeStepCpt > 0))
+        if (f_newEnd.Count == 0 && (playerHasNextAction() || timeStepCpt > 0))
         {
             //activate step
             if (timeStepCpt <= 0)
@@ -87,20 +87,21 @@ public class StepSystem : FSystem {
         yield return null;
         yield return null;
         // If there are still no actions => return to edit mode
-        if (!playerHasNextAction() || newEnd_f.Count > 0)
+        if (!playerHasNextAction() || f_newEnd.Count > 0)
         {
             GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
             // We save history if no end or win
-            if (newEnd_f.Count <= 0)
+            if (f_newEnd.Count <= 0)
                 GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
         }
         else
             Pause = false;
     }
 
+    // Check if one of the robot programmed by the player has a next action to perform
     private bool playerHasNextAction(){
 		CurrentAction act;
-		foreach(GameObject go in currentActions){
+		foreach(GameObject go in f_currentActions){
 			act = go.GetComponent<CurrentAction>();
 			if(act.agent != null && act.agent.CompareTag("Player") && act.GetComponent<BaseElement>().next != null)
 				return true;

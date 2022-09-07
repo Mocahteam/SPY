@@ -7,6 +7,7 @@ using FYFY;
 public class MoveSystem : FSystem {
 
 	private Family f_movable = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
+
 	private bool isMoving;
 	public float turnSpeed;
 	public float moveSpeed;
@@ -96,7 +97,6 @@ public class MoveSystem : FSystem {
 					audio.Stop();
 				}
 			}
-
 		}
 	}
 }

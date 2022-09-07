@@ -24,9 +24,4 @@ public class LevelGenerator_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "buttonExecute", buttonExecute);
 	}
 
-	public void computeNext(UnityEngine.GameObject container)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "computeNext", container);
-	}
-
 }

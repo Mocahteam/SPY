@@ -5,21 +5,21 @@ using FYFY;
 /// This system executes new currentActions
 /// </summary>
 public class CurrentActionExecutor : FSystem {
-	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Door"));
-	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
-    private Family newCurrentAction_f = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
-	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)), new AnyOfTags("Player"));
+	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Door"));
+	private Family f_activableConsole = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
+    private Family f_newCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
+	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)), new AnyOfTags("Player"));
 
 	protected override void onStart()
     {
-		newCurrentAction_f.addEntryCallback(onNewCurrentAction);
+		f_newCurrentAction.addEntryCallback(onNewCurrentAction);
 		Pause = true;
 	}
 
 	protected override void onProcess(int familiesUpdateCount)
 	{
 		// count inaction if a robot have no CurrentAction
-		foreach (GameObject robot in playerGO)
+		foreach (GameObject robot in f_player)
 			if (robot.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>() == null)
 				robot.GetComponent<ScriptRef>().nbOfInactions++;
 		Pause = true;
@@ -48,7 +48,7 @@ public class CurrentActionExecutor : FSystem {
 			case BasicAction.ActionType.Wait:
 				break;
 			case BasicAction.ActionType.Activate:
-				foreach( GameObject actGo in activableConsoleGO){
+				foreach( GameObject actGo in f_activableConsole){
 					if(actGo.GetComponent<Position>().x == ca.agent.GetComponent<Position>().x && actGo.GetComponent<Position>().z == ca.agent.GetComponent<Position>().z){
 						actGo.GetComponent<AudioSource>().Play();
 						// toggle activable GameObject
@@ -147,7 +147,7 @@ public class CurrentActionExecutor : FSystem {
 	}
 
 	private bool checkObstacle(int x, int z){
-		foreach( GameObject go in wallGO){
+		foreach( GameObject go in f_wall){
 			if(go.activeInHierarchy && go.GetComponent<Position>().x == x && go.GetComponent<Position>().z == z)
 				return true;
 		}

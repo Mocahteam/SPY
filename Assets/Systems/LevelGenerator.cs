@@ -17,7 +17,8 @@ public class LevelGenerator : FSystem {
 	public static LevelGenerator instance;
 
 	// Famille contenant les agents editables
-	private Family levelGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
+	private Family f_level = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
+
 	private List<List<int>> map;
 	private GameData gameData;
 	private int nbAgentCreate = 0; // Nombre d'agent créer
@@ -49,8 +50,6 @@ public class LevelGenerator : FSystem {
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 			{
 				MainLoop.instance.StartCoroutine(GetLevelWebRequest(doc));
-				doc.LoadXml(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
-				XmlToLevel(doc, gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
 			}
 			else
 			{
@@ -75,11 +74,7 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
-	public void startReadDocXML(XmlDocument doc)
-    {
-		MainLoop.instance.StartCoroutine(GetLevelWebRequest(doc));
-	}
-
+	// read the map and create wall, ground, spawn and exit
 	private void generateMap(){
 		for(int i = 0; i< map.Count; i++){
 			for(int j = 0; j < map[i].Count; j++){
@@ -106,7 +101,7 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
-	// Creer une entité agent ou robot et y associe un panel container
+	// Creer une entité agent ou robot et y associer un panel container
 	private GameObject createEntity(string nameAgent, int i, int j, Direction.Dir direction, string type, List<GameObject> script = null){
 		GameObject entity = null;
 		switch(type){
@@ -209,23 +204,6 @@ public class LevelGenerator : FSystem {
 		return entity;
 	}
 
-	private List<GameObject> getBasicActionGO(GameObject go){
-		List<GameObject> res = new List<GameObject>();
-		if(go.GetComponent<BasicAction>())
-			res.Add(go);
-		foreach(Transform child in go.transform){
-			if(child.GetComponent<BasicAction>())
-				res.Add(child.gameObject);
-			else {
-					List<GameObject> childGO = getBasicActionGO(child.gameObject); 
-					foreach(GameObject cgo in childGO){
-						res.Add(cgo);
-					}
-				}		
-		}
-		return res;
-	}
-
 	private void createDoor(int i, int j, Direction.Dir orientation, int slotID){
 		GameObject door = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Door") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 
@@ -279,12 +257,13 @@ public class LevelGenerator : FSystem {
 	}
 
 	private void eraseMap(){
-		foreach( GameObject go in levelGO){
+		foreach( GameObject go in f_level){
 			GameObjectManager.unbind(go.gameObject);
 			Object.Destroy(go.gameObject);
 		}
 	}
 
+	// Read xml document and create all game objects
 	public void XmlToLevel(XmlDocument doc, string nameLevel)
 	{
 
@@ -411,6 +390,7 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
+	// Load the data of the map from XML
 	private void readXMLMap(XmlNode mapNode){
 		foreach(XmlNode lineNode in mapNode.ChildNodes){
 			List<int> line = new List<int>();
@@ -523,6 +503,7 @@ public class LevelGenerator : FSystem {
 		 slotsID, (Direction.Dir)int.Parse(activableNode.Attributes.GetNamedItem("direction").Value));
 	}
 
+	// Lit le XML d'un script est génère les game objects des instructions
 	private List<GameObject> readXMLScript(XmlNode scriptNode)
 	{
 		if(scriptNode != null){
@@ -771,65 +752,6 @@ public class LevelGenerator : FSystem {
         }
 
 		return obj;
-	}
-
-	// link actions together => define next property
-	// Associe à chaque bloc le bloc qui sera executé aprés
-	public static void computeNext(GameObject container){
-		for (int i = 0 ; i < container.transform.childCount ; i++){
-			Transform child = container.transform.GetChild(i);
-			// Si l'action est une action basique et n'est pas la dernière
-			if (i < container.transform.childCount && child.GetComponent<BaseElement>()){
-				// Si le bloc appartient à un for, il faut que le dernier élément ait comme next le block for
-				if ((container.transform.parent.GetComponent<ForeverControl>() || container.transform.parent.GetComponent<ForControl>()) && i == container.transform.childCount - 1)
-				{
-					child.GetComponent<BaseElement>().next = container.transform.parent.gameObject;
-					i = container.transform.childCount;
-				}// Si le bloc appartient à un if et qu'il est le dernier block de la partie action
-				else if (container.transform.parent.GetComponent<IfControl>() && i == container.transform.childCount - 1) {
-					// On regarde si il reste des éléments dans le container parent
-					// Si oui on met l'élément suivant en next
-					// Sinon on ne fait rien et fin de la sequence
-					if(container.transform.parent.parent.childCount - 1 > container.transform.parent.GetSiblingIndex())
-                    {
-						child.GetComponent<BaseElement>().next = container.transform.parent.parent.GetChild(container.transform.parent.GetSiblingIndex() + 1).gameObject;
-					}
-                    else
-                    {
-						// Exception, si le container parent parent est un for, on le met en next
-						if (container.transform.parent.parent.parent.GetComponent<ForControl>() || container.transform.parent.parent.parent.GetComponent<ForeverControl>())
-                        {
-							child.GetComponent<BaseElement>().next = container.transform.parent.parent.parent.gameObject;
-						}
-                    }
-				}// Sinon l'associer au block suivant
-				else if (i != container.transform.childCount - 1)
-				{
-					child.GetComponent<BaseElement>().next = container.transform.GetChild(i + 1).gameObject;
-				}
-			}// Sinon si c'est la derniére et une action basique
-			else if(i == container.transform.childCount-1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>()){
-				if(container.GetComponent<ForControl>() || container.GetComponent<ForeverControl>())
-					child.GetComponent<BaseElement>().next = container;
-				else if(container.GetComponent<IfControl>())
-					child.GetComponent<BaseElement>().next = container.GetComponent<BaseElement>().next;
-			}
-			// Si autre action que les actions basique
-			// Alors récursive de la fonction sur leur container
-			if(child.GetComponent<IfControl>() || child.GetComponent<ForControl>())
-            {
-				computeNext(child.transform.Find("Container").gameObject);
-                // Si c'est un else il ne faut pas oublier le container else
-                if (child.GetComponent<IfElseControl>())
-                {
-					computeNext(child.transform.Find("ElseContainer").gameObject);
-				}
-			}
-			else if (child.GetComponent<ForeverControl>())
-            {
-				computeNext(child.transform.Find("Container").gameObject);
-			}
-		}
 	}
 
 	private void activeDesactiveFunctionality()

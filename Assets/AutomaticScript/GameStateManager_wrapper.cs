@@ -8,11 +8,6 @@ public class GameStateManager_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void SaveState()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "SaveState", null);
-	}
-
 	public void LoadState()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "LoadState", null);

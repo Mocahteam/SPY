@@ -3,7 +3,7 @@ using FYFY;
 using TMPro;
 
 /// <summary>
-/// This manager enables to save the game state and to restore it on demand
+/// This manager enables to save the game state and to restore it on demand for instance when the player is detected by drones, he can reset the game on a state just before the previous execution
 /// </summary>
 public class GameStateManager : FSystem {
 
@@ -15,7 +15,7 @@ public class GameStateManager : FSystem {
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
     private Family f_forControls = FamilyManager.getFamily(new AllOfComponents(typeof(ForControl)));
 
-    private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 
     private SaveContent save;
 
@@ -30,11 +30,11 @@ public class GameStateManager : FSystem {
     protected override void onStart()
     {
         save = new SaveContent();
-        playingMode_f.addEntryCallback(delegate { SaveState(); });
+        f_playingMode.addEntryCallback(delegate { SaveState(); });
     }
 
-    // See ExecuteButton in editor
-    public void SaveState()
+    // Save data of all interactable objects in scene
+    private void SaveState()
 	{
         //reset save
         save.rawSave.coinsState.Clear();
@@ -63,7 +63,8 @@ public class GameStateManager : FSystem {
         currentContent = JsonUtility.ToJson(save.rawSave);
     }
 
-    // See StopButton and ReloadState buttons in editor
+    // Used in StopButton and ReloadState buttons in editor
+    // Load saved state an restore data on interactable game objects
     public void LoadState()
     {
         save.rawSave = JsonUtility.FromJson<SaveContent.RawSave>(currentContent);

@@ -7,15 +7,15 @@ using FYFY_plugins.TriggerManager;
 /// </summary>
 public class DetectorManager : FSystem {
 
-	private Family enemyGO = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
-	private Family detectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody)));
-	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
-    private Family gameLoaded_f = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
-    private Family enemyMoved_f = FamilyManager.getFamily(new AllOfComponents(typeof(Moved)), new AnyOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
-    private Family robotcollision_f = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
+	private Family f_enemy = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
+	private Family f_detector = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody)));
+	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
+    private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
+    private Family f_enemyMoved = FamilyManager.getFamily(new AllOfComponents(typeof(Moved)), new AnyOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
+    private Family f_robotcollision = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
 
-    private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-    private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+    private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
     private GameData gameData;
     private bool activeRedDetector;
@@ -26,15 +26,15 @@ public class DetectorManager : FSystem {
         GameObject go = GameObject.Find("GameData");
         if (go != null)
             gameData = go.GetComponent<GameData>();
-        gameLoaded_f.addEntryCallback(delegate { updateDetectors(); });
-        enemyMoved_f.addEntryCallback(updateDetector);
-        robotcollision_f.addEntryCallback(onNewCollision);
+        f_gameLoaded.addEntryCallback(delegate { updateDetectors(); });
+        f_enemyMoved.addEntryCallback(updateDetector);
+        f_robotcollision.addEntryCallback(onNewCollision);
 
-        playingMode_f.addEntryCallback(delegate {
+        f_playingMode.addEntryCallback(delegate {
             activeRedDetector = true;
             updateDetectors();
         });
-        editingMode_f.addEntryCallback(delegate {
+        f_editingMode.addEntryCallback(delegate {
             activeRedDetector = false;
             updateDetectors();
         });
@@ -53,19 +53,21 @@ public class DetectorManager : FSystem {
 		}
     }
 
+    // Used by ReloadState button in inspector
     public void updateDetectors()
     {
-        foreach (GameObject detect in enemyGO)
+        foreach (GameObject detect in f_enemy)
             updateDetector(detect);
     }
 
+    // Reset detector positions depending on drone properties (position, orientation, range...)
     private void updateDetector(GameObject drone)
     {
         foreach (Moved moved in drone.GetComponents<Moved>())
             GameObjectManager.removeComponent(moved);
 
         //Destroy detection cells
-        foreach (GameObject detector in detectorGO)
+        foreach (GameObject detector in f_detector)
         {
             if (detector.GetComponent<Detector>().owner == drone)
             {
@@ -102,7 +104,7 @@ public class DetectorManager : FSystem {
                         {
                             int x = drone_pos.x;
                             int z = drone_pos.z + i + 1;
-                            foreach (GameObject wall in wallGO)
+                            foreach (GameObject wall in f_wall)
                                 if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
                                     stop = true;
                             if (stop)
@@ -123,7 +125,7 @@ public class DetectorManager : FSystem {
                         {
                             int x = drone_pos.x - i - 1;
                             int z = drone_pos.z;
-                            foreach (GameObject wall in wallGO)
+                            foreach (GameObject wall in f_wall)
                                 if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
                                     stop = true;
                             if (stop)
@@ -144,7 +146,7 @@ public class DetectorManager : FSystem {
                         {
                             int x = drone_pos.x;
                             int z = drone_pos.z - i - 1;
-                            foreach (GameObject wall in wallGO)
+                            foreach (GameObject wall in f_wall)
                                 if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
                                     stop = true;
                             if (stop)
@@ -165,7 +167,7 @@ public class DetectorManager : FSystem {
                         {
                             int x = drone_pos.x + i + 1;
                             int z = drone_pos.z;
-                            foreach (GameObject wall in wallGO)
+                            foreach (GameObject wall in f_wall)
                                 if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
                                     stop = true;
                             if (stop)

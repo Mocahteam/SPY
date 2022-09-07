@@ -5,9 +5,9 @@ using System.Collections;
 /// <summary>
 /// Manage Doors and Consoles => open/close doors depending on consoles state
 /// </summary>
-public class DoorManager : FSystem {
+public class DoorAndConsoleManager : FSystem {
 
-	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
+	private Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
 	private Family f_consoleOn = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource), typeof(TurnedOn)));
 	private Family f_consoleOff = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)), new NoneOfComponents(typeof(TurnedOn)));
 
@@ -24,7 +24,7 @@ public class DoorManager : FSystem {
 		foreach (int id in activable.slotID)
 		{
 			// parse all doors
-			foreach (GameObject slotGo in doorGO)
+			foreach (GameObject slotGo in f_door)
 			{
 				// if slots are equals => disable door
 				if (slotGo.GetComponent<ActivationSlot>().slotID == id)
@@ -45,7 +45,7 @@ public class DoorManager : FSystem {
 		foreach (int id in activable.slotID)
 		{
 			// parse all doors
-			foreach (GameObject slotGo in doorGO)
+			foreach (GameObject slotGo in f_door)
 			{
 				// if slots are equals => disable door
 				if (slotGo.GetComponent<ActivationSlot>().slotID == id)

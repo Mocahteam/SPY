@@ -183,7 +183,7 @@ public static class EditingUtility
 		}
 		// Va linker les blocs ensemble
 		// C'est à dire qu'il va définir pour chaque bloc, qu'elle est le suivant à exécuter
-		LevelGenerator.computeNext(targetContainer);
+		computeNext(targetContainer);
 		// On détruit la copy de la sequence d'action
 		UnityEngine.Object.Destroy(containerCopy);
 	}
@@ -428,5 +428,69 @@ public static class EditingUtility
 		}
 		else
 			GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.BadCondition });
+	}
+	
+	// link actions together => define next property
+	 // Associe à chaque bloc le bloc qui sera executé aprés
+	public static void computeNext(GameObject container)
+	{
+		for (int i = 0; i < container.transform.childCount; i++)
+		{
+			Transform child = container.transform.GetChild(i);
+			// Si l'action est une action basique et n'est pas la dernière
+			if (i < container.transform.childCount && child.GetComponent<BaseElement>())
+			{
+				// Si le bloc appartient à un for, il faut que le dernier élément ait comme next le block for
+				if ((container.transform.parent.GetComponent<ForeverControl>() || container.transform.parent.GetComponent<ForControl>()) && i == container.transform.childCount - 1)
+				{
+					child.GetComponent<BaseElement>().next = container.transform.parent.gameObject;
+					i = container.transform.childCount;
+				}// Si le bloc appartient à un if et qu'il est le dernier block de la partie action
+				else if (container.transform.parent.GetComponent<IfControl>() && i == container.transform.childCount - 1)
+				{
+					// On regarde si il reste des éléments dans le container parent
+					// Si oui on met l'élément suivant en next
+					// Sinon on ne fait rien et fin de la sequence
+					if (container.transform.parent.parent.childCount - 1 > container.transform.parent.GetSiblingIndex())
+					{
+						child.GetComponent<BaseElement>().next = container.transform.parent.parent.GetChild(container.transform.parent.GetSiblingIndex() + 1).gameObject;
+					}
+					else
+					{
+						// Exception, si le container parent parent est un for, on le met en next
+						if (container.transform.parent.parent.parent.GetComponent<ForControl>() || container.transform.parent.parent.parent.GetComponent<ForeverControl>())
+						{
+							child.GetComponent<BaseElement>().next = container.transform.parent.parent.parent.gameObject;
+						}
+					}
+				}// Sinon l'associer au block suivant
+				else if (i != container.transform.childCount - 1)
+				{
+					child.GetComponent<BaseElement>().next = container.transform.GetChild(i + 1).gameObject;
+				}
+			}// Sinon si c'est la derniére et une action basique
+			else if (i == container.transform.childCount - 1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>())
+			{
+				if (container.GetComponent<ForControl>() || container.GetComponent<ForeverControl>())
+					child.GetComponent<BaseElement>().next = container;
+				else if (container.GetComponent<IfControl>())
+					child.GetComponent<BaseElement>().next = container.GetComponent<BaseElement>().next;
+			}
+			// Si autre action que les actions basique
+			// Alors récursive de la fonction sur leur container
+			if (child.GetComponent<IfControl>() || child.GetComponent<ForControl>())
+			{
+				computeNext(child.transform.Find("Container").gameObject);
+				// Si c'est un else il ne faut pas oublier le container else
+				if (child.GetComponent<IfElseControl>())
+				{
+					computeNext(child.transform.Find("ElseContainer").gameObject);
+				}
+			}
+			else if (child.GetComponent<ForeverControl>())
+			{
+				computeNext(child.transform.Find("Container").gameObject);
+			}
+		}
 	}
 }

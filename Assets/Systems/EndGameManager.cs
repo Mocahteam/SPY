@@ -6,19 +6,19 @@ using TMPro;
 using System.IO;
 
 /// <summary>
-/// This system check if the end of the level is reached
+/// This system check if the end of the level is reached and display end panel accordingly
 /// </summary>
 public class EndGameManager : FSystem {
 
 	public static EndGameManager instance;
 
-	private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private Family f_requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 
-	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
-    private Family newCurrentAction_f = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
-	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
+	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
+    private Family f_newCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
+	private Family f_exit = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
 
-	private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	
 	private GameData gameData;
 	private FunctionalityParam funcPram;
@@ -39,14 +39,16 @@ public class EndGameManager : FSystem {
 			funcPram = go.GetComponent<FunctionalityParam>();
 		}
 
-		requireEndPanel.addEntryCallback(displayEndPanel);
+		GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
+
+		f_requireEndPanel.addEntryCallback(displayEndPanel);
 
 		// each time a current action is removed, we check if the level is over
-		newCurrentAction_f.addExitCallback(delegate {
+		f_newCurrentAction.addExitCallback(delegate {
 			MainLoop.instance.StartCoroutine(delayCheckEnd());
 		});
 
-		playingMode_f.addExitCallback(delegate {
+		f_playingMode.addExitCallback(delegate {
 			MainLoop.instance.StartCoroutine(delayNoMoreAttemptDetection());
 		});
 	}
@@ -61,17 +63,17 @@ public class EndGameManager : FSystem {
 		{
 			int nbEnd = 0;
 			// parse all players
-			foreach (GameObject player in playerGO)
+			foreach (GameObject player in f_player)
 			{
 				// parse all exits
-				foreach (GameObject exit in exitGO)
+				foreach (GameObject exit in f_exit)
 				{
 					// check if positions are equals
 					if (player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().z == exit.GetComponent<Position>().z)
 					{
 						nbEnd++;
 						// if all players reached end position
-						if (nbEnd >= playerGO.Count)
+						if (nbEnd >= f_player.Count)
 							// trigger end
 							GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Win });
 					}
@@ -82,7 +84,7 @@ public class EndGameManager : FSystem {
 
 	private bool playerHasCurrentAction()
 	{
-		foreach (GameObject go in newCurrentAction_f)
+		foreach (GameObject go in f_newCurrentAction)
 		{
 			if (go.GetComponent<CurrentAction>().agent.CompareTag("Player"))
 				return true;
@@ -96,7 +98,7 @@ public class EndGameManager : FSystem {
 		// display end panel (we need immediate enabling)
 		endPanel.transform.parent.gameObject.SetActive(true);
 		// Get the first end that occurs
-		if (requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Detected)
+		if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Detected)
 		{
 			endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Vous avez été repéré !";
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
@@ -107,7 +109,7 @@ public class EndGameManager : FSystem {
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
 		}
-		else if (requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Win)
+		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Win)
 		{
 			int score = (10000 / (gameData.totalActionBloc + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
 			Transform verticalCanvas = endPanel.transform.Find("VerticalCanvas");
@@ -127,7 +129,7 @@ public class EndGameManager : FSystem {
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 			}
 		}
-		else if (requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.BadCondition)
+		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.BadCondition)
 		{
 			endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Une condition est mal remplie !";
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, false);
@@ -137,7 +139,7 @@ public class EndGameManager : FSystem {
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
-		} else if (requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoMoreAttempt)
+		} else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoMoreAttempt)
 		{
 			endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Vous n'avez plus d'exécution disponible. Essayez de résoudre ce niveau en moins de coup";
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
@@ -193,7 +195,7 @@ public class EndGameManager : FSystem {
 	// Cancel End (see ReloadState button in editor)
 	public void cancelEnd()
 	{
-		foreach (GameObject endGO in requireEndPanel)
+		foreach (GameObject endGO in f_requireEndPanel)
 			// in case of several ends pop in the same time (for instance exit reached and detected)
 			foreach (NewEnd end in endGO.GetComponents<NewEnd>())
 				GameObjectManager.removeComponent(end);
@@ -205,7 +207,7 @@ public class EndGameManager : FSystem {
 		yield return null;
 		yield return null;
 		yield return null;
-		if (requireEndPanel.Count <= 0 && !funcPram.funcActiveInLevel.Contains("F5"))
+		if (f_requireEndPanel.Count <= 0 && !funcPram.funcActiveInLevel.Contains("F5"))
 			GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoMoreAttempt });
 	}
 }

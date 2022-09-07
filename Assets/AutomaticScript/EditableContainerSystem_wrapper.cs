@@ -24,16 +24,6 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "addContainer", null);
 	}
 
-	public void setContainerName()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "setContainerName", null);
-	}
-
-	public void addSpecificContainer()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "addSpecificContainer", null);
-	}
-
 	public void resetScriptContainer(System.Boolean refund)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "resetScriptContainer", refund);
@@ -47,11 +37,6 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 	public void newNameContainer(System.String newName)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "newNameContainer", newName);
-	}
-
-	public void setAgentName(System.String newName)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "setAgentName", newName);
 	}
 
 }

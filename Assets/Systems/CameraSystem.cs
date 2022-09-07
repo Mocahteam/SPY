@@ -7,16 +7,16 @@ using System.Collections;
 /// This system manages main camera (movement, rotation, focus on/follow agent...)
 /// </summary>
 public class CameraSystem : FSystem {
-	// In games agents controlable by the eplayer
-	private Family playerGO = FamilyManager.getFamily(new AnyOfTags("Player"));
+	// In games agents controlable by the player
+	private Family f_player = FamilyManager.getFamily(new AnyOfTags("Player"));
 	// Contains current UI focused
-	private Family UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver))); 
+	private Family f_UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver))); 
 
 	private Transform target; // if defined camera follow this target
 	private float smoothSpeed = 0.125f;
 	private Vector3 offset = new Vector3(0, 2f, 0);
 
-	// Déplacement au touche du clavier
+	// Déplacement aux touches du clavier
 	public float cameraMovingSpeed;
 	// Vitesse de Zoom
 	public float cameraZoomSpeed;
@@ -37,7 +37,7 @@ public class CameraSystem : FSystem {
 	protected override void onStart()
 	{
 		// set current camera target (the first player)
-		playerGO.addEntryCallback(delegate (GameObject go) { focusOnAgent(go); });
+		f_player.addEntryCallback(delegate (GameObject go) { focusOnAgent(go); });
 	}
 
 	// Use to process your families.
@@ -80,7 +80,7 @@ public class CameraSystem : FSystem {
 		}
 
 		// Zoom with scroll wheel only if UI element is not focused
-		else if(Input.GetAxis("Mouse ScrollWheel") < 0 && UIfocused.Count == 0) // Zoom out
+		else if(Input.GetAxis("Mouse ScrollWheel") < 0 && f_UIfocused.Count == 0) // Zoom out
 	    {
 			// compute distance between camera position and camera target
 			Vector3 relativePos = Camera.main.transform.InverseTransformPoint(Camera.main.transform.parent.parent.position);
@@ -89,7 +89,7 @@ public class CameraSystem : FSystem {
 				Camera.main.transform.position -= new Vector3(Camera.main.transform.forward.x * cameraZoomSpeed, Camera.main.transform.forward.y * cameraZoomSpeed, Camera.main.transform.forward.z * cameraZoomSpeed);
 			}
 		}
-	    else if(Input.GetAxis("Mouse ScrollWheel") > 0 && UIfocused.Count == 0) // Zoom in
+	    else if(Input.GetAxis("Mouse ScrollWheel") > 0 && f_UIfocused.Count == 0) // Zoom in
 		{
 			// compute distance between camera position and camera target
 			Vector3 relativePos = Camera.main.transform.InverseTransformPoint(Camera.main.transform.parent.parent.position);

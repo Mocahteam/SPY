@@ -6,8 +6,8 @@ using FYFY;
 /// </summary>
 public class ModeManager : FSystem {
 
-	private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-	private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 	public static ModeManager instance;
 
@@ -18,16 +18,16 @@ public class ModeManager : FSystem {
 
 	protected override void onStart()
 	{
-		playingMode_f.addEntryCallback(delegate { 
+		f_playingMode.addEntryCallback(delegate { 
 			// remove all EditMode
-			foreach(GameObject editModeGO in editingMode_f)
+			foreach(GameObject editModeGO in f_editingMode)
 				foreach (EditMode em in editModeGO.GetComponents<EditMode>())
 					GameObjectManager.removeComponent(em);
 		});
 
-		editingMode_f.addEntryCallback(delegate {
+		f_editingMode.addEntryCallback(delegate {
 			// remove all PlayMode
-			foreach (GameObject editModeGO in playingMode_f)
+			foreach (GameObject editModeGO in f_playingMode)
 				foreach (PlayMode em in editModeGO.GetComponents<PlayMode>())
 					GameObjectManager.removeComponent(em);
 		});

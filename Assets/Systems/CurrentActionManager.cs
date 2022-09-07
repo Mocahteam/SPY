@@ -6,27 +6,25 @@ using System.Collections.Generic;
 using System.Data;
 
 /// <summary>
-/// Manage CurrentAction components, parse scripts and define next CurrentActions
+/// Manage CurrentAction components, parse scripts and define first action, next actions, evaluate boolean expressions (if and while)...
 /// </summary>
 public class CurrentActionManager : FSystem
 {
-	private Family executionReady = FamilyManager.getFamily(new AllOfComponents(typeof(ExecutablePanelReady)));
-	private Family ends_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
-	private Family newStep_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
-    private Family currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(LibraryItemRef), typeof(CurrentAction)));
-	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
+	private Family f_executionReady = FamilyManager.getFamily(new AllOfComponents(typeof(ExecutablePanelReady)));
+	private Family f_ends = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private Family f_newStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+    private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(LibraryItemRef), typeof(CurrentAction)));
+	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 
-	private Family wallGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
-	private Family droneGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
-	private Family doorGO = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
-	private Family redDetectorGO = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
-	private Family activableConsoleGO = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)));
-	private Family exitGO = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
+	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
+	private Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
+	private Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
+	private Family f_redDetector = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
+	private Family f_activableConsole = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)));
+	private Family f_exit = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
 
-
-	private Family playingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-	private Family editingMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
-
+	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 	public static CurrentActionManager instance;
 
@@ -37,17 +35,17 @@ public class CurrentActionManager : FSystem
 
 	protected override void onStart()
 	{
-		executionReady.addEntryCallback(initFirstsActions);
-		newStep_f.addEntryCallback(delegate { onNewStep(); });
-		editingMode_f.addEntryCallback(delegate {
+		f_executionReady.addEntryCallback(initFirstsActions);
+		f_newStep.addEntryCallback(delegate { onNewStep(); });
+		f_editingMode.addEntryCallback(delegate {
 			// remove all player's current actions
-			foreach (GameObject currentAction in currentActions)
+			foreach (GameObject currentAction in f_currentActions)
 				if (currentAction.GetComponent<CurrentAction>().agent.CompareTag("Player"))
 					GameObjectManager.removeComponent<CurrentAction>(currentAction);
 		});
-		playingMode_f.addEntryCallback(delegate {
+		f_playingMode.addEntryCallback(delegate {
 			// reset inaction counters
-			foreach (GameObject robot in playerGO)
+			foreach (GameObject robot in f_player)
 				robot.GetComponent<ScriptRef>().nbOfInactions = 0;
 		});
 	}
@@ -55,11 +53,11 @@ public class CurrentActionManager : FSystem
 	private void initFirstsActions(GameObject go)
 	{
 		// init first action if no ends occur (possible for scripts with bad condition)
-		if (ends_f.Count <= 0)
+		if (f_ends.Count <= 0)
 		{
 			// init currentAction on the first action of players
 			bool atLeastOneFirstAction = false;
-			foreach (GameObject player in playerGO)
+			foreach (GameObject player in f_player)
 				if (addCurrentActionOnFirstAction(player) != null)
 					atLeastOneFirstAction = true;
 			if (!atLeastOneFirstAction)
@@ -70,7 +68,7 @@ public class CurrentActionManager : FSystem
 			{
 				// init currentAction on the first action of ennemies
 				bool forceNewStep = false;
-				foreach (GameObject drone in droneGO)
+				foreach (GameObject drone in f_drone)
 					if (!drone.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>() && !drone.GetComponent<ScriptRef>().scriptFinished)
 						addCurrentActionOnFirstAction(drone);
 					else
@@ -101,7 +99,8 @@ public class CurrentActionManager : FSystem
 		return firstAction;
 	}
 
-	private bool ifValid(List<string> condition, GameObject scripted)
+	// Return true if "condition" is valid and false otherwise
+	private bool ifValid(List<string> condition, GameObject agent)
 	{
 
 		string cond = "";
@@ -113,7 +112,7 @@ public class CurrentActionManager : FSystem
 			}
 			else
 			{
-				cond = cond + verifCondition(condition[i], scripted) + " ";
+				cond = cond + checkCaptor(condition[i], agent) + " ";
 			}
 		}
 
@@ -131,14 +130,15 @@ public class CurrentActionManager : FSystem
 		return result;
 	}
 
-	private bool verifCondition(string ele, GameObject scripted)
+	// return true if the captor is true, and false otherwise
+	private bool checkCaptor(string ele, GameObject agent)
 	{
 
 		bool ifok = false;
 		// get absolute target position depending on player orientation and relative direction to observe
 		// On commence par identifier quelle case doit être regardé pour voir si la condition est respecté
 		Vector2 vec = new Vector2();
-		switch (scripted.GetComponent<Direction>().direction)
+		switch (agent.GetComponent<Direction>().direction)
 		{
 			case Direction.Dir.North:
 				vec = new Vector2(0, 1);
@@ -158,44 +158,44 @@ public class CurrentActionManager : FSystem
 		switch (ele)
 		{
 			case "Wall": // walls
-				foreach (GameObject go in wallGO)
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+				foreach (GameObject wall in f_wall)
+					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+					 wall.GetComponent<Position>().z == agent.GetComponent<Position>().z + vec.y)
 						ifok = true;
 				break;
 			case "FieldGate": // doors
-				foreach (GameObject go in doorGO)
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+				foreach (GameObject door in f_door)
+					if (door.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+					 door.GetComponent<Position>().z == agent.GetComponent<Position>().z + vec.y)
 						ifok = true;
 				break;
 			case "Enemie": // ennemies
-				foreach (GameObject go in droneGO)
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-						go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+				foreach (GameObject drone in f_drone)
+					if (drone.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+						drone.GetComponent<Position>().z == agent.GetComponent<Position>().z + vec.y)
 						ifok = true;
 				break;
 			case "Terminal": // consoles
-				foreach (GameObject go in activableConsoleGO)
+				foreach (GameObject console in f_activableConsole)
 				{
 					vec = new Vector2(0, 0);
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-						go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+					if (console.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+						console.GetComponent<Position>().z == agent.GetComponent<Position>().z + vec.y)
 						ifok = true;
 				}
 				break;
 			case "RedArea": // detectors
-				foreach (GameObject go in redDetectorGO)
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+				foreach (GameObject detector in f_redDetector)
+					if (detector.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+					 detector.GetComponent<Position>().z == agent.GetComponent<Position>().z + vec.y)
 						ifok = true;
 				break;
 			case "Exit": // exits
-				foreach (GameObject go in exitGO)
+				foreach (GameObject exit in f_exit)
 				{
 					vec = new Vector2(0, 0);
-					if (go.GetComponent<Position>().x == scripted.GetComponent<Position>().x + vec.x &&
-					 go.GetComponent<Position>().z == scripted.GetComponent<Position>().z + vec.y)
+					if (exit.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+					 exit.GetComponent<Position>().z == agent.GetComponent<Position>().z + vec.y)
 						ifok = true;
 				}
 				break;
@@ -205,7 +205,7 @@ public class CurrentActionManager : FSystem
 	}
 
 	// get first action inside "action", it could be control structure (if, for...) => recursive call
-	public GameObject getFirstActionOf(GameObject action, GameObject agent)
+	private GameObject getFirstActionOf(GameObject action, GameObject agent)
 	{
 		if (action == null)
 			return null;
@@ -265,64 +265,10 @@ public class CurrentActionManager : FSystem
 		return null;
 	}
 
-	//0 Forward, 1 Backward, 2 Left, 3 Right
-	public static Direction.Dir getDirection(Direction.Dir dirEntity, int relativeDir)
-	{
-		if (relativeDir == 0)
-			return dirEntity;
-		switch (dirEntity)
-		{
-			case Direction.Dir.North:
-				switch (relativeDir)
-				{
-					case 1:
-						return Direction.Dir.South;
-					case 2:
-						return Direction.Dir.West;
-					case 3:
-						return Direction.Dir.East;
-				}
-				break;
-			case Direction.Dir.West:
-				switch (relativeDir)
-				{
-					case 1:
-						return Direction.Dir.East;
-					case 2:
-						return Direction.Dir.South;
-					case 3:
-						return Direction.Dir.North;
-				}
-				break;
-			case Direction.Dir.East:
-				switch (relativeDir)
-				{
-					case 1:
-						return Direction.Dir.West;
-					case 2:
-						return Direction.Dir.North;
-					case 3:
-						return Direction.Dir.South;
-				}
-				break;
-			case Direction.Dir.South:
-				switch (relativeDir)
-				{
-					case 1:
-						return Direction.Dir.North;
-					case 2:
-						return Direction.Dir.East;
-					case 3:
-						return Direction.Dir.West;
-				}
-				break;
-		}
-		return dirEntity;
-	}
-
+	// one step consists in removing the current actions this frame and adding new CurrentAction components next frame
 	private void onNewStep(){
 		GameObject nextAction;
-		foreach(GameObject currentActionGO in currentActions){
+		foreach(GameObject currentActionGO in f_currentActions){
 			CurrentAction currentAction = currentActionGO.GetComponent<CurrentAction>();
 			nextAction = getNextAction(currentActionGO, currentAction.agent);
 			// check if we reach last action of a drone
@@ -336,7 +282,8 @@ public class CurrentActionManager : FSystem
 		}
 	}
 
-	public GameObject getNextAction(GameObject currentAction, GameObject agent){
+	// return the next action to execute, return null if no next action available
+	private GameObject getNextAction(GameObject currentAction, GameObject agent){
 		BasicAction current_ba = currentAction.GetComponent<BasicAction>();
 		if (current_ba != null)
 		{

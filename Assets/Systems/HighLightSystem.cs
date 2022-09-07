@@ -4,48 +4,51 @@ using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
 
 /// <summary>
-/// Manage highlightable GameObjects
+/// Manage highlightable GameObjects (word object as robots, drones, ground and UI object as current action executed or library items
 /// </summary>
 public class HighLightSystem : FSystem {
-	private Family highlightableGO = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(LibraryItemRef))); //has to be defined before nonhighlightedGO because initBaseColor must be called before unHighLightItem
-	private Family highlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(PointerOver)), new NoneOfComponents(typeof(LibraryItemRef)));
-	private Family nonhighlightedGO = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(LibraryItemRef)));
-	private Family highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new AnyOfComponents( typeof(CurrentAction), typeof(PointerOver)));
-	private Family nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new NoneOfComponents(typeof(CurrentAction), typeof(Dragged), typeof(PointerOver)));
+	private Family f_highlightable = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(LibraryItemRef))); //has to be defined before nonhighlightedGO because initBaseColor must be called before unHighLightItem
+	private Family f_highlighted = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(PointerOver)), new NoneOfComponents(typeof(LibraryItemRef)));
+	private Family f_nonhighlighted = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(LibraryItemRef)));
+	private Family f_highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new AnyOfComponents( typeof(CurrentAction), typeof(PointerOver)));
+	private Family f_nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new NoneOfComponents(typeof(CurrentAction), typeof(Dragged), typeof(PointerOver)));
 	
 	protected override void onStart()
     {
-		highlightableGO.addEntryCallback(initBaseColor);
-		highlightedGO.addEntryCallback(highLightItem);
-		nonhighlightedGO.addEntryCallback(unHighLightItem);
-		highlightedAction.addEntryCallback(highLightItem);
-		nonCurrentAction.addEntryCallback(unHighLightItem);
-	}
-
-
-	private void initBaseColor(GameObject go){
-		// check if it is a script instruction
-		if((go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) && go.GetComponent<Image>()){
-			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image>().color;
-		}
-		// check if it is a word object (robot, ground...)
-		if (go.GetComponentInChildren<Renderer>()){
-			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>().material.color;
-			if(go.GetComponent<ScriptRef>()){
-				Image img = go.GetComponent<ScriptRef>().executablePanel.transform.Find("Scroll View").GetComponent<Image>();
-				img.GetComponent<Highlightable>().baseColor = img.color;	
-			}			
-		}
+		f_highlightable.addEntryCallback(initBaseColor);
+		f_highlighted.addEntryCallback(highLightItem);
+		f_nonhighlighted.addEntryCallback(unHighLightItem);
+		f_highlightedAction.addEntryCallback(highLightItem);
+		f_nonCurrentAction.addEntryCallback(unHighLightItem);
 	}
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-		GameObject highLightedItem = highlightedGO.First();
+		GameObject highLightedItem = f_highlighted.First();
 		//If click on highlighted item and item has a script, then show its script in the 2nd script window
 		if(highLightedItem && Input.GetMouseButtonUp(0) && highLightedItem.GetComponent<ScriptRef>()){
 			GameObject go = highLightedItem.GetComponent<ScriptRef>().executablePanel;
 			GameObjectManager.setGameObjectState(go,!go.activeInHierarchy);
 			MainLoop.instance.GetComponent<AudioSource>().Play();
+		}
+	}
+
+	private void initBaseColor(GameObject go)
+	{
+		// check if it is a script instruction
+		if ((go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) && go.GetComponent<Image>())
+		{
+			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image>().color;
+		}
+		// check if it is a word object (robot, ground...)
+		if (go.GetComponentInChildren<Renderer>())
+		{
+			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>().material.color;
+			if (go.GetComponent<ScriptRef>())
+			{
+				Image img = go.GetComponent<ScriptRef>().executablePanel.transform.Find("Scroll View").GetComponent<Image>();
+				img.GetComponent<Highlightable>().baseColor = img.color;
+			}
 		}
 	}
 
