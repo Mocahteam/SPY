@@ -92,7 +92,7 @@ public class StepSystem : FSystem {
             GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
             // We save history if no end or win
             if (newEnd_f.Count <= 0)
-                UISystem.instance.saveHistory();
+                GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
         }
         else
             Pause = false;

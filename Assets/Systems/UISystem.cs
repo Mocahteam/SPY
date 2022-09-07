@@ -37,6 +37,8 @@ public class UISystem : FSystem {
 	private Family enabledinventoryBlocks = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family inventoryBlocks = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)));
 
+	private Family askToSaveHistory_f = FamilyManager.getFamily(new AllOfComponents(typeof(AskToSaveHistory)));
+
 	private GameData gameData;
 	private int nDialog = 0;
 
@@ -101,6 +103,11 @@ public class UISystem : FSystem {
 					GameObjectManager.removeComponent(need);
 		});
 
+		askToSaveHistory_f.addEntryCallback(delegate (GameObject go)
+		{
+			saveHistory();
+			GameObjectManager.removeComponent<AskToSaveHistory>(go);
+		});
 		MainLoop.instance.StartCoroutine(delayLoadHistory());
 
 		MainLoop.instance.StartCoroutine(forceLibraryRefresh());
@@ -134,7 +141,7 @@ public class UISystem : FSystem {
 				brush.GetComponent<Button>().interactable = false;
 			foreach (GameObject trash in removeButton_f)
 				trash.GetComponent<Button>().interactable = false;
-			// Sauvegarde de l'état d'avancement des niveaux pour le jour (niveau et étoile)
+			// Sauvegarde de l'état d'avancement des niveaux (niveau et étoile)
 			PlayerPrefs.SetInt(gameData.levelToLoad.Item1, gameData.levelToLoad.Item2 + 1);
 			PlayerPrefs.Save();
 		}
