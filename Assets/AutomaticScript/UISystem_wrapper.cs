@@ -66,4 +66,9 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "setActiveEscapeMenu", null);
 	}
 
+	public void onlyPositiveInteger()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "onlyPositiveInteger", null);
+	}
+
 }

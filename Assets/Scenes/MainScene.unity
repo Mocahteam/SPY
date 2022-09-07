@@ -1129,8 +1129,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 567685742}
-          m_TargetAssemblyTypeName: AutoScroll, Assembly-CSharp
+        - m_Target: {fileID: 361349241}
+          m_TargetAssemblyTypeName: ScrollSystem_wrapper, Assembly-CSharp
           m_MethodName: setHorizontalSpeed
           m_Mode: 4
           m_Arguments:
@@ -1145,8 +1145,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 567685742}
-          m_TargetAssemblyTypeName: AutoScroll, Assembly-CSharp
+        - m_Target: {fileID: 361349241}
+          m_TargetAssemblyTypeName: ScrollSystem_wrapper, Assembly-CSharp
           m_MethodName: setHorizontalSpeed
           m_Mode: 4
           m_Arguments:
@@ -5080,6 +5080,7 @@ GameObject:
   - component: {fileID: 361349232}
   - component: {fileID: 361349237}
   - component: {fileID: 361349240}
+  - component: {fileID: 361349241}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -5325,6 +5326,10 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: EditableContainerSystem, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: EditableContainerSystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: ScrollSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    _typeFullName: ScrollSystem
     _pause: 0
   _lateUpdateSystemDescriptions:
   - _typeAssemblyQualifiedName: HighLightSystem, Assembly-CSharp, Version=0.0.0.0,
@@ -5611,6 +5616,19 @@ MonoBehaviour:
   canvas: {fileID: 1410401867}
   buttonAddEditableContainer: {fileID: 2015004020}
   buttonExecute: {fileID: 1504297949}
+--- !u!114 &361349241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c61ec87aa61ae34da92acff0730a64e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scrollRect: {fileID: 567685739}
 --- !u!1 &371440127
 GameObject:
   m_ObjectHideFlags: 0
@@ -7061,8 +7079,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 567685742}
-          m_TargetAssemblyTypeName: AutoScroll, Assembly-CSharp
+        - m_Target: {fileID: 361349241}
+          m_TargetAssemblyTypeName: ScrollSystem_wrapper, Assembly-CSharp
           m_MethodName: setVerticalSpeed
           m_Mode: 4
           m_Arguments:
@@ -7077,8 +7095,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 567685742}
-          m_TargetAssemblyTypeName: AutoScroll, Assembly-CSharp
+        - m_Target: {fileID: 361349241}
+          m_TargetAssemblyTypeName: ScrollSystem_wrapper, Assembly-CSharp
           m_MethodName: setVerticalSpeed
           m_Mode: 4
           m_Arguments:
@@ -7964,7 +7982,6 @@ GameObject:
   - component: {fileID: 567685741}
   - component: {fileID: 567685740}
   - component: {fileID: 567685739}
-  - component: {fileID: 567685742}
   m_Layer: 5
   m_Name: EditableScrollView
   m_TagString: Untagged
@@ -8063,18 +8080,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 567685737}
   m_CullTransparentMesh: 1
---- !u!114 &567685742
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 567685737}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de9e50a5ec39c1e48af8b666d75070e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &569181890
 GameObject:
   m_ObjectHideFlags: 0
@@ -10776,8 +10781,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 567685742}
-          m_TargetAssemblyTypeName: AutoScroll, Assembly-CSharp
+        - m_Target: {fileID: 361349241}
+          m_TargetAssemblyTypeName: ScrollSystem_wrapper, Assembly-CSharp
           m_MethodName: setVerticalSpeed
           m_Mode: 4
           m_Arguments:
@@ -10792,8 +10797,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 567685742}
-          m_TargetAssemblyTypeName: AutoScroll, Assembly-CSharp
+        - m_Target: {fileID: 361349241}
+          m_TargetAssemblyTypeName: ScrollSystem_wrapper, Assembly-CSharp
           m_MethodName: setVerticalSpeed
           m_Mode: 4
           m_Arguments:
@@ -17536,8 +17541,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 567685742}
-          m_TargetAssemblyTypeName: AutoScroll, Assembly-CSharp
+        - m_Target: {fileID: 361349241}
+          m_TargetAssemblyTypeName: ScrollSystem_wrapper, Assembly-CSharp
           m_MethodName: setHorizontalSpeed
           m_Mode: 4
           m_Arguments:
@@ -17552,8 +17557,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 567685742}
-          m_TargetAssemblyTypeName: AutoScroll, Assembly-CSharp
+        - m_Target: {fileID: 361349241}
+          m_TargetAssemblyTypeName: ScrollSystem_wrapper, Assembly-CSharp
           m_MethodName: setHorizontalSpeed
           m_Mode: 4
           m_Arguments:

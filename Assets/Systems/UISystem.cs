@@ -7,6 +7,7 @@ using TMPro;
 using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
+using System;
 
 /// <summary>
 /// Manage dialogs at the begining of the level
@@ -331,5 +332,14 @@ public class UISystem : FSystem {
 		}
     }
 
-
+	// see inputFiels in ForBloc prefab in inspector
+	public void onlyPositiveInteger(GameObject input, string newValue)
+	{
+		int res;
+		bool success = Int32.TryParse(newValue, out res);
+		if (!success || (success && Int32.Parse(newValue) < 0))
+		{
+			input.GetComponent<TMP_InputField>().text = "0";
+		}
+	}
 }
