@@ -3,11 +3,9 @@ using FYFY;
 
 public class StepSystem_wrapper : BaseWrapper
 {
-	public UnityEngine.GameObject endPanel;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
-		MainLoop.initAppropriateSystemField (system, "endPanel", endPanel);
 	}
 
 	public void autoExecuteStep(System.Boolean on)

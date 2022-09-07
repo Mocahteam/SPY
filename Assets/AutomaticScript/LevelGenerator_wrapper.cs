@@ -10,6 +10,7 @@ public class LevelGenerator_wrapper : BaseWrapper
 	public UnityEngine.GameObject EditableContenair;
 	public TMPro.TMP_Text levelName;
 	public UnityEngine.GameObject canvas;
+	public UnityEngine.GameObject buttonExecute;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -20,6 +21,7 @@ public class LevelGenerator_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "EditableContenair", EditableContenair);
 		MainLoop.initAppropriateSystemField (system, "levelName", levelName);
 		MainLoop.initAppropriateSystemField (system, "canvas", canvas);
+		MainLoop.initAppropriateSystemField (system, "buttonExecute", buttonExecute);
 	}
 
 	public void computeNext(UnityEngine.GameObject container)

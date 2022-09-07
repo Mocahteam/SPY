@@ -36,17 +36,17 @@ public class DragDropSystem : FSystem
 	private Family dropZone_f = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone))); // Les drops zones
 	private Family focusedDropArea_f = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(ReplacementSlot), typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // the drop area under mouse cursor
 	private Family elementToDelete_f = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToDelete)));
-	private Family elementToRefresh_f = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToRefresh)));
+	private Family elementToRefresh_f = FamilyManager.getFamily(new AllOfComponents(typeof(NeedRefreshHierarchy)));
 	private Family defaultDropZone_f = FamilyManager.getFamily(new AllOfComponents(typeof(Selected)));
 
-	private Family newEnd_f = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private Family playMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private Family editMode_f = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 	// Les variables
 	private GameObject itemDragged; // L'item (ici block d'action) en cours de drag
 	public GameObject mainCanvas; // Le canvas principal
 	public GameObject lastDropZoneUsed; // La dernière dropzone utilisée
 	public AudioSource audioSource; // Pour le son d'ajout de block
-	public GameObject buttonPlay;
 	//Pour la gestion du double click
 	private float lastClickTime;
 	public float catchTime;
@@ -66,11 +66,14 @@ public class DragDropSystem : FSystem
 		elementToRefresh_f.addEntryCallback(delegate (GameObject go)
 		{
 			refreshHierarchyContainers(go);
-			foreach (NeedToRefresh ntr in go.GetComponents<NeedToRefresh>())
+			foreach (NeedRefreshHierarchy ntr in go.GetComponents<NeedRefreshHierarchy>())
 				GameObjectManager.removeComponent(ntr);
 		});
-		newEnd_f.addEntryCallback(delegate {
+		playMode_f.addEntryCallback(delegate {
 			Pause = true;
+		});
+		editMode_f.addEntryCallback(delegate {
+			Pause = false;
 		});
 	}
 
@@ -200,7 +203,7 @@ public class DragDropSystem : FSystem
 				GameObjectManager.addComponent<AddOne>(condChild.GetComponent<LibraryItemRef>().linkedTo);
 
 			// Rend le bouton d'execution actif (ou non)
-			UISystem.instance.startUpdatePlayButton();
+			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
 			refreshHierarchyContainers(parent.gameObject);
 		}
@@ -281,7 +284,7 @@ public class DragDropSystem : FSystem
 				}
 			}
 			// Rafraichissement de l'UI
-			UISystem.instance.startUpdatePlayButton();
+			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
 			itemDragged = null;
 		}
@@ -296,7 +299,7 @@ public class DragDropSystem : FSystem
 			return false;
 		}
 
-		UISystem.instance.startUpdatePlayButton();
+		GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
 		// update limit bloc
 		foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
@@ -333,7 +336,7 @@ public class DragDropSystem : FSystem
 			EditingUtility.manageEmptyZone(elementToDelete);
 			//On associe à l'élément le component ResetBlocLimit pour déclancher le script de destruction de l'élément
 			GameObjectManager.addComponent<ResetBlocLimit>(elementToDelete);
-			UISystem.instance.startUpdatePlayButton();
+			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 			// refresh all the hierarchy of parent containers
 			refreshHierarchyContainers(elementToDelete);
 		}
@@ -380,7 +383,7 @@ public class DragDropSystem : FSystem
 			// refresh all the hierarchy of parent containers
 			refreshHierarchyContainers(lastDropZoneUsed);
 			// Rafraichissement de l'UI
-			UISystem.instance.startUpdatePlayButton();
+			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 			itemDragged = null;
 		}
 	}

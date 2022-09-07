@@ -6,7 +6,6 @@ public class DragDropSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject mainCanvas;
 	public UnityEngine.GameObject lastDropZoneUsed;
 	public UnityEngine.AudioSource audioSource;
-	public UnityEngine.GameObject buttonPlay;
 	public System.Single catchTime;
 	private void Start()
 	{
@@ -14,7 +13,6 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
 		MainLoop.initAppropriateSystemField (system, "lastDropZoneUsed", lastDropZoneUsed);
 		MainLoop.initAppropriateSystemField (system, "audioSource", audioSource);
-		MainLoop.initAppropriateSystemField (system, "buttonPlay", buttonPlay);
 		MainLoop.initAppropriateSystemField (system, "catchTime", catchTime);
 	}
 

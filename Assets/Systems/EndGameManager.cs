@@ -12,8 +12,7 @@ public class EndGameManager : FSystem {
 
 	public static EndGameManager instance;
 
-	private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)), new NoneOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-	private Family displayedEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd), typeof(AudioSource)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private Family requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 
 	private Family playerGO = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
     private Family newCurrentAction_f = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
@@ -41,7 +40,6 @@ public class EndGameManager : FSystem {
 		}
 
 		requireEndPanel.addEntryCallback(displayEndPanel);
-		displayedEndPanel.addEntryCallback(onDisplayedEndPanel);
 
 		// each time a current action is removed, we check if the level is over
 		newCurrentAction_f.addExitCallback(delegate {
@@ -75,7 +73,7 @@ public class EndGameManager : FSystem {
 						// if all players reached end position
 						if (nbEnd >= playerGO.Count)
 							// trigger end
-							GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Win });
+							GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Win });
 					}
 				}
 			}
@@ -92,32 +90,24 @@ public class EndGameManager : FSystem {
 		return false;
 	}
 
-	// Permet la gestion de l'affiche du panel de fin de niveau
-	private void displayEndPanel(GameObject endPanel)
+	// Display panel with appropriate content depending on end
+	private void displayEndPanel(GameObject unused)
 	{
-		GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, true);
-	}
-
-
-	// Permet de switcher entre les différents affichages de fin de niveau
-	// Cas 1 : Un ennemie à repéré le robot
-	// Cas 2 : Le robot est sortie du labyrinth
-	// Cas 3 : Le joueur à mal remplit une condition
-	private void onDisplayedEndPanel(GameObject endPanel)
-	{
+		// display end panel (we need immediate enabling)
+		endPanel.transform.parent.gameObject.SetActive(true);
 		// Get the first end that occurs
-		if (endPanel.GetComponent<NewEnd>().endType == NewEnd.Detected)
+		if (requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Detected)
 		{
 			endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Vous avez été repéré !";
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
 		}
-		else if (endPanel.GetComponent<NewEnd>().endType == NewEnd.Win)
+		else if (requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Win)
 		{
 			int score = (10000 / (gameData.totalActionBloc + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
 			Transform verticalCanvas = endPanel.transform.Find("VerticalCanvas");
@@ -127,33 +117,33 @@ public class EndGameManager : FSystem {
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = false;
 			endPanel.GetComponent<AudioSource>().Play();
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, true);
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, true);
 			//Check if next level exists in campaign
 			if (gameData.levelToLoad.Item2 >= gameData.levelList[gameData.levelToLoad.Item1].Count - 1)
 			{
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 			}
 		}
-		else if (endPanel.GetComponent<NewEnd>().endType == NewEnd.BadCondition)
+		else if (requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.BadCondition)
 		{
 			endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Une condition est mal remplie !";
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, false);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
-		} else if (endPanel.GetComponent<NewEnd>().endType == NewEnd.NoMoreAttempt)
+		} else if (requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoMoreAttempt)
 		{
 			endPanel.transform.Find("VerticalCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Vous n'avez plus d'exécution disponible. Essayez de résoudre ce niveau en moins de coup";
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -203,9 +193,10 @@ public class EndGameManager : FSystem {
 	// Cancel End (see ReloadState button in editor)
 	public void cancelEnd()
 	{
-		// in case of several ends pop in the same time (for instance exit reached and detected)
-		foreach (NewEnd end in endPanel.GetComponents<NewEnd>())
-			GameObjectManager.removeComponent(end);
+		foreach (GameObject endGO in requireEndPanel)
+			// in case of several ends pop in the same time (for instance exit reached and detected)
+			foreach (NewEnd end in endGO.GetComponents<NewEnd>())
+				GameObjectManager.removeComponent(end);
 	}
 
 	private IEnumerator delayNoMoreAttemptDetection()
@@ -214,7 +205,7 @@ public class EndGameManager : FSystem {
 		yield return null;
 		yield return null;
 		yield return null;
-		if (requireEndPanel.Count <= 0 && displayedEndPanel.Count <= 0 && !funcPram.funcActiveInLevel.Contains("F5"))
-			GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.NoMoreAttempt });
+		if (requireEndPanel.Count <= 0 && !funcPram.funcActiveInLevel.Contains("F5"))
+			GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoMoreAttempt });
 	}
 }

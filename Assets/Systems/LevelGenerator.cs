@@ -29,6 +29,7 @@ public class LevelGenerator : FSystem {
 	public GameObject EditableContenair; // Le container qui contient les séquences éditables
 	public TMP_Text levelName;
 	public GameObject canvas;
+	public GameObject buttonExecute;
 
 	public LevelGenerator()
 	{
@@ -192,7 +193,7 @@ public class LevelGenerator : FSystem {
 				GameObject tmpContainer = GameObject.Instantiate(scriptref.executableScript);
 				foreach (GameObject go in script)
 					go.transform.SetParent(tmpContainer.transform, false); //add actions to container
-				UISystem.instance.fillExecutablePanel(tmpContainer, scriptref.executableScript, entity.tag);
+				EditingUtility.fillExecutablePanel(tmpContainer, scriptref.executableScript, entity.tag);
 				// On fait apparaitre le panneau du robot
 				scriptref.executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
 				Object.Destroy(tmpContainer);
@@ -846,7 +847,7 @@ public class LevelGenerator : FSystem {
 		// Si F8 est désactivé, le bouton pour que le robot effectue une sequence d'action n'est plus disponible
 		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F8"))
 		{
-			UISystem.instance.buttonExecute.SetActive(false);
+			buttonExecute.SetActive(false);
 		}
 	}
 }

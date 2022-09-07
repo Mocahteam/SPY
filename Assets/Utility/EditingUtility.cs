@@ -1,4 +1,7 @@
 using FYFY;
+using FYFY_plugins.PointerManager;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -157,5 +160,273 @@ public static class EditingUtility
 				GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.parent.childCount - 2).gameObject, false);
 			}
 		}
+	}
+
+	// Copy an editable script to the container of an agent
+	public static void fillExecutablePanel(GameObject srcScript, GameObject targetContainer, string agentTag)
+	{
+		// On va copier la sequence créé par le joueur dans le container de la fenêtre du robot
+		// On commence par créer une copie du container ou se trouve la sequence
+		GameObject containerCopy = CopyActionsFromAndInitFirstChild(srcScript, false, agentTag);
+		// On copie les actions dedans 
+		for (int i = 0; i < containerCopy.transform.childCount; i++)
+		{
+			// On ne conserve que les BaseElement et on les nettoie
+			if (containerCopy.transform.GetChild(i).GetComponent<BaseElement>())
+			{
+				Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i)); ;
+				// Si c'est un block special (for, if...)
+				if (child.GetComponent<ControlElement>())
+					CleanControlBlock(child);
+				child.SetParent(targetContainer.transform, false);
+			}
+		}
+		// Va linker les blocs ensemble
+		// C'est à dire qu'il va définir pour chaque bloc, qu'elle est le suivant à exécuter
+		LevelGenerator.computeNext(targetContainer);
+		// On détruit la copy de la sequence d'action
+		UnityEngine.Object.Destroy(containerCopy);
+	}
+
+	/**
+	 * On copie le container qui contient la sequence d'actions et on initialise les firstChild
+	 * Param:
+	 *	Container (GameObject) : Le container qui contient le script à copier
+	 *	isInteractable (bool) : Si le script copié peut contenir des éléments interactable (sinon l'interaction sera desactivé)
+	 *	agent (GameObject) : L'agent sur qui l'on va copier la sequence (pour définir la couleur)
+	 * 
+	 **/
+	private static GameObject CopyActionsFromAndInitFirstChild(GameObject container, bool isInteractable, string agentTag)
+	{
+		// On va travailler avec une copy du container
+		GameObject copyGO = GameObject.Instantiate(container);
+		//Pour tous les élément interactible, on va les désactiver/activer selon le paramétrage
+		foreach (TMP_Dropdown drop in copyGO.GetComponentsInChildren<TMP_Dropdown>())
+		{
+			drop.interactable = isInteractable;
+		}
+		foreach (TMP_InputField input in copyGO.GetComponentsInChildren<TMP_InputField>())
+		{
+			input.interactable = isInteractable;
+		}
+
+		// Pour chaque bloc for
+		foreach (ForControl forAct in copyGO.GetComponentsInChildren<ForControl>())
+		{
+			// Si activé, on note le nombre de tour de boucle à faire
+			if (!isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
+			{
+				forAct.nbFor = int.Parse(forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text);
+				forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+			}// Sinon on met tout à 0
+			else if (isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
+			{
+				forAct.currentFor = 0;
+				forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
+			}
+			else if (forAct is WhileControl)
+			{
+				// On traduit la condition en string
+				((WhileControl)forAct).condition = new List<string>();
+				conditionToStrings(forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ((WhileControl)forAct).condition);
+
+			}
+			// On parcourt les éléments présent dans le block action
+			foreach (BaseElement act in forAct.GetComponentsInChildren<BaseElement>())
+			{
+				// Si ce n'est pas un bloc action alors on le note comme premier élément puis on arrête le parcourt des éléments
+				if (!act.Equals(forAct))
+				{
+					forAct.firstChild = act.gameObject;
+					break;
+				}
+			}
+		}
+		// Pour chaque block de boucle infini
+		foreach (ForeverControl loopAct in copyGO.GetComponentsInChildren<ForeverControl>())
+		{
+			foreach (BaseElement act in loopAct.GetComponentsInChildren<BaseElement>())
+			{
+				if (!act.Equals(loopAct))
+				{
+					loopAct.firstChild = act.gameObject;
+					break;
+				}
+			}
+		}
+		// Pour chaque block if
+		foreach (IfControl ifAct in copyGO.GetComponentsInChildren<IfControl>())
+		{
+			// On traduit la condition en string
+			ifAct.condition = new List<string>();
+			conditionToStrings(ifAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ifAct.condition);
+
+			GameObject thenContainer = ifAct.transform.Find("Container").gameObject;
+			BaseElement firstThen = thenContainer.GetComponentInChildren<BaseElement>();
+			if (firstThen)
+				ifAct.firstChild = firstThen.gameObject;
+			//Si c'est un elseAction
+			if (ifAct is IfElseControl)
+			{
+				GameObject elseContainer = ifAct.transform.Find("ElseContainer").gameObject;
+				BaseElement firstElse = elseContainer.GetComponentInChildren<BaseElement>();
+				if (firstElse)
+					((IfElseControl)ifAct).elseFirstChild = firstElse.gameObject;
+			}
+		}
+
+		foreach (PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>())
+			pointerSensitive.enabled = isInteractable;
+
+		foreach (Selectable selectable in copyGO.GetComponentsInChildren<Selectable>())
+			selectable.interactable = isInteractable;
+
+		// On défini la couleur de l'action selon l'agent à qui appartiendra la script
+		Color actionColor;
+		switch (agentTag)
+		{
+			case "Player":
+				actionColor = MainLoop.instance.GetComponent<AgentColor>().playerAction;
+				break;
+			case "Drone":
+				actionColor = MainLoop.instance.GetComponent<AgentColor>().droneAction;
+				break;
+			default: // agent by default = robot
+				actionColor = MainLoop.instance.GetComponent<AgentColor>().playerAction;
+				break;
+		}
+
+		foreach (BasicAction act in copyGO.GetComponentsInChildren<BasicAction>())
+		{
+			act.gameObject.GetComponent<Image>().color = actionColor;
+		}
+
+		return copyGO;
+	}
+
+	/**
+	 * Nettoie le bloc de controle (On supprime les end-zones, on met les conditions sous forme d'un seul bloc)
+	 * Param:
+	 *	specialBlock (GameObject) : Container qu'il faut nettoyer
+	 * 
+	 **/
+	public static void CleanControlBlock(Transform specialBlock)
+	{
+		// Vérifier que c'est bien un block de controle
+		if (specialBlock.GetComponent<ControlElement>())
+		{
+			// Récupérer le container des actions
+			Transform container = specialBlock.transform.Find("Container");
+			// remove the last child, the emptyZone
+			GameObject emptySlot = container.GetChild(container.childCount - 1).gameObject;
+			if (GameObjectManager.isBound(emptySlot))
+				GameObjectManager.unbind(emptySlot);
+			emptySlot.transform.SetParent(null);
+			GameObject.Destroy(emptySlot);
+			// remove the new last child, the dropzone
+			GameObject dropZone = container.GetChild(container.childCount - 1).gameObject;
+			if (GameObjectManager.isBound(emptySlot))
+				GameObjectManager.unbind(dropZone);
+			dropZone.transform.SetParent(null);
+			GameObject.Destroy(dropZone);
+
+			// Si c'est un block if on garde le container des actions (sans le emptyslot et la dropzone) mais la condition est traduite dans IfAction
+			if (specialBlock.GetComponent<IfElseControl>())
+			{
+				// get else container
+				Transform elseContainer = specialBlock.transform.Find("ElseContainer");
+				// remove the last child, the emptyZone
+				emptySlot = elseContainer.GetChild(elseContainer.childCount - 1).gameObject;
+				if (GameObjectManager.isBound(emptySlot))
+					GameObjectManager.unbind(emptySlot);
+				emptySlot.transform.SetParent(null);
+				GameObject.Destroy(emptySlot);
+				// remove the new last child, the dropzone
+				dropZone = elseContainer.GetChild(elseContainer.childCount - 1).gameObject;
+				if (GameObjectManager.isBound(emptySlot))
+					GameObjectManager.unbind(dropZone);
+				dropZone.transform.SetParent(null);
+				GameObject.Destroy(dropZone);
+			}
+
+			// On parcourt les blocks qui composent le container afin de les nettoyer également
+			foreach (Transform block in container)
+				// Si c'est le cas on fait un appel récursif
+				if (block.GetComponent<ControlElement>())
+					CleanControlBlock(block);
+		}
+	}
+
+	// Transforme une sequence de condition en une chaine de caractére
+	private static void conditionToStrings(GameObject condition, List<string> chaine)
+	{
+		// Check if condition is a BaseCondition
+		if (condition.GetComponent<BaseCondition>())
+		{
+			// On regarde si la condition reçue est un élément ou bien un opérator
+			// Si c'est un élément, on le traduit en string et on le renvoie 
+			if (condition.GetComponent<BaseCaptor>())
+				chaine.Add("" + condition.GetComponent<BaseCaptor>().captorType);
+			else
+			{
+				BaseOperator bo;
+				if (condition.TryGetComponent<BaseOperator>(out bo))
+				{
+					Transform conditionContainer = bo.transform.GetChild(0);
+					// Si c'est une négation on met "!" puis on fait une récursive sur le container et on renvoie le tous traduit en string
+					if (bo.operatorType == BaseOperator.OperatorType.NotOperator)
+					{
+						// On vérifie qu'il y a bien un élément présent, son container doit contenir 3 enfants (icone, une BaseCondition et le ReplacementSlot)
+						if (conditionContainer.childCount == 3)
+						{
+							chaine.Add("NOT");
+							conditionToStrings(conditionContainer.GetComponentInChildren<BaseCondition>().gameObject, chaine);
+						}
+						else
+						{
+							GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.BadCondition });
+						}
+					}
+					else if (bo.operatorType == BaseOperator.OperatorType.AndOperator)
+					{
+						// Si les côtés de l'opérateur sont remplis, alors il compte 5 childs (2 ReplacementSlots, 2 BaseCondition et 1 icone), sinon cela veux dire que il manque des conditions
+						if (conditionContainer.childCount == 5)
+						{
+							chaine.Add("(");
+							conditionToStrings(conditionContainer.GetChild(0).gameObject, chaine);
+							chaine.Add("AND");
+							conditionToStrings(conditionContainer.GetChild(3).gameObject, chaine);
+							chaine.Add(")");
+						}
+						else
+						{
+							GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.BadCondition });
+						}
+					}
+					else if (bo.operatorType == BaseOperator.OperatorType.OrOperator)
+					{
+						// Si les côtés de l'opérateur sont remplis, alors il compte 5 childs, sinon cela veux dire que il manque des conditions
+						if (conditionContainer.childCount == 5)
+						{
+							chaine.Add("(");
+							conditionToStrings(conditionContainer.GetChild(0).gameObject, chaine);
+							chaine.Add("OR");
+							conditionToStrings(conditionContainer.GetChild(3).gameObject, chaine);
+							chaine.Add(")");
+						}
+						else
+						{
+							GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.BadCondition });
+						}
+					}
+				}
+				else
+				{
+					Debug.LogError("Unknown BaseCondition!!!");
+				}
+			}
+		}
+		else
+			GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.BadCondition });
 	}
 }

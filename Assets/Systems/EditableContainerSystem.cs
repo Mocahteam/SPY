@@ -167,7 +167,7 @@ public class EditableContainerSystem : FSystem
 		{
 			for (int k = 0; k < script.Count; k++)
 				EditingUtility.addItemOnDropArea(script[k], dropArea);
-			UISystem.instance.startUpdatePlayButton();
+			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 		}
 
 		// On ajoute le nouveau viewport container à FYFY
@@ -175,7 +175,7 @@ public class EditableContainerSystem : FSystem
 
 		if (script != null && dropArea != null)
 			// refresh all the hierarchy of parent containers
-			GameObjectManager.addComponent<NeedToRefresh>(dropArea);
+			GameObjectManager.addComponent<NeedRefreshHierarchy>(dropArea);
 
 		// Update size of parent GameObject
 		MainLoop.instance.StartCoroutine(setEditableSize());

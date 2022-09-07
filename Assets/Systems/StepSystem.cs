@@ -21,8 +21,6 @@ public class StepSystem : FSystem {
     private int nbStep;
     private bool newStepAskedByPlayer;
 
-    public GameObject endPanel;
-
     protected override void onStart()
     {
         nbStep = 0;

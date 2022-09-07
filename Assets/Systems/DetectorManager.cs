@@ -20,8 +20,6 @@ public class DetectorManager : FSystem {
     private GameData gameData;
     private bool activeRedDetector;
 
-    public GameObject endPanel;
-
     protected override void onStart()
     {
         activeRedDetector = false;
@@ -49,7 +47,7 @@ public class DetectorManager : FSystem {
 				//Check if the player collide with a detection cell
 				if (target.GetComponent<Detector>() != null){
 					//end level
-					GameObjectManager.addComponent<NewEnd>(endPanel, new { endType = NewEnd.Detected });
+					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Detected });
 				}
 			}			
 		}

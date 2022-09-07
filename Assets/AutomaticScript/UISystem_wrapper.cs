@@ -38,11 +38,6 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "libraryWait", libraryWait);
 	}
 
-	public void startUpdatePlayButton()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "startUpdatePlayButton", null);
-	}
-
 	public void setExecutionView(System.Boolean value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setExecutionView", value);
@@ -108,19 +103,9 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "retry", null);
 	}
 
-	public void fillExecutablePanel()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "fillExecutablePanel", null);
-	}
-
 	public void copyEditableScriptsToExecutablePanels()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "copyEditableScriptsToExecutablePanels", null);
-	}
-
-	public void CleanControlBlock(UnityEngine.Transform specialBlock)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "CleanControlBlock", specialBlock);
 	}
 
 	public void setActiveEscapeMenu()
