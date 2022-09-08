@@ -1,12 +1,9 @@
 using UnityEngine;
 using FYFY;
-using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
-using System.IO;
 using System.Collections;
-using UnityEngine.Networking;
 using System;
 
 /// <summary>
@@ -86,7 +83,7 @@ public class UISystem : FSystem {
 	// Lors d'une fin d'exécution de séquence, gére les différents éléments à ré-afficher ou si il faut sauvegarder la progression du joueur
 	private void levelFinished(GameObject go)
 	{
-		// On réaffiche les différent panel pour la création de séquence
+		// On réaffiche les différents panels pour la création de séquence
 		setExecutionView(false);
 
 		// En cas de fin de niveau
@@ -212,7 +209,7 @@ public class UISystem : FSystem {
 				trash.GetComponent<Button>().interactable = false;
 	}
 
-	// Permet de relaner le niveau au début
+	// Permet de relancer le niveau au début
 	public void restartScene(){
 		initZeroVariableLevel();
 		GameObjectManager.loadScene("MainScene");
@@ -261,7 +258,7 @@ public class UISystem : FSystem {
 
 
 	// See ReloadLevel and RestartLevel buttons in editor
-	// Fait recommencé la scéne mais en gardant l'historique des actions
+	// Fait recommencer la scéne mais en gardant l'historique des actions
 	public void retry(){
 		if (gameData.actionsHistory != null)
 			UnityEngine.Object.DontDestroyOnLoad(gameData.actionsHistory);
@@ -269,7 +266,7 @@ public class UISystem : FSystem {
 	}
 
 	// See ExecuteButton in editor
-	// Copie les blocks du panneau d'édition dans le panneau d'exécution
+	// Copie les blocs du panneau d'édition dans le panneau d'exécution
 	public void copyEditableScriptsToExecutablePanels(){
 		//clean container for each robot and copy the new sequence
 		foreach (GameObject robot in f_player) {
@@ -284,7 +281,7 @@ public class UISystem : FSystem {
 
 			//copy editable script
 			GameObject editableContainer = null;
-			// On parcourt les script container pour identifer celui associé au robot 
+			// On parcourt les scripts containers pour identifer celui associé au robot 
 			foreach (GameObject container in f_viewportContainer)
 				// Si le container comporte le même nom que le robot
 				if (container.GetComponentInChildren<UIRootContainer>().associedAgentName == robot.GetComponent<AgentEdit>().agentName)
@@ -306,7 +303,7 @@ public class UISystem : FSystem {
 			}
 		}
 		
-		// On notifie les systèmes comme quoi le panneau d'execution est rempli
+		// On notifie les systèmes comme quoi le panneau d'éxecution est rempli
 		GameObjectManager.addComponent<ExecutablePanelReady>(MainLoop.instance.gameObject);
 
 		// On harmonise l'affichage de l'UI container des agents
@@ -318,10 +315,10 @@ public class UISystem : FSystem {
 		}
 	}
 
-	// Permet d'activé ou désactivé le menu echap
+	// Permet d'activer ou désactiver le menu echap
 	public void setActiveEscapeMenu()
     {
-		// Si le menu est active, le désactive
+		// Si le menu est activé, le désactiver
         if (menuEchap.activeInHierarchy)
         {
 			menuEchap.SetActive(false);

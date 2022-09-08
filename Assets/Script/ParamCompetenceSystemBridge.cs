@@ -25,7 +25,7 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
         ParamCompetenceSystem.instance.saveListUser();
         if(target.GetComponent<Toggle>().interactable)
         {
-            // Si il n'est pas selectionner, il va le devenir donc on active se qu'il faut
+            // S'il n'est pas selectionné, il va le devenir donc on active ce qu'il faut
             if (!target.GetComponent<Toggle>().isOn)
             {
                 ParamCompetenceSystem.instance.selectComp(target, true);

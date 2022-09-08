@@ -12,23 +12,23 @@ public class ParamCompetenceSystem : FSystem
 
 	public static ParamCompetenceSystem instance;
 
-	// Famille
-	private Family f_competence = FamilyManager.getFamily(new AllOfComponents(typeof(Competence))); // Les Toogles compétence
-	private Family f_menuElement = FamilyManager.getFamily(new AnyOfComponents(typeof(Competence), typeof(Category))); // Les Toogles compétences et les Catégories qui les réunnis en groupes
-	private Family f_category = FamilyManager.getFamily(new AllOfComponents(typeof(Category))); // Les category qui contiendra des sous category ou des competences
+	// Familles
+	private Family f_competence = FamilyManager.getFamily(new AllOfComponents(typeof(Competence))); // Les Toogles compétences
+	private Family f_menuElement = FamilyManager.getFamily(new AnyOfComponents(typeof(Competence), typeof(Category))); // Les Toogles compétences et les Catégories qui les réunnissent en groupes
+	private Family f_category = FamilyManager.getFamily(new AllOfComponents(typeof(Category))); // Les categories qui contiendront des sous categories ou des compétences
 
-	// Variable
+	// Variables
 	public GameObject panelSelectComp; // Panneau de selection des compétences
 	public GameObject panelInfoComp; // Panneau d'information des compétences
 	public GameObject panelInfoUser; // Panneau pour informer le joueur (erreurs de chargement, conflit dans la selection des compétences etc...)
-	public GameObject scrollViewComp; // Le controleur du scroll pour les compétences
-	public string pathParamComp = "/StreamingAssets/ParamCompFunc/ParamCompetence.csv"; // Chemin d'acces du fichier CSV contenant les info à charger des competences
-	public GameObject prefabCateComp; // Prefab de l'affichage d'une catégorie de competence
-	public GameObject prefabComp; // Prefab de l'affichage d'une competence
+	public GameObject scrollViewComp; // Le contrôleur du scroll pour les compétences
+	public string pathParamComp = "/StreamingAssets/ParamCompFunc/ParamCompetence.csv"; // Chemin d'acces du fichier CSV contenant les info des competences à charger 
+	public GameObject prefabCateComp; // Prefab de l'affichage d'une catégorie de compétence
+	public GameObject prefabComp; // Prefab de l'affichage d'une compétence
 	public GameObject ContentCompMenu; // Panneau qui contient la liste des catégories et compétences
 
 	private GameData gameData;
-	private TMP_Text messageForUser; // Zone de texte pour les messages d'erreur adressé à l'utilisateur
+	private TMP_Text messageForUser; // Zone de texte pour les messages d'erreur adressés à l'utilisateur
 	private List<string> listCompSelectUser = new List<string>(); // Enregistre temporairement les compétences séléctionnées par le user
 	private List<string> listCompSelectUserSave = new List<string>(); // Contient les compétences selectionnées par le user
 
@@ -63,7 +63,7 @@ public class ParamCompetenceSystem : FSystem
 		MainLoop.instance.StopCoroutine(noSelect(comp));
 	}
 
-	// Permet d'attacher à chaque catégorie les sous-categorie et compétences qui la compose
+	// Permet d'attacher à chaque catégorie les sous-categories et compétences qui la compose
 	private IEnumerator attacheComptWithCat()
     {
 		yield return null;
@@ -82,13 +82,13 @@ public class ParamCompetenceSystem : FSystem
 		MainLoop.instance.StopCoroutine(attacheComptWithCat());
 	}
 
-	// Permet de lancer les différentes fonctions que l'on a besoin pour le démarrage APRES que les familles soient mise à jours
+	// Permet de lancer les différentes fonctions que l'on a besoin pour le démarrage APRES que les familles soient mises à jour
 	private IEnumerator startAfterFamillyOk() {
 		yield return null;
 
-		// On désactive les compétences pas encore implémenté
+		// On désactive les compétences pas encore implémentées
 		desactiveToogleComp();
-		// On décale les sous-catégorie et compétence selon leur place dans la hierarchie
+		// On décale les sous-catégories et compétences selon leur place dans la hierarchie
 		displayCatAndComp();
 
 		MainLoop.instance.StopCoroutine(startAfterFamillyOk());
@@ -99,15 +99,15 @@ public class ParamCompetenceSystem : FSystem
 	{
 		try
 		{
-			// Note pour chaque fonction les niveaux ou elle sont présentes
+			// Note pour chaque fonction les niveaux ou elles sont présentes
 			readXMLinfo();
 		}
 		catch
 		{
 			string message = "Erreur chargement fichiers de niveaux!\n";
-			message += "Vérifié que les fichiers existent ou sont bien au format XML";
+			message += "Vérifier que les fichiers existent ou sont bien au format XML";
 			displayMessageUser(message);
-			// Permetra de fermer le panel de selection des competence lorsque le user apuie sur le bouton ok du message d'erreur
+			// Permetra de fermer le panel de selection des competences lorsque le user appuie sur le bouton ok du message d'erreur
 			panelSelectComp.GetComponent<ParamCompetenceSystemBridge>().closePanelParamComp = true;
 		}
 
@@ -116,7 +116,7 @@ public class ParamCompetenceSystem : FSystem
 			// On charge les données pour chaque compétence
 			loadParamComp();
 			MainLoop.instance.StartCoroutine(startAfterFamillyOk());
-			// On demare la corroutine pour attacher chaque competence et sous-categorie et leur catégorie
+			// On démarre la coroutine pour attacher chaque compétence et sous-categorie et leur catégorie
 			MainLoop.instance.StartCoroutine(attacheComptWithCat());
 		}
 		catch
@@ -124,7 +124,7 @@ public class ParamCompetenceSystem : FSystem
 			string message = "Erreur chargement fichier de parametrage des compétences!\n";
 			message += "Vérifié que le fichier csv et les informations contenues sont au bon format";
 			displayMessageUser(message);
-			// Permetra de fermer le panel de selection des competence lorsque le user apuie sur le bouton ok du message d'erreur
+			// Permettra de fermer le panel de selection des compétences lorsque le user appuie sur le bouton ok du message d'erreur
 			panelSelectComp.GetComponent<ParamCompetenceSystemBridge>().closePanelParamComp = true;
 		}
 	}
@@ -155,14 +155,14 @@ public class ParamCompetenceSystem : FSystem
 		}
 	}
 
-	// Instancie et parametre la compétence à afficher
+	// Instancie et paramètre la compétence à afficher
 	private void createCatObject(string[] data)
     {
 		// On instancie la catégorie
 		GameObject category = UnityEngine.Object.Instantiate(prefabCateComp);
 		// On l'attache au content
 		category.transform.SetParent(ContentCompMenu.transform);
-		// On signal à quel catégori la compétence appartien
+		// On signale à quelle catégorie la compétence appartient
 		if(data[1] != "None")
         {
 			category.GetComponent<MenuComp>().catParent = data[1];
@@ -175,12 +175,12 @@ public class ParamCompetenceSystem : FSystem
 		GameObjectManager.bind(category);
 	}
 
-	// Instancie et parametre la sous-compétence à afficher
+	// Instancie et paramètre la sous-compétence à afficher
 	private void createCompObject(string[] data)
 	{
 		// On instancie la catégorie
 		GameObject competence = UnityEngine.Object.Instantiate(prefabComp);
-		// On signal à quel catégori la compétence appartien
+		// On signale à quel catégorie la compétence appartient
 		competence.GetComponent<Competence>().catParent = data[1];
 		// On l'attache au content
 		competence.transform.SetParent(ContentCompMenu.transform);
@@ -188,9 +188,9 @@ public class ParamCompetenceSystem : FSystem
 		// On charge le text de la compétence
 		competence.transform.Find("Label").GetComponent<TMP_Text>().text = data[3];
 		competence.transform.Find("Label").GetComponent<TMP_Text>().alignment = TMPro.TextAlignmentOptions.MidlineLeft;
-		// On charge les info de la compétence qui sera affiché lorsque l'on survolera celle-ci avec la souris
+		// On charge les info de la compétence qui sera affichée lorsque l'on survolera celle-ci avec la souris
 		competence.GetComponent<Competence>().info = data[4];
-		// On charge le vecteur des Fonction lié à la compétence
+		// On charge le vecteur des Fonctions liées à la compétence
 		if (data.Length >= 6)
         {
 			var data_link = data[5].Split(',');
@@ -208,7 +208,7 @@ public class ParamCompetenceSystem : FSystem
 				}
 				if (data.Length >= 8)
 				{
-					// On charge le vecteur des compétences dont au moins l'une devra être selectionné en m^me temps que celle selectionné actuellement
+					// On charge le vecteur des compétences dont au moins l'une devra être selectionnée en même temps que celle selectionnée actuellement
 					data_link = data[7].Split(',');
 					foreach (string value in data_link)
 					{
@@ -221,11 +221,11 @@ public class ParamCompetenceSystem : FSystem
 		GameObjectManager.bind(competence);
 	}
 
-	// Mise en place décaler les sous-categories et compétences
+	// Mise en place: décaller les sous-categories et compétences
 	private void displayCatAndComp()
     {
 		foreach(GameObject element in f_menuElement) { 
-			// Si l'élément à un parent
+			// Si l'élément a un parent
 			if(element.GetComponent<MenuComp>().catParent != "")
             {
 				int nbParent = nbParentInHierarchiComp(element);
@@ -245,8 +245,8 @@ public class ParamCompetenceSystem : FSystem
 		}
     }
 
-	// Fonction pouvant être apellé par récusrcivité
-	// Permet de renvyer à qu'elle profondeur dans la hiérarchie Categorie de la selection des compétences l'élément se trouve
+	// Fonction pouvant être appellée par récursivité
+	// Permet de renvoyer à quelle profondeur dans la hiérarchie Categorie de la selection des compétences l'élément se trouve
 	private int nbParentInHierarchiComp(GameObject element)
     {
 		int nbParent = 1;
@@ -260,7 +260,7 @@ public class ParamCompetenceSystem : FSystem
 			return nbParent;
     }
 
-	// Lis tous les fichiers XML des niveaux de chaque dossier afin de charger quelle fonctionalité se trouve dans quel niveau  
+	// Lit tous les fichiers XML des niveaux de chaque dossier afin de charger quelle fonctionalité se trouve dans quel niveau  
 	private void readXMLinfo()
 	{
 		foreach (List<string> levels in gameData.levelList.Values)
@@ -282,7 +282,7 @@ public class ParamCompetenceSystem : FSystem
 		}
 	}
 
-	// Parcourt le noeud d'information est apelle les bonnes fonctions pour traiter l'information du niveau
+	// Parcourt le noeud d'information et appelle les bonnes fonctions pour traiter l'information du niveau
 	private void loadInfo(XmlDocument doc, string namelevel)
 	{
 		XmlNode root = doc.ChildNodes[1];
@@ -305,7 +305,7 @@ public class ParamCompetenceSystem : FSystem
 		}
 	}
 
-	// Associe à chaque fonctionalité renseigné sa présence dans le niveau
+	// Associe à chaque fonctionalité renseignée sa présence dans le niveau
 	private void addInfo(XmlNode node, string namelevel)
 	{
 		if(gameData.GetComponent<FunctionalityParam>().levelDesign[node.Attributes.GetNamedItem("name").Value])
@@ -332,7 +332,7 @@ public class ParamCompetenceSystem : FSystem
 		}
 	}
 
-	// Désactive les toogles pas encore implémenté
+	// Désactive les toggles pas encore implémentés
 	private void desactiveToogleComp()
 	{
 
@@ -352,13 +352,13 @@ public class ParamCompetenceSystem : FSystem
         }
 	}
 
-	// Permet de selectionné aussi les functionnalité linker avec la fonctionalité selectionné
+	// Permet de selectionné aussi les functionnalités linker avec la fonctionalité selectionnée
 	private void addSelectFuncLinkbyFunc(string nameFunc)
     {
 		foreach(string f_name in gameData.GetComponent<FunctionalityParam>().activeFunc[nameFunc])
         {
-            // Si la fonction na pas encore été selectionné
-			// alors on l'ajoute à la séléction et on récurcive dessus
+            // Si la fonction na pas encore été selectionnée
+			// alors on l'ajoute à la séléction et on fait un appel récursif dessus
             if (f_name != "" && !gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_name))
             {
 				gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(f_name);
@@ -367,9 +367,9 @@ public class ParamCompetenceSystem : FSystem
         }
     }
 
-	// Pour certaine compétence il est indispensable que d'autre soit aussi selectionné
+	// Pour certaines compétences il est indispensable que d'autres soient aussi selectionnées
 	// Cette fonction vérifie que c'est bien le cas avant de lancer la selection de niveau auto
-	// Sinon il signale au User qu'elle compétence pause probléme ainsi qu'une compétence minimum qu'il doit cocher parmit la liste proposé
+	// Sinon il signale au User quelle compétence pose problème ainsi qu'une compétence minimum qu'il doit cocher parmis la liste proposée
 	public void verificationSelectedComp()
     {
 		saveListUser();
@@ -378,10 +378,10 @@ public class ParamCompetenceSystem : FSystem
 		List<string> listNameCompSelect = new List<string>();
 		GameObject errorSelectComp = null;
 
-		//On verifi
+		//On verifie
 		foreach (GameObject comp in f_competence)
         {
-            // Si la compétence est séléctionné on le note
+            // Si la compétence est séléctionnée on le note
             if (comp.GetComponent<Toggle>().isOn)
             {
 				// Si la compétence demande à avoir une autre comp
@@ -409,14 +409,14 @@ public class ParamCompetenceSystem : FSystem
             }
         }
 
-		// Si tous va bien on lance la selection du niveau
+		// Si tout va bien on lance la sélection du niveau
         if (verif)
         {
 			startLevel();
         }
-        else // Sinon on signal au joueur l'erreur
+        else // Sinon on signale au joueur l'erreur
         {
-			// Message au User en lui signalant qu'elle competence il doit choisir 
+			// Message au User en lui signalant quelle competence il doit choisir 
 			string message = "Pour la compétence " + errorSelectComp + " Il faut aussi selectionner une de ces compétences :\n";
 			foreach(string comp in errorSelectComp.GetComponent<Competence>().listSelectMinOneComp)
             {
@@ -429,13 +429,13 @@ public class ParamCompetenceSystem : FSystem
 	// Use in ButtonStartLevel in ParamCompPanel prefab
 	public void startLevel()
     {
-		// On parcourt tous les levels disponible pour les copier dans une liste temporaire
+		// On parcourt tous les levels disponibles pour les copier dans une liste temporaire
 		List<string> copyLevel = new List<string>();
 		int nbCompActive = 0;
 		bool conditionStartLevelOk = true;
 
 		bool levelLD = false;
-		// On regarde si des competence concernant le level design on été selectionné
+		// On regarde si des competences concernant le level design on été selectionnées
 		foreach (GameObject comp in f_competence)
 		{
             if (comp.GetComponent<Toggle>().isOn)
@@ -457,7 +457,7 @@ public class ParamCompetenceSystem : FSystem
 			}
 		}
 
-        // Si aucune compétence n'a été selectionné on ne chargera pas de niveau
+        // Si aucune compétence n'a été selectionnée on ne chargera pas de niveau
         if (nbCompActive <= 0)
         {
 			conditionStartLevelOk = false;
@@ -465,15 +465,15 @@ public class ParamCompetenceSystem : FSystem
 
         if (conditionStartLevelOk)
         {
-			// On signal que la séléction de niveau se fait par les compétences (et donc que les info des fonctionnalité du niveau ne doivent pas être chargé)
+			// On signal que la séléction de niveau se fait par les compétences (et donc que les info des fonctionnalités du niveau ne doivent pas être chargées)
 			gameData.GetComponent<GameData>().executeLvlByComp = true;
 			// 2 cas de figures : 
 			// Demande de niveau spécial pour la compétence
-			// Demande de niveau sans competence LD
+			// Demande de niveau sans compétence LD
 			if (levelLD)
 			{
 				// On parcourt le dictionnaires des fonctionnalités de level design
-				// Si elle fait partie des fonctionnalités selectionné, alors on enregistre les levels associé à la fonctionnalité
+				// Si elle fait partie des fonctionnalités selectionnées, alors on enregistre les levels associés à la fonctionnalité
 				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign.Keys)
 				{
                     if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_key))
@@ -484,7 +484,7 @@ public class ParamCompetenceSystem : FSystem
 						}
 					}
 				}
-				// On garde ensuite les niveaux qui contient exclusivement toutes les fonctionalités selectionné
+				// On garde ensuite les niveaux qui contienent exclusivement toutes les fonctionalités selectionnées
 				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign.Keys)
 				{
 					if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_key))
@@ -506,10 +506,10 @@ public class ParamCompetenceSystem : FSystem
 			else if (!levelLD)
 			{
 				// On parcourt le dictionnaire des fonctionnalités level design
-				// On supprime de la liste des niveaux possible tous les niveaux appellent des fonctionnalités de level design
+				// On supprime de la liste des niveaux possibles tous les niveaux appellant des fonctionnalités de level design
 				foreach (List<string> levels in gameData.levelList.Values)
 				{
-					// On créer une copie de la liste des niveaux disponible
+					// On créer une copie de la liste des niveaux disponibles
 					foreach (string level in levels)
 						copyLevel.Add(level);
 				}
@@ -529,8 +529,8 @@ public class ParamCompetenceSystem : FSystem
 			displayMessageUser(message);
 		}
 
-		// Si on a au moins une compétence activé et un niveau en commun
-		// On lance un niveau selectionné aléatoirement parmis la liste des niveaux restant
+		// Si on a au moins une compétence activée et un niveau en commun
+		// On lance un niveau selectionné aléatoirement parmis la liste des niveaux restants
 		if (copyLevel.Count != 0)
         {
 			if (copyLevel.Count > 1)
@@ -554,7 +554,7 @@ public class ParamCompetenceSystem : FSystem
 			}
 			GameObjectManager.loadScene("MainScene");
 		}
-		else // Sinon on signal que aucune compétence n'est selectionné ou que aucun niveau n'est disponible
+		else // Sinon on signale qu'aucune compétence n'est selectionnée ou qu'aucun niveau n'est disponible
         {
 			string message = "Pas de niveau disponible pour l'ensemble des compétences selectionnées";
 			displayMessageUser(message);
@@ -567,7 +567,7 @@ public class ParamCompetenceSystem : FSystem
 		panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text = comp.GetComponent<MenuComp>().info;
 		comp.transform.Find("Label").GetComponent<TMP_Text>().fontStyle = TMPro.FontStyles.Bold;
 
-		// Si la compétence enclanche la selection d'autre compétence, on l'afiche dans les infos
+		// Si la compétence enclanche la sélection d'autre compétence, on l'affiche dans les infos
 		if(comp.GetComponent<Competence>() && comp.GetComponent<Competence>().compLinkWhitComp[0] != "")
         {
 			string infoMsg = panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text;
@@ -579,7 +579,7 @@ public class ParamCompetenceSystem : FSystem
 			panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text = infoMsg;
 		}
 
-		// Si on survole une category, on change la couleur du bouton
+		// Si on survole une categorie, on change la couleur du bouton
         if (comp.GetComponent<Category>())
         {
 			foreach(Transform child in comp.transform){
@@ -617,7 +617,7 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	// On parcourt toutes les compétences
-	// On desactive toutes les compétences non implémenté et les compétences ne pouvant plus être selectionné
+	// On desactive toutes les compétences non implémentées et les compétences ne pouvant plus être selectionnées
 	// On selectionne automatiquement les competences linker
 	public void selectComp(GameObject comp, bool userSelect)
     {
@@ -632,13 +632,13 @@ public class ParamCompetenceSystem : FSystem
 
 		bool error = false;
 
-		// On parcourt la liste des fonctions a activé pour la compétence
+		// On parcourt la liste des fonctions à activer pour la compétence
 		foreach (string funcNameActive in comp.GetComponent<Competence>().compLinkWhitFunc)
 		{
-			//Pour chaque fonction on regarde si cela empeche une compétence d'être selectionné
+			//Pour chaque fonction on regarde si cela empêche une compétence d'être selectionnée
 			foreach (string funcNameDesactive in gameData.GetComponent<FunctionalityParam>().enableFunc[funcNameActive])
 			{
-				// Pour chaque fonction non possible, on regarde les compétence les utilisant pour en désactivé la selection
+				// Pour chaque fonction non possible, on regarde les compétences les utilisant pour en désactiver la selection
 				foreach (GameObject c in f_competence)
 				{
 					if (c.GetComponent<Competence>().compLinkWhitFunc.Contains(funcNameDesactive))
@@ -662,13 +662,13 @@ public class ParamCompetenceSystem : FSystem
                 {
 					if(c.name == nameComp)
                     {
-						// Les compétences non active sont les compétences dont au moins une des fonctionalités n'est pas encore implémenté
-						// Pour éviter tous bug (comme être considérer comme inactive à cause d'une autre compétence séléctionné) on test si la compétence est désactivé par le biais d'un manque de fonction ou non
+						// Les compétences non active sont les compétences dont au moins une des fonctionalités n'est pas encore implémentée
+						// Pour éviter tout bug (comme être considéré comme inactive à cause d'une autre compétence séléctionnée) on teste si la compétence est désactivée par le biais d'un manque de fonction ou non
 						if (c.GetComponent<Competence>().active)
 						{
 							if (c.GetComponent<Toggle>().interactable)
 							{
-								// Pour éviter les boucles infini, si la compétence est déjà activé, alors la récursive à déjà eu lieu
+								// Pour éviter les boucles infinies, si la compétence est déjà activée, alors la récursive a déjà eu lieu
 								if (!c.GetComponent<Toggle>().isOn)
 								{
 									selectComp(c, false);
@@ -700,25 +700,25 @@ public class ParamCompetenceSystem : FSystem
 		MainLoop.instance.StartCoroutine(noSelect(comp));
 	}
 
-	//Lors de la deselection d'une compétence on désélectionne toutes les compétences reliées
+	//Lors de la desélection d'une compétence on desélectionne toutes les compétences reliées
 	public void unselectComp(GameObject comp, bool userUnselect)
     {
-		// On retir la compétence de la liste des compétences séléctionnées
+		// On retire la compétence de la liste des compétences sélectionnées
 		addOrRemoveCompSelect(comp, false);
 
 		// On reset l'affichage de toutes les compétences.
 		resetSelectComp();
 
-		// Le toogle va être désactivé automatique par le programme aprés le traitement de la fonction 
+		// Le toggle va être désactivé automatiquement par le programme aprés le traitement de la fonction 
 		if (userUnselect)
 		{
 			comp.GetComponent<Toggle>().isOn = true;
 		}
 
-		//On désactive tous les toogle des comp pas implémenté
+		//On désactive tous les toggle des comp pas implémentés
 		desactiveToogleComp();
 
-		// On reselectionne toutes les compétences
+		// On resélectionne toutes les compétences
 		foreach (string compName in listCompSelectUser)
 		{
 			foreach (GameObject c in f_competence)
@@ -732,12 +732,12 @@ public class ParamCompetenceSystem : FSystem
 
 	}
 
-	// Ajoute ou retire la compétence de la liste des compétences selectionner manuellement par l'utilisateur
+	// Ajoute ou retire la compétence de la liste des compétences selectionnées manuellement par l'utilisateur
 	public void addOrRemoveCompSelect(GameObject comp, bool value)
 	{
         if (value)
         {
-			// Si la compétence n'est pas encore noté comme avoir été selectionné par le user
+			// Si la compétence n'est pas encore notée comme avoir été selectionnée par le user
             if (!listCompSelectUser.Contains(comp.name))
             {
 				listCompSelectUser.Add(comp.name);
@@ -745,14 +745,14 @@ public class ParamCompetenceSystem : FSystem
 		}
         else
         {
-			// Si la compétence avait été séléctionné par le user
+			// Si la compétence avait été séléctionnée par le user
 			if(listCompSelectUser.Contains(comp.name)){
 				listCompSelectUser.Remove(comp.name);
 			}
 		}
 	}
 
-	// Reset toutes les compétences en "non selectionné"
+	// Reset toutes les compétences en "non selectionnée"
 	private void resetSelectComp()
     {
 		foreach (GameObject comp in f_competence)
@@ -762,15 +762,15 @@ public class ParamCompetenceSystem : FSystem
 		}
 	}
 
-	// Enregistre la liste des compétence séléctionné par le user
+	// Enregistre la liste des compétences sélectionnées par le user
 	public void saveListUser()
     {
 		listCompSelectUserSave = new List<string>(listCompSelectUser);
 	}
 
-	// Ferme le panel de selection des compétences
+	// Ferme le panel de sélection des compétences
 	// Décoche toutes les compétences cochées
-	// vide les listes de suivis des compétences selectionné
+	// vide les listes de suivis des compétences selectionnées
 	public void closeSelectCompetencePanel()
     {
 		panelSelectComp.SetActive(false);
@@ -786,7 +786,7 @@ public class ParamCompetenceSystem : FSystem
 		panelInfoUser.SetActive(true);
 	}
 
-	// Cache ou montre les éléments associés à la catégory
+	// Cache ou montre les éléments associés à la catégorie
 	public void viewOrHideCompList(GameObject category)
     {
 		category.GetComponent<Category>().hideList = !category.GetComponent<Category>().hideList;
@@ -801,7 +801,7 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	// Active ou désactive la bouton
-	// Cette fonction est résèrvé à la gestion du bonton à afficher à coté de la catégorie si jamais le user appuie sur le text pour faire apparaitre ou disparaitre la liste associée
+	// Cette fonction est réservée à la gestion du bouton à afficher à coté de la catégorie si jamais le user appuie sur le text pour faire apparaitre ou disparaitre la liste associée
 	public void hideOrShowButtonCategory(GameObject button)
     {
 		button.SetActive(!button.activeSelf);

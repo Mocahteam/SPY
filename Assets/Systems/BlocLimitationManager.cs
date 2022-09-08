@@ -91,7 +91,7 @@ public class BlocLimitationManager : FSystem
 		return null;
 	}
 
-	// Met à jour la limite du nombre de fois où l'on peux utiliser un bloc (si il y a une limite)
+	// Met à jour la limite du nombre de fois où l'on peut utiliser un bloc (si il y a une limite)
 	// Le désactive si la limite est atteinte
 	// Met à jour le compteur
 	private void updateBlocLimit(GameObject draggableGO){

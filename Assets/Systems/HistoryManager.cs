@@ -47,7 +47,7 @@ public class HistoryManager : FSystem
 		// En cas de fin de niveau
 		if (go.GetComponent<NewEnd>().endType == NewEnd.Win)
 		{
-			// Affichage de l'historique de l'ensemble des actions exécutés
+			// Affichage de l'historique de l'ensemble des actions exécutées
 			saveHistory();
 			loadHistory();
 		}

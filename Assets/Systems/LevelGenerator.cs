@@ -21,10 +21,10 @@ public class LevelGenerator : FSystem {
 
 	private List<List<int>> map;
 	private GameData gameData;
-	private int nbAgentCreate = 0; // Nombre d'agent créer
+	private int nbAgentCreate = 0; // Nombre d'agents créés
 
 	public GameObject camera;
-	public GameObject editableCanvas;// Le container qui contient les Viewport/script container
+	public GameObject editableCanvas;// Le container qui contient les Viewport/script containers
 	public GameObject scriptContainer;
 	public GameObject library; // Le viewport qui contient la librairie
 	public GameObject EditableContenair; // Le container qui contient les séquences éditables
@@ -101,7 +101,7 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
-	// Creer une entité agent ou robot et y associer un panel container
+	// Créer une entité agent ou robot et y associer un panel container
 	private GameObject createEntity(string nameAgent, int i, int j, Direction.Dir direction, string type, List<GameObject> script = null){
 		GameObject entity = null;
 		switch(type){
@@ -112,7 +112,7 @@ public class LevelGenerator : FSystem {
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.Level.transform.position + new Vector3(i*3,5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				break;
 		}
-        // Si la function permettant de changer le nom de l'agent est activé
+        // Si la function permettant de changer le nom de l'agent est activée
         if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F9"))
         {
 			entity.GetComponent<AgentEdit>().editState = AgentEdit.EditMode.Editable;
@@ -341,8 +341,8 @@ public class LevelGenerator : FSystem {
         GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
 	}
 
-	// Si le niveau n'a pas était lancer par la selection de compétence,
-	// Alors on va noté les fonctionnalité (hors level design) qui doivent être activé dans le niveau
+	// Si le niveau n'a pas été lancé par la selection de compétence,
+	// Alors on va noter les fonctionnalité (hors level design) qui doivent être activées dans le niveau
 	private void readXMLInfos(XmlNode infoNode){
         if (!gameData.GetComponent<GameData>().executeLvlByComp){
 			foreach (XmlNode child in infoNode){
@@ -358,14 +358,14 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
-	// Ajoute la fonction parametrée dans le niveau dans la liste des fonctions selectionnées dans le gameData si celle ci ne si trouve pas déjà
+	// Ajoute la fonction parametrée dans le niveau dans la liste des fonctions selectionnées dans le gameData si celle ci ne s'y trouve pas déjà
 	private void readFunc(XmlNode FuncNode)
     {
         if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(FuncNode.Attributes.GetNamedItem("name").Value))
         {
 			gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(FuncNode.Attributes.GetNamedItem("name").Value);
 		}
-		 // tester si func associer et réitérer
+		 // tester si func associé et réitéré
 		foreach(string funcName in gameData.GetComponent<FunctionalityParam>().activeFunc[FuncNode.Attributes.GetNamedItem("name").Value])
         {
 			if(funcName != "")
@@ -403,7 +403,7 @@ public class LevelGenerator : FSystem {
 
 	private void readXMLLimits(XmlNode limitsNode){
 		List<string> listFuncGD = gameData.GetComponent<FunctionalityParam>().funcActiveInLevel;
-		// Si l'option F2 est activé
+		// Si l'option F2 est activée
 		if (listFuncGD.Contains("F2"))
         {
 			string actionName = null;
@@ -416,7 +416,7 @@ public class LevelGenerator : FSystem {
 				}
 			}
 			tcheckRequierement();
-		} // Sinon on met toutes les limites de block à 0
+		} // Sinon on met toutes les limites de bloc à 0
         else
         {
 			foreach(string nameFunc in gameData.actionBlocLimit.Keys)
@@ -457,7 +457,7 @@ public class LevelGenerator : FSystem {
 						// On vérifie aussi que l'élément à besoin de capteur
 						if (!prgOkCaptor && gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary[funcName].Contains("Captor"))
 						{
-							// On passe tous les capteur à -1
+							// On passe tous les capteurs à -1
 							foreach (string captor in gameData.GetComponent<FunctionalityParam>().listCaptor)
                             {
 								gameData.actionBlocLimit[captor] = -1;
@@ -481,7 +481,7 @@ public class LevelGenerator : FSystem {
         {
             if (gameData.GetComponent<FunctionalityParam>().listCaptor.Contains(ele))
             {
-				// Si au moins un des capteurs est présent dans les limitation (autre que 0)
+				// Si au moins un des capteurs est présent dans les limitations (autre que 0)
 				// On considére qu'il n'y a pas d'erreur de programation du niveau pour les capteurs
 				if(gameData.actionBlocLimit[ele] != 0)
                 {
@@ -516,7 +516,7 @@ public class LevelGenerator : FSystem {
 		return null;
 	}
 
-	// Transforme le noeux d'action XML en gameObject
+	// Transforme le noeud d'action XML en gameObject
 	private GameObject readXMLInstruction(XmlNode actionNode){
 		GameObject obj = null;
 		BaseElement action = null;
@@ -535,7 +535,7 @@ public class LevelGenerator : FSystem {
 						firstContainerBloc = obj.transform.Find("Container");
 						action = obj.GetComponent<IfControl>();
 
-						// On ajoute les éléments enfant dans les bons container
+						// On ajoute les éléments enfants dans les bons containers
 						foreach (XmlNode containerNode in actionNode.ChildNodes)
 						{
 							// Ajout des conditions
@@ -566,7 +566,7 @@ public class LevelGenerator : FSystem {
 						secondContainerBloc = obj.transform.Find("ElseContainer");
 						action = obj.GetComponent<IfControl>();
 
-						// On ajoute les éléments enfant dans les bons container
+						// On ajoute les éléments enfants dans les bons containers
 						foreach (XmlNode containerNode in actionNode.ChildNodes)
 						{
 							// Ajout des conditions
@@ -613,7 +613,7 @@ public class LevelGenerator : FSystem {
 						conditionContainer = obj.transform.Find("ConditionContainer");
 						action = obj.GetComponent<WhileControl>();
 
-						// On ajoute les éléments enfant dans les bons container
+						// On ajoute les éléments enfants dans les bons containers
 						foreach (XmlNode containerNode in actionNode.ChildNodes)
 						{
 							// Ajout des conditions
@@ -673,7 +673,7 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
-	// Transforme le noeux d'action XML en gameObject élément/opérator
+	// Transforme le noeud d'action XML en gameObject élément/opérator
 	private GameObject readXMLCondition(XmlNode conditionNode) {
 		GameObject obj = null;
 		ReplacementSlot[] slots = null;

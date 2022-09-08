@@ -6,7 +6,7 @@ using System.Collections;
 using UnityEngine.UI;
 using FYFY_plugins.PointerManager;
 
-/// Ce systéme gére tous les éléments d'éditions des agents par l'utilisateur.
+/// Ce systéme gére tous les éléments d'édition des agents par l'utilisateur.
 /// Il gére entre autre:
 ///		Le changement de nom du robot
 ///		Le changement automatique (si activé) du nom du container associé (si container associé)
@@ -15,22 +15,22 @@ using FYFY_plugins.PointerManager;
 /// <summary>
 /// 
 /// agentSelect
-///		Pour enregistrer sur qu'elle agents le systéme va travaillé
+///		Pour enregistrer sur quel agent le systéme va travailler
 ///	modificationAgent
-///		Pour les appel extérieurs, permet de trouver l'agent (et le considéré comme selectionné) en fonction de son nom
+///		Pour les appels extérieurs, permet de trouver l'agent (et le considérer comme selectionné) en fonction de son nom
 ///		Renvoie True si trouvé, sinon false
 /// setAgentName
 ///		Pour changer le nom d'un agent
 ///	majDisplayCardAgent
-///		Met à jour l'affichage des info de l'agent dans ça fiche
+///		Met à jour l'affichage des info de l'agent dans sa fiche
 ///		
 /// </summary>
 
 public class EditableContainerSystem : FSystem 
 {
 	// Les familles
-	private Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
-	private Family f_viewportContainerPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les container éditable
+	private Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édités
+	private Family f_viewportContainerPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les containers contenant les containers éditables
 	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
 	private Family f_refreshSize = FamilyManager.getFamily(new AllOfComponents(typeof(RefreshSizeOfEditableContainer)));
 	private Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
@@ -67,7 +67,7 @@ public class EditableContainerSystem : FSystem
 			foreach (GameObject go in f_addSpecificContainer)
 				foreach (AddSpecificContainer asc in go.GetComponents<AddSpecificContainer>())
 				{
-					addSpecificContainer(asc.name, asc.editState, asc.script);
+					addSpecificContainer(asc.title, asc.editState, asc.script);
 					GameObjectManager.removeComponent(asc);
 				}
     }
@@ -251,7 +251,7 @@ public class EditableContainerSystem : FSystem
 					{
 						if (agentSelected.GetComponent<AgentEdit>().editState == AgentEdit.EditMode.Synch)
 						{
-							// On met à jours le nom de tous les agents qui auraient le même nom pour garder l'association avec le container editable
+							// On met à jour le nom de tous les agents qui auraient le même nom pour garder l'association avec le container editable
 							foreach (GameObject agent in f_agent)
 								if (agent.GetComponent<AgentEdit>().agentName == oldName)
 								{
@@ -274,7 +274,7 @@ public class EditableContainerSystem : FSystem
 						agentSelected.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().text = newName;
 					}
 
-					// On vérifie si on a une association avec les container éditables
+					// On vérifie si on a une association avec les containers éditables
 					refreshUINameContainer();
 				}
 				// On change pour son nouveau nom
@@ -300,7 +300,7 @@ public class EditableContainerSystem : FSystem
 		return false;
 	}
 
-	// Définie l'agent sur lequel les modifications seront opporté
+	// Définie l'agent sur lequel les modifications seront opportées
 	// Renvoie le composant AgentEdit de l'agent sélectionné s'il a été trouvé, sinon null
 	private AgentEdit selectLinkedAgentByName(string nameAgent)
     {
@@ -318,12 +318,12 @@ public class EditableContainerSystem : FSystem
 
 
 	// Vérifie si les noms des containers correspond à un agent et vice-versa
-	// Si non, Fait apparaitre le nom en rouge
+	// Si non, fait apparaitre le nom en rouge
 	private IEnumerator tcheckLinkName()
 	{
 		yield return null;
 
-		// On parcours les containers et si aucun nom ne correspond alors on met leur nom en gras rouge
+		// On parcourt les containers et si aucun nom ne correspond alors on met leur nom en gras rouge
 		foreach (GameObject container in f_scriptContainer)
 		{
 			bool nameSame = false;
@@ -331,7 +331,7 @@ public class EditableContainerSystem : FSystem
 				if (container.GetComponent<UIRootContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
 					nameSame = true;
 
-			// Si même nom trouver on met l'arriére plan blanc
+			// Si même nom trouvé on met l'arriére plan blanc
 			if (nameSame)
 				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().image.color = Color.white;
 			else // sinon rouge 
@@ -346,7 +346,7 @@ public class EditableContainerSystem : FSystem
 				if (container.GetComponent<UIRootContainer>().associedAgentName == agent.GetComponent<AgentEdit>().agentName)
 					nameSame = true;
 
-			// Si même nom trouver on met l'arriére transparent
+			// Si même nom trouvé on met l'arriére transparent
 			if (nameSame)
 				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 1f, 1f, 1f);
 			else // sinon rouge 

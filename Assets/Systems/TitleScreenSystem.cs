@@ -21,8 +21,8 @@ public class TitleScreenSystem : FSystem {
 	public GameObject quitButton;
 	public GameObject backButton;
 	public GameObject cList;
-	public string pathFileParamFunct = "/StreamingAssets/ParamCompFunc/FunctionConstraint.csv"; // Chemin d'acces pour la chargement des paramétres des functions
-	public string pathFileParamRequiermentLibrary = "/StreamingAssets/ParamCompFunc/FunctionalityRequiermentLibrairy.xml"; // Chemin d'acces pour la chargement des paramétres des functions
+	public string pathFileParamFunct = "/StreamingAssets/ParamCompFunc/FunctionConstraint.csv"; // Chemin d'acces pour la chargement des paramètres des functions
+	public string pathFileParamRequiermentLibrary = "/StreamingAssets/ParamCompFunc/FunctionalityRequiermentLibrairy.xml"; // Chemin d'acces pour la chargement des paramètres des functions
 
 	private Dictionary<GameObject, List<GameObject>> levelButtons; //key = directory button,  value = list of level buttons
 
@@ -194,14 +194,14 @@ public class TitleScreenSystem : FSystem {
 		}
 	}
 
-	// Initialise tous ce qui concerne les fonctionalités
+	// Initialise tout ce qui concerne les fonctionalités
 	private void paramFunction()
 	{
 		loadConstraintFunction();
 		loadRequiermentLibrairy();
 	}
 
-	// Charge les différentes contraintes qui existe entre les fonctionalités
+	// Charge les différentes contraintes qui existent entre les fonctionalités
 	private void loadConstraintFunction()
 	{
 		StreamReader reader = new StreamReader("" + Application.dataPath + pathFileParamFunct);

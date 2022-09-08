@@ -1,6 +1,5 @@
 using UnityEngine;
 using FYFY;
-using System.Collections;
 
 /// <summary>
 /// Manage Doors and Consoles => open/close doors depending on consoles state

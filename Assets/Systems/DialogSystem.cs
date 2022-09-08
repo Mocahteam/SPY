@@ -80,7 +80,7 @@ public class DialogSystem : FSystem
 		else
 			GameObjectManager.setGameObjectState(imageGO, false);
 
-		// Si il reste des dialogue à afficher ensuite
+		// Si il reste des dialogues à afficher ensuite
 		if (nDialog + 1 < gameData.dialogMessage.Count)
 		{
 			setActiveOKButton(false);
@@ -101,7 +101,7 @@ public class DialogSystem : FSystem
 	}
 
 
-	// Active ou non le bouton next du panle dialogue
+	// Active ou non le bouton next du panel dialogue
 	public void setActiveNextButton(bool active)
 	{
 		GameObjectManager.setGameObjectState(dialogPanel.transform.Find("Buttons").Find("NextButton").gameObject, active);
