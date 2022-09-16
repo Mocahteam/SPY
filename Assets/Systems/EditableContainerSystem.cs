@@ -190,7 +190,7 @@ public class EditableContainerSystem : FSystem
 
 	// Empty the script window
 	// See ResetButton in ViewportScriptContainer prefab in editor
-	public void resetScriptContainer(bool refund = false)
+	public void resetScriptContainer()
 	{
 		// On récupére le contenair pointé lors du clic de la balayette
 		GameObject scriptContainerPointer = f_viewportContainerPointed.First().transform.Find("ScriptContainer").gameObject;

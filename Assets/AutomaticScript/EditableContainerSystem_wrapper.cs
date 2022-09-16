@@ -24,9 +24,9 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "addContainer", null);
 	}
 
-	public void resetScriptContainer(System.Boolean refund)
+	public void resetScriptContainer()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "resetScriptContainer", refund);
+		MainLoop.callAppropriateSystemMethod (system, "resetScriptContainer", null);
 	}
 
 	public void removeContainer(UnityEngine.GameObject container)

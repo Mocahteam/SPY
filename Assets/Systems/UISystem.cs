@@ -7,10 +7,8 @@ using System.Collections;
 using System;
 
 /// <summary>
-/// Manage dialogs at the begining of the level
 /// Manage InGame UI (Play/Pause/Stop, reset, go back to main menu...)
 /// Switch to edition/execution view
-/// Manage history
 /// Need to be binded after LevelGenerator
 /// </summary>
 public class UISystem : FSystem {

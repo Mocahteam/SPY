@@ -26,9 +26,9 @@ public class ParamCompetenceSystem : FSystem
 	public GameObject prefabCateComp; // Prefab de l'affichage d'une catégorie de compétence
 	public GameObject prefabComp; // Prefab de l'affichage d'une compétence
 	public GameObject ContentCompMenu; // Panneau qui contient la liste des catégories et compétences
+	public TMP_Text messageForUser; // Zone de texte pour les messages d'erreur adressés à l'utilisateur
 
 	private GameData gameData;
-	private TMP_Text messageForUser; // Zone de texte pour les messages d'erreur adressés à l'utilisateur
 	private List<string> listCompSelectUser = new List<string>(); // Enregistre temporairement les compétences séléctionnées par le user
 	private List<string> listCompSelectUserSave = new List<string>(); // Contient les compétences selectionnées par le user
 
@@ -40,10 +40,44 @@ public class ParamCompetenceSystem : FSystem
 	protected override void onStart()
 	{
 		gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		messageForUser = panelInfoUser.transform.Find("Panel").Find("Message").GetComponent<TMP_Text>(); 
 	}
 
-    private IEnumerator noSelect(GameObject comp)
+	// used on TitleScreen scene
+	public void openPanelSelectComp()
+	{
+		try
+		{
+			// Note pour chaque fonction les niveaux ou elles sont présentes
+			readXMLinfo();
+		}
+		catch
+		{
+			string message = "Erreur chargement fichiers de niveaux!\n";
+			message += "Vérifier que les fichiers existent ou sont bien au format XML";
+			displayMessageUser(message);
+			// Permetra de fermer le panel de selection des competences lorsque le user appuie sur le bouton ok du message d'erreur
+			panelSelectComp.GetComponent<ParamCompetenceSystemBridge>().closePanelParamComp = true;
+		}
+
+		try
+		{
+			// On charge les données pour chaque compétence
+			loadParamComp();
+			MainLoop.instance.StartCoroutine(startAfterFamillyOk());
+			// On démarre la coroutine pour attacher chaque compétence et sous-categorie et leur catégorie
+			MainLoop.instance.StartCoroutine(attacheComptWithCat());
+		}
+		catch
+		{
+			string message = "Erreur chargement fichier de parametrage des compétences!\n";
+			message += "Vérifié que le fichier csv et les informations contenues sont au bon format";
+			displayMessageUser(message);
+			// Permettra de fermer le panel de selection des compétences lorsque le user appuie sur le bouton ok du message d'erreur
+			panelSelectComp.GetComponent<ParamCompetenceSystemBridge>().closePanelParamComp = true;
+		}
+	}
+
+	private IEnumerator noSelect(GameObject comp)
     {
 		yield return null;
 
@@ -92,41 +126,6 @@ public class ParamCompetenceSystem : FSystem
 		displayCatAndComp();
 
 		MainLoop.instance.StopCoroutine(startAfterFamillyOk());
-	}
-
-	// used on TitleScreen scene
-	public void openPanelSelectComp()
-	{
-		try
-		{
-			// Note pour chaque fonction les niveaux ou elles sont présentes
-			readXMLinfo();
-		}
-		catch
-		{
-			string message = "Erreur chargement fichiers de niveaux!\n";
-			message += "Vérifier que les fichiers existent ou sont bien au format XML";
-			displayMessageUser(message);
-			// Permetra de fermer le panel de selection des competences lorsque le user appuie sur le bouton ok du message d'erreur
-			panelSelectComp.GetComponent<ParamCompetenceSystemBridge>().closePanelParamComp = true;
-		}
-
-		try
-		{
-			// On charge les données pour chaque compétence
-			loadParamComp();
-			MainLoop.instance.StartCoroutine(startAfterFamillyOk());
-			// On démarre la coroutine pour attacher chaque compétence et sous-categorie et leur catégorie
-			MainLoop.instance.StartCoroutine(attacheComptWithCat());
-		}
-		catch
-		{
-			string message = "Erreur chargement fichier de parametrage des compétences!\n";
-			message += "Vérifié que le fichier csv et les informations contenues sont au bon format";
-			displayMessageUser(message);
-			// Permettra de fermer le panel de selection des compétences lorsque le user appuie sur le bouton ok du message d'erreur
-			panelSelectComp.GetComponent<ParamCompetenceSystemBridge>().closePanelParamComp = true;
-		}
 	}
 
 	// Chargement des parametres des compétences

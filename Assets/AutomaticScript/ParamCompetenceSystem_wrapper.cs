@@ -11,6 +11,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject prefabCateComp;
 	public UnityEngine.GameObject prefabComp;
 	public UnityEngine.GameObject ContentCompMenu;
+	public TMPro.TMP_Text messageForUser;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -22,6 +23,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "prefabCateComp", prefabCateComp);
 		MainLoop.initAppropriateSystemField (system, "prefabComp", prefabComp);
 		MainLoop.initAppropriateSystemField (system, "ContentCompMenu", ContentCompMenu);
+		MainLoop.initAppropriateSystemField (system, "messageForUser", messageForUser);
 	}
 
 	public void openPanelSelectComp()
