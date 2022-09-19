@@ -282,7 +282,7 @@ public class UISystem : FSystem {
 			// On parcourt les scripts containers pour identifer celui associé au robot 
 			foreach (GameObject container in f_viewportContainer)
 				// Si le container comporte le même nom que le robot
-				if (container.GetComponentInChildren<UIRootContainer>().associedAgentName == robot.GetComponent<AgentEdit>().agentName)
+				if (container.GetComponentInChildren<UIRootContainer>().scriptName == robot.GetComponent<AgentEdit>().associatedScriptName)
 					// On recupére le container qui contient le script à associer au robot
 					editableContainer = container.transform.Find("ScriptContainer").gameObject;
 

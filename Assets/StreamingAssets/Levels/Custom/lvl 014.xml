@@ -51,7 +51,7 @@
       <row value="-1" />
     </line>
   </map>
-  <actionBlocLimit>
+  <actionBlockLimit>
     <limit actionType="Forward" limit="1" />
     <limit actionType="TurnLeft" limit="1" />
     <limit actionType="TurnRight" limit="1" />
@@ -72,10 +72,10 @@
     <limit actionType="FieldGate" limit="0" />
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="1" />
-  </actionBlocLimit>
-  <player name="Agent 1" posX="5" posZ="1" direction="3" />
-  <enemy name="Sentinelle 1" posX="1" posZ="1" direction="0" range="2" selfRange="False" typeRange="0">
-    <script>
+  </actionBlockLimit>
+  <player associatedScriptName="Agent 1" posX="5" posZ="1" direction="3" />
+  <enemy associatedScriptName="Sentinelle 1" posX="1" posZ="1" direction="0" range="2" selfRange="False" typeRange="0" />
+  <script name="Sentinelle 1" editMode="0">
       <control type="While">
         <condition>
           <operator type="NotOperator">
@@ -94,7 +94,6 @@
         </control>
         </container>
       </control>
-    </script>
-  </enemy>
+  </script>
   <score twoStars="3875" threeStars="4875"/>
 </level>

@@ -36,9 +36,11 @@
       <row value="1" />
     </line>
   </map>
-  <dialogs dialog="Pour déplacer la caméra, utilise ZQSD ou les flèches directionnelles du clavier." />
-  <dialogs dialog="Pour zoomer ou dézoomer, utilise la molette de la souris." />
-  <actionBlocLimit>
+  <dialogs>
+	<dialog text="Pour déplacer la caméra, utilise ZQSD ou les flèches directionnelles du clavier." />
+	<dialog text="Pour zoomer ou dézoomer, utilise la molette de la souris." />
+  </dialogs>
+  <actionBlockLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="0" />
     <limit actionType="TurnRight" limit="0" />
@@ -59,7 +61,7 @@
     <limit actionType="FieldGate" limit="0" />
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="0" />
-  </actionBlocLimit>
-  <player name="Agent 1" posX="4" posZ="1" direction="3" />
+  </actionBlockLimit>
+  <player associatedScriptName="Agent 1" posX="4" posZ="1" direction="3" />
   <score twoStars="5750" threeStars="6750"/>
 </level>

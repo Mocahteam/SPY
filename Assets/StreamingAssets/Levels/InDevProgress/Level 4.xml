@@ -43,9 +43,11 @@
       <row value="1" />
     </line>
   </map>
-  <dialogs dialog="Attention ! Il y a une caméra devant toi ! Par chance, son champ de détection est très petit, mais elle te bloque tout de même le passage." />
-  <dialogs dialog="Il semblerait que cette caméra a un comportement. Clique dessus pour analyser son comportement pour y trouver une faille et passer. De plus, ce modèle de caméra ne semble pas voir en dessous d'elle même." />
-  <actionBlocLimit>
+  <dialogs>
+	<dialog text="Attention ! Il y a une caméra devant toi ! Par chance, son champ de détection est très petit, mais elle te bloque tout de même le passage." />
+	<dialog text="Il semblerait que cette caméra a un comportement. Clique dessus pour analyser son comportement pour y trouver une faille et passer. De plus, ce modèle de caméra ne semble pas voir en dessous d'elle même." />
+  </dialogs>
+  <actionBlockLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="-1" />
     <limit actionType="TurnRight" limit="-1" />
@@ -66,10 +68,10 @@
     <limit actionType="FieldGate" limit="0" />
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="-1" />
-  </actionBlocLimit>
-  <player name="Agent 1" posX="3" posZ="1" direction="3" />
-  <enemy name="Sentinelle 1" posX="1" posZ="1" direction="2" range="1" selfRange="False" typeRange="0">
-    <script>
+  </actionBlockLimit>
+  <player associatedScriptName="Agent 1" posX="3" posZ="1" direction="3" />
+  <enemy associatedScriptName="Sentinelle 1" posX="1" posZ="1" direction="2" range="1" selfRange="False" typeRange="0"/>
+  <script name="Sentinelle 1" editMode="0">
       <control type="Forever">
         <action type="Wait"/>
         <action type="Wait"/>
@@ -78,6 +80,5 @@
         <action type="Wait"/>
         <action type="TurnRight"/>
       </control>
-    </script>
-  </enemy>
+  </script>
 </level>

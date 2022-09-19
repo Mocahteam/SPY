@@ -53,7 +53,7 @@
       <row value="1" />
     </line>
   </map>
-  <actionBlocLimit>
+  <actionBlockLimit>
     <limit actionType="Forward" limit="1" />
     <limit actionType="TurnLeft" limit="-1" />
     <limit actionType="TurnRight" limit="-1" />
@@ -74,15 +74,15 @@
     <limit actionType="FieldGate" limit="-1" />
     <limit actionType="Terminal" limit="-1" />
     <limit actionType="Exit" limit="0" />
-  </actionBlocLimit>
-  <activable posX="3" posZ="1" direction="1">
+  </actionBlockLimit>
+  <console posX="3" posZ="1" direction="1">
     <slot slot="0" />
-  </activable>
-  <activable posX="5" posZ="1" direction="1">
+  </console>
+  <console posX="5" posZ="1" direction="1">
     <slot slot="1" />
-  </activable>
+  </console>
   <door posX="2" posZ="1" slot="0" direction="2" />
   <door posX="4" posZ="1" slot="1" direction="2" />
-  <player name="Agent 1" posX="7" posZ="1" direction="3" />
+  <player associatedScriptName="Agent 1" posX="7" posZ="1" direction="3" />
   <score twoStars="0" threeStars="5500"/>
 </level>

@@ -49,8 +49,10 @@
       <row value="1" />
     </line>
   </map>
-  <dialogs dialog="Attention !&#xA;Ce n'est pas exactement le même niveau." />
-  <actionBlocLimit>
+  <dialogs>
+	<dialog text="Attention !&#xA;Ce n'est pas exactement le même niveau." />
+  </dialogs>
+  <actionBlockLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="-1" />
     <limit actionType="TurnRight" limit="-1" />
@@ -71,10 +73,10 @@
     <limit actionType="FieldGate" limit="0" />
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="0" />
-  </actionBlocLimit>
-  <player name="Agent 1" posX="4" posZ="2" direction="3" />
-  <enemy name="Sentinelle 1" posX="3" posZ="1" direction="0" range="1" selfRange="True" typeRange="0">
-    <script>
+  </actionBlockLimit>
+  <player associatedScriptName="Agent 1" posX="4" posZ="2" direction="3" />
+  <enemy associatedScriptName="Sentinelle 1" posX="3" posZ="1" direction="0" range="1" selfRange="True" typeRange="0" />
+  <script name="Sentinelle 1">
       <control type="Forever">
         <action type="Forward"/>
         <action type="Forward"/>
@@ -84,7 +86,6 @@
         <action type="TurnLeft"/>
         <action type="TurnLeft"/>
       </control>
-    </script>
-  </enemy>
+  </script>
   <score twoStars="3071" threeStars="4071"/>
 </level>

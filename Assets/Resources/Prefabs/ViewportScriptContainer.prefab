@@ -134,7 +134,7 @@ MonoBehaviour:
   m_HideSoftKeyboard: 0
   m_CharacterValidation: 0
   m_RegexValue: 
-  m_GlobalPointSize: 14
+  m_GlobalPointSize: 11
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
@@ -504,7 +504,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 390ae5b6d5b4ea542a10de01639cef92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  associedAgentName: Script 1
+  scriptName: Agent
+  editState: 1
 --- !u!114 &2876508349029538607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1112,12 +1113,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 11.6
-  m_fontSizeBase: 14
+  m_fontSize: 11
+  m_fontSizeBase: 8
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 2
-  m_fontSizeMax: 24
+  m_fontSizeMin: 8
+  m_fontSizeMax: 11
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -1130,7 +1131,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 50
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 1
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
@@ -1247,7 +1248,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 5.25
+  m_fontSize: 11
   m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1374,7 +1375,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Code de :'
+  m_text: 'Programme :'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1401,7 +1402,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 10.55
+  m_fontSize: 7.85
   m_fontSizeBase: 9
   m_fontWeight: 400
   m_enableAutoSizing: 1

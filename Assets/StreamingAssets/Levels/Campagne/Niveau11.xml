@@ -55,9 +55,11 @@
     </line>
 
   </map>
-  <dialogs dialog="Tu peux maintenant utiliser l'action attendre." img="WaitIcon.png"/>
-  <dialogs dialog ="Attention !&#xA;Observe bien le drone !&#xA;Il a lui aussi un script."/>
-  <actionBlocLimit>
+  <dialogs>
+	<dialog text="Tu peux maintenant utiliser l'action attendre." img="WaitIcon.png"/>
+	<dialog text="Attention !&#xA;Observe bien le drone !&#xA;Il a lui aussi un script."/>
+  </dialogs>
+  <actionBlockLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="-1" />
     <limit actionType="TurnRight" limit="-1" />
@@ -78,13 +80,12 @@
     <limit actionType="FieldGate" limit="0" />
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="0" />
-  </actionBlocLimit>
-  <player name="Agent 1" posX="4" posZ="2" direction="3" />
-  <enemy name="Sentinelle 1" posX="3" posZ="4" direction="1" range="2" selfRange="False" typeRange="0">
-    <script>
-        <action type="Wait"/>
-        <action type="TurnRight"/>
-    </script>
-  </enemy>
+  </actionBlockLimit>
+  <player associatedScriptName="Agent 1" posX="4" posZ="2" direction="3" />
+  <enemy associatedScriptName="Sentinelle 1" posX="3" posZ="4" direction="1" range="2" selfRange="False" typeRange="0" />
+  <script name="Sentinelle 1">
+	<action type="Wait"/>
+	<action type="TurnRight"/>
+  </script>
   <score twoStars="4142" threeStars="5142"/>
 </level>

@@ -26,10 +26,12 @@
       <row value="1" />
     </line>
   </map>
-  <dialogs dialog="Bienvenue dans Spy !&#xA; Ton objectif est de t'échapper en atteignant la sortie (téléporteur rouge) !" />
-  <dialogs dialog="Pour cela, il faut donner des ordres au robot en faisant glisser les actions dans la partie blanche de la fenêtre de script." img="drophere.png" />
-  <dialogs dialog="Tu peux utiliser le clic droit sur une action du script pour la supprimer, le bouton ci-dessous permet de vider la fenêtre de script d'un seul coup."  img="resetButton.png"/>
-  <actionBlocLimit>
+  <dialogs>
+	<dialog text="Bienvenue dans Spy !&#xA; Ton objectif est de t'échapper en atteignant la sortie (téléporteur rouge) !" />
+	<dialog text="Pour cela, il faut donner des ordres au robot en faisant glisser les actions dans la partie blanche de la fenêtre de script." img="drophere.png" />
+	<dialog text="Tu peux utiliser le clic droit sur une action du script pour la supprimer, le bouton ci-dessous permet de vider la fenêtre de script d'un seul coup."  img="resetButton.png"/>
+  </dialogs>
+  <actionBlockLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="0" />
     <limit actionType="TurnRight" limit="0" />
@@ -50,7 +52,7 @@
     <limit actionType="FieldGate" limit="0" />
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="0" />
-  </actionBlocLimit>
-  <player name="Agent 1" posX="2" posZ="1" direction="3" />
+  </actionBlockLimit>
+  <player associatedScriptName="Agent 1" posX="2" posZ="1" direction="3" />
   <score twoStars="7999" threeStars="10500"/>
 </level>

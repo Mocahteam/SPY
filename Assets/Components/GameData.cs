@@ -8,7 +8,7 @@ public class GameData : MonoBehaviour {
 	public (string, int) levelToLoad = ("Campagne", 1); //directory name, level index
 	public int[] levelToLoadScore; //levelToLoadScore[0] = best score (3 stars) ; levelToLoadScore[1] = medium score (2 stars)
 	public List<(string,string)> dialogMessage; //list of (dialogText, imageName)
-	public Dictionary<string, int> actionBlocLimit; //Is block available in library?
+	public Dictionary<string, int> actionBlockLimit; //Is block available in library?
 	public string scoreKey = "score";
 	public int totalStep;
 	public int totalActionBloc;

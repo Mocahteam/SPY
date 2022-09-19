@@ -107,9 +107,9 @@ public class HistoryManager : FSystem
 		for (int containerCpt = 0; containerCpt < EditableCanvas.transform.GetChild(0).childCount; containerCpt++)
 		{
 			// look for associated agent
-			string associatedAgent = EditableCanvas.transform.GetChild(0).GetChild(containerCpt).GetComponentInChildren<UIRootContainer>().associedAgentName;
+			string associatedAgent = EditableCanvas.transform.GetChild(0).GetChild(containerCpt).GetComponentInChildren<UIRootContainer>().scriptName;
 			foreach (GameObject agent in f_agent)
-				if (associatedAgent == agent.GetComponent<AgentEdit>().agentName)
+				if (associatedAgent == agent.GetComponent<AgentEdit>().associatedScriptName)
 				{
 					ScriptRef sr = agent.GetComponent<ScriptRef>();
 					if (sr.nbOfInactions == 1)

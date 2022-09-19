@@ -18,6 +18,8 @@ public class CameraSystem : FSystem {
 
 	// Déplacement aux touches du clavier
 	public float cameraMovingSpeed;
+	// Rotation au clic droit
+	public float cameraRotationSpeed;
 	// Vitesse de Zoom
 	public float cameraZoomSpeed;
 	// Distance minimale de zoom
@@ -45,7 +47,6 @@ public class CameraSystem : FSystem {
 		// move camera front/back depending on Vertical axis
 		if (Input.GetAxis("Vertical") != 0)
 		{
-			Transform camera = Camera.main.transform;
 			Transform cameraTarget = Camera.main.transform.parent.parent;
 			cameraTarget.Translate(-Input.GetAxis("Vertical") * Time.deltaTime * cameraMovingSpeed, 0, 0);
 			unfocusAgent();
@@ -53,7 +54,6 @@ public class CameraSystem : FSystem {
 		// move camera left/right de pending on Horizontal axis
 		if (Input.GetAxis("Horizontal") != 0)
 		{
-			Transform camera = Camera.main.transform;
 			Transform cameraTarget = Camera.main.transform.parent.parent;
 			cameraTarget.Translate(0, 0, Input.GetAxis("Horizontal") * Time.deltaTime * cameraMovingSpeed);
 			unfocusAgent();
@@ -75,7 +75,7 @@ public class CameraSystem : FSystem {
             Cursor.lockState = CursorLockMode.Locked;
 	        Cursor.visible = false;
 			Transform cameraTarget = Camera.main.transform.parent.parent;
-			cameraTarget.Translate(-Input.GetAxisRaw("Mouse Y") * Time.deltaTime * dragSpeed, 0, Input.GetAxisRaw("Mouse X") * Time.deltaTime * dragSpeed);
+			cameraTarget.Translate(Input.GetAxisRaw("Mouse Y") * Time.deltaTime * dragSpeed, 0, -Input.GetAxisRaw("Mouse X") * Time.deltaTime * dragSpeed);
 			unfocusAgent();
 		}
 
@@ -117,8 +117,8 @@ public class CameraSystem : FSystem {
 
 	private void rotateCamera(float x, float y)
 	{
-		Camera.main.transform.parent.parent.Rotate(Vector3.up, 90f * x * Time.deltaTime);
-		Camera.main.transform.parent.Rotate(Vector3.back, 90f * y * Time.deltaTime);
+		Camera.main.transform.parent.parent.Rotate(Vector3.up, 90f * x * cameraRotationSpeed * Time.deltaTime);
+		Camera.main.transform.parent.Rotate(Vector3.back, 90f * y * cameraRotationSpeed * Time.deltaTime);
 	}
 
 	public void focusOnAgent(GameObject agent)

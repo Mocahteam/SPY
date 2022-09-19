@@ -89,8 +89,10 @@
       <row value="1" />
     </line>
   </map>
-  <dialogs dialog="Attention ! Il y a des caméras de sécurité ici. Tu peux voir leur champ de vision en rouge. Faufile toi sans te faire repérer." />
-  <actionBlocLimit>
+  <dialogs>
+	<dialog text="Attention ! Il y a des caméras de sécurité ici. Tu peux voir leur champ de vision en rouge. Faufile toi sans te faire repérer." />
+  </dialogs>
+  <actionBlockLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="-1" />
     <limit actionType="TurnRight" limit="-1" />
@@ -111,8 +113,8 @@
     <limit actionType="FieldGate" limit="0" />
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="-1" />
-  </actionBlocLimit>
-  <player name="Agent 1" posX="7" posZ="3" direction="3" />
-  <enemy name="Sentinelle 1" posX="3" posZ="1" direction="0" range="2" selfRange="False" typeRange="0"/>
-  <enemy name="Sentinelle 2" posX="5" posZ="5" direction="1" range="2" selfRange="False" typeRange="0"/>
+  </actionBlockLimit>
+  <player associatedScriptName="Agent 1" posX="7" posZ="3" direction="3" />
+  <enemy associatedScriptName="Sentinelle 1" posX="3" posZ="1" direction="0" range="2" selfRange="False" typeRange="0"/>
+  <enemy associatedScriptName="Sentinelle 2" posX="5" posZ="5" direction="1" range="2" selfRange="False" typeRange="0"/>
 </level>

@@ -95,20 +95,20 @@ public class BlocLimitationManager : FSystem
 	// Le désactive si la limite est atteinte
 	// Met à jour le compteur
 	private void updateBlocLimit(GameObject draggableGO){
-		if (gameData.actionBlocLimit.ContainsKey(draggableGO.name))
+		if (gameData.actionBlockLimit.ContainsKey(draggableGO.name))
 		{
-			bool isActive = gameData.actionBlocLimit[draggableGO.name] != 0; // negative means no limit
+			bool isActive = gameData.actionBlockLimit[draggableGO.name] != 0; // negative means no limit
 			GameObjectManager.setGameObjectState(draggableGO, isActive);
 			if (isActive)
 			{
-				if (gameData.actionBlocLimit[draggableGO.name] < 0)
+				if (gameData.actionBlockLimit[draggableGO.name] < 0)
 					// unlimited action => hide counter
 					GameObjectManager.setGameObjectState(draggableGO.transform.GetChild(1).gameObject, false);
 				else
 				{
 					// limited action => init and show counter
 					GameObject counterText = draggableGO.transform.GetChild(1).gameObject;
-					counterText.GetComponent<TextMeshProUGUI>().text = "Reste " + gameData.actionBlocLimit[draggableGO.name].ToString();
+					counterText.GetComponent<TextMeshProUGUI>().text = "Reste " + gameData.actionBlockLimit[draggableGO.name].ToString();
 					GameObjectManager.setGameObjectState(counterText, true);
 				}
 			}
@@ -119,10 +119,10 @@ public class BlocLimitationManager : FSystem
 	private void useAction(GameObject go){
 		LibraryItemRef lir = go.GetComponent<LibraryItemRef>();
 		string actionKey = lir.linkedTo.name;
-		if(actionKey != null && gameData.actionBlocLimit.ContainsKey(actionKey))
+		if(actionKey != null && gameData.actionBlockLimit.ContainsKey(actionKey))
 		{
-			if (gameData.actionBlocLimit[actionKey] > 0)
-				gameData.actionBlocLimit[actionKey] -= 1;
+			if (gameData.actionBlockLimit[actionKey] > 0)
+				gameData.actionBlockLimit[actionKey] -= 1;
 			updateBlocLimit(lir.linkedTo);		
 		}
 		GameObjectManager.removeComponent<Dropped>(go);
@@ -131,9 +131,9 @@ public class BlocLimitationManager : FSystem
 	// Restore item in library
 	private void unuseAction(GameObject go){
 		AddOne[] addOnes =  go.GetComponents<AddOne>();
-		if(gameData.actionBlocLimit.ContainsKey(go.name)){
-			if (gameData.actionBlocLimit[go.name] >= 0)
-				gameData.actionBlocLimit[go.name] += addOnes.Length;
+		if(gameData.actionBlockLimit.ContainsKey(go.name)){
+			if (gameData.actionBlockLimit[go.name] >= 0)
+				gameData.actionBlockLimit[go.name] += addOnes.Length;
 			updateBlocLimit(go);
 		}
 		foreach(AddOne a in addOnes){

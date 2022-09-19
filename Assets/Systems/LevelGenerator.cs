@@ -18,10 +18,14 @@ public class LevelGenerator : FSystem {
 
 	// Famille contenant les agents editables
 	private Family f_level = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
+	private Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édités
+	private Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)), new AnyOfTags("Drone")); // On récupére les agents pouvant être édités
 
 	private List<List<int>> map;
 	private GameData gameData;
 	private int nbAgentCreate = 0; // Nombre d'agents créés
+	private int nbDroneCreate = 0; // Nombre de drones créés
+	private HashSet<string> scriptNameUsed = new HashSet<string>();
 
 	public GameObject camera;
 	public GameObject editableCanvas;// Le container qui contient les Viewport/script containers
@@ -74,6 +78,95 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
+	// Read xml document and create all game objects
+	public void XmlToLevel(XmlDocument doc, string nameLevel)
+	{
+
+		gameData.totalActionBloc = 0;
+		gameData.totalStep = 0;
+		gameData.totalExecute = 0;
+		gameData.totalCoin = 0;
+		gameData.levelToLoadScore = null;
+		gameData.dialogMessage = new List<(string, string)>();
+		gameData.actionBlockLimit = new Dictionary<string, int>();
+		map = new List<List<int>>();
+
+		XmlNode root = doc.ChildNodes[1];
+		foreach (XmlNode child in root.ChildNodes)
+		{
+			switch (child.Name)
+			{
+				case "info":
+					readXMLInfos(child);
+					break;
+				case "map":
+					readXMLMap(child);
+					break;
+				case "dialogs":
+					readXMLDialogs(child);
+					break;
+				case "actionBlockLimit":
+					readXMLLimits(child);
+					break;
+				case "coin":
+					createCoin(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value));
+					break;
+				case "console":
+					readXMLConsole(child);
+					break;
+				case "door":
+					createDoor(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
+					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), int.Parse(child.Attributes.GetNamedItem("slot").Value));
+					break;
+				case "player":
+					string nameAgentByUser = "";
+					XmlNode agentName = child.Attributes.GetNamedItem("associatedScriptName");
+					if (agentName != null && agentName.Value != "")
+						nameAgentByUser = agentName.Value;
+					createEntity(nameAgentByUser, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
+					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), "player");
+					break;
+				case "enemy":
+					string nameDroneByUser = "";
+					XmlNode droneName = child.Attributes.GetNamedItem("associatedScriptName");
+					if (droneName != null && droneName.Value != "")
+						nameDroneByUser = droneName.Value;
+					GameObject enemy = createEntity(nameDroneByUser, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
+					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), "enemy");
+					enemy.GetComponent<DetectRange>().range = int.Parse(child.Attributes.GetNamedItem("range").Value);
+					enemy.GetComponent<DetectRange>().selfRange = bool.Parse(child.Attributes.GetNamedItem("selfRange").Value);
+					enemy.GetComponent<DetectRange>().type = (DetectRange.Type)int.Parse(child.Attributes.GetNamedItem("typeRange").Value);
+					break;
+				case "script":
+					UIRootContainer.EditMode editModeByUser = UIRootContainer.EditMode.Locked;
+					XmlNode editMode = child.Attributes.GetNamedItem("editMode");
+					int tmpValue;
+					if (editMode != null && int.TryParse(editMode.Value, out tmpValue)) {
+						editModeByUser = (UIRootContainer.EditMode)tmpValue;
+					}
+					// Script has to be created after agents
+					MainLoop.instance.StartCoroutine(delayReadXMLScript(child, child.Attributes.GetNamedItem("name").Value, editModeByUser));
+					break;
+				case "score":
+					gameData.levelToLoadScore = new int[2];
+					gameData.levelToLoadScore[0] = int.Parse(child.Attributes.GetNamedItem("threeStars").Value);
+					gameData.levelToLoadScore[1] = int.Parse(child.Attributes.GetNamedItem("twoStars").Value);
+					break;
+			}
+		}
+
+		eraseMap();
+		generateMap();
+		activeDesactiveFunctionality();
+		GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
+	}
+
+	IEnumerator delayReadXMLScript(XmlNode scriptNode, string name, UIRootContainer.EditMode editMode)
+    {
+		yield return null;
+		readXMLScript(scriptNode, name, editMode);
+	}
+
 	// read the map and create wall, ground, spawn and exit
 	private void generateMap(){
 		for(int i = 0; i< map.Count; i++){
@@ -102,7 +195,7 @@ public class LevelGenerator : FSystem {
 	}
 
 	// Créer une entité agent ou robot et y associer un panel container
-	private GameObject createEntity(string nameAgent, int i, int j, Direction.Dir direction, string type, List<GameObject> script = null){
+	private GameObject createEntity(string nameAgent, int i, int j, Direction.Dir direction, string type){
 		GameObject entity = null;
 		switch(type){
 			case "player": // Robot
@@ -111,11 +204,6 @@ public class LevelGenerator : FSystem {
 			case "enemy": // Enemy
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.Level.transform.position + new Vector3(i*3,5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				break;
-		}
-        // Si la function permettant de changer le nom de l'agent est activée
-        if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F9"))
-        {
-			entity.GetComponent<AgentEdit>().editState = AgentEdit.EditMode.Editable;
 		}
 
 		// Charger l'agent aux bonnes coordonées dans la bonne direction
@@ -139,62 +227,31 @@ public class LevelGenerator : FSystem {
 			nbAgentCreate++;
 			// On nomme l'agent
 			AgentEdit agentEdit = entity.GetComponent<AgentEdit>();
-            if (nameAgent != "")
-            {
-				agentEdit.agentName = nameAgent;
-			}
-            else
-            {
-				if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F9"))
-				{
-					agentEdit.agentName = "Agent" + nbAgentCreate;
-				}
-				else
-				{
-					agentEdit.agentName = "Script " + nbAgentCreate;
-				}
-			}
-
-			// Si l'agent est en mode Locked ou Synchro ou qu'un script est défini, on crée une zone de programmation dédiée
-			if (agentEdit.editState == AgentEdit.EditMode.Locked || agentEdit.editState == AgentEdit.EditMode.Synch || script != null)
+			if (nameAgent != "")
+				agentEdit.associatedScriptName = nameAgent;
+			else
 			{
-				GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = agentEdit.agentName, editState = agentEdit.editState, script = script });
+				if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F9"))
+					agentEdit.associatedScriptName = "Agent" + nbAgentCreate;
+				else
+					agentEdit.associatedScriptName = "Script " + nbAgentCreate;
 			}
 
 			// Chargement de l'icône de l'agent sur la localisation
 			executablePanel.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
-			executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = entity.GetComponent<AgentEdit>().agentName;
-			// Si on autorise le changement de nom on dévérouille la possibilité d'écrire dans la zone de nom du robot
-			if (entity.GetComponent<AgentEdit>().editState != AgentEdit.EditMode.Locked)
-			{
-				executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().interactable = true;
-			}
+			executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = entity.GetComponent<AgentEdit>().associatedScriptName;
 		}
 		else if (type == "enemy")
 		{
+			nbDroneCreate++;
 			// Chargement de l'icône de l'agent sur la localisation
 			executablePanel.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
 			if(nameAgent != "")
-            {
 				executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = nameAgent;
-			}
             else
-            {
-				executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = "Drone";
-			}
-
-			if (script != null)
-			{
-				GameObject tmpContainer = GameObject.Instantiate(scriptref.executableScript);
-				foreach (GameObject go in script)
-					go.transform.SetParent(tmpContainer.transform, false); //add actions to container
-				EditingUtility.fillExecutablePanel(tmpContainer, scriptref.executableScript, entity.tag);
-				// On fait apparaitre le panneau du robot
-				scriptref.executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
-				Object.Destroy(tmpContainer);
-			}
+				executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = "Drone "+nbDroneCreate;
 		}
 
 		AgentColor ac = MainLoop.instance.GetComponent<AgentColor>();
@@ -216,7 +273,7 @@ public class LevelGenerator : FSystem {
 		GameObjectManager.bind(door);
 	}
 
-	private void createActivable(int i, int j, List<int> slotIDs, Direction.Dir orientation)
+	private void createConsole(int i, int j, List<int> slotIDs, Direction.Dir orientation)
 	{
 		GameObject activable = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ActivableConsole") as GameObject, gameData.Level.transform.position + new Vector3(i * 3, 3, j * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
 
@@ -263,84 +320,6 @@ public class LevelGenerator : FSystem {
 			GameObjectManager.unbind(go.gameObject);
 			Object.Destroy(go.gameObject);
 		}
-	}
-
-	// Read xml document and create all game objects
-	public void XmlToLevel(XmlDocument doc, string nameLevel)
-	{
-
-		gameData.totalActionBloc = 0;
-		gameData.totalStep = 0;
-		gameData.totalExecute = 0;
-		gameData.totalCoin = 0;
-		gameData.levelToLoadScore = null;
-		gameData.dialogMessage = new List<(string, string)>();
-		gameData.actionBlocLimit = new Dictionary<string, int>();
-		map = new List<List<int>>();
-
-		XmlNode root = doc.ChildNodes[1];
-		foreach(XmlNode child in root.ChildNodes){
-			switch(child.Name){
-				case "info":
-					readXMLInfos(child);
-					break;
-				case "map":
-					readXMLMap(child);
-					break;
-				case "dialogs":
-					string src = null;
-					//optional xml attribute
-					if(child.Attributes["img"] !=null)
-						src = child.Attributes.GetNamedItem("img").Value;
-					gameData.dialogMessage.Add((child.Attributes.GetNamedItem("dialog").Value, src));
-					break;
-				case "actionBlocLimit":
-					readXMLLimits(child);
-					break;
-				case "coin":
-					createCoin(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value));
-					break;
-				case "activable":
-					readXMLActivable(child);
-					break;
-				case "door":
-					createDoor(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
-					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), int.Parse(child.Attributes.GetNamedItem("slot").Value));
-					break;
-				case "player":
-					string nameAgentByUser = "";
-					if(child.Attributes.GetNamedItem("name").Value != "")
-                    {
-						nameAgentByUser = child.Attributes.GetNamedItem("name").Value;
-					}
-					createEntity(nameAgentByUser, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
-					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),"player", readXMLScript(child.ChildNodes[0]));
-					break;		
-				case "enemy":
-					string nameSentinelleByUser = "";
-					if (child.Attributes.GetNamedItem("name").Value != "")
-					{
-						nameSentinelleByUser = child.Attributes.GetNamedItem("name").Value;
-					}
-					GameObject enemy = createEntity(nameSentinelleByUser, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
-					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value),"enemy", readXMLScript(child.ChildNodes[0]));
-					enemy.GetComponent<DetectRange>().range = int.Parse(child.Attributes.GetNamedItem("range").Value);
-					enemy.GetComponent<DetectRange>().selfRange = bool.Parse(child.Attributes.GetNamedItem("selfRange").Value);
-					enemy.GetComponent<DetectRange>().type = (DetectRange.Type)int.Parse(child.Attributes.GetNamedItem("typeRange").Value);
-					break;
-				
-				case "score":
-					gameData.levelToLoadScore = new int[2];
-					gameData.levelToLoadScore[0] = int.Parse(child.Attributes.GetNamedItem("threeStars").Value);
-					gameData.levelToLoadScore[1] = int.Parse(child.Attributes.GetNamedItem("twoStars").Value);
-					break;
-			}
-		}
-
-		eraseMap();
-		generateMap();
-		activeDesactiveFunctionality();
-        GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
 	}
 
 	// Si le niveau n'a pas été lancé par la selection de compétence,
@@ -403,6 +382,18 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
+	private void readXMLDialogs(XmlNode dialogs)
+	{
+		foreach (XmlNode dialog in dialogs.ChildNodes)
+		{
+			string src = null;
+			//optional xml attribute
+			if (dialog.Attributes["img"] != null)
+				src = dialog.Attributes.GetNamedItem("img").Value;
+			gameData.dialogMessage.Add((dialog.Attributes.GetNamedItem("text").Value, src));
+		}
+	}
+
 	private void readXMLLimits(XmlNode limitsNode){
 		List<string> listFuncGD = gameData.GetComponent<FunctionalityParam>().funcActiveInLevel;
 		// Si l'option F2 est activée
@@ -413,17 +404,17 @@ public class LevelGenerator : FSystem {
 			{
 				actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
 				// check if a GameObject exists with the same name
-				if (GameObject.Find(actionName) && !gameData.actionBlocLimit.ContainsKey(actionName)){
-					gameData.actionBlocLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
+				if (GameObject.Find(actionName) && !gameData.actionBlockLimit.ContainsKey(actionName)){
+					gameData.actionBlockLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
 				}
 			}
 			tcheckRequierement();
 		} // Sinon on met toutes les limites de bloc à 0
         else
         {
-			foreach(string nameFunc in gameData.actionBlocLimit.Keys)
+			foreach(string nameFunc in gameData.actionBlockLimit.Keys)
             {
-				gameData.actionBlocLimit[nameFunc] = 0;
+				gameData.actionBlockLimit[nameFunc] = 0;
 			}
 		}
 		
@@ -444,7 +435,7 @@ public class LevelGenerator : FSystem {
 					//On regarde si c'est un capteur ou non
 					if (element != "Captor")
 					{
-						if (gameData.actionBlocLimit[element] != 0)
+						if (gameData.actionBlockLimit[element] != 0)
 						{
 							errorPrgFunc = false;
 						}
@@ -462,13 +453,13 @@ public class LevelGenerator : FSystem {
 							// On passe tous les capteurs à -1
 							foreach (string captor in gameData.GetComponent<FunctionalityParam>().listCaptor)
                             {
-								gameData.actionBlocLimit[captor] = -1;
+								gameData.actionBlockLimit[captor] = -1;
 							}
 						}
 
 						if(errorPrgFunc && element != "Captor")
 						{
-							gameData.actionBlocLimit[element] = -1;
+							gameData.actionBlockLimit[element] = -1;
 						}
 					}
 				}
@@ -479,13 +470,13 @@ public class LevelGenerator : FSystem {
 	private bool tcheckCaptorProgramationValide()
     {
 		bool tcheck = false;
-		foreach(string ele in gameData.actionBlocLimit.Keys)
+		foreach(string ele in gameData.actionBlockLimit.Keys)
         {
             if (gameData.GetComponent<FunctionalityParam>().listCaptor.Contains(ele))
             {
 				// Si au moins un des capteurs est présent dans les limitations (autre que 0)
 				// On considére qu'il n'y a pas d'erreur de programation du niveau pour les capteurs
-				if(gameData.actionBlocLimit[ele] != 0)
+				if(gameData.actionBlockLimit[ele] != 0)
                 {
 					tcheck = true;
 				}
@@ -494,28 +485,58 @@ public class LevelGenerator : FSystem {
 		return tcheck;
 	}
 
-	private void readXMLActivable(XmlNode activableNode){
+	private void readXMLConsole(XmlNode activableNode){
 		List<int> slotsID = new List<int>();
 
 		foreach(XmlNode child in activableNode.ChildNodes){
 			slotsID.Add(int.Parse(child.Attributes.GetNamedItem("slot").Value));
 		}
 
-		createActivable(int.Parse(activableNode.Attributes.GetNamedItem("posX").Value), int.Parse(activableNode.Attributes.GetNamedItem("posZ").Value),
+		createConsole(int.Parse(activableNode.Attributes.GetNamedItem("posX").Value), int.Parse(activableNode.Attributes.GetNamedItem("posZ").Value),
 		 slotsID, (Direction.Dir)int.Parse(activableNode.Attributes.GetNamedItem("direction").Value));
 	}
 
 	// Lit le XML d'un script est génère les game objects des instructions
-	private List<GameObject> readXMLScript(XmlNode scriptNode)
+	private void readXMLScript(XmlNode scriptNode, string name, UIRootContainer.EditMode editMode)
 	{
 		if(scriptNode != null){
 			List<GameObject> script = new List<GameObject>();
 			foreach(XmlNode actionNode in scriptNode.ChildNodes){
 				script.Add(readXMLInstruction(actionNode));
 			}
-			return script;			
+
+			// Look for another script with the same name. If one already exists, we don't create one more.
+			if (!scriptNameUsed.Contains(name))
+            {
+				// Si la function permettant de changer le nom de l'agent est activée
+				if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F9"))
+					editMode = UIRootContainer.EditMode.Editable;
+
+				// Rechercher un drone associé à ce script
+				bool droneFound = false;
+				foreach (GameObject drone in f_drone)
+				{
+					ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
+					if (scriptRef.executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text == name)
+					{
+						GameObject tmpContainer = GameObject.Instantiate(scriptRef.executableScript);
+						foreach (GameObject go in script)
+							go.transform.SetParent(tmpContainer.transform, false); //add actions to container
+						EditingUtility.fillExecutablePanel(tmpContainer, scriptRef.executableScript, drone.tag);
+						// On fait apparaitre le panneau du robot
+						scriptRef.executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
+						Object.Destroy(tmpContainer);
+						droneFound = true;
+					}
+				}
+				if (!droneFound)
+					GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = name, editState = editMode, script = script });
+			}
+			else
+            {
+				Debug.LogWarning("Script \"" + name + "\" not created because another one already exists. Only one script with the same name is possible.");
+            }		
 		}
-		return null;
 	}
 
 	// Transforme le noeud d'action XML en gameObject

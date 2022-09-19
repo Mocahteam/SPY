@@ -98,8 +98,10 @@
       <row value="1" />
     </line>
   </map>
-  <dialogs dialog="Cette salle ne devrait pas vous poser de problèmes maintenant que vous êtes un expert. Cependant, il y a une pièce à récupérer, ce n'est pas obligatoire mais elle pourrait vous donner un meilleur score !" />
-  <actionBlocLimit>
+  <dialogs>
+	<dialog text="Cette salle ne devrait pas vous poser de problèmes maintenant que vous êtes un expert. Cependant, il y a une pièce à récupérer, ce n'est pas obligatoire mais elle pourrait vous donner un meilleur score !" />
+  </dialogs>
+  <actionBlockLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="-1" />
     <limit actionType="TurnRight" limit="-1" />
@@ -120,11 +122,11 @@
     <limit actionType="FieldGate" limit="0" />
     <limit actionType="Terminal" limit="-1" />
     <limit actionType="Exit" limit="0" />
-  </actionBlocLimit>
+  </actionBlockLimit>
   <coin posX="1" posZ="6" />
-  <player name="Agent 1" posX="1" posZ="1" direction="0" />
-  <enemy name="Sentinelle 1" posX="4" posZ="6" direction="3" range="3" selfRange="False" typeRange="0">
-    <script>
+  <player associatedScriptName="Agent 1" posX="1" posZ="1" direction="0" />
+  <enemy associatedScriptName="Sentinelle 1" posX="4" posZ="6" direction="3" range="3" selfRange="False" typeRange="0" />
+  <script name="Sentinelle 1" editMode="0">
       <control type="Forever">
         <action type="Wait"/>
         <action type="Wait"/>
@@ -139,6 +141,5 @@
         <action type="Wait"/>
         <action type="TurnRight"/>
       </control>
-    </script>
-  </enemy>
+  </script>
 </level>

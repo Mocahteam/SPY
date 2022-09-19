@@ -69,7 +69,7 @@
       <row value="1" />
     </line>
   </map>
-  <actionBlocLimit>
+  <actionBlockLimit>
     <limit actionType="Forward" limit="1" />
     <limit actionType="TurnLeft" limit="1" />
     <limit actionType="TurnRight" limit="1" />
@@ -90,9 +90,9 @@
     <limit actionType="FieldGate" limit="0" />
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="-1" />
-  </actionBlocLimit>
-  <player name="Agent 1" posX="2" posZ="1" direction="3" />
-  <script>
+  </actionBlockLimit>
+  <player associatedScriptName="Agent 1" posX="2" posZ="1" direction="3" />
+  <script name="Agent 1" editMode="0">
     <control type="For" nbFor="19">
       <control type="If">
         <condition>

@@ -23,9 +23,10 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if(text.Contains("#agentName"))
-            text = text.Replace("#agentName", GetComponent<AgentEdit>().agentName);
-        tooltip.ShowTooltip(text);
+        string formatedContent = text;
+        if (text.Contains("#agentName"))
+            formatedContent = text.Replace("#agentName", GetComponent<AgentEdit>().associatedScriptName);
+        tooltip.ShowTooltip(formatedContent);
         isOver = true;
     }
 
