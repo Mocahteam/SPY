@@ -124,8 +124,9 @@
     <limit actionType="Exit" limit="0" />
   </actionBlockLimit>
   <coin posX="1" posZ="6" />
-  <player associatedScriptName="Agent 1" posX="1" posZ="1" direction="0" />
-  <enemy associatedScriptName="Sentinelle 1" posX="4" posZ="6" direction="3" range="3" selfRange="False" typeRange="0" />
+  <player associatedScriptName="Bob" posX="1" posZ="1" direction="0" />
+  <script name="Bob" editMode="0" />
+  <enemy associatedScriptName="Sentinelle 1" posX="4" posZ="6" direction="0" range="3" selfRange="False" typeRange="0" />
   <script name="Sentinelle 1" editMode="0">
       <control type="Forever">
         <action type="Wait"/>

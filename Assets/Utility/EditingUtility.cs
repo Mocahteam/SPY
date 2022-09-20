@@ -120,7 +120,7 @@ public static class EditingUtility
 		return true;
 	}
 
-	// We create the an editable block from a library item (without binded it to FYFY, depending on context the object has to be binded or not)
+	// We create an editable block from a library item (without binded it to FYFY, depending on context the object has to be binded or not)
 	public static GameObject createEditableBlockFromLibrary(GameObject element, GameObject targetCanvas)
 	{
 		// On récupére le prefab associé à l'action de la librairie
@@ -347,6 +347,11 @@ public static class EditingUtility
 					GameObjectManager.unbind(dropZone);
 				dropZone.transform.SetParent(null);
 				GameObject.Destroy(dropZone);
+				// On parcourt les blocks qui composent le ElseContainer afin de les nettoyer également
+				foreach (Transform block in elseContainer)
+					// Si c'est le cas on fait un appel récursif
+					if (block.GetComponent<ControlElement>())
+						CleanControlBlock(block);
 			}
 
 			// On parcourt les blocks qui composent le container afin de les nettoyer également
@@ -434,62 +439,36 @@ public static class EditingUtility
 	 // Associe à chaque bloc le bloc qui sera executé aprés
 	public static void computeNext(GameObject container)
 	{
+		// parcourir tous les enfants jusqu'à l'avant dernier
+		for (int i = 0; i < container.transform.childCount - 1; i++)
+		{
+			Transform child = container.transform.GetChild(i);
+			child.GetComponent<BaseElement>().next = container.transform.GetChild(i + 1).gameObject;
+		}
+		// traitement de la dernière instruction
+		if (container.transform.childCount > 0)
+		{
+			Transform lastChild = container.transform.GetChild(container.transform.childCount - 1);
+			// On cherche un parent qui serait une boucle, si tel est le cas le next est cette boucle
+			Transform parent = container.transform.parent;
+			while (parent != null && parent.GetComponent<ForControl>() == null && parent.GetComponent<ForeverControl>() == null)
+				parent = parent.parent;
+			if (parent != null)
+				lastChild.GetComponent<BaseElement>().next = parent.gameObject;
+			// Sinon on ne fait rien et fin de la sequence
+		}
+
+		// parcourir tous les enfants jusqu'au dernier cette fois ci pour déclencher des appel récursif pour les structure de contrôle
 		for (int i = 0; i < container.transform.childCount; i++)
 		{
 			Transform child = container.transform.GetChild(i);
-			// Si l'action est une action basique et n'est pas la dernière
-			if (i < container.transform.childCount && child.GetComponent<BaseElement>())
-			{
-				// Si le bloc appartient à un for, il faut que le dernier élément ait comme next le block for
-				if ((container.transform.parent.GetComponent<ForeverControl>() || container.transform.parent.GetComponent<ForControl>()) && i == container.transform.childCount - 1)
-				{
-					child.GetComponent<BaseElement>().next = container.transform.parent.gameObject;
-					i = container.transform.childCount;
-				}// Si le bloc appartient à un if et qu'il est le dernier block de la partie action
-				else if (container.transform.parent.GetComponent<IfControl>() && i == container.transform.childCount - 1)
-				{
-					// On regarde si il reste des éléments dans le container parent
-					// Si oui on met l'élément suivant en next
-					// Sinon on ne fait rien et fin de la sequence
-					if (container.transform.parent.parent.childCount - 1 > container.transform.parent.GetSiblingIndex())
-					{
-						child.GetComponent<BaseElement>().next = container.transform.parent.parent.GetChild(container.transform.parent.GetSiblingIndex() + 1).gameObject;
-					}
-					else
-					{
-						// Exception, si le container parent parent est un for, on le met en next
-						if (container.transform.parent.parent.parent.GetComponent<ForControl>() || container.transform.parent.parent.parent.GetComponent<ForeverControl>())
-						{
-							child.GetComponent<BaseElement>().next = container.transform.parent.parent.parent.gameObject;
-						}
-					}
-				}// Sinon l'associer au block suivant
-				else if (i != container.transform.childCount - 1)
-				{
-					child.GetComponent<BaseElement>().next = container.transform.GetChild(i + 1).gameObject;
-				}
-			}// Sinon si c'est la derniére et une action basique
-			else if (i == container.transform.childCount - 1 && child.GetComponent<BaseElement>() && container.GetComponent<BaseElement>())
-			{
-				if (container.GetComponent<ForControl>() || container.GetComponent<ForeverControl>())
-					child.GetComponent<BaseElement>().next = container;
-				else if (container.GetComponent<IfControl>())
-					child.GetComponent<BaseElement>().next = container.GetComponent<BaseElement>().next;
-			}
-			// Si autre action que les actions basique
-			// Alors récursive de la fonction sur leur container
-			if (child.GetComponent<IfControl>() || child.GetComponent<ForControl>())
+			// Si le fils est un contrôle, appel résursif sur leurs containers
+			if (child.GetComponent<ControlElement>())
 			{
 				computeNext(child.transform.Find("Container").gameObject);
 				// Si c'est un else il ne faut pas oublier le container else
 				if (child.GetComponent<IfElseControl>())
-				{
 					computeNext(child.transform.Find("ElseContainer").gameObject);
-				}
-			}
-			else if (child.GetComponent<ForeverControl>())
-			{
-				computeNext(child.transform.Find("Container").gameObject);
 			}
 		}
 	}

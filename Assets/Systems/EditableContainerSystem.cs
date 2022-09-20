@@ -212,19 +212,6 @@ public class EditableContainerSystem : FSystem
 		MainLoop.instance.StartCoroutine(setEditableSize());
 	}
 
-	// return the container associated to the name. return null if no container with this name axists
-	private UIRootContainer selectContainerByName(string name)
-	{
-		foreach (GameObject container in f_scriptContainer)
-		{
-			UIRootContainer uiContainer = container.GetComponent<UIRootContainer>();
-			if (uiContainer.scriptName == name)
-				return uiContainer;
-		}
-
-		return null;
-	}
-
 	// Rename the script window
 	// See ContainerName in ViewportScriptContainer prefab in editor
 	public void newNameContainer(string newName)

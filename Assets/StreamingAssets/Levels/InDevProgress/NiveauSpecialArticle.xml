@@ -100,8 +100,9 @@
   <console posX="5" posZ="2" direction="1">
     <slot slot="0" />
   </console>
-  <door posX="4" posZ="2" slot="0" direction="3" />
-  <player associatedScriptName="Agent 1" posX="6" posZ="2" direction="3" />
+  <door posX="4" posZ="2" slot="0" direction="0" />
+  <player associatedScriptName="Bob" posX="6" posZ="2" direction="0" />
+  <script name="Bob" editMode="0" />
   <enemy associatedScriptName="Sentinelle 1" posX="3" posZ="4" direction="1" range="2" selfRange="False" typeRange="0" />
   <script name="Sentinelle 1" editMode="0">
         <action type="Wait"/>

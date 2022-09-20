@@ -141,16 +141,16 @@ public class CurrentActionManager : FSystem
 		switch (agent.GetComponent<Direction>().direction)
 		{
 			case Direction.Dir.North:
-				vec = new Vector2(0, 1);
+				vec = new Vector2(-1, 0);
 				break;
 			case Direction.Dir.South:
-				vec = new Vector2(0, -1);
-				break;
-			case Direction.Dir.East:
 				vec = new Vector2(1, 0);
 				break;
+			case Direction.Dir.East:
+				vec = new Vector2(0, 1);
+				break;
 			case Direction.Dir.West:
-				vec = new Vector2(-1, 0);
+				vec = new Vector2(0, -1);
 				break;
 		}
 

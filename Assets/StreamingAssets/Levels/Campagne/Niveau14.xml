@@ -71,13 +71,14 @@
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="0" />
   </actionBlockLimit>
-  <player associatedScriptName="Agent 1" posX="4" posZ="2" direction="3" />
-  <enemy associatedScriptName="Sentinelle 1" posX="3" posZ="1" direction="0" range="1" selfRange="False" typeRange="0" />
+  <player associatedScriptName="Bob" posX="4" posZ="2" direction="0" />
+  <script name="Bob" editMode="0" />
+  <enemy associatedScriptName="Sentinelle 1" posX="1" posZ="1" direction="2" range="1" selfRange="False" typeRange="0" />
   <script name="Sentinelle 1">
       <control type="Forever">
         <action type="Forward"/>
         <action type="Forward"/>
-        <action type="TurnLeft"/>
+        <action type="TurnRight"/>
       </control>
   </script>
   <score twoStars="4459" threeStars="5459"/>

@@ -57,7 +57,9 @@ public class HistoryManager : FSystem
 
 	private IEnumerator delayLoadHistory()
 	{
-		yield return null;// delay one frame time the editable container will be created
+		// delay two frame, time the editable container will be created
+		yield return null;
+		yield return null;
 		loadHistory();
 	}
 
@@ -108,35 +110,45 @@ public class HistoryManager : FSystem
 		{
 			// look for associated agent
 			string associatedAgent = EditableCanvas.transform.GetChild(0).GetChild(containerCpt).GetComponentInChildren<UIRootContainer>().scriptName;
+			GameObject agentSelected = null;
+			int minNbOfInaction = int.MaxValue;
 			foreach (GameObject agent in f_agent)
 				if (associatedAgent == agent.GetComponent<AgentEdit>().associatedScriptName)
 				{
 					ScriptRef sr = agent.GetComponent<ScriptRef>();
-					if (sr.nbOfInactions == 1)
+					if (sr.nbOfInactions < minNbOfInaction)
 					{
-						GameObject newWait = EditingUtility.createEditableBlockFromLibrary(libraryWait, canvas);
-						newWait.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
-						newWait.transform.SetAsLastSibling();
-					}
-					else if (sr.nbOfInactions > 1)
-					{
-						// Create for control
-						ForControl forCont = EditingUtility.createEditableBlockFromLibrary(libraryFor, canvas).GetComponent<ForControl>();
-						forCont.currentFor = 0;
-						forCont.nbFor = sr.nbOfInactions;
-						forCont.transform.GetComponentInChildren<TMP_InputField>().text = forCont.nbFor.ToString();
-						forCont.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
-						// Create Wait action
-						Transform forContainer = forCont.transform.Find("Container");
-						GameObject newWait = EditingUtility.createEditableBlockFromLibrary(libraryWait, canvas);
-						newWait.transform.SetParent(forContainer, false);
-						newWait.transform.SetAsFirstSibling();
-						// Set drop/empty zone
-						forContainer.GetChild(forContainer.childCount - 2).gameObject.SetActive(true); // enable drop zone
-						forContainer.GetChild(forContainer.childCount - 1).gameObject.SetActive(false); // disable empty zone
+						agentSelected = agent;
+						minNbOfInaction = sr.nbOfInactions;
 					}
 					sr.nbOfInactions = 0;
 				}
+			if (agentSelected != null)
+            {
+				if (minNbOfInaction == 1)
+				{
+					GameObject newWait = EditingUtility.createEditableBlockFromLibrary(libraryWait, canvas);
+					newWait.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
+					newWait.transform.SetAsLastSibling();
+				}
+				else if (minNbOfInaction > 1)
+				{
+					// Create for control
+					ForControl forCont = EditingUtility.createEditableBlockFromLibrary(libraryFor, canvas).GetComponent<ForControl>();
+					forCont.currentFor = 0;
+					forCont.nbFor = minNbOfInaction;
+					forCont.transform.GetComponentInChildren<TMP_InputField>().text = forCont.nbFor.ToString();
+					forCont.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
+					// Create Wait action
+					Transform forContainer = forCont.transform.Find("Container");
+					GameObject newWait = EditingUtility.createEditableBlockFromLibrary(libraryWait, canvas);
+					newWait.transform.SetParent(forContainer, false);
+					newWait.transform.SetAsFirstSibling();
+					// Set drop/empty zone
+					forContainer.GetChild(forContainer.childCount - 2).gameObject.SetActive(true); // enable drop zone
+					forContainer.GetChild(forContainer.childCount - 1).gameObject.SetActive(false); // disable empty zone
+				}
+			}
 		}
 
 		// Disable add container button

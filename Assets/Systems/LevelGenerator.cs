@@ -18,8 +18,8 @@ public class LevelGenerator : FSystem {
 
 	// Famille contenant les agents editables
 	private Family f_level = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
-	private Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édités
 	private Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)), new AnyOfTags("Drone")); // On récupére les agents pouvant être édités
+	private Family f_draggableElement = FamilyManager.getFamily(new AnyOfComponents(typeof(ElementToDrag)));
 
 	private List<List<int>> map;
 	private GameData gameData;
@@ -523,8 +523,12 @@ public class LevelGenerator : FSystem {
 						foreach (GameObject go in script)
 							go.transform.SetParent(tmpContainer.transform, false); //add actions to container
 						EditingUtility.fillExecutablePanel(tmpContainer, scriptRef.executableScript, drone.tag);
+						// bind all child
+						foreach (Transform child in scriptRef.executableScript.transform)
+							GameObjectManager.bind(child.gameObject);
 						// On fait apparaitre le panneau du robot
 						scriptRef.executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
+						GameObjectManager.setGameObjectState(scriptRef.executablePanel, true);
 						Object.Destroy(tmpContainer);
 						droneFound = true;
 					}
@@ -539,10 +543,17 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
+	private GameObject getLibraryItemByName(string itemName)
+    {
+		foreach (GameObject item in f_draggableElement)
+			if (item.name == itemName)
+				return item;
+		return null;
+	}
+
 	// Transforme le noeud d'action XML en gameObject
 	private GameObject readXMLInstruction(XmlNode actionNode){
 		GameObject obj = null;
-		BaseElement action = null;
 		Transform conditionContainer = null;
 		Transform firstContainerBloc = null;
 		Transform secondContainerBloc = null;
@@ -552,11 +563,10 @@ public class LevelGenerator : FSystem {
 				switch (actionNode.Attributes.GetNamedItem("type").Value)
                 {
 					case "If":
-						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("If"), canvas);
+						obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("If"), canvas);
 
 						conditionContainer = obj.transform.Find("ConditionContainer");
 						firstContainerBloc = obj.transform.Find("Container");
-						action = obj.GetComponent<IfControl>();
 
 						// On ajoute les éléments enfants dans les bons containers
 						foreach (XmlNode containerNode in actionNode.ChildNodes)
@@ -583,11 +593,10 @@ public class LevelGenerator : FSystem {
 						break;
 
 					case "IfElse":
-						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("IfElse"), canvas);
+						obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("IfElse"), canvas);
 						conditionContainer = obj.transform.Find("ConditionContainer");
 						firstContainerBloc = obj.transform.Find("Container");
 						secondContainerBloc = obj.transform.Find("ElseContainer");
-						action = obj.GetComponent<IfControl>();
 
 						// On ajoute les éléments enfants dans les bons containers
 						foreach (XmlNode containerNode in actionNode.ChildNodes)
@@ -619,9 +628,9 @@ public class LevelGenerator : FSystem {
 						break;
 
 					case "For":
-						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("For"), canvas);
+						obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("For"), canvas);
 						firstContainerBloc = obj.transform.Find("Container");
-						action = obj.GetComponent<ForControl>();
+						BaseElement action = obj.GetComponent<ForControl>();
 
 						((ForControl)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
 						obj.transform.GetComponentInChildren<TMP_InputField>().text = ((ForControl)action).nbFor.ToString();
@@ -631,10 +640,9 @@ public class LevelGenerator : FSystem {
 						break;
 
 					case "While":
-						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("While"), canvas);
+						obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("While"), canvas);
 						firstContainerBloc = obj.transform.Find("Container");
 						conditionContainer = obj.transform.Find("ConditionContainer");
-						action = obj.GetComponent<WhileControl>();
 
 						// On ajoute les éléments enfants dans les bons containers
 						foreach (XmlNode containerNode in actionNode.ChildNodes)
@@ -661,7 +669,7 @@ public class LevelGenerator : FSystem {
 						break;
 
 					case "Forever":
-						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("Forever"), canvas);
+						obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("Forever"), canvas);
 						firstContainerBloc = obj.transform.Find("Container");
 
 						if (actionNode.HasChildNodes)
@@ -670,7 +678,7 @@ public class LevelGenerator : FSystem {
 				}
 				break;
 			case "action":
-				obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find(actionNode.Attributes.GetNamedItem("type").Value), canvas);
+				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName(actionNode.Attributes.GetNamedItem("type").Value), canvas);
 				break;
         }
 

@@ -293,9 +293,7 @@ public class UISystem : FSystem {
 				EditingUtility.fillExecutablePanel(editableContainer, executableContainer, robot.tag);
 				// bind all child
 				foreach (Transform child in executableContainer.transform)
-				{
 					GameObjectManager.bind(child.gameObject);
-				}
 				// On développe le panneau au cas où il aurait été réduit
 				robot.GetComponent<ScriptRef>().executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
 			}

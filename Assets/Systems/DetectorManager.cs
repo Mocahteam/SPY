@@ -102,27 +102,6 @@ public class DetectorManager : FSystem {
                         stop = false;
                         for (int i = 0; i < dr.range; i++)
                         {
-                            int x = drone_pos.x;
-                            int z = drone_pos.z + i + 1;
-                            foreach (GameObject wall in f_wall)
-                                if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
-                                    stop = true;
-                            if (stop)
-                                break;
-                            else
-                            {
-                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
-                                obj.GetComponent<Position>().x = x;
-                                obj.GetComponent<Position>().z = z;
-                                obj.GetComponent<Detector>().owner = drone;
-                                GameObjectManager.bind(obj);
-                            }
-                        }
-                        break;
-                    case Direction.Dir.West:
-                        stop = false;
-                        for (int i = 0; i < dr.range; i++)
-                        {
                             int x = drone_pos.x - i - 1;
                             int z = drone_pos.z;
                             foreach (GameObject wall in f_wall)
@@ -140,7 +119,7 @@ public class DetectorManager : FSystem {
                             }
                         }
                         break;
-                    case Direction.Dir.South:
+                    case Direction.Dir.West:
                         stop = false;
                         for (int i = 0; i < dr.range; i++)
                         {
@@ -161,12 +140,33 @@ public class DetectorManager : FSystem {
                             }
                         }
                         break;
-                    case Direction.Dir.East:
+                    case Direction.Dir.South:
                         stop = false;
                         for (int i = 0; i < dr.range; i++)
                         {
                             int x = drone_pos.x + i + 1;
                             int z = drone_pos.z;
+                            foreach (GameObject wall in f_wall)
+                                if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
+                                    stop = true;
+                            if (stop)
+                                break;
+                            else
+                            {
+                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(x * 3, 1.5f, z * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+                                obj.GetComponent<Position>().x = x;
+                                obj.GetComponent<Position>().z = z;
+                                obj.GetComponent<Detector>().owner = drone;
+                                GameObjectManager.bind(obj);
+                            }
+                        }
+                        break;
+                    case Direction.Dir.East:
+                        stop = false;
+                        for (int i = 0; i < dr.range; i++)
+                        {
+                            int x = drone_pos.x;
+                            int z = drone_pos.z + i + 1;
                             foreach (GameObject wall in f_wall)
                                 if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().z == z)
                                     stop = true;

@@ -23,17 +23,17 @@ public class MoveSystem : FSystem {
     {
 		switch (agent.GetComponent<Direction>().direction)
 		{
-			case Direction.Dir.East:
-				agent.transform.rotation = Quaternion.Euler(0, 90, 0);
-				break;
 			case Direction.Dir.North:
+				agent.transform.rotation = Quaternion.Euler(0, -90, 0);
+				break;
+			case Direction.Dir.East:
 				agent.transform.rotation = Quaternion.Euler(0, 0, 0);
 				break;
-			case Direction.Dir.South:
+			case Direction.Dir.West:
 				agent.transform.rotation = Quaternion.Euler(0, 180, 0);
 				break;
-			case Direction.Dir.West:
-				agent.transform.rotation = Quaternion.Euler(0, -90, 0);
+			case Direction.Dir.South:
+				agent.transform.rotation = Quaternion.Euler(0, 90, 0);
 				break;
 		}
 	}
@@ -62,17 +62,17 @@ public class MoveSystem : FSystem {
 			// Manage orientation
 			Quaternion target = Quaternion.Euler(0, 0, 0);
 			switch(go.GetComponent<Direction>().direction){
-				case Direction.Dir.East:
-					target = Quaternion.Euler(0, 90, 0);
-					break;
 				case Direction.Dir.North:
+					target = Quaternion.Euler(0, -90, 0);
+					break;
+				case Direction.Dir.East:
 					target = Quaternion.Euler(0, 0, 0);
 					break;
-				case Direction.Dir.South:
+				case Direction.Dir.West:
 					target = Quaternion.Euler(0, 180, 0);
 					break;
-				case Direction.Dir.West:
-					target = Quaternion.Euler(0, -90, 0);
+				case Direction.Dir.South:
+					target = Quaternion.Euler(0, 90, 0);
 					break;
 			}
 			if(target.eulerAngles.y != go.transform.eulerAngles.y){
