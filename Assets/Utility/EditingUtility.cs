@@ -127,6 +127,11 @@ public static class EditingUtility
 		GameObject prefab = element.GetComponent<ElementToDrag>().actionPrefab;
 		// Create a dragged GameObject
 		GameObject newItem = UnityEngine.Object.Instantiate<GameObject>(prefab, element.transform);
+		// Ajout d'un TooltipContent identique à celui de l'inventaire
+		if (element.GetComponent<TooltipContent>()) {
+			TooltipContent tooltip = newItem.AddComponent<TooltipContent>();
+			tooltip.text = element.GetComponent<TooltipContent>().text;
+		}
 		// On l'attache au canvas pour le drag ou l'on veux
 		newItem.transform.SetParent(targetCanvas.transform);
 		// link with library

@@ -141,16 +141,16 @@ public class CurrentActionManager : FSystem
 		switch (agent.GetComponent<Direction>().direction)
 		{
 			case Direction.Dir.North:
-				vec = new Vector2(-1, 0);
+				vec = new Vector2(0, -1);
 				break;
 			case Direction.Dir.South:
-				vec = new Vector2(1, 0);
-				break;
-			case Direction.Dir.East:
 				vec = new Vector2(0, 1);
 				break;
+			case Direction.Dir.East:
+				vec = new Vector2(1, 0);
+				break;
 			case Direction.Dir.West:
-				vec = new Vector2(0, -1);
+				vec = new Vector2(-1, 0);
 				break;
 		}
 
@@ -160,19 +160,19 @@ public class CurrentActionManager : FSystem
 			case "Wall": // walls
 				foreach (GameObject wall in f_wall)
 					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-					 wall.GetComponent<Position>().z == agent.GetComponent<Position>().z + vec.y)
+					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
 				break;
 			case "FieldGate": // doors
 				foreach (GameObject door in f_door)
 					if (door.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-					 door.GetComponent<Position>().z == agent.GetComponent<Position>().z + vec.y)
+					 door.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
 				break;
 			case "Enemie": // ennemies
 				foreach (GameObject drone in f_drone)
 					if (drone.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-						drone.GetComponent<Position>().z == agent.GetComponent<Position>().z + vec.y)
+						drone.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
 				break;
 			case "Terminal": // consoles
@@ -180,14 +180,14 @@ public class CurrentActionManager : FSystem
 				{
 					vec = new Vector2(0, 0);
 					if (console.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-						console.GetComponent<Position>().z == agent.GetComponent<Position>().z + vec.y)
+						console.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
 				}
 				break;
 			case "RedArea": // detectors
 				foreach (GameObject detector in f_redDetector)
 					if (detector.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-					 detector.GetComponent<Position>().z == agent.GetComponent<Position>().z + vec.y)
+					 detector.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
 				break;
 			case "Exit": // exits
@@ -195,7 +195,7 @@ public class CurrentActionManager : FSystem
 				{
 					vec = new Vector2(0, 0);
 					if (exit.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-					 exit.GetComponent<Position>().z == agent.GetComponent<Position>().z + vec.y)
+					 exit.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
 				}
 				break;
@@ -331,9 +331,9 @@ public class CurrentActionManager : FSystem
 				if (forAct.firstChild == null)
 				{
 					if (!forAct.gameObject.GetComponent<WhileControl>()) {
-					// reset nb iteration to 0
-					forAct.currentFor = 0;
-					forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+						// reset nb iteration to 0
+						forAct.currentFor = 0;
+						forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 					}
 					// return next action
 					if (forAct.next == null || forAct.next.GetComponent<BasicAction>())

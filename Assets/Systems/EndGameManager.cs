@@ -69,7 +69,7 @@ public class EndGameManager : FSystem {
 				foreach (GameObject exit in f_exit)
 				{
 					// check if positions are equals
-					if (player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().z == exit.GetComponent<Position>().z)
+					if (player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().y == exit.GetComponent<Position>().y)
 					{
 						nbEnd++;
 						// if all players reached end position

@@ -49,7 +49,7 @@ public class CurrentActionExecutor : FSystem {
 				break;
 			case BasicAction.ActionType.Activate:
 				foreach( GameObject actGo in f_activableConsole){
-					if(actGo.GetComponent<Position>().x == ca.agent.GetComponent<Position>().x && actGo.GetComponent<Position>().z == ca.agent.GetComponent<Position>().z){
+					if(actGo.GetComponent<Position>().x == ca.agent.GetComponent<Position>().x && actGo.GetComponent<Position>().y == ca.agent.GetComponent<Position>().y){
 						actGo.GetComponent<AudioSource>().Play();
 						// toggle activable GameObject
 						if (actGo.GetComponent<TurnedOn>())
@@ -68,27 +68,27 @@ public class CurrentActionExecutor : FSystem {
 	private void ApplyForward(GameObject go){
 		switch (go.GetComponent<Direction>().direction){
 			case Direction.Dir.North:
-				if(!checkObstacle(go.GetComponent<Position>().x - 1, go.GetComponent<Position>().z)){
-					go.GetComponent<Position>().x = go.GetComponent<Position>().x - 1;
-					go.GetComponent<Position>().z = go.GetComponent<Position>().z;
+				if(!checkObstacle(go.GetComponent<Position>().x, go.GetComponent<Position>().y - 1)){
+					go.GetComponent<Position>().x = go.GetComponent<Position>().x;
+					go.GetComponent<Position>().y = go.GetComponent<Position>().y - 1;
 				}
 				break;
 			case Direction.Dir.South:
-				if(!checkObstacle(go.GetComponent<Position>().x + 1,go.GetComponent<Position>().z)){
-					go.GetComponent<Position>().x = go.GetComponent<Position>().x + 1;
-					go.GetComponent<Position>().z = go.GetComponent<Position>().z;
+				if(!checkObstacle(go.GetComponent<Position>().x,go.GetComponent<Position>().y + 1)){
+					go.GetComponent<Position>().x = go.GetComponent<Position>().x;
+					go.GetComponent<Position>().y = go.GetComponent<Position>().y + 1;
 				}
 				break;
 			case Direction.Dir.East:
-				if(!checkObstacle(go.GetComponent<Position>().x,go.GetComponent<Position>().z + 1)){
-					go.GetComponent<Position>().x = go.GetComponent<Position>().x;
-					go.GetComponent<Position>().z = go.GetComponent<Position>().z + 1;
+				if(!checkObstacle(go.GetComponent<Position>().x + 1, go.GetComponent<Position>().y)){
+					go.GetComponent<Position>().x = go.GetComponent<Position>().x + 1;
+					go.GetComponent<Position>().y = go.GetComponent<Position>().y;
 				}
 				break;
 			case Direction.Dir.West:
-				if(!checkObstacle(go.GetComponent<Position>().x,go.GetComponent<Position>().z - 1)){
-					go.GetComponent<Position>().x = go.GetComponent<Position>().x;
-					go.GetComponent<Position>().z = go.GetComponent<Position>().z - 1;
+				if(!checkObstacle(go.GetComponent<Position>().x - 1, go.GetComponent<Position>().y)){
+					go.GetComponent<Position>().x = go.GetComponent<Position>().x - 1;
+					go.GetComponent<Position>().y = go.GetComponent<Position>().y;
 				}
 				break;
 		}
@@ -148,7 +148,7 @@ public class CurrentActionExecutor : FSystem {
 
 	private bool checkObstacle(int x, int z){
 		foreach( GameObject go in f_wall){
-			if(go.activeInHierarchy && go.GetComponent<Position>().x == x && go.GetComponent<Position>().z == z)
+			if(go.activeInHierarchy && go.GetComponent<Position>().x == x && go.GetComponent<Position>().y == z)
 				return true;
 		}
 		return false;

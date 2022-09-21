@@ -7,87 +7,15 @@
     <func name="F7"/>
   </info>
   <map>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="3" />
-      <row value="1" />
-      <row value="0" />
-      <row value="3" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="2" />
-      <row value="1" />
-      <row value="2" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
+    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="3" /><row value="1" /><row value="0" /><row value="3" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="1" /><row value="1" /><row value="0" /><row value="1" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="1" /><row value="1" /><row value="0" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="1" /><row value="1" /><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="0" /><row value="1" /><row value="0" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="0" /><row value="1" /><row value="0" /><row value="1" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="2" /><row value="1" /><row value="2" /><row value="1" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
   </map>
   <dialogs>
 	<dialog text="Dans cette mission, vous avez deux agents que vous devez diriger vers la sortie. Malheureusement, nous ne pouvons pas nous permettre d'utiliser plusieurs communications, ils recevront donc les même ordres." />
@@ -115,39 +43,8 @@
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="-1" />
   </actionBlockLimit>
-  <player associatedScriptName="Bob" posX="7" posZ="2" direction="0" />
-  <player associatedScriptName="Bob" posX="7" posZ="4" direction="0" />
-  <script name="Bob" editMode="0">
-	<control type="While">
-        <condition>
-          <operator type="NotOperator">
-            <captor type="Exit" />
-          </operator>
-        </condition>
-        <container>
-		  <control type="IfElse">
-			<condition>
-			  <operator type="NotOperator">
-				<captor type="Wall" />
-			  </operator>
-			</condition>
-			<container type="ThenContainer">
-				<action type="Forward" />
-			</container>
-			<container type="ElseContainer">
-				<action type="TurnLeft" />
-				<control type="If" >
-					<condition>
-					  <captor type="Wall" />
-					</condition>
-					<container>
-					  <action type="TurnBack" />
-					</container>
-				</control>
-			</container>
-		  </control>
-        </container>
-      </control>
-  </script>
+  <player associatedScriptName="Bob" posY="7" posX="2" direction="0" />
+  <player associatedScriptName="Bob" posY="7" posX="4" direction="0" />
+  <script name="Bob" editMode="0" />
   <score twoStars="4562" threeStars="4740"/>
 </level>

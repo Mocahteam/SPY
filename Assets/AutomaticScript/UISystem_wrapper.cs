@@ -56,11 +56,6 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "retry", null);
 	}
 
-	public void copyEditableScriptsToExecutablePanels()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "copyEditableScriptsToExecutablePanels", null);
-	}
-
 	public void setActiveEscapeMenu()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setActiveEscapeMenu", null);

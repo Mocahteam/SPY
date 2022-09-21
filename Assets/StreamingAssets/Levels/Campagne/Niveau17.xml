@@ -6,110 +6,29 @@
     <func name="F6"/>
   </info>
   <map>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="2" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="3" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
+    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
+    <line><row value="1" /><row value="2" /><row value="0" /><row value="0" /><row value="0" /><row value="0" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="0" /><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="0" /><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="0" /><row value="0" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="0" /><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="0" /><row value="0" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="3" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
   </map>
   <dialogs>
 	<dialog text="Regarde ! Il y a une pièce à récupérer. Ce n'est pas obligatoire mais elle pourrait te donner un meilleur score !" />
   </dialogs>
   <actionBlockLimit>
-    <limit actionType="Forward" limit="-1" />
-    <limit actionType="TurnLeft" limit="-1" />
-    <limit actionType="TurnRight" limit="-1" />
-    <limit actionType="Wait" limit="-1" />
-    <limit actionType="Activate" limit="-1" />
-    <limit actionType="TurnBack" limit="-1" />
+    <limit actionType="Forward" limit="2" />
+    <limit actionType="TurnLeft" limit="0" />
+    <limit actionType="TurnRight" limit="1" />
+    <limit actionType="Wait" limit="0" />
+    <limit actionType="Activate" limit="0" />
+    <limit actionType="TurnBack" limit="0" />
     <limit actionType="If" limit="0" />
     <limit actionType="IfElse" limit="0" />
-    <limit actionType="For" limit="-1" />
+    <limit actionType="For" limit="2" />
     <limit actionType="While" limit="0" />
     <limit actionType="AndOperator" limit="0" />
     <limit actionType="OrOperator" limit="0" />
@@ -121,11 +40,11 @@
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="0" />
   </actionBlockLimit>
-  <coin posX="1" posZ="6" />
-  <player associatedScriptName="Bob" posX="1" posZ="1" direction="2" />
+  <coin posY="1" posX="6" />
+  <player associatedScriptName="Bob" posY="1" posX="1" direction="2" />
   <script name="Bob" editMode="0" />
-  <enemy associatedScriptName="Sentinelle 1" posX="4" posZ="6" direction="0" range="3" selfRange="False" typeRange="0" />
-  <script name="Sentinelle 1">
+  <enemy associatedScriptName="Guarde 1" posY="4" posX="6" direction="0" range="3" selfRange="False" typeRange="0" />
+  <script name="Guarde 1">
       <control type="Forever">
         <action type="Wait"/>
         <action type="Wait"/>

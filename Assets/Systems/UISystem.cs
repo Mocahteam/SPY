@@ -263,9 +263,8 @@ public class UISystem : FSystem {
 		restartScene();
 	}
 
-	// See ExecuteButton in editor
 	// Copie les blocs du panneau d'édition dans le panneau d'exécution
-	public void copyEditableScriptsToExecutablePanels(){
+	private void copyEditableScriptsToExecutablePanels(){
 		//clean container for each robot and copy the new sequence
 		foreach (GameObject robot in f_player) {
 			GameObject executableContainer = robot.GetComponent<ScriptRef>().executableScript;
@@ -333,6 +332,8 @@ public class UISystem : FSystem {
 		if (!success || (success && Int32.Parse(newValue) < 0))
 		{
 			input.GetComponent<TMP_InputField>().text = "0";
+			res = 0;
 		}
+		input.GetComponentInParent<ForControl>().nbFor = res;
 	}
 }

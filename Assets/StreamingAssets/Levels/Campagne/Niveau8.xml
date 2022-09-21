@@ -5,41 +5,13 @@
     <func name="F8"/>
   </info>
   <map>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="3" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="2" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
+    <line><row value="1" /><row value="1" /><row value="1" /></line>
+    <line><row value="1" /><row value="3" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="2" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="1" /></line>
 
   </map>
   <dialogs>
@@ -69,11 +41,11 @@
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="0" />
   </actionBlockLimit>
-  <console posX="3" posZ="1" direction="3">
+  <console posY="3" posX="1" direction="3">
     <slot slot="0" />
   </console>
-  <door posX="2" posZ="1" slot="0" direction="0" />
-  <player associatedScriptName="Bob" posX="5" posZ="1" direction="0" />
+  <door posY="2" posX="1" slot="0" direction="0" />
+  <player associatedScriptName="Bob" posY="5" posX="1" direction="0" />
   <script name="Bob" editMode="0" />
   <score twoStars="4499" threeStars="5499"/>
 </level>

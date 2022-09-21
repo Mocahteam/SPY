@@ -44,7 +44,7 @@ public class MoveSystem : FSystem {
 		foreach( GameObject go in f_movable){
 			isMoving = false; 
 			// Manage position
-			if(go.transform.localPosition.x/3 != go.GetComponent<Position>().x || go.transform.localPosition.z/3 != go.GetComponent<Position>().z ||
+			if(go.transform.localPosition.z/3 != go.GetComponent<Position>().x || go.transform.localPosition.x/3 != go.GetComponent<Position>().y ||
 			 go.GetComponent<Position>().animate){
 				if(go.GetComponent<Animator>()){
 					go.GetComponent<Animator>().SetFloat("Run", 1f);	
@@ -52,7 +52,7 @@ public class MoveSystem : FSystem {
 				go.GetComponent<Position>().animate = false;
 				isMoving = true;
 				
-				go.transform.localPosition = Vector3.MoveTowards(go.transform.localPosition, new Vector3(go.GetComponent<Position>().x*3,go.transform.localPosition.y,go.GetComponent<Position>().z*3), moveSpeed* Time.deltaTime);
+				go.transform.localPosition = Vector3.MoveTowards(go.transform.localPosition, new Vector3(go.GetComponent<Position>().y*3,go.transform.localPosition.y,go.GetComponent<Position>().x*3), moveSpeed* Time.deltaTime);
 			}
 			else{
 				if(go.GetComponent<Animator>())

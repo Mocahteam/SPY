@@ -109,33 +109,29 @@ public class LevelGenerator : FSystem {
 					readXMLLimits(child);
 					break;
 				case "coin":
-					createCoin(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value));
+					createCoin(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value));
 					break;
 				case "console":
 					readXMLConsole(child);
 					break;
 				case "door":
-					createDoor(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
+					createDoor(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value),
 					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), int.Parse(child.Attributes.GetNamedItem("slot").Value));
 					break;
 				case "player":
+				case "enemy":
 					string nameAgentByUser = "";
 					XmlNode agentName = child.Attributes.GetNamedItem("associatedScriptName");
 					if (agentName != null && agentName.Value != "")
 						nameAgentByUser = agentName.Value;
-					createEntity(nameAgentByUser, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
-					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), "player");
-					break;
-				case "enemy":
-					string nameDroneByUser = "";
-					XmlNode droneName = child.Attributes.GetNamedItem("associatedScriptName");
-					if (droneName != null && droneName.Value != "")
-						nameDroneByUser = droneName.Value;
-					GameObject enemy = createEntity(nameDroneByUser, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posZ").Value),
-					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), "enemy");
-					enemy.GetComponent<DetectRange>().range = int.Parse(child.Attributes.GetNamedItem("range").Value);
-					enemy.GetComponent<DetectRange>().selfRange = bool.Parse(child.Attributes.GetNamedItem("selfRange").Value);
-					enemy.GetComponent<DetectRange>().type = (DetectRange.Type)int.Parse(child.Attributes.GetNamedItem("typeRange").Value);
+					GameObject agent = createEntity(nameAgentByUser, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value),
+					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), child.Name);
+					if (child.Name == "enemy")
+					{
+						agent.GetComponent<DetectRange>().range = int.Parse(child.Attributes.GetNamedItem("range").Value);
+						agent.GetComponent<DetectRange>().selfRange = bool.Parse(child.Attributes.GetNamedItem("selfRange").Value);
+						agent.GetComponent<DetectRange>().type = (DetectRange.Type)int.Parse(child.Attributes.GetNamedItem("typeRange").Value);
+					}
 					break;
 				case "script":
 					UIRootContainer.EditMode editModeByUser = UIRootContainer.EditMode.Locked;
@@ -169,25 +165,25 @@ public class LevelGenerator : FSystem {
 
 	// read the map and create wall, ground, spawn and exit
 	private void generateMap(){
-		for(int i = 0; i< map.Count; i++){
-			for(int j = 0; j < map[i].Count; j++){
-				switch (map[i][j]){
+		for(int y = 0; y< map.Count; y++){
+			for(int x = 0; x < map[y].Count; x++){
+				switch (map[y][x]){
 					case -1: // void
 						break;
 					case 0: // Path
-						createCell(i,j);
+						createCell(x,y);
 						break;
 					case 1: // Wall
-						createCell(i,j);
-						createWall(i,j);
+						createCell(x,y);
+						createWall(x,y);
 						break;
 					case 2: // Spawn
-						createCell(i,j);
-						createSpawnExit(i,j,true);
+						createCell(x,y);
+						createSpawnExit(x,y,true);
 						break;
 					case 3: // Exit
-						createCell(i,j);
-						createSpawnExit(i,j,false);
+						createCell(x,y);
+						createSpawnExit(x,y,false);
 						break;
 				}
 			}
@@ -195,20 +191,20 @@ public class LevelGenerator : FSystem {
 	}
 
 	// Créer une entité agent ou robot et y associer un panel container
-	private GameObject createEntity(string nameAgent, int i, int j, Direction.Dir direction, string type){
+	private GameObject createEntity(string nameAgent, int gridX, int gridY, Direction.Dir direction, string type){
 		GameObject entity = null;
 		switch(type){
 			case "player": // Robot
-				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Robot Kyle") as GameObject, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Robot Kyle") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				break;
 			case "enemy": // Enemy
-				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.Level.transform.position + new Vector3(i*3,5f,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,5f,gridX*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 				break;
 		}
 
 		// Charger l'agent aux bonnes coordonées dans la bonne direction
-		entity.GetComponent<Position>().x = i;
-		entity.GetComponent<Position>().z = j;
+		entity.GetComponent<Position>().x = gridX;
+		entity.GetComponent<Position>().y = gridY;
 		entity.GetComponent<Direction>().direction = direction;
 		
 		//add new container to entity
@@ -263,55 +259,55 @@ public class LevelGenerator : FSystem {
 		return entity;
 	}
 
-	private void createDoor(int i, int j, Direction.Dir orientation, int slotID){
-		GameObject door = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Door") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+	private void createDoor(int gridX, int gridY, Direction.Dir orientation, int slotID){
+		GameObject door = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Door") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 
 		door.GetComponent<ActivationSlot>().slotID = slotID;
-		door.GetComponent<Position>().x = i;
-		door.GetComponent<Position>().z = j;
+		door.GetComponent<Position>().x = gridX;
+		door.GetComponent<Position>().y = gridY;
 		door.GetComponent<Direction>().direction = orientation;
 		GameObjectManager.bind(door);
 	}
 
-	private void createConsole(int i, int j, List<int> slotIDs, Direction.Dir orientation)
+	private void createConsole(int gridX, int gridY, List<int> slotIDs, Direction.Dir orientation)
 	{
-		GameObject activable = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ActivableConsole") as GameObject, gameData.Level.transform.position + new Vector3(i * 3, 3, j * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+		GameObject activable = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ActivableConsole") as GameObject, gameData.Level.transform.position + new Vector3(gridY * 3, 3, gridX * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
 
 		activable.GetComponent<Activable>().slotID = slotIDs;
-		activable.GetComponent<Position>().x = i;
-		activable.GetComponent<Position>().z = j;
+		activable.GetComponent<Position>().x = gridX;
+		activable.GetComponent<Position>().y = gridY;
 		activable.GetComponent<Direction>().direction = orientation;
 		GameObjectManager.bind(activable);
 	}
 
-	private void createSpawnExit(int i, int j, bool type){
+	private void createSpawnExit(int gridX, int gridY, bool type){
 		GameObject spawnExit;
 		if(type)
-			spawnExit = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterSpawn") as GameObject, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3), Quaternion.Euler(-90,0,0), gameData.Level.transform);
+			spawnExit = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterSpawn") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(-90,0,0), gameData.Level.transform);
 		else
-			spawnExit = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterExit") as GameObject, gameData.Level.transform.position + new Vector3(i*3,1.5f,j*3), Quaternion.Euler(-90,0,0), gameData.Level.transform);
+			spawnExit = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterExit") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(-90,0,0), gameData.Level.transform);
 
-		spawnExit.GetComponent<Position>().x = i;
-		spawnExit.GetComponent<Position>().z = j;
+		spawnExit.GetComponent<Position>().x = gridX;
+		spawnExit.GetComponent<Position>().y = gridY;
 		GameObjectManager.bind(spawnExit);
 	}
 
-	private void createCoin(int i, int j){
-		GameObject coin = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Coin") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(90,0,0), gameData.Level.transform);
-		coin.GetComponent<Position>().x = i;
-		coin.GetComponent<Position>().z = j;
+	private void createCoin(int gridX, int gridY){
+		GameObject coin = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Coin") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(90,0,0), gameData.Level.transform);
+		coin.GetComponent<Position>().x = gridX;
+		coin.GetComponent<Position>().y = gridY;
 		GameObjectManager.bind(coin);
 	}
 
-	private void createCell(int i, int j){
-		GameObject cell = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Cell") as GameObject, gameData.Level.transform.position + new Vector3(i*3,0,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+	private void createCell(int gridX, int gridY){
+		GameObject cell = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Cell") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,0,gridX*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 		GameObjectManager.bind(cell);
 	}
 
-	private void createWall(int i, int j){
-		GameObject wall = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Wall") as GameObject, gameData.Level.transform.position + new Vector3(i*3,3,j*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
-		wall.GetComponent<Position>().x = i;
-		wall.GetComponent<Position>().z = j;
+	private void createWall(int gridX, int gridY){
+		GameObject wall = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Wall") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+		wall.GetComponent<Position>().x = gridX;
+		wall.GetComponent<Position>().y = gridY;
 		GameObjectManager.bind(wall);
 	}
 
@@ -492,7 +488,7 @@ public class LevelGenerator : FSystem {
 			slotsID.Add(int.Parse(child.Attributes.GetNamedItem("slot").Value));
 		}
 
-		createConsole(int.Parse(activableNode.Attributes.GetNamedItem("posX").Value), int.Parse(activableNode.Attributes.GetNamedItem("posZ").Value),
+		createConsole(int.Parse(activableNode.Attributes.GetNamedItem("posX").Value), int.Parse(activableNode.Attributes.GetNamedItem("posY").Value),
 		 slotsID, (Direction.Dir)int.Parse(activableNode.Attributes.GetNamedItem("direction").Value));
 	}
 

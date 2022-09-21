@@ -9,56 +9,16 @@
     <func name="F19"/>
   </info>
   <map>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="3" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="2" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
+    <line><row value="1" /><row value="1" /><row value="1" /></line>
+    <line><row value="1" /><row value="3" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="2" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="1" /></line>
   </map>
   <actionBlockLimit>
     <limit actionType="Forward" limit="0" />
@@ -82,7 +42,7 @@
     <limit actionType="Terminal" limit="1" />
     <limit actionType="Exit" limit="0" />
   </actionBlockLimit>
-  <player associatedScriptName="Bob" posX="8" posZ="1" direction="0"/>
+  <player associatedScriptName="Bob" posY="8" posX="1" direction="0"/>
   <script name="Bob" editMode="0">
       <control type="While">
         <condition>
@@ -100,13 +60,13 @@
         </container>
       </control>
   </script>
-  <console posX="3" posZ="1" direction="1">
+  <console posY="3" posX="1" direction="1">
     <slot slot="0" />
   </console>
-  <door posX="2" posZ="1" slot="0" direction="0" />
-  <console posX="7" posZ="1" direction="1">
+  <door posY="2" posX="1" slot="0" direction="0" />
+  <console posY="7" posX="1" direction="1">
     <slot slot="1" />
   </console>
-  <door posX="6" posZ="1" slot="1" direction="0" />
+  <door posY="6" posX="1" slot="1" direction="0" />
   <score twoStars="3875" threeStars="4875"/>
 </level>

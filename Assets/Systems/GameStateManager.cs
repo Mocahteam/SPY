@@ -84,7 +84,7 @@ public class GameStateManager : FSystem {
         {
             Position pos = f_positions.getAt(i).GetComponent<Position>();
             pos.x = save.rawSave.positions[i].x;
-            pos.z = save.rawSave.positions[i].z;
+            pos.y = save.rawSave.positions[i].y;
         }
         for (int i = 0; i < f_activables.Count && i < save.rawSave.activables.Count; i++)
         {
@@ -101,7 +101,7 @@ public class GameStateManager : FSystem {
             ForControl fc = f_forControls.getAt(i).GetComponent<ForControl>();
             fc.currentFor = save.rawSave.currentLoopParams[i].currentFor;
             fc.nbFor = save.rawSave.currentLoopParams[i].nbFor;
-            fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (fc.currentFor).ToString() + " / " + fc.nbFor.ToString();
+            fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = fc.nbFor.ToString();
         }
     }
 }

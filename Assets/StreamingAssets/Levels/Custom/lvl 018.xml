@@ -6,70 +6,14 @@
     <func name="F17"/>
   </info>
   <map>
-    <line>
-      <row value="-1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="2" />
-      <row value="0" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="-1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="0" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="-1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="-1" />
-      <row value="1" />
-      <row value="0" />
-      <row value="0" />
-      <row value="3" />
-      <row value="1" />
-    </line>
-    <line>
-      <row value="-1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-      <row value="1" />
-    </line>
+    <line><row value="-1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="0" /><row value="0" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="2" /><row value="0" /><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="0" /><row value="1" /></line>
+    <line><row value="-1" /><row value="1" /><row value="0" /><row value="0" /><row value="0" /><row value="1" /></line>
+    <line><row value="-1" /><row value="1" /><row value="0" /><row value="1" /><row value="1" /><row value="1" /></line>
+    <line><row value="-1" /><row value="1" /><row value="0" /><row value="0" /><row value="3" /><row value="1" /></line>
+    <line><row value="-1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
   </map>
   <actionBlockLimit>
     <limit actionType="Forward" limit="-1" />
@@ -93,7 +37,7 @@
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="0" />
   </actionBlockLimit>
-  <player associatedScriptName="Bob" posX="2" posZ="1" direction="4" />
+  <player associatedScriptName="Bob" posY="2" posX="1" direction="4" />
   <script name="Bob" editMode="0">
     <action type="Forward"/>
     <action type="TurnLeft"/>

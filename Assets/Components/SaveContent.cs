@@ -12,11 +12,11 @@ public class SaveContent {
     [Serializable]
     public class RawPosition {
         public int x;
-        public int z;
+        public int y;
         public RawPosition (Position pos)
         {
             x = pos.x;
-            z = pos.z;
+            y = pos.y;
         }
     }
 
