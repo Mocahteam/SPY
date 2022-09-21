@@ -262,10 +262,10 @@ public class LevelGenerator : FSystem {
 	private void createDoor(int gridX, int gridY, Direction.Dir orientation, int slotID){
 		GameObject door = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Door") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 
-		door.GetComponent<ActivationSlot>().slotID = slotID;
-		door.GetComponent<Position>().x = gridX;
-		door.GetComponent<Position>().y = gridY;
-		door.GetComponent<Direction>().direction = orientation;
+		door.GetComponentInChildren<ActivationSlot>().slotID = slotID;
+		door.GetComponentInChildren<Position>().x = gridX;
+		door.GetComponentInChildren<Position>().y = gridY;
+		door.GetComponentInChildren<Direction>().direction = orientation;
 		GameObjectManager.bind(door);
 	}
 

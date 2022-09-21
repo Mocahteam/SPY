@@ -11,11 +11,17 @@ public class MoveSystem : FSystem {
 	private bool isMoving;
 	public float turnSpeed;
 	public float moveSpeed;
+	public AudioClip footSlow;
+	public AudioClip footSpeed;
+	private GameData gameData;
 
 	protected override void onStart()
-    {
-		foreach (GameObject go in f_movable)
-			initAgentDirection(go);
+	{
+		GameObject go = GameObject.Find("GameData");
+		if (go != null)
+			gameData = go.GetComponent<GameData>();
+		foreach (GameObject movable in f_movable)
+			initAgentDirection(movable);
 		f_movable.addEntryCallback(initAgentDirection);
 	}
 
@@ -42,26 +48,27 @@ public class MoveSystem : FSystem {
 	protected override void onProcess(int familiesUpdateCount) {
 
 		foreach( GameObject go in f_movable){
-			isMoving = false; 
+			isMoving = false;
 			// Manage position
-			if(go.transform.localPosition.z/3 != go.GetComponent<Position>().x || go.transform.localPosition.x/3 != go.GetComponent<Position>().y ||
-			 go.GetComponent<Position>().animate){
-				if(go.GetComponent<Animator>()){
-					go.GetComponent<Animator>().SetFloat("Run", 1f);	
+			if (go.transform.localPosition.z / 3 != go.GetComponent<Position>().x || go.transform.localPosition.x / 3 != go.GetComponent<Position>().y)
+			{
+				if (go.GetComponent<Animator>() && go.tag == "Player")
+				{
+					if (gameData.gameSpeed_current == gameData.gameSpeed_default)
+						go.GetComponent<Animator>().SetFloat("Walk", 1f);
+					else
+						go.GetComponent<Animator>().SetFloat("Run", 1f);
 				}
-				go.GetComponent<Position>().animate = false;
 				isMoving = true;
-				
-				go.transform.localPosition = Vector3.MoveTowards(go.transform.localPosition, new Vector3(go.GetComponent<Position>().y*3,go.transform.localPosition.y,go.GetComponent<Position>().x*3), moveSpeed* Time.deltaTime);
+
+				go.transform.localPosition = Vector3.MoveTowards(go.transform.localPosition, new Vector3(go.GetComponent<Position>().y * 3, go.transform.localPosition.y, go.GetComponent<Position>().x * 3), moveSpeed * gameData.gameSpeed_current * Time.deltaTime);
 			}
-			else{
-				if(go.GetComponent<Animator>())
-					go.GetComponent<Animator>().SetFloat("Run", -1f);
-			}
+
 
 			// Manage orientation
 			Quaternion target = Quaternion.Euler(0, 0, 0);
-			switch(go.GetComponent<Direction>().direction){
+			switch (go.GetComponent<Direction>().direction)
+			{
 				case Direction.Dir.North:
 					target = Quaternion.Euler(0, -90, 0);
 					break;
@@ -75,26 +82,37 @@ public class MoveSystem : FSystem {
 					target = Quaternion.Euler(0, 90, 0);
 					break;
 			}
-			if(target.eulerAngles.y != go.transform.eulerAngles.y){
-				go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, target, turnSpeed*Time.deltaTime);
-				if(go.GetComponent<Animator>())
-					go.GetComponent<Animator>().SetFloat("Turn", 1f);
+			if (target.eulerAngles.y != go.transform.eulerAngles.y)
+			{
+				go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, target, turnSpeed * gameData.gameSpeed_current * Time.deltaTime);
+				if (go.GetComponent<Animator>() && go.tag == "Player")
+					go.GetComponent<Animator>().SetFloat("Walk", 1f);
 				isMoving = true;
-				
-			}
-			else{
-				if(go.GetComponent<Animator>())
-					go.GetComponent<Animator>().SetFloat("Turn", -1f);
 			}
 
 			AudioSource audio = go.GetComponent<AudioSource>(); // not included into family because red detector has no audio source
-			if(audio != null){
-				if(isMoving){
-					if(!audio.isPlaying)
+			if (audio != null)
+			{
+				if (isMoving)
+				{
+					if (!audio.isPlaying)
+					{
+						if (gameData.gameSpeed_current == gameData.gameSpeed_default)
+							audio.clip = footSlow;
+						else
+							audio.clip = footSpeed;
 						audio.Play();
+					}
 				}
-				else{
+				else
+				{
 					audio.Stop();
+					// Stop animation
+					if (go.GetComponent<Animator>() && go.tag == "Player")
+					{
+						go.GetComponent<Animator>().SetFloat("Run", -1f);
+						go.GetComponent<Animator>().SetFloat("Walk", -1f);
+					}
 				}
 			}
 		}

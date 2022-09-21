@@ -1753,7 +1753,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 649317142}
   m_HandleRect: {fileID: 649317141}
   m_Direction: 0
-  m_Value: -0.00000019073487
+  m_Value: -0.0000022411348
   m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -5248,8 +5248,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9db7531a306e504429d50d1af3e9c72f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turnSpeed: 150
-  moveSpeed: 7
+  turnSpeed: 87
+  moveSpeed: 2.9
+  footSlow: {fileID: 8300000, guid: 8b818089b5e9f58449af7b92e4edd1ab, type: 3}
+  footSpeed: {fileID: 8300000, guid: 4d11813f5983ce047873c94858e6a6c1, type: 3}
 --- !u!114 &361349227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5276,6 +5278,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fixedUpdateSystemDescriptions: []
   _updateSystemDescriptions:
+  - _typeAssemblyQualifiedName: LevelGenerator, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: LevelGenerator
+    _pause: 0
   - _typeAssemblyQualifiedName: MoveSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     _typeFullName: MoveSystem
@@ -5283,10 +5289,6 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: CoinManager, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     _typeFullName: CoinManager
-    _pause: 0
-  - _typeAssemblyQualifiedName: LevelGenerator, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: LevelGenerator
     _pause: 0
   - _typeAssemblyQualifiedName: UISystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
@@ -13092,7 +13094,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000032409094}
+  m_AnchoredPosition: {x: 0, y: 0.00053749926}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &976971666
@@ -18712,6 +18714,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 361349216}
+        m_TargetAssemblyTypeName: StepSystem_wrapper, Assembly-CSharp
+        m_MethodName: setToDefaultTimeStep
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
       - m_Target: {fileID: 361349238}
         m_TargetAssemblyTypeName: ModeManager_wrapper, Assembly-CSharp
         m_MethodName: setPlayingMode
@@ -20938,7 +20952,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2102614943}
   m_HandleRect: {fileID: 2102614942}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

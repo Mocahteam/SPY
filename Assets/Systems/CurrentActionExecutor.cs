@@ -5,7 +5,7 @@ using FYFY;
 /// This system executes new currentActions
 /// </summary>
 public class CurrentActionExecutor : FSystem {
-	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Door"));
+	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Door"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family f_activableConsole = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
     private Family f_newCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
 	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)), new AnyOfTags("Player"));
@@ -48,8 +48,9 @@ public class CurrentActionExecutor : FSystem {
 			case BasicAction.ActionType.Wait:
 				break;
 			case BasicAction.ActionType.Activate:
-				foreach( GameObject actGo in f_activableConsole){
-					if(actGo.GetComponent<Position>().x == ca.agent.GetComponent<Position>().x && actGo.GetComponent<Position>().y == ca.agent.GetComponent<Position>().y){
+				Position agentPos = ca.agent.GetComponent<Position>();
+				foreach ( GameObject actGo in f_activableConsole){
+					if(actGo.GetComponent<Position>().x == agentPos.x && actGo.GetComponent<Position>().y == agentPos.y){
 						actGo.GetComponent<AudioSource>().Play();
 						// toggle activable GameObject
 						if (actGo.GetComponent<TurnedOn>())
@@ -58,6 +59,7 @@ public class CurrentActionExecutor : FSystem {
 							GameObjectManager.addComponent<TurnedOn>(actGo);
 					}
 				}
+				ca.agent.GetComponent<Animator>().SetTrigger("Action");
 				break;
 		}
 		// notify agent moving
@@ -92,7 +94,6 @@ public class CurrentActionExecutor : FSystem {
 				}
 				break;
 		}
-		go.GetComponent<Position>().animate = true;
 	}
 
 	private void ApplyTurnLeft(GameObject go){
@@ -148,7 +149,7 @@ public class CurrentActionExecutor : FSystem {
 
 	private bool checkObstacle(int x, int z){
 		foreach( GameObject go in f_wall){
-			if(go.activeInHierarchy && go.GetComponent<Position>().x == x && go.GetComponent<Position>().y == z)
+			if(go.GetComponent<Position>().x == x && go.GetComponent<Position>().y == z)
 				return true;
 		}
 		return false;

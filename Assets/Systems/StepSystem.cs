@@ -15,8 +15,6 @@ public class StepSystem : FSystem {
     private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
     private float timeStepCpt;
-    private static float defaultTimeStep = 1.5f; 
-	private static float timeStep = defaultTimeStep;
 	private GameData gameData;
     private int nbStep;
     private bool newStepAskedByPlayer;
@@ -27,8 +25,10 @@ public class StepSystem : FSystem {
         newStepAskedByPlayer = false;
         GameObject go = GameObject.Find("GameData");
         if (go != null)
+        {
             gameData = go.GetComponent<GameData>();
-        timeStepCpt = timeStep;
+            timeStepCpt = 1 / gameData.gameSpeed_current;
+        }
         f_newStep.addEntryCallback(onNewStep);
 
         f_playingMode.addEntryCallback(delegate
@@ -36,7 +36,7 @@ public class StepSystem : FSystem {
             // count a new execution
             gameData.totalExecute++;
             gameData.totalStep++;
-            timeStepCpt = timeStep;
+            timeStepCpt = 1 / gameData.gameSpeed_current;
             nbStep++;
             Pause = false;
             setToDefaultTimeStep();
@@ -51,7 +51,7 @@ public class StepSystem : FSystem {
     private void onNewStep(GameObject go)
     {
         GameObjectManager.removeComponent(go.GetComponent<NewStep>());  
-        timeStepCpt = timeStep;
+        timeStepCpt = (1 / gameData.gameSpeed_current) + timeStepCpt; // le "+ timeStepCpt" permet de prendre en compte le débordement de temps de la frame précédente
     }
 
     // Use to process your families.
@@ -128,11 +128,11 @@ public class StepSystem : FSystem {
 
     // See SpeedButton in editor
     public void speedTimeStep(){
-        timeStep = defaultTimeStep/5;
+        gameData.gameSpeed_current = gameData.gameSpeed_default * 3f;
     }
 
     // See ContinueButton in editor
     public void setToDefaultTimeStep(){
-        timeStep = defaultTimeStep;
+        gameData.gameSpeed_current = gameData.gameSpeed_default;
     }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using FYFY;
+using System.Collections;
 
 /// <summary>
 /// Manage Doors and Consoles => open/close doors depending on consoles state
@@ -10,8 +11,13 @@ public class DoorAndConsoleManager : FSystem {
 	private Family f_consoleOn = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource), typeof(TurnedOn)));
 	private Family f_consoleOff = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)), new NoneOfComponents(typeof(TurnedOn)));
 
+	private GameData gameData;
+
 	protected override void onStart()
-    {
+	{
+		GameObject go = GameObject.Find("GameData");
+		if (go != null)
+			gameData = go.GetComponent<GameData>();
 		f_consoleOn.addEntryCallback(onNewConsoleTurnedOn); // Console will enter in this family when TurnedOn component will be added to console (see CurrentActionExecutor)
 		f_consoleOff.addEntryCallback(onNewConsoleTurnedOff); // Console will enter in this family when TurnedOn component will be removed from console (see CurrentActionExecutor)
 	}
@@ -29,9 +35,9 @@ public class DoorAndConsoleManager : FSystem {
 				if (slotGo.GetComponent<ActivationSlot>().slotID == id)
 				{
 					// hide door
-					slotGo.GetComponent<Renderer>().enabled = false;
-					slotGo.GetComponent<AudioSource>().Play();
-					GameObjectManager.setGameObjectState(slotGo, false);
+					slotGo.transform.parent.GetComponent<AudioSource>().Play();
+					slotGo.transform.parent.GetComponent<Animator>().SetTrigger("Open");
+					slotGo.transform.parent.GetComponent<Animator>().speed = gameData.gameSpeed_current;
 				}
 			}
 		}
@@ -50,9 +56,9 @@ public class DoorAndConsoleManager : FSystem {
 				if (slotGo.GetComponent<ActivationSlot>().slotID == id)
 				{
 					// display door
-					slotGo.GetComponent<Renderer>().enabled = true;
-					slotGo.GetComponent<AudioSource>().Play();
-					GameObjectManager.setGameObjectState(slotGo, true);
+					slotGo.transform.parent.GetComponent<AudioSource>().Play();
+					slotGo.transform.parent.GetComponent<Animator>().SetTrigger("Close");
+					slotGo.transform.parent.GetComponent<Animator>().speed = gameData.gameSpeed_current;
 				}
 			}
 		}
