@@ -10,8 +10,13 @@ public class CurrentActionExecutor : FSystem {
     private Family f_newCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
 	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)), new AnyOfTags("Player"));
 
+	private GameData gameData;
+
 	protected override void onStart()
-    {
+	{
+		GameObject go = GameObject.Find("GameData");
+		if (go != null)
+			gameData = go.GetComponent<GameData>();
 		f_newCurrentAction.addEntryCallback(onNewCurrentAction);
 		Pause = true;
 	}
@@ -94,6 +99,13 @@ public class CurrentActionExecutor : FSystem {
 				}
 				break;
 		}
+		if (go.GetComponent<Animator>() && go.tag == "Player")
+		{
+			if (gameData.gameSpeed_current == gameData.gameSpeed_default)
+				go.GetComponent<Animator>().SetFloat("Walk", 1f);
+			else
+				go.GetComponent<Animator>().SetFloat("Run", 1f);
+		}
 	}
 
 	private void ApplyTurnLeft(GameObject go){
@@ -111,6 +123,8 @@ public class CurrentActionExecutor : FSystem {
 				go.GetComponent<Direction>().direction = Direction.Dir.South;
 				break;
 		}
+		if (go.GetComponent<Animator>() && go.tag == "Player")
+			go.GetComponent<Animator>().SetFloat("Rotate", 1f);
 	}
 
 	private void ApplyTurnRight(GameObject go){
@@ -128,6 +142,8 @@ public class CurrentActionExecutor : FSystem {
 				go.GetComponent<Direction>().direction = Direction.Dir.North;
 				break;
 		}
+		if (go.GetComponent<Animator>() && go.tag == "Player")
+			go.GetComponent<Animator>().SetFloat("Rotate", 1f);
 	}
 
 	private void ApplyTurnBack(GameObject go){
@@ -145,6 +161,8 @@ public class CurrentActionExecutor : FSystem {
 				go.GetComponent<Direction>().direction = Direction.Dir.East;
 				break;
 		}
+		if (go.GetComponent<Animator>() && go.tag == "Player")
+			go.GetComponent<Animator>().SetFloat("Rotate", 1f);
 	}
 
 	private bool checkObstacle(int x, int z){

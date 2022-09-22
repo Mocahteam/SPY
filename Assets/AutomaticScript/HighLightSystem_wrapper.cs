@@ -3,9 +3,11 @@ using FYFY;
 
 public class HighLightSystem_wrapper : BaseWrapper
 {
+	public UnityEngine.GameObject dialogPanel;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
+		MainLoop.initAppropriateSystemField (system, "dialogPanel", dialogPanel);
 	}
 
 	public void highLightItem(UnityEngine.GameObject go)

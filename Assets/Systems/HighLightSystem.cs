@@ -12,7 +12,9 @@ public class HighLightSystem : FSystem {
 	private Family f_nonhighlighted = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(LibraryItemRef)));
 	private Family f_highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new AnyOfComponents( typeof(CurrentAction), typeof(PointerOver)));
 	private Family f_nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new NoneOfComponents(typeof(CurrentAction), typeof(Dragged), typeof(PointerOver)));
-	
+
+	public GameObject dialogPanel;
+
 	protected override void onStart()
     {
 		f_highlightable.addEntryCallback(initBaseColor);
@@ -26,7 +28,8 @@ public class HighLightSystem : FSystem {
 	protected override void onProcess(int familiesUpdateCount) {
 		GameObject highLightedItem = f_highlighted.First();
 		//If click on highlighted item and item has a script, then show its script in the 2nd script window
-		if(highLightedItem && Input.GetMouseButtonUp(0) && highLightedItem.GetComponent<ScriptRef>()){
+		if(highLightedItem && Input.GetMouseButtonUp(0) && highLightedItem.GetComponent<ScriptRef>() && dialogPanel.activeInHierarchy == false)
+		{
 			GameObject go = highLightedItem.GetComponent<ScriptRef>().executablePanel;
 			GameObjectManager.setGameObjectState(go,!go.activeInHierarchy);
 			MainLoop.instance.GetComponent<AudioSource>().Play();

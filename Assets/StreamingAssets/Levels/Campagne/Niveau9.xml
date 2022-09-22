@@ -11,8 +11,10 @@
     <line><row value="1" /><row value="1" /><row value="1" /><row value="2" /><row value="1" /><row value="1" /><row value="1" /></line>
     <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
   </map>
-  <dialogs dialog="Tu peux maintenant utiliser l'action faire un demi-tour." img="TurnBackIcon.png" />
-  <dialogs dialog="Attention !&#xA;Quand le robot tourne, il reste sur place." />
+  <dialogs>
+	<dialog text="Tu peux maintenant utiliser l'action faire un demi-tour." img="TurnBackIcon.png" />
+	<dialog text="Attention !&#xA;Quand le robot tourne, il reste sur place." />
+  </dialogs>
   <actionBlockLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="-1" />

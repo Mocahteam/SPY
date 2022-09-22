@@ -301,9 +301,15 @@ public static class EditingUtility
 				break;
 		}
 
-		foreach (BasicAction act in copyGO.GetComponentsInChildren<BasicAction>())
+		foreach (BaseElement act in copyGO.GetComponentsInChildren<BaseElement>())
 		{
 			act.gameObject.GetComponent<Image>().color = actionColor;
+			if (act.GetComponent<ControlElement>() && agentTag == "Drone")
+				foreach (Transform child in act.gameObject.transform) {
+					Image childImg = child.GetComponent<Image>();
+					if (childImg != null)
+						childImg.color = actionColor;
+				}
 		}
 
 		return copyGO;

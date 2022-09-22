@@ -12,8 +12,10 @@
   </map>
   <dialogs>
 	<dialog text="Bienvenue dans Spy !&#xA; Ton objectif est de t'échapper en atteignant la sortie (téléporteur rouge) !" />
-	<dialog text="Pour cela, il faut donner des ordres au robot en faisant glisser les actions dans la partie blanche de la fenêtre de script." img="drophere.png" />
-	<dialog text="Tu peux utiliser le clic droit sur une action du script pour la supprimer, le bouton ci-dessous permet de vider la fenêtre de script d'un seul coup."  img="resetButton.png"/>
+	<dialog text="Pour cela, il faut donner des ordres au robot en faisant glisser les actions dans le programme du robot." img="drophere.png" />
+	<dialog text="Tu peux utiliser le clic droit sur une action du script pour la supprimer, ou nettoyer tout le programme à l'aide de la petite balayette."  img="resetButton.png"/>
+	<dialog text="Tu peux aussi supprimer un programme avec la petite poubelle. Dans ce niveau elle est désactivée."  img="delButton.png"/>
+	<dialog text="A toi de jouer, essaye de déplacer l'action Avancer dans le programme du robot et clique sur le bouton lecture pour lancer le programme."  img="FirstActionAndPlay.png"/>
   </dialogs>
   <actionBlockLimit>
     <limit actionType="Forward" limit="-1" />
