@@ -13,6 +13,7 @@ public class BlocLimitationManager : FSystem
 	private Family f_deletedActions = FamilyManager.getFamily(new AllOfComponents(typeof(AddOne), typeof(ElementToDrag)));
 	private Family f_draggableElement = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)));
 	private Family f_resetBlocLimit = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
+	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
 
 	private GameData gameData;
 
@@ -20,17 +21,7 @@ public class BlocLimitationManager : FSystem
 	{
 		GameObject gd = GameObject.Find("GameData");
 		if (gd != null)
-		{
 			gameData = gd.GetComponent<GameData>();
-			// init limitation counters for each draggable elements
-			foreach (GameObject go in f_draggableElement)
-			{
-				// default => hide go
-				GameObjectManager.setGameObjectState(go, false);
-				// update counter and enable required blocks
-				updateBlocLimit(go);
-			}
-		}
 
 		f_resetBlocLimit.addEntryCallback(delegate (GameObject go) {
 			destroyScript(go, true);
@@ -39,6 +30,17 @@ public class BlocLimitationManager : FSystem
 		});
 
 		f_actions.addEntryCallback(linkTo);
+
+		f_gameLoaded.addEntryCallback(delegate {
+			// init limitation counters for each draggable elements
+			foreach (GameObject go in f_draggableElement)
+			{
+				// default => hide go
+				GameObjectManager.setGameObjectState(go, false);
+				// update counter and enable required blocks
+				updateBlocLimit(go);
+			}
+		});
 
 		f_droppedActions.addEntryCallback(useAction);
 		f_deletedActions.addEntryCallback(unuseAction);

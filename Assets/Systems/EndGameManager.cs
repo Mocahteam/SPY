@@ -23,6 +23,7 @@ public class EndGameManager : FSystem {
 	private GameData gameData;
 	private FunctionalityParam funcPram;
 
+	public GameObject playButtonAmount;
 	public GameObject endPanel;
 
 	public EndGameManager()
@@ -207,7 +208,7 @@ public class EndGameManager : FSystem {
 		yield return null;
 		yield return null;
 		yield return null;
-		if (f_requireEndPanel.Count <= 0 && !funcPram.funcActiveInLevel.Contains("F5"))
+		if (f_requireEndPanel.Count <= 0 && playButtonAmount.activeSelf && playButtonAmount.GetComponentInChildren<TMP_Text>().text == "0")
 			GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoMoreAttempt });
 	}
 }

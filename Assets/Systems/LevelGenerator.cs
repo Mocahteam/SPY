@@ -58,7 +58,7 @@ public class LevelGenerator : FSystem {
 			else
 			{
 				doc.Load(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
-				XmlToLevel(doc, gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+				XmlToLevel(doc);
 			}
 			levelName.text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
 		}
@@ -74,12 +74,12 @@ public class LevelGenerator : FSystem {
 		else
 		{
 			doc.LoadXml(www.downloadHandler.text);
-			XmlToLevel(doc, gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+			XmlToLevel(doc);
 		}
 	}
 
 	// Read xml document and create all game objects
-	public void XmlToLevel(XmlDocument doc, string nameLevel)
+	public void XmlToLevel(XmlDocument doc)
 	{
 
 		gameData.totalActionBloc = 0;
@@ -97,13 +97,22 @@ public class LevelGenerator : FSystem {
 			switch (child.Name)
 			{
 				case "info":
-					readXMLInfos(child);
+					if (Application.platform != RuntimePlatform.WebGLPlayer)
+						readXMLInfos(child);
 					break;
 				case "map":
 					readXMLMap(child);
 					break;
 				case "dialogs":
 					readXMLDialogs(child);
+					break;
+				case "executionLimit":
+					int amount = int.Parse(child.Attributes.GetNamedItem("amount").Value);
+					if (amount > 0) {
+						GameObject amountGO = buttonExecute.transform.GetChild(1).gameObject;
+						GameObjectManager.setGameObjectState(amountGO, true);
+						amountGO.GetComponentInChildren<TMP_Text>().text = ""+amount;
+					}
 					break;
 				case "actionBlockLimit":
 					readXMLLimits(child);
@@ -150,10 +159,10 @@ public class LevelGenerator : FSystem {
 					break;
 			}
 		}
-
 		eraseMap();
 		generateMap();
-		activeDesactiveFunctionality();
+		if (Application.platform != RuntimePlatform.WebGLPlayer)
+			activeDesactiveFunctionality();
 		GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
 	}
 
@@ -226,12 +235,7 @@ public class LevelGenerator : FSystem {
 			if (nameAgent != "")
 				agentEdit.associatedScriptName = nameAgent;
 			else
-			{
-				if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F9"))
-					agentEdit.associatedScriptName = "Agent" + nbAgentCreate;
-				else
-					agentEdit.associatedScriptName = "Script " + nbAgentCreate;
-			}
+				agentEdit.associatedScriptName = "Agent" + nbAgentCreate;
 
 			// Chargement de l'icône de l'agent sur la localisation
 			executablePanel.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
@@ -393,14 +397,14 @@ public class LevelGenerator : FSystem {
 	private void readXMLLimits(XmlNode limitsNode){
 		List<string> listFuncGD = gameData.GetComponent<FunctionalityParam>().funcActiveInLevel;
 		// Si l'option F2 est activée
-		if (listFuncGD.Contains("F2"))
+		if (listFuncGD.Contains("F2") || Application.platform == RuntimePlatform.WebGLPlayer)
         {
 			string actionName = null;
 			foreach (XmlNode limitNode in limitsNode.ChildNodes)
 			{
 				actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
 				// check if a GameObject exists with the same name
-				if (GameObject.Find(actionName) && !gameData.actionBlockLimit.ContainsKey(actionName)){
+				if (getLibraryItemByName(actionName) && !gameData.actionBlockLimit.ContainsKey(actionName)){
 					gameData.actionBlockLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
 				}
 			}
@@ -504,10 +508,6 @@ public class LevelGenerator : FSystem {
 			// Look for another script with the same name. If one already exists, we don't create one more.
 			if (!scriptNameUsed.Contains(name))
             {
-				// Si la function permettant de changer le nom de l'agent est activée
-				if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F9"))
-					editMode = UIRootContainer.EditMode.Editable;
-
 				// Rechercher un drone associé à ce script
 				bool droneFound = false;
 				foreach (GameObject drone in f_drone)
@@ -710,7 +710,7 @@ public class LevelGenerator : FSystem {
 				switch (conditionNode.Attributes.GetNamedItem("type").Value)
                 {
 					case "AndOperator":
-						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("AndOperator"), canvas);
+						obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("AndOperator"), canvas);
 						slots = obj.GetComponentsInChildren<ReplacementSlot>();
 						if (conditionNode.HasChildNodes)
 						{
@@ -736,7 +736,7 @@ public class LevelGenerator : FSystem {
 						break;
 
 					case "OrOperator":
-						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("OrOperator"), canvas);
+						obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("OrOperator"), canvas);
 						slots = obj.GetComponentsInChildren<ReplacementSlot>();
 						if (conditionNode.HasChildNodes)
 						{
@@ -762,7 +762,7 @@ public class LevelGenerator : FSystem {
 						break;
 
 					case "NotOperator":
-						obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find("NotOperator"), canvas);
+						obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("NotOperator"), canvas);
 						if (conditionNode.HasChildNodes)
 						{
 							GameObject emptyZone = obj.transform.Find("Container").GetChild(1).gameObject;
@@ -774,7 +774,7 @@ public class LevelGenerator : FSystem {
 				}
 				break;
 			case "captor":
-				obj = EditingUtility.createEditableBlockFromLibrary(GameObject.Find(conditionNode.Attributes.GetNamedItem("type").Value), canvas);
+				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName(conditionNode.Attributes.GetNamedItem("type").Value), canvas);
 				break;
         }
 
@@ -783,11 +783,6 @@ public class LevelGenerator : FSystem {
 
 	private void activeDesactiveFunctionality()
     {
-        // Si F1 désactivé, on désactive la librairie
-        if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F1"))
-        {
-			library.SetActive(false);
-		}
 		// Si F3 désactivé, on désactive le systéme DragDropSystem
 		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F3"))
         {

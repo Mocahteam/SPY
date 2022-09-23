@@ -7,7 +7,6 @@ using TMPro;
 using System.Xml;
 using System;
 using Object = UnityEngine.Object;
-using UnityEngine.Networking;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -32,7 +31,6 @@ public class TitleScreenSystem : FSystem {
 		{
 			gameData = UnityEngine.Object.Instantiate(prefabGameData);
 			gameData.name = "GameData";
-			paramFunction();
 			GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
 		}
 		else
@@ -49,12 +47,18 @@ public class TitleScreenSystem : FSystem {
 		string levelsPath;
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
+			//paramFunction();
 			gameData.levelList["Campagne"] = new List<string>();
 			for (int i = 1; i <= 20; i++)
-				gameData.levelList["Campagne"].Add(Application.streamingAssetsPath + "/Levels/Campagne/Niveau" + i + ".xml");
+				gameData.levelList["Campagne"].Add(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels" +
+			Path.DirectorySeparatorChar + "Campagne" + Path.DirectorySeparatorChar +"Niveau" + i + ".xml");
+			// Hide Competence button
+			GameObjectManager.setGameObjectState(compLevelButton, false);
+			ParamCompetenceSystem.instance.Pause = true;
 		}
 		else
 		{
+			paramFunction();
 			levelsPath = Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels";
 			List<string> levels;
 			foreach (string directory in Directory.GetDirectories(levelsPath))
@@ -79,8 +83,8 @@ public class TitleScreenSystem : FSystem {
 			{
 				GameObject button = Object.Instantiate<GameObject>(Resources.Load("Prefabs/LevelButton") as GameObject, cList.transform);
 				button.transform.Find("Button").GetChild(0).GetComponent<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(gameData.levelList[key][i]);
-				int indice = i;
-				button.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate { launchLevel(key, indice); });
+				int delegateIndice = i; // need to use local variable instead all buttons launch the last
+				button.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate { launchLevel(key, delegateIndice); });
 				levelButtons[directoryButton].Add(button);
 				GameObjectManager.bind(button);
 				GameObjectManager.setGameObjectState(button, false);
@@ -198,7 +202,7 @@ public class TitleScreenSystem : FSystem {
 	private void paramFunction()
 	{
 		loadConstraintFunction();
-		loadRequiermentLibrairy();
+		loadRequiermentLibrary();
 	}
 
 	// Charge les différentes contraintes qui existent entre les fonctionalités
@@ -234,7 +238,7 @@ public class TitleScreenSystem : FSystem {
 		}
 	}
 
-	private void loadRequiermentLibrairy(){
+	private void loadRequiermentLibrary(){
 		XmlDocument doc = new XmlDocument();
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{

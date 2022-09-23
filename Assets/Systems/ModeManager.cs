@@ -1,5 +1,6 @@
 using UnityEngine;
 using FYFY;
+using TMPro;
 
 /// <summary>
 /// This system enables to manage game mode: playmode vs editmode
@@ -8,6 +9,8 @@ public class ModeManager : FSystem {
 
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+
+	public GameObject playButtonAmount;
 
 	public static ModeManager instance;
 
@@ -36,6 +39,11 @@ public class ModeManager : FSystem {
 	// Used in ExecuteButton in inspector
 	public void setPlayingMode(){
 		GameObjectManager.addComponent<PlayMode>(MainLoop.instance.gameObject);
+		// If amount enabled, reduce by 1
+		if (playButtonAmount.activeSelf) {
+			TMP_Text amountText = playButtonAmount.GetComponentInChildren<TMP_Text>();
+			amountText.text = ""+(int.Parse(amountText.text) - 1);
+		}
 	}
 	
 	// Used in StopButton and ReloadState in inspector
