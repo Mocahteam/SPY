@@ -41,16 +41,8 @@ public class DialogSystem : FSystem
 	{
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
 		nDialog = 0;
-		dialogPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[0].Item1;
-		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
-		if (gameData.dialogMessage[0].Item2 != null)
-		{
-			GameObjectManager.setGameObjectState(imageGO, true);
-			setImageSprite(imageGO.GetComponent<Image>(), Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels" +
-			Path.DirectorySeparatorChar + gameData.levelToLoad.Item1 + Path.DirectorySeparatorChar + "Images" + Path.DirectorySeparatorChar + gameData.dialogMessage[0].Item2);
-		}
-		else
-			GameObjectManager.setGameObjectState(imageGO, false);
+
+		configureDialog();
 
 		if (gameData.dialogMessage.Count > 1)
 		{
@@ -69,16 +61,8 @@ public class DialogSystem : FSystem
 	public void nextDialog()
 	{
 		nDialog++; // On incrémente le nombre de dialogue
-		dialogPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog].Item1;
-		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
-		if (gameData.dialogMessage[nDialog].Item2 != null)
-		{
-			GameObjectManager.setGameObjectState(imageGO, true);
-			setImageSprite(imageGO.GetComponent<Image>(), Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels" +
-			Path.DirectorySeparatorChar + gameData.levelToLoad.Item1 + Path.DirectorySeparatorChar + "Images" + Path.DirectorySeparatorChar + gameData.dialogMessage[nDialog].Item2);
-		}
-		else
-			GameObjectManager.setGameObjectState(imageGO, false);
+
+		configureDialog();
 
 		// Si il reste des dialogues à afficher ensuite
 		if (nDialog + 1 < gameData.dialogMessage.Count)
@@ -91,6 +75,35 @@ public class DialogSystem : FSystem
 			setActiveOKButton(true);
 			setActiveNextButton(false);
 		}
+	}
+
+	private void configureDialog()
+    {
+		GameObject textGO = dialogPanel.transform.Find("Text").gameObject;
+		if (gameData.dialogMessage[nDialog].Item1 != null)
+		{
+			GameObjectManager.setGameObjectState(textGO, true);
+			textGO.GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog].Item1;
+			if (gameData.dialogMessage[nDialog].Item2 != -1)
+				((RectTransform)textGO.transform).sizeDelta = new Vector2(((RectTransform)textGO.transform).sizeDelta.x, gameData.dialogMessage[nDialog].Item2);
+			else
+				((RectTransform)textGO.transform).sizeDelta = new Vector2(((RectTransform)textGO.transform).sizeDelta.x, textGO.GetComponent<LayoutElement>().preferredHeight);
+		}
+		else
+			GameObjectManager.setGameObjectState(textGO, false);
+		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
+		if (gameData.dialogMessage[nDialog].Item3 != null)
+		{
+			GameObjectManager.setGameObjectState(imageGO, true);
+			setImageSprite(imageGO.GetComponent<Image>(), Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels" +
+			Path.DirectorySeparatorChar + gameData.levelToLoad.Item1 + Path.DirectorySeparatorChar + "Images" + Path.DirectorySeparatorChar + gameData.dialogMessage[nDialog].Item3);
+			if (gameData.dialogMessage[nDialog].Item4 != -1)
+				((RectTransform)textGO.transform).sizeDelta = new Vector2(((RectTransform)textGO.transform).sizeDelta.x, gameData.dialogMessage[nDialog].Item4);
+			else
+				((RectTransform)textGO.transform).sizeDelta = new Vector2(((RectTransform)textGO.transform).sizeDelta.x, textGO.GetComponent<LayoutElement>().preferredHeight);
+		}
+		else
+			GameObjectManager.setGameObjectState(imageGO, false);
 	}
 
 
@@ -113,7 +126,7 @@ public class DialogSystem : FSystem
 	public void closeDialogPanel()
 	{
 		nDialog = 0;
-		gameData.dialogMessage = new List<(string, string)>();
+		gameData.dialogMessage = new List<(string, float, string, float)>();
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 	}
 
