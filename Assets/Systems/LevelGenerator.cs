@@ -92,13 +92,17 @@ public class LevelGenerator : FSystem {
 		map = new List<List<int>>();
 
 		XmlNode root = doc.ChildNodes[1];
+
+		// remove comments
+		removeComments(root);
+
 		foreach (XmlNode child in root.ChildNodes)
 		{
 			switch (child.Name)
 			{
 				case "info":
-					if (Application.platform != RuntimePlatform.WebGLPlayer)
-						readXMLInfos(child);
+					/*if (Application.platform != RuntimePlatform.WebGLPlayer)
+						readXMLInfos(child);*/
 					break;
 				case "map":
 					readXMLMap(child);
@@ -108,10 +112,11 @@ public class LevelGenerator : FSystem {
 					break;
 				case "executionLimit":
 					int amount = int.Parse(child.Attributes.GetNamedItem("amount").Value);
-					if (amount > 0) {
+					if (amount > 0)
+					{
 						GameObject amountGO = buttonExecute.transform.GetChild(1).gameObject;
 						GameObjectManager.setGameObjectState(amountGO, true);
-						amountGO.GetComponentInChildren<TMP_Text>().text = ""+amount;
+						amountGO.GetComponentInChildren<TMP_Text>().text = "" + amount;
 					}
 					break;
 				case "actionBlockLimit":
@@ -146,7 +151,8 @@ public class LevelGenerator : FSystem {
 					UIRootContainer.EditMode editModeByUser = UIRootContainer.EditMode.Locked;
 					XmlNode editMode = child.Attributes.GetNamedItem("editMode");
 					int tmpValue;
-					if (editMode != null && int.TryParse(editMode.Value, out tmpValue)) {
+					if (editMode != null && int.TryParse(editMode.Value, out tmpValue))
+					{
 						editModeByUser = (UIRootContainer.EditMode)tmpValue;
 					}
 					// Script has to be created after agents
@@ -161,9 +167,19 @@ public class LevelGenerator : FSystem {
 		}
 		eraseMap();
 		generateMap();
-		if (Application.platform != RuntimePlatform.WebGLPlayer)
-			activeDesactiveFunctionality();
 		GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
+	}
+
+	private void removeComments(XmlNode node)
+	{
+		for (int i = node.ChildNodes.Count-1; i>= 0; i--)
+		{
+			XmlNode child = node.ChildNodes[i];
+			if (child.NodeType == XmlNodeType.Comment)
+				node.RemoveChild(child);
+			else
+				removeComments(child);
+		}
 	}
 
 	IEnumerator delayReadXMLScript(XmlNode scriptNode, string name, UIRootContainer.EditMode editMode)
@@ -327,14 +343,14 @@ public class LevelGenerator : FSystem {
 	private void readXMLInfos(XmlNode infoNode){
         if (!gameData.GetComponent<GameData>().executeLvlByComp){
 			foreach (XmlNode child in infoNode){
-				switch(child.Name)
-                {
+				switch (child.Name)
+				{
 					case "func":
 						readFunc(child);
 						break;
 					default:
 						break;
-                }
+				}
 			}
 		}
 	}
@@ -388,36 +404,23 @@ public class LevelGenerator : FSystem {
 		{
 			string src = null;
 			//optional xml attribute
-			if (dialog.Attributes["img"] != null)
+			if (dialog.Attributes.GetNamedItem("img") != null)
 				src = dialog.Attributes.GetNamedItem("img").Value;
 			gameData.dialogMessage.Add((dialog.Attributes.GetNamedItem("text").Value, src));
 		}
 	}
 
 	private void readXMLLimits(XmlNode limitsNode){
-		List<string> listFuncGD = gameData.GetComponent<FunctionalityParam>().funcActiveInLevel;
-		// Si l'option F2 est activée
-		if (listFuncGD.Contains("F2") || Application.platform == RuntimePlatform.WebGLPlayer)
-        {
-			string actionName = null;
-			foreach (XmlNode limitNode in limitsNode.ChildNodes)
-			{
-				actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
-				// check if a GameObject exists with the same name
-				if (getLibraryItemByName(actionName) && !gameData.actionBlockLimit.ContainsKey(actionName)){
-					gameData.actionBlockLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
-				}
-			}
-			tcheckRequierement();
-		} // Sinon on met toutes les limites de bloc à 0
-        else
-        {
-			foreach(string nameFunc in gameData.actionBlockLimit.Keys)
-            {
-				gameData.actionBlockLimit[nameFunc] = 0;
+		string actionName = null;
+		foreach (XmlNode limitNode in limitsNode.ChildNodes)
+		{
+			actionName = limitNode.Attributes.GetNamedItem("actionType").Value;
+			// check if a GameObject exists with the same name
+			if (getLibraryItemByName(actionName) && !gameData.actionBlockLimit.ContainsKey(actionName)){
+				gameData.actionBlockLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
 			}
 		}
-		
+		tcheckRequierement();
 	}
 
 	private void tcheckRequierement()
@@ -779,19 +782,5 @@ public class LevelGenerator : FSystem {
         }
 
 		return obj;
-	}
-
-	private void activeDesactiveFunctionality()
-    {
-		// Si F3 désactivé, on désactive le systéme DragDropSystem
-		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F3"))
-        {
-			DragDropSystem.instance.Pause = true;
-		}
-		// Si F8 est désactivé, le bouton pour que le robot effectue une sequence d'action n'est plus disponible
-		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains("F8"))
-		{
-			buttonExecute.SetActive(false);
-		}
 	}
 }

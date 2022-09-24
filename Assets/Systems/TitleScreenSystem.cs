@@ -201,8 +201,8 @@ public class TitleScreenSystem : FSystem {
 	// Initialise tout ce qui concerne les fonctionalités
 	private void paramFunction()
 	{
-		loadConstraintFunction();
-		loadRequiermentLibrary();
+		//loadConstraintFunction();
+		//loadRequiermentLibrary();
 	}
 
 	// Charge les différentes contraintes qui existent entre les fonctionalités

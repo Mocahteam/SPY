@@ -63,18 +63,21 @@ public class EndGameManager : FSystem {
 		if (!playerHasCurrentAction())
 		{
 			int nbEnd = 0;
-			// parse all players
-			foreach (GameObject player in f_player)
+			bool endDetected = false;
+			// parse all exits
+			for (int e = 0; e < f_exit.Count && !endDetected; e++)
 			{
-				// parse all exits
-				foreach (GameObject exit in f_exit)
+				GameObject exit = f_exit.getAt(e);
+				// parse all players
+				for (int p = 0; p < f_player.Count && !endDetected; p++)
 				{
+					GameObject player = f_player.getAt(p);
 					// check if positions are equals
 					if (player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().y == exit.GetComponent<Position>().y)
 					{
 						nbEnd++;
 						// if all players reached end position
-						if (nbEnd >= f_player.Count)
+						if (nbEnd >= f_exit.Count)
 							// trigger end
 							GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Win });
 					}
