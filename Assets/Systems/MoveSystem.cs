@@ -83,38 +83,21 @@ public class MoveSystem : FSystem {
 				isRotating = true;
 			}
 
-			AudioSource audio = go.GetComponent<AudioSource>(); // not included into family because red detector has no audio source
-			if (audio != null)
+			if (!isWalking)
 			{
-				if (isWalking || isRotating)
+				// Stop animation
+				if (go.GetComponent<Animator>() && go.tag == "Player")
 				{
-					if (!audio.isPlaying)
-					{
-						if (gameData.gameSpeed_current == gameData.gameSpeed_default)
-							audio.clip = footSlow;
-						else
-							audio.clip = footSpeed;
-						audio.Play();
-					}
-				} else
-					audio.Stop();
-
-				if (!isWalking)
-				{
-					// Stop animation
-					if (go.GetComponent<Animator>() && go.tag == "Player")
-					{
-						go.GetComponent<Animator>().SetFloat("Run", -1f);
-						go.GetComponent<Animator>().SetFloat("Walk", -1f);
-					}
+					go.GetComponent<Animator>().SetFloat("Run", -1f);
+					go.GetComponent<Animator>().SetFloat("Walk", -1f);
 				}
-				if (!isRotating)
+			}
+			if (!isRotating)
+			{
+				// Stop animation
+				if (go.GetComponent<Animator>() && go.tag == "Player")
 				{
-					// Stop animation
-					if (go.GetComponent<Animator>() && go.tag == "Player")
-					{
-						go.GetComponent<Animator>().SetFloat("Rotate", -1f);
-					}
+					go.GetComponent<Animator>().SetFloat("Rotate", -1f);
 				}
 			}
 		}

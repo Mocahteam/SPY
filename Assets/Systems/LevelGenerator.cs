@@ -103,10 +103,6 @@ public class LevelGenerator : FSystem {
 		{
 			switch (child.Name)
 			{
-				case "info":
-					/*if (Application.platform != RuntimePlatform.WebGLPlayer)
-						readXMLInfos(child);*/
-					break;
 				case "map":
 					readXMLMap(child);
 					break;
@@ -341,55 +337,6 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
-	// Si le niveau n'a pas été lancé par la selection de compétence,
-	// Alors on va noter les fonctionnalité (hors level design) qui doivent être activées dans le niveau
-	private void readXMLInfos(XmlNode infoNode){
-        if (!gameData.GetComponent<GameData>().executeLvlByComp){
-			foreach (XmlNode child in infoNode){
-				switch (child.Name)
-				{
-					case "func":
-						readFunc(child);
-						break;
-					default:
-						break;
-				}
-			}
-		}
-	}
-
-	// Ajoute la fonction parametrée dans le niveau dans la liste des fonctions selectionnées dans le gameData si celle ci ne s'y trouve pas déjà
-	private void readFunc(XmlNode FuncNode)
-    {
-        if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(FuncNode.Attributes.GetNamedItem("name").Value))
-        {
-			gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(FuncNode.Attributes.GetNamedItem("name").Value);
-		}
-		 // tester si func associé et réitéré
-		foreach(string funcName in gameData.GetComponent<FunctionalityParam>().activeFunc[FuncNode.Attributes.GetNamedItem("name").Value])
-        {
-			if(funcName != "")
-            {
-				selectFuncAssociate(funcName);
-			}
-        }
-    }
-
-	private void selectFuncAssociate(string functionnalityName)
-    {
-		if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(functionnalityName))
-        {
-			gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Add(functionnalityName);
-			foreach (string funcName in gameData.GetComponent<FunctionalityParam>().activeFunc[functionnalityName])
-			{
-				if (funcName != "")
-				{
-					selectFuncAssociate(funcName);
-				}
-			}
-		}
-	}
-
 	// Load the data of the map from XML
 	private void readXMLMap(XmlNode mapNode){
 		foreach(XmlNode lineNode in mapNode.ChildNodes){
@@ -431,72 +378,6 @@ public class LevelGenerator : FSystem {
 				gameData.actionBlockLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
 			}
 		}
-		tcheckRequierement();
-	}
-
-	private void tcheckRequierement()
-    {
-		// Besoin de regarder si les capteurs sont correctement parametrés
-		bool prgOkCaptor = tcheckCaptorProgramationValide();
-
-		foreach (string funcName in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary.Keys)
-        {
-			if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(funcName))
-            {
-				bool errorPrgFunc = true;
-				foreach (string element in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary[funcName])
-				{
-					//On regarde si c'est un capteur ou non
-					if (element != "Captor")
-					{
-						if (gameData.actionBlockLimit[element] != 0)
-						{
-							errorPrgFunc = false;
-						}
-					}
-				}
-
-                if (errorPrgFunc || !prgOkCaptor)
-                {
-					foreach (string element in gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary[funcName])
-					{
-						//On regarde si c'est une erreur de programation capteur (et si l'element est un capteur)
-						// On vérifie aussi que l'élément à besoin de capteur
-						if (!prgOkCaptor && gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary[funcName].Contains("Captor"))
-						{
-							// On passe tous les capteurs à -1
-							foreach (string captor in gameData.GetComponent<FunctionalityParam>().listCaptor)
-                            {
-								gameData.actionBlockLimit[captor] = -1;
-							}
-						}
-
-						if(errorPrgFunc && element != "Captor")
-						{
-							gameData.actionBlockLimit[element] = -1;
-						}
-					}
-				}
-			}
-        }
-	}
-
-	private bool tcheckCaptorProgramationValide()
-    {
-		bool tcheck = false;
-		foreach(string ele in gameData.actionBlockLimit.Keys)
-        {
-            if (gameData.GetComponent<FunctionalityParam>().listCaptor.Contains(ele))
-            {
-				// Si au moins un des capteurs est présent dans les limitations (autre que 0)
-				// On considére qu'il n'y a pas d'erreur de programation du niveau pour les capteurs
-				if(gameData.actionBlockLimit[ele] != 0)
-                {
-					tcheck = true;
-				}
-            }
-        }
-		return tcheck;
 	}
 
 	private void readXMLConsole(XmlNode activableNode){

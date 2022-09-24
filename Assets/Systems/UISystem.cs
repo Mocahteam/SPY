@@ -250,7 +250,6 @@ public class UISystem : FSystem {
 	// Reset les données du gameData pour la gestion des fonctionalités dans les niveaux
 	private void resetGameData()
 	{
-		gameData.GetComponent<FunctionalityParam>().funcActiveInLevel = new List<string>();
 		gameData.GetComponent<GameData>().executeLvlByComp = false;
 	}
 

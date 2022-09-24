@@ -21,7 +21,6 @@ public class EndGameManager : FSystem {
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	
 	private GameData gameData;
-	private FunctionalityParam funcPram;
 
 	public GameObject playButtonAmount;
 	public GameObject endPanel;
@@ -35,10 +34,7 @@ public class EndGameManager : FSystem {
 	{
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
-		{
 			gameData = go.GetComponent<GameData>();
-			funcPram = go.GetComponent<FunctionalityParam>();
-		}
 
 		GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
 
