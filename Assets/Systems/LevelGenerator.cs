@@ -96,6 +96,9 @@ public class LevelGenerator : FSystem {
 		// remove comments
 		removeComments(root);
 
+		// check if dragdropDisabled node exists and set gamedata accordingly
+		gameData.dragDropEnabled = doc.GetElementsByTagName("dragdropDisabled").Count == 0;
+
 		foreach (XmlNode child in root.ChildNodes)
 		{
 			switch (child.Name)
