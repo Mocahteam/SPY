@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
+    <line><row value="-1" /><row value= "1" /><row value= "0" /><row value= "1" /><row value="-1" /></line>
+    <line><row value="-1" /><row value= "0" /><row value= "3" /><row value= "0" /><row value="-1" /></line>
+    <line><row value="-1" /><row value= "1" /><row value= "0" /><row value= "1" /><row value="-1" /></line>
+    <line><row value="-1" /><row value= "1" /><row value= "0" /><row value= "1" /><row value="-1" /></line>
+    <line><row value="-1" /><row value= "1" /><row value= "0" /><row value= "1" /><row value="-1" /></line>
+    <line><row value="-1" /><row value= "1" /><row value= "0" /><row value= "1" /><row value="-1" /></line>
+    <line><row value="-1" /><row value= "1" /><row value= "0" /><row value= "1" /><row value="-1" /></line>
+    <line><row value="-1" /><row value= "1" /><row value= "0" /><row value= "1" /><row value="-1" /></line>
+    <line><row value="-1" /><row value= "1" /><row value= "2" /><row value= "1" /><row value="-1" /></line>
+    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Nous devons nous arrêter au prochain carrefour !"/>
+	<dialog text="Evitons de saturer la ligne de communication en multipliant les ordres 'Avancer'. Nous allons utiliser une boucle, pour répeter plusieurs fois les actions ! Nos ingénieurs en ont préparé une pour vous mais elle est peut être mal configurée..." textHeight="70" img="forExample.png" />
+	<dialog text="Nous commencons à être pressé par le temps, il nous faut gagner du temps et arriver au carrefour en n'envoyant qu'une seule fois notre programme" img="executeLimitation.png" imgHeight="50"/>
+  </dialogs>
+  <executionLimit amount="1" />
+  <actionBlockLimit>
+    <limit actionType="Forward" limit="0" />
+    <limit actionType="TurnLeft" limit="0" />
+    <limit actionType="TurnRight" limit="0" />
+    <limit actionType="Wait" limit="0" />
+    <limit actionType="Activate" limit="0" />
+    <limit actionType="TurnBack" limit="0" />
+    <limit actionType="If" limit="0" />
+    <limit actionType="IfElse" limit="0" />
+    <limit actionType="For" limit="0" />
+    <limit actionType="While" limit="0" />
+    <limit actionType="Forever" limit="0" />
+    <limit actionType="AndOperator" limit="0" />
+    <limit actionType="OrOperator" limit="0" />
+    <limit actionType="NotOperator" limit="0" />
+    <limit actionType="Wall" limit="0" />
+    <limit actionType="Enemie" limit="0" />
+    <limit actionType="RedArea" limit="0" />
+    <limit actionType="FieldGate" limit="0" />
+    <limit actionType="Terminal" limit="0" />
+    <limit actionType="Exit" limit="0" />
+  </actionBlockLimit>
+  <player associatedScriptName="Bob" posY="9" posX="2" direction="0" />
+  <script name="Bob" editMode="0">
+      <control type="For" nbFor="2">
+        <action type="Forward"/>
+      </control>
+  </script>
+  <score twoStars="0" threeStars="6888"/>
+</level>

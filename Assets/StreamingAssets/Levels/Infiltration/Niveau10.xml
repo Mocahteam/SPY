@@ -1,9 +1,5 @@
 <?xml version="1.0"?>
 <level>
-  <info>
-    <func name="F5"/>
-    <func name="F8"/>
-  </info>
   <map>
     <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
     <line><row value= "1" /><row value= "1" /><row value= "3" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /></line>
@@ -11,11 +7,10 @@
     <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "1" /></line>
     <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "1" /></line>
     <line><row value= "1" /><row value= "1" /><row value= "2" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /></line>
-    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
-
+    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
   </map>
   <dialogs>
-	<dialog text="Attention !&#xA;Il y a un drône ayant une caméra dans cette pièce ! Il semble protéger une salle."/>
+	<dialog text="Attention !&#xA;Il y a un garde ayant une caméra dans cette pièce ! Il semble protéger une salle."/>
 	<dialog text="Il faut absoluement éviter les zones surveillées (en rouge).&#xA;Faufilez vous sans vous faire repérer !"/>
   </dialogs>
   <actionBlockLimit>
@@ -42,6 +37,6 @@
   </actionBlockLimit>
   <player associatedScriptName="Bob" posY="5" posX="2" direction="0" />
   <script name="Bob" editMode="0" />
-  <enemy associatedScriptName="Guarde 1" posY="3" posX="4" direction="3" range="2" selfRange="False" typeRange="0" />
+  <enemy associatedScriptName="Guarde" posY="3" posX="4" direction="3" range="2" selfRange="False" typeRange="0" />
   <score twoStars="3500" threeStars="4500"/>
 </level>
