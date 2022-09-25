@@ -29,7 +29,7 @@ public class DialogSystem : FSystem
 	protected override void onProcess(int familiesUpdateCount)
 	{
 		//Activate DialogPanel if there is a message
-		if (gameData != null && gameData.dialogMessage.Count > 0 && !dialogPanel.transform.parent.gameObject.activeSelf)
+		if (gameData != null && nDialog < gameData.dialogMessage.Count-1 && !dialogPanel.transform.parent.gameObject.activeSelf)
 		{
 			showDialogPanel();
 		}
@@ -122,11 +122,9 @@ public class DialogSystem : FSystem
 
 
 	// See OKButton in editor
-	// Désactive le panel de dialogue et réinitialise le nombre de dialogue à 0
+	// Désactive le panel de dialogue
 	public void closeDialogPanel()
 	{
-		nDialog = 0;
-		gameData.dialogMessage = new List<(string, float, string, float)>();
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 	}
 

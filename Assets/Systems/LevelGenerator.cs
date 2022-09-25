@@ -151,11 +151,13 @@ public class LevelGenerator : FSystem {
 					XmlNode editMode = child.Attributes.GetNamedItem("editMode");
 					int tmpValue;
 					if (editMode != null && int.TryParse(editMode.Value, out tmpValue))
-					{
 						editModeByUser = (UIRootContainer.EditMode)tmpValue;
-					}
+					UIRootContainer.SolutionType typeByUser = UIRootContainer.SolutionType.Undefined;
+					XmlNode typeNode = child.Attributes.GetNamedItem("type");
+					if (typeNode != null && int.TryParse(typeNode.Value, out tmpValue))
+						typeByUser = (UIRootContainer.SolutionType)tmpValue;
 					// Script has to be created after agents
-					MainLoop.instance.StartCoroutine(delayReadXMLScript(child, child.Attributes.GetNamedItem("name").Value, editModeByUser));
+					MainLoop.instance.StartCoroutine(delayReadXMLScript(child, child.Attributes.GetNamedItem("name").Value, editModeByUser, typeByUser));
 					break;
 				case "score":
 					gameData.levelToLoadScore = new int[2];
@@ -181,10 +183,10 @@ public class LevelGenerator : FSystem {
 		}
 	}
 
-	IEnumerator delayReadXMLScript(XmlNode scriptNode, string name, UIRootContainer.EditMode editMode)
+	IEnumerator delayReadXMLScript(XmlNode scriptNode, string name, UIRootContainer.EditMode editMode, UIRootContainer.SolutionType type)
     {
 		yield return null;
-		readXMLScript(scriptNode, name, editMode);
+		readXMLScript(scriptNode, name, editMode, type);
 	}
 
 	// read the map and create wall, ground, spawn and exit
@@ -193,13 +195,14 @@ public class LevelGenerator : FSystem {
 			for(int x = 0; x < map[y].Count; x++){
 				switch (map[y][x]){
 					case -1: // void
+						createWall(x, y, false);
 						break;
 					case 0: // Path
 						createCell(x,y);
 						break;
 					case 1: // Wall
 						createCell(x,y);
-						createWall(x,y);
+						createWall(x,y, true);
 						break;
 					case 2: // Spawn
 						createCell(x,y);
@@ -323,10 +326,12 @@ public class LevelGenerator : FSystem {
 		GameObjectManager.bind(cell);
 	}
 
-	private void createWall(int gridX, int gridY){
+	private void createWall(int gridX, int gridY, bool visible = true){
 		GameObject wall = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Wall") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
 		wall.GetComponent<Position>().x = gridX;
 		wall.GetComponent<Position>().y = gridY;
+		if (!visible)
+			wall.GetComponent<Renderer>().enabled = false;
 		GameObjectManager.bind(wall);
 	}
 
@@ -392,7 +397,7 @@ public class LevelGenerator : FSystem {
 	}
 
 	// Lit le XML d'un script est génère les game objects des instructions
-	private void readXMLScript(XmlNode scriptNode, string name, UIRootContainer.EditMode editMode)
+	private void readXMLScript(XmlNode scriptNode, string name, UIRootContainer.EditMode editMode, UIRootContainer.SolutionType type)
 	{
 		if(scriptNode != null){
 			List<GameObject> script = new List<GameObject>();
@@ -425,7 +430,7 @@ public class LevelGenerator : FSystem {
 					}
 				}
 				if (!droneFound)
-					GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = name, editState = editMode, script = script });
+					GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = name, editState = editMode, typeState = type, script = script });
 			}
 			else
             {

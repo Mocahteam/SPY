@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><row value="-1" /><row value="-1" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "3" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "2" /><row value= "1" /></line>
+    <line><row value="-1" /><row value="-1" /><row value="-1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Un champ de force bloque le passage !&#xA;Il devrait y avoir un moyen de le désactiver..." />
+	<dialog text="Regardez là-bas ! Il y a un terminal." img="terminalSolo.png" />
+	<dialog text="Nous connaissons ce modèle, il suffit de s'y déplacer dessus pour pouvoir l'activer, en revanche il n'est pas nécessaire de se tourner vers le terminal pour l'activer. Etre sûr sa case suffit." textHeight="75" img="terminalRobot.png"/>
+	<dialog text="Nous venons de vous envoyer une nouvelle action qui devrait vous aider. Essayez donc de l'activer avec l'action 'Activer'." img="ActivateIcon.png" imgHeight="45"/>
+  </dialogs>
+  <actionBlockLimit>
+    <limit actionType="Forward" limit="-1" />
+    <limit actionType="TurnLeft" limit="-1" />
+    <limit actionType="TurnRight" limit="-1" />
+    <limit actionType="Wait" limit="0" />
+    <limit actionType="Activate" limit="-1" />
+    <limit actionType="TurnBack" limit="0" />
+    <limit actionType="If" limit="0" />
+    <limit actionType="IfElse" limit="0" />
+    <limit actionType="For" limit="0" />
+    <limit actionType="While" limit="0" />
+    <limit actionType="Forever" limit="0" />
+    <limit actionType="AndOperator" limit="0" />
+    <limit actionType="OrOperator" limit="0" />
+    <limit actionType="NotOperator" limit="0" />
+    <limit actionType="Wall" limit="0" />
+    <limit actionType="Enemie" limit="0" />
+    <limit actionType="RedArea" limit="0" />
+    <limit actionType="FieldGate" limit="0" />
+    <limit actionType="Terminal" limit="0" />
+    <limit actionType="Exit" limit="0" />
+  </actionBlockLimit>
+  <console posY="3" posX="1" direction="3">
+    <slot slot="0" />
+  </console>
+  <door posY="2" posX="1" slot="0" direction="0" />
+  <player associatedScriptName="Bob" posY="5" posX="1" direction="0" />
+  <script name="Bob" editMode="0" />
+  <score twoStars="4499" threeStars="5499"/>
+</level>

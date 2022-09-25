@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><row value="0" /><row value="0" /><row value="0" /></line>
+    <line><row value="0" /><row value="3" /><row value="0" /></line>
+    <line><row value="0" /><row value="2" /><row value="0" /></line>
+    <line><row value="0" /><row value="0" /><row value="0" /></line>
+  </map>
+  <dialogs>
+	<dialog text="23 août 2041...&#xA;&#xA;Vous avez un message..."/>
+	<dialog text="Bonjour agent special !&#xA;&#xA;Nous venons d'apprendre que des documents top-secrets ont été volés et nous devons les récupérer." textHeight="70"/>
+	<dialog text="Nous avons envoyé sur le terrain un prototype de robot, son nom de code est Karl." />
+	<dialog text="Pour le contrôler à distance vous devrez lui envoyer les bonnes actions. Vous pouvez donner des ordres à Karl en faisant glisser les actions dans la zone de programme." img="drophere.png" imgHeight="150" />
+	<dialog text="Si vous vous trompez vous pouvez utiliser le clic droit sur une action du programme pour la supprimer, ou nettoyer tout le programme à l'aide de la petite balayette." img="resetButton.png" imgHeight="150"/>
+	<dialog text="Pour téléporter Karl dans le bâtiment vous devez lui commander de se déplacer sur le téléporteur rouge !" />
+	<dialog text="A vous de jouer, essayez d'utiliser l'action 'Avancer' dans la zone de programme du robot et cliquez sur le bouton lecture pour envoyer le programme à Karl." img="FirstActionAndPlay.png" imgHeight="150"/>
+  </dialogs>
+  <actionBlockLimit>
+    <limit actionType="Forward" limit="1" />
+    <limit actionType="TurnLeft" limit="0" />
+    <limit actionType="TurnRight" limit="0" />
+    <limit actionType="Wait" limit="0" />
+    <limit actionType="Activate" limit="0" />
+    <limit actionType="TurnBack" limit="0" />
+    <limit actionType="If" limit="0" />
+    <limit actionType="IfElse" limit="0" />
+    <limit actionType="For" limit="0" />
+    <limit actionType="While" limit="0" />
+    <limit actionType="Forever" limit="0" />
+    <limit actionType="AndOperator" limit="0" />
+    <limit actionType="OrOperator" limit="0" />
+    <limit actionType="NotOperator" limit="0" />
+    <limit actionType="Wall" limit="0" />
+    <limit actionType="Enemie" limit="0" />
+    <limit actionType="RedArea" limit="0" />
+    <limit actionType="FieldGate" limit="0" />
+    <limit actionType="Terminal" limit="0" />
+    <limit actionType="Exit" limit="0" />
+  </actionBlockLimit>
+  <player associatedScriptName="Karl" posY="2" posX="1" direction="0" />
+  <script name="Karl" editMode="0" />
+  <score twoStars="5750" threeStars="6750"/>
+</level>

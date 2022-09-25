@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <level>
-  <info>
-    <func name="F5"/>
-    <func name="F8"/>
-  </info>
   <map>
-    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
-    <line><row value="1" /><row value="1" /><row value="1" /><row value="3" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="0" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="2" /><row value="1" /><row value="1" /><row value="1" /></line>
-    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
+    <line><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "3" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "1" /><row value= "1" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "2" /><row value= "1" /><row value= "1" /><row value="-1" /></line>
+    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
   </map>
+  <dialogs>
+	<dialog text="Vous pouvez maintenant utiliser des actions pour tourner à gauche et tourner à droite." img="turnleftright.png" imgHeight="45" />
+	<dialog text="Attention !&#xA;Quand le robot tourne, il reste sur place." />
+  </dialogs>
   <actionBlockLimit>
     <limit actionType="Forward" limit="-1" />
     <limit actionType="TurnLeft" limit="-1" />
@@ -35,5 +35,5 @@
   </actionBlockLimit>
   <player associatedScriptName="Bob" posY="3" posX="1" direction="0" />
   <script name="Bob" editMode="0" />
-  <score twoStars="3666" threeStars="4666"/>
+  <score twoStars="4499" threeStars="5499"/>
 </level>

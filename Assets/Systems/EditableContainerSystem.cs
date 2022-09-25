@@ -67,7 +67,7 @@ public class EditableContainerSystem : FSystem
 			foreach (GameObject go in f_addSpecificContainer)
 				foreach (AddSpecificContainer asc in go.GetComponents<AddSpecificContainer>())
 				{
-					addSpecificContainer(asc.title, asc.editState, asc.script);
+					addSpecificContainer(asc.title, asc.editState, asc.typeState, asc.script);
 					GameObjectManager.removeComponent(asc);
 				}
     }
@@ -98,7 +98,7 @@ public class EditableContainerSystem : FSystem
 	}
 
 	// Ajouter un container à la scéne
-	private void addSpecificContainer(string name = "", UIRootContainer.EditMode editState = UIRootContainer.EditMode.Editable, List<GameObject> script = null)
+	private void addSpecificContainer(string name = "", UIRootContainer.EditMode editState = UIRootContainer.EditMode.Editable, UIRootContainer.SolutionType typeState = UIRootContainer.SolutionType.Undefined, List<GameObject> script = null)
 	{
 		if (!nameContainerUsed(name))
 		{
@@ -146,6 +146,8 @@ public class EditableContainerSystem : FSystem
 				cloneContainer.transform.Find("ScriptContainer").Find("Header").Find("RemoveButton").GetComponent<Button>().interactable = false;
 			}
 			cloneContainer.GetComponentInChildren<UIRootContainer>().editState = editState;
+
+			cloneContainer.GetComponentInChildren<UIRootContainer>().type = typeState;
 
 			// ajout du script par défaut
 			GameObject dropArea = cloneContainer.GetComponentInChildren<ReplacementSlot>().gameObject;
