@@ -11,15 +11,16 @@
   </map>
   <dialogs>
 	<dialog text="Attention !&#xA;Il y a un garde ayant une caméra dans cette pièce ! Il semble protéger une salle."/>
-	<dialog text="Il faut absoluement éviter les zones surveillées (en rouge).&#xA;Faufilez vous sans vous faire repérer !"/>
+	<dialog text="Il faut absoluement éviter les zones surveillées (en rouge).&#xA;Nos ingénieurs vous proposent trois solutions, mais quelle est la plus efficace ?"/>
   </dialogs>
+  <dragdropDisabled />
   <actionBlockLimit>
-    <limit actionType="Forward" limit="-1" />
-    <limit actionType="TurnLeft" limit="-1" />
-    <limit actionType="TurnRight" limit="-1" />
+    <limit actionType="Forward" limit="0" />
+    <limit actionType="TurnLeft" limit="0" />
+    <limit actionType="TurnRight" limit="0" />
     <limit actionType="Wait" limit="0" />
-    <limit actionType="Activate" limit="-1" />
-    <limit actionType="TurnBack" limit="-1" />
+    <limit actionType="Activate" limit="0" />
+    <limit actionType="TurnBack" limit="0" />
     <limit actionType="If" limit="0" />
     <limit actionType="IfElse" limit="0" />
     <limit actionType="For" limit="0" />
@@ -36,7 +37,36 @@
     <limit actionType="Exit" limit="0" />
   </actionBlockLimit>
   <player associatedScriptName="Bob" posY="5" posX="2" direction="0" />
-  <script name="Bob" editMode="0" />
+  <script name="Essai1" editMode="3" type="2">
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+  </script>
+  <script name="Essai2" editMode="3" type="2">
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+  </script>
+  <script name="Essai3" editMode="3" type="0">
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+  </script>
   <enemy associatedScriptName="Guarde" posY="3" posX="4" direction="3" range="2" selfRange="False" typeRange="0" />
   <score twoStars="3500" threeStars="4500"/>
 </level>

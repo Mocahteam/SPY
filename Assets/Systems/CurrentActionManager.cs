@@ -160,7 +160,7 @@ public class CurrentActionManager : FSystem
 			case "Wall": // walls
 				foreach (GameObject wall in f_wall)
 					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>().enabled)
 						ifok = true;
 				break;
 			case "FieldGate": // doors

@@ -8,8 +8,6 @@ public class MoveSystem : FSystem {
 
 	private Family f_movable = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
 
-	private bool isWalking;
-	private bool isRotating;
 	public float turnSpeed;
 	public float moveSpeed;
 	public AudioClip footSlow;
@@ -48,17 +46,34 @@ public class MoveSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 
-		foreach( GameObject go in f_movable){
-			isWalking = false;
-			isRotating = false;
+		foreach (GameObject go in f_movable)
+		{
 			// Manage position
-			if (go.transform.localPosition.z / 3 != go.GetComponent<Position>().x || go.transform.localPosition.x / 3 != go.GetComponent<Position>().y)
+			if (Mathf.Abs(go.transform.localPosition.z / 3 - go.GetComponent<Position>().x) > 0.01f || Mathf.Abs(go.transform.localPosition.x / 3 - go.GetComponent<Position>().y) > 0.01f)
 			{
-				isWalking = true;
-
 				go.transform.localPosition = Vector3.MoveTowards(go.transform.localPosition, new Vector3(go.GetComponent<Position>().y * 3, go.transform.localPosition.y, go.GetComponent<Position>().x * 3), moveSpeed * gameData.gameSpeed_current * Time.deltaTime);
+				if (go.GetComponent<Animator>() && go.tag == "Player")
+				{
+					if (gameData.gameSpeed_current == gameData.gameSpeed_default)
+					{
+						go.GetComponent<Animator>().SetFloat("Walk", 1f);
+						go.GetComponent<Animator>().SetFloat("Run", -1f);
+					}
+					else
+					{
+						go.GetComponent<Animator>().SetFloat("Walk", -1f);
+						go.GetComponent<Animator>().SetFloat("Run", 1f);
+					}
+				}
 			}
-
+			else
+			{
+				if (go.GetComponent<Animator>() && go.tag == "Player")
+				{
+					go.GetComponent<Animator>().SetFloat("Walk", -1f);
+					go.GetComponent<Animator>().SetFloat("Run", -1f);
+				}
+			}
 
 			// Manage orientation
 			Quaternion target = Quaternion.Euler(0, 0, 0);
@@ -80,26 +95,12 @@ public class MoveSystem : FSystem {
 			if (target.eulerAngles.y != go.transform.eulerAngles.y)
 			{
 				go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, target, turnSpeed * gameData.gameSpeed_current * Time.deltaTime);
-				isRotating = true;
-			}
-
-			if (!isWalking)
-			{
-				// Stop animation
 				if (go.GetComponent<Animator>() && go.tag == "Player")
-				{
-					go.GetComponent<Animator>().SetFloat("Run", -1f);
-					go.GetComponent<Animator>().SetFloat("Walk", -1f);
-				}
+					go.GetComponent<Animator>().SetFloat("Rotate", 1f);
 			}
-			if (!isRotating)
-			{
-				// Stop animation
+			else
 				if (go.GetComponent<Animator>() && go.tag == "Player")
-				{
 					go.GetComponent<Animator>().SetFloat("Rotate", -1f);
-				}
-			}
 		}
 	}
 }

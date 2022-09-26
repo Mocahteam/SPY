@@ -99,13 +99,6 @@ public class CurrentActionExecutor : FSystem {
 				}
 				break;
 		}
-		if (go.GetComponent<Animator>() && go.tag == "Player")
-		{
-			if (gameData.gameSpeed_current == gameData.gameSpeed_default)
-				go.GetComponent<Animator>().SetFloat("Walk", 1f);
-			else
-				go.GetComponent<Animator>().SetFloat("Run", 1f);
-		}
 	}
 
 	private void ApplyTurnLeft(GameObject go){
@@ -123,8 +116,6 @@ public class CurrentActionExecutor : FSystem {
 				go.GetComponent<Direction>().direction = Direction.Dir.South;
 				break;
 		}
-		if (go.GetComponent<Animator>() && go.tag == "Player")
-			go.GetComponent<Animator>().SetFloat("Rotate", 1f);
 	}
 
 	private void ApplyTurnRight(GameObject go){
@@ -142,8 +133,6 @@ public class CurrentActionExecutor : FSystem {
 				go.GetComponent<Direction>().direction = Direction.Dir.North;
 				break;
 		}
-		if (go.GetComponent<Animator>() && go.tag == "Player")
-			go.GetComponent<Animator>().SetFloat("Rotate", 1f);
 	}
 
 	private void ApplyTurnBack(GameObject go){
@@ -161,8 +150,6 @@ public class CurrentActionExecutor : FSystem {
 				go.GetComponent<Direction>().direction = Direction.Dir.East;
 				break;
 		}
-		if (go.GetComponent<Animator>() && go.tag == "Player")
-			go.GetComponent<Animator>().SetFloat("Rotate", 1f);
 	}
 
 	private bool checkObstacle(int x, int z){

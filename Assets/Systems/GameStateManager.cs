@@ -21,6 +21,8 @@ public class GameStateManager : FSystem {
 
     private string currentContent;
 
+    public GameObject playButtonAmount;
+
     public static GameStateManager instance;
 
     public GameStateManager()
@@ -61,6 +63,13 @@ public class GameStateManager : FSystem {
             save.rawSave.currentLoopParams.Add(new SaveContent.RawLoop(go.GetComponent<ForControl>()));
 
         currentContent = JsonUtility.ToJson(save.rawSave);
+
+        // If amount enabled, reduce by 1
+        if (playButtonAmount.activeSelf)
+        {
+            TMP_Text amountText = playButtonAmount.GetComponentInChildren<TMP_Text>();
+            amountText.text = "" + (int.Parse(amountText.text) - 1);
+        }
     }
 
     // Used in StopButton and ReloadState buttons in editor
@@ -102,6 +111,13 @@ public class GameStateManager : FSystem {
             fc.currentFor = save.rawSave.currentLoopParams[i].currentFor;
             fc.nbFor = save.rawSave.currentLoopParams[i].nbFor;
             fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = fc.nbFor.ToString();
+        }
+
+        // If amount enabled, reduce by 1
+        if (playButtonAmount.activeSelf)
+        {
+            TMP_Text amountText = playButtonAmount.GetComponentInChildren<TMP_Text>();
+            amountText.text = "" + (int.Parse(amountText.text) + 1);
         }
     }
 }

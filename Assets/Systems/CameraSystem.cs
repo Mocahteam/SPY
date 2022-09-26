@@ -119,6 +119,9 @@ public class CameraSystem : FSystem {
 	{
 		Camera.main.transform.parent.parent.Rotate(Vector3.up, 90f * x * cameraRotationSpeed * Time.deltaTime);
 		Camera.main.transform.parent.Rotate(Vector3.back, 90f * y * cameraRotationSpeed * Time.deltaTime);
+		if (Camera.main.transform.position.y < 8f)
+			// cancel previous y rotation
+			Camera.main.transform.parent.Rotate(Vector3.back, 90f * -y * cameraRotationSpeed * Time.deltaTime);
 	}
 
 	public void focusOnAgent(GameObject agent)

@@ -202,8 +202,12 @@ public class HistoryManager : FSystem
 			}
 			// Count used elements
 			foreach (Transform viewportForEditableContainer in EditableCanvas.transform.GetChild(0))
+			{
 				foreach (BaseElement act in viewportForEditableContainer.GetComponentsInChildren<BaseElement>())
 					GameObjectManager.addComponent<Dropped>(act.gameObject);
+				foreach (BaseCondition act in viewportForEditableContainer.GetComponentsInChildren<BaseCondition>())
+					GameObjectManager.addComponent<Dropped>(act.gameObject);
+			}
 			//destroy history
 			GameObject.Destroy(gameData.actionsHistory);
 			LayoutRebuilder.ForceRebuildLayoutImmediate(EditableCanvas.GetComponent<RectTransform>());

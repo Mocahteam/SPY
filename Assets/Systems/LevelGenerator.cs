@@ -26,6 +26,7 @@ public class LevelGenerator : FSystem {
 	private int nbAgentCreate = 0; // Nombre d'agents créés
 	private int nbDroneCreate = 0; // Nombre de drones créés
 	private HashSet<string> scriptNameUsed = new HashSet<string>();
+	private GameObject lastAgentCreated = null;
 
 	public GameObject camera;
 	public GameObject editableCanvas;// Le container qui contient les Viewport/script containers
@@ -118,6 +119,10 @@ public class LevelGenerator : FSystem {
 						amountGO.GetComponentInChildren<TMP_Text>().text = "" + amount;
 					}
 					break;
+				case "fogOfWar":
+					// fog has to be enabled after agents
+					MainLoop.instance.StartCoroutine(delayEnableFogOfWar());
+					break;
 				case "actionBlockLimit":
 					readXMLLimits(child);
 					break;
@@ -145,6 +150,8 @@ public class LevelGenerator : FSystem {
 						agent.GetComponent<DetectRange>().selfRange = bool.Parse(child.Attributes.GetNamedItem("selfRange").Value);
 						agent.GetComponent<DetectRange>().type = (DetectRange.Type)int.Parse(child.Attributes.GetNamedItem("typeRange").Value);
 					}
+					else
+						lastAgentCreated = agent;
 					break;
 				case "script":
 					UIRootContainer.EditMode editModeByUser = UIRootContainer.EditMode.Locked;
@@ -180,6 +187,17 @@ public class LevelGenerator : FSystem {
 				node.RemoveChild(child);
 			else
 				removeComments(child);
+		}
+	}
+
+	IEnumerator delayEnableFogOfWar()
+	{
+		yield return null;
+		if (lastAgentCreated != null)
+		{
+			Transform fog = lastAgentCreated.transform.Find("Fog");
+			if (fog != null)
+				GameObjectManager.setGameObjectState(fog.gameObject, true);
 		}
 	}
 

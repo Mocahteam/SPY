@@ -8,7 +8,7 @@
     <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
   </map>
   <dialogs>
-	<dialog text="Vous pouvez maintenant utiliser des actions pour tourner à gauche et tourner à droite." img="turnleftright.png" imgHeight="45" />
+	<dialog text="Vous pouvez maintenant utiliser des actions pour tourner à gauche et tourner à droite. A vous de compléter le programme." img="turnleftright.png" imgHeight="45" />
 	<dialog text="Attention !&#xA;Quand le robot tourne, il reste sur place." />
   </dialogs>
   <actionBlockLimit>
@@ -34,6 +34,10 @@
     <limit actionType="Exit" limit="0" />
   </actionBlockLimit>
   <player associatedScriptName="Bob" posY="3" posX="1" direction="0" />
-  <script name="Bob" editMode="0" />
+  <script name="Bob" editMode="0" >
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+  </script>
   <score twoStars="4499" threeStars="5499"/>
 </level>
