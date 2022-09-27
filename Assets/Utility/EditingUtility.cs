@@ -447,7 +447,7 @@ public static class EditingUtility
 	}
 	
 	// link actions together => define next property
-	 // Associe à chaque bloc le bloc qui sera executé aprés
+	// Associe à chaque bloc le bloc qui sera executé aprés
 	public static void computeNext(GameObject container)
 	{
 		// parcourir tous les enfants jusqu'à l'avant dernier
@@ -460,16 +460,18 @@ public static class EditingUtility
 		if (container.transform.childCount > 0)
 		{
 			Transform lastChild = container.transform.GetChild(container.transform.childCount - 1);
-			// On cherche un parent qui serait une boucle, si tel est le cas le next est cette boucle
+			// Pour la dernière instruction le next dépend du parent
 			Transform parent = container.transform.parent;
-			while (parent != null && parent.GetComponent<ForControl>() == null && parent.GetComponent<ForeverControl>() == null)
-				parent = parent.parent;
-			if (parent != null)
-				lastChild.GetComponent<BaseElement>().next = parent.gameObject;
+			if (parent != null && parent.GetComponent<BaseElement>() != null) {
+				if (parent.GetComponent<ForControl>() != null || parent.GetComponent<ForeverControl>() != null)
+					lastChild.GetComponent<BaseElement>().next = parent.gameObject;
+				else
+					lastChild.GetComponent<BaseElement>().next = parent.GetComponent<BaseElement>().next;
+			}
 			// Sinon on ne fait rien et fin de la sequence
 		}
 
-		// parcourir tous les enfants jusqu'au dernier cette fois ci pour déclencher des appel récursif pour les structure de contrôle
+		// parcourir tous les enfants jusqu'au dernier cette fois ci pour déclencher des appel récursifs pour les structures de contrôle
 		for (int i = 0; i < container.transform.childCount; i++)
 		{
 			Transform child = container.transform.GetChild(i);

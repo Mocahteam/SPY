@@ -10,13 +10,8 @@ public class CurrentActionExecutor : FSystem {
     private Family f_newCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
 	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)), new AnyOfTags("Player"));
 
-	private GameData gameData;
-
 	protected override void onStart()
 	{
-		GameObject go = GameObject.Find("GameData");
-		if (go != null)
-			gameData = go.GetComponent<GameData>();
 		f_newCurrentAction.addEntryCallback(onNewCurrentAction);
 		Pause = true;
 	}

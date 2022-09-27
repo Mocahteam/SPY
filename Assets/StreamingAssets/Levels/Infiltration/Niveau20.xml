@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><row value="0" /><row value="0" /><row value="0" /><row value="0" /></line>
+    <line><row value="0" /><row value="3" /><row value="3" /><row value="0" /></line>
+    <line><row value="0" /><row value="0" /><row value="0" /><row value="0" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Félicitation ! Vous avez réussi à récupérer les documents volés et à ramener les Bob et Karl en toutes pièces."/>
+	<dialog text="Cette mission est un réel succès."/>
+	<dialog text="Bob et Karl peuvent bien se serrer la main :)"/>
+  </dialogs>
+  <dragdropDisabled />
+  <actionBlockLimit>
+    <limit actionType="Forward" limit="0" />
+    <limit actionType="TurnLeft" limit="0" />
+    <limit actionType="TurnRight" limit="0" />
+    <limit actionType="Wait" limit="0" />
+    <limit actionType="Activate" limit="0" />
+    <limit actionType="TurnBack" limit="0" />
+    <limit actionType="If" limit="0" />
+    <limit actionType="IfElse" limit="0" />
+    <limit actionType="For" limit="0" />
+    <limit actionType="While" limit="0" />
+    <limit actionType="Forever" limit="0" />
+    <limit actionType="AndOperator" limit="0" />
+    <limit actionType="OrOperator" limit="0" />
+    <limit actionType="NotOperator" limit="0" />
+    <limit actionType="Wall" limit="0" />
+    <limit actionType="Enemie" limit="0" />
+    <limit actionType="RedArea" limit="0" />
+    <limit actionType="FieldGate" limit="0" />
+    <limit actionType="Terminal" limit="0" />
+    <limit actionType="Exit" limit="0" />
+  </actionBlockLimit>
+  <player associatedScriptName="Karl" posY="1" posX="1" direction="2" />
+  <script name="Karl" editMode="0">
+    <action type="Activate"/>
+    <action type="Activate"/>
+  </script>
+  <player associatedScriptName="Bob" posY="1" posX="2" direction="3" />
+  <script name="Bob" editMode="0">
+    <action type="Activate"/>
+    <action type="Activate"/>
+  </script>
+  <score twoStars="5750" threeStars="6750"/>
+</level>

@@ -1,7 +1,6 @@
 using UnityEngine;
 using FYFY;
 using TMPro;
-using System.Collections.Generic;
 using UnityEngine.UI;
 using System.IO;
 using System.Collections;
@@ -29,7 +28,7 @@ public class DialogSystem : FSystem
 	protected override void onProcess(int familiesUpdateCount)
 	{
 		//Activate DialogPanel if there is a message
-		if (gameData != null && nDialog < gameData.dialogMessage.Count-1 && !dialogPanel.transform.parent.gameObject.activeSelf)
+		if (gameData != null && nDialog < gameData.dialogMessage.Count && !dialogPanel.transform.parent.gameObject.activeSelf)
 		{
 			showDialogPanel();
 		}
@@ -126,6 +125,7 @@ public class DialogSystem : FSystem
 	public void closeDialogPanel()
 	{
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
+		nDialog = gameData.dialogMessage.Count;
 	}
 
 	// Affiche l'image associée au dialogue

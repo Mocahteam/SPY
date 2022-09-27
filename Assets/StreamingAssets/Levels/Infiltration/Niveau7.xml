@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <level>
   <map>
-    <line><row value="-1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /></line>
-    <line><row value="-1" /><row value= "3" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "1" /></line>
-    <line><row value="-1" /><row value= "1" /><row value= "0" /><row value= "1" /><row value= "0" /><row value= "1" /></line>
+    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "3" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "1" /><row value= "0" /><row value= "1" /><row value= "0" /><row value= "1" /></line>
     <line><row value="-1" /><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "1" /></line>
     <line><row value="-1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "2" /><row value= "1" /></line>
     <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
@@ -34,7 +35,7 @@
     <limit actionType="Terminal" limit="0" />
     <limit actionType="Exit" limit="0" />
   </actionBlockLimit>
-  <player associatedScriptName="Bob" posY="4" posX="4" direction="0" />
+  <player associatedScriptName="Bob" posY="5" posX="4" direction="0" />
   <script name="Essai1" editMode="3" type="0">
     <action type="Forward"/>
 	<action type="TurnLeft"/>
@@ -45,6 +46,8 @@
     <action type="Forward"/>
 	<action type="TurnLeft"/>
     <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
   </script>
   <script name="Essai2" editMode="3" type="1">
     <action type="Forward"/>
@@ -53,6 +56,8 @@
 	<action type="TurnLeft"/>
     <action type="Forward"/>
     <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
     <action type="Forward"/>
   </script>
   <score twoStars="0" threeStars="6888"/>

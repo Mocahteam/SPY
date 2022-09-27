@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "2" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "1" /><row value= "0" /><row value= "0" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "1" /><row value= "3" /><row value= "0" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "0" /><row value= "1" /><row value= "1" /><row value= "1" /></line>
+    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
+  </map>
+   <dialogs>
+	<dialog text="Enfin ! Nous avons réussi à accéder au bureau qui contient les documents top-secrets." />
+  </dialogs>
+  <actionBlockLimit>
+    <limit actionType="Forward" limit="-1" />
+    <limit actionType="TurnLeft" limit="-1" />
+    <limit actionType="TurnRight" limit="-1" />
+    <limit actionType="Wait" limit="-1" />
+    <limit actionType="Activate" limit="0" />
+    <limit actionType="TurnBack" limit="-1" />
+    <limit actionType="If" limit="-1" />
+    <limit actionType="IfElse" limit="0" />
+    <limit actionType="For" limit="-1" />
+    <limit actionType="While" limit="-1" />
+    <limit actionType="Forever" limit="0" />
+    <limit actionType="AndOperator" limit="0" />
+    <limit actionType="OrOperator" limit="-1" />
+    <limit actionType="NotOperator" limit="-1" />
+    <limit actionType="Wall" limit="-1" />
+    <limit actionType="Enemie" limit="0" />
+    <limit actionType="RedArea" limit="0" />
+    <limit actionType="FieldGate" limit="-1" />
+    <limit actionType="Terminal" limit="0" />
+    <limit actionType="Exit" limit="-1" />
+  </actionBlockLimit>
+  <door posY="7" posX="4" direction="0" slot="0" />
+  <console posY="6" posX="3" direction="1">
+    <slot slot="0" />
+  </console>
+  <player associatedScriptName="Bob" posY="1" posX="1" direction="1" />
+  <script name="Bob" editMode="0" />
+  <score twoStars="0" threeStars="5185"/>
+</level>

@@ -6,12 +6,14 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject agentSelected;
 	public UnityEngine.GameObject EditableCanvas;
 	public UnityEngine.GameObject prefabViewportScriptContainer;
+	public UnityEngine.UI.Button addContainerButton;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "agentSelected", agentSelected);
 		MainLoop.initAppropriateSystemField (system, "EditableCanvas", EditableCanvas);
 		MainLoop.initAppropriateSystemField (system, "prefabViewportScriptContainer", prefabViewportScriptContainer);
+		MainLoop.initAppropriateSystemField (system, "addContainerButton", addContainerButton);
 	}
 
 	public void selectContainer(UIRootContainer container)

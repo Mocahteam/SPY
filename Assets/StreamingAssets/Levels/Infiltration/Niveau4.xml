@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <level>
   <map>
-    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
-    <line><row value= "1" /><row value= "3" /><row value= "1" /><row value="-1" /><row value="-1" /></line>
-	<line><row value= "1" /><row value= "0" /><row value= "1" /><row value="-1" /><row value="-1" /></line>
-    <line><row value= "1" /><row value= "0" /><row value= "1" /><row value= "1" /><row value= "1" /></line>
-    <line><row value= "1" /><row value= "2" /><row value= "1" /><row value= "2" /><row value= "1" /></line>
-    <line><row value= "1" /><row value= "0" /><row value= "1" /><row value= "0" /><row value= "1" /></line>
-    <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "1" /></line>
-    <line><row value= "1" /><row value= "1" /><row value= "1" /><row value= "0" /><row value= "1" /></line>
+    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "3" /><row value= "1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
+	<line><row value= "1" /><row value= "0" /><row value= "1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "1" /><row value= "1" /><row value= "1" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "2" /><row value= "1" /><row value= "2" /><row value= "0" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "1" /><row value= "1" /><row value= "1" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value="-1" /></line>
   </map>
   <dialogs>
 	<dialog text="Catastrophe ! Karl vient de se faire piéger derrière une porte qu'il ne peut pas ouvrir." />
@@ -39,9 +39,12 @@
     <limit actionType="Exit" limit="0" />
   </actionBlockLimit>
   <door posY="5" posX="1" direction="0" slot="0" />
-  <door posY="5" posX="3" direction="0" slot="0" />
+  <door posY="4" posX="4" direction="2" slot="0" />
+  <console posY="4" posX="1" direction="2">
+    <slot slot="0" />
+  </console>
   <player associatedScriptName="Bob" posY="4" posX="1" direction="0" />
-  <player associatedScriptName="Karl" posY="4" posX="3" direction="1" />
+  <player associatedScriptName="Karl" posY="4" posX="3" direction="3" />
   <script name="Karl" editMode="3" />
   <score twoStars="4499" threeStars="5499"/>
 </level>

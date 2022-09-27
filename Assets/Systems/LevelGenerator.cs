@@ -175,6 +175,13 @@ public class LevelGenerator : FSystem {
 		}
 		eraseMap();
 		generateMap();
+		MainLoop.instance.StartCoroutine(delayGameLoaded());
+	}
+
+	IEnumerator delayGameLoaded()
+	{
+		yield return null;
+		yield return null;
 		GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
 	}
 

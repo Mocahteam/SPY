@@ -34,12 +34,14 @@ public class EditableContainerSystem : FSystem
 	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
 	private Family f_refreshSize = FamilyManager.getFamily(new AllOfComponents(typeof(RefreshSizeOfEditableContainer)));
 	private Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
-	
+	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
+
 	// Les variables
 	public GameObject agentSelected = null;
 	private UIRootContainer containerSelected; // Le container selectionné
 	public GameObject EditableCanvas;
 	public GameObject prefabViewportScriptContainer;
+	public Button addContainerButton;
 
 	// L'instance
 	public static EditableContainerSystem instance;
@@ -51,6 +53,15 @@ public class EditableContainerSystem : FSystem
 	protected override void onStart()
 	{
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
+		f_gameLoaded.addEntryCallback(delegate {
+			GameObject gameDataGO = GameObject.Find("GameData");
+			if (gameDataGO != null && !gameDataGO.GetComponent<GameData>().dragDropEnabled)
+			{
+				foreach (GameObject container in f_scriptContainer)
+					container.transform.Find("Header").Find("ResetButton").GetComponent<Button>().interactable = false;
+				addContainerButton.interactable = false;
+			}
+		});
 	}
 
     protected override void onProcess(int familiesUpdateCount)

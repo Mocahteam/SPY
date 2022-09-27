@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
+    <line><row value= "1" /><row value= "3" /><row value= "1" /><row value= "1" /><row value= "3" /><row value= "1" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "1" /><row value= "1" /><row value= "0" /><row value= "1" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "1" /><row value= "1" /><row value= "0" /><row value= "0" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "0" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "1" /><row value= "0" /><row value= "0" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "1" /><row value= "0" /><row value= "1" /><row value= "0" /><row value= "1" /><row value= "1" /></line>
+    <line><row value= "1" /><row value= "1" /><row value= "2" /><row value= "1" /><row value= "2" /><row value= "1" /><row value= "1" /></line>
+    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Encore une dernière difficulté avant de sortir de la base. Les brouilleurs nous empêchent d'utiliser deux cannaux de communication. Il va donc nous falloir utiliser le même signal pour contrôler les deux robots." textHeight="70"/>
+	<dialog text="Exploitez les particularités du terrain et ce que vous avez appris de vos précédentes missions pour ammener Bob et Karl vers la sortie." />
+  </dialogs>
+  <actionBlockLimit>
+    <limit actionType="Forward" limit="-1" />
+    <limit actionType="TurnLeft" limit="-1" />
+    <limit actionType="TurnRight" limit="-1" />
+    <limit actionType="Wait" limit="0" />
+    <limit actionType="Activate" limit="0" />
+    <limit actionType="TurnBack" limit="-1" />
+    <limit actionType="If" limit="-1" />
+    <limit actionType="IfElse" limit="-1" />
+    <limit actionType="For" limit="-1" />
+    <limit actionType="While" limit="-1" />
+    <limit actionType="Forever" limit="0" />
+    <limit actionType="AndOperator" limit="-1" />
+    <limit actionType="OrOperator" limit="-1" />
+    <limit actionType="NotOperator" limit="-1" />
+    <limit actionType="Wall" limit="-1" />
+    <limit actionType="Enemie" limit="0" />
+    <limit actionType="RedArea" limit="0" />
+    <limit actionType="FieldGate" limit="0" />
+    <limit actionType="Terminal" limit="0" />
+    <limit actionType="Exit" limit="-1" />
+  </actionBlockLimit>
+  <player associatedScriptName="Bob/Karl" posY="7" posX="2" direction="0" />
+  <player associatedScriptName="Bob/Karl" posY="7" posX="4" direction="0" />
+  <script name="Bob/Karl" editMode="0" />
+  <score twoStars="4562" threeStars="4740"/>
+</level>
