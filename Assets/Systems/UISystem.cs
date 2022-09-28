@@ -226,7 +226,7 @@ public class UISystem : FSystem {
 	// Permet de réinitialiser les variables du niveau dans l'objet gameData
 	public void initZeroVariableLevel()
     {
-		gameData.totalActionBloc = 0;
+		gameData.totalActionBlocUsed = 0;
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;

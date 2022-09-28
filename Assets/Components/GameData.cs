@@ -11,7 +11,7 @@ public class GameData : MonoBehaviour {
 	public Dictionary<string, int> actionBlockLimit; //Is block available in library?
 	public string scoreKey = "score";
 	public int totalStep;
-	public int totalActionBloc;
+	public int totalActionBlocUsed;
 	public int totalExecute;
 	public int totalCoin;
 	public GameObject actionsHistory; //all actions made in the level, displayed at the end

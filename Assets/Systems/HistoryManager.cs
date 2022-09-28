@@ -173,8 +173,10 @@ public class HistoryManager : FSystem
 					Transform child = viewportForEditableContainer.GetChild(0).GetChild(i);
 					if (child.GetComponent<BaseElement>())
 					{
+						gameData.totalActionBlocUsed -= child.GetComponentsInChildren<BaseElement>().Length;
+						gameData.totalActionBlocUsed -= child.GetComponentsInChildren<BaseCondition>().Length;
 						GameObjectManager.unbind(child.gameObject);
-						child.transform.SetParent(null); // beacause destroying is not immediate, we remove this child from its parent, then Unity can take the time he wants to destroy GameObject
+						child.transform.SetParent(null); // because destroying is not immediate, we remove this child from its parent, then Unity can take the time he wants to destroy GameObject
 						GameObject.Destroy(child.gameObject);
 					}
 				}

@@ -83,7 +83,7 @@ public class LevelGenerator : FSystem {
 	public void XmlToLevel(XmlDocument doc)
 	{
 
-		gameData.totalActionBloc = 0;
+		gameData.totalActionBlocUsed = 0;
 		gameData.totalStep = 0;
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;

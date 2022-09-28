@@ -24,7 +24,7 @@ public class BlocLimitationManager : FSystem
 			gameData = gd.GetComponent<GameData>();
 
 		f_resetBlocLimit.addEntryCallback(delegate (GameObject go) {
-			destroyScript(go, true);
+			destroyScript(go);
 			GameObjectManager.unbind(go);
 			UnityEngine.Object.Destroy(go);
 		});
@@ -47,18 +47,13 @@ public class BlocLimitationManager : FSystem
 	}
 
 	//Recursive script destroyer
-	private void destroyScript(GameObject go, bool refund = false)
+	private void destroyScript(GameObject go)
 	{
 		if (go.GetComponent<LibraryItemRef>())
-		{
-			if (!refund)
-				gameData.totalActionBloc++;
-			else
-				GameObjectManager.addComponent<AddOne>(go.GetComponent<LibraryItemRef>().linkedTo);
-		}
+			GameObjectManager.addComponent<AddOne>(go.GetComponent<LibraryItemRef>().linkedTo);
 
 		foreach (Transform child in go.transform)
-			destroyScript(child.gameObject, refund);
+			destroyScript(child.gameObject);
 	}
 
 	// Find item in library to hook to this GameObject
@@ -129,6 +124,7 @@ public class BlocLimitationManager : FSystem
 			updateBlocLimit(lir.linkedTo);		
 		}
 		GameObjectManager.removeComponent<Dropped>(go);
+		gameData.totalActionBlocUsed++;
 	}
 	
 	// Restore item in library
@@ -138,6 +134,7 @@ public class BlocLimitationManager : FSystem
 			if (gameData.actionBlockLimit[go.name] >= 0)
 				gameData.actionBlockLimit[go.name] += addOnes.Length;
 			updateBlocLimit(go);
+			gameData.totalActionBlocUsed -= addOnes.Length;
 		}
 		foreach(AddOne a in addOnes){
 			GameObjectManager.removeComponent(a);	
