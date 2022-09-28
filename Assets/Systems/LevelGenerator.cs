@@ -153,6 +153,9 @@ public class LevelGenerator : FSystem {
 					else
 						lastAgentCreated = agent;
 					break;
+				case "decoration":
+					createDecoration(child.Attributes.GetNamedItem("name").Value, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value), (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value));
+					break;
 				case "script":
 					UIRootContainer.EditMode editModeByUser = UIRootContainer.EditMode.Locked;
 					XmlNode editMode = child.Attributes.GetNamedItem("editMode");
@@ -314,6 +317,16 @@ public class LevelGenerator : FSystem {
 		door.GetComponentInChildren<Position>().y = gridY;
 		door.GetComponentInChildren<Direction>().direction = orientation;
 		GameObjectManager.bind(door);
+	}
+
+	private void createDecoration(string name, int gridX, int gridY, Direction.Dir orientation)
+	{
+		GameObject decoration = Object.Instantiate<GameObject>(Resources.Load("Prefabs/"+name) as GameObject, gameData.Level.transform.position + new Vector3(gridY * 3, 3, gridX * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+
+		decoration.GetComponent<Position>().x = gridX;
+		decoration.GetComponent<Position>().y = gridY;
+		decoration.GetComponent<Direction>().direction = orientation;
+		GameObjectManager.bind(decoration);
 	}
 
 	private void createConsole(int gridX, int gridY, List<int> slotIDs, Direction.Dir orientation)
