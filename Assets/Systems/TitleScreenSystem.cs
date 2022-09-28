@@ -48,10 +48,10 @@ public class TitleScreenSystem : FSystem {
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
 			//paramFunction();
-			gameData.levelList["Campagne"] = new List<string>();
+			gameData.levelList["Campagne infiltration"] = new List<string>();
 			for (int i = 1; i <= 20; i++)
-				gameData.levelList["Campagne"].Add(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels" +
-			Path.DirectorySeparatorChar + "Campagne" + Path.DirectorySeparatorChar +"Niveau" + i + ".xml");
+				gameData.levelList["Campagne infiltration"].Add(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels" +
+			Path.DirectorySeparatorChar + "Campagne infiltration" + Path.DirectorySeparatorChar +"Niveau" + i + ".xml");
 			// Hide Competence button
 			GameObjectManager.setGameObjectState(compLevelButton, false);
 			ParamCompetenceSystem.instance.Pause = true;
@@ -148,7 +148,7 @@ public class TitleScreenSystem : FSystem {
 						levelButtons[directory][i].transform.Find("Button").GetComponent<Button>().interactable = true;
 					//unlocked levels
 					else {
-						levelButtons[directory][i].transform.Find("Button").GetComponent<Button>().interactable = true;
+						levelButtons[directory][i].transform.Find("Button").GetComponent<Button>().interactable = false;
 						//scores
 						int scoredStars = PlayerPrefs.GetInt(directoryName + Path.DirectorySeparatorChar + i + gameData.scoreKey, 0); //0 star by default
 						Transform scoreCanvas = levelButtons[directory][i].transform.Find("ScoreCanvas");
