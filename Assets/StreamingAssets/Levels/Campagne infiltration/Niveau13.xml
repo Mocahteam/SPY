@@ -5,33 +5,33 @@
 	<dialog text="Là c'est un peu mieux, mais nous ne pourrons pas utiliser toutes nos actions. Nous avons quand même réussi à vous envoyer le strict minimum à savoir une boucle qui s'arrête l'orsqu'un capteur n'est plus valide. Vous disposez donc de cette boucle ainsi qu'un capteur qui vous indique si le robot se trouve sur la case d'un téléporteur." textHeight="110" />
   </dialogs>
   <map>
-    <line><row value="-1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value="-1" /></line>
-    <line><row value="-1" /><row value= "2" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "3" /><row value="-1" /></line>
-    <line><row value="-1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "2" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "3" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
   </map>
   <executionLimit amount="1" />
-  <actionBlockLimit>
-    <limit actionType="Forward" limit="1" />
-    <limit actionType="TurnLeft" limit="0" />
-    <limit actionType="TurnRight" limit="0" />
-    <limit actionType="Wait" limit="0" />
-    <limit actionType="Activate" limit="0" />
-    <limit actionType="TurnBack" limit="0" />
-    <limit actionType="If" limit="0" />
-    <limit actionType="IfElse" limit="0" />
-    <limit actionType="For" limit="0" />
-    <limit actionType="While" limit="1" />
-    <limit actionType="Forever" limit="0" />
-    <limit actionType="AndOperator" limit="0" />
-    <limit actionType="OrOperator" limit="0" />
-    <limit actionType="NotOperator" limit="1" />
-    <limit actionType="Wall" limit="0" />
-    <limit actionType="Enemie" limit="0" />
-    <limit actionType="RedArea" limit="0" />
-    <limit actionType="FieldGate" limit="0" />
-    <limit actionType="Terminal" limit="0" />
-    <limit actionType="Exit" limit="1" />
-  </actionBlockLimit>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="1" />
+    <blockLimit blockType="TurnLeft" limit="0" />
+    <blockLimit blockType="TurnRight" limit="0" />
+    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="0" />
+    <blockLimit blockType="If" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="For" limit="0" />
+    <blockLimit blockType="While" limit="1" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="1" />
+    <blockLimit blockType="Wall" limit="0" />
+    <blockLimit blockType="Enemie" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="1" />
+  </blockLimits>
   <player associatedScriptName="Bob" posY="1" posX="1" direction="2" />
   <script name="Bob" editMode="0" />
   <score twoStars="0" threeStars="5833"/>

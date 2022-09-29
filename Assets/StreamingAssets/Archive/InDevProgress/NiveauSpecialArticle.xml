@@ -5,46 +5,46 @@
     <func name="F8"/>
   </info>
   <map>
-    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="0" /><row value="3" /><row value="1" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="0" /><row value="0" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="0" /><row value="0" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="1" /><row value="0" /><row value="1" /><row value="1" /><row value="1" /></line>
-    <line><row value="1" /><row value="1" /><row value="0" /><row value="1" /><row value="1" /><row value="1" /></line>
-    <line><row value="1" /><row value="1" /><row value="2" /><row value="1" /><row value="1" /><row value="1" /></line>
-    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="0" /><cell value="3" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="2" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
 
   </map>
   <dialogs>
 	<dialog text="Tu peux maintenant utiliser l'action attendre." img="WaitIcon.png"/>
 	<dialog text ="Attention !&#xA;Observe bien le drone !&#xA;Il a lui aussi un script."/>
   </dialogs>
-  <actionBlockLimit>
-    <limit actionType="Forward" limit="-1" />
-    <limit actionType="TurnLeft" limit="-1" />
-    <limit actionType="TurnRight" limit="-1" />
-    <limit actionType="Wait" limit="-1" />
-    <limit actionType="Activate" limit="-1" />
-    <limit actionType="TurnBack" limit="-1" />
-    <limit actionType="If" limit="0" />
-    <limit actionType="IfElse" limit="0" />
-    <limit actionType="For" limit="0" />
-    <limit actionType="While" limit="0" />
-    <limit actionType="Forever" limit="0" />
-    <limit actionType="AndOperator" limit="0" />
-    <limit actionType="OrOperator" limit="0" />
-    <limit actionType="NotOperator" limit="0" />
-    <limit actionType="Wall" limit="0" />
-    <limit actionType="Enemie" limit="0" />
-    <limit actionType="RedArea" limit="0" />
-    <limit actionType="FieldGate" limit="0" />
-    <limit actionType="Terminal" limit="0" />
-    <limit actionType="Exit" limit="0" />
-  </actionBlockLimit>
-  <console posY="5" posX="2" direction="1">
-    <slot slot="0" />
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="-1" />
+    <blockLimit blockType="TurnLeft" limit="-1" />
+    <blockLimit blockType="TurnRight" limit="-1" />
+    <blockLimit blockType="Wait" limit="-1" />
+    <blockLimit blockType="Activate" limit="-1" />
+    <blockLimit blockType="TurnBack" limit="-1" />
+    <blockLimit blockType="If" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="For" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="Wall" limit="0" />
+    <blockLimit blockType="Enemie" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <console state="1" posY="5" posX="2" direction="1">
+    <slot slotId="0" />
   </console>
-  <door posY="4" posX="2" slot="0" direction="0" />
+  <door posY="4" posX="2" slotId="0" direction="0" />
   <player associatedScriptName="Bob" posY="6" posX="2" direction="0" />
   <script name="Bob" editMode="0" />
   <enemy associatedScriptName="Guarde 1" posY="3" posX="4" direction="1" range="2" selfRange="False" typeRange="0" />

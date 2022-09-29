@@ -7,49 +7,49 @@
     <func name="F8"/>
   </info>
   <map>
-    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="0" /><row value="3" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /><row value="1" /><row value="1" /></line>
-    <line><row value="1" /><row value="2" /><row value="1" /><row value="1" /><row value="1" /></line>
-    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="0" /><cell value="3" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="2" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
   </map>
   <dialogs>
 	<dialog text="Attention ! Il y a une caméra devant toi ! Par chance, son champ de détection est très petit, mais elle te bloque tout de même le passage." />
 	<dialog text="Il semblerait que cette caméra a un comportement. Clique dessus pour analyser son comportement pour y trouver une faille et passer. De plus, ce modèle de caméra ne semble pas voir en dessous d'elle même." />
   </dialogs>
-  <actionBlockLimit>
-    <limit actionType="Forward" limit="-1" />
-    <limit actionType="TurnLeft" limit="-1" />
-    <limit actionType="TurnRight" limit="-1" />
-    <limit actionType="Wait" limit="-1" />
-    <limit actionType="Activate" limit="0" />
-    <limit actionType="TurnBack" limit="-1" />
-    <limit actionType="If" limit="-1" />
-    <limit actionType="IfElse" limit="-1" />
-    <limit actionType="For" limit="0" />
-    <limit actionType="Forever" limit="0" />
-    <limit actionType="While" limit="-1" />
-    <limit actionType="AndOperator" limit="0" />
-    <limit actionType="OrOperator" limit="0" />
-    <limit actionType="NotOperator" limit="0" />
-    <limit actionType="Wall" limit="-1" />
-    <limit actionType="Enemie" limit="-1" />
-    <limit actionType="RedArea" limit="-1" />
-    <limit actionType="FieldGate" limit="0" />
-    <limit actionType="Terminal" limit="0" />
-    <limit actionType="Exit" limit="-1" />
-  </actionBlockLimit>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="-1" />
+    <blockLimit blockType="TurnLeft" limit="-1" />
+    <blockLimit blockType="TurnRight" limit="-1" />
+    <blockLimit blockType="Wait" limit="-1" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="-1" />
+    <blockLimit blockType="If" limit="-1" />
+    <blockLimit blockType="IfElse" limit="-1" />
+    <blockLimit blockType="For" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="While" limit="-1" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="Wall" limit="-1" />
+    <blockLimit blockType="Enemie" limit="-1" />
+    <blockLimit blockType="RedArea" limit="-1" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="-1" />
+  </blockLimits>
   <player associatedScriptName="Bob" posY="3" posX="1" direction="0" />
   <script name="Bob" editMode="0" />
   <enemy associatedScriptName="Guarde 1" posY="1" posX="1" direction="2" range="1" selfRange="False" typeRange="0"/>
   <script name="Guarde 1" editMode="0">
-      <control type="Forever">
+      <forever>
         <action type="Wait"/>
         <action type="Wait"/>
         <action type="TurnLeft"/>
         <action type="Wait"/>
         <action type="Wait"/>
         <action type="TurnRight"/>
-      </control>
+      </forever>
   </script>
 </level>

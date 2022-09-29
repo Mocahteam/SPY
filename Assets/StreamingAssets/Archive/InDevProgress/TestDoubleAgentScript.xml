@@ -8,129 +8,129 @@
     <func name="F18"/>
   </info>
   <map>
-    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="3" /><row value="1" /><row value="3" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /><row value="1" /><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /><row value="1" /><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="2" /><row value="1" /><row value="1" /><row value="1" /><row value="2" /><row value="1" /></line>
-    <line><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /><row value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="3" /><cell value="1" /><cell value="3" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="2" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="2" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
   </map>
-  <actionBlockLimit>
-    <limit actionType="Forward" limit="-1" />
-    <limit actionType="TurnLeft" limit="1" />
-    <limit actionType="TurnRight" limit="1" />
-    <limit actionType="TurnBack" limit="1" />
-    <limit actionType="Activate" limit="1" />
-    <limit actionType="Wait" limit="1" />
-    <limit actionType="If" limit="1" />
-    <limit actionType="IfElse" limit="1" />
-    <limit actionType="For" limit="1" />
-    <limit actionType="Forever" limit="1" />
-    <limit actionType="While" limit="1" />
-    <limit actionType="AndOperator" limit="1" />
-    <limit actionType="OrOperator" limit="1" />
-    <limit actionType="NotOperator" limit="1" />
-    <limit actionType="Wall" limit="1" />
-    <limit actionType="Enemie" limit="1" />
-    <limit actionType="RedArea" limit="1" />
-    <limit actionType="FieldGate" limit="1" />
-    <limit actionType="Terminal" limit="1" />
-    <limit actionType="Exit" limit="1" />
-  </actionBlockLimit>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="-1" />
+    <blockLimit blockType="TurnLeft" limit="1" />
+    <blockLimit blockType="TurnRight" limit="1" />
+    <blockLimit blockType="TurnBack" limit="1" />
+    <blockLimit blockType="Activate" limit="1" />
+    <blockLimit blockType="Wait" limit="1" />
+    <blockLimit blockType="If" limit="1" />
+    <blockLimit blockType="IfElse" limit="1" />
+    <blockLimit blockType="For" limit="1" />
+    <blockLimit blockType="Forever" limit="1" />
+    <blockLimit blockType="While" limit="1" />
+    <blockLimit blockType="AndOperator" limit="1" />
+    <blockLimit blockType="OrOperator" limit="1" />
+    <blockLimit blockType="NotOperator" limit="1" />
+    <blockLimit blockType="Wall" limit="1" />
+    <blockLimit blockType="Enemie" limit="1" />
+    <blockLimit blockType="RedArea" limit="1" />
+    <blockLimit blockType="FieldGate" limit="1" />
+    <blockLimit blockType="Terminal" limit="1" />
+    <blockLimit blockType="Exit" limit="1" />
+  </blockLimits>
   <player associatedScriptName="Bob" posY="4" posX="1" direction="0" />
   <script name="Bob" editMode="2">
 	  <action type="Forward" />
-	  <control type="If" >
+	  <if>
 		<condition>
-		  <operator type="OrOperator">
-			<condition type="Left">
-			  <operator type="AndOperator">
-				<condition type="Left">
-				</condition>
-				<condition type="Right">
-				  <operator type="NotOperator">
-				  </operator>
-				</condition>
-			  </operator>
-			</condition>
-			<condition type="Right">
-			</condition>
-		  </operator>
+		  <or>
+			<conditionLeft>
+			  <and>
+				<conditionLeft>
+				</conditionLeft>
+				<conditionRight>
+				  <not>
+				  </not>
+				</conditionRight>
+			  </and>
+			</conditionLeft>
+			<conditionRight>
+			</conditionRight>
+		  </or>
 		</condition>
 		<container>
 		  <action type="Forward" />
 		</container>
-	  </control>
-	  <control type="IfElse">
+	  </if>
+	  <ifElse>
 		<condition>
 		</condition>
-		<container type="ThenContainer">
+		<thenContainer>
 		  <action type="TurnRight" />
-		</container>
-		<container type="ElseContainer">
+		</thenContainer>
+		<elseContainer>
 		  <action type="TurnLeft" />
-		</container>
-	  </control>
-	  <control type="For" nbFor="3">
+		</elseContainer>
+	  </ifElse>
+	  <for nbFor="3">
 		<action type="TurnBack" />
-	  </control>
-	  <control type="While">
+	  </for>
+	  <while>
 		<condition>
 		</condition>
 		<container>
 		  <action type="Activate" />
 		</container>
-	  </control>
-	  <control type="Forever">
+	  </while>
+	  <forever>
 		<action type="Wait" />
-	  </control>
+	  </forever>
 	  <action type="Forward" />
   </script>
   <player associatedScriptName="Agent 2" posY="4" posX="5" direction="0" />
   <script name="Agent 2" editMode="1">
-      <control type="If" >
+      <if>
         <condition>
-          <operator type="NotOperator">
+          <not>
             <captor type="Wall" />
-          </operator>
+          </not>
         </condition>
         <container>
         </container>
-      </control>
-      <control type="IfElse">
+      </if>
+      <ifElse>
         <condition>
-          <operator type="AndOperator">
-            <condition type="Left">
+          <and>
+            <conditionLeft>
               <captor type="FieldGate" />
-            </condition>
-            <condition type="Right">
+            </conditionLeft>
+            <conditionRight>
               <captor type="Terminal" />
-            </condition>
-          </operator>
+            </conditionRight>
+          </and>
         </condition>
-        <container type="ThenContainer">
-        </container>
-        <container type="ElseContainer">
-        </container>
-      </control>
-      <control type="For" nbFor="3">
-      </control>
-      <control type="While">
+        <thenContainer>
+        </thenContainer>
+        <elseContainer>
+        </elseContainer>
+      </ifElse>
+      <for nbFor="3">
+      </for>
+      <while>
         <condition>
-          <operator type="OrOperator">
-            <condition type="Left">
+          <or>
+            <conditionLeft>
               <captor type="Enemie" />
-            </condition>
-            <condition type="Right">
+            </conditionLeft>
+            <conditionRight>
               <captor type="RedArea" />
-            </condition>
-          </operator>
+            </conditionRight>
+          </or>
         </condition>
         <container>
         </container>
-      </control>
-      <control type="Forever">
-      </control>
+      </while>
+      <forever>
+      </forever>
   </script>
   <score twoStars="7999" threeStars="10500"/>
 </level>

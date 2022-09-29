@@ -11,12 +11,15 @@ public class DoorAndConsoleManager : FSystem {
 	private Family f_console = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position)));
 	private Family f_consoleOn = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource), typeof(TurnedOn)));
 	private Family f_consoleOff = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)), new NoneOfComponents(typeof(TurnedOn)));
+	private Family f_doorPath = FamilyManager.getFamily(new AllOfComponents(typeof(DoorPath)));
 
 	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
 
 	private GameData gameData;
 
 	public GameObject doorPathPrefab;
+	public Color pathOn;
+	public Color pathOff;
 
 	protected override void onStart()
 	{
@@ -37,13 +40,14 @@ public class DoorAndConsoleManager : FSystem {
 			// parse all doors
 			foreach (GameObject slotGo in f_door)
 			{
-				// if slots are equals => disable door
+				// if slots are equals => enable door
 				if (slotGo.GetComponent<ActivationSlot>().slotID == id)
 				{
-					// hide door
+					// display door
 					slotGo.transform.parent.GetComponent<AudioSource>().Play();
-					slotGo.transform.parent.GetComponent<Animator>().SetTrigger("Open");
+					slotGo.transform.parent.GetComponent<Animator>().SetTrigger("Close");
 					slotGo.transform.parent.GetComponent<Animator>().speed = gameData.gameSpeed_current;
+					updatePathColor(id, true);
 				}
 			}
 		}
@@ -61,14 +65,23 @@ public class DoorAndConsoleManager : FSystem {
 				// if slots are equals => disable door
 				if (slotGo.GetComponent<ActivationSlot>().slotID == id)
 				{
-					// display door
+					// hide door
 					slotGo.transform.parent.GetComponent<AudioSource>().Play();
-					slotGo.transform.parent.GetComponent<Animator>().SetTrigger("Close");
+					slotGo.transform.parent.GetComponent<Animator>().SetTrigger("Open");
 					slotGo.transform.parent.GetComponent<Animator>().speed = gameData.gameSpeed_current;
+					updatePathColor(id, false);
 				}
 			}
 		}
 	}
+
+	private void updatePathColor(int slotId, bool state)
+    {
+		foreach(GameObject path in f_doorPath)
+			if (path.GetComponent<DoorPath>().slotId == slotId)
+				foreach (SpriteRenderer sr in path.GetComponentsInChildren<SpriteRenderer>())
+					sr.color = state ? pathOn : pathOff;
+    }
 
 	private void connectDoorsAndConsoles(GameObject unused)
     {
@@ -82,6 +95,7 @@ public class DoorAndConsoleManager : FSystem {
             {
 				// Check if door is controlled by this console
 				Activable consoleSlots = console.GetComponent<Activable>();
+				bool isOn = console.GetComponent<TurnedOn>() != null;
 				if (consoleSlots.slotID.Contains(doorSlot.slotID))
 				{
 					// Connect this console with this door
@@ -94,6 +108,9 @@ public class DoorAndConsoleManager : FSystem {
 						GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, gameData.Level.transform.position + new Vector3(consolePos.y * 3, 3, (consolePos.x + x + xStep / 2f) * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
 						path.transform.Find("West").gameObject.SetActive(true);
 						path.transform.Find("East").gameObject.SetActive(true);
+						path.GetComponent<DoorPath>().slotId = doorSlot.slotID;
+						foreach (SpriteRenderer sr in path.GetComponentsInChildren<SpriteRenderer>())
+							sr.color = isOn ? pathOn : pathOff;
 						GameObjectManager.bind(path);
 						x = x + xStep;
 					}
@@ -103,6 +120,9 @@ public class DoorAndConsoleManager : FSystem {
 						GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, gameData.Level.transform.position + new Vector3((consolePos.y + y + yStep / 2f) * 3, 3, (consolePos.x + x) * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
 						path.transform.Find("South").gameObject.SetActive(true);
 						path.transform.Find("North").gameObject.SetActive(true);
+						path.GetComponent<DoorPath>().slotId = doorSlot.slotID;
+						foreach (SpriteRenderer sr in path.GetComponentsInChildren<SpriteRenderer>())
+							sr.color = isOn ? pathOn : pathOff;
 						GameObjectManager.bind(path);
 						y = y + yStep;
 					}

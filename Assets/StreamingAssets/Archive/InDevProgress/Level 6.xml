@@ -7,50 +7,50 @@
     <func name="F8"/>
   </info>
   <map>
-    <line><row value="1" /><row value="1" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="3" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="0" /><row value="1" /></line>
-    <line><row value="1" /><row value="2" /><row value="1" /></line>
-    <line><row value="1" /><row value="1" /><row value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="3" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="2" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /></line>
   </map>
   <dialogs>
 	<dialog text="La sortie est au bout de ce couloir !" />
 	<dialog text="Evitons de saturer la ligne de communication en donnant un ordre plus efficace ! Le nombre d'ordres disponible est limité par la valeur indiquée au dessus des ordres." />
 	<dialog text="Utilise l'action 'Boucle', tu pourras y mettre d'autres actions dans cet ordre qui seront répétées le nombre de fois indiqué !&#xA;Attention, tu dois t'arrêter pile sur la sortie." />
   </dialogs>
-  <actionBlockLimit>
-    <limit actionType="Forward" limit="1" />
-    <limit actionType="TurnLeft" limit="-1" />
-    <limit actionType="TurnRight" limit="-1" />
-    <limit actionType="Wait" limit="-1" />
-    <limit actionType="Activate" limit="-1" />
-    <limit actionType="TurnBack" limit="-1" />
-    <limit actionType="If" limit="-1" />
-    <limit actionType="IfElse" limit="-1" />
-    <limit actionType="For" limit="-1" />
-    <limit actionType="Forever" limit="0" />
-    <limit actionType="While" limit="0" />
-    <limit actionType="AndOperator" limit="0" />
-    <limit actionType="OrOperator" limit="0" />
-    <limit actionType="NotOperator" limit="0" />
-    <limit actionType="Wall" limit="-1" />
-    <limit actionType="Enemie" limit="0" />
-    <limit actionType="RedArea" limit="0" />
-    <limit actionType="FieldGate" limit="0" />
-    <limit actionType="Terminal" limit="0" />
-    <limit actionType="Exit" limit="-1" />
-  </actionBlockLimit>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="1" />
+    <blockLimit blockType="TurnLeft" limit="-1" />
+    <blockLimit blockType="TurnRight" limit="-1" />
+    <blockLimit blockType="Wait" limit="-1" />
+    <blockLimit blockType="Activate" limit="-1" />
+    <blockLimit blockType="TurnBack" limit="-1" />
+    <blockLimit blockType="If" limit="-1" />
+    <blockLimit blockType="IfElse" limit="-1" />
+    <blockLimit blockType="For" limit="-1" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="Wall" limit="-1" />
+    <blockLimit blockType="Enemie" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="-1" />
+  </blockLimits>
   <player associatedScriptName="Bob" posY="14" posX="1" direction="0" />
   <script name="Bob" editMode="0" />
 </level>

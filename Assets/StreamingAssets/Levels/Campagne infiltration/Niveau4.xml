@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <level>
   <map>
-    <line><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
-    <line><row value= "1" /><row value= "3" /><row value= "1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
-	<line><row value= "1" /><row value= "0" /><row value= "1" /><row value="-1" /><row value="-1" /><row value="-1" /></line>
-    <line><row value= "1" /><row value= "0" /><row value= "1" /><row value= "1" /><row value= "1" /><row value="-1" /></line>
-    <line><row value= "1" /><row value= "2" /><row value= "1" /><row value= "2" /><row value= "0" /><row value="-1" /></line>
-    <line><row value= "1" /><row value= "0" /><row value= "1" /><row value= "1" /><row value= "1" /><row value="-1" /></line>
-    <line><row value= "1" /><row value= "0" /><row value= "0" /><row value= "0" /><row value= "0" /><row value="-1" /></line>
-    <line><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value= "1" /><row value="-1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	<line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "2" /><cell value= "0" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
   </map>
   <dialogs>
 	<dialog text="Catastrophe ! Karl vient de se faire piéger derrière une porte qu'il ne peut pas ouvrir." />
@@ -16,32 +16,32 @@
 	<dialog text="Il vous faudra utiliser la bonne ligne de communication pour contrôler le bon robot. Vous pouvez voir la ligne de communication d'un robot en passant la souris dessus." img="robotName.png" imgHeight="200" />
 	<dialog text="Vous pouvez aussi définir la ligne de communication sur laquelle le programme sera envoyé dans la zone de programme." img="scriptName.png" />
   </dialogs>
-  <actionBlockLimit>
-    <limit actionType="Forward" limit="3" />
-    <limit actionType="TurnLeft" limit="0" />
-    <limit actionType="TurnRight" limit="0" />
-    <limit actionType="Wait" limit="0" />
-    <limit actionType="Activate" limit="0" />
-    <limit actionType="TurnBack" limit="0" />
-    <limit actionType="If" limit="0" />
-    <limit actionType="IfElse" limit="0" />
-    <limit actionType="For" limit="0" />
-    <limit actionType="While" limit="0" />
-    <limit actionType="Forever" limit="0" />
-    <limit actionType="AndOperator" limit="0" />
-    <limit actionType="OrOperator" limit="0" />
-    <limit actionType="NotOperator" limit="0" />
-    <limit actionType="Wall" limit="0" />
-    <limit actionType="Enemie" limit="0" />
-    <limit actionType="RedArea" limit="0" />
-    <limit actionType="FieldGate" limit="0" />
-    <limit actionType="Terminal" limit="0" />
-    <limit actionType="Exit" limit="0" />
-  </actionBlockLimit>
-  <door posY="5" posX="1" direction="0" slot="0" />
-  <door posY="4" posX="4" direction="2" slot="0" />
-  <console posY="4" posX="1" direction="2">
-    <slot slot="0" />
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="3" />
+    <blockLimit blockType="TurnLeft" limit="0" />
+    <blockLimit blockType="TurnRight" limit="0" />
+    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="0" />
+    <blockLimit blockType="If" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="For" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="Wall" limit="0" />
+    <blockLimit blockType="Enemie" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <door posY="5" posX="1" direction="0" slotId="0" />
+  <door posY="4" posX="4" direction="2" slotId="0" />
+  <console state="1" posY="4" posX="1" direction="2">
+    <slot slotId="0" />
   </console>
   <player associatedScriptName="Bob" posY="4" posX="1" direction="0" />
   <player associatedScriptName="Karl" posY="4" posX="3" direction="3" />
