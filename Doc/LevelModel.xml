@@ -1,0 +1,330 @@
+<?xml version="1.0"?>
+<!-- level: this tag describes the content of a level. It has to be the first tag of the file. -->
+<level>
+	<!-- map (mandatory): this tag describes the map of the level. It is composed by a set of lines. -->
+	<map>
+		<!-- line (at least one): this tag describes a line of the map. It is composed by a set of cells. -->
+		<line>
+			<!-- 
+				cell (at least one): this tag describes a cell of the map. It contains one attribute:
+					value (mandatory): defines the type of cell. Available data are:
+						-1 a void cell that blocks agent movement
+						0 a ground cell that enables agent movement
+						1 a wall cell that blocks agent movement
+						2 a ground cell with a spawn object
+						3 a ground cell with a teleport object (at least one to detect the end of the level)
+			-->
+			<cell value="-1" />
+			<cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+  
+	<!-- dialogs (optional): this tag describes the set of text to display at the beginning of the level. It is composed by a set of dialog. The dialogs will be displayed in the order they defined. -->
+	<dialogs>
+		<!-- 
+			dialog (at least one): this tag describes one of the dialogs of this level. It contains four attributes:
+				text (optional): the text to display
+				textHeight (optional): the height of the text field in the dialog panel
+				img (optional): the name of the image to load. This file has to be placed inside the "Images" directory. Both "Images" directory in this level file have to be in the same directory.
+				imgHeight (optional)! the height of the image in the dialog panel
+		-->
+		<dialog text="Exemple of briefing text."/>
+	</dialogs>
+  
+	<!-- dragdropDisabled (optional): this tag enables to lock Drag&Drop system and to delete/clean editor containers. Usefull to propose solution scripts to the player and to avoid they modify them. -->
+	<dragdropDisabled />
+
+	<!-- executionLimit (optional): this tag enables to limit the number of times the player can click on the play button to solve the level. -->
+	<executionLimit amount="1" />
+
+	<!-- fog (optional):this tag enables a mask on the last player created (see player tag) that hides all the map except around this player -->
+	<fog />
+  
+	<!-- blockLimits (optional):this tag enables to limit the amount of programming blocks available. It is composed by a set of blockLimit -->
+	<blockLimits>
+		<!-- 
+			blockLimit (optional): this tag enables to define  the amount of specific programming block available. It contains two attributes:
+				blockType (mandatory): the key of a type of block in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack", "If", "IfElse", "For", "While", "Forever", "AndOperator", "OrOperator", "NotOperator", "Wall", "Enemie", "RedArea", "FieldGate", "Terminal", "Exit"}
+				limit (mandatory): >0 the amount of blocks available for the player, ==0 this block type is hidden for the player, <0 unlimited accès of this block type
+		-->
+		<blockLimit blockType="Forward" limit="-1" />
+		<blockLimit blockType="TurnLeft" limit="4" />
+		<blockLimit blockType="TurnRight" limit="4" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="If" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="For" limit="0" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="Wall" limit="0" />
+		<blockLimit blockType="Enemie" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+  
+	<!-- 
+		coin (optional): this tag enables to display a coin on the map grid. Coins give more points to the player if he passes on this position. It contains two attributes:
+			posX (mandatory): the X position of the coin on the map grid
+			posY (mandatory): the Y position of the coin on the map grid
+	-->
+	<coin posY="1" posX="6" />
+  
+	<!-- 
+		console (optional): this tag enables to display a console on the map grid. A console controls door opening/closing (see door tag). Consoles are linked with doors by slots. It contains three attributes and is composed by a set of slots:
+			state (mandatory): is the console on or off:
+				0 -> off, means doors opened
+				1 -> on, means doors closed
+			posX (mandatory): the X position of the console on the map grid
+			posY (mandatory): the Y position of the console on the map grid
+			direction (mandatory): the orientation of the console:
+				0 -> North
+				1 -> South
+				2 -> East
+				3 -> West
+	-->
+	<console state="1" posY="3" posX="1" direction="3">
+		<!--
+			slot (optional): this tag defines a slot id controlled by the console. It contains one attribute:
+				slotId (mandatory): the id of the slot controlled by the console
+		-->
+		<slot slotId="0" />
+	</console>
+  
+	<!-- 
+		door (optional): this tag enables to display a door on the map grid. A door is controlled by console (see console tag). Doors are linked with consoles by slots. It contains four attributes:
+			posX (mandatory): the X position of the door on the map grid
+			posY (mandatory): the Y position of the door on the map grid
+			slotId (mandatory):  the id of the slot that controls the door
+			direction (mandatory): the orientation of the door:
+				0 -> North
+				1 -> South
+				2 -> East
+				3 -> West
+	-->
+	<door posY="2" posX="1" slotId="0" direction="0" />
+  
+	<!--
+		player (at least one): this tag enables to display a robot on the map grid. A player is a robot that the human player can progam. It contains four attributes:
+			associatedScriptName (optional): the id of script that controls this player (see script tag)
+			posX (mandatory): the X position of the player on the map grid
+			posY (mandatory): the Y position of the player on the map grid
+			direction (mandatory): the orientation of the player:
+				0 -> North
+				1 -> South
+				2 -> East
+				3 -> West
+	-->
+  <player associatedScriptName="Bob" posY="5" posX="2" direction="0" />
+  
+	<!-- 
+		enemy (optional): this tag enables to display a drone on the map grid. It contains seven attributes:
+			associatedScriptName (optional): the id of script that controls this enemy (see script tag)
+			posX (mandatory): the X position of the enemy on the map grid
+			posY (mandatory): the Y position of the enemy on the map grid
+			direction (mandatory): the orientation of the enemy:
+				0 -> North
+				1 -> South
+				2 -> East
+				3 -> West
+			range (mandatory): the number of cell the enemy can be see in front of it
+			selfRange (mandatory):
+				True -> the enemy scans cell under it
+				False -> the enemy ignores cell under it
+			typeRange (mandatory):
+				0 -> Line view
+				1 -> Cone view (not implemented) 
+				2 -> Around view (not implemented)
+	-->
+  <enemy associatedScriptName="Guarde" posY="3" posX="4" direction="3" range="2" selfRange="False" typeRange="0" />
+  
+	<!-- 
+		script (optionnal): this tag enables to define a script loaded at the beginning of the game. It contains three attributes:
+			name (mandatory): the id of this script. This name has to be unique. Player tags and enemy tags that have a "associatedScriptName" (see player and enemy tags) equal to this, will be controlled by this script
+			editMode (optional):
+				0 -> Locked (default): the player can't rename the script
+				1 -> Synch:  if the player renames the script it will automatically renames associated player tags
+				2 -> Editable: if the player renames the script it will not automatically renames associated player tags
+			type (optional):
+				0 -> Optimal: the given script is the optimal solution for the level
+				1 -> NonOptimal: the given script resolve the level but it can be optimized
+				2 -> Bugged: the given script doesn't resolve the level (bug or incomplete)
+				3 -> Undefined (default)
+
+			#######################
+			# Content description #
+			#######################
+			The content of the script can contain actions and control structures with the following tags:
+				action: this tag contains one attribute:
+					type (mandatory): the name of the action in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack"}.
+				Exemple: <action type="Forward" />
+				
+				if: this tag has no attribute, it is composed by two mandatory tags: condition (see condition section) and container (see container section)
+				Exemple:
+						<if>
+							<condition>
+							</condition>
+							<container>
+							</container>
+						</if>
+				
+				ifElse: this tag has no attribute, it is composed by three mandatory tags: condition (see condition section) and thenContainer (see container section) and elseContainer (see container section)
+				Exemple:
+						<ifElse>
+							<condition>
+							</condition>
+							<thenContainer>
+							</thenContainer>
+							<elseContainer>
+							</elseContainer>
+						</ifElse>
+				
+				for: this tag contains one attribute (nbFor). The content of the for tag can contain same tags as main script (action, if, ifElse, for, while, forever)
+					nbFor (mandatorry): the number of iteration
+				Exemple:
+					<for nbFor="15">
+					</for>
+					
+				while: this tag has no attribute, it is composed by two mandatory tags: condition (see condition section) and container (see container section)
+				Exemple:
+						<while>
+							<condition>
+							</condition>
+							<container>
+							</container>
+						</while>
+						
+				forever: this tag has no attribute. The content of the forever tag can contain same tags as main script (action, if, ifElse, for, while, forever)
+				Exemple:
+					<forever>
+					</forever>
+			
+			#####################
+			# Condition section #
+			#####################
+			Three condition tags exists: condition, thenCondition, elseCondition. The three follow the same rules.
+			Condition tags can contain only one child that can be a captor or an operator among the following tags:
+				captor: this tag contains one attribute:
+					type (mandatory): the name of the captor in {"Wall", "Enemie", "RedArea", "FieldGate", "Terminal", "Exit"}.
+				Exemple: <captor type="Terminal" />
+				
+				and: this tag has no attributes, it is composed by two mandatory tags: conditionLeft and conditionRight (see Condition description).
+				Exemple:
+					<and>
+						<conditionLeft>
+						</conditionLeft>
+						<conditionRight>
+						</conditionRight>
+					</and>
+				
+				or: this tag has no attributes, it is composed by two mandatory tags: conditionLeft and conditionRight (see Condition description).
+				Exemple:
+					<or>
+						<conditionLeft>
+						</conditionLeft>
+						<conditionRight>
+						</conditionRight>
+					</or>
+				
+				not: this tag has no attributes, like condition tag it can contain only one child that can be a captor or an operator (and, or, not)
+				Exemple:
+					<not>
+					</not>
+			
+			#####################
+			# Container section #
+			#####################
+			Three container tags exists: container, thenContainer, elseContainer. The three follow the same rules.
+			Container tags can contain same tags as main script (action, if, ifElse, for, while, forever)
+			
+	-->
+	<script name="Guarde" editMode="0" type="3">
+		<action type="Forward"/>
+		<action type="TurnLeft"/>
+		<action type="TurnRight"/>
+		<action type="Forward"/>
+	</script>
+
+	<script name="Bob" editMode="0" type="3">
+		<ifElse>
+			<condition>
+			  <and>
+				<conditionLeft>
+				  <captor type="FieldGate" />
+				</conditionLeft>
+				<conditionRight>
+				  <captor type="Terminal" />
+				</conditionRight>
+			  </and>
+			</condition>
+			<thenContainer>
+				<action type="Wait" />
+				<for nbFor="15">
+					<forever>
+						<if>
+							<condition>
+								<or>
+									<conditionLeft>
+										<captor type="Enemie" />
+									</conditionLeft>
+									<conditionRight>
+										<captor type="Exit" />
+									</conditionRight>
+								</or>
+							</condition>
+							<container>
+								<action type="Activate"/>
+							</container>
+						</if>
+					</forever>
+				</for>
+			</thenContainer>
+			<elseContainer>
+				<while>
+					<condition>
+						<not>
+							<captor type="Wall" />
+						</not>
+					</condition>
+					<container>
+						<action type="Forward" />
+					</container>
+				</while>
+			</elseContainer>
+      </ifElse>
+	</script>
+  
+	<!--
+		decoration (optional) enables to display a decoration on the map grid. It contains four attributes:
+			name (mandatory):  the path of the decoration to load. The root directory is Assets/Resources/Prefabs/
+			posX (mandatory): the X position of the decoration on the map grid
+			posY (mandatory): the Y position of the decoration on the map grid
+			direction (mandatory): the orientation of the decoration:
+				0 -> North
+				1 -> South
+				2 -> East
+				3 -> West
+	-->
+  <decoration name="Modern Furniture/Prefabs/Book Rack" posY="2" posX="5" direction="0" /> 
+  <decoration name="Modern Furniture/Prefabs/Book Rack" posY="2" posX="6" direction="0" /> 
+  <decoration name="Modern Furniture/Prefabs/Coffee Table" posY="3" posX="7" direction="2" /> 
+  <decoration name="Modern Furniture/Prefabs/Triangle Chair" posY="3" posX="6" direction="2" /> 
+  
+	<!--
+		score (optional) enables to define minimal score to display two or three stars. If the player reach the end of the level he always wins one star. It contains two attributes:
+			twoStars (mandatory): if the player score is higher, he wins two stars
+			threeStars (mandatory): if the player score is higher, he wins three stars
+	-->
+  <score twoStars="0" threeStars="3854"/>
+</level>
