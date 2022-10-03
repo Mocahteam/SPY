@@ -14,11 +14,9 @@ using Object = UnityEngine.Object;
 public class TitleScreenSystem : FSystem {
 	private GameData gameData;
 	public GameData prefabGameData;
+	public GameObject mainMenu;
 	public GameObject campagneMenu;
 	public GameObject compLevelButton;
-	public GameObject playButton;
-	public GameObject quitButton;
-	public GameObject backButton;
 	public GameObject cList;
 	public string pathFileParamFunct = "/StreamingAssets/ParamCompFunc/FunctionConstraint.csv"; // Chemin d'acces pour la chargement des paramètres des functions
 	public string pathFileParamRequiermentLibrary = "/StreamingAssets/ParamCompFunc/FunctionalityRequiermentLibrairy.xml"; // Chemin d'acces pour la chargement des paramètres des functions
@@ -43,7 +41,6 @@ public class TitleScreenSystem : FSystem {
 		levelButtons = new Dictionary<GameObject, List<GameObject>>();
 
 		GameObjectManager.setGameObjectState(campagneMenu, false);
-		GameObjectManager.setGameObjectState(backButton, false);
 		string levelsPath;
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
@@ -117,6 +114,7 @@ public class TitleScreenSystem : FSystem {
 	// See Jouer button in editor
 	public void showCampagneMenu() {
 		GameObjectManager.setGameObjectState(campagneMenu, true);
+		GameObjectManager.setGameObjectState(mainMenu, false);
 		foreach (GameObject directory in levelButtons.Keys) {
 			//show directory buttons
 			GameObjectManager.setGameObjectState(directory, true);
@@ -125,10 +123,6 @@ public class TitleScreenSystem : FSystem {
 				GameObjectManager.setGameObjectState(level, false);
 			}
 		}
-		GameObjectManager.setGameObjectState(playButton, false);
-		GameObjectManager.setGameObjectState(quitButton, false);
-		GameObjectManager.setGameObjectState(compLevelButton, false);
-		GameObjectManager.setGameObjectState(backButton, true);
 	}
 
 	private void showLevels(GameObject levelDirectory) {
@@ -138,7 +132,6 @@ public class TitleScreenSystem : FSystem {
 			GameObjectManager.setGameObjectState(directory, false);
 			//show levels
 			if (directory.Equals(levelDirectory)) {
-				//foreach(GameObject go in levelButtons[directory]){
 				for (int i = 0; i < levelButtons[directory].Count; i++) {
 					GameObjectManager.setGameObjectState(levelButtons[directory][i], true);
 
@@ -147,17 +140,16 @@ public class TitleScreenSystem : FSystem {
 					if (i <= PlayerPrefs.GetInt(directoryName, 0)) //by default first level of directory is the only unlocked level of directory
 						levelButtons[directory][i].transform.Find("Button").GetComponent<Button>().interactable = true;
 					//unlocked levels
-					else {
-						levelButtons[directory][i].transform.Find("Button").GetComponent<Button>().interactable = true;
-						//scores
-						int scoredStars = PlayerPrefs.GetInt(directoryName + Path.DirectorySeparatorChar + i + gameData.scoreKey, 0); //0 star by default
-						Transform scoreCanvas = levelButtons[directory][i].transform.Find("ScoreCanvas");
-						for (int nbStar = 0; nbStar < 4; nbStar++) {
-							if (nbStar == scoredStars)
-								GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, true);
-							else
-								GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, false);
-						}
+					else 
+						levelButtons[directory][i].transform.Find("Button").GetComponent<Button>().interactable = false;
+					//scores
+					int scoredStars = PlayerPrefs.GetInt(directoryName + Path.DirectorySeparatorChar + i + gameData.scoreKey, 0); //0 star by default
+					Transform scoreCanvas = levelButtons[directory][i].transform.Find("ScoreCanvas");
+					for (int nbStar = 0; nbStar < 4; nbStar++) {
+						if (nbStar == scoredStars)
+							GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, true);
+						else
+							GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, false);
 					}
 				}
 			}
@@ -180,11 +172,8 @@ public class TitleScreenSystem : FSystem {
 		foreach (GameObject directory in levelButtons.Keys) {
 			if (directory.activeSelf) {
 				//main menu
+				GameObjectManager.setGameObjectState(mainMenu, true);
 				GameObjectManager.setGameObjectState(campagneMenu, false);
-				GameObjectManager.setGameObjectState(playButton, true);
-				GameObjectManager.setGameObjectState(quitButton, true);
-				GameObjectManager.setGameObjectState(backButton, false);
-				GameObjectManager.setGameObjectState(compLevelButton, true);
 				break;
 			}
 			else {

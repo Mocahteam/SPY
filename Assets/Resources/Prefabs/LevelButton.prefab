@@ -35,12 +35,12 @@ RectTransform:
   - {fileID: 5233554974640938611}
   - {fileID: 8361679180715253690}
   m_Father: {fileID: 2736190105121724138}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 140, y: 20}
+  m_SizeDelta: {x: 96.8, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &1849304609413614019
 Canvas:
@@ -113,7 +113,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2736190105121724138}
   - component: {fileID: 6511645927820091960}
-  - component: {fileID: 2855218831008415533}
+  - component: {fileID: 6668654199923685670}
   m_Layer: 5
   m_Name: LevelButton
   m_TagString: Untagged
@@ -132,15 +132,15 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 6507271676656560551}
   - {fileID: 6262297013106444469}
+  - {fileID: 6507271676656560551}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -626}
+  m_SizeDelta: {x: 260, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6511645927820091960
 CanvasRenderer:
@@ -150,7 +150,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8403557285751870894}
   m_CullTransparentMesh: 0
---- !u!114 &2855218831008415533
+--- !u!114 &6668654199923685670
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8403557285751870894}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
@@ -168,7 +168,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 5
+  m_Spacing: 0
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -821,7 +821,7 @@ PrefabInstance:
     - target: {fileID: 2736190105121724138, guid: d6527149b979027408a3d90fe769acdf,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2736190105121724138, guid: d6527149b979027408a3d90fe769acdf,
         type: 3}

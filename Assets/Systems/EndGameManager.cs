@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using FYFY;
-using UnityEngine.UI;
 using System.Collections;
 using TMPro;
 using System.IO;
