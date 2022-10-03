@@ -220,10 +220,8 @@ public class EditableContainerSystem : FSystem
 		// On récupére le contenair pointé lors du clic de la balayette
 		GameObject scriptContainerPointer = f_viewportContainerPointed.First().transform.Find("ScriptContainer").gameObject;
 
-		// On parcourt le script container pour détruire toutes les instructions
-		for (int i = scriptContainerPointer.transform.childCount - 1; i >= 0; i--)
-			if (scriptContainerPointer.transform.GetChild(i).GetComponent<BaseElement>())
-				GameObjectManager.addComponent<NeedToDelete>(scriptContainerPointer.transform.GetChild(i).gameObject);
+		deleteContent(scriptContainerPointer);
+
 		// Enable the last emptySlot and disable dropZone
 		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 1).gameObject, true);
 		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 2).gameObject, false);
@@ -233,6 +231,21 @@ public class EditableContainerSystem : FSystem
 	// See RemoveButton in ViewportScriptContainer prefab in editor
 	public void removeContainer(GameObject container)
 	{
+		deleteContent(container.transform.GetChild(0).gameObject);
+		MainLoop.instance.StartCoroutine(realDelete(container));
+	}
+
+	private void deleteContent (GameObject container)
+    {
+		// On parcourt le script container pour détruire toutes les instructions
+		for (int i = container.transform.childCount - 1; i >= 0; i--)
+			if (container.transform.GetChild(i).GetComponent<BaseElement>())
+				GameObjectManager.addComponent<NeedToDelete>(container.transform.GetChild(i).gameObject);
+	}
+
+	private IEnumerator realDelete(GameObject container)
+	{
+		yield return null;
 		GameObjectManager.unbind(container);
 		Object.Destroy(container);
 		// Update size of parent GameObject
