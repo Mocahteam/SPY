@@ -97,7 +97,8 @@ public class UISystem : FSystem {
 			foreach (GameObject trash in f_removeButton)
 				trash.GetComponent<Button>().interactable = false;
 			// Sauvegarde de l'état d'avancement des niveaux (niveau et étoile)
-			PlayerPrefs.SetInt(gameData.levelToLoad.Item1, gameData.levelToLoad.Item2 + 1);
+			if (PlayerPrefs.GetInt(gameData.levelToLoad.Item1,0) < gameData.levelToLoad.Item2 + 1)
+				PlayerPrefs.SetInt(gameData.levelToLoad.Item1, gameData.levelToLoad.Item2 + 1);
 			PlayerPrefs.Save();
 		}
 		// for other end type, nothing to do more
