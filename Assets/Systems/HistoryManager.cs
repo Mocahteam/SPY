@@ -57,7 +57,8 @@ public class HistoryManager : FSystem
 
 	private IEnumerator delayLoadHistory()
 	{
-		// delay two frame, time the editable container will be created
+		// delay three frame, time the editable container will be created
+		yield return null;
 		yield return null;
 		yield return null;
 		loadHistory();

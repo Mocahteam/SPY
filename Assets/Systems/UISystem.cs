@@ -233,7 +233,6 @@ public class UISystem : FSystem {
 		gameData.totalCoin = 0;
 		gameData.levelToLoadScore = null;
 		gameData.dialogMessage = new List<(string, float, string, float)>();
-		resetGameData();
 }
 
 
@@ -248,12 +247,6 @@ public class UISystem : FSystem {
 		restartScene();
 	}
 
-	// Reset les données du gameData pour la gestion des fonctionalités dans les niveaux
-	private void resetGameData()
-	{
-		gameData.GetComponent<GameData>().executeLvlByComp = false;
-	}
-
 
 	// See ReloadLevel and RestartLevel buttons in editor
 	// Fait recommencer la scéne mais en gardant l'historique des actions
@@ -261,6 +254,7 @@ public class UISystem : FSystem {
 		if (gameData.actionsHistory != null)
 			UnityEngine.Object.DontDestroyOnLoad(gameData.actionsHistory);
 		restartScene();
+		Debug.Log("retry done!");
 	}
 
 	// Copie les blocs du panneau d'édition dans le panneau d'exécution

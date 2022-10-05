@@ -464,8 +464,6 @@ public class ParamCompetenceSystem : FSystem
 
         if (conditionStartLevelOk)
         {
-			// On signal que la séléction de niveau se fait par les compétences (et donc que les info des fonctionnalités du niveau ne doivent pas être chargées)
-			gameData.GetComponent<GameData>().executeLvlByComp = true;
 			// 2 cas de figures : 
 			// Demande de niveau spécial pour la compétence
 			// Demande de niveau sans compétence LD

@@ -3,7 +3,6 @@ using FYFY;
 
 public class LevelGenerator_wrapper : BaseWrapper
 {
-	public UnityEngine.GameObject camera;
 	public UnityEngine.GameObject editableCanvas;
 	public UnityEngine.GameObject scriptContainer;
 	public UnityEngine.GameObject library;
@@ -14,7 +13,6 @@ public class LevelGenerator_wrapper : BaseWrapper
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
-		MainLoop.initAppropriateSystemField (system, "camera", camera);
 		MainLoop.initAppropriateSystemField (system, "editableCanvas", editableCanvas);
 		MainLoop.initAppropriateSystemField (system, "scriptContainer", scriptContainer);
 		MainLoop.initAppropriateSystemField (system, "library", library);

@@ -28,7 +28,6 @@ public class LevelGenerator : FSystem {
 	private HashSet<string> scriptNameUsed = new HashSet<string>();
 	private GameObject lastAgentCreated = null;
 
-	public GameObject camera;
 	public GameObject editableCanvas;// Le container qui contient les Viewport/script containers
 	public GameObject scriptContainer;
 	public GameObject library; // Le viewport qui contient la librairie

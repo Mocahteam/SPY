@@ -15,7 +15,6 @@ public class GameData : MonoBehaviour {
 	public int totalExecute;
 	public int totalCoin;
 	public GameObject actionsHistory; //all actions made in the level, displayed at the end
-	public bool executeLvlByComp = false;
 	public float gameSpeed_default = 1f;
 	public float gameSpeed_current = 1f;
 	public bool dragDropEnabled = true;
