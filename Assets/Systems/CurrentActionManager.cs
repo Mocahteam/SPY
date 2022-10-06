@@ -26,6 +26,7 @@ public class CurrentActionManager : FSystem
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 
 	private HashSet<int> exploredScripItem;
+	private bool infiniteLoopDetected;
 
 	public static CurrentActionManager instance;
 
@@ -53,11 +54,19 @@ public class CurrentActionManager : FSystem
 			// init currentAction on the first action of players
 			bool atLeastOneFirstAction = false;
 			foreach (GameObject player in f_player)
+			{
 				if (addCurrentActionOnFirstAction(player) != null)
 					atLeastOneFirstAction = true;
-			if (!atLeastOneFirstAction)
+				if (infiniteLoopDetected)
+					break;
+			}
+			if (!atLeastOneFirstAction || infiniteLoopDetected)
 			{
 				GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
+				if (infiniteLoopDetected)
+					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.InfiniteLoop });
+				else
+					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoAction });
 			}
 			else
 			{
@@ -98,13 +107,15 @@ public class CurrentActionManager : FSystem
 	private GameObject getFirstActionOf(GameObject action, GameObject agent)
     {
 		exploredScripItem = new HashSet<int>();
+		infiniteLoopDetected = false;
 		return rec_getFirstActionOf(action, agent);
 	}
 
 	// look for first action recursively, it could be control structure (if, for...)
 	private GameObject rec_getFirstActionOf(GameObject action, GameObject agent)
 	{
-		if (action == null || exploredScripItem.Contains(action.GetInstanceID()))
+		infiniteLoopDetected = exploredScripItem.Contains(action.GetInstanceID());
+		if (action == null || infiniteLoopDetected)
 			return null;
 		exploredScripItem.Add(action.GetInstanceID());
 		if (action.GetComponent<BasicAction>())
@@ -224,7 +235,7 @@ public class CurrentActionManager : FSystem
 			case "Wall": // walls
 				foreach (GameObject wall in f_wall)
 					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>().enabled)
+					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
 						ifok = true;
 				break;
 			case "FieldGate": // doors
@@ -275,12 +286,15 @@ public class CurrentActionManager : FSystem
 			CurrentAction currentAction = currentActionGO.GetComponent<CurrentAction>();
 			nextAction = getNextAction(currentActionGO, currentAction.agent);
 			// check if we reach last action of a drone
-			if(nextAction == null && currentActionGO.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
+			if (nextAction == null && currentActionGO.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
 				currentActionGO.GetComponent<CurrentAction>().agent.GetComponent<ScriptRef>().scriptFinished = true;
-			else if(nextAction != null){
+			else if (nextAction != null)
+			{
 				//ask to add CurrentAction on next frame => this frame we will remove current CurrentActions
 				MainLoop.instance.StartCoroutine(delayAddCurrentAction(nextAction, currentAction.agent));
 			}
+			else if (infiniteLoopDetected)
+				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.InfiniteLoop });
 			GameObjectManager.removeComponent<CurrentAction>(currentActionGO);
 		}
 	}

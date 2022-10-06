@@ -413,7 +413,7 @@ public class DragDropSystem : FSystem
 		// et on retourne la réponse
 		if (Time.time - lastClickTime < catchTime)
         {
-			lastClickTime = Time.time;
+			lastClickTime = Time.time-catchTime;
 			return true;
 		}
         else
