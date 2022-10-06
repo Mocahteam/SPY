@@ -264,6 +264,12 @@ public class DragDropSystem : FSystem
 					undoDrop();
 					return;
 				}
+				// check that dropArea is not a child of the dragged element (can appear if we move the mouse fast)
+				else if (dropArea.transform.IsChildOf(itemDragged.transform))
+                {
+					undoDrop();
+					return;
+				}
 
 				if (addDraggedItemOnDropZone(dropArea))
 				{
@@ -371,7 +377,7 @@ public class DragDropSystem : FSystem
 	// Si double clic sur l'élément de la bibliothèque (voir l'inspector), ajoute le bloc d'action au dernier container utilisé
 	public void checkDoubleClick(BaseEventData element)
     {
-		if (!Pause && gameData.dragDropEnabled && doubleClick())
+		if (!Pause && gameData.dragDropEnabled && doubleClick() && !itemDragged)
 		{
 			// if no drop zone used, try to get the last
 			if (lastDropZoneUsed == null)

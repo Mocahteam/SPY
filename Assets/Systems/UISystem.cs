@@ -193,9 +193,18 @@ public class UISystem : FSystem {
 	public void setExecutionView(bool value){
 		// Toggle library and editable panel
 		GameObjectManager.setGameObjectState(canvas.transform.Find("LeftPanel").gameObject, !value);
-		// Toggle all execution panels
-		foreach (Transform executablePanel in canvas.transform.Find("ExecutableCanvas"))
-			GameObjectManager.setGameObjectState(executablePanel.gameObject, value);
+		// Show sentinel panels and toggle player panels
+		foreach (GameObject agent in f_agents)
+			if (agent.GetComponent<DetectRange>())
+				// always enable drone execution panel
+				GameObjectManager.setGameObjectState(agent.GetComponent<ScriptRef>().executablePanel, true);
+			else
+			{
+				// toggle player execution panel
+				GameObjectManager.setGameObjectState(agent.GetComponent<ScriptRef>().executablePanel, value);
+				if (!value)
+					freePlayerExecutablePanels();
+			}
 		// Define Menu button states
 		GameObjectManager.setGameObjectState(buttonExecute, !value);
 		GameObjectManager.setGameObjectState(buttonPause, value);
@@ -254,22 +263,33 @@ public class UISystem : FSystem {
 		if (gameData.actionsHistory != null)
 			UnityEngine.Object.DontDestroyOnLoad(gameData.actionsHistory);
 		restartScene();
-		Debug.Log("retry done!");
 	}
 
-	// Copie les blocs du panneau d'édition dans le panneau d'exécution
-	private void copyEditableScriptsToExecutablePanels(){
-		//clean container for each robot and copy the new sequence
-		foreach (GameObject robot in f_player) {
+	private void freePlayerExecutablePanels()
+	{
+		foreach (GameObject robot in f_player)
+		{
 			GameObject executableContainer = robot.GetComponent<ScriptRef>().executableScript;
 			// Clean robot container
-			for(int i = executableContainer.transform.childCount - 1; i >= 0; i--) {
+			for (int i = executableContainer.transform.childCount - 1; i >= 0; i--)
+			{
 				Transform child = executableContainer.transform.GetChild(i);
 				GameObjectManager.unbind(child.gameObject);
 				child.SetParent(null); // beacause destroying is not immediate, we remove this child from its parent, then Unity can take the time he wants to destroy GameObject
 				GameObject.Destroy(child.gameObject);
 			}
+		}
+	}
 
+	// Copie les blocs du panneau d'édition dans le panneau d'exécution
+	private void copyEditableScriptsToExecutablePanels()
+	{
+		// be sure executable panel is free
+		freePlayerExecutablePanels();
+		// copy the new sequence
+		foreach (GameObject robot in f_player)
+		{
+			GameObject executableContainer = robot.GetComponent<ScriptRef>().executableScript;
 			//copy editable script
 			GameObject editableContainer = null;
 			// On parcourt les scripts containers pour identifer celui associé au robot 

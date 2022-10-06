@@ -24,7 +24,6 @@ public class CurrentActionManager : FSystem
 	private Family f_exit = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
 
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 	private HashSet<int> exploredScripItem;
 
@@ -39,12 +38,6 @@ public class CurrentActionManager : FSystem
 	{
 		f_executionReady.addEntryCallback(initFirstsActions);
 		f_newStep.addEntryCallback(delegate { onNewStep(); });
-		f_editingMode.addEntryCallback(delegate {
-			// remove all player's current actions
-			foreach (GameObject currentAction in f_currentActions)
-				if (currentAction.GetComponent<CurrentAction>().agent.CompareTag("Player"))
-					GameObjectManager.removeComponent<CurrentAction>(currentAction);
-		});
 		f_playingMode.addEntryCallback(delegate {
 			// reset inaction counters
 			foreach (GameObject robot in f_player)
