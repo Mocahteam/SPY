@@ -371,24 +371,30 @@ public class DragDropSystem : FSystem
 	// Si double clic sur l'élément de la bibliothèque (voir l'inspector), ajoute le bloc d'action au dernier container utilisé
 	public void checkDoubleClick(BaseEventData element)
     {
-		if (!Pause && gameData.dragDropEnabled && doubleClick() && lastDropZoneUsed != null)
+		if (!Pause && gameData.dragDropEnabled && doubleClick())
 		{
-
-			// if last drop zone used is the neighbor of enabled replacement slot => disable this replacement slot
-			GameObject neighbor = lastDropZoneUsed.transform.parent.GetChild(Mathf.Min(lastDropZoneUsed.transform.GetSiblingIndex() + 1, lastDropZoneUsed.transform.parent.childCount - 1)).gameObject;
-			if (neighbor != null && neighbor.activeInHierarchy && neighbor.GetComponent<ReplacementSlot>())
-				GameObjectManager.setGameObjectState(neighbor, false);
-			// On crée le bloc action
-			itemDragged = EditingUtility.createEditableBlockFromLibrary(element.selectedObject, mainCanvas);
-			// On l'ajoute aux familles de FYFY
-			GameObjectManager.bind(itemDragged);
-			// On l'envoie sur la dernière dropzone utilisée
-			addDraggedItemOnDropZone(lastDropZoneUsed);
-			// refresh all the hierarchy of parent containers
-			refreshHierarchyContainers(lastDropZoneUsed);
-			// Rafraichissement de l'UI
-			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
-			itemDragged = null;
+			// if no drop zone used, try to get the last
+			if (lastDropZoneUsed == null)
+				lastDropZoneUsed = f_dropZone.getAt(f_dropZone.Count-1);
+			// be sure the lastDropZone is defined
+			if (lastDropZoneUsed != null)
+			{
+				// if last drop zone used is the neighbor of enabled replacement slot => disable this replacement slot
+				GameObject neighbor = lastDropZoneUsed.transform.parent.GetChild(Mathf.Min(lastDropZoneUsed.transform.GetSiblingIndex() + 1, lastDropZoneUsed.transform.parent.childCount - 1)).gameObject;
+				if (neighbor != null && neighbor.activeInHierarchy && neighbor.GetComponent<ReplacementSlot>())
+					GameObjectManager.setGameObjectState(neighbor, false);
+				// On crée le bloc action
+				itemDragged = EditingUtility.createEditableBlockFromLibrary(element.selectedObject, mainCanvas);
+				// On l'ajoute aux familles de FYFY
+				GameObjectManager.bind(itemDragged);
+				// On l'envoie sur la dernière dropzone utilisée
+				addDraggedItemOnDropZone(lastDropZoneUsed);
+				// refresh all the hierarchy of parent containers
+				refreshHierarchyContainers(lastDropZoneUsed);
+				// Rafraichissement de l'UI
+				GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+				itemDragged = null;
+			}
 		}
 	}
 
