@@ -155,12 +155,11 @@ public class DragDropSystem : FSystem
 			// exclude this GameObject from the EventSystem
 			itemDragged.GetComponent<Image>().raycastTarget = false;
 			// and all his child who can disturb the drag
-			foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
+			foreach (Image child in itemDragged.GetComponentsInChildren<Image>(true))
 				child.raycastTarget = false;
-			foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>())
+			foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>(true))
 				child.raycastTarget = false;
 		}
-
 	}
 
 
@@ -185,9 +184,9 @@ public class DragDropSystem : FSystem
 			// exclude this GameObject from the EventSystem
 			itemDragged.GetComponent<Image>().raycastTarget = false;
 			// and all his child who can disturb the drag
-			foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
+			foreach (Image child in itemDragged.GetComponentsInChildren<Image>(true))
 				child.raycastTarget = false;
-			foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>())
+			foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>(true))
 				child.raycastTarget = false;
 			// Restore action and subactions to inventory
 			foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
@@ -276,10 +275,10 @@ public class DragDropSystem : FSystem
 					// We restore this GameObject inside the EventSystem
 					itemDragged.GetComponent<Image>().raycastTarget = true;
 					// and its childrens
-					foreach (Image child in itemDragged.GetComponentsInChildren<Image>())
+					foreach (Image child in itemDragged.GetComponentsInChildren<Image>(true))
 						if (child.name != "3DEffect") // except 3DEffect child
 							child.raycastTarget = true;
-					foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>())
+					foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>(true))
 						child.raycastTarget = true;
 				}
 			}
