@@ -78,6 +78,7 @@ public class DialogSystem : FSystem
 
 	private void configureDialog()
     {
+		// set text
 		GameObject textGO = dialogPanel.transform.Find("Text").gameObject;
 		if (gameData.dialogMessage[nDialog].Item1 != null)
 		{
@@ -90,6 +91,7 @@ public class DialogSystem : FSystem
 		}
 		else
 			GameObjectManager.setGameObjectState(textGO, false);
+		// set image
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if (gameData.dialogMessage[nDialog].Item3 != null)
 		{
@@ -103,6 +105,11 @@ public class DialogSystem : FSystem
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO, false);
+		// set camera pos
+		if (gameData.dialogMessage[nDialog].Item5 != -1 && gameData.dialogMessage[nDialog].Item6 != -1)
+        {
+			GameObjectManager.addComponent<FocusCamOn>(MainLoop.instance.gameObject, new { camX = gameData.dialogMessage[nDialog].Item5, camY = gameData.dialogMessage[nDialog].Item6 });
+        }
 	}
 
 

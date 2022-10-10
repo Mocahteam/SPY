@@ -27,11 +27,13 @@
 	<!-- dialogs (optional): this tag describes the set of text to display at the beginning of the level. It is composed by a set of dialog. The dialogs will be displayed in the order they defined. -->
 	<dialogs>
 		<!-- 
-			dialog (at least one): this tag describes one of the dialogs of this level. It contains four attributes:
+			dialog (at least one): this tag describes one of the dialogs of this level. It contains six attributes:
 				text (optional): the text to display
 				textHeight (optional): the height of the text field in the dialog panel
 				img (optional): the name of the image to load. This file has to be placed inside the "Images" directory. Both "Images" directory in this level file have to be in the same directory.
-				imgHeight (optional)! the height of the image in the dialog panel
+				imgHeight (optional): the height of the image in the dialog panel
+				camX (optional): the X position to focus camera on the map grid
+				camY (optional): the Y position to focus camera on the map grid
 		-->
 		<dialog text="Exemple of briefing text."/>
 	</dialogs>
