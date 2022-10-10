@@ -32,6 +32,7 @@ public class DragDropSystem : FSystem
 	// Les familles
     private Family f_viewportContainerPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les containers éditables
 	private Family f_dropZone = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone))); // Les drops zones
+	private Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
 	private Family f_focusedDropArea = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(ReplacementSlot), typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // the drop area under mouse cursor
 	private Family f_elementToDelete = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToDelete)));
 	private Family f_elementToRefresh = FamilyManager.getFamily(new AllOfComponents(typeof(NeedRefreshHierarchy)));
@@ -380,7 +381,7 @@ public class DragDropSystem : FSystem
 		{
 			// if no drop zone used, try to get the last
 			if (lastDropZoneUsed == null)
-				lastDropZoneUsed = f_dropZone.getAt(f_dropZone.Count-1);
+				lastDropZoneUsed = f_dropArea.getAt(f_dropArea.Count-1);
 			// be sure the lastDropZone is defined
 			if (lastDropZoneUsed != null)
 			{

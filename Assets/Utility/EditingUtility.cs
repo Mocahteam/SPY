@@ -67,7 +67,7 @@ public static class EditingUtility
 				item.transform.SetParent(dropArea.transform.parent);
 				// On met l'élément à la position voulue
 				item.transform.SetSiblingIndex(dropArea.transform.GetSiblingIndex() - 1); // the empty zone is preceded by the drop zone, so we add the item at the position of the drop zone (reason of -1)	
-																						  // disable empty slot
+				// disable empty slot
 				dropArea.GetComponent<Outline>().enabled = false;
 
 				// Because this function can be call for binded GO or not
