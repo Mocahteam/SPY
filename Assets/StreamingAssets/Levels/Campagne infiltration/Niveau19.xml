@@ -1,27 +1,25 @@
 <?xml version="1.0"?>
 <level>
   <map>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-    <line><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	<line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "3" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "3" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
   </map>
   <dialogs>
-	<dialog text="Encore une dernière difficulté avant de sortir de la base. Les brouilleurs nous empêchent d'utiliser deux cannaux de communication. Il va donc nous falloir utiliser le même signal pour contrôler les deux robots." textHeight="70" camY="7" camX="3"/>
-	<dialog text="Exploitez les particularités du terrain et ce que vous avez appris de vos précédentes missions pour ammener Bob et Karl vers la sortie." />
-	<dialog text="N'oubliez pas que vous pouvez exécuter votre programme étape par étape..." />
+	<dialog text="Tiens ! Nous retrouvons Karl, c'est l'occasion de le sortir le là. Il semblerait que le terminal de ce couloir contrôle les deux champs de force." camY="4" camX="3" />
+	<dialog text="Nous vous avons envoyé toutes les briques de programmation développées par nos ingénieurs. Vous avez un contrôle total des robots." camY="1" camX="1" />
   </dialogs>
   <blockLimits>
     <blockLimit blockType="Forward" limit="-1" />
     <blockLimit blockType="TurnLeft" limit="-1" />
     <blockLimit blockType="TurnRight" limit="-1" />
-    <blockLimit blockType="Wait" limit="0" />
-    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="Wait" limit="-1" />
+    <blockLimit blockType="Activate" limit="-1" />
     <blockLimit blockType="TurnBack" limit="-1" />
     <blockLimit blockType="If" limit="-1" />
     <blockLimit blockType="IfElse" limit="-1" />
@@ -32,14 +30,20 @@
     <blockLimit blockType="OrOperator" limit="-1" />
     <blockLimit blockType="NotOperator" limit="-1" />
     <blockLimit blockType="Wall" limit="-1" />
-    <blockLimit blockType="Enemie" limit="0" />
-    <blockLimit blockType="RedArea" limit="0" />
-    <blockLimit blockType="FieldGate" limit="0" />
-    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Enemy" limit="-1" />
+    <blockLimit blockType="RedArea" limit="-1" />
+    <blockLimit blockType="FieldGate" limit="-1" />
+    <blockLimit blockType="Terminal" limit="-1" />
     <blockLimit blockType="Exit" limit="-1" />
   </blockLimits>
-  <player associatedScriptName="Bob/Karl" posY="7" posX="2" direction="0" />
-  <player associatedScriptName="Bob/Karl" posY="7" posX="4" direction="0" />
-  <script name="Bob/Karl" editMode="0" />
-  <score twoStars="4221" threeStars="4423"/>
+  <door posY="5" posX="1" direction="0" slotId="0" />
+  <door posY="4" posX="4" direction="2" slotId="0" />
+  <console state="1" posY="4" posX="1" direction="2">
+    <slot slotId="0" />
+  </console>
+  <player associatedScriptName="Karl" posY="4" posX="3" direction="2" />
+  <script name="Karl" editMode="0" />
+  <player associatedScriptName="Bob" posY="1" posX="1" direction="1" />
+  <script name="Bob" editMode="0" />
+  <score twoStars="4130" threeStars="4249"/>
 </level>

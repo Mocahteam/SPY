@@ -1,6 +1,7 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
 using System.Collections.Generic;
+using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -483,6 +484,18 @@ public static class EditingUtility
 				if (child.GetComponent<IfElseControl>())
 					computeNext(child.transform.Find("ElseContainer").gameObject);
 			}
+		}
+	}
+
+	public static void removeComments(XmlNode node)
+	{
+		for (int i = node.ChildNodes.Count - 1; i >= 0; i--)
+		{
+			XmlNode child = node.ChildNodes[i];
+			if (child.NodeType == XmlNodeType.Comment)
+				node.RemoveChild(child);
+			else
+				removeComments(child);
 		}
 	}
 }

@@ -244,7 +244,7 @@ public class CurrentActionManager : FSystem
 					 door.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
 				break;
-			case "Enemie": // ennemies
+			case "Enemy": // enemies
 				foreach (GameObject drone in f_drone)
 					if (drone.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 						drone.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)

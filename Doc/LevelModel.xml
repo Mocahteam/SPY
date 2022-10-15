@@ -51,7 +51,7 @@
 	<blockLimits>
 		<!-- 
 			blockLimit (optional): this tag enables to define  the amount of specific programming block available. It contains two attributes:
-				blockType (mandatory): the key of a type of block in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack", "If", "IfElse", "For", "While", "Forever", "AndOperator", "OrOperator", "NotOperator", "Wall", "Enemie", "RedArea", "FieldGate", "Terminal", "Exit"}
+				blockType (mandatory): the key of a type of block in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack", "If", "IfElse", "For", "While", "Forever", "AndOperator", "OrOperator", "NotOperator", "Wall", "Enemy", "RedArea", "FieldGate", "Terminal", "Exit"}
 				limit (mandatory): >0 the amount of blocks available for the player, ==0 this block type is hidden for the player, <0 unlimited accès of this block type
 		-->
 		<blockLimit blockType="Forward" limit="-1" />
@@ -69,7 +69,7 @@
 		<blockLimit blockType="OrOperator" limit="0" />
 		<blockLimit blockType="NotOperator" limit="0" />
 		<blockLimit blockType="Wall" limit="0" />
-		<blockLimit blockType="Enemie" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
 		<blockLimit blockType="RedArea" limit="0" />
 		<blockLimit blockType="FieldGate" limit="0" />
 		<blockLimit blockType="Terminal" limit="0" />
@@ -218,7 +218,7 @@
 			Three condition tags exists: condition, thenCondition, elseCondition. The three follow the same rules.
 			Condition tags can contain only one child that can be a captor or an operator among the following tags:
 				captor: this tag contains one attribute:
-					type (mandatory): the name of the captor in {"Wall", "Enemie", "RedArea", "FieldGate", "Terminal", "Exit"}.
+					type (mandatory): the name of the captor in {"Wall", "Enemy", "RedArea", "FieldGate", "Terminal", "Exit"}.
 				Exemple: <captor type="Terminal" />
 				
 				and: this tag has no attributes, it is composed by two mandatory tags: conditionLeft and conditionRight (see Condition description).
@@ -278,7 +278,7 @@
 							<condition>
 								<or>
 									<conditionLeft>
-										<captor type="Enemie" />
+										<captor type="Enemy" />
 									</conditionLeft>
 									<conditionRight>
 										<captor type="Exit" />

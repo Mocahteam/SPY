@@ -1,23 +1,19 @@
 <?xml version="1.0"?>
 <level>
-  <info>
-    <func name="F5"/>
-    <func name="F8"/>
-  </info>
   <map>
-    <line><cell value="1" /><cell value="1" /><cell value="1" /></line>
-    <line><cell value="1" /><cell value="3" /><cell value="1" /></line>
-    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
-    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
-    <line><cell value="1" /><cell value="2" /><cell value="1" /></line>
-    <line><cell value="1" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /></line>
+    <line><cell value="0" /><cell value="3" /><cell value="3" /><cell value="0" /></line>
+    <line><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /></line>
   </map>
   <dialogs>
-	<dialog text="Pour déplacer la caméra, utilise les flèches directionnelles du clavier." />
-	<dialog text="Pour zoomer ou dézoomer, utilise la molette de la souris." />
+	<dialog text="Félicitation ! Vous avez réussi à récupérer les documents volés et à ramener les Bob et Karl en toutes pièces."/>
+	<dialog text="Cette mission est un réel succès."/>
+	<dialog text="Bob et Karl peuvent bien se serrer la main :)"/>
   </dialogs>
+  <dragdropDisabled />
+  <executionLimit amount="1" />
   <blockLimits>
-    <blockLimit blockType="Forward" limit="-1" />
+    <blockLimit blockType="Forward" limit="0" />
     <blockLimit blockType="TurnLeft" limit="0" />
     <blockLimit blockType="TurnRight" limit="0" />
     <blockLimit blockType="Wait" limit="0" />
@@ -38,7 +34,15 @@
     <blockLimit blockType="Terminal" limit="0" />
     <blockLimit blockType="Exit" limit="0" />
   </blockLimits>
-  <player associatedScriptName="Bob" posY="4" posX="1" direction="0" />
-  <script name="Bob" editMode="0" />
-  <score twoStars="5750" threeStars="6750"/>
+  <player associatedScriptName="Karl" posY="1" posX="1" direction="2" />
+  <script name="Karl" editMode="0">
+    <action type="Activate"/>
+    <action type="Activate"/>
+  </script>
+  <player associatedScriptName="Bob" posY="1" posX="2" direction="3" />
+  <script name="Bob" editMode="0">
+    <action type="Activate"/>
+    <action type="Activate"/>
+  </script>
+  <score twoStars="0" threeStars="6666"/>
 </level>

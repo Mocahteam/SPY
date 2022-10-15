@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using System.IO;
 using TMPro;
 using System.Xml;
-using System;
 using Object = UnityEngine.Object;
 
 /// <summary>
@@ -55,7 +54,6 @@ public class TitleScreenSystem : FSystem {
 		}
 		else
 		{
-			paramFunction();
 			levelsPath = Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels";
 			List<string> levels;
 			foreach (string directory in Directory.GetDirectories(levelsPath))
@@ -183,84 +181,6 @@ public class TitleScreenSystem : FSystem {
 				foreach (GameObject go in levelButtons[directory]) {
 					GameObjectManager.setGameObjectState(go, false);
 				}
-			}
-		}
-	}
-
-	// Initialise tout ce qui concerne les fonctionalités
-	private void paramFunction()
-	{
-		//loadConstraintFunction();
-		//loadRequiermentLibrary();
-	}
-
-	// Charge les différentes contraintes qui existent entre les fonctionalités
-	private void loadConstraintFunction()
-	{
-		StreamReader reader = new StreamReader("" + Application.dataPath + pathFileParamFunct);
-		bool endOfFile = false;
-		while (!endOfFile)
-		{
-			string data_string = reader.ReadLine();
-			if (data_string == null)
-			{
-				endOfFile = true;
-				break;
-			}
-			string[] data = data_string.Split(';');
-			gameData.GetComponent<FunctionalityParam>().active.Add(data[0], Convert.ToBoolean(data[4]));
-			gameData.GetComponent<FunctionalityParam>().levelDesign.Add(data[0], Convert.ToBoolean(data[3]));
-			List<string> tmp = new List<string>();
-			var data_link = data[1].Split(',');
-			foreach (string value in data_link)
-			{
-				tmp.Add(value);
-			}
-			gameData.GetComponent<FunctionalityParam>().activeFunc.Add(data[0], new List<string>(tmp));
-			tmp = new List<string>();
-			data_link = data[2].Split(',');
-			foreach (string value in data_link)
-			{
-				tmp.Add(value);
-			}
-			gameData.GetComponent<FunctionalityParam>().enableFunc.Add(data[0], new List<string>(tmp));
-		}
-	}
-
-	private void loadRequiermentLibrary(){
-		XmlDocument doc = new XmlDocument();
-		if (Application.platform == RuntimePlatform.WebGLPlayer)
-		{
-			doc.LoadXml("" + Application.dataPath + pathFileParamRequiermentLibrary);
-			XMLRequiermentLibrary(doc);
-		}
-		else
-		{
-			doc.Load("" + Application.dataPath + pathFileParamRequiermentLibrary);
-			XMLRequiermentLibrary(doc);
-		}
-	}
-
-	private void XMLRequiermentLibrary(XmlDocument doc)
-    {
-		XmlNode root = doc.ChildNodes[1];
-		foreach (XmlNode child in root.ChildNodes)
-		{
-            if (child.Name == "CaptorList")
-            {
-				foreach (XmlNode childEle in child)
-                {
-					gameData.GetComponent<FunctionalityParam>().listCaptor.Add(childEle.Attributes.GetNamedItem("name").Value);
-				}
-			}
-			else if(child.Name == "func")
-            {
-				List<string> listEleTemp = new List<string>();
-				foreach (XmlNode childEle in child)
-				{
-					listEleTemp.Add(childEle.Attributes.GetNamedItem("name").Value);
-				}
-				gameData.GetComponent<FunctionalityParam>().elementRequiermentLibrary.Add(child.Attributes.GetNamedItem("name").Value, listEleTemp);
 			}
 		}
 	}

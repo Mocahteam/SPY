@@ -27,8 +27,11 @@ public class ScrollSystem : FSystem
 
     protected override void onProcess(int familiesUpdateCount)
     {
-        scrollRect.verticalScrollbar.value += verticalSpeed;
-        scrollRect.horizontalScrollbar.value += horizontalSpeed;
+        if (scrollRect != null)
+        {
+            scrollRect.verticalScrollbar.value += verticalSpeed;
+            scrollRect.horizontalScrollbar.value += horizontalSpeed;
+        }
     }
 
     public void setVerticalSpeed(float newSpeed)

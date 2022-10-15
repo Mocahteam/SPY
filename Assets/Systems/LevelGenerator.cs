@@ -92,7 +92,7 @@ public class LevelGenerator : FSystem {
 		map = new List<List<int>>();
 
 		// remove comments
-		removeComments(doc);
+		EditingUtility.removeComments(doc);
 
 		XmlNode root = doc.ChildNodes[1];
 
@@ -187,18 +187,6 @@ public class LevelGenerator : FSystem {
 		GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
 	}
 
-	private void removeComments(XmlNode node)
-	{
-		for (int i = node.ChildNodes.Count-1; i>= 0; i--)
-		{
-			XmlNode child = node.ChildNodes[i];
-			if (child.NodeType == XmlNodeType.Comment)
-				node.RemoveChild(child);
-			else
-				removeComments(child);
-		}
-	}
-
 	IEnumerator delayEnableFog()
 	{
 		yield return null;
@@ -271,7 +259,7 @@ public class LevelGenerator : FSystem {
 		// Association de l'agent au script de gestion des fonctions
 		executablePanel.GetComponentInChildren<LinkedWith>().target = entity;
 
-		// On va charger l'image et le nom de l'agent selon l'agent (robot, enemie etc...)
+		// On va charger l'image et le nom de l'agent selon l'agent (robot, ennemi etc...)
 		if (type == "player")
 		{
 			nbAgentCreate++;
