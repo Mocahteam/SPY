@@ -23,6 +23,8 @@ public class GameStateManager : FSystem {
 
     public GameObject playButtonAmount;
 
+    public GameObject level;
+
     public static GameStateManager instance;
 
     public GameStateManager()
@@ -94,6 +96,8 @@ public class GameStateManager : FSystem {
             Position pos = f_positions.getAt(i).GetComponent<Position>();
             pos.x = save.rawSave.positions[i].x;
             pos.y = save.rawSave.positions[i].y;
+            // Téléport object to the right position
+            pos.transform.position = level.transform.position + new Vector3(pos.y * 3, pos.transform.position.y - level.transform.position.y, pos.x * 3);
         }
         for (int i = 0; i < f_activables.Count && i < save.rawSave.activables.Count; i++)
         {
