@@ -70,28 +70,37 @@ public class CurrentActionExecutor : FSystem {
 	private void ApplyForward(GameObject go){
 		switch (go.GetComponent<Direction>().direction){
 			case Direction.Dir.North:
-				if(!checkObstacle(go.GetComponent<Position>().x, go.GetComponent<Position>().y - 1)){
+				if (!checkObstacle(go.GetComponent<Position>().x, go.GetComponent<Position>().y - 1))
+				{
 					go.GetComponent<Position>().x = go.GetComponent<Position>().x;
 					go.GetComponent<Position>().y = go.GetComponent<Position>().y - 1;
 				}
+				else
+					GameObjectManager.addComponent<ForceMoveAnimation>(go);
 				break;
 			case Direction.Dir.South:
 				if(!checkObstacle(go.GetComponent<Position>().x,go.GetComponent<Position>().y + 1)){
 					go.GetComponent<Position>().x = go.GetComponent<Position>().x;
 					go.GetComponent<Position>().y = go.GetComponent<Position>().y + 1;
 				}
+				else
+					GameObjectManager.addComponent<ForceMoveAnimation>(go);
 				break;
 			case Direction.Dir.East:
 				if(!checkObstacle(go.GetComponent<Position>().x + 1, go.GetComponent<Position>().y)){
 					go.GetComponent<Position>().x = go.GetComponent<Position>().x + 1;
 					go.GetComponent<Position>().y = go.GetComponent<Position>().y;
 				}
+				else
+					GameObjectManager.addComponent<ForceMoveAnimation>(go);
 				break;
 			case Direction.Dir.West:
 				if(!checkObstacle(go.GetComponent<Position>().x - 1, go.GetComponent<Position>().y)){
 					go.GetComponent<Position>().x = go.GetComponent<Position>().x - 1;
 					go.GetComponent<Position>().y = go.GetComponent<Position>().y;
 				}
+				else
+					GameObjectManager.addComponent<ForceMoveAnimation>(go);
 				break;
 		}
 	}

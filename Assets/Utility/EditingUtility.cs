@@ -191,7 +191,7 @@ public static class EditingUtility
 					if (GameObjectManager.isBound(dropZone.gameObject))
 						GameObjectManager.unbind(dropZone.gameObject);
 					dropZone.transform.SetParent(null);
-					GameObject.Destroy(dropZone);
+					Object.Destroy(dropZone.gameObject);
 				}
 				//remove empty zones for BaseElements
 				foreach (ReplacementSlot emptyZone in child.GetComponentsInChildren<ReplacementSlot>(true))
@@ -200,7 +200,7 @@ public static class EditingUtility
 						if (GameObjectManager.isBound(emptyZone.gameObject))
 							GameObjectManager.unbind(emptyZone.gameObject);
 						emptyZone.transform.SetParent(null);
-						GameObject.Destroy(emptyZone);
+						Object.Destroy(emptyZone.gameObject);
 					}
 				}
 				child.SetParent(targetContainer.transform, false);

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using FYFY;
+using System.Collections;
 
 /// <summary>
 /// Manage position and Direction component to move agent accordingly
@@ -7,6 +8,7 @@ using FYFY;
 public class MoveSystem : FSystem {
 
 	private Family f_movable = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
+	private Family f_forceMove = FamilyManager.getFamily(new AllOfComponents(typeof(ForceMoveAnimation)));
 
 	public float turnSpeed;
 	public float moveSpeed;
@@ -22,6 +24,7 @@ public class MoveSystem : FSystem {
 		foreach (GameObject movable in f_movable)
 			initAgentDirection(movable);
 		f_movable.addEntryCallback(initAgentDirection);
+		f_forceMove.addEntryCallback(onForceMove);
 	}
 
 	private void initAgentDirection(GameObject agent)
@@ -43,6 +46,32 @@ public class MoveSystem : FSystem {
 		}
 	}
 
+	private void onForceMove(GameObject go)
+    {
+		playMoveAnimation(go);
+		MainLoop.instance.StartCoroutine(removeForceMoving(go));
+    }
+
+	private IEnumerator removeForceMoving(GameObject go)
+    {
+		yield return new WaitForSeconds(.5f);
+		GameObjectManager.removeComponent<ForceMoveAnimation>(go);
+	}
+
+	private void playMoveAnimation(GameObject go)
+    {
+		if (gameData.gameSpeed_current == gameData.gameSpeed_default)
+		{
+			go.GetComponent<Animator>().SetFloat("Walk", 1f);
+			go.GetComponent<Animator>().SetFloat("Run", -1f);
+		}
+		else
+		{
+			go.GetComponent<Animator>().SetFloat("Walk", -1f);
+			go.GetComponent<Animator>().SetFloat("Run", 1f);
+		}
+	}
+
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 
@@ -53,23 +82,13 @@ public class MoveSystem : FSystem {
 			{
 				go.transform.localPosition = Vector3.MoveTowards(go.transform.localPosition, new Vector3(go.GetComponent<Position>().y * 3, go.transform.localPosition.y, go.GetComponent<Position>().x * 3), moveSpeed * gameData.gameSpeed_current * Time.deltaTime);
 				if (go.GetComponent<Animator>() && go.tag == "Player")
-				{
-					if (gameData.gameSpeed_current == gameData.gameSpeed_default)
-					{
-						go.GetComponent<Animator>().SetFloat("Walk", 1f);
-						go.GetComponent<Animator>().SetFloat("Run", -1f);
-					}
-					else
-					{
-						go.GetComponent<Animator>().SetFloat("Walk", -1f);
-						go.GetComponent<Animator>().SetFloat("Run", 1f);
-					}
-				}
+					playMoveAnimation(go);
 			}
 			else
 			{
-				if (go.GetComponent<Animator>() && go.tag == "Player")
+				if (go.GetComponent<Animator>() && go.tag == "Player" && go.GetComponent<ForceMoveAnimation>() == null)
 				{
+					// Stop moving
 					go.GetComponent<Animator>().SetFloat("Walk", -1f);
 					go.GetComponent<Animator>().SetFloat("Run", -1f);
 				}
