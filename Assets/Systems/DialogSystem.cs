@@ -84,31 +84,28 @@ public class DialogSystem : FSystem
 		{
 			GameObjectManager.setGameObjectState(textGO, true);
 			textGO.GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog].Item1;
-			if (gameData.dialogMessage[nDialog].Item2 != -1)
-				((RectTransform)textGO.transform).sizeDelta = new Vector2(((RectTransform)textGO.transform).sizeDelta.x, gameData.dialogMessage[nDialog].Item2);
-			else
-				((RectTransform)textGO.transform).sizeDelta = new Vector2(((RectTransform)textGO.transform).sizeDelta.x, textGO.GetComponent<LayoutElement>().preferredHeight);
+			LayoutRebuilder.ForceRebuildLayoutImmediate(textGO.transform as RectTransform);
 		}
 		else
 			GameObjectManager.setGameObjectState(textGO, false);
 		// set image
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
-		if (gameData.dialogMessage[nDialog].Item3 != null)
+		if (gameData.dialogMessage[nDialog].Item2 != null)
 		{
 			GameObjectManager.setGameObjectState(imageGO, true);
 			setImageSprite(imageGO.GetComponent<Image>(), Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels" +
-			Path.DirectorySeparatorChar + gameData.levelToLoad.Item1 + Path.DirectorySeparatorChar + "Images" + Path.DirectorySeparatorChar + gameData.dialogMessage[nDialog].Item3);
-			if (gameData.dialogMessage[nDialog].Item4 != -1)
-				((RectTransform)imageGO.transform).sizeDelta = new Vector2(((RectTransform)imageGO.transform).sizeDelta.x, gameData.dialogMessage[nDialog].Item4);
+			Path.DirectorySeparatorChar + gameData.levelToLoad.Item1 + Path.DirectorySeparatorChar + "Images" + Path.DirectorySeparatorChar + gameData.dialogMessage[nDialog].Item2);
+			if (gameData.dialogMessage[nDialog].Item3 != -1)
+				((RectTransform)imageGO.transform).sizeDelta = new Vector2(((RectTransform)imageGO.transform).sizeDelta.x, gameData.dialogMessage[nDialog].Item3);
 			else
 				((RectTransform)imageGO.transform).sizeDelta = new Vector2(((RectTransform)imageGO.transform).sizeDelta.x, imageGO.GetComponent<LayoutElement>().preferredHeight);
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO, false);
 		// set camera pos
-		if (gameData.dialogMessage[nDialog].Item5 != -1 && gameData.dialogMessage[nDialog].Item6 != -1)
+		if (gameData.dialogMessage[nDialog].Item4 != -1 && gameData.dialogMessage[nDialog].Item5 != -1)
         {
-			GameObjectManager.addComponent<FocusCamOn>(MainLoop.instance.gameObject, new { camX = gameData.dialogMessage[nDialog].Item5, camY = gameData.dialogMessage[nDialog].Item6 });
+			GameObjectManager.addComponent<FocusCamOn>(MainLoop.instance.gameObject, new { camX = gameData.dialogMessage[nDialog].Item4, camY = gameData.dialogMessage[nDialog].Item5 });
         }
 	}
 

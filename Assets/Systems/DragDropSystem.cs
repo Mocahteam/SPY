@@ -81,16 +81,16 @@ public class DragDropSystem : FSystem
 		});
 	}
 
-	// active toutes les dropzones qui n'ont pas de voisins ReplacementSlot
+	// toggle toutes les dropzones qui n'ont pas de voisins ReplacementSlot actif
 	private void setDropZoneState(bool value)
 	{
 		foreach (GameObject Dp in f_dropZone)
 		{
 			// if a drop zone is not a neighbor of an empty slot => toggle it
 			GameObject neighbor = Dp.transform.parent.GetChild(Mathf.Min(Dp.transform.GetSiblingIndex()+1, Dp.transform.parent.childCount-1)).gameObject;
-			if (neighbor != null && !neighbor.GetComponent<ReplacementSlot>())
+			if (!value || !neighbor.GetComponentInChildren<ReplacementSlot>() || (neighbor.GetComponentInChildren<ReplacementSlot>() && !neighbor.activeSelf))
 			{
-				GameObjectManager.setGameObjectState(Dp, value);
+				GameObjectManager.setGameObjectState(Dp.transform.gameObject, value);
 				Dp.transform.GetChild(0).gameObject.SetActive(false); // Be sure the drop zone is disabled
 			}
 		}
@@ -153,13 +153,9 @@ public class DragDropSystem : FSystem
 			itemDragged = EditingUtility.createEditableBlockFromLibrary(element.selectedObject, mainCanvas);
 			// On l'ajoute aux familles de FYFY
 			GameObjectManager.bind(itemDragged);
-			// exclude this GameObject from the EventSystem
-			itemDragged.GetComponent<Image>().raycastTarget = false;
-			// and all his child who can disturb the drag
-			foreach (Image child in itemDragged.GetComponentsInChildren<Image>(true))
-				child.raycastTarget = false;
-			foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>(true))
-				child.raycastTarget = false;
+			// exclude all UI elements that can disturb the drag from the EventSystem
+			foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
+				child.GetComponent<Image>().raycastTarget = false;
 		}
 	}
 
@@ -182,13 +178,9 @@ public class DragDropSystem : FSystem
 			// On l'associe (temporairement) au Canvas Main
 			GameObjectManager.setGameObjectParent(itemDragged, mainCanvas, true);
 			itemDragged.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-			// exclude this GameObject from the EventSystem
-			itemDragged.GetComponent<Image>().raycastTarget = false;
-			// and all his child who can disturb the drag
-			foreach (Image child in itemDragged.GetComponentsInChildren<Image>(true))
-				child.raycastTarget = false;
-			foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>(true))
-				child.raycastTarget = false;
+			// exclude all UI elements that can disturb the drag from the EventSystem
+			foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
+				child.GetComponent<Image>().raycastTarget = false;
 			// Restore action and subactions to inventory
 			foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
 				GameObjectManager.addComponent<AddOne>(actChild.GetComponent<LibraryItemRef>().linkedTo);
@@ -273,14 +265,9 @@ public class DragDropSystem : FSystem
 
 				if (addDraggedItemOnDropZone(dropArea))
 				{
-					// We restore this GameObject inside the EventSystem
-					itemDragged.GetComponent<Image>().raycastTarget = true;
-					// and its childrens
-					foreach (Image child in itemDragged.GetComponentsInChildren<Image>(true))
-						if (child.name != "3DEffect") // except 3DEffect child
-							child.raycastTarget = true;
-					foreach (TMP_Text child in itemDragged.GetComponentsInChildren<TMP_Text>(true))
-						child.raycastTarget = true;
+					// We restore all UI elements inside the EventSystem
+					foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
+						child.GetComponent<Image>().raycastTarget = true;
 				}
 			}
 			// Rafraichissement de l'UI
@@ -346,7 +333,7 @@ public class DragDropSystem : FSystem
 	private void selectNewDefaultDropZone(GameObject newDropZone)
     {
 		// define this new drop zone as the default
-		lastDropZoneUsed = newDropZone;
+		lastDropZoneUsed = newDropZone.transform.gameObject;
 		// remove old selected dropZone
 		foreach (GameObject dropZoneSelected in f_defaultDropZone)
 			if (dropZoneSelected != newDropZone)
@@ -387,7 +374,7 @@ public class DragDropSystem : FSystem
 			{
 				// if last drop zone used is the neighbor of enabled replacement slot => disable this replacement slot
 				GameObject neighbor = lastDropZoneUsed.transform.parent.GetChild(Mathf.Min(lastDropZoneUsed.transform.GetSiblingIndex() + 1, lastDropZoneUsed.transform.parent.childCount - 1)).gameObject;
-				if (neighbor != null && neighbor.activeInHierarchy && neighbor.GetComponent<ReplacementSlot>())
+				if (neighbor.activeInHierarchy && neighbor.GetComponentInChildren<ReplacementSlot>())
 					GameObjectManager.setGameObjectState(neighbor, false);
 				// On crée le bloc action
 				itemDragged = EditingUtility.createEditableBlockFromLibrary(element.selectedObject, mainCanvas);

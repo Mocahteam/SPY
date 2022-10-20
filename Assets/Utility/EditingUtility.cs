@@ -47,7 +47,7 @@ public static class EditingUtility
 				return false;
 			}
 			// if binded set this drop area as default
-			if (GameObjectManager.isBound(dropArea))
+			if (GameObjectManager.isBound(dropArea) && !dropArea.GetComponent<Selected>())
 				GameObjectManager.addComponent<Selected>(dropArea);
 			// On associe l'element au container
 			item.transform.SetParent(targetContainer);
@@ -65,48 +65,48 @@ public static class EditingUtility
 			if (repSlot.slotType == ReplacementSlot.SlotType.BaseElement)
 			{
 				// On associe l'element au container
-				item.transform.SetParent(dropArea.transform.parent);
+				item.transform.SetParent(repSlot.transform.parent);
 				// On met l'élément à la position voulue
-				item.transform.SetSiblingIndex(dropArea.transform.GetSiblingIndex() - 1); // the empty zone is preceded by the drop zone, so we add the item at the position of the drop zone (reason of -1)	
+				item.transform.SetSiblingIndex(repSlot.transform.GetSiblingIndex() - 1); // the empty zone is preceded by the drop zone, so we add the item at the position of the drop zone (reason of -1)	
 				// disable empty slot
-				dropArea.GetComponent<Outline>().enabled = false;
+				repSlot.GetComponent<Outline>().enabled = false;
 
 				// Because this function can be call for binded GO or not
-				if (GameObjectManager.isBound(dropArea)) GameObjectManager.setGameObjectState(dropArea, false);
-				else dropArea.SetActive(false);
+				if (GameObjectManager.isBound(repSlot.gameObject)) GameObjectManager.setGameObjectState(repSlot.transform.gameObject, false);
+				else repSlot.transform.gameObject.SetActive(false);
 
 				// define last drop zone to the drop zone associated to this replacement slot
-				GameObject dropzone = dropArea.transform.parent.GetChild(dropArea.transform.GetSiblingIndex() - 1).gameObject;
+				GameObject dropzone = repSlot.transform.parent.GetChild(repSlot.transform.GetSiblingIndex() - 1).gameObject;
 
 				// Because this function can be call for binded GO or not
 				if (GameObjectManager.isBound(dropzone)) GameObjectManager.setGameObjectState(dropzone, true);
 				else dropzone.SetActive(true);
 
 				// if binded set this drop zone as default
-				if (GameObjectManager.isBound(dropzone))
-					GameObjectManager.addComponent<Selected>(dropzone);
+				if (GameObjectManager.isBound(dropzone) && !dropzone.GetComponentInChildren<DropZone>().GetComponent<Selected>())
+					GameObjectManager.addComponent<Selected>(dropzone.GetComponentInChildren<DropZone>().gameObject);
 			}
 			// if replacement slot is for base condition => two case fill an empty zone or replace existing condition
 			else if (repSlot.slotType == ReplacementSlot.SlotType.BaseCondition)
 			{
 				// On associe l'element au container
-				item.transform.SetParent(dropArea.transform.parent);
+				item.transform.SetParent(repSlot.transform.parent);
 				// On met l'élément à la position voulue
-				item.transform.SetSiblingIndex(dropArea.transform.GetSiblingIndex());
+				item.transform.SetSiblingIndex(repSlot.transform.GetSiblingIndex());
 				// check if the replacement slot is an empty zone (doesn't contain a condition)
 				if (!repSlot.GetComponent<BaseCondition>())
 				{
 					// disable empty slot
-					dropArea.GetComponent<Outline>().enabled = false;
+					repSlot.GetComponent<Outline>().enabled = false;
 
 					// Because this function can be call for binded GO or not
-					if (GameObjectManager.isBound(dropArea)) GameObjectManager.setGameObjectState(dropArea, false);
-					else dropArea.SetActive(false);
+					if (GameObjectManager.isBound(repSlot.gameObject)) GameObjectManager.setGameObjectState(repSlot.transform.gameObject, false);
+					else repSlot.transform.gameObject.SetActive(false);
 				}
 				else
 				{
 					// ResetBlocLimit will restore library and remove dropArea and children
-					GameObjectManager.addComponent<ResetBlocLimit>(dropArea);
+					GameObjectManager.addComponent<ResetBlocLimit>(repSlot.gameObject);
 				}
 			}
 		}
@@ -161,7 +161,11 @@ public static class EditingUtility
 			if (cpt <= 1)
 			{
 				// enable EmptyZone
-				GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.parent.childCount - 1).gameObject, true);
+				GameObject emptyZone = elementToDelete.transform.parent.GetChild(elementToDelete.transform.parent.childCount - 1).gameObject;
+				GameObjectManager.setGameObjectState(emptyZone, true);
+				// select this EmptyZone as default dropArea
+				if (!emptyZone.GetComponent<Selected>())
+					GameObjectManager.addComponent<Selected>(emptyZone);
 				// disable DropZone
 				GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.parent.childCount - 2).gameObject, false);
 			}
@@ -180,10 +184,25 @@ public static class EditingUtility
 			// On ne conserve que les BaseElement et on les nettoie
 			if (containerCopy.transform.GetChild(i).GetComponent<BaseElement>())
 			{
-				Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i)); ;
-				// Si c'est un block special (for, if...)
-				if (child.GetComponent<ControlElement>())
-					CleanControlBlock(child);
+				Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
+				// remove drop zones
+				foreach (DropZone dropZone in child.GetComponentsInChildren<DropZone>(true))
+                {
+					if (GameObjectManager.isBound(dropZone.gameObject))
+						GameObjectManager.unbind(dropZone.gameObject);
+					dropZone.transform.SetParent(null);
+					GameObject.Destroy(dropZone);
+				}
+				//remove empty zones for BaseElements
+				foreach (ReplacementSlot emptyZone in child.GetComponentsInChildren<ReplacementSlot>(true))
+				{
+					if (emptyZone.slotType == ReplacementSlot.SlotType.BaseElement) {
+						if (GameObjectManager.isBound(emptyZone.gameObject))
+							GameObjectManager.unbind(emptyZone.gameObject);
+						emptyZone.transform.SetParent(null);
+						GameObject.Destroy(emptyZone);
+					}
+				}
 				child.SetParent(targetContainer.transform, false);
 			}
 		}
@@ -389,7 +408,7 @@ public static class EditingUtility
 				BaseOperator bo;
 				if (condition.TryGetComponent<BaseOperator>(out bo))
 				{
-					Transform conditionContainer = bo.transform.GetChild(0);
+					Transform conditionContainer = bo.transform.GetChild(1);
 					// Si c'est une négation on met "!" puis on fait une récursive sur le container et on renvoie le tous traduit en string
 					if (bo.operatorType == BaseOperator.OperatorType.NotOperator)
 					{

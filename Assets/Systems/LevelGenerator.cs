@@ -87,7 +87,7 @@ public class LevelGenerator : FSystem {
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
 		gameData.levelToLoadScore = null;
-		gameData.dialogMessage = new List<(string, float, string, float, int, int)>();
+		gameData.dialogMessage = new List<(string, string, float, int, int)>();
 		gameData.actionBlockLimit = new Dictionary<string, int>();
 		map = new List<List<int>>();
 
@@ -392,9 +392,6 @@ public class LevelGenerator : FSystem {
 			string text = null;
 			if (dialog.Attributes.GetNamedItem("text") != null)
 				text = dialog.Attributes.GetNamedItem("text").Value;
-			float dialogHeight = -1;
-			if (dialog.Attributes.GetNamedItem("textHeight") != null)
-				dialogHeight = float.Parse(dialog.Attributes.GetNamedItem("textHeight").Value);
 			string src = null;
 			if (dialog.Attributes.GetNamedItem("img") != null)
 				src = dialog.Attributes.GetNamedItem("img").Value;
@@ -407,7 +404,7 @@ public class LevelGenerator : FSystem {
 			int camY = -1;
 			if (dialog.Attributes.GetNamedItem("camY") != null)
 				camY = int.Parse(dialog.Attributes.GetNamedItem("camY").Value);
-			gameData.dialogMessage.Add((text, dialogHeight, src, imgHeight, camX, camY));
+			gameData.dialogMessage.Add((text, src, imgHeight, camX, camY));
 		}
 	}
 

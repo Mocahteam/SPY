@@ -161,8 +161,16 @@ public class CurrentActionManager : FSystem
 					return rec_getFirstActionOf(forCont.firstChild, agent);
 				}
 				else
+				{
 					// this for doesn't contain action or nb iteration == 0 or end loop reached => get first action of next action (could be if, for...)
+					if (forCont.currentFor >= forCont.nbFor)
+                    {
+						// reset nb iteration to 0
+						forCont.currentFor = 0;
+						forCont.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
+					}
 					return rec_getFirstActionOf(forCont.next, agent);
+				}
 			}
 			// check if action is a ForeverControl
 			else if (action.GetComponent<ForeverControl>())
@@ -332,7 +340,7 @@ public class CurrentActionManager : FSystem
 		else if(currentAction.GetComponent<ForControl>()){
 			ForControl forAct = currentAction.GetComponent<ForControl>();
 			// ForAction reach the number of iterations
-			if (!forAct.gameObject.GetComponent<WhileControl>() && forAct.currentFor >= forAct.nbFor){
+			if (forAct.currentFor >= forAct.nbFor){
 				// reset nb iteration to 0
 				forAct.currentFor = 0;
 				forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
@@ -347,11 +355,9 @@ public class CurrentActionManager : FSystem
 				// in case ForAction has no child
 				if (forAct.firstChild == null)
 				{
-					if (!forAct.gameObject.GetComponent<WhileControl>()) {
-						// reset nb iteration to 0
-						forAct.currentFor = 0;
-						forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
-					}
+					// reset nb iteration to 0
+					forAct.currentFor = 0;
+					forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 					// return next action
 					if (forAct.next == null || forAct.next.GetComponent<BasicAction>())
 						return forAct.next;

@@ -7,7 +7,7 @@ public class GameData : MonoBehaviour {
 	public Dictionary <string, List<string>> levelList; //key = directory name, value = list of level file name
 	public (string, int) levelToLoad = ("Campagne infiltration", 1); //directory name, level index
 	public int[] levelToLoadScore; //levelToLoadScore[0] = best score (3 stars) ; levelToLoadScore[1] = medium score (2 stars)
-	public List<(string,float,string,float, int, int)> dialogMessage; //list of (dialogText, dialogHeight, imageName, imageHeight, camX, camY)
+	public List<(string,string,float, int, int)> dialogMessage; //list of (dialogText, imageName, imageHeight, camX, camY)
 	public Dictionary<string, int> actionBlockLimit; //Is block available in library?
 	public string scoreKey = "score";
 	public int totalStep;
