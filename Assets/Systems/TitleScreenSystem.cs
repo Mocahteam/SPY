@@ -45,7 +45,7 @@ public class TitleScreenSystem : FSystem {
 		{
 			//paramFunction();
 			gameData.levelList["Campagne infiltration"] = new List<string>();
-			for (int i = 1; i <= 20; i++)
+			for (int i = 1; i <= 22; i++)
 				gameData.levelList["Campagne infiltration"].Add(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels" +
 			Path.DirectorySeparatorChar + "Campagne infiltration" + Path.DirectorySeparatorChar +"Niveau" + i + ".xml");
 			// Hide Competence button
