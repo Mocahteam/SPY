@@ -126,10 +126,8 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, true);
 			//Check if next level exists in campaign
-			if (gameData.levelToLoad.Item2 >= gameData.levelList[gameData.levelToLoad.Item1].Count - 1)
-			{
+			if (gameData.scenario.FindIndex(x => x == gameData.levelToLoad) >= gameData.scenario.Count - 1)
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
-			}
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.BadCondition)
 		{
@@ -216,10 +214,10 @@ public class EndGameManager : FSystem {
 		}
 
 		//save score only if better score
-		int savedScore = PlayerPrefs.GetInt(gameData.levelToLoad.Item1 + Path.DirectorySeparatorChar + gameData.levelToLoad.Item2 + gameData.scoreKey, 0);
+		int savedScore = PlayerPrefs.GetInt(gameData.levelToLoad + gameData.scoreKey, 0);
 		if (savedScore < scoredStars)
 		{
-			PlayerPrefs.SetInt(gameData.levelToLoad.Item1 + Path.DirectorySeparatorChar + gameData.levelToLoad.Item2 + gameData.scoreKey, scoredStars);
+			PlayerPrefs.SetInt(gameData.levelToLoad + gameData.scoreKey, scoredStars);
 			PlayerPrefs.Save();
 		}
 	}

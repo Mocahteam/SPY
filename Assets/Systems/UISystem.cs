@@ -97,8 +97,9 @@ public class UISystem : FSystem {
 			foreach (GameObject trash in f_removeButton)
 				trash.GetComponent<Button>().interactable = false;
 			// Sauvegarde de l'état d'avancement des niveaux (niveau et étoile)
-			if (PlayerPrefs.GetInt(gameData.levelToLoad.Item1,0) < gameData.levelToLoad.Item2 + 1)
-				PlayerPrefs.SetInt(gameData.levelToLoad.Item1, gameData.levelToLoad.Item2 + 1);
+			int currentLevelNum = gameData.scenario.FindIndex(x => x == gameData.levelToLoad);
+			if (PlayerPrefs.GetInt(gameData.scenarioName,0) < currentLevelNum + 1)
+				PlayerPrefs.SetInt(gameData.scenarioName, currentLevelNum + 1);
 			PlayerPrefs.Save();
 		}
 		// for other end type, nothing to do more
@@ -249,7 +250,7 @@ public class UISystem : FSystem {
 	// On charge la scéne suivante
 	public void nextLevel(){
 		// On imcrémente le numéro du niveau
-		gameData.levelToLoad.Item2++;
+		gameData.levelToLoad = gameData.scenario[gameData.scenario.FindIndex(x => x == gameData.levelToLoad)+1];
 		// On efface l'historique
 		gameData.actionsHistory = null;
 		// On recharge la scéne (mais avec le nouveau numéro de niveau)

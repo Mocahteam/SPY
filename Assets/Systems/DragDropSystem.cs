@@ -334,11 +334,9 @@ public class DragDropSystem : FSystem
     {
 		// define this new drop zone as the default
 		lastDropZoneUsed = newDropZone.transform.gameObject;
-		// remove old selected dropZone
-		foreach (GameObject dropZoneSelected in f_defaultDropZone)
-			if (dropZoneSelected != newDropZone)
-				foreach (Selected selectedDZ in dropZoneSelected.GetComponents<Selected>())
-					GameObjectManager.removeComponent(selectedDZ);
+		// remove old trigger component
+		foreach (Selected selectedDZ in newDropZone.GetComponents<Selected>())
+			GameObjectManager.removeComponent(selectedDZ);
 	}
 
 	// Refresh the hierarchy (parent by parent) from elementToRefresh. Used in Control prefabs (If, For, ...)

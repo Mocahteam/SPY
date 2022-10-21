@@ -57,16 +57,16 @@ public class LevelGenerator : FSystem {
 			}
 			else
 			{
-				doc.Load(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+				doc.Load(gameData.levelToLoad);
 				XmlToLevel(doc);
 			}
-			levelName.text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+			levelName.text = Path.GetFileNameWithoutExtension(gameData.levelToLoad);
 		}
 	}
 
 	IEnumerator GetLevelWebRequest(XmlDocument doc)
 	{
-		UnityWebRequest www = UnityWebRequest.Get(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
+		UnityWebRequest www = UnityWebRequest.Get(gameData.levelToLoad);
 		yield return www.SendWebRequest();
 
 		if (www.result != UnityWebRequest.Result.Success)
