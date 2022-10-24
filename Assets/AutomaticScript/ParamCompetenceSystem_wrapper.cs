@@ -14,6 +14,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject contentInfoCompatibleLevel;
 	public UnityEngine.GameObject deletableElement;
 	public UnityEngine.GameObject contentScenario;
+	public UnityEngine.UI.Button addToScenario;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -28,6 +29,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "contentInfoCompatibleLevel", contentInfoCompatibleLevel);
 		MainLoop.initAppropriateSystemField (system, "deletableElement", deletableElement);
 		MainLoop.initAppropriateSystemField (system, "contentScenario", contentScenario);
+		MainLoop.initAppropriateSystemField (system, "addToScenario", addToScenario);
 	}
 
 	public void openPanelSelectComp()
@@ -83,6 +85,11 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public void refreshUI(UnityEngine.RectTransform competency)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "refreshUI", competency);
+	}
+
+	public void saveScenario(TMPro.TMP_InputField scenarioName)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "saveScenario", scenarioName);
 	}
 
 }

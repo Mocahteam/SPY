@@ -29,6 +29,7 @@ public class ParamCompetenceSystem : FSystem
 	public GameObject contentInfoCompatibleLevel; // Le panneau contenant les info d'un niveau (miniView, dialogues, competences, ...)
 	public GameObject deletableElement; // Un niveau que l'on peut supprimer
 	public GameObject contentScenario; // Le panneau contenant les niveaux sélectionnés pour le scénario
+	public Button addToScenario;
 
 	[Serializable]
 	public class RawParams
@@ -50,18 +51,18 @@ public class ParamCompetenceSystem : FSystem
 
 	[Serializable]
 	public class RawComp
-    {
+	{
 		public string key;
 		public string parentKey;
 		public string name;
 		public string description;
 		public RawConstraint[] constraints;
 		public string rule;
-    }
+	}
 
 	[Serializable]
 	public class RawListComp
-    {
+	{
 		public List<RawComp> list = new List<RawComp>();
 	}
 
@@ -85,8 +86,8 @@ public class ParamCompetenceSystem : FSystem
 	{
 		RawListComp raw_competencies = JsonUtility.FromJson<RawListComp>(File.ReadAllText(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Competencies" + Path.DirectorySeparatorChar + "PIAF.json"));
 		// create all competencies
-		foreach(RawComp rawComp in raw_competencies.list)
-        {
+		foreach (RawComp rawComp in raw_competencies.list)
+		{
 			// On instancie la compétence
 			GameObject competency = UnityEngine.Object.Instantiate(prefabComp);
 			competency.name = rawComp.key;
@@ -108,8 +109,8 @@ public class ParamCompetenceSystem : FSystem
 
 		// move sub-competencies
 		Competency[] competencies = ContentCompMenu.transform.GetComponentsInChildren<Competency>();
-		foreach(Competency comp in competencies)
-        {
+		foreach (Competency comp in competencies)
+		{
 			// Check if this competency has a parent
 			if (comp.parentKey != "")
 				// Look for this parent
@@ -122,11 +123,11 @@ public class ParamCompetenceSystem : FSystem
 						parentComp.transform.Find("Header").Find("ButtonHide").gameObject.SetActive(true);
 						LayoutRebuilder.ForceRebuildLayoutImmediate(parentComp.transform.Find("SubCompetencies") as RectTransform);
 					}
-        }
+		}
 	}
 
 	public void cleanCompPanel()
-    {
+	{
 		for (int i = ContentCompMenu.transform.childCount - 1; i >= 0; i--)
 		{
 			Transform child = ContentCompMenu.transform.GetChild(i);
@@ -138,7 +139,7 @@ public class ParamCompetenceSystem : FSystem
 
 	// Used in ButtonShowLevels in ParamCompPanel
 	public void showCompatibleLevels()
-    {
+	{
 		// default, select all levels
 		List<XmlNode> selectedLevels = new List<XmlNode>();
 		foreach (XmlNode level in gameData.levels.Values)
@@ -146,10 +147,10 @@ public class ParamCompetenceSystem : FSystem
 		// now, filtering level that not check constraints
 		int nbCompSelected = 0;
 		foreach (GameObject comp in f_competencies)
-        {
+		{
 			// process only selected competencies
 			if (comp.GetComponentInChildren<Toggle>().isOn)
-            {
+			{
 				nbCompSelected++;
 				Competency competency = comp.GetComponent<Competency>();
 				// parse all levels
@@ -158,25 +159,25 @@ public class ParamCompetenceSystem : FSystem
 					if (!isCompetencyMatchWithLevel(competency, selectedLevels[l].OwnerDocument))
 						selectedLevels.RemoveAt(l);
 				}
-            }
+			}
 		}
 		if (nbCompSelected == 0)
 			selectedLevels.Clear();
 		Debug.Log(selectedLevels.Count);
 		if (selectedLevels.Count == 0)
-			displayMessageUser("Aucun niveau compatible avec votre sélection", "", "OK", delegate { } );
+			displayMessageUser("Aucun niveau compatible avec votre sélection", "", "OK", delegate { });
 		else
-        {
+		{
 			// display compatible panel
 			GameObjectManager.setGameObjectState(compatibleLevelsPanel, true);
 			// remove all old buttons
-			foreach(Transform child in contentListOfCompatibleLevel.transform)
-            {
+			foreach (Transform child in contentListOfCompatibleLevel.transform)
+			{
 				GameObjectManager.unbind(child.gameObject);
 				GameObject.Destroy(child.gameObject);
-            }
+			}
 			compatibleLevelsPanel.transform.Find("ButtonTestLevel").GetComponent<Button>().interactable = false;
-			compatibleLevelsPanel.transform.Find("ButtonAddToScenario").GetComponent<Button>().interactable = false;
+			addToScenario.interactable = false;
 			// Instanciate one button for each level
 			foreach (XmlNode level in selectedLevels)
 			{
@@ -184,16 +185,16 @@ public class ParamCompetenceSystem : FSystem
 				foreach (string levelName in gameData.levels.Keys)
 					if (gameData.levels[levelName] == level)
 					{
-						compatibleLevel.GetComponentInChildren<TMP_Text>().text = levelName.Replace(Application.streamingAssetsPath+Path.DirectorySeparatorChar, "");
+						compatibleLevel.GetComponentInChildren<TMP_Text>().text = levelName.Replace(Application.streamingAssetsPath + Path.DirectorySeparatorChar, "");
 						break;
 					}
 				GameObjectManager.bind(compatibleLevel);
 			}
-        }
+		}
 	}
 
 	private bool isCompetencyMatchWithLevel(Competency competency, XmlDocument level)
-    {
+	{
 
 		// check all constraints of the competency
 		Dictionary<string, List<XmlNode>> constraintsState = new Dictionary<string, List<XmlNode>>();
@@ -393,7 +394,7 @@ public class ParamCompetenceSystem : FSystem
 		}
 		else
 			GameObjectManager.setGameObjectState(contentInfoCompatibleLevel.transform.Find("LevelMiniView").gameObject, false);
-		XmlNode levelSelected = gameData.levels[Application.streamingAssetsPath+Path.DirectorySeparatorChar+path];
+		XmlNode levelSelected = gameData.levels[Application.streamingAssetsPath + Path.DirectorySeparatorChar + path];
 
 		TMP_Text contentInfo = contentInfoCompatibleLevel.transform.Find("levelTextInfo").GetComponent<TMP_Text>();
 		contentInfo.text = "";
@@ -427,12 +428,12 @@ public class ParamCompetenceSystem : FSystem
 		else
 			contentInfo.text += "Aucune information à afficher sur ce niveau.";
 		compatibleLevelsPanel.transform.Find("ButtonTestLevel").GetComponent<Button>().interactable = true;
-		compatibleLevelsPanel.transform.Find("ButtonAddToScenario").GetComponent<Button>().interactable = true;
+		addToScenario.interactable = true;
 	}
 
 	// Used on ButtonAddToScenario
 	public void addCurrentLevelToScenario()
-    {
+	{
 		GameObject newLevel = GameObject.Instantiate(deletableElement, contentScenario.transform);
 		newLevel.GetComponentInChildren<TMP_Text>().text = contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text;
 		LayoutRebuilder.ForceRebuildLayoutImmediate(newLevel.transform as RectTransform);
@@ -448,13 +449,13 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	public void removeLevelFromScenario(GameObject go)
-    {
+	{
 		GameObjectManager.unbind(go);
 		GameObject.Destroy(go);
-    }
+	}
 
 	public void moveLevelInScenario(GameObject go, int step)
-    {
+	{
 		if (go.transform.GetSiblingIndex() + step < 0 || go.transform.GetSiblingIndex() + step > go.transform.parent.childCount)
 			step = 0;
 		go.transform.SetSiblingIndex(go.transform.GetSiblingIndex() + step);
@@ -469,7 +470,7 @@ public class ParamCompetenceSystem : FSystem
 			displayMessageUser("Si vous n'avez pas sauvegarder votre scénario, les dernières modifications seront perdues.\nEtes-vous sûr de vouloir continuer ?", "Oui", "Annuler", delegate { startLevel(levelToLoad.text); });
 	}
 
-	private void startLevel (string levelToLoad)
+	private void startLevel(string levelToLoad)
 	{
 		gameData.scenarioName = "testLevel";
 		gameData.scenario = new List<string>();
@@ -478,11 +479,9 @@ public class ParamCompetenceSystem : FSystem
 		GameObjectManager.loadScene("MainScene");
 	}
 
-	public delegate void callback(string param);
-
 	// Affiche le panel message avec le bon message
 	public void displayMessageUser(string message, string OkButton, string CancelButton, UnityAction call)
-    {
+	{
 		messageForUser.text = message;
 		GameObject buttons = panelInfoUser.transform.Find("Panel").Find("Buttons").gameObject;
 		GameObjectManager.setGameObjectState(buttons.transform.GetChild(0).gameObject, OkButton != "");
@@ -497,14 +496,79 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	public void refreshUI(RectTransform competency)
-    {
+	{
 		Competency comp = competency.GetComponentInParent<Competency>();
-		while(comp != null)
+		while (comp != null)
 		{
 			competency = comp.transform as RectTransform;
 			LayoutRebuilder.ForceRebuildLayoutImmediate(competency);
 			comp = competency.parent.GetComponentInParent<Competency>();
-        }
+		}
 		LayoutRebuilder.ForceRebuildLayoutImmediate(competency.transform.parent as RectTransform);
+	}
+
+	/// <summary>
+	/// Called when trying to save
+	/// </summary>
+	public bool CheckSaveNameValidity(string nameCandidate)
+	{
+		bool isValid = true;
+
+		isValid = nameCandidate != "";
+
+		char[] chars = Path.GetInvalidFileNameChars();
+
+		foreach (char c in chars)
+			if (nameCandidate.IndexOf(c) != -1)
+			{
+				isValid = false;
+				break;
+			}
+
+		return isValid;
+	}
+
+	public void saveScenario(TMP_InputField scenarioName)
+	{
+
+		// remove file extension
+		if (!scenarioName.text.EndsWith(".xml"))
+			scenarioName.text += ".xml";
+
+		if (!CheckSaveNameValidity(scenarioName.text))
+		{
+			displayMessageUser("Le nom du scenario est invalide, veuillez donner un nom à votre scénario", "", "OK", delegate { });
+			// Be sure saving windows is enabled
+			GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
+		}else if (File.Exists(Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario" + Path.DirectorySeparatorChar + scenarioName.text))
+		{
+			displayMessageUser("Un scénario avec le nom \""+ scenarioName.text + "\" existe déjà, souhaitez-vous le remplacer ?", "Oui", "Non", delegate { saveToFile(scenarioName); });
+			// Be sure saving windows is enabled
+			GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
+		}
+		else
+			saveToFile(scenarioName);
+	}
+
+	private void saveToFile(TMP_InputField scenarioName) { 
+		string scenarioExport = "<?xml version=\"1.0\"?>\n";
+		scenarioExport += "<scenario>\n";
+		foreach (Transform child in contentScenario.transform)
+			scenarioExport += "\t<level name = \""+child.GetComponentInChildren<TMP_Text>().text+"\" />\n";
+		scenarioExport += "</scenario>";
+
+		try
+		{
+			// Create all necessary directories if they don't exist
+			Directory.CreateDirectory(Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario");
+			File.WriteAllText(Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario" + Path.DirectorySeparatorChar + scenarioName.text, scenarioExport);
+			displayMessageUser("Le scénario a été enregistré dans le fichier : "+ Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario" + Path.DirectorySeparatorChar + scenarioName.text, "", "OK", delegate { });
+		}
+		catch (Exception e)
+		{
+			displayMessageUser("Erreur, le scénario n'a pas été enregistré.\n"+e, "", "OK", delegate { });
+		}
+		// Be sure saving windows is disabled
+		GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, false);
 	}
 }

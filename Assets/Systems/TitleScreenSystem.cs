@@ -18,9 +18,19 @@ public class TitleScreenSystem : FSystem {
 	public GameObject compLevelButton;
 	public GameObject listOfCampaigns;
 	public GameObject listOfLevels;
+	public GameObject loadingScenarioContent;
+	public GameObject scenarioContent;
 
-
+	private GameObject selectedScenario;
 	private Dictionary<string, List<string>> defaultCampaigns; // List of levels for each default campaign
+
+	// L'instance
+	public static TitleScreenSystem instance;
+
+	public TitleScreenSystem()
+	{
+		instance = this;
+	}
 
 	protected override void onStart()
 	{
@@ -39,9 +49,9 @@ public class TitleScreenSystem : FSystem {
 		gameData.scenario = new List<string>();
 
 		defaultCampaigns = new Dictionary<string, List<string>>();
+		selectedScenario = null;
 
 		GameObjectManager.setGameObjectState(campagneMenu, false);
-		string levelsPath;
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
 			for (int i = 1; i <= 22; i++)
@@ -49,34 +59,41 @@ public class TitleScreenSystem : FSystem {
 			Path.DirectorySeparatorChar + "Campagne infiltration" + Path.DirectorySeparatorChar +"Niveau" + i + ".xml");
 			// Hide Competence button
 			GameObjectManager.setGameObjectState(compLevelButton, false);
+			createScenarioButtons();
 		}
-		else
+	}
+
+	public void updateScenarioList()
+	{
+		if (Application.platform != RuntimePlatform.WebGLPlayer)
 		{
-			// Load all levels
-			loadLevels(Application.streamingAssetsPath);
-			// Load content of each campaign
-			levelsPath = Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels";
-			List<string> levels;
-			foreach (string directory in Directory.GetDirectories(levelsPath))
-			{
-				levels = readScenario(directory);
-				if (levels != null)
-					defaultCampaigns[Path.GetFileName(directory)] = levels; //key = directory name
-			}
+			loadLevelsAndScenarios(Application.streamingAssetsPath);
+			loadLevelsAndScenarios(Application.persistentDataPath);
+			createScenarioButtons();
 		}
+	}
+
+	private void createScenarioButtons()
+	{
+		// remove all old scenario
+		foreach(Transform child in listOfCampaigns.transform)
+        {
+			GameObjectManager.unbind(child.gameObject);
+			GameObject.Destroy(child.gameObject);
+        }
 
 		//create level directory buttons
 		foreach (string key in defaultCampaigns.Keys)
 		{
 			GameObject directoryButton = Object.Instantiate<GameObject>(Resources.Load("Prefabs/Button") as GameObject, listOfCampaigns.transform);
-			directoryButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = key;
+			directoryButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(key);
 			GameObjectManager.bind(directoryButton);
 			// add on click
 			directoryButton.GetComponent<Button>().onClick.AddListener(delegate { showLevels(key); });
 		}
 	}
 
-	private void loadLevels(string path)
+	private void loadLevelsAndScenarios(string path)
 	{
 		// try to load all child files
 		foreach (string fileName in Directory.GetFiles(path))
@@ -89,29 +106,22 @@ public class TitleScreenSystem : FSystem {
 				// a valid level must have only one tag "level"
 				if (doc.GetElementsByTagName("level").Count == 1)
 					gameData.levels.Add(fileName, doc.GetElementsByTagName("level")[0]);
+				// a valid scenario must have only one tag "scenario"
+				if (doc.GetElementsByTagName("scenario").Count == 1)
+				{
+					List<string> levelList = new List<string>();
+					foreach (XmlNode child in doc.GetElementsByTagName("scenario")[0])
+						if (child.Name.Equals("level"))
+							levelList.Add(Application.streamingAssetsPath + Path.DirectorySeparatorChar + (child.Attributes.GetNamedItem("name").Value));
+					defaultCampaigns[Path.GetFileName(fileName)] = levelList; //key = directory name
+				}
 			}
 			catch { }
 		}
 
 		// explore subdirectories
 		foreach (string directory in Directory.GetDirectories(path))
-			loadLevels(directory);
-	}
-
-	private List<string> readScenario(string repositoryPath) {
-		if (File.Exists(repositoryPath + Path.DirectorySeparatorChar + "Scenario.xml")) {
-			List<string> levelList = new List<string>();
-			XmlDocument doc = new XmlDocument();
-			doc.Load(repositoryPath + Path.DirectorySeparatorChar + "Scenario.xml");
-			XmlNode root = doc.ChildNodes[1]; //root = <scenario/>
-			foreach (XmlNode child in root.ChildNodes) {
-				if (child.Name.Equals("level")) {
-					levelList.Add(repositoryPath + Path.DirectorySeparatorChar + (child.Attributes.GetNamedItem("name").Value));
-				}
-			}
-			return levelList;
-		}
-		return null;
+			loadLevelsAndScenarios(directory);
 	}
 
 	protected override void onProcess(int familiesUpdateCount) {
@@ -121,8 +131,8 @@ public class TitleScreenSystem : FSystem {
 	}
 
 	private void showLevels(string campaignKey) {
-		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("MenuCampaigns").gameObject, false);
-		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("MenuLevels").gameObject, true);
+		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("SPYMenu").Find("MenuCampaigns").gameObject, false);
+		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("SPYMenu").Find("MenuLevels").gameObject, true);
 		// delete all old level buttons
 		foreach (Transform child in listOfLevels.transform)
         {
@@ -168,4 +178,51 @@ public class TitleScreenSystem : FSystem {
 	public void quitGame(){
 		Application.Quit();
 	}
+
+	public void displayLoadingPanel()
+	{
+		selectedScenario = null;
+		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("LoadingPanel").gameObject, true);
+		// remove all old scenario
+		foreach (Transform child in loadingScenarioContent.transform)
+		{
+			GameObjectManager.unbind(child.gameObject);
+			GameObject.Destroy(child.gameObject);
+		}
+
+		//create level directory buttons
+		foreach (string key in defaultCampaigns.Keys)
+		{
+			GameObject scenarioItem = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ScenarioAvailable") as GameObject, loadingScenarioContent.transform);
+			scenarioItem.GetComponent<TextMeshProUGUI>().text = key;
+			GameObjectManager.bind(scenarioItem);
+		}
+	}
+
+	public void onScenarioSelected(GameObject go)
+    {
+		selectedScenario = go;
+    }
+
+	public void loadScenario()
+    {
+		if (selectedScenario != null && defaultCampaigns.ContainsKey(selectedScenario.GetComponentInChildren<TMP_Text>().text))
+		{
+			//remove all old scenario
+			foreach (Transform child in scenarioContent.transform)
+            {
+				GameObjectManager.unbind(child.gameObject);
+				GameObject.Destroy(child.gameObject);
+            }
+
+			foreach (string levelPath in defaultCampaigns[selectedScenario.GetComponentInChildren<TMP_Text>().text])
+			{
+				GameObject newLevel = GameObject.Instantiate(Resources.Load("Prefabs/deletableElement") as GameObject, scenarioContent.transform);
+				newLevel.GetComponentInChildren<TMP_Text>().text = levelPath.Replace(Application.streamingAssetsPath + Path.DirectorySeparatorChar, "");
+				LayoutRebuilder.ForceRebuildLayoutImmediate(newLevel.transform as RectTransform);
+				GameObjectManager.bind(newLevel);
+			}
+			LayoutRebuilder.ForceRebuildLayoutImmediate(scenarioContent.transform as RectTransform);
+		}
+    }
 }

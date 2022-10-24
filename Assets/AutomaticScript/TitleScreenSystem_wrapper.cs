@@ -9,6 +9,8 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject compLevelButton;
 	public UnityEngine.GameObject listOfCampaigns;
 	public UnityEngine.GameObject listOfLevels;
+	public UnityEngine.GameObject loadingScenarioContent;
+	public UnityEngine.GameObject scenarioContent;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -18,6 +20,13 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "compLevelButton", compLevelButton);
 		MainLoop.initAppropriateSystemField (system, "listOfCampaigns", listOfCampaigns);
 		MainLoop.initAppropriateSystemField (system, "listOfLevels", listOfLevels);
+		MainLoop.initAppropriateSystemField (system, "loadingScenarioContent", loadingScenarioContent);
+		MainLoop.initAppropriateSystemField (system, "scenarioContent", scenarioContent);
+	}
+
+	public void updateScenarioList()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "updateScenarioList", null);
 	}
 
 	public void launchLevel()
@@ -28,6 +37,21 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public void quitGame()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "quitGame", null);
+	}
+
+	public void displayLoadingPanel()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "displayLoadingPanel", null);
+	}
+
+	public void onScenarioSelected(UnityEngine.GameObject go)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "onScenarioSelected", go);
+	}
+
+	public void loadScenario()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "loadScenario", null);
 	}
 
 }
