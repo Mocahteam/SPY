@@ -17,10 +17,6 @@ public class CoinSystem : FSystem {
 
 	public static CoinSystem instance;
 
-	private int coin_player;
-
-	private string path_coin_player = "jenaiaucuneidee.txt";
-
 	public CoinSystem()
 	{
 		instance = this;
@@ -50,7 +46,6 @@ public class CoinSystem : FSystem {
 		GameObject text_field = f_coinDisplay.First(); // acces au premier game object
 		TextMeshProUGUI text = text_field.GetComponent<TextMeshProUGUI>(); // acces au component text
 		text.text = coins + "$"; // modification du tex
-		Debug.Log("Print coins");
 	}
 
 }
