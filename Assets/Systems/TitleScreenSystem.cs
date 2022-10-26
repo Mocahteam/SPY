@@ -5,7 +5,9 @@ using UnityEngine.UI;
 using System.IO;
 using TMPro;
 using System.Xml;
-using Object = UnityEngine.Object;
+using System.Collections;
+using UnityEngine.Networking;
+using System;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -23,6 +25,20 @@ public class TitleScreenSystem : FSystem {
 
 	private GameObject selectedScenario;
 	private Dictionary<string, List<string>> defaultCampaigns; // List of levels for each default campaign
+
+	[Serializable]
+	public class WebGlDataLevels
+    {
+		public string scenarioName;
+		public List<string> levelPath;
+    }
+
+	[Serializable]
+	public class WebGlScenarioList
+    {
+		public List<WebGlDataLevels> scenarios;
+    }
+
 
 	// L'instance
 	public static TitleScreenSystem instance;
@@ -54,14 +70,74 @@ public class TitleScreenSystem : FSystem {
 		GameObjectManager.setGameObjectState(campagneMenu, false);
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-			for (int i = 1; i <= 22; i++)
-				defaultCampaigns["Campagne infiltration"].Add(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Levels" +
-			Path.DirectorySeparatorChar + "Campagne infiltration" + Path.DirectorySeparatorChar +"Niveau" + i + ".xml");
-			// Hide Competence button
-			GameObjectManager.setGameObjectState(compLevelButton, false);
+			MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
+			MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
 			createScenarioButtons();
 		}
 	}
+
+	private IEnumerator GetScenarioWebRequest()
+	{
+		UnityWebRequest www = new UnityWebRequest(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "WebGlData" + Path.DirectorySeparatorChar + "ScenarioList.json");
+		yield return www.SendWebRequest();
+
+		if (www.result != UnityWebRequest.Result.Success)
+			Debug.Log(www.error);
+		else
+		{
+			string scenarioJson = www.downloadHandler.text;
+			WebGlScenarioList scenarioListRaw = JsonUtility.FromJson<WebGlScenarioList>(scenarioJson);
+			// try to load all scenarios
+			foreach (WebGlDataLevels scenarioRaw in scenarioListRaw.scenarios)
+				defaultCampaigns[scenarioRaw.scenarioName] = scenarioRaw.levelPath;
+			createScenarioButtons();
+		}
+	}
+
+	private IEnumerator GetLevelsWebRequest()
+	{
+		UnityWebRequest www = new UnityWebRequest(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "WebGlData" + Path.DirectorySeparatorChar + "LevelsList.json");
+		yield return www.SendWebRequest();
+
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			Debug.Log(www.error);
+		}
+		else
+		{
+			string levelsJson = www.downloadHandler.text;
+			WebGlDataLevels levelsListRaw = JsonUtility.FromJson<WebGlDataLevels>(levelsJson);
+			// try to load all levels
+			foreach (string levelRaw in levelsListRaw.levelPath)
+				MainLoop.instance.StartCoroutine(GetLevelWebRequest(levelRaw));
+		}
+	}
+
+	private IEnumerator GetLevelWebRequest(string levelUri)
+	{
+		UnityWebRequest www = new UnityWebRequest(Application.streamingAssetsPath + Path.DirectorySeparatorChar + levelUri);
+		yield return www.SendWebRequest();
+
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			Debug.Log(www.error);
+		}
+		else
+		{
+			string levelXML = www.downloadHandler.text;
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml(levelXML);
+			EditingUtility.removeComments(doc);
+			// a valid level must have only one tag "level"
+			if (doc.GetElementsByTagName("level").Count == 1)
+				gameData.levels.Add(levelUri, doc.GetElementsByTagName("level")[0]);
+		}
+	}
+
+	public void importScenario()
+    {
+		//TODO appel via le javascript
+    }
 
 	public void updateScenarioList()
 	{
@@ -85,7 +161,7 @@ public class TitleScreenSystem : FSystem {
 		//create level directory buttons
 		foreach (string key in defaultCampaigns.Keys)
 		{
-			GameObject directoryButton = Object.Instantiate<GameObject>(Resources.Load("Prefabs/Button") as GameObject, listOfCampaigns.transform);
+			GameObject directoryButton = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/Button") as GameObject, listOfCampaigns.transform);
 			directoryButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(key);
 			GameObjectManager.bind(directoryButton);
 			// add on click
@@ -144,7 +220,7 @@ public class TitleScreenSystem : FSystem {
 		for (int i = 0; i < defaultCampaigns[campaignKey].Count; i++)
 		{
 			string levelKey = defaultCampaigns[campaignKey][i];
-			GameObject button = Object.Instantiate<GameObject>(Resources.Load("Prefabs/LevelButton") as GameObject, listOfLevels.transform);
+			GameObject button = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/LevelButton") as GameObject, listOfLevels.transform);
 			button.transform.Find("Button").GetChild(0).GetComponent<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(levelKey);
 			button.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate { launchLevel(campaignKey, levelKey); });
 			GameObjectManager.bind(button);
@@ -193,7 +269,7 @@ public class TitleScreenSystem : FSystem {
 		//create level directory buttons
 		foreach (string key in defaultCampaigns.Keys)
 		{
-			GameObject scenarioItem = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ScenarioAvailable") as GameObject, loadingScenarioContent.transform);
+			GameObject scenarioItem = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/ScenarioAvailable") as GameObject, loadingScenarioContent.transform);
 			scenarioItem.GetComponent<TextMeshProUGUI>().text = key;
 			GameObjectManager.bind(scenarioItem);
 		}

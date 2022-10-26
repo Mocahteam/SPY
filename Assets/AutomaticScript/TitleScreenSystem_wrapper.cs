@@ -24,6 +24,11 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "scenarioContent", scenarioContent);
 	}
 
+	public void importScenario()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "importScenario", null);
+	}
+
 	public void updateScenarioList()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "updateScenarioList", null);

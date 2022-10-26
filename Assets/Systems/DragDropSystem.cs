@@ -33,6 +33,7 @@ public class DragDropSystem : FSystem
     private Family f_viewportContainerPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les containers éditables
 	private Family f_dropZone = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone))); // Les drops zones
 	private Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
+	private Family f_operators = FamilyManager.getFamily(new AllOfComponents(typeof(BaseOperator)));
 	private Family f_focusedDropArea = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(ReplacementSlot), typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // the drop area under mouse cursor
 	private Family f_elementToDelete = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToDelete)));
 	private Family f_elementToRefresh = FamilyManager.getFamily(new AllOfComponents(typeof(NeedRefreshHierarchy)));
@@ -94,6 +95,21 @@ public class DragDropSystem : FSystem
 				Dp.transform.GetChild(0).gameObject.SetActive(false); // Be sure the drop zone is disabled
 			}
 		}
+
+		// enable eventManager of each operator
+		foreach (GameObject op in f_operators)
+        {
+			// be sure Outline is disabled on all operator
+			Transform eventManager = op.transform.Find("EventManager");
+			if (eventManager != null)
+			{
+				if (op != itemDragged)
+					eventManager.gameObject.SetActive(value);
+				else
+					eventManager.gameObject.SetActive(false); // means object dragged is this => always disable eventManager
+			}
+        }
+
 	}
 
 	// used by prefabs (Captors, boolean operators and drop areas)
@@ -129,15 +145,15 @@ public class DragDropSystem : FSystem
 	// used by prefabs on ReplacementSlot
 	public void unhighlightDropArea(GameObject dropArea)
 	{
-		if (itemDragged != null && itemDragged.GetComponent<BaseCondition>())
+		if (itemDragged != null && itemDragged.GetComponent<BaseCondition>() && !dropArea.transform.IsChildOf(itemDragged.transform))
 		{
 			Outline[] outlines = dropArea.GetComponentsInParent<Outline>(); // the first is this
+			
 			// if we found an outline in parent, we enable the first parent that is the second item in the list (the first is the outline of the current drop area)
 			if (outlines.Length >= 2)
 				outlines[1].enabled = true;
 			// then disable outline of current dropArea
 			dropArea.GetComponent<Outline>().enabled = false;
-
 		}
 	}
 
