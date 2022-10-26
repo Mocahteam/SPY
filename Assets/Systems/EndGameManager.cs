@@ -219,6 +219,10 @@ public class EndGameManager : FSystem {
 		int savedScore = PlayerPrefs.GetInt(gameData.levelToLoad.Item1 + Path.DirectorySeparatorChar + gameData.levelToLoad.Item2 + gameData.scoreKey, 0);
 		if (savedScore < scoredStars)
 		{
+			int coins = PlayerPrefs.GetInt("playerCoins", 0);
+			Debug.Log("Player coins : " + coins);
+			PlayerPrefs.SetInt("playerCoins", coins+(scoredStars - savedScore)*10);
+			PlayerPrefs.Save();
 			PlayerPrefs.SetInt(gameData.levelToLoad.Item1 + Path.DirectorySeparatorChar + gameData.levelToLoad.Item2 + gameData.scoreKey, scoredStars);
 			PlayerPrefs.Save();
 		}
