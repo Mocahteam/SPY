@@ -50,7 +50,7 @@ public class CoinSystem : FSystem {
 		GameObject text_field = f_coinDisplay.First(); // acces au premier game object
 		TextMeshProUGUI text = text_field.GetComponent<TextMeshProUGUI>(); // acces au component text
 		text.text = coins + "$"; // modification du tex
-
+		Debug.Log("Print coins");
 	}
 
 }

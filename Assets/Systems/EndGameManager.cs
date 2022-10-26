@@ -24,6 +24,11 @@ public class EndGameManager : FSystem {
 	public GameObject playButtonAmount;
 	public GameObject endPanel;
 
+	/*
+		-- Ajout Projet
+	*/
+	public CoinSystem coin_system = new CoinSystem();
+
 	public EndGameManager()
 	{
 		instance = this;
