@@ -14,14 +14,14 @@ public class ParamCompetenceSystem : FSystem
 	public static ParamCompetenceSystem instance;
 
 	// Familles
-	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les Toogles compétences
+	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les Toogles compï¿½tences
 
 	// Variables
-	public GameObject panelInfoComp; // Panneau d'information des compétences
-	public GameObject panelInfoUser; // Panneau pour informer le joueur (erreurs de chargement, conflit dans la selection des compétences etc...)
-	public GameObject prefabComp; // Prefab de l'affichage d'une compétence
-	public GameObject ContentCompMenu; // Panneau qui contient la liste des catégories et compétences
-	public TMP_Text messageForUser; // Zone de texte pour les messages d'erreur adressés à l'utilisateur
+	public GameObject panelInfoComp; // Panneau d'information des compï¿½tences
+	public GameObject panelInfoUser; // Panneau pour informer le joueur (erreurs de chargement, conflit dans la selection des compï¿½tences etc...)
+	public GameObject prefabComp; // Prefab de l'affichage d'une compï¿½tence
+	public GameObject ContentCompMenu; // Panneau qui contient la liste des catï¿½gories et compï¿½tences
+	public TMP_Text messageForUser; // Zone de texte pour les messages d'erreur adressï¿½s ï¿½ l'utilisateur
 
 	private List<XmlNode> levels = new List<XmlNode>();
 
@@ -79,7 +79,8 @@ public class ParamCompetenceSystem : FSystem
 		// create all competencies
 		foreach(RawComp rawComp in raw_competencies.list)
         {
-			// On instancie la compétence
+			Debug.Log(rawComp);
+			// On instancie la compï¿½tence
 			GameObject competency = UnityEngine.Object.Instantiate(prefabComp);
 			competency.name = rawComp.key;
 			Competency comp = competency.GetComponent<Competency>();
@@ -93,7 +94,7 @@ public class ParamCompetenceSystem : FSystem
 
 			// On l'attache au content
 			competency.transform.SetParent(ContentCompMenu.transform);
-			// On charge le text de la compétence
+			// On charge le text de la compï¿½tence
 			competency.GetComponentInChildren<TMP_Text>().text = rawComp.name;
 			GameObjectManager.bind(competency);
 		}
@@ -336,13 +337,13 @@ public class ParamCompetenceSystem : FSystem
 		bool conditionStartLevelOk = true;
 
 		bool levelLD = false;
-		// On regarde si des competences concernant le level design on été selectionnées
+		// On regarde si des competences concernant le level design on ï¿½tï¿½ selectionnï¿½es
 		foreach (GameObject comp in f_competence)
 		{
             if (comp.GetComponent<Toggle>().isOn)
             {
 				nbCompActive += 1;
-				// On fait ça avec le level design
+				// On fait ï¿½a avec le level design
 				foreach (string f_key in gameData.GetComponent<FunctionalityParam>().levelDesign.Keys)
 				{
                     if (!gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_key) && comp.GetComponent<Competence>().compLinkWhitFunc.Contains(f_key))
@@ -358,7 +359,7 @@ public class ParamCompetenceSystem : FSystem
 			}
 		}
 
-        // Si aucune compétence n'a été selectionnée on ne chargera pas de niveau
+        // Si aucune compï¿½tence n'a ï¿½tï¿½ selectionnï¿½e on ne chargera pas de niveau
         if (nbCompActive <= 0)
         {
 			conditionStartLevelOk = false;
@@ -367,12 +368,12 @@ public class ParamCompetenceSystem : FSystem
         if (conditionStartLevelOk)
         {
 			// 2 cas de figures : 
-			// Demande de niveau spécial pour la compétence
-			// Demande de niveau sans compétence LD
+			// Demande de niveau spï¿½cial pour la compï¿½tence
+			// Demande de niveau sans compï¿½tence LD
 			if (levelLD)
 			{
-				// On parcourt le dictionnaires des fonctionnalités de level design
-				// Si elle fait partie des fonctionnalités selectionnées, alors on enregistre les levels associés à la fonctionnalité
+				// On parcourt le dictionnaires des fonctionnalitï¿½s de level design
+				// Si elle fait partie des fonctionnalitï¿½s selectionnï¿½es, alors on enregistre les levels associï¿½s ï¿½ la fonctionnalitï¿½
 				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign.Keys)
 				{
                     if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_key))
@@ -383,7 +384,7 @@ public class ParamCompetenceSystem : FSystem
 						}
 					}
 				}
-				// On garde ensuite les niveaux qui contienent exclusivement toutes les fonctionalités selectionnées
+				// On garde ensuite les niveaux qui contienent exclusivement toutes les fonctionalitï¿½s selectionnï¿½es
 				foreach (string f_key in gameData.GetComponent<FunctionalityInLevel>().levelByFuncLevelDesign.Keys)
 				{
 					if (gameData.GetComponent<FunctionalityParam>().funcActiveInLevel.Contains(f_key))
@@ -404,11 +405,11 @@ public class ParamCompetenceSystem : FSystem
 			}
 			else if (!levelLD)
 			{
-				// On parcourt le dictionnaire des fonctionnalités level design
-				// On supprime de la liste des niveaux possibles tous les niveaux appellant des fonctionnalités de level design
+				// On parcourt le dictionnaire des fonctionnalitï¿½s level design
+				// On supprime de la liste des niveaux possibles tous les niveaux appellant des fonctionnalitï¿½s de level design
 				foreach (List<string> levels in gameData.levelList.Values)
 				{
-					// On créer une copie de la liste des niveaux disponibles
+					// On crï¿½er une copie de la liste des niveaux disponibles
 					foreach (string level in levels)
 						copyLevel.Add(level);
 				}
@@ -424,21 +425,21 @@ public class ParamCompetenceSystem : FSystem
 		}
         else
         {
-			string message = "Erreur, pas de compétence sélectionnée!";
+			string message = "Erreur, pas de compï¿½tence sï¿½lectionnï¿½e!";
 			displayMessageUser(message);
 		}
 
-		// Si on a au moins une compétence activée et un niveau en commun
-		// On lance un niveau selectionné aléatoirement parmis la liste des niveaux restants
+		// Si on a au moins une compï¿½tence activï¿½e et un niveau en commun
+		// On lance un niveau selectionnï¿½ alï¿½atoirement parmis la liste des niveaux restants
 		if (copyLevel.Count != 0)
         {
 			if (copyLevel.Count > 1)
             {
-				// On selectionne le niveau aléatoirement
+				// On selectionne le niveau alï¿½atoirement
 				var rand = new System.Random();
 				int r = rand.Next(0, copyLevel.Count);
 				string levelSelected = copyLevel[r];
-				// On split la chaine de caractére pour pouvoir récupérer le dossier ou se trouve le niveau selectionné
+				// On split la chaine de caractï¿½re pour pouvoir rï¿½cupï¿½rer le dossier ou se trouve le niveau selectionnï¿½
 				var level = levelSelected.Split('\\');
 				string folder = level[level.Length - 2];
 				gameData.levelToLoad = (folder, gameData.levelList[folder].IndexOf(levelSelected));
@@ -446,16 +447,16 @@ public class ParamCompetenceSystem : FSystem
             else
             {
 				string levelSelected = copyLevel[0];
-				// On split la chaine de caractére pour pouvoir récupérer le dossier ou se trouve le niveau selectionné
+				// On split la chaine de caractï¿½re pour pouvoir rï¿½cupï¿½rer le dossier ou se trouve le niveau selectionnï¿½
 				var level = levelSelected.Split('\\');
 				string folder = level[level.Length - 2];
 				gameData.levelToLoad = (folder, gameData.levelList[folder].IndexOf(levelSelected));
 			}
 			GameObjectManager.loadScene("MainScene");
 		}
-		else // Sinon on signale qu'aucune compétence n'est selectionnée ou qu'aucun niveau n'est disponible
+		else // Sinon on signale qu'aucune compï¿½tence n'est selectionnï¿½e ou qu'aucun niveau n'est disponible
         {
-			string message = "Pas de niveau disponible pour l'ensemble des compétences selectionnées";
+			string message = "Pas de niveau disponible pour l'ensemble des compï¿½tences selectionnï¿½es";
 			displayMessageUser(message);
 		}*/
 	}

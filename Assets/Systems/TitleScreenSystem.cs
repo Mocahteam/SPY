@@ -14,16 +14,51 @@ public class TitleScreenSystem : FSystem {
 	private GameData gameData;
 	public GameData prefabGameData;
 	public GameObject mainMenu;
+	public GameObject skinMenu;
+	public GameObject skins;
 	public GameObject campagneMenu;
 	public GameObject compLevelButton;
 	public GameObject cList;
+
+	public GameObject robotKyle;
+
+	private List<Material> textures = new List<Material>();
+
 	public string pathFileParamFunct = "/StreamingAssets/ParamCompFunc/FunctionConstraint.csv"; // Chemin d'acces pour la chargement des paramètres des functions
 	public string pathFileParamRequiermentLibrary = "/StreamingAssets/ParamCompFunc/FunctionalityRequiermentLibrairy.xml"; // Chemin d'acces pour la chargement des paramètres des functions
 
 	private Dictionary<GameObject, List<GameObject>> levelButtons; //key = directory button,  value = list of level buttons
 
+	private bool skinActive = false;
+
 	protected override void onStart()
 	{
+		skinMenu = GameObject.Find("SkinMenu");
+		skinMenu.SetActive(false);
+		skins = GameObject.Find("skins");
+		skins.SetActive(false);
+		robotKyle = GameObject.Find("Robot2");
+
+		//Material texture0 = (Material)Resources.Load("Models\Robot Kyle\Materials\Robot_Color.mat");
+		//Material texture1 = (Material)Resources.Load("Models\Robot Kyle\Materials\Robot_Color_Skin1.mat");
+
+
+
+		Material texture0 = (Material)Resources.Load("Robot_Color");
+		Material texture1 = (Material)Resources.Load("Robot_Color_skin1");
+
+		Debug.Log(texture0);
+
+		//Texture2D texture2 = (Texture2D)Resources.Load("Robot_Color_skin 2");
+		//Texture2D texture3 = (Texture2D)Resources.Load("Robot_Color_skin 3");
+
+		textures.Add(texture0);
+		textures.Add(texture1);
+		textures.Add(texture0);
+		textures.Add(texture0);
+		
+
+
 		if (!GameObject.Find("GameData"))
 		{
 			gameData = UnityEngine.Object.Instantiate(prefabGameData);
@@ -67,6 +102,7 @@ public class TitleScreenSystem : FSystem {
 		//create level directory buttons
 		foreach (string key in gameData.levelList.Keys)
 		{
+			// Campagne infiltration
 			GameObject directoryButton = Object.Instantiate<GameObject>(Resources.Load("Prefabs/Button") as GameObject, cList.transform);
 			directoryButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = key;
 			levelButtons[directoryButton] = new List<GameObject>();
@@ -189,4 +225,41 @@ public class TitleScreenSystem : FSystem {
 	public void quitGame(){
 		Application.Quit();
 	}
+
+	/**
+	* Elements added for project
+	**/
+
+	// See Jouer button in editor
+	public void showSkinMenu() {
+		mainMenu.SetActive(false);
+		skins.SetActive(true);
+		skinMenu.SetActive(true);
+		skinActive = true;
+	}
+
+	public void backToMain() {
+		Debug.Log("Click retour");
+		if(this.skinActive){
+			skins.SetActive(false);
+			skinMenu.SetActive(false);
+			this.skinActive = false;
+		}else{
+			campagneMenu.SetActive(false);
+		}
+		mainMenu.SetActive(true);
+		// TODO : Fix competence button disapear ...
+	}
+
+	public void LogName(int skinNum){
+    	Debug.Log("CLICK : " + skinNum);
+		robotKyle.GetComponent<Renderer>().material = textures[skinNum];
+
+		//robot.GetComponent<Renderer>().material.mainTexture = texture0;
+
+	}
+
+
+
+	
 }
