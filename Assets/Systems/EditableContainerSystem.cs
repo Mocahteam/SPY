@@ -275,11 +275,11 @@ public class EditableContainerSystem : FSystem
 				}
 				// On change pour son nouveau nom
 				containerSelected.scriptName = newName;
-				containerSelected.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = newName;
+				containerSelected.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text = newName;
 			}
 			else
 			{ // Sinon on annule le changement
-				containerSelected.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = oldName;
+				containerSelected.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text = oldName;
 			}
 		}
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
@@ -328,9 +328,9 @@ public class EditableContainerSystem : FSystem
 
 			// Si même nom trouvé on met l'arriére plan blanc
 			if (nameSame)
-				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().image.color = Color.white;
+				container.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().image.color = Color.white;
 			else // sinon rouge 
-				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
+				container.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
 		}
 
 		// On fait la même chose pour les agents
