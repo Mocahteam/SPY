@@ -115,7 +115,7 @@ public class LevelGenerator : FSystem {
 					{
 						GameObject amountGO = buttonExecute.transform.GetChild(1).gameObject;
 						GameObjectManager.setGameObjectState(amountGO, true);
-						amountGO.GetComponentInChildren<TMP_Text>().text = "" + amount;
+						amountGO.GetComponentInChildren<TMP_Text>(true).text = "" + amount;
 					}
 					break;
 				case "fog":
@@ -257,7 +257,7 @@ public class LevelGenerator : FSystem {
 		// Associer à l'agent le script container
 		scriptref.executableScript = executablePanel.transform.Find("Scroll View").Find("Viewport").Find("ScriptContainer").gameObject;
 		// Association de l'agent au script de gestion des fonctions
-		executablePanel.GetComponentInChildren<LinkedWith>().target = entity;
+		executablePanel.GetComponentInChildren<LinkedWith>(true).target = entity;
 
 		// On va charger l'image et le nom de l'agent selon l'agent (robot, ennemi etc...)
 		if (type == "player")
@@ -638,7 +638,7 @@ public class LevelGenerator : FSystem {
         {
 			case "and":
 				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("AndOperator"), canvas);
-				slots = obj.GetComponentsInChildren<ReplacementSlot>();
+				slots = obj.GetComponentsInChildren<ReplacementSlot>(true);
 				if (conditionNode.HasChildNodes)
 				{
 					GameObject emptyZone = null;
@@ -664,7 +664,7 @@ public class LevelGenerator : FSystem {
 
 			case "or":
 				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("OrOperator"), canvas);
-				slots = obj.GetComponentsInChildren<ReplacementSlot>();
+				slots = obj.GetComponentsInChildren<ReplacementSlot>(true);
 				if (conditionNode.HasChildNodes)
 				{
 					GameObject emptyZone = null;

@@ -123,7 +123,7 @@ public class UISystem : FSystem {
 		buttonExecute.GetComponent<Button>().interactable = false;
 		foreach (GameObject container in f_scriptContainer)
 		{
-			if (container.GetComponentsInChildren<BaseElement>().Length > 0)
+			if (container.GetComponentsInChildren<BaseElement>(true).Length > 0)
 			{
 				buttonExecute.GetComponent<Button>().interactable = true;
 			}
@@ -349,6 +349,6 @@ public class UISystem : FSystem {
 			input.GetComponent<TMP_InputField>().text = "0";
 			res = 0;
 		}
-		input.GetComponentInParent<ForControl>().nbFor = res;
+		input.GetComponentInParent<ForControl>(true).nbFor = res;
 	}
 }

@@ -73,7 +73,7 @@ public class CurrentActionManager : FSystem
 				// init currentAction on the first action of ennemies
 				bool forceNewStep = false;
 				foreach (GameObject drone in f_drone)
-					if (!drone.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>() && !drone.GetComponent<ScriptRef>().scriptFinished)
+					if (!drone.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>(true) && !drone.GetComponent<ScriptRef>().scriptFinished)
 						addCurrentActionOnFirstAction(drone);
 					else
 						forceNewStep = true; // will move currentAction on next action

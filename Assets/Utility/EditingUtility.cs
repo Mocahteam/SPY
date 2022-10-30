@@ -83,8 +83,8 @@ public static class EditingUtility
 				else dropzone.SetActive(true);
 
 				// if binded set this drop zone as default
-				if (GameObjectManager.isBound(dropzone) && !dropzone.GetComponentInChildren<DropZone>().GetComponent<Selected>())
-					GameObjectManager.addComponent<Selected>(dropzone.GetComponentInChildren<DropZone>().gameObject);
+				if (GameObjectManager.isBound(dropzone) && !dropzone.GetComponentInChildren<DropZone>(true).GetComponent<Selected>())
+					GameObjectManager.addComponent<Selected>(dropzone.GetComponentInChildren<DropZone>(true).gameObject);
 			}
 			// if replacement slot is for base condition => two case fill an empty zone or replace existing condition
 			else if (repSlot.slotType == ReplacementSlot.SlotType.BaseCondition)
@@ -172,6 +172,27 @@ public static class EditingUtility
 		}
 	}
 
+	// Bug Unity? Unity add Carets in InputField on clones, if we clone an active in hierarchy input field at runtime three times, four carets will be present in the input field!!! For FYFY it is a problem because these gameobjects are not binded (this occurs with For blocks that contain an InputField)
+	// Solution: Remove and unbind if required all unnecessary carets and bind all necessary caret
+	public static void resolveUnityBugOnCaret(GameObject parent)
+	{
+		foreach (TMP_InputField inputField in parent.GetComponentsInChildren<TMP_InputField>(true))
+		{
+			TMP_SelectionCaret[] carets = inputField.GetComponentsInChildren<TMP_SelectionCaret>(true);
+			for (int i = carets.Length - 1; i >= 0; i--)  // remove all caret except the first one if active in hierarchy, otherwise remove all carets, a new one will be added when GameObject will be enabled
+			{
+				if (i > 0) {
+					if (GameObjectManager.isBound(carets[i].gameObject))
+						GameObjectManager.unbind(carets[i].gameObject);
+					carets[i].transform.SetParent(null); // remove the caret from its parent, this enables to not bind this caret if parent input field is bind this frame
+					GameObject.Destroy(carets[i].gameObject);
+				} else
+					if (!GameObjectManager.isBound(carets[i].gameObject))
+						GameObjectManager.bind(carets[i].gameObject);
+			}
+		}
+	}
+
 	// Copy an editable script to the container of an agent
 	public static void fillExecutablePanel(GameObject srcScript, GameObject targetContainer, string agentTag)
 	{
@@ -185,6 +206,7 @@ public static class EditingUtility
 			if (containerCopy.transform.GetChild(i).GetComponent<BaseElement>())
 			{
 				Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
+
 				// remove drop zones
 				foreach (DropZone dropZone in child.GetComponentsInChildren<DropZone>(true))
                 {
@@ -226,17 +248,17 @@ public static class EditingUtility
 		// On va travailler avec une copy du container
 		GameObject copyGO = GameObject.Instantiate(container);
 		//Pour tous les élément interactible, on va les désactiver/activer selon le paramétrage
-		foreach (TMP_Dropdown drop in copyGO.GetComponentsInChildren<TMP_Dropdown>())
+		foreach (TMP_Dropdown drop in copyGO.GetComponentsInChildren<TMP_Dropdown>(true))
 		{
 			drop.interactable = isInteractable;
 		}
-		foreach (TMP_InputField input in copyGO.GetComponentsInChildren<TMP_InputField>())
+		foreach (TMP_InputField input in copyGO.GetComponentsInChildren<TMP_InputField>(true))
 		{
 			input.interactable = isInteractable;
 		}
 
 		// Pour chaque bloc for
-		foreach (ForControl forAct in copyGO.GetComponentsInChildren<ForControl>())
+		foreach (ForControl forAct in copyGO.GetComponentsInChildren<ForControl>(true))
 		{
 			// Si activé, on note le nombre de tour de boucle à faire
 			if (!isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
@@ -257,7 +279,7 @@ public static class EditingUtility
 
 			}
 			// On parcourt les éléments présent dans le block action
-			foreach (BaseElement act in forAct.GetComponentsInChildren<BaseElement>())
+			foreach (BaseElement act in forAct.GetComponentsInChildren<BaseElement>(true))
 			{
 				// Si ce n'est pas un bloc action alors on le note comme premier élément puis on arrête le parcourt des éléments
 				if (!act.Equals(forAct))
@@ -268,9 +290,9 @@ public static class EditingUtility
 			}
 		}
 		// Pour chaque block de boucle infini
-		foreach (ForeverControl loopAct in copyGO.GetComponentsInChildren<ForeverControl>())
+		foreach (ForeverControl loopAct in copyGO.GetComponentsInChildren<ForeverControl>(true))
 		{
-			foreach (BaseElement act in loopAct.GetComponentsInChildren<BaseElement>())
+			foreach (BaseElement act in loopAct.GetComponentsInChildren<BaseElement>(true))
 			{
 				if (!act.Equals(loopAct))
 				{
@@ -280,30 +302,30 @@ public static class EditingUtility
 			}
 		}
 		// Pour chaque block if
-		foreach (IfControl ifAct in copyGO.GetComponentsInChildren<IfControl>())
+		foreach (IfControl ifAct in copyGO.GetComponentsInChildren<IfControl>(true))
 		{
 			// On traduit la condition en string
 			ifAct.condition = new List<string>();
 			conditionToStrings(ifAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ifAct.condition);
 
 			GameObject thenContainer = ifAct.transform.Find("Container").gameObject;
-			BaseElement firstThen = thenContainer.GetComponentInChildren<BaseElement>();
+			BaseElement firstThen = thenContainer.GetComponentInChildren<BaseElement>(true);
 			if (firstThen)
 				ifAct.firstChild = firstThen.gameObject;
 			//Si c'est un elseAction
 			if (ifAct is IfElseControl)
 			{
 				GameObject elseContainer = ifAct.transform.Find("ElseContainer").gameObject;
-				BaseElement firstElse = elseContainer.GetComponentInChildren<BaseElement>();
+				BaseElement firstElse = elseContainer.GetComponentInChildren<BaseElement>(true);
 				if (firstElse)
 					((IfElseControl)ifAct).elseFirstChild = firstElse.gameObject;
 			}
 		}
 
-		foreach (PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>())
+		foreach (PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>(true))
 			pointerSensitive.enabled = isInteractable;
 
-		foreach (Selectable selectable in copyGO.GetComponentsInChildren<Selectable>())
+		foreach (Selectable selectable in copyGO.GetComponentsInChildren<Selectable>(true))
 			selectable.interactable = isInteractable;
 
 		// On défini la couleur de l'action selon l'agent à qui appartiendra la script
@@ -321,7 +343,7 @@ public static class EditingUtility
 				break;
 		}
 
-		foreach (BaseElement act in copyGO.GetComponentsInChildren<BaseElement>())
+		foreach (BaseElement act in copyGO.GetComponentsInChildren<BaseElement>(true))
 		{
 			act.gameObject.GetComponent<Image>().color = actionColor;
 			if (act.GetComponent<ControlElement>() && agentTag == "Drone")
@@ -416,7 +438,7 @@ public static class EditingUtility
 						if (conditionContainer.childCount == 3)
 						{
 							chaine.Add("NOT");
-							conditionToStrings(conditionContainer.GetComponentInChildren<BaseCondition>().gameObject, chaine);
+							conditionToStrings(conditionContainer.GetComponentInChildren<BaseCondition>(true).gameObject, chaine);
 						}
 						else
 						{

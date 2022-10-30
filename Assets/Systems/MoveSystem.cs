@@ -55,7 +55,7 @@ public class MoveSystem : FSystem {
 	private IEnumerator removeForceMoving(GameObject go)
     {
 		yield return new WaitForSeconds(.5f);
-		foreach (ForceMoveAnimation forceMove in go.GetComponentsInChildren<ForceMoveAnimation>())
+		foreach (ForceMoveAnimation forceMove in go.GetComponentsInChildren<ForceMoveAnimation>(true))
 			GameObjectManager.removeComponent(forceMove);
 	}
 

@@ -44,9 +44,9 @@ public class HighLightSystem : FSystem {
 			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image>().color;
 		}
 		// check if it is a word object (robot, ground...)
-		if (go.GetComponentInChildren<Renderer>())
+		if (go.GetComponentInChildren<Renderer>(true))
 		{
-			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>().material.color;
+			go.GetComponent<Highlightable>().baseColor = go.GetComponentInChildren<Renderer>(true).material.color;
 			if (go.GetComponent<ScriptRef>())
 			{
 				Image img = go.GetComponent<ScriptRef>().executablePanel.transform.Find("Scroll View").GetComponent<Image>();
@@ -75,8 +75,8 @@ public class HighLightSystem : FSystem {
 		else if (go.GetComponent<ElementToDrag>() && go.GetComponent<PointerOver>())
 			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
 		// then process world GameObjects (Walls, drone, robots...)
-		else if (go.GetComponentInChildren<Renderer>()){
-			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().highlightedColor;
+		else if (go.GetComponentInChildren<Renderer>(true)){
+			go.GetComponentInChildren<Renderer>(true).material.color = go.GetComponent<Highlightable>().highlightedColor;
 			if(go.GetComponent<ScriptRef>()){
 				Image img = go.GetComponent<ScriptRef>().executablePanel.transform.Find("Scroll View").GetComponent<Image>();
 				img.color = img.GetComponent<Highlightable>().highlightedColor;
@@ -100,8 +100,8 @@ public class HighLightSystem : FSystem {
 		else if (go.GetComponent<ElementToDrag>())
 			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
 		// the case of world GameObjects (robot, ground...)
-		else if (go.GetComponentInChildren<Renderer>()){
-			go.GetComponentInChildren<Renderer>().material.color = go.GetComponent<Highlightable>().baseColor;
+		else if (go.GetComponentInChildren<Renderer>(true)){
+			go.GetComponentInChildren<Renderer>(true).material.color = go.GetComponent<Highlightable>().baseColor;
 			if(go.GetComponent<ScriptRef>()){
 				Image img = go.GetComponent<ScriptRef>().executablePanel.transform.Find("Scroll View").GetComponent<Image>();
 				img.color = img.GetComponent<Highlightable>().baseColor;

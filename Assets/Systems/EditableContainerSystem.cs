@@ -170,15 +170,15 @@ public class EditableContainerSystem : FSystem
 			cloneContainer.GetComponentInChildren<UIRootContainer>().type = typeState;
 
 			// ajout du script par défaut
-			GameObject dropArea = cloneContainer.GetComponentInChildren<ReplacementSlot>().gameObject;
+			GameObject dropArea = cloneContainer.GetComponentInChildren<ReplacementSlot>(true).gameObject;
 			if (script != null && dropArea != null)
 			{
 				for (int k = 0; k < script.Count; k++)
 				{
 					EditingUtility.addItemOnDropArea(script[k], dropArea);
 					// On compte le nombre de bloc utilisé pour l'initialisation
-					gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseElement>().Length;
-					gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseCondition>().Length;
+					gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseElement>(true).Length;
+					gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseCondition>(true).Length;
 				}
 				GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 			}
@@ -296,21 +296,6 @@ public class EditableContainerSystem : FSystem
 		return false;
 	}
 
-	// Renvoie la liste des agents associés à un script
-	private List<AgentEdit> selectLinkedAgentByName(string scriptName)
-    {
-		List<AgentEdit> agentList = new List<AgentEdit>();
-		foreach (GameObject agent in f_agent)
-        {
-			AgentEdit ae = agent.GetComponent<AgentEdit>();
-			if (ae.associatedScriptName == scriptName)
-            {
-				agentList.Add(agent.GetComponent<AgentEdit>());
-			}
-        }
-		return agentList;
-	}
-
 
 	// Vérifie si les noms des containers correspond à un agent et vice-versa
 	// Si non, fait apparaitre le nom en rouge
@@ -343,9 +328,9 @@ public class EditableContainerSystem : FSystem
 
 			// Si même nom trouvé on met l'arriére transparent
 			if (nameSame)
-				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 1f, 1f, 1f);
+				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>(true).image.color = new Color(1f, 1f, 1f, 1f);
 			else // sinon rouge 
-				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
+				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>(true).image.color = new Color(1f, 0.4f, 0.28f, 1f);
 		}
 	}
 }

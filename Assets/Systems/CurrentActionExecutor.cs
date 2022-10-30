@@ -20,7 +20,7 @@ public class CurrentActionExecutor : FSystem {
 	{
 		// count inaction if a robot have no CurrentAction
 		foreach (GameObject robot in f_player)
-			if (robot.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>() == null)
+			if (robot.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>(true) == null)
 				robot.GetComponent<ScriptRef>().nbOfInactions++;
 		Pause = true;
 	}

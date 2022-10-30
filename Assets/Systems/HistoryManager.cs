@@ -81,6 +81,7 @@ public class HistoryManager : FSystem
 			for (int containerCpt = 0; containerCpt < EditableCanvas.transform.GetChild(0).childCount; containerCpt++)
 			{
 				Transform viewportForEditableContainer = EditableCanvas.transform.GetChild(0).GetChild(containerCpt);
+				EditingUtility.resolveUnityBugOnCaret(viewportForEditableContainer.gameObject);
 				// the first child is the script container that contains script elements
 				foreach (Transform child in viewportForEditableContainer.GetChild(0))
 				{
@@ -95,6 +96,7 @@ public class HistoryManager : FSystem
 		}
 		// Erase all editable containers
 		foreach (Transform viewportForEditableContainer in EditableCanvas.transform.GetChild(0))
+		{
 			for (int i = viewportForEditableContainer.GetChild(0).childCount - 1; i >= 0; i--)
 			{
 				Transform child = viewportForEditableContainer.GetChild(0).GetChild(i);
@@ -106,6 +108,7 @@ public class HistoryManager : FSystem
 					GameObject.Destroy(child.gameObject);
 				}
 			}
+		}
 		// Add Wait action for each inaction
 		for (int containerCpt = 0; containerCpt < EditableCanvas.transform.GetChild(0).childCount; containerCpt++)
 		{
@@ -138,7 +141,7 @@ public class HistoryManager : FSystem
 					ForControl forCont = EditingUtility.createEditableBlockFromLibrary(libraryFor, canvas).GetComponent<ForControl>();
 					forCont.currentFor = 0;
 					forCont.nbFor = minNbOfInaction;
-					forCont.transform.GetComponentInChildren<TMP_InputField>().text = forCont.nbFor.ToString();
+					forCont.transform.GetComponentInChildren<TMP_InputField>(true).text = forCont.nbFor.ToString();
 					forCont.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
 					// Create Wait action
 					Transform forContainer = forCont.transform.Find("Container");
@@ -161,7 +164,6 @@ public class HistoryManager : FSystem
 			trash.GetComponent<Button>().interactable = false;
 	}
 
-
 	// Restore saved scripts in history inside editable script containers
 	private void loadHistory()
 	{
@@ -174,8 +176,8 @@ public class HistoryManager : FSystem
 					Transform child = viewportForEditableContainer.GetChild(0).GetChild(i);
 					if (child.GetComponent<BaseElement>())
 					{
-						gameData.totalActionBlocUsed -= child.GetComponentsInChildren<BaseElement>().Length;
-						gameData.totalActionBlocUsed -= child.GetComponentsInChildren<BaseCondition>().Length;
+						gameData.totalActionBlocUsed -= child.GetComponentsInChildren<BaseElement>(true).Length;
+						gameData.totalActionBlocUsed -= child.GetComponentsInChildren<BaseCondition>(true).Length;
 						GameObjectManager.unbind(child.gameObject);
 						child.transform.SetParent(null); // because destroying is not immediate, we remove this child from its parent, then Unity can take the time he wants to destroy GameObject
 						GameObject.Destroy(child.gameObject);
@@ -206,9 +208,9 @@ public class HistoryManager : FSystem
 			// Count used elements
 			foreach (Transform viewportForEditableContainer in EditableCanvas.transform.GetChild(0))
 			{
-				foreach (BaseElement act in viewportForEditableContainer.GetComponentsInChildren<BaseElement>())
+				foreach (BaseElement act in viewportForEditableContainer.GetComponentsInChildren<BaseElement>(true))
 					GameObjectManager.addComponent<Dropped>(act.gameObject);
-				foreach (BaseCondition act in viewportForEditableContainer.GetComponentsInChildren<BaseCondition>())
+				foreach (BaseCondition act in viewportForEditableContainer.GetComponentsInChildren<BaseCondition>(true))
 					GameObjectManager.addComponent<Dropped>(act.gameObject);
 			}
 			//destroy history

@@ -89,7 +89,7 @@ public class DragDropSystem : FSystem
 		{
 			// if a drop zone is not a neighbor of an empty slot => toggle it
 			GameObject neighbor = Dp.transform.parent.GetChild(Mathf.Min(Dp.transform.GetSiblingIndex()+1, Dp.transform.parent.childCount-1)).gameObject;
-			if (!value || !neighbor.GetComponentInChildren<ReplacementSlot>() || (neighbor.GetComponentInChildren<ReplacementSlot>() && !neighbor.activeSelf))
+			if (!value || !neighbor.GetComponentInChildren<ReplacementSlot>(true) || (neighbor.GetComponentInChildren<ReplacementSlot>(true) && !neighbor.activeSelf))
 			{
 				GameObjectManager.setGameObjectState(Dp.transform.gameObject, value);
 				Dp.transform.GetChild(0).gameObject.SetActive(false); // Be sure the drop zone is disabled
@@ -129,10 +129,10 @@ public class DragDropSystem : FSystem
 					// Be sure to not outline the drop area before looking for enabled outline in parents and childs
 					repSlot.GetComponent<Outline>().enabled = false;
 					// First remove outline from parents, indeed with nested conditions all the hierarchy is outlined
-					foreach (Outline outline in repSlot.GetComponentsInParent<Outline>())
+					foreach (Outline outline in repSlot.GetComponentsInParent<Outline>(true))
 						outline.enabled = false;
 					// check if a child is not already outlined
-					foreach (Outline outline in repSlot.GetComponentsInChildren<Outline>())
+					foreach (Outline outline in repSlot.GetComponentsInChildren<Outline>(true))
 						if (outline.enabled)
 							return;
 					// no child is already outline => then we can outline this drop area
@@ -198,10 +198,10 @@ public class DragDropSystem : FSystem
 			foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
 				child.GetComponent<Image>().raycastTarget = false;
 			// Restore action and subactions to inventory
-			foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
+			foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>(true))
 				GameObjectManager.addComponent<AddOne>(actChild.GetComponent<LibraryItemRef>().linkedTo);
 			// Restore conditions to inventory
-			foreach (BaseCondition condChild in itemDragged.GetComponentsInChildren<BaseCondition>())
+			foreach (BaseCondition condChild in itemDragged.GetComponentsInChildren<BaseCondition>(true))
 				GameObjectManager.addComponent<AddOne>(condChild.GetComponent<LibraryItemRef>().linkedTo);
 
 			// Rend le bouton d'execution actif (ou non)
@@ -305,9 +305,9 @@ public class DragDropSystem : FSystem
 		GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
 		// update limit bloc
-		foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>())
+		foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>(true))
 			GameObjectManager.addComponent<Dropped>(actChild.gameObject);
-		foreach (BaseCondition condChild in itemDragged.GetComponentsInChildren<BaseCondition>())
+		foreach (BaseCondition condChild in itemDragged.GetComponentsInChildren<BaseCondition>(true))
 			GameObjectManager.addComponent<Dropped>(condChild.gameObject);
 
 		// refresh all the hierarchy of parent containers
@@ -388,7 +388,7 @@ public class DragDropSystem : FSystem
 			{
 				// if last drop zone used is the neighbor of enabled replacement slot => disable this replacement slot
 				GameObject neighbor = lastDropZoneUsed.transform.parent.GetChild(Mathf.Min(lastDropZoneUsed.transform.GetSiblingIndex() + 1, lastDropZoneUsed.transform.parent.childCount - 1)).gameObject;
-				if (neighbor.activeInHierarchy && neighbor.GetComponentInChildren<ReplacementSlot>())
+				if (neighbor.activeInHierarchy && neighbor.GetComponentInChildren<ReplacementSlot>(true))
 					GameObjectManager.setGameObjectState(neighbor, false);
 				// On crée le bloc action
 				itemDragged = EditingUtility.createEditableBlockFromLibrary(element.selectedObject, mainCanvas);
