@@ -66,8 +66,10 @@ public class EditableContainerSystem : FSystem
 			{
 				foreach (GameObject container in f_scriptContainer)
 				{
-					container.transform.Find("Header").Find("ResetButton").GetComponent<Button>().interactable = false;
-					container.transform.Find("Header").Find("RemoveButton").GetComponent<Button>().interactable = false;
+					Transform header = container.transform.Find("Header");
+					header.Find("ResetButton").GetComponent<Button>().interactable = false;
+					header.Find("RemoveButton").GetComponent<Button>().interactable = false;
+					GameObjectManager.removeComponent<TooltipContent>(header.Find("ProgramText").gameObject);
 				}
 				addContainerButton.interactable = false;
 			}
@@ -164,7 +166,9 @@ public class EditableContainerSystem : FSystem
 			if (editState == UIRootContainer.EditMode.Locked)
 			{
 				cloneContainer.GetComponentInChildren<TMP_InputField>().interactable = false;
-				cloneContainer.transform.Find("ScriptContainer").Find("Header").Find("RemoveButton").GetComponent<Button>().interactable = false;
+				Transform header = cloneContainer.transform.Find("ScriptContainer").Find("Header");
+				header.Find("RemoveButton").GetComponent<Button>().interactable = false;
+				header.Find("ContainerName").GetComponent<TooltipContent>().text = "Ce programme sera envoyé à " + name + ".<br><i>Vous ne pouvez le changer</i>.";
 			}
 			cloneContainer.GetComponentInChildren<UIRootContainer>().editState = editState;
 

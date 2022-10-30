@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2373119215472063672}
   - component: {fileID: 4074579980787044415}
   - component: {fileID: 6023537846393364863}
+  - component: {fileID: 2086279192914146519}
   m_Layer: 5
   m_Name: ContainerName
   m_TagString: Untagged
@@ -224,6 +225,20 @@ MonoBehaviour:
   m_isRichTextEditingAllowed: 0
   m_LineLimit: 0
   m_InputValidator: {fileID: 0}
+--- !u!114 &2086279192914146519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1245433763471564457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: Indiquez ici le nom de la ligne de communication<br>sur laquelle envoyer
+    le programme.<br><i>Attention aux majuscules...</i>
 --- !u!1 &1853557508229980022
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,7 +424,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: tout effacer
+  text: "Efface la zone d'\xE9dition"
 --- !u!1 &2876508349029538603
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,8 +464,8 @@ RectTransform:
   m_Father: {fileID: 2876508349418875101}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
@@ -965,6 +980,7 @@ GameObject:
   - component: {fileID: 2881059577990816373}
   - component: {fileID: 5767873436664048798}
   - component: {fileID: 4569319209375832351}
+  - component: {fileID: 8702060301378478664}
   m_Layer: 5
   m_Name: ProgramText
   m_TagString: Untagged
@@ -1102,6 +1118,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &8702060301378478664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4762557652995906972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: Glissez ci-dessous les blocs de votre programme
 --- !u!1 &7262772615360938875
 GameObject:
   m_ObjectHideFlags: 0
@@ -1549,6 +1578,7 @@ GameObject:
   - component: {fileID: 558578274065986923}
   - component: {fileID: 7568058385241630762}
   - component: {fileID: 6334519672863568342}
+  - component: {fileID: 8297852434857309424}
   m_Layer: 5
   m_Name: SendToText
   m_TagString: Untagged
@@ -1686,6 +1716,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &8297852434857309424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9220079920452930829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: "D\xE9finit la ligne de communication<br>sur laquelle sera envoy\xE9 ce programme"
 --- !u!1001 &1009565001974048321
 PrefabInstance:
   m_ObjectHideFlags: 0
