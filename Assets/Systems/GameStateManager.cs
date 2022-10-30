@@ -8,7 +8,6 @@ using TMPro;
 public class GameStateManager : FSystem {
 
     private Family f_coins = FamilyManager.getFamily(new AnyOfTags("Coin"));
-    private Family f_doors = FamilyManager.getFamily(new AnyOfTags("Door"));
     private Family f_directions = FamilyManager.getFamily(new AllOfComponents(typeof(Direction)), new NoneOfComponents(typeof(Detector)));
     private Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new NoneOfComponents(typeof(Detector)));
     private Family f_activables = FamilyManager.getFamily(new AllOfComponents(typeof(Activable)));
@@ -44,9 +43,6 @@ public class GameStateManager : FSystem {
         save.rawSave.coinsState.Clear();
         foreach (GameObject coin in f_coins)
             save.rawSave.coinsState.Add(coin.activeSelf);
-        save.rawSave.doorsState.Clear();
-        foreach (GameObject door in f_doors)
-            save.rawSave.doorsState.Add(door.activeSelf);
         save.rawSave.directions.Clear();
         foreach (GameObject dir in f_directions)
             save.rawSave.directions.Add(dir.GetComponent<Direction>().direction);
@@ -84,11 +80,6 @@ public class GameStateManager : FSystem {
             GameObjectManager.setGameObjectState(f_coins.getAt(i), save.rawSave.coinsState[i]);
             f_coins.getAt(i).GetComponent<Renderer>().enabled = save.rawSave.coinsState[i];
         }
-        for (int i = 0; i < f_doors.Count && i < save.rawSave.doorsState.Count ; i++)
-        {
-            GameObjectManager.setGameObjectState(f_doors.getAt(i), save.rawSave.doorsState[i]);
-            f_doors.getAt(i).GetComponent<Renderer>().enabled = save.rawSave.doorsState[i];
-        }
         for (int i = 0; i < f_directions.Count && i < save.rawSave.directions.Count ; i++)
             f_directions.getAt(i).GetComponent<Direction>().direction = save.rawSave.directions[i];
         for (int i = 0; i < f_positions.Count && i < save.rawSave.positions.Count ; i++)
@@ -103,6 +94,16 @@ public class GameStateManager : FSystem {
         {
             Activable act = f_activables.getAt(i).GetComponent<Activable>();
             act.slotID = save.rawSave.activables[i].slotID;
+            if (save.rawSave.activables[i].state)
+            {
+                if (act.GetComponent<TurnedOn>() == null)
+                    GameObjectManager.addComponent<TurnedOn>(act.gameObject);
+            }
+            else
+            {
+                if (act.GetComponent<TurnedOn>() != null)
+                    GameObjectManager.removeComponent<TurnedOn>(act.gameObject);
+            }
         }
         foreach(GameObject go in f_currentActions)
             if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
