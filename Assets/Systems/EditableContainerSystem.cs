@@ -42,6 +42,7 @@ public class EditableContainerSystem : FSystem
 	public GameObject EditableCanvas;
 	public GameObject prefabViewportScriptContainer;
 	public Button addContainerButton;
+	public int maxWidth;
 
 	private GameData gameData;
 
@@ -210,7 +211,7 @@ public class EditableContainerSystem : FSystem
 		editableContainers.ForceUpdateRectTransforms();
 		yield return null;
 		// compute new size
-		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(215, editableContainers.rect.width));
+		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(maxWidth, editableContainers.rect.width));
 	}
 
 	// Empty the script window
