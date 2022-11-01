@@ -168,7 +168,7 @@ public class EditableContainerSystem : FSystem
 				cloneContainer.GetComponentInChildren<TMP_InputField>().interactable = false;
 				Transform header = cloneContainer.transform.Find("ScriptContainer").Find("Header");
 				header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-				header.Find("ContainerName").GetComponent<TooltipContent>().text = "Ce programme sera envoyé à " + name + ".<br><i>Vous ne pouvez le changer</i>.";
+				header.Find("ContainerName").GetComponent<TooltipContent>().text = "Ce programme sera envoyé à " + name + ".<br><i>Vous ne pouvez pas le changer</i>.";
 			}
 			cloneContainer.GetComponentInChildren<UIRootContainer>().editState = editState;
 
@@ -190,6 +190,11 @@ public class EditableContainerSystem : FSystem
 
 			// On ajoute le nouveau viewport container à FYFY
 			GameObjectManager.bind(cloneContainer);
+
+			// if drag&drop diabled => hide all replacement slots
+			if (!gameData.dragDropEnabled)
+				foreach (ReplacementSlot slot in cloneContainer.GetComponentsInChildren<ReplacementSlot>(true))
+					GameObjectManager.setGameObjectState(slot.gameObject, false);
 
 			if (script != null && dropArea != null)
 				// refresh all the hierarchy of parent containers

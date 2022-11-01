@@ -11,6 +11,9 @@ using UnityEngine.Networking;
 /// </summary>
 public class DialogSystem : FSystem
 {
+	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+
 	private GameData gameData;
 	public GameObject dialogPanel;
 	public GameObject showDialogsMenu;
@@ -32,6 +35,15 @@ public class DialogSystem : FSystem
 				showDialogsMenu.GetComponent<Button>().interactable = true;
 		}
 
+		f_playingMode.addEntryCallback(delegate {
+			GameObjectManager.setGameObjectState(showDialogsBottom, false);
+		});
+
+		f_editingMode.addEntryCallback(delegate {
+			if (gameData.dialogMessage.Count > 0)
+				GameObjectManager.setGameObjectState(showDialogsBottom, true);
+		});
+
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 	}
 
@@ -40,9 +52,7 @@ public class DialogSystem : FSystem
 	{
 		//Activate DialogPanel if there is a message
 		if (gameData != null && nDialog < gameData.dialogMessage.Count && !dialogPanel.transform.parent.gameObject.activeSelf)
-		{
 			showDialogPanel();
-		}
 	}
 
 

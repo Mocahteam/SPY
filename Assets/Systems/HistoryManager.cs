@@ -196,7 +196,7 @@ public class HistoryManager : FSystem
 						Transform history_childCopy = GameObject.Instantiate(history_child, EditableCanvas.transform.GetChild(0).GetChild(i).GetChild(0));
 						// Place this child copy at the end of the container
 						history_childCopy.SetAsFirstSibling();
-						history_childCopy.SetSiblingIndex(history_childCopy.parent.childCount - 3);
+						history_childCopy.SetSiblingIndex(history_childCopy.parent.childCount - 2);
 						GameObjectManager.bind(history_childCopy.gameObject);
 						// Disable emptyzone
 						GameObjectManager.setGameObjectState(history_childCopy.parent.GetChild(history_childCopy.parent.childCount - 1).gameObject, false);

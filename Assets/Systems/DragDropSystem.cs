@@ -87,13 +87,8 @@ public class DragDropSystem : FSystem
 	{
 		foreach (GameObject Dp in f_dropZone)
 		{
-			// if a drop zone is not a neighbor of an empty slot => toggle it
-			GameObject neighbor = Dp.transform.parent.GetChild(Mathf.Min(Dp.transform.GetSiblingIndex()+1, Dp.transform.parent.childCount-1)).gameObject;
-			if (!value || !neighbor.GetComponentInChildren<ReplacementSlot>(true) || (neighbor.GetComponentInChildren<ReplacementSlot>(true) && !neighbor.activeSelf))
-			{
-				GameObjectManager.setGameObjectState(Dp.transform.gameObject, value);
-				Dp.transform.GetChild(0).gameObject.SetActive(false); // Be sure the drop zone is disabled
-			}
+			GameObjectManager.setGameObjectState(Dp.transform.gameObject, value);
+			Dp.transform.GetChild(0).gameObject.SetActive(false); // Be sure the drop zone is disabled
 		}
 
 		// enable eventManager of each operator
@@ -386,10 +381,6 @@ public class DragDropSystem : FSystem
 			// be sure the lastDropZone is defined
 			if (lastDropZoneUsed != null)
 			{
-				// if last drop zone used is the neighbor of enabled replacement slot => disable this replacement slot
-				GameObject neighbor = lastDropZoneUsed.transform.parent.GetChild(Mathf.Min(lastDropZoneUsed.transform.GetSiblingIndex() + 1, lastDropZoneUsed.transform.parent.childCount - 1)).gameObject;
-				if (neighbor.activeInHierarchy && neighbor.GetComponentInChildren<ReplacementSlot>(true))
-					GameObjectManager.setGameObjectState(neighbor, false);
 				// On crée le bloc action
 				itemDragged = EditingUtility.createEditableBlockFromLibrary(element.selectedObject, mainCanvas);
 				// On l'ajoute aux familles de FYFY

@@ -36,11 +36,6 @@ public static class EditingUtility
 				targetContainer = dropArea.transform.parent.parent.parent; // target is the grandgrandparent
 				siblingIndex = dropArea.transform.parent.parent.GetSiblingIndex();
 			}
-			else if (dropArea.transform.parent.parent.GetComponent<ControlElement>() && dropArea.transform.parent.GetSiblingIndex() > 1) // the dropArea of another child of a Control block
-			{
-				targetContainer = dropArea.transform.parent; // target is the parent
-				siblingIndex = dropArea.transform.GetSiblingIndex();
-			}
 			else
 			{
 				Debug.LogError("Warning! Unknown case: the drop zone is not in the correct context");
@@ -61,30 +56,19 @@ public static class EditingUtility
 			if ((repSlot.slotType == ReplacementSlot.SlotType.BaseElement && !item.GetComponent<BaseElement>()) ||
 				(repSlot.slotType == ReplacementSlot.SlotType.BaseCondition && !item.GetComponent<BaseCondition>()))
 				return false;
-			// if replacement slot is for base element => insert item, hide replacement slot and enable dropZone
+			// if replacement slot is for base element => insert item just before replacement slot
 			if (repSlot.slotType == ReplacementSlot.SlotType.BaseElement)
 			{
 				// On associe l'element au container
 				item.transform.SetParent(repSlot.transform.parent);
 				// On met l'élément à la position voulue
-				item.transform.SetSiblingIndex(repSlot.transform.GetSiblingIndex() - 1); // the empty zone is preceded by the drop zone, so we add the item at the position of the drop zone (reason of -1)	
+				item.transform.SetSiblingIndex(repSlot.transform.GetSiblingIndex()); 
 				// disable empty slot
 				repSlot.GetComponent<Outline>().enabled = false;
 
-				// Because this function can be call for binded GO or not
-				if (GameObjectManager.isBound(repSlot.gameObject)) GameObjectManager.setGameObjectState(repSlot.transform.gameObject, false);
-				else repSlot.transform.gameObject.SetActive(false);
-
-				// define last drop zone to the drop zone associated to this replacement slot
-				GameObject dropzone = repSlot.transform.parent.GetChild(repSlot.transform.GetSiblingIndex() - 1).gameObject;
-
-				// Because this function can be call for binded GO or not
-				if (GameObjectManager.isBound(dropzone)) GameObjectManager.setGameObjectState(dropzone, true);
-				else dropzone.SetActive(true);
-
-				// if binded set this drop zone as default
-				if (GameObjectManager.isBound(dropzone) && !dropzone.GetComponentInChildren<DropZone>(true).GetComponent<Selected>())
-					GameObjectManager.addComponent<Selected>(dropzone.GetComponentInChildren<DropZone>(true).gameObject);
+				// if binded set this empty slot as default
+				if (GameObjectManager.isBound(repSlot.gameObject) && !repSlot.GetComponent<Selected>())
+					GameObjectManager.addComponent<Selected>(repSlot.gameObject);
 			}
 			// if replacement slot is for base condition => two case fill an empty zone or replace existing condition
 			else if (repSlot.slotType == ReplacementSlot.SlotType.BaseCondition)
@@ -145,31 +129,8 @@ public static class EditingUtility
 	public static void manageEmptyZone(GameObject elementToDelete)
 	{
 		if (elementToDelete.GetComponent<BaseCondition>())
-		{
 			// enable the next last child of the container
 			GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.GetSiblingIndex() + 1).gameObject, true);
-		}
-		else if (elementToDelete.GetComponent<BaseElement>())
-		{
-			// We have to disable dropZone and enable empty zone if no other BaseElement exists inside the container
-			// We count the number of brother (including this) that is a BaseElement
-			int cpt = 0;
-			foreach (Transform brother in elementToDelete.transform.parent)
-				if (brother.GetComponent<BaseElement>())
-					cpt++;
-			// if the container contains only 1 child (the element we are removing) => enable EmptyZone and disable dropZone
-			if (cpt <= 1)
-			{
-				// enable EmptyZone
-				GameObject emptyZone = elementToDelete.transform.parent.GetChild(elementToDelete.transform.parent.childCount - 1).gameObject;
-				GameObjectManager.setGameObjectState(emptyZone, true);
-				// select this EmptyZone as default dropArea
-				if (!emptyZone.GetComponent<Selected>())
-					GameObjectManager.addComponent<Selected>(emptyZone);
-				// disable DropZone
-				GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.parent.childCount - 2).gameObject, false);
-			}
-		}
 	}
 
 	// Bug Unity? Unity add Carets in InputField on clones, if we clone an active in hierarchy input field at runtime three times, four carets will be present in the input field!!! For FYFY it is a problem because these gameobjects are not binded (this occurs with For blocks that contain an InputField)
