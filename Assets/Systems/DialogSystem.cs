@@ -13,13 +13,24 @@ public class DialogSystem : FSystem
 {
 	private GameData gameData;
 	public GameObject dialogPanel;
+	public GameObject showDialogsMenu;
+	public GameObject showDialogsBottom;
 	private int nDialog = 0;
 
 	protected override void onStart()
 	{
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
+		{
 			gameData = go.GetComponent<GameData>();
+
+			// Always disable bottom button, it will be enabled at the end of the dialogs (see Ok button)
+			GameObjectManager.setGameObjectState(showDialogsBottom, false);
+			if (gameData.dialogMessage.Count == 0)
+				showDialogsMenu.GetComponent<Button>().interactable = false;
+            else
+				showDialogsMenu.GetComponent<Button>().interactable = true;
+		}
 
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 	}
@@ -42,17 +53,6 @@ public class DialogSystem : FSystem
 		nDialog = 0;
 
 		configureDialog();
-
-		if (gameData.dialogMessage.Count > 1)
-		{
-			setActiveOKButton(false);
-			setActiveNextButton(true);
-		}
-		else
-		{
-			setActiveOKButton(true);
-			setActiveNextButton(false);
-		}
 	}
 
 	// See NextButton in editor
@@ -62,18 +62,15 @@ public class DialogSystem : FSystem
 		nDialog++; // On incrémente le nombre de dialogue
 
 		configureDialog();
+	}
 
-		// Si il reste des dialogues à afficher ensuite
-		if (nDialog + 1 < gameData.dialogMessage.Count)
-		{
-			setActiveOKButton(false);
-			setActiveNextButton(true);
-		}
-		else
-		{
-			setActiveOKButton(true);
-			setActiveNextButton(false);
-		}
+	// See PreviousButton in editor
+	// Permet d'afficher le message précédent
+	public void prevDialog()
+	{
+		nDialog--; // On décrémente le nombre de dialogue
+
+		configureDialog();
 	}
 
 	private void configureDialog()
@@ -105,7 +102,19 @@ public class DialogSystem : FSystem
 		if (gameData.dialogMessage[nDialog].Item4 != -1 && gameData.dialogMessage[nDialog].Item5 != -1)
         {
 			GameObjectManager.addComponent<FocusCamOn>(MainLoop.instance.gameObject, new { camX = gameData.dialogMessage[nDialog].Item4, camY = gameData.dialogMessage[nDialog].Item5 });
-        }
+		}
+
+		// Be sure all buttons are disabled
+		setActiveOKButton(false);
+		setActiveNextButton(false);
+		setActivePrevButton(false);
+
+		if (nDialog + 1 < gameData.dialogMessage.Count)
+			setActiveNextButton(true);
+		if (nDialog > 0)
+			setActivePrevButton(true);
+		if (nDialog + 1 >= gameData.dialogMessage.Count)
+			setActiveOKButton(true);
 	}
 
 
@@ -120,6 +129,13 @@ public class DialogSystem : FSystem
 	public void setActiveNextButton(bool active)
 	{
 		GameObjectManager.setGameObjectState(dialogPanel.transform.Find("Buttons").Find("NextButton").gameObject, active);
+	}
+
+
+	// Active ou non le bouton next du panel dialogue
+	public void setActivePrevButton(bool active)
+	{
+		dialogPanel.transform.Find("Buttons").Find("PrevButton").gameObject.GetComponent<Button>().interactable = active;
 	}
 
 
