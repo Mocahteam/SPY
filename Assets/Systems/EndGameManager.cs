@@ -29,6 +29,10 @@ public class EndGameManager : FSystem {
 	*/
 	public CoinSystem coin_system = new CoinSystem();
 
+	/*
+		-- Ajout Projet
+	*/
+
 	public EndGameManager()
 	{
 		instance = this;

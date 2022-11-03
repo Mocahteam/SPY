@@ -13,6 +13,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject robotKyle;
 	public System.String pathFileParamFunct;
 	public System.String pathFileParamRequiermentLibrary;
+	public System.String[] textures_available;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -26,6 +27,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "robotKyle", robotKyle);
 		MainLoop.initAppropriateSystemField (system, "pathFileParamFunct", pathFileParamFunct);
 		MainLoop.initAppropriateSystemField (system, "pathFileParamRequiermentLibrary", pathFileParamRequiermentLibrary);
+		MainLoop.initAppropriateSystemField (system, "textures_available", textures_available);
 	}
 
 	public void showCampagneMenu()
@@ -58,9 +60,14 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "backToMain", null);
 	}
 
-	public void LogName(System.Int32 skinNum)
+	public void LogName(System.Int32 skin_index)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "LogName", skinNum);
+		MainLoop.callAppropriateSystemMethod (system, "LogName", skin_index);
+	}
+
+	public void write_current_skin_index()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "write_current_skin_index", null);
 	}
 
 }

@@ -7,6 +7,8 @@ using TMPro;
 using System.Xml;
 using Object = UnityEngine.Object;
 
+using UnityEngine.SceneManagement;
+
 /// <summary>
 /// Manage main menu to launch a specific mission
 /// </summary>
@@ -31,35 +33,76 @@ public class TitleScreenSystem : FSystem {
 
 	private bool skinActive = false;
 
+	private int current_skin_index = 0;
+
+	/*
+		Ajout projet
+	*/
+	public string[] textures_available = null;
+
+	Material texture = null;
+
+	/*
+		Fin ajout projet
+	*/
+
+
 	protected override void onStart()
 	{
+		/*
+			Ajout Projet
+		*/
+
 		skinMenu = GameObject.Find("SkinMenu");
 		skinMenu.SetActive(false);
 		skins = GameObject.Find("skins");
 		skins.SetActive(false);
 		robotKyle = GameObject.Find("Robot2");
 
+		// Initialisation des skins dispos
+		this.textures_available = new string[]{
+			"Robot_Color",
+			"Robot_Color_skin1",
+			"Robot_Color_skin2",
+			"Robot_Color_skin3"
+		};
+		
+		// Debug.Log("y : "+this.bifules[3].ToString());
+		int value_index_skin = get_current_skin_index_from_file();
+		Debug.Log(this.textures_available[0]);
+		Debug.Log(this.textures_available);
+		Debug.Log("value : "+value_index_skin.ToString());
+
+
+
+
+		this.texture = (Material)Resources.Load(textures_available[value_index_skin]);
+		robotKyle.GetComponent<Renderer>().material = this.texture;
+		/*
+			Fin Ajout projet
+		*/
+
 		//Material texture0 = (Material)Resources.Load("Models\Robot Kyle\Materials\Robot_Color.mat");
 		//Material texture1 = (Material)Resources.Load("Models\Robot Kyle\Materials\Robot_Color_Skin1.mat");
 
+		
 
-
+		/*
 		Material texture0 = (Material)Resources.Load("Robot_Color");
 		Material texture1 = (Material)Resources.Load("Robot_Color_skin1");
 		Material texture2 = (Material)Resources.Load("Robot_Color_skin2");
 
 		Debug.Log(texture0);
 
-		//Texture2D texture2 = (Texture2D)Resources.Load("Robot_Color_skin 2");
 		//Texture2D texture3 = (Texture2D)Resources.Load("Robot_Color_skin 3");
 
+		// il faut ajouter 4 textures
 		textures.Add(texture0);
 		textures.Add(texture1);
 		textures.Add(texture2);
 		textures.Add(texture0);
+		*/
 		
-
-
 		if (!GameObject.Find("GameData"))
 		{
 			gameData = UnityEngine.Object.Instantiate(prefabGameData);
@@ -141,6 +184,11 @@ public class TitleScreenSystem : FSystem {
 	}
 
 	protected override void onProcess(int familiesUpdateCount) {
+
+		
+
+
+
 		if (Input.GetButtonDown("Cancel")) {
 			Application.Quit();
 		}
@@ -234,6 +282,8 @@ public class TitleScreenSystem : FSystem {
 	// See Jouer button in editor
 	public void showSkinMenu() {
 		mainMenu.SetActive(false);
+		//SceneManager.LoadScene("SkinSelection", LoadSceneMode.Single);
+		
 		skins.SetActive(true);
 		skinMenu.SetActive(true);
 		skinActive = true;
@@ -252,15 +302,44 @@ public class TitleScreenSystem : FSystem {
 		// TODO : Fix competence button disapear ...
 	}
 
-	public void LogName(int skinNum){
-    	Debug.Log("CLICK : " + skinNum);
-		robotKyle.GetComponent<Renderer>().material = textures[skinNum];
 
-		//robot.GetComponent<Renderer>().material.mainTexture = texture0;
+	/*
+		Ajout project function
+	*/
+	public void LogName(int skin_index){
+		this.current_skin_index = skin_index;
 
+		this.texture = (Material)Resources.Load(textures_available[skin_index]);
+
+		robotKyle.GetComponent<Renderer>().material = this.texture;
+		
+		write_current_skin_index();
 	}
 
+	public void write_current_skin_index()
+	{
+		string path = "Assets/Resources/current_skin_value.txt";
+		if(File.Exists(path)){
+			File.WriteAllText(path,string.Empty); // efface les dernieres valeurs enregistrée pour mettre la plus récente
+		}
+		StreamWriter writer = new StreamWriter(path, true);
+		writer.WriteLine(this.current_skin_index.ToString());
+        writer.Close();
+		Debug.Log("Enregistrement fini du skin : "+this.current_skin_index.ToString());
+		get_current_skin_index_from_file();
+	}
 
+	public int get_current_skin_index_from_file()
+	{
+		int skin_index = 0;
+		string path = "Assets/Resources/current_skin_value.txt";
+		if(File.Exists(path)){
+			// si le fichier existe, on prend la derniere valeur enregistrée
+			string[] lines = File.ReadAllLines(path);
+			skin_index =  int.Parse(lines[0]);
+		}
+		// sinon on prend le skin par défaut
+		return skin_index;
+	}
 
-	
 }
