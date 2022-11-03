@@ -46,6 +46,7 @@ public class TitleScreenSystem : FSystem {
 
 		Material texture0 = (Material)Resources.Load("Robot_Color");
 		Material texture1 = (Material)Resources.Load("Robot_Color_skin1");
+		Material texture2 = (Material)Resources.Load("Robot_Color_skin2");
 
 		Debug.Log(texture0);
 
@@ -54,7 +55,7 @@ public class TitleScreenSystem : FSystem {
 
 		textures.Add(texture0);
 		textures.Add(texture1);
-		textures.Add(texture0);
+		textures.Add(texture2);
 		textures.Add(texture0);
 		
 
