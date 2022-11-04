@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
+using System;
 
 /// <summary>
 /// Manage dialogs at the begining of the level
@@ -162,14 +163,21 @@ public class DialogSystem : FSystem
 	{
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, path));
+			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, Application.streamingAssetsPath + Path.DirectorySeparatorChar + path));
 		}
 		else
 		{
 			Texture2D tex2D = new Texture2D(2, 2); //create new "empty" texture
-			byte[] fileData = File.ReadAllBytes(path); //load image from SPY/path
-			if (tex2D.LoadImage(fileData))
-				img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+			try
+			{
+				byte[] fileData = File.ReadAllBytes(Application.streamingAssetsPath + Path.DirectorySeparatorChar + path); //load image from SPY/path
+				if (tex2D.LoadImage(fileData))
+					img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+			}
+			catch (Exception e)
+			{
+				Debug.Log(e.Message);
+			}
 		}
 	}
 

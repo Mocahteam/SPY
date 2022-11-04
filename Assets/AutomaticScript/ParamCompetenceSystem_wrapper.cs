@@ -3,11 +3,10 @@ using FYFY;
 
 public class ParamCompetenceSystem_wrapper : BaseWrapper
 {
+	public TMPro.TMP_Dropdown referentialSelector;
 	public UnityEngine.GameObject panelInfoComp;
-	public UnityEngine.GameObject panelInfoUser;
 	public UnityEngine.GameObject prefabComp;
 	public UnityEngine.GameObject ContentCompMenu;
-	public TMPro.TMP_Text messageForUser;
 	public UnityEngine.GameObject compatibleLevelsPanel;
 	public UnityEngine.GameObject levelCompatiblePrefab;
 	public UnityEngine.GameObject contentListOfCompatibleLevel;
@@ -15,14 +14,14 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject deletableElement;
 	public UnityEngine.GameObject contentScenario;
 	public UnityEngine.UI.Button addToScenario;
+	public UnityEngine.GameObject savingPanel;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
+		MainLoop.initAppropriateSystemField (system, "referentialSelector", referentialSelector);
 		MainLoop.initAppropriateSystemField (system, "panelInfoComp", panelInfoComp);
-		MainLoop.initAppropriateSystemField (system, "panelInfoUser", panelInfoUser);
 		MainLoop.initAppropriateSystemField (system, "prefabComp", prefabComp);
 		MainLoop.initAppropriateSystemField (system, "ContentCompMenu", ContentCompMenu);
-		MainLoop.initAppropriateSystemField (system, "messageForUser", messageForUser);
 		MainLoop.initAppropriateSystemField (system, "compatibleLevelsPanel", compatibleLevelsPanel);
 		MainLoop.initAppropriateSystemField (system, "levelCompatiblePrefab", levelCompatiblePrefab);
 		MainLoop.initAppropriateSystemField (system, "contentListOfCompatibleLevel", contentListOfCompatibleLevel);
@@ -30,11 +29,17 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "deletableElement", deletableElement);
 		MainLoop.initAppropriateSystemField (system, "contentScenario", contentScenario);
 		MainLoop.initAppropriateSystemField (system, "addToScenario", addToScenario);
+		MainLoop.initAppropriateSystemField (system, "savingPanel", savingPanel);
 	}
 
 	public void openPanelSelectComp()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "openPanelSelectComp", null);
+	}
+
+	public void createCompetencies(System.Int32 referentialId)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "createCompetencies", referentialId);
 	}
 
 	public void cleanCompPanel()
@@ -77,11 +82,6 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "testLevel", levelToLoad);
 	}
 
-	public void displayMessageUser()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "displayMessageUser", null);
-	}
-
 	public void refreshUI(UnityEngine.RectTransform competency)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "refreshUI", competency);
@@ -90,6 +90,11 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public void saveScenario(TMPro.TMP_InputField scenarioName)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "saveScenario", scenarioName);
+	}
+
+	public void displaySavingPanel()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "displaySavingPanel", null);
 	}
 
 }

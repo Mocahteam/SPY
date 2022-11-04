@@ -4,7 +4,7 @@ using System.Xml;
 
 public class GameData : MonoBehaviour {
 	// Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
-	public GameObject Level;
+	public GameObject LevelGO;
 	public Dictionary<string, XmlNode> levels; // The Associated XmlNode to its path
 	public string scenarioName; // name of the scenario (campaign)
 	public List<string> scenario; // The scenario to play

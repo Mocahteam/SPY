@@ -8,21 +8,23 @@ using System.Collections.Generic;
 using System;
 using System.Data;
 using UnityEngine.Events;
+using System.Runtime.InteropServices;
+using System.Collections;
+using UnityEngine.Networking;
 
 public class ParamCompetenceSystem : FSystem
 {
-
 	public static ParamCompetenceSystem instance;
 
 	// Familles
 	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les Toogles compétences
+	private UnityAction localCallback;
 
 	// Variables
+	public TMP_Dropdown referentialSelector; // Liste déroulante listant les référentiels
 	public GameObject panelInfoComp; // Panneau d'information des compétences
-	public GameObject panelInfoUser; // Panneau pour informer le joueur (erreurs de chargement, conflit dans la selection des compétences etc...)
 	public GameObject prefabComp; // Prefab de l'affichage d'une compétence
 	public GameObject ContentCompMenu; // Panneau qui contient la liste des catégories et compétences
-	public TMP_Text messageForUser; // Zone de texte pour les messages d'erreur adressés à l'utilisateur
 	public GameObject compatibleLevelsPanel; // Le panneau permettant de gérer les niveaux compatibles
 	public GameObject levelCompatiblePrefab; // Le préfab d'un bouton d'un niveau compatible
 	public GameObject contentListOfCompatibleLevel; // Le panneau contenant l'ensemble des niveaux compatibles
@@ -30,6 +32,10 @@ public class ParamCompetenceSystem : FSystem
 	public GameObject deletableElement; // Un niveau que l'on peut supprimer
 	public GameObject contentScenario; // Le panneau contenant les niveaux sélectionnés pour le scénario
 	public Button addToScenario;
+	public GameObject savingPanel;
+
+	[DllImport("__Internal")]
+	private static extern void Save(string content); // call javascript
 
 	[Serializable]
 	public class RawParams
@@ -63,11 +69,18 @@ public class ParamCompetenceSystem : FSystem
 	[Serializable]
 	public class RawListComp
 	{
+		public string name;
 		public List<RawComp> list = new List<RawComp>();
 	}
 
-	private RawListComp competencies;
+	[Serializable]
+	public class RawListReferential
+	{
+		public List<RawListComp> referentials = new List<RawListComp>();
+	}
+
 	private GameData gameData;
+	private RawListReferential rawReferentials;
 
 	public ParamCompetenceSystem()
 	{
@@ -84,9 +97,93 @@ public class ParamCompetenceSystem : FSystem
 	// used on TitleScreen scene
 	public void openPanelSelectComp()
 	{
-		RawListComp raw_competencies = JsonUtility.FromJson<RawListComp>(File.ReadAllText(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Competencies" + Path.DirectorySeparatorChar + "PIAF.json"));
+		string referentialsPath = Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Competencies" + Path.DirectorySeparatorChar + "competenciesReferential.json";
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+			MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath));
+		else
+		{
+            try
+            {
+				createReferentials(File.ReadAllText(referentialsPath));
+			}
+            catch (Exception e)
+			{
+				localCallback = null;
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + referentialsPath + " : " + e.Message, OkButton = "", CancelButton = "OK", call = localCallback });
+			}
+		}
+	}
+
+	private IEnumerator GetCompetenciesWebRequest(string referentialsPath)
+    {
+		UnityWebRequest www = UnityWebRequest.Get(referentialsPath);
+		yield return www.SendWebRequest();
+
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			localCallback = null;
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + referentialsPath + " : " + www.error, OkButton = "", CancelButton = "OK", call = localCallback });
+		}
+		else
+		{
+			createReferentials(www.downloadHandler.text);
+		}
+	}
+
+	private void createReferentials(string jsonContent)
+	{
+		referentialSelector.ClearOptions();
+
+		try
+		{
+			rawReferentials = JsonUtility.FromJson<RawListReferential>(jsonContent);
+		} catch (Exception e)
+		{
+			localCallback = null;
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "La liste des référentiels est mal formée : " + e.Message, OkButton = "", CancelButton = "OK", call = localCallback });
+			return;
+		}
+
+		// add referential to dropdone
+		List<TMP_Dropdown.OptionData> referentials = new List<TMP_Dropdown.OptionData>();
+		foreach (RawListComp rlc in rawReferentials.referentials)
+			referentials.Add(new TMP_Dropdown.OptionData(rlc.name));
+		if (referentials.Count > 0)
+		{
+			referentialSelector.AddOptions(referentials);
+			// Be sure dropdone is active
+			GameObjectManager.setGameObjectState(referentialSelector.gameObject, true);
+		}
+		else
+		{
+			// Hide dropdown
+			GameObjectManager.setGameObjectState(referentialSelector.gameObject, false);
+		}
+
+		createCompetencies(referentialSelector.value);
+	}
+
+	// used in DropdownReferential dropdown 
+	public void createCompetencies(int referentialId)
+	{
+		// remove all old competencies
+		for (int i = ContentCompMenu.transform.childCount - 1; i >= 0; i--)
+        {
+			Transform child = ContentCompMenu.transform.GetChild(i);
+			GameObjectManager.unbind(child.gameObject);
+			child.SetParent(null);
+			GameObject.Destroy(child.gameObject);
+        }
+
+		if (referentialId >= rawReferentials.referentials.Count || referentialId < 0)
+		{
+			localCallback = null;
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Référentiel numéro "+referentialId+" non défini.", OkButton = "", CancelButton = "OK", call = localCallback });
+			return;
+		}
+
 		// create all competencies
-		foreach (RawComp rawComp in raw_competencies.list)
+		foreach (RawComp rawComp in rawReferentials.referentials[referentialId].list)
 		{
 			// On instancie la compétence
 			GameObject competency = UnityEngine.Object.Instantiate(prefabComp);
@@ -124,6 +221,7 @@ public class ParamCompetenceSystem : FSystem
 						LayoutRebuilder.ForceRebuildLayoutImmediate(parentComp.transform.Find("SubCompetencies") as RectTransform);
 					}
 		}
+		LayoutRebuilder.ForceRebuildLayoutImmediate(ContentCompMenu.transform as RectTransform);
 	}
 
 	public void cleanCompPanel()
@@ -163,9 +261,12 @@ public class ParamCompetenceSystem : FSystem
 		}
 		if (nbCompSelected == 0)
 			selectedLevels.Clear();
-		Debug.Log(selectedLevels.Count);
+		
 		if (selectedLevels.Count == 0)
-			displayMessageUser("Aucun niveau compatible avec votre sélection", "", "OK", delegate { });
+		{
+			localCallback = null;
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Aucun niveau compatible avec votre sélection", OkButton = "", CancelButton = "OK", call = localCallback });
+		}
 		else
 		{
 			// display compatible panel
@@ -379,21 +480,25 @@ public class ParamCompetenceSystem : FSystem
 		contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text = path;
 		// Display miniView
 		string imgPath = Application.streamingAssetsPath + Path.DirectorySeparatorChar + path.Replace(".xml", ".png");
-		if (File.Exists(imgPath))
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-
-			GameObjectManager.setGameObjectState(contentInfoCompatibleLevel.transform.Find("LevelMiniView").gameObject, true);
-			Texture2D tex2D = new Texture2D(2, 2); //create new "empty" texture
-			byte[] fileData = File.ReadAllBytes(imgPath); //load image from SPY/path
-			if (tex2D.LoadImage(fileData))
-			{
-				Image img = contentInfoCompatibleLevel.transform.Find("LevelMiniView").GetComponent<Image>();
-				img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
-				img.preserveAspect = true;
-			}
+			MainLoop.instance.StartCoroutine(GetMiniViewWebRequest(imgPath));
 		}
 		else
-			GameObjectManager.setGameObjectState(contentInfoCompatibleLevel.transform.Find("LevelMiniView").gameObject, false);
+		{
+			try 
+			{
+				Texture2D tex2D = new Texture2D(2, 2); //create new "empty" texture
+				byte[] fileData = File.ReadAllBytes(imgPath); //load image from SPY/path
+				if (tex2D.LoadImage(fileData))
+					setMiniView(tex2D);
+			}
+			catch
+			{
+				setMiniView(null);
+			}
+		}
+
 		XmlNode levelSelected = gameData.levels[Application.streamingAssetsPath + Path.DirectorySeparatorChar + path];
 
 		TMP_Text contentInfo = contentInfoCompatibleLevel.transform.Find("levelTextInfo").GetComponent<TMP_Text>();
@@ -431,6 +536,36 @@ public class ParamCompetenceSystem : FSystem
 		addToScenario.interactable = true;
 	}
 
+	private IEnumerator GetMiniViewWebRequest(string miniViewUri)
+	{
+		UnityWebRequest www = UnityWebRequestTexture.GetTexture(miniViewUri);
+		yield return www.SendWebRequest();
+
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			Debug.Log(www.error);
+			setMiniView(null);
+		}
+		else
+		{
+			Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
+			setMiniView(tex2D);
+		}
+	}
+
+	private void setMiniView(Texture2D tex2D)
+    {
+		if (tex2D != null)
+		{
+			GameObjectManager.setGameObjectState(contentInfoCompatibleLevel.transform.Find("LevelMiniView").gameObject, true);
+			Image img = contentInfoCompatibleLevel.transform.Find("LevelMiniView").GetComponent<Image>();
+			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+			img.preserveAspect = true;
+		}
+		else
+			GameObjectManager.setGameObjectState(contentInfoCompatibleLevel.transform.Find("LevelMiniView").gameObject, false);
+	}
+
 	// Used on ButtonAddToScenario
 	public void addCurrentLevelToScenario()
 	{
@@ -464,35 +599,11 @@ public class ParamCompetenceSystem : FSystem
 	//Used on 
 	public void testLevel(TMP_Text levelToLoad)
 	{
-		if (contentScenario.transform.childCount == 0)
-			startLevel(levelToLoad.text);
-		else
-			displayMessageUser("Si vous n'avez pas sauvegarder votre scénario, les dernières modifications seront perdues.\nEtes-vous sûr de vouloir continuer ?", "Oui", "Annuler", delegate { startLevel(levelToLoad.text); });
-	}
-
-	private void startLevel(string levelToLoad)
-	{
 		gameData.scenarioName = "testLevel";
 		gameData.scenario = new List<string>();
-		gameData.levelToLoad = Application.streamingAssetsPath + Path.DirectorySeparatorChar + levelToLoad;
+		gameData.levelToLoad = Application.streamingAssetsPath + Path.DirectorySeparatorChar + levelToLoad.text;
 		gameData.scenario.Add(gameData.levelToLoad);
 		GameObjectManager.loadScene("MainScene");
-	}
-
-	// Affiche le panel message avec le bon message
-	public void displayMessageUser(string message, string OkButton, string CancelButton, UnityAction call)
-	{
-		messageForUser.text = message;
-		GameObject buttons = panelInfoUser.transform.Find("Panel").Find("Buttons").gameObject;
-		GameObjectManager.setGameObjectState(buttons.transform.GetChild(0).gameObject, OkButton != "");
-		buttons.transform.GetChild(0).GetComponentInChildren<TMP_Text>().text = OkButton;
-		buttons.transform.GetChild(0).GetComponent<Button>().onClick.RemoveAllListeners();
-		buttons.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(call);
-		GameObjectManager.setGameObjectState(buttons.transform.GetChild(1).gameObject, CancelButton != "");
-		buttons.transform.GetChild(1).GetComponentInChildren<TMP_Text>().text = CancelButton;
-		panelInfoUser.SetActive(true); // not use GameObjectManager here else ForceRebuildLayout doesn't work
-		LayoutRebuilder.ForceRebuildLayoutImmediate(messageForUser.transform as RectTransform);
-		LayoutRebuilder.ForceRebuildLayoutImmediate(messageForUser.transform.parent as RectTransform);
 	}
 
 	public void refreshUI(RectTransform competency)
@@ -510,7 +621,7 @@ public class ParamCompetenceSystem : FSystem
 	/// <summary>
 	/// Called when trying to save
 	/// </summary>
-	public bool CheckSaveNameValidity(string nameCandidate)
+	private bool CheckSaveNameValidity(string nameCandidate)
 	{
 		bool isValid = true;
 
@@ -530,45 +641,71 @@ public class ParamCompetenceSystem : FSystem
 
 	public void saveScenario(TMP_InputField scenarioName)
 	{
-
-		// remove file extension
-		if (!scenarioName.text.EndsWith(".xml"))
-			scenarioName.text += ".xml";
-
 		if (!CheckSaveNameValidity(scenarioName.text))
 		{
-			displayMessageUser("Le nom du scenario est invalide, veuillez donner un nom à votre scénario", "", "OK", delegate { });
-			// Be sure saving windows is enabled
-			GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
-		}else if (File.Exists(Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario" + Path.DirectorySeparatorChar + scenarioName.text))
-		{
-			displayMessageUser("Un scénario avec le nom \""+ scenarioName.text + "\" existe déjà, souhaitez-vous le remplacer ?", "Oui", "Non", delegate { saveToFile(scenarioName); });
+			localCallback = null;
+			string invalidChars = "";
+			foreach (char someChar in Path.GetInvalidFileNameChars())
+				if (Char.IsPunctuation(someChar) || Char.IsSymbol(someChar))
+					invalidChars += someChar+" ";
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Le nom du scenario est invalide. Il ne peut être vide et contenir les caratères suivants : "+ invalidChars, OkButton = "", CancelButton = "OK", call = localCallback });
 			// Be sure saving windows is enabled
 			GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
 		}
 		else
-			saveToFile(scenarioName);
+		{
+			// remove file extension
+			if (!scenarioName.text.EndsWith(".xml"))
+				scenarioName.text += ".xml";
+			if (File.Exists(Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario" + Path.DirectorySeparatorChar + scenarioName.text))
+			{
+				localCallback = null;
+				localCallback += delegate { saveToFile(scenarioName); };
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Un scénario avec le nom \"" + scenarioName.text + "\" existe déjà, souhaitez-vous le remplacer ?", OkButton = "Oui", CancelButton = "Non", call = localCallback });
+				// Be sure saving windows is enabled
+				GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
+			}
+			else
+				saveToFile(scenarioName);
+		}
 	}
 
-	private void saveToFile(TMP_InputField scenarioName) { 
+	private string buildScenarioContent()
+    {
 		string scenarioExport = "<?xml version=\"1.0\"?>\n";
 		scenarioExport += "<scenario>\n";
 		foreach (Transform child in contentScenario.transform)
-			scenarioExport += "\t<level name = \""+child.GetComponentInChildren<TMP_Text>().text+"\" />\n";
+			scenarioExport += "\t<level name = \"" + child.GetComponentInChildren<TMP_Text>().text + "\" />\n";
 		scenarioExport += "</scenario>";
+		return scenarioExport;
+	}
+
+	private void saveToFile(TMP_InputField scenarioName) {
+		string scenarioExport = buildScenarioContent();
 
 		try
 		{
 			// Create all necessary directories if they don't exist
 			Directory.CreateDirectory(Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario");
 			File.WriteAllText(Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario" + Path.DirectorySeparatorChar + scenarioName.text, scenarioExport);
-			displayMessageUser("Le scénario a été enregistré dans le fichier : "+ Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario" + Path.DirectorySeparatorChar + scenarioName.text, "", "OK", delegate { });
+			localCallback = null;
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Le scénario a été enregistré dans le fichier : " + Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario" + Path.DirectorySeparatorChar + scenarioName.text, OkButton = "", CancelButton = "OK", call = localCallback });
 		}
 		catch (Exception e)
 		{
-			displayMessageUser("Erreur, le scénario n'a pas été enregistré.\n"+e, "", "OK", delegate { });
+			localCallback = null;
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur, le scénario n'a pas été enregistré.\n" + e, OkButton = "", CancelButton = "OK", call = localCallback });
 		}
 		// Be sure saving windows is disabled
 		GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, false);
+	}
+
+	// See ButtonSaveScenario
+	public void displaySavingPanel()
+	{
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+			Save(buildScenarioContent());
+		else
+			GameObjectManager.setGameObjectState(savingPanel, true);
 	}
 }

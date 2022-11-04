@@ -90,7 +90,7 @@ public class DetectorManager : FSystem {
             case DetectRange.Type.Line:
                 if (dr.selfRange)
                 {
-                    GameObject newRedArea = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(drone_pos.y * 3, 1.5f, drone_pos.x * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+                    GameObject newRedArea = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.LevelGO.transform.position + new Vector3(drone_pos.y * 3, 1.5f, drone_pos.x * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
                     newRedArea.GetComponent<Position>().x = drone_pos.x;
                     newRedArea.GetComponent<Position>().y = drone_pos.y;
                     newRedArea.GetComponent<Detector>().owner = drone;
@@ -111,7 +111,7 @@ public class DetectorManager : FSystem {
                                 break;
                             else
                             {
-                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(y * 3, 1.5f, x * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.LevelGO.transform.position + new Vector3(y * 3, 1.5f, x * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
                                 obj.GetComponent<Position>().x = x;
                                 obj.GetComponent<Position>().y = y;
                                 obj.GetComponent<Detector>().owner = drone;
@@ -132,7 +132,7 @@ public class DetectorManager : FSystem {
                                 break;
                             else
                             {
-                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(y * 3, 1.5f, x * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.LevelGO.transform.position + new Vector3(y * 3, 1.5f, x * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
                                 obj.GetComponent<Position>().x = x;
                                 obj.GetComponent<Position>().y = y;
                                 obj.GetComponent<Detector>().owner = drone;
@@ -153,7 +153,7 @@ public class DetectorManager : FSystem {
                                 break;
                             else
                             {
-                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(y * 3, 1.5f, x * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.LevelGO.transform.position + new Vector3(y * 3, 1.5f, x * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
                                 obj.GetComponent<Position>().x = x;
                                 obj.GetComponent<Position>().y = y;
                                 obj.GetComponent<Detector>().owner = drone;
@@ -174,7 +174,7 @@ public class DetectorManager : FSystem {
                                 break;
                             else
                             {
-                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.Level.transform.position + new Vector3(y * 3, 1.5f, x * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+                                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, gameData.LevelGO.transform.position + new Vector3(y * 3, 1.5f, x * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
                                 obj.GetComponent<Position>().x = x;
                                 obj.GetComponent<Position>().y = y;
                                 obj.GetComponent<Detector>().owner = drone;
