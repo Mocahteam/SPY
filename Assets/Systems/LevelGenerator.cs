@@ -471,7 +471,7 @@ public class LevelGenerator : FSystem {
         switch (actionNode.Name)
         {
 			case "if":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("If"), canvas);
+				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("IfThen"), canvas);
 
 				conditionContainer = obj.transform.Find("ConditionContainer");
 				firstContainerBloc = obj.transform.Find("Container");
@@ -536,7 +536,7 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "for":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("For"), canvas);
+				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("ForLoop"), canvas);
 				firstContainerBloc = obj.transform.Find("Container");
 				BaseElement action = obj.GetComponent<ForControl>();
 

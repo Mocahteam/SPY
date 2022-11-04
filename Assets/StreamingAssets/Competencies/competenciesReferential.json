@@ -321,7 +321,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "While|If|IfElse"
+									"value": "While|IfThen|IfElse"
 								},
 								{
 									"attribute": "limit",
@@ -331,15 +331,19 @@
 							]
 						},
 						{
-							"label": "ControlInScript",
-							"tag": "action",
-							"parameters": [
-								{
-									"attribute": "type",
-									"constraint": "include",
-									"value": "while|if|ifElse"
-								}
-							]
+							"label": "IfInScript",
+							"tag": "if",
+							"parameters": []
+						},
+						{
+							"label": "IfElseInScript",
+							"tag": "ifElse",
+							"parameters": []
+						},
+						{
+							"label": "WhileInScript",
+							"tag": "while",
+							"parameters": []
 						},
 						{
 							"label": "ActionInLib",
@@ -409,7 +413,7 @@
 						}
 						
 					],
-					"rule": "((ActionInLib + ActionInScript) >= 1 and (CaptorInLib + CaptorInScript) >= 1 and (ControlInLib + ControlInScript) >= 1) or DoorWithSlotConnected >= 1"
+					"rule": "((ActionInLib + ActionInScript) >= 1 and (CaptorInLib + CaptorInScript) >= 1 and (ControlInLib + IfInScript + IfElseInScript + WhileInScript) >= 1) or DoorWithSlotConnected >= 1"
 				},
 				{
 					"key": "C1.7",
@@ -568,7 +572,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "For|Forever|While|If|IfElse"
+									"value": "ForLoop|Forever|While|IfThen|IfElse"
 								},
 								{
 									"attribute": "limit",
@@ -650,7 +654,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "For|Forever|While|If|IfElse"
+									"value": "ForLoop|Forever|While|IfThen|IfElse"
 								},
 								{
 									"attribute": "limit",
@@ -732,7 +736,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "For|Forever|While|If|IfElse"
+									"value": "ForLoop|Forever|While|IfThen|IfElse"
 								},
 								{
 									"attribute": "limit",
@@ -823,7 +827,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "=",
-									"value": "For"
+									"value": "ForLoop"
 								},
 								{
 									"attribute": "limit",
@@ -951,7 +955,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "If|IfElse"
+									"value": "IfThen|IfElse"
 								},
 								{
 									"attribute": "limit",
@@ -1049,7 +1053,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "If|IfElse|While"
+									"value": "IfThen|IfElse|While"
 								},
 								{
 									"attribute": "limit",
@@ -1419,7 +1423,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "If|IfElse|For|Wait|While|Forever"
+									"value": "IfThen|IfElse|ForLoop|Wait|While|Forever"
 								},
 								{
 									"attribute": "limit",
@@ -1480,7 +1484,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "If|IfElse|For|Wait|While|Forever"
+									"value": "IfThen|IfElse|ForLoop|Wait|While|Forever"
 								},
 								{
 									"attribute": "limit",
@@ -1541,7 +1545,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "For|Forever"
+									"value": "ForLoop|Forever"
 								},
 								{
 									"attribute": "limit",
@@ -1557,7 +1561,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "If|IfElse|While"
+									"value": "IfThen|IfElse|While"
 								},
 								{
 									"attribute": "limit",
@@ -1607,7 +1611,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "While|If|IfElse"
+									"value": "While|IfThen|IfElse"
 								},
 								{
 									"attribute": "limit",
@@ -1678,7 +1682,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "While|If|IfElse"
+									"value": "While|IfThen|IfElse"
 								},
 								{
 									"attribute": "limit",

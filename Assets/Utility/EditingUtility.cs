@@ -133,27 +133,6 @@ public static class EditingUtility
 			GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.GetSiblingIndex() + 1).gameObject, true);
 	}
 
-	// Bug Unity? Unity add Carets in InputField on clones, if we clone an active in hierarchy input field at runtime three times, four carets will be present in the input field!!! For FYFY it is a problem because these gameobjects are not binded (this occurs with For blocks that contain an InputField)
-	// Solution: Remove and unbind if required all unnecessary carets and bind all necessary caret
-	public static void resolveUnityBugOnCaret(GameObject parent)
-	{
-		foreach (TMP_InputField inputField in parent.GetComponentsInChildren<TMP_InputField>(true))
-		{
-			TMP_SelectionCaret[] carets = inputField.GetComponentsInChildren<TMP_SelectionCaret>(true);
-			for (int i = carets.Length - 1; i >= 0; i--)  // remove all caret except the first one if active in hierarchy, otherwise remove all carets, a new one will be added when GameObject will be enabled
-			{
-				if (i > 0) {
-					if (GameObjectManager.isBound(carets[i].gameObject))
-						GameObjectManager.unbind(carets[i].gameObject);
-					carets[i].transform.SetParent(null); // remove the caret from its parent, this enables to not bind this caret if parent input field is bind this frame
-					GameObject.Destroy(carets[i].gameObject);
-				} else
-					if (!GameObjectManager.isBound(carets[i].gameObject))
-						GameObjectManager.bind(carets[i].gameObject);
-			}
-		}
-	}
-
 	// Copy an editable script to the container of an agent
 	public static void fillExecutablePanel(GameObject srcScript, GameObject targetContainer, string agentTag)
 	{

@@ -81,7 +81,6 @@ public class HistoryManager : FSystem
 			for (int containerCpt = 0; containerCpt < EditableCanvas.transform.GetChild(0).childCount; containerCpt++)
 			{
 				Transform viewportForEditableContainer = EditableCanvas.transform.GetChild(0).GetChild(containerCpt);
-				EditingUtility.resolveUnityBugOnCaret(viewportForEditableContainer.gameObject);
 				// the first child is the script container that contains script elements
 				foreach (Transform child in viewportForEditableContainer.GetChild(0))
 				{
