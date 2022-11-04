@@ -18,7 +18,7 @@
   </map>
    <dialogs>
 	<dialog text="Tu peux maintenant demander au robot de réaliser une action uniquement si un capteur est activé." img="SiIcon.png" />
-	<dialog text="Par exemple, ce capteur permet de tester si la case en face du robot est un mur." img="WallIcon.png" />
+	<dialog text="Par exemple, ce capteur permet de tester si la case en face du robot est un mur." img="WallFrontIcon.png" />
 	<dialog text="Tu pourrais tourner si un mur se présente devant toi par exemple." img="ifExample.png"/>
   </dialogs>
   <blockLimits>
@@ -36,7 +36,7 @@
     <blockLimit blockType="AndOperator" limit="0" />
     <blockLimit blockType="OrOperator" limit="0" />
     <blockLimit blockType="NotOperator" limit="0" />
-    <blockLimit blockType="Wall" limit="1" />
+    <blockLimit blockType="WallFront" limit="1" />
     <blockLimit blockType="Enemy" limit="0" />
     <blockLimit blockType="RedArea" limit="0" />
     <blockLimit blockType="FieldGate" limit="0" />

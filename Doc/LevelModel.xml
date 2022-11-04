@@ -50,7 +50,7 @@
 	<blockLimits>
 		<!-- 
 			blockLimit (optional): this tag enables to define  the amount of specific programming block available. It contains two attributes:
-				blockType (mandatory): the key of a type of block in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack", "If", "IfElse", "For", "While", "Forever", "AndOperator", "OrOperator", "NotOperator", "Wall", "Enemy", "RedArea", "FieldGate", "Terminal", "Exit"}
+				blockType (mandatory): the key of a type of block in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack", "If", "IfElse", "For", "While", "Forever", "AndOperator", "OrOperator", "NotOperator", "WallFront", "WallLeft", "WallRight", "Enemy", "RedArea", "FieldGate", "Terminal", "Exit"}
 				limit (mandatory): >0 the amount of blocks available for the player, ==0 this block type is hidden for the player, <0 unlimited accès of this block type
 		-->
 		<blockLimit blockType="Forward" limit="-1" />
@@ -67,7 +67,9 @@
 		<blockLimit blockType="AndOperator" limit="0" />
 		<blockLimit blockType="OrOperator" limit="0" />
 		<blockLimit blockType="NotOperator" limit="0" />
-		<blockLimit blockType="Wall" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
 		<blockLimit blockType="Enemy" limit="0" />
 		<blockLimit blockType="RedArea" limit="0" />
 		<blockLimit blockType="FieldGate" limit="0" />
@@ -217,7 +219,7 @@
 			Three condition tags exists: condition, thenCondition, elseCondition. The three follow the same rules.
 			Condition tags can contain only one child that can be a captor or an operator among the following tags:
 				captor: this tag contains one attribute:
-					type (mandatory): the name of the captor in {"Wall", "Enemy", "RedArea", "FieldGate", "Terminal", "Exit"}.
+					type (mandatory): the name of the captor in {"WallFront", "WallLeft", "WallRight", "Enemy", "RedArea", "FieldGate", "Terminal", "Exit"}.
 				Exemple: <captor type="Terminal" />
 				
 				and: this tag has no attributes, it is composed by two mandatory tags: conditionLeft and conditionRight (see Condition description).
@@ -262,10 +264,12 @@
 			<condition>
 			  <and>
 				<conditionLeft>
-				  <captor type="FieldGate" />
+					<captor type="FieldGate" />
 				</conditionLeft>
 				<conditionRight>
-				  <captor type="Terminal" />
+					<not>
+						<captor type="Terminal" />
+					</not>
 				</conditionRight>
 			  </and>
 			</condition>
@@ -294,9 +298,21 @@
 			<elseContainer>
 				<while>
 					<condition>
-						<not>
-							<captor type="Wall" />
-						</not>
+						<or>
+							<conditionLeft>
+								<captor type="WallFront" />
+							</conditionLeft>
+							<conditionRight>
+								<or>
+									<conditionLeft>
+										<captor type="WallLeft" />
+									</conditionLeft>
+									<conditionRight>
+										<captor type="WallRight" />
+									</conditionRight>
+								</or>
+							</conditionRight>
+						</or>
 					</condition>
 					<container>
 						<action type="Forward" />

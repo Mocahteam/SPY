@@ -31,7 +31,7 @@
     <blockLimit blockType="AndOperator" limit="1" />
     <blockLimit blockType="OrOperator" limit="1" />
     <blockLimit blockType="NotOperator" limit="1" />
-    <blockLimit blockType="Wall" limit="1" />
+    <blockLimit blockType="WallFront" limit="1" />
     <blockLimit blockType="Enemy" limit="0" />
     <blockLimit blockType="RedArea" limit="0" />
     <blockLimit blockType="FieldGate" limit="1" />
@@ -43,7 +43,7 @@
     <while>
       <condition>
         <not>
-          <action type="Wall"/>
+          <action type="WallFront"/>
         </not>
        </condition>
       <container>
@@ -61,7 +61,7 @@
       <if>
         <condition>
           <not>
-            <captor type="Wall"/>
+            <captor type="WallFront"/>
           </not>
         </condition>
         <container>

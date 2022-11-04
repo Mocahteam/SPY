@@ -191,10 +191,11 @@ public class EditableContainerSystem : FSystem
 			// On ajoute le nouveau viewport container à FYFY
 			GameObjectManager.bind(cloneContainer);
 
-			// if drag&drop diabled => hide all replacement slots
+			// if drag&drop diabled => hide all replacement slots that are not BaseCondition
 			if (!gameData.dragDropEnabled)
 				foreach (ReplacementSlot slot in cloneContainer.GetComponentsInChildren<ReplacementSlot>(true))
-					GameObjectManager.setGameObjectState(slot.gameObject, false);
+					if (slot.slotType != ReplacementSlot.SlotType.BaseCondition)
+						GameObjectManager.setGameObjectState(slot.gameObject, false);
 
 			if (script != null && dropArea != null)
 				// refresh all the hierarchy of parent containers

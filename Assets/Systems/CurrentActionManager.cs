@@ -240,7 +240,51 @@ public class CurrentActionManager : FSystem
 		// check target position
 		switch (ele)
 		{
-			case "Wall": // walls
+			case "WallFront":
+				foreach (GameObject wall in f_wall)
+					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
+						ifok = true;
+				break;
+			case "WallLeft":
+				// override target
+				switch (agent.GetComponent<Direction>().direction)
+				{
+					case Direction.Dir.North:
+						vec = new Vector2(-1, 0);
+						break;
+					case Direction.Dir.South:
+						vec = new Vector2(1, 0);
+						break;
+					case Direction.Dir.East:
+						vec = new Vector2(0, -1);
+						break;
+					case Direction.Dir.West:
+						vec = new Vector2(0, 1);
+						break;
+				}
+				foreach (GameObject wall in f_wall)
+					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
+						ifok = true;
+				break;
+			case "WallRight":
+				// override target
+				switch (agent.GetComponent<Direction>().direction)
+				{
+					case Direction.Dir.North:
+						vec = new Vector2(1, 0);
+						break;
+					case Direction.Dir.South:
+						vec = new Vector2(-1, 0);
+						break;
+					case Direction.Dir.East:
+						vec = new Vector2(0, 1);
+						break;
+					case Direction.Dir.West:
+						vec = new Vector2(0, -1);
+						break;
+				}
 				foreach (GameObject wall in f_wall)
 					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
@@ -259,9 +303,9 @@ public class CurrentActionManager : FSystem
 						ifok = true;
 				break;
 			case "Terminal": // consoles
+				vec = new Vector2(0, 0);
 				foreach (GameObject console in f_activableConsole)
 				{
-					vec = new Vector2(0, 0);
 					if (console.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 						console.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
@@ -274,9 +318,9 @@ public class CurrentActionManager : FSystem
 						ifok = true;
 				break;
 			case "Exit": // exits
+				vec = new Vector2(0, 0);
 				foreach (GameObject exit in f_exit)
 				{
-					vec = new Vector2(0, 0);
 					if (exit.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 					 exit.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
