@@ -231,10 +231,6 @@ public class EditableContainerSystem : FSystem
 		GameObject scriptContainerPointer = f_viewportContainerPointed.First().transform.Find("ScriptContainer").gameObject;
 
 		deleteContent(scriptContainerPointer);
-
-		// Enable the last emptySlot and disable dropZone
-		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 1).gameObject, true);
-		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 2).gameObject, false);
 	}
 
 	// Remove the script window

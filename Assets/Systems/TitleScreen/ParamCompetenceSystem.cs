@@ -97,7 +97,7 @@ public class ParamCompetenceSystem : FSystem
 	// used on TitleScreen scene
 	public void openPanelSelectComp()
 	{
-		string referentialsPath = Application.streamingAssetsPath + Path.DirectorySeparatorChar + "Competencies" + Path.DirectorySeparatorChar + "competenciesReferential.json";
+		string referentialsPath = Application.streamingAssetsPath + "/Competencies/competenciesReferential.json";
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 			MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath));
 		else
@@ -286,7 +286,7 @@ public class ParamCompetenceSystem : FSystem
 				foreach (string levelName in gameData.levels.Keys)
 					if (gameData.levels[levelName] == level)
 					{
-						compatibleLevel.GetComponentInChildren<TMP_Text>().text = levelName.Replace(Application.streamingAssetsPath + Path.DirectorySeparatorChar, "");
+						compatibleLevel.GetComponentInChildren<TMP_Text>().text = levelName.Replace(Application.streamingAssetsPath + "/", "");
 						break;
 					}
 				GameObjectManager.bind(compatibleLevel);
@@ -479,7 +479,7 @@ public class ParamCompetenceSystem : FSystem
 		// Display Title
 		contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text = path;
 		// Display miniView
-		string imgPath = Application.streamingAssetsPath + Path.DirectorySeparatorChar + path.Replace(".xml", ".png");
+		string imgPath = Application.streamingAssetsPath + "/" + path.Replace(".xml", ".png");
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
 			MainLoop.instance.StartCoroutine(GetMiniViewWebRequest(imgPath));
@@ -499,7 +499,7 @@ public class ParamCompetenceSystem : FSystem
 			}
 		}
 
-		XmlNode levelSelected = gameData.levels[Application.streamingAssetsPath + Path.DirectorySeparatorChar + path];
+		XmlNode levelSelected = gameData.levels[Application.streamingAssetsPath + "/" + path];
 
 		TMP_Text contentInfo = contentInfoCompatibleLevel.transform.Find("levelTextInfo").GetComponent<TMP_Text>();
 		contentInfo.text = "";
@@ -601,7 +601,7 @@ public class ParamCompetenceSystem : FSystem
 	{
 		gameData.scenarioName = "testLevel";
 		gameData.scenario = new List<string>();
-		gameData.levelToLoad = Application.streamingAssetsPath + Path.DirectorySeparatorChar + levelToLoad.text;
+		gameData.levelToLoad = Application.streamingAssetsPath + "/" + levelToLoad.text;
 		gameData.scenario.Add(gameData.levelToLoad);
 		GameObjectManager.loadScene("MainScene");
 	}
@@ -657,7 +657,7 @@ public class ParamCompetenceSystem : FSystem
 			// remove file extension
 			if (!scenarioName.text.EndsWith(".xml"))
 				scenarioName.text += ".xml";
-			if (File.Exists(Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario" + Path.DirectorySeparatorChar + scenarioName.text))
+			if (File.Exists(Application.persistentDataPath + "/Scenario/" + scenarioName.text))
 			{
 				localCallback = null;
 				localCallback += delegate { saveToFile(scenarioName); };
@@ -686,10 +686,10 @@ public class ParamCompetenceSystem : FSystem
 		try
 		{
 			// Create all necessary directories if they don't exist
-			Directory.CreateDirectory(Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario");
-			File.WriteAllText(Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario" + Path.DirectorySeparatorChar + scenarioName.text, scenarioExport);
+			Directory.CreateDirectory(Application.persistentDataPath + "/Scenario");
+			File.WriteAllText(Application.persistentDataPath + "/Scenario/" + scenarioName.text, scenarioExport);
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Le scénario a été enregistré dans le fichier : " + Application.persistentDataPath + Path.DirectorySeparatorChar + "Scenario" + Path.DirectorySeparatorChar + scenarioName.text, OkButton = "", CancelButton = "OK", call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Le scénario a été enregistré dans le fichier : " + Application.persistentDataPath + "/Scenario/" + scenarioName.text, OkButton = "", CancelButton = "OK", call = localCallback });
 		}
 		catch (Exception e)
 		{

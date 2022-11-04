@@ -337,14 +337,8 @@ public static class EditingUtility
 				GameObjectManager.unbind(emptySlot);
 			emptySlot.transform.SetParent(null);
 			GameObject.Destroy(emptySlot);
-			// remove the new last child, the dropzone
-			GameObject dropZone = container.GetChild(container.childCount - 1).gameObject;
-			if (GameObjectManager.isBound(emptySlot))
-				GameObjectManager.unbind(dropZone);
-			dropZone.transform.SetParent(null);
-			GameObject.Destroy(dropZone);
 
-			// Si c'est un block if on garde le container des actions (sans le emptyslot et la dropzone) mais la condition est traduite dans IfAction
+			// Si c'est un block if on garde le container des actions (sans le emptyslot) mais la condition est traduite dans IfAction
 			if (specialBlock.GetComponent<IfElseControl>())
 			{
 				// get else container
@@ -355,12 +349,6 @@ public static class EditingUtility
 					GameObjectManager.unbind(emptySlot);
 				emptySlot.transform.SetParent(null);
 				GameObject.Destroy(emptySlot);
-				// remove the new last child, the dropzone
-				dropZone = elseContainer.GetChild(elseContainer.childCount - 1).gameObject;
-				if (GameObjectManager.isBound(emptySlot))
-					GameObjectManager.unbind(dropZone);
-				dropZone.transform.SetParent(null);
-				GameObject.Destroy(dropZone);
 				// On parcourt les blocks qui composent le ElseContainer afin de les nettoyer également
 				foreach (Transform block in elseContainer)
 					// Si c'est le cas on fait un appel récursif

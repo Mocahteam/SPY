@@ -84,13 +84,13 @@ public class TitleScreenSystem : FSystem {
 
 	private IEnumerator GetScenarioWebRequest()
 	{
-		UnityWebRequest www = UnityWebRequest.Get(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "WebGlData" + Path.DirectorySeparatorChar + "ScenarioList.json");
+		UnityWebRequest www = UnityWebRequest.Get(Application.streamingAssetsPath + "/WebGlData/ScenarioList.json");
 		yield return www.SendWebRequest();
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + Application.streamingAssetsPath + Path.DirectorySeparatorChar + "WebGlData" + Path.DirectorySeparatorChar + "ScenarioList.json : " + www.error, OkButton = "", CancelButton = "OK", call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + Application.streamingAssetsPath + "/WebGlData/ScenarioList.json : " + www.error, OkButton = "", CancelButton = "OK", call = localCallback });
 		}
 		else
 		{
@@ -102,7 +102,7 @@ public class TitleScreenSystem : FSystem {
 			{
 				defaultCampaigns[scenarioRaw.scenarioName] = new List<string>();
 				foreach (string levelPath in scenarioRaw.levelPath)
-					defaultCampaigns[scenarioRaw.scenarioName].Add(Application.streamingAssetsPath + Path.DirectorySeparatorChar + levelPath);
+					defaultCampaigns[scenarioRaw.scenarioName].Add(Application.streamingAssetsPath + "/" + levelPath);
 			}
 			createScenarioButtons();
 		}
@@ -110,13 +110,13 @@ public class TitleScreenSystem : FSystem {
 
 	private IEnumerator GetLevelsWebRequest()
 	{
-		UnityWebRequest www = UnityWebRequest.Get(Application.streamingAssetsPath + Path.DirectorySeparatorChar + "WebGlData" + Path.DirectorySeparatorChar + "LevelsList.json");
+		UnityWebRequest www = UnityWebRequest.Get(Application.streamingAssetsPath + "/WebGlData/LevelsList.json");
 		yield return www.SendWebRequest();
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + Application.streamingAssetsPath + Path.DirectorySeparatorChar + "WebGlData" + Path.DirectorySeparatorChar + "LevelsList.json : " + www.error, OkButton = "", CancelButton = "OK", call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + Application.streamingAssetsPath + "/WebGlData/LevelsList.json : " + www.error, OkButton = "", CancelButton = "OK", call = localCallback });
 		}
 		else
 		{
@@ -124,7 +124,7 @@ public class TitleScreenSystem : FSystem {
 			WebGlDataLevels levelsListRaw = JsonUtility.FromJson<WebGlDataLevels>(levelsJson);
 			// try to load all levels
 			foreach (string levelRaw in levelsListRaw.levelPath)
-				MainLoop.instance.StartCoroutine(GetLevelWebRequest(Application.streamingAssetsPath + Path.DirectorySeparatorChar + levelRaw));
+				MainLoop.instance.StartCoroutine(GetLevelWebRequest(Application.streamingAssetsPath + "/" + levelRaw));
 		}
 	}
 
@@ -183,7 +183,7 @@ public class TitleScreenSystem : FSystem {
 			List<string> levelList = new List<string>();
 			foreach (XmlNode child in doc.GetElementsByTagName("scenario")[0])
 				if (child.Name.Equals("level"))
-					levelList.Add(Application.streamingAssetsPath + Path.DirectorySeparatorChar + (child.Attributes.GetNamedItem("name").Value));
+					levelList.Add(Application.streamingAssetsPath + "/" + (child.Attributes.GetNamedItem("name").Value));
 			defaultCampaigns[Path.GetFileName(scenarioName)] = levelList; //key = directory name
 		}
 	}
@@ -230,7 +230,7 @@ public class TitleScreenSystem : FSystem {
 				EditingUtility.removeComments(doc);
 				// a valid level must have only one tag "level"
 				if (doc.GetElementsByTagName("level").Count == 1)
-					gameData.levels.Add(fileName, doc.GetElementsByTagName("level")[0]);
+					gameData.levels.Add(fileName.Replace("\\", "/"), doc.GetElementsByTagName("level")[0]);
 				// try to extract scenario
 				extractLevelListFromScenario(fileName, doc);
 			}
@@ -263,7 +263,6 @@ public class TitleScreenSystem : FSystem {
 		{
 			string levelKey = defaultCampaigns[campaignKey][i];
 			GameObject button = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/LevelButton") as GameObject, listOfLevels.transform);
-			Debug.Log(levelKey + " " + Path.GetFileNameWithoutExtension(levelKey));
 			button.transform.Find("Button").GetChild(0).GetComponent<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(levelKey);
 			button.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate { launchLevel(campaignKey, levelKey); });
 			GameObjectManager.bind(button);
@@ -338,7 +337,7 @@ public class TitleScreenSystem : FSystem {
 			foreach (string levelPath in defaultCampaigns[selectedScenario.GetComponentInChildren<TMP_Text>().text])
 			{
 				GameObject newLevel = GameObject.Instantiate(Resources.Load("Prefabs/deletableElement") as GameObject, scenarioContent.transform);
-				newLevel.GetComponentInChildren<TMP_Text>().text = levelPath.Replace(Application.streamingAssetsPath + Path.DirectorySeparatorChar, "");
+				newLevel.GetComponentInChildren<TMP_Text>().text = levelPath.Replace(Application.streamingAssetsPath + "/", "");
 				LayoutRebuilder.ForceRebuildLayoutImmediate(newLevel.transform as RectTransform);
 				GameObjectManager.bind(newLevel);
 			}

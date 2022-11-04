@@ -82,7 +82,7 @@ public class DragDropSystem : FSystem
 		});
 	}
 
-	// toggle toutes les dropzones qui n'ont pas de voisins ReplacementSlot actif
+	// toggle toutes les dropzones
 	private void setDropZoneState(bool value)
 	{
 		foreach (GameObject Dp in f_dropZone)
@@ -104,7 +104,6 @@ public class DragDropSystem : FSystem
 					eventManager.gameObject.SetActive(false); // means object dragged is this => always disable eventManager
 			}
         }
-
 	}
 
 	// used by prefabs (Captors, boolean operators and drop areas)

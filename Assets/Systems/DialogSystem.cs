@@ -101,11 +101,7 @@ public class DialogSystem : FSystem
 		if (gameData.dialogMessage[nDialog].Item2 != null)
 		{
 			GameObjectManager.setGameObjectState(imageGO, true);
-			setImageSprite(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.levelToLoad) + Path.DirectorySeparatorChar + "Images" + Path.DirectorySeparatorChar + gameData.dialogMessage[nDialog].Item2);
-			if (gameData.dialogMessage[nDialog].Item3 != -1)
-				((RectTransform)imageGO.transform).sizeDelta = new Vector2(((RectTransform)imageGO.transform).sizeDelta.x, gameData.dialogMessage[nDialog].Item3);
-			else
-				((RectTransform)imageGO.transform).sizeDelta = new Vector2(((RectTransform)imageGO.transform).sizeDelta.x, imageGO.GetComponent<LayoutElement>().preferredHeight);
+			setImageSprite(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.levelToLoad) + "/Images/" + gameData.dialogMessage[nDialog].Item2);
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO, false);
@@ -163,16 +159,19 @@ public class DialogSystem : FSystem
 	{
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, Application.streamingAssetsPath + Path.DirectorySeparatorChar + path));
+			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, path));
 		}
 		else
 		{
 			Texture2D tex2D = new Texture2D(2, 2); //create new "empty" texture
 			try
 			{
-				byte[] fileData = File.ReadAllBytes(Application.streamingAssetsPath + Path.DirectorySeparatorChar + path); //load image from SPY/path
+				byte[] fileData = File.ReadAllBytes(path); //load image from SPY/path
 				if (tex2D.LoadImage(fileData))
+				{
 					img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+					setWantedHeight(img);
+				}
 			}
 			catch (Exception e)
 			{
@@ -194,6 +193,15 @@ public class DialogSystem : FSystem
 		{
 			Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
 			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+			setWantedHeight(img);
 		}
+	}
+
+	private void setWantedHeight(Image img)
+    {
+		if (gameData.dialogMessage[nDialog].Item3 != -1)
+			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, gameData.dialogMessage[nDialog].Item3);
+		else
+			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, img.GetComponent<LayoutElement>().preferredHeight);
 	}
 }

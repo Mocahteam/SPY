@@ -593,21 +593,10 @@ public class LevelGenerator : FSystem {
 
 	private void processXMLInstruction(Transform gameContainer, XmlNode xmlContainer)
 	{
-		// The first child of a control container is a drop zone and the second an emptySolt
-		GameObject dropZone = gameContainer.GetChild(0).gameObject;
-		GameObject emptySlot = gameContainer.GetChild(1).gameObject;
-		bool firstchild = true;
+		// The first child of a control container is an emptySolt
+		GameObject emptySlot = gameContainer.GetChild(0).gameObject;
 		foreach (XmlNode eleNode in xmlContainer.ChildNodes)
-		{
-			GameObject child = readXMLInstruction(eleNode);
-			if (firstchild) // add the first child to the emptySlot
-			{
-				EditingUtility.addItemOnDropArea(child, emptySlot);
-				firstchild = false;
-			}
-			else // add next childs to the dropZone
-				EditingUtility.addItemOnDropArea(child, dropZone);
-		}
+			EditingUtility.addItemOnDropArea(readXMLInstruction(eleNode), emptySlot);
 	}
 
 	// Transforme le noeud d'action XML en gameObject élément/opérator

@@ -198,10 +198,6 @@ public class HistoryManager : FSystem
 						history_childCopy.SetAsFirstSibling();
 						history_childCopy.SetSiblingIndex(history_childCopy.parent.childCount - 2);
 						GameObjectManager.bind(history_childCopy.gameObject);
-						// Disable emptyzone
-						GameObjectManager.setGameObjectState(history_childCopy.parent.GetChild(history_childCopy.parent.childCount - 1).gameObject, false);
-						// Enable dropzone
-						GameObjectManager.setGameObjectState(history_childCopy.parent.GetChild(history_childCopy.parent.childCount - 2).gameObject, true);
 					}
 				}
 			}
