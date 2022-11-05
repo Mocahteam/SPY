@@ -101,7 +101,12 @@ public class DialogSystem : FSystem
 		if (gameData.dialogMessage[nDialog].Item2 != null)
 		{
 			GameObjectManager.setGameObjectState(imageGO, true);
-			setImageSprite(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.levelToLoad) + "/Images/" + gameData.dialogMessage[nDialog].Item2);
+			if (Application.platform == RuntimePlatform.WebGLPlayer){
+				Uri uri = new Uri(gameData.levelToLoad);
+				setImageSprite(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + gameData.dialogMessage[nDialog].Item2);
+			}
+			else
+				setImageSprite(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.levelToLoad) + "/Images/" + gameData.dialogMessage[nDialog].Item2);
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO, false);
