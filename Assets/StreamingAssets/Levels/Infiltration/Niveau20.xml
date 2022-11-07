@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+	<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "3" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value= "2" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value= "2" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Les brouilleurs nous empêchent d'utiliser deux canaux de communication. Il va donc nous falloir utiliser le même signal pour contrôler les deux robots." camY="5" camX="1"/>
+  </dialogs>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="-1" />
+    <blockLimit blockType="TurnLeft" limit="-1" />
+    <blockLimit blockType="TurnRight" limit="-1" />
+    <blockLimit blockType="Wait" limit="-1" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="-1" />
+    <blockLimit blockType="IfThen" limit="-1" />
+    <blockLimit blockType="IfElse" limit="-1" />
+    <blockLimit blockType="ForLoop" limit="-1" />
+    <blockLimit blockType="While" limit="-1" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="-1" />
+    <blockLimit blockType="OrOperator" limit="-1" />
+    <blockLimit blockType="NotOperator" limit="-1" />
+    <blockLimit blockType="WallFront" limit="-1" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="-1" />
+  </blockLimits>
+  <door posY="5" posX="3" direction="0" slotId="0" />
+  <player associatedScriptName="Bob/Karl" posY="4" posX="1" direction="2" />
+  <player associatedScriptName="Bob/Karl" posY="6" posX="1" direction="2" />
+  <script name="Bob/Karl" editMode="0" />
+  <score twoStars="4325" threeStars="4666"/>
+</level>

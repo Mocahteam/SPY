@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "0" /><cell value= "3" /><cell value= "0" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Nous devons nous arrêter au prochain carrefour !" camY="2" camX="2"/>
+	<dialog text="Evitons de saturer la ligne de communication en multipliant les ordres 'Avancer'. Nous allons utiliser une boucle, pour répeter plusieurs fois les actions ! Nos ingénieurs en ont préparé une pour vous mais elle est peut être mal configurée..." img="forExample.png" imgHeight="200" camY="9" camX="2" />
+	<dialog text="Nous commencons à être pressé par le temps, il nous faut gagner du temps et arriver au carrefour en n'envoyant qu'une seule fois notre programme" img="executeLimitation.png" imgHeight="50"/>
+  </dialogs>
+  <executionLimit amount="1" />
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="0" />
+    <blockLimit blockType="TurnLeft" limit="0" />
+    <blockLimit blockType="TurnRight" limit="0" />
+    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="0" />
+    <blockLimit blockType="IfThen" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="ForLoop" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="0" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <player associatedScriptName="Bob" posY="9" posX="2" direction="0" />
+  <script name="Bob" editMode="0" type="2">
+      <for nbFor="2">
+        <action type="Forward"/>
+      </for>
+  </script>
+  <score twoStars="0" threeStars="6888"/>
+</level>

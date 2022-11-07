@@ -22,9 +22,12 @@ public class DragDropSystemBridge : MonoBehaviour
 
     public void beginDragElement(BaseEventData e)
     {
-        // check that the element dragged is the one where the DragDropSystemBridge is added (this case can occurs if we try to drag&drop a child like the reduce button of a canvas)
-        if (e.selectedObject == gameObject)
+        // check that the element dragged is the one where the DragDropSystemBridge is added or it's one of his child (this case can occurs if we try to drag&drop a child like the reduce button of a canvas)
+        if (((PointerEventData)e).hovered.Contains(gameObject) || e.selectedObject == gameObject)
+        {
+            e.selectedObject = gameObject;
             DragDropSystem.instance.beginDragElementFromEditableScript(e);
+        }
     }
 
     public void dragElement(BaseEventData e)

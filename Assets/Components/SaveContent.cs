@@ -24,9 +24,11 @@ public class SaveContent {
     public class RawActivable
     {
         public List<int> slotID;
+        public bool state;
         public RawActivable(Activable act)
         {
             slotID = new List<int>(act.slotID);
+            state = act.GetComponent<TurnedOn>();
         }
     }
 
@@ -56,7 +58,6 @@ public class SaveContent {
     public class RawSave
     {
         public List<bool> coinsState = new List<bool>();
-        public List<bool> doorsState = new List<bool>();
         public List<Direction.Dir> directions = new List<Direction.Dir>();
         public List<RawPosition> positions = new List<RawPosition>();
         public List<RawActivable> activables = new List<RawActivable>();

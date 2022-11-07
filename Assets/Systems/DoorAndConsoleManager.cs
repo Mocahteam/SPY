@@ -105,7 +105,7 @@ public class DoorAndConsoleManager : FSystem {
 					int x = 0;
 					while (consolePos.x + x != doorPos.x)
 					{
-						GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, gameData.Level.transform.position + new Vector3(consolePos.y * 3, 3, (consolePos.x + x + xStep / 2f) * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+						GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, gameData.LevelGO.transform.position + new Vector3(consolePos.y * 3, 3, (consolePos.x + x + xStep / 2f) * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
 						path.transform.Find("West").gameObject.SetActive(true);
 						path.transform.Find("East").gameObject.SetActive(true);
 						path.GetComponent<DoorPath>().slotId = doorSlot.slotID;
@@ -117,7 +117,7 @@ public class DoorAndConsoleManager : FSystem {
 					int y = 0;
 					while (consolePos.y + y != doorPos.y)
 					{
-						GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, gameData.Level.transform.position + new Vector3((consolePos.y + y + yStep / 2f) * 3, 3, (consolePos.x + x) * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+						GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, gameData.LevelGO.transform.position + new Vector3((consolePos.y + y + yStep / 2f) * 3, 3, (consolePos.x + x) * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
 						path.transform.Find("South").gameObject.SetActive(true);
 						path.transform.Find("North").gameObject.SetActive(true);
 						path.GetComponent<DoorPath>().slotId = doorSlot.slotID;

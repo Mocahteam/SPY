@@ -1,58 +1,31 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ParamCompetenceSystemBridge : MonoBehaviour
 {
-    public bool closePanelParamComp = false;
-
-    public void startLevel()
+    public void infoCompetence()
     {
-        ParamCompetenceSystem.instance.verificationSelectedComp();
+        ParamCompetenceSystem.instance.infoCompetence(GetComponent<Competency>());
     }
 
-    public void infoCompetence(GameObject target)
+    public void refreshUI()
     {
-        ParamCompetenceSystem.instance.infoCompetence(target);
+        ParamCompetenceSystem.instance.refreshUI((RectTransform)transform);
     }
 
-    public void resetViewInfoCompetence(GameObject target)
+    public void showLevelInfo()
     {
-        ParamCompetenceSystem.instance.resetViewInfoCompetence(target);
+        ParamCompetenceSystem.instance.showLevelInfo(GetComponentInChildren<TMP_Text>().text);
     }
 
-    public void MAJLinkCompetence(GameObject target)
+    public void removeLevelFromScenario()
     {
-        ParamCompetenceSystem.instance.saveListUser();
-        if(target.GetComponent<Toggle>().interactable)
-        {
-            // S'il n'est pas selectionné, il va le devenir donc on active ce qu'il faut
-            if (!target.GetComponent<Toggle>().isOn)
-            {
-                ParamCompetenceSystem.instance.selectComp(target, true);
-            }
-            else
-            {
-                ParamCompetenceSystem.instance.unselectComp(target, true);
-            }
-        }
+        ParamCompetenceSystem.instance.removeLevelFromScenario(gameObject);
     }
 
-    public void closeSelectCompetencePanel()
+    public void moveLevelInScenario(int step)
     {
-        if (closePanelParamComp)
-        {
-            ParamCompetenceSystem.instance.closeSelectCompetencePanel();
-            closePanelParamComp = false;
-        }
-    }
-
-    public void viewOrHideCompList(GameObject category)
-    {
-        ParamCompetenceSystem.instance.viewOrHideCompList(category);
-    }
-
-    public void hideOrShowButtonCategory(GameObject button)
-    {
-        ParamCompetenceSystem.instance.hideOrShowButtonCategory(button);
+        ParamCompetenceSystem.instance.moveLevelInScenario(gameObject, step);
     }
 }
