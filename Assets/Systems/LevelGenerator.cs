@@ -7,6 +7,7 @@ using TMPro;
 using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// Read XML file and load level
@@ -36,6 +37,9 @@ public class LevelGenerator : FSystem {
 	public GameObject canvas;
 	public GameObject buttonExecute;
 
+	[DllImport("__Internal")]
+	private static extern void HideHtmlButtons(); // call javascript
+
 	public LevelGenerator()
 	{
 		instance = this;
@@ -55,6 +59,8 @@ public class LevelGenerator : FSystem {
 			else
 				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Error });
 			levelName.text = Path.GetFileNameWithoutExtension(gameData.levelToLoad);
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
+				HideHtmlButtons();
 		}
 	}
 
