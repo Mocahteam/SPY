@@ -12,6 +12,7 @@
 	<dialogs>
 		<dialog text="Contrairement à la boucle 'Répéter' pour laquelle vous devez indiquer le nombre de répétitions, la boucle 'Tant que' répète les actions tant que la condition est vraie. Vous pouvez donc utiliser les capteurs dans une boucle 'Tant que'" img="whileWall.png" imgHeight="200" />
 		<dialog text="Vous disposez aussi d'un nouveau capteur qui vous permet de tester si le robot se trouve sur la case du téléporteur." img="exit.png" imgHeight="45" />
+		<dialog text="Vous disposez aussi du bloc 'Non' qui permet de savoir si une condition est fausse." img="notOperator.png" imgHeight="100" />
 	</dialogs>
 	<blockLimits>
 		<blockLimit blockType="Forward" limit="4" />
@@ -28,9 +29,9 @@
 		<blockLimit blockType="AndOperator" limit="0" />
 		<blockLimit blockType="OrOperator" limit="0" />
 		<blockLimit blockType="NotOperator" limit="-1" />
-		<blockLimit blockType="WallFront" limit="-1" />
-		<blockLimit blockType="WallLeft" limit="-1" />
-		<blockLimit blockType="WallRight" limit="-1" />
+		<blockLimit blockType="PathFront" limit="-1" />
+		<blockLimit blockType="PathLeft" limit="-1" />
+		<blockLimit blockType="PathRight" limit="-1" />
 		<blockLimit blockType="Enemy" limit="0" />
 		<blockLimit blockType="RedArea" limit="0" />
 		<blockLimit blockType="FieldGate" limit="0" />

@@ -241,12 +241,21 @@ public class CurrentActionManager : FSystem
 		switch (ele)
 		{
 			case "WallFront":
+			case "PathFront":
+				// check Wall in front
 				foreach (GameObject wall in f_wall)
 					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
+					{
 						ifok = true;
+						break;
+					}
+				// if checking Path in front inverse result
+				if (ele == "PathFront")
+					ifok = !ifok;
 				break;
 			case "WallLeft":
+			case "PathLeft":
 				// override target
 				switch (agent.GetComponent<Direction>().direction)
 				{
@@ -263,12 +272,20 @@ public class CurrentActionManager : FSystem
 						vec = new Vector2(0, 1);
 						break;
 				}
+				// check Wall in left
 				foreach (GameObject wall in f_wall)
 					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
+					{
 						ifok = true;
+						break;
+					}
+				// if checking Path inverse result
+				if (ele == "PathLeft")
+					ifok = !ifok;
 				break;
 			case "WallRight":
+			case "PathRight":
 				// override target
 				switch (agent.GetComponent<Direction>().direction)
 				{
@@ -285,10 +302,17 @@ public class CurrentActionManager : FSystem
 						vec = new Vector2(0, -1);
 						break;
 				}
+				// check Wall in right
 				foreach (GameObject wall in f_wall)
 					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
+					{
 						ifok = true;
+						break;
+					}
+					// if checking Path inverse result
+					if (ele == "PathRight")
+						ifok = !ifok;
 				break;
 			case "FieldGate": // doors
 				foreach (GameObject door in f_door)

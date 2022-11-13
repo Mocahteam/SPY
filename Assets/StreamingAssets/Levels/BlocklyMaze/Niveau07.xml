@@ -11,9 +11,7 @@
 		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
 	</map>
 	<dialogs>
-		<dialog text="Vous disposez maintenant de 3 capteurs qui indiquent vrai si un mur se trouve devant le robot, à gauche ou à droite." img="wallCaptors.png" imgHeight="45" />
-		<dialog text="Vous disposez aussi du bloc 'Non' qui permet de savoir si une condition est fausse." img="notOperator.png" imgHeight="100" />
-		<dialog text="Par exemple dans l'illustration de gauche l'action 'Pivoter' sera exécutée si un mur se trouve en face du robot. Dans l'illustration de droite l'action 'Pivoter' sera exécutée si un mur NE se trouve PAS en face du robot." img="notExample.png" imgHeight="200" />
+		<dialog text="Vous disposez maintenant de 3 capteurs qui indiquent vrai si un passage se trouve devant le robot, à gauche ou à droite." img="pathCaptors.png" imgHeight="45" />
 	</dialogs>
 	<executionLimit amount="1" />
 	<blockLimits>
@@ -30,10 +28,10 @@
 		<blockLimit blockType="Forever" limit="0" />
 		<blockLimit blockType="AndOperator" limit="0" />
 		<blockLimit blockType="OrOperator" limit="0" />
-		<blockLimit blockType="NotOperator" limit="1" />
-		<blockLimit blockType="WallFront" limit="1" />
-		<blockLimit blockType="WallLeft" limit="1" />
-		<blockLimit blockType="WallRight" limit="1" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="PathFront" limit="1" />
+		<blockLimit blockType="PathLeft" limit="1" />
+		<blockLimit blockType="PathRight" limit="1" />
 		<blockLimit blockType="Enemy" limit="0" />
 		<blockLimit blockType="RedArea" limit="0" />
 		<blockLimit blockType="FieldGate" limit="0" />
