@@ -16,7 +16,7 @@ mergeInto(LibraryManager.library, {
 	ShowHtmlButtons: function () {
 		var element = document.getElementById("proxyLoadButton");
 		element.style.visibility = 'visible';
-	}
+	},
 	
 	HideHtmlButtons: function () {
 		var element = document.getElementById("proxyLoadButton");
