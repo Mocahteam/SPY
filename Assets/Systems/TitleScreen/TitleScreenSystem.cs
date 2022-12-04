@@ -292,6 +292,11 @@ public class TitleScreenSystem : FSystem {
 		GameObjectManager.loadScene("MainScene");
 	}
 
+	public void launchLevelEditor()
+	{
+		GameObjectManager.loadScene("LevelEditorProto");
+	}
+
 	// See Quitter button in editor
 	public void quitGame(){
 		Application.Quit();
