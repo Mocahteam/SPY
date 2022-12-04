@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	<line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "2" /><cell value= "0" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Catastrophe ! Karl vient de se faire piéger derrière une porte qu'il ne peut pas ouvrir." />
+	<dialog text="Heureusement nous avions un autre robot disponible que nous venons de vous envoyer. Il faut poursuivre la mission coûte que coûte." camY="4" camX="1" />
+	<dialog text="Il vous faudra utiliser la bonne ligne de communication pour contrôler le bon robot. Vous pouvez voir la ligne de communication d'un robot en passant la souris dessus." img="robotName.png" imgHeight="200" camY="4" camX="3" />
+	<dialog text="Vous pouvez aussi définir la ligne de communication sur laquelle le programme sera envoyé dans la zone de programme." img="scriptName.png" imgHeight="250" />
+  </dialogs>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="-1" />
+    <blockLimit blockType="TurnLeft" limit="0" />
+    <blockLimit blockType="TurnRight" limit="0" />
+    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="0" />
+    <blockLimit blockType="IfThen" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="ForLoop" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="0" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <door posY="5" posX="1" direction="0" slotId="0" />
+  <door posY="4" posX="4" direction="2" slotId="0" />
+  <console state="1" posY="4" posX="1" direction="2" />
+  <player associatedScriptName="Bob" posY="4" posX="1" direction="0" />
+  <player associatedScriptName="Karl" posY="4" posX="3" direction="3" />
+  <script name="Karl" editMode="2" />
+  <score twoStars="5750" threeStars="6750"/>
+</level>

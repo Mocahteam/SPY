@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<level>
+	<map>
+		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+		<line><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="1" /></line>
+		<line><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
+		<line><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
+		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
+		<line><cell value="1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="3" /><cell value="1" /></line>
+		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+	</map>
+	<dialogs>
+		<dialog text="Contrairement à la boucle 'Répéter' pour laquelle vous devez indiquer le nombre de répétitions, la boucle 'Tant que' répète les actions tant que la condition est vraie. Vous pouvez donc utiliser les capteurs dans une boucle 'Tant que'" img="whileWall.png" imgHeight="200" />
+		<dialog text="Vous disposez aussi d'un nouveau capteur qui vous permet de tester si le robot se trouve sur la case du téléporteur." img="exit.png" imgHeight="45" />
+		<dialog text="Vous disposez aussi du bloc 'Non' qui permet de savoir si une condition est fausse." img="notOperator.png" imgHeight="100" />
+	</dialogs>
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="4" />
+		<blockLimit blockType="TurnLeft" limit="-1" />
+		<blockLimit blockType="TurnRight" limit="-1" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="IfThen" limit="-1" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="-1" />
+		<blockLimit blockType="While" limit="-1" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="-1" />
+		<blockLimit blockType="PathFront" limit="-1" />
+		<blockLimit blockType="PathLeft" limit="-1" />
+		<blockLimit blockType="PathRight" limit="-1" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="-1" />
+	</blockLimits>
+	<player associatedScriptName="Karl" posY="5" posX="1" direction="2" />
+	<script name="Karl" editMode="0" />
+	<score twoStars="2914" threeStars="3969"/>
+</level>

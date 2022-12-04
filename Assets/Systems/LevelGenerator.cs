@@ -7,6 +7,7 @@ using TMPro;
 using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// Read XML file and load level
@@ -28,7 +29,6 @@ public class LevelGenerator : FSystem {
 	private HashSet<string> scriptNameUsed = new HashSet<string>();
 	private GameObject lastAgentCreated = null;
 
-	public GameObject camera;
 	public GameObject editableCanvas;// Le container qui contient les Viewport/script containers
 	public GameObject scriptContainer;
 	public GameObject library; // Le viewport qui contient la librairie
@@ -36,6 +36,9 @@ public class LevelGenerator : FSystem {
 	public TMP_Text levelName;
 	public GameObject canvas;
 	public GameObject buttonExecute;
+
+	[DllImport("__Internal")]
+	private static extern void HideHtmlButtons(); // call javascript
 
 	public LevelGenerator()
 	{
@@ -50,32 +53,14 @@ public class LevelGenerator : FSystem {
 		else
 		{
 			gameData = gameDataGO.GetComponent<GameData>();
-			gameData.Level = GameObject.Find("Level");
-			XmlDocument doc = new XmlDocument();
-			if (Application.platform == RuntimePlatform.WebGLPlayer)
-			{
-				MainLoop.instance.StartCoroutine(GetLevelWebRequest(doc));
-			}
+			gameData.LevelGO = GameObject.Find("Level");
+			if (gameData.levels.ContainsKey(gameData.levelToLoad))
+				XmlToLevel(gameData.levels[gameData.levelToLoad].OwnerDocument);
 			else
-			{
-				doc.Load(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
-				XmlToLevel(doc);
-			}
-			levelName.text = Path.GetFileNameWithoutExtension(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
-		}
-	}
-
-	IEnumerator GetLevelWebRequest(XmlDocument doc)
-	{
-		UnityWebRequest www = UnityWebRequest.Get(gameData.levelList[gameData.levelToLoad.Item1][gameData.levelToLoad.Item2]);
-		yield return www.SendWebRequest();
-
-		if (www.result != UnityWebRequest.Result.Success)
-			Debug.Log(www.error);
-		else
-		{
-			doc.LoadXml(www.downloadHandler.text);
-			XmlToLevel(doc);
+				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Error });
+			levelName.text = Path.GetFileNameWithoutExtension(gameData.levelToLoad);
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
+				HideHtmlButtons();
 		}
 	}
 
@@ -88,12 +73,12 @@ public class LevelGenerator : FSystem {
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
 		gameData.levelToLoadScore = null;
-		gameData.dialogMessage = new List<(string, float, string, float)>();
+		gameData.dialogMessage = new List<(string, string, float, int, int)>();
 		gameData.actionBlockLimit = new Dictionary<string, int>();
 		map = new List<List<int>>();
 
 		// remove comments
-		removeComments(doc);
+		EditingUtility.removeComments(doc);
 
 		XmlNode root = doc.ChildNodes[1];
 
@@ -116,7 +101,7 @@ public class LevelGenerator : FSystem {
 					{
 						GameObject amountGO = buttonExecute.transform.GetChild(1).gameObject;
 						GameObjectManager.setGameObjectState(amountGO, true);
-						amountGO.GetComponentInChildren<TMP_Text>().text = "" + amount;
+						amountGO.GetComponentInChildren<TMP_Text>(true).text = "" + amount;
 					}
 					break;
 				case "fog":
@@ -188,18 +173,6 @@ public class LevelGenerator : FSystem {
 		GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
 	}
 
-	private void removeComments(XmlNode node)
-	{
-		for (int i = node.ChildNodes.Count-1; i>= 0; i--)
-		{
-			XmlNode child = node.ChildNodes[i];
-			if (child.NodeType == XmlNodeType.Comment)
-				node.RemoveChild(child);
-			else
-				removeComments(child);
-		}
-	}
-
 	IEnumerator delayEnableFog()
 	{
 		yield return null;
@@ -250,10 +223,10 @@ public class LevelGenerator : FSystem {
 		GameObject entity = null;
 		switch(type){
 			case "player": // Robot
-				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Robot Kyle") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Robot Kyle") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
 				break;
 			case "enemy": // Enemy
-				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,5f,gridX*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,5f,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
 				break;
 		}
 
@@ -270,9 +243,9 @@ public class LevelGenerator : FSystem {
 		// Associer à l'agent le script container
 		scriptref.executableScript = executablePanel.transform.Find("Scroll View").Find("Viewport").Find("ScriptContainer").gameObject;
 		// Association de l'agent au script de gestion des fonctions
-		executablePanel.GetComponentInChildren<LinkedWith>().target = entity;
+		executablePanel.GetComponentInChildren<LinkedWith>(true).target = entity;
 
-		// On va charger l'image et le nom de l'agent selon l'agent (robot, enemie etc...)
+		// On va charger l'image et le nom de l'agent selon l'agent (robot, ennemi etc...)
 		if (type == "player")
 		{
 			nbAgentCreate++;
@@ -310,7 +283,7 @@ public class LevelGenerator : FSystem {
 	}
 
 	private void createDoor(int gridX, int gridY, Direction.Dir orientation, int slotID){
-		GameObject door = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Door") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+		GameObject door = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Door") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
 
 		door.GetComponentInChildren<ActivationSlot>().slotID = slotID;
 		door.GetComponentInChildren<Position>().x = gridX;
@@ -321,7 +294,7 @@ public class LevelGenerator : FSystem {
 
 	private void createDecoration(string name, int gridX, int gridY, Direction.Dir orientation)
 	{
-		GameObject decoration = Object.Instantiate<GameObject>(Resources.Load("Prefabs/"+name) as GameObject, gameData.Level.transform.position + new Vector3(gridY * 3, 3, gridX * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+		GameObject decoration = Object.Instantiate<GameObject>(Resources.Load("Prefabs/"+name) as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY * 3, 3, gridX * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
 
 		decoration.GetComponent<Position>().x = gridX;
 		decoration.GetComponent<Position>().y = gridY;
@@ -331,7 +304,7 @@ public class LevelGenerator : FSystem {
 
 	private void createConsole(int state, int gridX, int gridY, List<int> slotIDs, Direction.Dir orientation)
 	{
-		GameObject activable = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ActivableConsole") as GameObject, gameData.Level.transform.position + new Vector3(gridY * 3, 3, gridX * 3), Quaternion.Euler(0, 0, 0), gameData.Level.transform);
+		GameObject activable = Object.Instantiate<GameObject>(Resources.Load("Prefabs/ActivableConsole") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY * 3, 3, gridX * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
 
 		activable.GetComponent<Activable>().slotID = slotIDs;
 		DoorPath path = activable.GetComponentInChildren<DoorPath>();
@@ -350,9 +323,9 @@ public class LevelGenerator : FSystem {
 	private void createSpawnExit(int gridX, int gridY, bool type){
 		GameObject spawnExit;
 		if(type)
-			spawnExit = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterSpawn") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(-90,0,0), gameData.Level.transform);
+			spawnExit = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterSpawn") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(-90,0,0), gameData.LevelGO.transform);
 		else
-			spawnExit = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterExit") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(-90,0,0), gameData.Level.transform);
+			spawnExit = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterExit") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(-90,0,0), gameData.LevelGO.transform);
 
 		spawnExit.GetComponent<Position>().x = gridX;
 		spawnExit.GetComponent<Position>().y = gridY;
@@ -360,19 +333,19 @@ public class LevelGenerator : FSystem {
 	}
 
 	private void createCoin(int gridX, int gridY){
-		GameObject coin = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Coin") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(90,0,0), gameData.Level.transform);
+		GameObject coin = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Coin") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(90,0,0), gameData.LevelGO.transform);
 		coin.GetComponent<Position>().x = gridX;
 		coin.GetComponent<Position>().y = gridY;
 		GameObjectManager.bind(coin);
 	}
 
 	private void createCell(int gridX, int gridY){
-		GameObject cell = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Cell") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,0,gridX*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+		GameObject cell = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Cell") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,0,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
 		GameObjectManager.bind(cell);
 	}
 
 	private void createWall(int gridX, int gridY, bool visible = true){
-		GameObject wall = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Wall") as GameObject, gameData.Level.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(0,0,0), gameData.Level.transform);
+		GameObject wall = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Wall") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
 		wall.GetComponent<Position>().x = gridX;
 		wall.GetComponent<Position>().y = gridY;
 		if (!visible)
@@ -405,16 +378,19 @@ public class LevelGenerator : FSystem {
 			string text = null;
 			if (dialog.Attributes.GetNamedItem("text") != null)
 				text = dialog.Attributes.GetNamedItem("text").Value;
-			float dialogHeight = -1;
-			if (dialog.Attributes.GetNamedItem("textHeight") != null)
-				dialogHeight = float.Parse(dialog.Attributes.GetNamedItem("textHeight").Value);
 			string src = null;
 			if (dialog.Attributes.GetNamedItem("img") != null)
 				src = dialog.Attributes.GetNamedItem("img").Value;
 			float imgHeight = -1;
 			if (dialog.Attributes.GetNamedItem("imgHeight") != null)
 				imgHeight = float.Parse(dialog.Attributes.GetNamedItem("imgHeight").Value);
-			gameData.dialogMessage.Add((text, dialogHeight, src, imgHeight));
+			int camX = -1;
+			if (dialog.Attributes.GetNamedItem("camX") != null)
+				camX = int.Parse(dialog.Attributes.GetNamedItem("camX").Value);
+			int camY = -1;
+			if (dialog.Attributes.GetNamedItem("camY") != null)
+				camY = int.Parse(dialog.Attributes.GetNamedItem("camY").Value);
+			gameData.dialogMessage.Add((text, src, imgHeight, camX, camY));
 		}
 	}
 
@@ -501,7 +477,7 @@ public class LevelGenerator : FSystem {
         switch (actionNode.Name)
         {
 			case "if":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("If"), canvas);
+				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("IfThen"), canvas);
 
 				conditionContainer = obj.transform.Find("ConditionContainer");
 				firstContainerBloc = obj.transform.Find("Container");
@@ -566,7 +542,7 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "for":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("For"), canvas);
+				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("ForLoop"), canvas);
 				firstContainerBloc = obj.transform.Find("Container");
 				BaseElement action = obj.GetComponent<ForControl>();
 
@@ -623,21 +599,10 @@ public class LevelGenerator : FSystem {
 
 	private void processXMLInstruction(Transform gameContainer, XmlNode xmlContainer)
 	{
-		// The first child of a control container is a drop zone and the second an emptySolt
-		GameObject dropZone = gameContainer.GetChild(0).gameObject;
-		GameObject emptySlot = gameContainer.GetChild(1).gameObject;
-		bool firstchild = true;
+		// The first child of a control container is an emptySolt
+		GameObject emptySlot = gameContainer.GetChild(0).gameObject;
 		foreach (XmlNode eleNode in xmlContainer.ChildNodes)
-		{
-			GameObject child = readXMLInstruction(eleNode);
-			if (firstchild) // add the first child to the emptySlot
-			{
-				EditingUtility.addItemOnDropArea(child, emptySlot);
-				firstchild = false;
-			}
-			else // add next childs to the dropZone
-				EditingUtility.addItemOnDropArea(child, dropZone);
-		}
+			EditingUtility.addItemOnDropArea(readXMLInstruction(eleNode), emptySlot);
 	}
 
 	// Transforme le noeud d'action XML en gameObject élément/opérator
@@ -648,7 +613,7 @@ public class LevelGenerator : FSystem {
         {
 			case "and":
 				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("AndOperator"), canvas);
-				slots = obj.GetComponentsInChildren<ReplacementSlot>();
+				slots = obj.GetComponentsInChildren<ReplacementSlot>(true);
 				if (conditionNode.HasChildNodes)
 				{
 					GameObject emptyZone = null;
@@ -674,7 +639,7 @@ public class LevelGenerator : FSystem {
 
 			case "or":
 				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("OrOperator"), canvas);
-				slots = obj.GetComponentsInChildren<ReplacementSlot>();
+				slots = obj.GetComponentsInChildren<ReplacementSlot>(true);
 				if (conditionNode.HasChildNodes)
 				{
 					GameObject emptyZone = null;

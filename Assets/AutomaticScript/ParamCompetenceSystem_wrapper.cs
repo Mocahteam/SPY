@@ -3,27 +3,33 @@ using FYFY;
 
 public class ParamCompetenceSystem_wrapper : BaseWrapper
 {
-	public UnityEngine.GameObject panelSelectComp;
+	public TMPro.TMP_Dropdown referentialSelector;
 	public UnityEngine.GameObject panelInfoComp;
-	public UnityEngine.GameObject panelInfoUser;
-	public UnityEngine.GameObject scrollViewComp;
-	public System.String pathParamComp;
-	public UnityEngine.GameObject prefabCateComp;
 	public UnityEngine.GameObject prefabComp;
 	public UnityEngine.GameObject ContentCompMenu;
-	public TMPro.TMP_Text messageForUser;
+	public UnityEngine.GameObject compatibleLevelsPanel;
+	public UnityEngine.GameObject levelCompatiblePrefab;
+	public UnityEngine.GameObject contentListOfCompatibleLevel;
+	public UnityEngine.GameObject contentInfoCompatibleLevel;
+	public UnityEngine.GameObject deletableElement;
+	public UnityEngine.GameObject contentScenario;
+	public UnityEngine.UI.Button addToScenario;
+	public UnityEngine.GameObject savingPanel;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
-		MainLoop.initAppropriateSystemField (system, "panelSelectComp", panelSelectComp);
+		MainLoop.initAppropriateSystemField (system, "referentialSelector", referentialSelector);
 		MainLoop.initAppropriateSystemField (system, "panelInfoComp", panelInfoComp);
-		MainLoop.initAppropriateSystemField (system, "panelInfoUser", panelInfoUser);
-		MainLoop.initAppropriateSystemField (system, "scrollViewComp", scrollViewComp);
-		MainLoop.initAppropriateSystemField (system, "pathParamComp", pathParamComp);
-		MainLoop.initAppropriateSystemField (system, "prefabCateComp", prefabCateComp);
 		MainLoop.initAppropriateSystemField (system, "prefabComp", prefabComp);
 		MainLoop.initAppropriateSystemField (system, "ContentCompMenu", ContentCompMenu);
-		MainLoop.initAppropriateSystemField (system, "messageForUser", messageForUser);
+		MainLoop.initAppropriateSystemField (system, "compatibleLevelsPanel", compatibleLevelsPanel);
+		MainLoop.initAppropriateSystemField (system, "levelCompatiblePrefab", levelCompatiblePrefab);
+		MainLoop.initAppropriateSystemField (system, "contentListOfCompatibleLevel", contentListOfCompatibleLevel);
+		MainLoop.initAppropriateSystemField (system, "contentInfoCompatibleLevel", contentInfoCompatibleLevel);
+		MainLoop.initAppropriateSystemField (system, "deletableElement", deletableElement);
+		MainLoop.initAppropriateSystemField (system, "contentScenario", contentScenario);
+		MainLoop.initAppropriateSystemField (system, "addToScenario", addToScenario);
+		MainLoop.initAppropriateSystemField (system, "savingPanel", savingPanel);
 	}
 
 	public void openPanelSelectComp()
@@ -31,64 +37,64 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "openPanelSelectComp", null);
 	}
 
-	public void verificationSelectedComp()
+	public void createCompetencies(System.Int32 referentialId)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "verificationSelectedComp", null);
+		MainLoop.callAppropriateSystemMethod (system, "createCompetencies", referentialId);
 	}
 
-	public void startLevel()
+	public void cleanCompPanel()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "startLevel", null);
+		MainLoop.callAppropriateSystemMethod (system, "cleanCompPanel", null);
 	}
 
-	public void infoCompetence(UnityEngine.GameObject comp)
+	public void showCompatibleLevels()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "showCompatibleLevels", null);
+	}
+
+	public void showLevelInfo(System.String path)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "showLevelInfo", path);
+	}
+
+	public void addCurrentLevelToScenario()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "addCurrentLevelToScenario", null);
+	}
+
+	public void infoCompetence(Competency comp)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "infoCompetence", comp);
 	}
 
-	public void resetViewInfoCompetence(UnityEngine.GameObject comp)
+	public void removeLevelFromScenario(UnityEngine.GameObject go)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "resetViewInfoCompetence", comp);
+		MainLoop.callAppropriateSystemMethod (system, "removeLevelFromScenario", go);
 	}
 
-	public void selectComp()
+	public void moveLevelInScenario()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "selectComp", null);
+		MainLoop.callAppropriateSystemMethod (system, "moveLevelInScenario", null);
 	}
 
-	public void unselectComp()
+	public void testLevel(TMPro.TMP_Text levelToLoad)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "unselectComp", null);
+		MainLoop.callAppropriateSystemMethod (system, "testLevel", levelToLoad);
 	}
 
-	public void addOrRemoveCompSelect()
+	public void refreshUI(UnityEngine.RectTransform competency)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "addOrRemoveCompSelect", null);
+		MainLoop.callAppropriateSystemMethod (system, "refreshUI", competency);
 	}
 
-	public void saveListUser()
+	public void saveScenario(TMPro.TMP_InputField scenarioName)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "saveListUser", null);
+		MainLoop.callAppropriateSystemMethod (system, "saveScenario", scenarioName);
 	}
 
-	public void closeSelectCompetencePanel()
+	public void displaySavingPanel()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "closeSelectCompetencePanel", null);
-	}
-
-	public void displayMessageUser(System.String message)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "displayMessageUser", message);
-	}
-
-	public void viewOrHideCompList(UnityEngine.GameObject category)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "viewOrHideCompList", category);
-	}
-
-	public void hideOrShowButtonCategory(UnityEngine.GameObject button)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "hideOrShowButtonCategory", button);
+		MainLoop.callAppropriateSystemMethod (system, "displaySavingPanel", null);
 	}
 
 }

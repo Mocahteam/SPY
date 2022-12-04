@@ -1,6 +1,7 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
 using System.Collections.Generic;
+using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,18 +36,13 @@ public static class EditingUtility
 				targetContainer = dropArea.transform.parent.parent.parent; // target is the grandgrandparent
 				siblingIndex = dropArea.transform.parent.parent.GetSiblingIndex();
 			}
-			else if (dropArea.transform.parent.parent.GetComponent<ControlElement>() && dropArea.transform.parent.GetSiblingIndex() > 1) // the dropArea of another child of a Control block
-			{
-				targetContainer = dropArea.transform.parent; // target is the parent
-				siblingIndex = dropArea.transform.GetSiblingIndex();
-			}
 			else
 			{
 				Debug.LogError("Warning! Unknown case: the drop zone is not in the correct context");
 				return false;
 			}
 			// if binded set this drop area as default
-			if (GameObjectManager.isBound(dropArea))
+			if (GameObjectManager.isBound(dropArea) && !dropArea.GetComponent<Selected>())
 				GameObjectManager.addComponent<Selected>(dropArea);
 			// On associe l'element au container
 			item.transform.SetParent(targetContainer);
@@ -60,52 +56,41 @@ public static class EditingUtility
 			if ((repSlot.slotType == ReplacementSlot.SlotType.BaseElement && !item.GetComponent<BaseElement>()) ||
 				(repSlot.slotType == ReplacementSlot.SlotType.BaseCondition && !item.GetComponent<BaseCondition>()))
 				return false;
-			// if replacement slot is for base element => insert item, hide replacement slot and enable dropZone
+			// if replacement slot is for base element => insert item just before replacement slot
 			if (repSlot.slotType == ReplacementSlot.SlotType.BaseElement)
 			{
 				// On associe l'element au container
-				item.transform.SetParent(dropArea.transform.parent);
+				item.transform.SetParent(repSlot.transform.parent);
 				// On met l'élément à la position voulue
-				item.transform.SetSiblingIndex(dropArea.transform.GetSiblingIndex() - 1); // the empty zone is preceded by the drop zone, so we add the item at the position of the drop zone (reason of -1)	
-																						  // disable empty slot
-				dropArea.GetComponent<Outline>().enabled = false;
+				item.transform.SetSiblingIndex(repSlot.transform.GetSiblingIndex()); 
+				// disable empty slot
+				repSlot.GetComponent<Outline>().enabled = false;
 
-				// Because this function can be call for binded GO or not
-				if (GameObjectManager.isBound(dropArea)) GameObjectManager.setGameObjectState(dropArea, false);
-				else dropArea.SetActive(false);
-
-				// define last drop zone to the drop zone associated to this replacement slot
-				GameObject dropzone = dropArea.transform.parent.GetChild(dropArea.transform.GetSiblingIndex() - 1).gameObject;
-
-				// Because this function can be call for binded GO or not
-				if (GameObjectManager.isBound(dropzone)) GameObjectManager.setGameObjectState(dropzone, true);
-				else dropzone.SetActive(true);
-
-				// if binded set this drop zone as default
-				if (GameObjectManager.isBound(dropzone))
-					GameObjectManager.addComponent<Selected>(dropzone);
+				// if binded set this empty slot as default
+				if (GameObjectManager.isBound(repSlot.gameObject) && !repSlot.GetComponent<Selected>())
+					GameObjectManager.addComponent<Selected>(repSlot.gameObject);
 			}
 			// if replacement slot is for base condition => two case fill an empty zone or replace existing condition
 			else if (repSlot.slotType == ReplacementSlot.SlotType.BaseCondition)
 			{
 				// On associe l'element au container
-				item.transform.SetParent(dropArea.transform.parent);
+				item.transform.SetParent(repSlot.transform.parent);
 				// On met l'élément à la position voulue
-				item.transform.SetSiblingIndex(dropArea.transform.GetSiblingIndex());
+				item.transform.SetSiblingIndex(repSlot.transform.GetSiblingIndex());
 				// check if the replacement slot is an empty zone (doesn't contain a condition)
 				if (!repSlot.GetComponent<BaseCondition>())
 				{
 					// disable empty slot
-					dropArea.GetComponent<Outline>().enabled = false;
+					repSlot.GetComponent<Outline>().enabled = false;
 
 					// Because this function can be call for binded GO or not
-					if (GameObjectManager.isBound(dropArea)) GameObjectManager.setGameObjectState(dropArea, false);
-					else dropArea.SetActive(false);
+					if (GameObjectManager.isBound(repSlot.gameObject)) GameObjectManager.setGameObjectState(repSlot.transform.gameObject, false);
+					else repSlot.transform.gameObject.SetActive(false);
 				}
 				else
 				{
 					// ResetBlocLimit will restore library and remove dropArea and children
-					GameObjectManager.addComponent<ResetBlocLimit>(dropArea);
+					GameObjectManager.addComponent<ResetBlocLimit>(repSlot.gameObject);
 				}
 			}
 		}
@@ -144,27 +129,8 @@ public static class EditingUtility
 	public static void manageEmptyZone(GameObject elementToDelete)
 	{
 		if (elementToDelete.GetComponent<BaseCondition>())
-		{
 			// enable the next last child of the container
 			GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.GetSiblingIndex() + 1).gameObject, true);
-		}
-		else if (elementToDelete.GetComponent<BaseElement>())
-		{
-			// We have to disable dropZone and enable empty zone if no other BaseElement exists inside the container
-			// We count the number of brother (including this) that is a BaseElement
-			int cpt = 0;
-			foreach (Transform brother in elementToDelete.transform.parent)
-				if (brother.GetComponent<BaseElement>())
-					cpt++;
-			// if the container contains only 1 child (the element we are removing) => enable EmptyZone and disable dropZone
-			if (cpt <= 1)
-			{
-				// enable EmptyZone
-				GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.parent.childCount - 1).gameObject, true);
-				// disable DropZone
-				GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.parent.childCount - 2).gameObject, false);
-			}
-		}
 	}
 
 	// Copy an editable script to the container of an agent
@@ -179,10 +145,26 @@ public static class EditingUtility
 			// On ne conserve que les BaseElement et on les nettoie
 			if (containerCopy.transform.GetChild(i).GetComponent<BaseElement>())
 			{
-				Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i)); ;
-				// Si c'est un block special (for, if...)
-				if (child.GetComponent<ControlElement>())
-					CleanControlBlock(child);
+				Transform child = UnityEngine.GameObject.Instantiate(containerCopy.transform.GetChild(i));
+
+				// remove drop zones
+				foreach (DropZone dropZone in child.GetComponentsInChildren<DropZone>(true))
+                {
+					if (GameObjectManager.isBound(dropZone.gameObject))
+						GameObjectManager.unbind(dropZone.gameObject);
+					dropZone.transform.SetParent(null);
+					Object.Destroy(dropZone.gameObject);
+				}
+				//remove empty zones for BaseElements
+				foreach (ReplacementSlot emptyZone in child.GetComponentsInChildren<ReplacementSlot>(true))
+				{
+					if (emptyZone.slotType == ReplacementSlot.SlotType.BaseElement) {
+						if (GameObjectManager.isBound(emptyZone.gameObject))
+							GameObjectManager.unbind(emptyZone.gameObject);
+						emptyZone.transform.SetParent(null);
+						Object.Destroy(emptyZone.gameObject);
+					}
+				}
 				child.SetParent(targetContainer.transform, false);
 			}
 		}
@@ -206,17 +188,17 @@ public static class EditingUtility
 		// On va travailler avec une copy du container
 		GameObject copyGO = GameObject.Instantiate(container);
 		//Pour tous les élément interactible, on va les désactiver/activer selon le paramétrage
-		foreach (TMP_Dropdown drop in copyGO.GetComponentsInChildren<TMP_Dropdown>())
+		foreach (TMP_Dropdown drop in copyGO.GetComponentsInChildren<TMP_Dropdown>(true))
 		{
 			drop.interactable = isInteractable;
 		}
-		foreach (TMP_InputField input in copyGO.GetComponentsInChildren<TMP_InputField>())
+		foreach (TMP_InputField input in copyGO.GetComponentsInChildren<TMP_InputField>(true))
 		{
 			input.interactable = isInteractable;
 		}
 
 		// Pour chaque bloc for
-		foreach (ForControl forAct in copyGO.GetComponentsInChildren<ForControl>())
+		foreach (ForControl forAct in copyGO.GetComponentsInChildren<ForControl>(true))
 		{
 			// Si activé, on note le nombre de tour de boucle à faire
 			if (!isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
@@ -237,7 +219,7 @@ public static class EditingUtility
 
 			}
 			// On parcourt les éléments présent dans le block action
-			foreach (BaseElement act in forAct.GetComponentsInChildren<BaseElement>())
+			foreach (BaseElement act in forAct.GetComponentsInChildren<BaseElement>(true))
 			{
 				// Si ce n'est pas un bloc action alors on le note comme premier élément puis on arrête le parcourt des éléments
 				if (!act.Equals(forAct))
@@ -248,9 +230,9 @@ public static class EditingUtility
 			}
 		}
 		// Pour chaque block de boucle infini
-		foreach (ForeverControl loopAct in copyGO.GetComponentsInChildren<ForeverControl>())
+		foreach (ForeverControl loopAct in copyGO.GetComponentsInChildren<ForeverControl>(true))
 		{
-			foreach (BaseElement act in loopAct.GetComponentsInChildren<BaseElement>())
+			foreach (BaseElement act in loopAct.GetComponentsInChildren<BaseElement>(true))
 			{
 				if (!act.Equals(loopAct))
 				{
@@ -260,30 +242,30 @@ public static class EditingUtility
 			}
 		}
 		// Pour chaque block if
-		foreach (IfControl ifAct in copyGO.GetComponentsInChildren<IfControl>())
+		foreach (IfControl ifAct in copyGO.GetComponentsInChildren<IfControl>(true))
 		{
 			// On traduit la condition en string
 			ifAct.condition = new List<string>();
 			conditionToStrings(ifAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ifAct.condition);
 
 			GameObject thenContainer = ifAct.transform.Find("Container").gameObject;
-			BaseElement firstThen = thenContainer.GetComponentInChildren<BaseElement>();
+			BaseElement firstThen = thenContainer.GetComponentInChildren<BaseElement>(true);
 			if (firstThen)
 				ifAct.firstChild = firstThen.gameObject;
 			//Si c'est un elseAction
 			if (ifAct is IfElseControl)
 			{
 				GameObject elseContainer = ifAct.transform.Find("ElseContainer").gameObject;
-				BaseElement firstElse = elseContainer.GetComponentInChildren<BaseElement>();
+				BaseElement firstElse = elseContainer.GetComponentInChildren<BaseElement>(true);
 				if (firstElse)
 					((IfElseControl)ifAct).elseFirstChild = firstElse.gameObject;
 			}
 		}
 
-		foreach (PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>())
+		foreach (PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>(true))
 			pointerSensitive.enabled = isInteractable;
 
-		foreach (Selectable selectable in copyGO.GetComponentsInChildren<Selectable>())
+		foreach (Selectable selectable in copyGO.GetComponentsInChildren<Selectable>(true))
 			selectable.interactable = isInteractable;
 
 		// On défini la couleur de l'action selon l'agent à qui appartiendra la script
@@ -301,7 +283,7 @@ public static class EditingUtility
 				break;
 		}
 
-		foreach (BaseElement act in copyGO.GetComponentsInChildren<BaseElement>())
+		foreach (BaseElement act in copyGO.GetComponentsInChildren<BaseElement>(true))
 		{
 			act.gameObject.GetComponent<Image>().color = actionColor;
 			if (act.GetComponent<ControlElement>() && agentTag == "Drone")
@@ -334,14 +316,8 @@ public static class EditingUtility
 				GameObjectManager.unbind(emptySlot);
 			emptySlot.transform.SetParent(null);
 			GameObject.Destroy(emptySlot);
-			// remove the new last child, the dropzone
-			GameObject dropZone = container.GetChild(container.childCount - 1).gameObject;
-			if (GameObjectManager.isBound(emptySlot))
-				GameObjectManager.unbind(dropZone);
-			dropZone.transform.SetParent(null);
-			GameObject.Destroy(dropZone);
 
-			// Si c'est un block if on garde le container des actions (sans le emptyslot et la dropzone) mais la condition est traduite dans IfAction
+			// Si c'est un block if on garde le container des actions (sans le emptyslot) mais la condition est traduite dans IfAction
 			if (specialBlock.GetComponent<IfElseControl>())
 			{
 				// get else container
@@ -352,12 +328,6 @@ public static class EditingUtility
 					GameObjectManager.unbind(emptySlot);
 				emptySlot.transform.SetParent(null);
 				GameObject.Destroy(emptySlot);
-				// remove the new last child, the dropzone
-				dropZone = elseContainer.GetChild(elseContainer.childCount - 1).gameObject;
-				if (GameObjectManager.isBound(emptySlot))
-					GameObjectManager.unbind(dropZone);
-				dropZone.transform.SetParent(null);
-				GameObject.Destroy(dropZone);
 				// On parcourt les blocks qui composent le ElseContainer afin de les nettoyer également
 				foreach (Transform block in elseContainer)
 					// Si c'est le cas on fait un appel récursif
@@ -388,7 +358,7 @@ public static class EditingUtility
 				BaseOperator bo;
 				if (condition.TryGetComponent<BaseOperator>(out bo))
 				{
-					Transform conditionContainer = bo.transform.GetChild(0);
+					Transform conditionContainer = bo.transform.GetChild(1);
 					// Si c'est une négation on met "!" puis on fait une récursive sur le container et on renvoie le tous traduit en string
 					if (bo.operatorType == BaseOperator.OperatorType.NotOperator)
 					{
@@ -396,7 +366,7 @@ public static class EditingUtility
 						if (conditionContainer.childCount == 3)
 						{
 							chaine.Add("NOT");
-							conditionToStrings(conditionContainer.GetComponentInChildren<BaseCondition>().gameObject, chaine);
+							conditionToStrings(conditionContainer.GetComponentInChildren<BaseCondition>(true).gameObject, chaine);
 						}
 						else
 						{
@@ -483,6 +453,18 @@ public static class EditingUtility
 				if (child.GetComponent<IfElseControl>())
 					computeNext(child.transform.Find("ElseContainer").gameObject);
 			}
+		}
+	}
+
+	public static void removeComments(XmlNode node)
+	{
+		for (int i = node.ChildNodes.Count - 1; i >= 0; i--)
+		{
+			XmlNode child = node.ChildNodes[i];
+			if (child.NodeType == XmlNodeType.Comment)
+				node.RemoveChild(child);
+			else
+				removeComments(child);
 		}
 	}
 }

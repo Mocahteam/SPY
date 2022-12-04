@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "0" /><cell value= "3" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "2" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Bien... Karl vient de se téléporter dans le bâtiment juste devant les portes d'entrée. Il faut continuer à progresser, pour l'instant tout semble calme." />
+	<dialog text="La connexion avec le robot étant de bonne qualité, vous pouvez envoyer plusieurs ordres en même temps. Il suffit de les mettres les uns sous les autres dans la zone de programme." img="stackActions.png" imgHeight="250"/>
+  </dialogs>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="3" />
+    <blockLimit blockType="TurnLeft" limit="0" />
+    <blockLimit blockType="TurnRight" limit="0" />
+    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="0" />
+    <blockLimit blockType="IfThen" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="ForLoop" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="0" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <door posY="5" posX="1" direction="0" slotId="0" />
+  <door posY="5" posX="2" direction="0" slotId="0" />
+  <door posY="5" posX="3" direction="0" slotId="0" />
+  <player associatedScriptName="Karl" posY="4" posX="2" direction="0" />
+  <script name="Karl" editMode="0" />
+  <score twoStars="5750" threeStars="6750"/>
+</level>

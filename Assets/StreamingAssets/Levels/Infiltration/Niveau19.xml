@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	<line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "3" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "3" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Tiens ! Nous retrouvons Karl, c'est l'occasion de le sortir de là. Il semblerait que le terminal de ce couloir contrôle les deux portes." camY="4" camX="3" />
+	<dialog text="Nous vous avons envoyé toutes les briques de programmation développées par nos ingénieurs. Vous avez un contrôle total des robots." camY="1" camX="1" />
+  </dialogs>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="-1" />
+    <blockLimit blockType="TurnLeft" limit="-1" />
+    <blockLimit blockType="TurnRight" limit="-1" />
+    <blockLimit blockType="Wait" limit="-1" />
+    <blockLimit blockType="Activate" limit="-1" />
+    <blockLimit blockType="TurnBack" limit="-1" />
+    <blockLimit blockType="IfThen" limit="-1" />
+    <blockLimit blockType="IfElse" limit="-1" />
+    <blockLimit blockType="ForLoop" limit="-1" />
+    <blockLimit blockType="While" limit="-1" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="-1" />
+    <blockLimit blockType="OrOperator" limit="-1" />
+    <blockLimit blockType="NotOperator" limit="-1" />
+    <blockLimit blockType="WallFront" limit="-1" />
+    <blockLimit blockType="Enemy" limit="-1" />
+    <blockLimit blockType="RedArea" limit="-1" />
+    <blockLimit blockType="FieldGate" limit="-1" />
+    <blockLimit blockType="Terminal" limit="-1" />
+    <blockLimit blockType="Exit" limit="-1" />
+  </blockLimits>
+  <door posY="5" posX="1" direction="0" slotId="0" />
+  <door posY="4" posX="4" direction="2" slotId="0" />
+  <console state="1" posY="4" posX="1" direction="2">
+    <slot slotId="0" />
+  </console>
+  <player associatedScriptName="Karl" posY="4" posX="3" direction="2" />
+  <script name="Karl" editMode="0" />
+  <player associatedScriptName="Bob" posY="1" posX="1" direction="1" />
+  <script name="Bob" editMode="0" />
+  <score twoStars="4130" threeStars="4249"/>
+</level>

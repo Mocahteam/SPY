@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<level>
+	<map>
+		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+		<line><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
+		<line><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
+		<line><cell value="1" /><cell value="0" /><cell value="0" /><cell value="3" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
+		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
+		<line><cell value="1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
+		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+	</map>
+	<dialogs>
+		<dialog text="Un bloc 'Si' va exécuter ce qu'il contient seulement si la condition est vraie. Essayez de tourner à gauche s'il y a un chemin vers la gauche." img="ifPathLeft.png" imgHeight="200"/>
+	</dialogs>
+	<executionLimit amount="1" />
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="1" />
+		<blockLimit blockType="TurnLeft" limit="1" />
+		<blockLimit blockType="TurnRight" limit="1" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="IfThen" limit="1" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="1" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="1" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+	<player associatedScriptName="Karl" posY="5" posX="1" direction="2" />
+	<script name="Karl" editMode="0" />
+	<score twoStars="0" threeStars="4883"/>
+</level>

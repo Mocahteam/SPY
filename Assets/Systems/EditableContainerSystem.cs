@@ -42,6 +42,7 @@ public class EditableContainerSystem : FSystem
 	public GameObject EditableCanvas;
 	public GameObject prefabViewportScriptContainer;
 	public Button addContainerButton;
+	public int maxWidth;
 
 	private GameData gameData;
 
@@ -65,8 +66,10 @@ public class EditableContainerSystem : FSystem
 			{
 				foreach (GameObject container in f_scriptContainer)
 				{
-					container.transform.Find("Header").Find("ResetButton").GetComponent<Button>().interactable = false;
-					container.transform.Find("Header").Find("RemoveButton").GetComponent<Button>().interactable = false;
+					Transform header = container.transform.Find("Header");
+					header.Find("ResetButton").GetComponent<Button>().interactable = false;
+					header.Find("RemoveButton").GetComponent<Button>().interactable = false;
+					GameObjectManager.removeComponent<TooltipContent>(header.Find("ProgramText").gameObject);
 				}
 				addContainerButton.interactable = false;
 			}
@@ -163,28 +166,36 @@ public class EditableContainerSystem : FSystem
 			if (editState == UIRootContainer.EditMode.Locked)
 			{
 				cloneContainer.GetComponentInChildren<TMP_InputField>().interactable = false;
-				cloneContainer.transform.Find("ScriptContainer").Find("Header").Find("RemoveButton").GetComponent<Button>().interactable = false;
+				Transform header = cloneContainer.transform.Find("ScriptContainer").Find("Header");
+				header.Find("RemoveButton").GetComponent<Button>().interactable = false;
+				header.Find("ContainerName").GetComponent<TooltipContent>().text = "Ce programme sera envoyé à " + name + ".<br><i>Vous ne pouvez pas le changer</i>.";
 			}
 			cloneContainer.GetComponentInChildren<UIRootContainer>().editState = editState;
 
 			cloneContainer.GetComponentInChildren<UIRootContainer>().type = typeState;
 
 			// ajout du script par défaut
-			GameObject dropArea = cloneContainer.GetComponentInChildren<ReplacementSlot>().gameObject;
+			GameObject dropArea = cloneContainer.GetComponentInChildren<ReplacementSlot>(true).gameObject;
 			if (script != null && dropArea != null)
 			{
 				for (int k = 0; k < script.Count; k++)
 				{
 					EditingUtility.addItemOnDropArea(script[k], dropArea);
 					// On compte le nombre de bloc utilisé pour l'initialisation
-					gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseElement>().Length;
-					gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseCondition>().Length;
+					gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseElement>(true).Length;
+					gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseCondition>(true).Length;
 				}
 				GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 			}
 
 			// On ajoute le nouveau viewport container à FYFY
 			GameObjectManager.bind(cloneContainer);
+
+			// if drag&drop diabled => hide all replacement slots that are not BaseCondition
+			if (!gameData.dragDropEnabled)
+				foreach (ReplacementSlot slot in cloneContainer.GetComponentsInChildren<ReplacementSlot>(true))
+					if (slot.slotType != ReplacementSlot.SlotType.BaseCondition)
+						GameObjectManager.setGameObjectState(slot.gameObject, false);
 
 			if (script != null && dropArea != null)
 				// refresh all the hierarchy of parent containers
@@ -210,7 +221,7 @@ public class EditableContainerSystem : FSystem
 		editableContainers.ForceUpdateRectTransforms();
 		yield return null;
 		// compute new size
-		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(215, editableContainers.rect.width));
+		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(maxWidth, editableContainers.rect.width));
 	}
 
 	// Empty the script window
@@ -221,10 +232,6 @@ public class EditableContainerSystem : FSystem
 		GameObject scriptContainerPointer = f_viewportContainerPointed.First().transform.Find("ScriptContainer").gameObject;
 
 		deleteContent(scriptContainerPointer);
-
-		// Enable the last emptySlot and disable dropZone
-		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 1).gameObject, true);
-		GameObjectManager.setGameObjectState(scriptContainerPointer.transform.GetChild(scriptContainerPointer.transform.childCount - 2).gameObject, false);
 	}
 
 	// Remove the script window
@@ -275,11 +282,11 @@ public class EditableContainerSystem : FSystem
 				}
 				// On change pour son nouveau nom
 				containerSelected.scriptName = newName;
-				containerSelected.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = newName;
+				containerSelected.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text = newName;
 			}
 			else
 			{ // Sinon on annule le changement
-				containerSelected.transform.Find("ContainerName").GetComponent<TMP_InputField>().text = oldName;
+				containerSelected.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text = oldName;
 			}
 		}
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
@@ -294,21 +301,6 @@ public class EditableContainerSystem : FSystem
 				return true;
 
 		return false;
-	}
-
-	// Renvoie la liste des agents associés à un script
-	private List<AgentEdit> selectLinkedAgentByName(string scriptName)
-    {
-		List<AgentEdit> agentList = new List<AgentEdit>();
-		foreach (GameObject agent in f_agent)
-        {
-			AgentEdit ae = agent.GetComponent<AgentEdit>();
-			if (ae.associatedScriptName == scriptName)
-            {
-				agentList.Add(agent.GetComponent<AgentEdit>());
-			}
-        }
-		return agentList;
 	}
 
 
@@ -328,9 +320,9 @@ public class EditableContainerSystem : FSystem
 
 			// Si même nom trouvé on met l'arriére plan blanc
 			if (nameSame)
-				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().image.color = Color.white;
+				container.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().image.color = Color.white;
 			else // sinon rouge 
-				container.transform.Find("ContainerName").GetComponent<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
+				container.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
 		}
 
 		// On fait la même chose pour les agents
@@ -343,9 +335,9 @@ public class EditableContainerSystem : FSystem
 
 			// Si même nom trouvé on met l'arriére transparent
 			if (nameSame)
-				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 1f, 1f, 1f);
+				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>(true).image.color = new Color(1f, 1f, 1f, 1f);
 			else // sinon rouge 
-				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
+				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>(true).image.color = new Color(1f, 0.4f, 0.28f, 1f);
 		}
 	}
 }

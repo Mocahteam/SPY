@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Attention !&#xA;Un garde équipé d'une caméra protége cette salle." camY="3" camX="4"/>
+	<dialog text="Il faut absoluement éviter les zones surveillées (en rouge).&#xA;Nos ingénieurs vous proposent trois solutions, mais quelle est la plus efficace ?" camY="5" camX="2"/>
+  </dialogs>
+  <dragdropDisabled />
+  <executionLimit amount="1" />
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="0" />
+    <blockLimit blockType="TurnLeft" limit="0" />
+    <blockLimit blockType="TurnRight" limit="0" />
+    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="0" />
+    <blockLimit blockType="IfThen" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="ForLoop" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="0" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <decoration name="Modern Furniture/Prefabs/Book Rack" posY="2" posX="5" direction="0" /> 
+  <decoration name="Modern Furniture/Prefabs/Book Rack" posY="2" posX="6" direction="0" /> 
+  <decoration name="Modern Furniture/Prefabs/Coffee Table" posY="3" posX="7" direction="2" /> 
+  <decoration name="Modern Furniture/Prefabs/Triangle Chair" posY="3" posX="6" direction="2" /> 
+  <player associatedScriptName="Bob" posY="5" posX="2" direction="0" />
+  <script name="Essai1" editMode="2" type="2">
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+  </script>
+  <script name="Essai2" editMode="2" type="2">
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+  </script>
+  <script name="Essai3" editMode="2" type="0">
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+  </script>
+  <enemy associatedScriptName="Guarde" posY="3" posX="4" direction="3" range="2" selfRange="False" typeRange="0" />
+  <score twoStars="0" threeStars="3854"/>
+</level>

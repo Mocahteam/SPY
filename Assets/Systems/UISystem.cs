@@ -97,8 +97,9 @@ public class UISystem : FSystem {
 			foreach (GameObject trash in f_removeButton)
 				trash.GetComponent<Button>().interactable = false;
 			// Sauvegarde de l'état d'avancement des niveaux (niveau et étoile)
-			if (PlayerPrefs.GetInt(gameData.levelToLoad.Item1,0) < gameData.levelToLoad.Item2 + 1)
-				PlayerPrefs.SetInt(gameData.levelToLoad.Item1, gameData.levelToLoad.Item2 + 1);
+			int currentLevelNum = gameData.scenario.FindIndex(x => x == gameData.levelToLoad);
+			if (PlayerPrefs.GetInt(gameData.scenarioName,0) < currentLevelNum + 1)
+				PlayerPrefs.SetInt(gameData.scenarioName, currentLevelNum + 1);
 			PlayerPrefs.Save();
 		}
 		// for other end type, nothing to do more
@@ -122,7 +123,7 @@ public class UISystem : FSystem {
 		buttonExecute.GetComponent<Button>().interactable = false;
 		foreach (GameObject container in f_scriptContainer)
 		{
-			if (container.GetComponentsInChildren<BaseElement>().Length > 0)
+			if (container.GetComponentsInChildren<BaseElement>(true).Length > 0)
 			{
 				buttonExecute.GetComponent<Button>().interactable = true;
 			}
@@ -193,9 +194,18 @@ public class UISystem : FSystem {
 	public void setExecutionView(bool value){
 		// Toggle library and editable panel
 		GameObjectManager.setGameObjectState(canvas.transform.Find("LeftPanel").gameObject, !value);
-		// Toggle all execution panels
-		foreach (Transform executablePanel in canvas.transform.Find("ExecutableCanvas"))
-			GameObjectManager.setGameObjectState(executablePanel.gameObject, value);
+		// Show sentinel panels and toggle player panels
+		foreach (GameObject agent in f_agents)
+			if (agent.GetComponent<DetectRange>())
+				// always enable drone execution panel
+				GameObjectManager.setGameObjectState(agent.GetComponent<ScriptRef>().executablePanel, true);
+			else
+			{
+				// toggle player execution panel
+				GameObjectManager.setGameObjectState(agent.GetComponent<ScriptRef>().executablePanel, value);
+				if (!value)
+					freePlayerExecutablePanels();
+			}
 		// Define Menu button states
 		GameObjectManager.setGameObjectState(buttonExecute, !value);
 		GameObjectManager.setGameObjectState(buttonPause, value);
@@ -232,8 +242,7 @@ public class UISystem : FSystem {
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
 		gameData.levelToLoadScore = null;
-		gameData.dialogMessage = new List<(string, float, string, float)>();
-		resetGameData();
+		gameData.dialogMessage = new List<(string, string, float, int, int)>();
 }
 
 
@@ -241,17 +250,11 @@ public class UISystem : FSystem {
 	// On charge la scéne suivante
 	public void nextLevel(){
 		// On imcrémente le numéro du niveau
-		gameData.levelToLoad.Item2++;
+		gameData.levelToLoad = gameData.scenario[gameData.scenario.FindIndex(x => x == gameData.levelToLoad)+1];
 		// On efface l'historique
 		gameData.actionsHistory = null;
 		// On recharge la scéne (mais avec le nouveau numéro de niveau)
 		restartScene();
-	}
-
-	// Reset les données du gameData pour la gestion des fonctionalités dans les niveaux
-	private void resetGameData()
-	{
-		gameData.GetComponent<GameData>().executeLvlByComp = false;
 	}
 
 
@@ -263,19 +266,31 @@ public class UISystem : FSystem {
 		restartScene();
 	}
 
-	// Copie les blocs du panneau d'édition dans le panneau d'exécution
-	private void copyEditableScriptsToExecutablePanels(){
-		//clean container for each robot and copy the new sequence
-		foreach (GameObject robot in f_player) {
+	private void freePlayerExecutablePanels()
+	{
+		foreach (GameObject robot in f_player)
+		{
 			GameObject executableContainer = robot.GetComponent<ScriptRef>().executableScript;
 			// Clean robot container
-			for(int i = executableContainer.transform.childCount - 1; i >= 0; i--) {
+			for (int i = executableContainer.transform.childCount - 1; i >= 0; i--)
+			{
 				Transform child = executableContainer.transform.GetChild(i);
 				GameObjectManager.unbind(child.gameObject);
 				child.SetParent(null); // beacause destroying is not immediate, we remove this child from its parent, then Unity can take the time he wants to destroy GameObject
 				GameObject.Destroy(child.gameObject);
 			}
+		}
+	}
 
+	// Copie les blocs du panneau d'édition dans le panneau d'exécution
+	private void copyEditableScriptsToExecutablePanels()
+	{
+		// be sure executable panel is free
+		freePlayerExecutablePanels();
+		// copy the new sequence
+		foreach (GameObject robot in f_player)
+		{
+			GameObject executableContainer = robot.GetComponent<ScriptRef>().executableScript;
 			//copy editable script
 			GameObject editableContainer = null;
 			// On parcourt les scripts containers pour identifer celui associé au robot 
@@ -334,6 +349,6 @@ public class UISystem : FSystem {
 			input.GetComponent<TMP_InputField>().text = "0";
 			res = 0;
 		}
-		input.GetComponentInParent<ForControl>().nbFor = res;
+		input.GetComponentInParent<ForControl>(true).nbFor = res;
 	}
 }

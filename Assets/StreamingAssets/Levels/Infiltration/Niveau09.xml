@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Tiens ! Ils n'ont pas placé le terminal à proximité de la porte, mais ce n'est pas grave, ça devrait fonctionner." />
+	<dialog text="Vous pouvez maintenant utiliser l'action 'Se retourner' qui est équivalente à deux actions 'Pivoter à gauche' ou deux actions 'Pivoter à droite'." img="TurnBackIcon.png" imgHeight="45"/>
+  </dialogs>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="-1" />
+    <blockLimit blockType="TurnLeft" limit="-1" />
+    <blockLimit blockType="TurnRight" limit="-1" />
+    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Activate" limit="-1" />
+    <blockLimit blockType="TurnBack" limit="-1" />
+    <blockLimit blockType="IfThen" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="ForLoop" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="0" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <console state="1" posY="2" posX="1" direction="3">
+    <slot slotId="0" />
+  </console>
+  <door posY="2" posX="4" slotId="0" direction="3" />
+  <player associatedScriptName="Bob" posY="4" posX="3" direction="0" />
+  <script name="Bob" editMode="0" />
+  <score twoStars="39999" threeStars="4071"/>
+</level>

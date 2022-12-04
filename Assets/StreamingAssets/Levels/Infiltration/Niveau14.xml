@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "2" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "0" /><cell value= "3" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+  </map>
+   <dialogs>
+	<dialog text="Que se passe-t-il ici ?" />
+	<dialog text="Visiblement un nouveau système de sécurité bloque la vue de notre drone d'observation... Il va faloir avancer à l'aveugle." />
+	<dialog text="Attendez, nous recevons des informations..." />
+	<dialog text="..." />
+	<dialog text="Vous disposez maintenant d'un bloc 'Si' qui vous permet d'exécuter des actions si un capteur est valide. Il devrait vous être utiles." img="ifWall.png" imgHeight="200" />
+	<dialog text="Notre service de renseignement nous indique qu'il vous faut avancer de 11 cases et tourner à droite à chaque fois que vous rencontrerez un mur sur votre passage." />
+  </dialogs>
+  <executionLimit amount="1" />
+  <fog />
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="1" />
+    <blockLimit blockType="TurnLeft" limit="1" />
+    <blockLimit blockType="TurnRight" limit="1" />
+    <blockLimit blockType="Wait" limit="-1" />
+    <blockLimit blockType="Activate" limit="-1" />
+    <blockLimit blockType="TurnBack" limit="-1" />
+    <blockLimit blockType="IfThen" limit="-1" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="ForLoop" limit="-1" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="-1" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <door posY="7" posX="8" direction="2" slotId="0" />
+  <player associatedScriptName="Bob" posY="4" posX="4" direction="2" />
+  <script name="Bob" editMode="0" />
+  <score twoStars="4583" threeStars="4999"/>
+</level>

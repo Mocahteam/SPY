@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<level>
+  <dialogs>
+	<dialog text="Bob semble avoir un problème pour pivoter, un circuit défectueux dans sa jambe...&#xA;Le problème devrait se résoudre tout seul mais pour l'instant vous ne pouvez utiliser que deux actions 'pivoter à gauche'."/>
+	<dialog text="Même si les blocs sont limités ici, nous avons pu vous envoyer une boucle qui s'arrête lorsqu'un capteur n'est plus valide." img="while.png" imgHeight="200" />
+	<dialog text="Vous disposez donc de cette boucle ainsi que d'un capteur qui vous indique si un mur se trouve sur la case juste devant le robot. Vous pouvez glisser un capteur dans la zone grise de la même forme." img="whileWall.png" imgHeight="200" />
+  </dialogs>
+  <map>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "0" /><cell value= "2" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "3" /><cell value= "0" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+  </map>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="-1" />
+    <blockLimit blockType="TurnLeft" limit="2" />
+    <blockLimit blockType="TurnRight" limit="0" />
+    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="0" />
+    <blockLimit blockType="IfThen" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="ForLoop" limit="0" />
+    <blockLimit blockType="While" limit="1" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="1" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <player associatedScriptName="Bob" posY="1" posX="2" direction="2" />
+  <script name="Bob" editMode="0" />
+  <score twoStars="4261" threeStars="5261"/>
+</level>

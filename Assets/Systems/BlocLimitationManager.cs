@@ -72,11 +72,11 @@ public class BlocLimitationManager : FSystem
 			else if (go.GetComponent<ForeverControl>())
 				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("Forever");
 			else if (go.GetComponent<ForControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("For");
+				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("ForLoop");
 			else if (go.GetComponent<IfElseControl>())
 				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("IfElse");
 			else if (go.GetComponent<IfControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("If");
+				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("IfThen");
 		}
 	}
 

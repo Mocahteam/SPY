@@ -24,7 +24,9 @@ public class CurrentActionManager : FSystem
 	private Family f_exit = FamilyManager.getFamily(new AllOfComponents(typeof(Position), typeof(AudioSource)), new AnyOfTags("Exit"));
 
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+
+	private HashSet<int> exploredScripItem;
+	private bool infiniteLoopDetected;
 
 	public static CurrentActionManager instance;
 
@@ -37,12 +39,6 @@ public class CurrentActionManager : FSystem
 	{
 		f_executionReady.addEntryCallback(initFirstsActions);
 		f_newStep.addEntryCallback(delegate { onNewStep(); });
-		f_editingMode.addEntryCallback(delegate {
-			// remove all player's current actions
-			foreach (GameObject currentAction in f_currentActions)
-				if (currentAction.GetComponent<CurrentAction>().agent.CompareTag("Player"))
-					GameObjectManager.removeComponent<CurrentAction>(currentAction);
-		});
 		f_playingMode.addEntryCallback(delegate {
 			// reset inaction counters
 			foreach (GameObject robot in f_player)
@@ -58,18 +54,26 @@ public class CurrentActionManager : FSystem
 			// init currentAction on the first action of players
 			bool atLeastOneFirstAction = false;
 			foreach (GameObject player in f_player)
+			{
 				if (addCurrentActionOnFirstAction(player) != null)
 					atLeastOneFirstAction = true;
-			if (!atLeastOneFirstAction)
+				if (infiniteLoopDetected)
+					break;
+			}
+			if (!atLeastOneFirstAction || infiniteLoopDetected)
 			{
 				GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
+				if (infiniteLoopDetected)
+					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.InfiniteLoop });
+				else
+					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoAction });
 			}
 			else
 			{
 				// init currentAction on the first action of ennemies
 				bool forceNewStep = false;
 				foreach (GameObject drone in f_drone)
-					if (!drone.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>() && !drone.GetComponent<ScriptRef>().scriptFinished)
+					if (!drone.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>(true) && !drone.GetComponent<ScriptRef>().scriptFinished)
 						addCurrentActionOnFirstAction(drone);
 					else
 						forceNewStep = true; // will move currentAction on next action
@@ -99,11 +103,21 @@ public class CurrentActionManager : FSystem
 		return firstAction;
 	}
 
-	// get first action inside "action", it could be control structure (if, for...) => recursive call
+	// get first action inside "action"
 	private GameObject getFirstActionOf(GameObject action, GameObject agent)
+    {
+		exploredScripItem = new HashSet<int>();
+		infiniteLoopDetected = false;
+		return rec_getFirstActionOf(action, agent);
+	}
+
+	// look for first action recursively, it could be control structure (if, for...)
+	private GameObject rec_getFirstActionOf(GameObject action, GameObject agent)
 	{
-		if (action == null)
+		infiniteLoopDetected = exploredScripItem.Contains(action.GetInstanceID());
+		if (action == null || infiniteLoopDetected)
 			return null;
+		exploredScripItem.Add(action.GetInstanceID());
 		if (action.GetComponent<BasicAction>())
 			return action;
 		else
@@ -115,12 +129,12 @@ public class CurrentActionManager : FSystem
 				// check if this IfControl include a child and if condition is evaluated to true
 				if (ifCont.firstChild != null && ifValid(ifCont.condition, agent))
 					// get first action of its first child (could be if, for...)
-					return getFirstActionOf(ifCont.firstChild, agent);
+					return rec_getFirstActionOf(ifCont.firstChild, agent);
 				else if (action.GetComponent<IfElseControl>() && action.GetComponent<IfElseControl>().firstChild != null)
-					return getFirstActionOf(action.GetComponent<IfElseControl>().elseFirstChild, agent);
+					return rec_getFirstActionOf(action.GetComponent<IfElseControl>().elseFirstChild, agent);
 				else
 					// this if doesn't contain action or its condition is false => get first action of next action (could be if, for...)
-					return getFirstActionOf(ifCont.next, agent);
+					return rec_getFirstActionOf(ifCont.next, agent);
 			}
 			// check if action is a WhileControl
 			else if (action.GetComponent<WhileControl>())
@@ -129,10 +143,10 @@ public class CurrentActionManager : FSystem
 				// check if condition is evaluated to true
 				if (ifValid(whileCont.condition, agent))
 					// get first action of its first child (could be if, for...)
-					return getFirstActionOf(whileCont.firstChild, agent);
+					return rec_getFirstActionOf(whileCont.firstChild, agent);
 				else
 					// this condition is false => get first action of next action (could be if, for...)
-					return getFirstActionOf(whileCont.next, agent);
+					return rec_getFirstActionOf(whileCont.next, agent);
 			}
 			// check if action is a ForControl
 			else if (action.GetComponent<ForControl>())
@@ -144,17 +158,25 @@ public class CurrentActionManager : FSystem
 					forCont.currentFor++;
 					forCont.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
 					// get first action of its first child (could be if, for...)
-					return getFirstActionOf(forCont.firstChild, agent);
+					return rec_getFirstActionOf(forCont.firstChild, agent);
 				}
 				else
+				{
 					// this for doesn't contain action or nb iteration == 0 or end loop reached => get first action of next action (could be if, for...)
-					return getFirstActionOf(forCont.next, agent);
+					if (forCont.currentFor >= forCont.nbFor)
+                    {
+						// reset nb iteration to 0
+						forCont.currentFor = 0;
+						forCont.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
+					}
+					return rec_getFirstActionOf(forCont.next, agent);
+				}
 			}
 			// check if action is a ForeverControl
 			else if (action.GetComponent<ForeverControl>())
 			{
 				// always return firstchild of this ForeverControl
-				return getFirstActionOf(action.GetComponent<ForeverControl>().firstChild, agent);
+				return rec_getFirstActionOf(action.GetComponent<ForeverControl>().firstChild, agent);
 			}
 		}
 		return null;
@@ -218,11 +240,79 @@ public class CurrentActionManager : FSystem
 		// check target position
 		switch (ele)
 		{
-			case "Wall": // walls
+			case "WallFront":
+			case "PathFront":
+				// check Wall in front
 				foreach (GameObject wall in f_wall)
 					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>().enabled)
+					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
+					{
 						ifok = true;
+						break;
+					}
+				// if checking Path in front inverse result
+				if (ele == "PathFront")
+					ifok = !ifok;
+				break;
+			case "WallLeft":
+			case "PathLeft":
+				// override target
+				switch (agent.GetComponent<Direction>().direction)
+				{
+					case Direction.Dir.North:
+						vec = new Vector2(-1, 0);
+						break;
+					case Direction.Dir.South:
+						vec = new Vector2(1, 0);
+						break;
+					case Direction.Dir.East:
+						vec = new Vector2(0, -1);
+						break;
+					case Direction.Dir.West:
+						vec = new Vector2(0, 1);
+						break;
+				}
+				// check Wall in left
+				foreach (GameObject wall in f_wall)
+					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
+					{
+						ifok = true;
+						break;
+					}
+				// if checking Path inverse result
+				if (ele == "PathLeft")
+					ifok = !ifok;
+				break;
+			case "WallRight":
+			case "PathRight":
+				// override target
+				switch (agent.GetComponent<Direction>().direction)
+				{
+					case Direction.Dir.North:
+						vec = new Vector2(1, 0);
+						break;
+					case Direction.Dir.South:
+						vec = new Vector2(-1, 0);
+						break;
+					case Direction.Dir.East:
+						vec = new Vector2(0, 1);
+						break;
+					case Direction.Dir.West:
+						vec = new Vector2(0, -1);
+						break;
+				}
+				// check Wall in right
+				foreach (GameObject wall in f_wall)
+					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
+					{
+						ifok = true;
+						break;
+					}
+					// if checking Path inverse result
+					if (ele == "PathRight")
+						ifok = !ifok;
 				break;
 			case "FieldGate": // doors
 				foreach (GameObject door in f_door)
@@ -230,16 +320,16 @@ public class CurrentActionManager : FSystem
 					 door.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
 				break;
-			case "Enemie": // ennemies
+			case "Enemy": // enemies
 				foreach (GameObject drone in f_drone)
 					if (drone.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 						drone.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
 				break;
 			case "Terminal": // consoles
+				vec = new Vector2(0, 0);
 				foreach (GameObject console in f_activableConsole)
 				{
-					vec = new Vector2(0, 0);
 					if (console.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 						console.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
@@ -252,9 +342,9 @@ public class CurrentActionManager : FSystem
 						ifok = true;
 				break;
 			case "Exit": // exits
+				vec = new Vector2(0, 0);
 				foreach (GameObject exit in f_exit)
 				{
-					vec = new Vector2(0, 0);
 					if (exit.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 					 exit.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 						ifok = true;
@@ -272,12 +362,15 @@ public class CurrentActionManager : FSystem
 			CurrentAction currentAction = currentActionGO.GetComponent<CurrentAction>();
 			nextAction = getNextAction(currentActionGO, currentAction.agent);
 			// check if we reach last action of a drone
-			if(nextAction == null && currentActionGO.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
+			if (nextAction == null && currentActionGO.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
 				currentActionGO.GetComponent<CurrentAction>().agent.GetComponent<ScriptRef>().scriptFinished = true;
-			else if(nextAction != null){
+			else if (nextAction != null)
+			{
 				//ask to add CurrentAction on next frame => this frame we will remove current CurrentActions
 				MainLoop.instance.StartCoroutine(delayAddCurrentAction(nextAction, currentAction.agent));
 			}
+			else if (infiniteLoopDetected)
+				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.InfiniteLoop });
 			GameObjectManager.removeComponent<CurrentAction>(currentActionGO);
 		}
 	}
@@ -315,7 +408,7 @@ public class CurrentActionManager : FSystem
 		else if(currentAction.GetComponent<ForControl>()){
 			ForControl forAct = currentAction.GetComponent<ForControl>();
 			// ForAction reach the number of iterations
-			if (!forAct.gameObject.GetComponent<WhileControl>() && forAct.currentFor >= forAct.nbFor){
+			if (forAct.currentFor >= forAct.nbFor){
 				// reset nb iteration to 0
 				forAct.currentFor = 0;
 				forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
@@ -330,11 +423,9 @@ public class CurrentActionManager : FSystem
 				// in case ForAction has no child
 				if (forAct.firstChild == null)
 				{
-					if (!forAct.gameObject.GetComponent<WhileControl>()) {
-						// reset nb iteration to 0
-						forAct.currentFor = 0;
-						forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
-					}
+					// reset nb iteration to 0
+					forAct.currentFor = 0;
+					forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 					// return next action
 					if (forAct.next == null || forAct.next.GetComponent<BasicAction>())
 						return forAct.next;

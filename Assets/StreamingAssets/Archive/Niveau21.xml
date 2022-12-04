@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Encore une dernière difficulté avant de sortir de la base. Exploitez les particularités du terrain et ce que vous avez appris de vos précédentes missions pour ammener Bob et Karl vers la sortie." camY="7" camX="3" />
+	<dialog text="N'oubliez pas que vous pouvez exécuter votre programme étape par étape..." />
+  </dialogs>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="-1" />
+    <blockLimit blockType="TurnLeft" limit="-1" />
+    <blockLimit blockType="TurnRight" limit="-1" />
+    <blockLimit blockType="Wait" limit="-1" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="-1" />
+    <blockLimit blockType="IfThen" limit="-1" />
+    <blockLimit blockType="IfElse" limit="-1" />
+    <blockLimit blockType="ForLoop" limit="-1" />
+    <blockLimit blockType="While" limit="-1" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="-1" />
+    <blockLimit blockType="OrOperator" limit="-1" />
+    <blockLimit blockType="NotOperator" limit="-1" />
+    <blockLimit blockType="WallFront" limit="-1" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="-1" />
+  </blockLimits>
+  <player associatedScriptName="Bob/Karl" posY="8" posX="2" direction="0" />
+  <player associatedScriptName="Bob/Karl" posY="8" posX="4" direction="0" />
+  <script name="Bob/Karl" editMode="0" />
+  <score twoStars="4221" threeStars="4423"/>
+</level>

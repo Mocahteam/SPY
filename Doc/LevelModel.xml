@@ -27,11 +27,12 @@
 	<!-- dialogs (optional): this tag describes the set of text to display at the beginning of the level. It is composed by a set of dialog. The dialogs will be displayed in the order they defined. -->
 	<dialogs>
 		<!-- 
-			dialog (at least one): this tag describes one of the dialogs of this level. It contains four attributes:
+			dialog (at least one): this tag describes one of the dialogs of this level. It contains five attributes:
 				text (optional): the text to display
-				textHeight (optional): the height of the text field in the dialog panel
 				img (optional): the name of the image to load. This file has to be placed inside the "Images" directory. Both "Images" directory in this level file have to be in the same directory.
-				imgHeight (optional)! the height of the image in the dialog panel
+				imgHeight (optional): the height of the image in the dialog panel
+				camX (optional): the X position to focus camera on the map grid
+				camY (optional): the Y position to focus camera on the map grid
 		-->
 		<dialog text="Exemple of briefing text."/>
 	</dialogs>
@@ -49,7 +50,7 @@
 	<blockLimits>
 		<!-- 
 			blockLimit (optional): this tag enables to define  the amount of specific programming block available. It contains two attributes:
-				blockType (mandatory): the key of a type of block in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack", "If", "IfElse", "For", "While", "Forever", "AndOperator", "OrOperator", "NotOperator", "Wall", "Enemie", "RedArea", "FieldGate", "Terminal", "Exit"}
+				blockType (mandatory): the key of a type of block in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack", "IfThen", "IfElse", "ForLoop", "While", "Forever", "AndOperator", "OrOperator", "NotOperator", "WallFront", "WallLeft", "WallRight", "PathFront", "PathLeft", "PathRight", "Enemy", "RedArea", "FieldGate", "Terminal", "Exit"}
 				limit (mandatory): >0 the amount of blocks available for the player, ==0 this block type is hidden for the player, <0 unlimited accès of this block type
 		-->
 		<blockLimit blockType="Forward" limit="-1" />
@@ -58,7 +59,7 @@
 		<blockLimit blockType="Wait" limit="0" />
 		<blockLimit blockType="Activate" limit="0" />
 		<blockLimit blockType="TurnBack" limit="0" />
-		<blockLimit blockType="If" limit="0" />
+		<blockLimit blockType="IfThen" limit="0" />
 		<blockLimit blockType="IfElse" limit="0" />
 		<blockLimit blockType="For" limit="0" />
 		<blockLimit blockType="While" limit="0" />
@@ -66,8 +67,13 @@
 		<blockLimit blockType="AndOperator" limit="0" />
 		<blockLimit blockType="OrOperator" limit="0" />
 		<blockLimit blockType="NotOperator" limit="0" />
-		<blockLimit blockType="Wall" limit="0" />
-		<blockLimit blockType="Enemie" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
 		<blockLimit blockType="RedArea" limit="0" />
 		<blockLimit blockType="FieldGate" limit="0" />
 		<blockLimit blockType="Terminal" limit="0" />
@@ -216,7 +222,7 @@
 			Three condition tags exists: condition, thenCondition, elseCondition. The three follow the same rules.
 			Condition tags can contain only one child that can be a captor or an operator among the following tags:
 				captor: this tag contains one attribute:
-					type (mandatory): the name of the captor in {"Wall", "Enemie", "RedArea", "FieldGate", "Terminal", "Exit"}.
+					type (mandatory): the name of the captor in {"WallFront", "WallLeft", "WallRight", "Enemy", "RedArea", "FieldGate", "Terminal", "Exit"}.
 				Exemple: <captor type="Terminal" />
 				
 				and: this tag has no attributes, it is composed by two mandatory tags: conditionLeft and conditionRight (see Condition description).
@@ -261,10 +267,12 @@
 			<condition>
 			  <and>
 				<conditionLeft>
-				  <captor type="FieldGate" />
+					<captor type="FieldGate" />
 				</conditionLeft>
 				<conditionRight>
-				  <captor type="Terminal" />
+					<not>
+						<captor type="Terminal" />
+					</not>
 				</conditionRight>
 			  </and>
 			</condition>
@@ -276,7 +284,7 @@
 							<condition>
 								<or>
 									<conditionLeft>
-										<captor type="Enemie" />
+										<captor type="Enemy" />
 									</conditionLeft>
 									<conditionRight>
 										<captor type="Exit" />
@@ -293,9 +301,42 @@
 			<elseContainer>
 				<while>
 					<condition>
-						<not>
-							<captor type="Wall" />
-						</not>
+						<and>
+							<conditionLeft>
+								<or>
+									<conditionLeft>
+										<captor type="WallFront" />
+									</conditionLeft>
+									<conditionRight>
+										<or>
+											<conditionLeft>
+												<captor type="WallLeft" />
+											</conditionLeft>
+											<conditionRight>
+												<captor type="WallRight" />
+											</conditionRight>
+										</or>
+									</conditionRight>
+								</or>
+							</conditionLeft>
+							<conditionRight>
+								<or>
+									<conditionLeft>
+										<captor type="PathFront" />
+									</conditionLeft>
+									<conditionRight>
+										<or>
+											<conditionLeft>
+												<captor type="PathLeft" />
+											</conditionLeft>
+											<conditionRight>
+												<captor type="PathRight" />
+											</conditionRight>
+										</or>
+									</conditionRight>
+								</or>
+							</conditionRight>
+						</and>
 					</condition>
 					<container>
 						<action type="Forward" />

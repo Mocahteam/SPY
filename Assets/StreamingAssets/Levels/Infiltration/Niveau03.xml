@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value= "3" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "2" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Il faut continuer à avancer." />
+	<dialog text="Au fait, notre drone d'observation suis automatiquement le déplacement de Karl mais vous pouvez le contrôler avec les flèches du clavier et la molette de la souris. N'hésitez pas à expérimenter ces commandes."/>
+	<dialog text="Vous pouvez aussi à tout moment accéder au menu de la mission pour, par exemple, revoir les textes d'introduction, relancer la mission ou la quitter." img="menu.png" imgHeight="250"/>
+  </dialogs>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="4" />
+    <blockLimit blockType="TurnLeft" limit="0" />
+    <blockLimit blockType="TurnRight" limit="0" />
+    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="0" />
+    <blockLimit blockType="IfThen" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="ForLoop" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="0" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <player associatedScriptName="Karl" posY="1" posX="5" direction="3" />
+  <script name="Karl" editMode="0" />
+  <score twoStars="5000" threeStars="6000"/>  
+</level>
