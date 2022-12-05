@@ -24,6 +24,7 @@ public class TitleScreenSystem : FSystem {
 	public GameObject listOfLevels;
 	public GameObject loadingScenarioContent;
 	public GameObject scenarioContent;
+	public GameObject quitButton;
 
 	private GameObject selectedScenario;
 	private Dictionary<string, List<string>> defaultCampaigns; // List of levels for each default campaign
@@ -80,6 +81,9 @@ public class TitleScreenSystem : FSystem {
 			MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
 			MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
 		}
+
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+			GameObjectManager.setGameObjectState(quitButton, false);
 	}
 
 	private IEnumerator GetScenarioWebRequest()
@@ -240,12 +244,6 @@ public class TitleScreenSystem : FSystem {
 		// explore subdirectories
 		foreach (string directory in Directory.GetDirectories(path))
 			loadLevelsAndScenarios(directory);
-	}
-
-	protected override void onProcess(int familiesUpdateCount) {
-		if (Input.GetButtonDown("Cancel")) {
-			Application.Quit();
-		}
 	}
 
 	private void showLevels(string campaignKey) {

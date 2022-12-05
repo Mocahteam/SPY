@@ -49,7 +49,7 @@ public class HistoryManager : FSystem
 		{
 			// Affichage de l'historique de l'ensemble des actions exécutées
 			saveHistory();
-			loadHistory();
+			MainLoop.instance.StartCoroutine(delayLoadHistory());
 		}
 		// for other end type, nothing to do more
 	}
@@ -116,7 +116,7 @@ public class HistoryManager : FSystem
 			GameObject agentSelected = null;
 			int minNbOfInaction = int.MaxValue;
 			foreach (GameObject agent in f_agent)
-				if (associatedAgent == agent.GetComponent<AgentEdit>().associatedScriptName)
+				if (associatedAgent.ToLower() == agent.GetComponent<AgentEdit>().associatedScriptName.ToLower())
 				{
 					ScriptRef sr = agent.GetComponent<ScriptRef>();
 					if (sr.nbOfInactions < minNbOfInaction)

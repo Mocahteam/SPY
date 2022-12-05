@@ -608,6 +608,12 @@ public class ParamCompetenceSystem : FSystem
 
 	public void refreshUI(RectTransform competency)
 	{
+		MainLoop.instance.StartCoroutine(delayRefreshUI(competency));
+	}
+
+	private IEnumerator delayRefreshUI(RectTransform competency)
+    {
+		yield return null;
 		Competency comp = competency.GetComponentInParent<Competency>();
 		while (comp != null)
 		{

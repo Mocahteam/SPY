@@ -12,6 +12,8 @@
 	  <div>
 		<label id="proxyLoadButton" style="visibility:hidden;" for="file-selector" class="loadButton">Importer un scénario</label>
 		<input id="file-selector" style="visibility:hidden;" type="file" accept=".xml">
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">{{{ PRODUCT_NAME }}}</div>
 	  </div>
       <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}}></canvas>
       <div id="unity-loading-bar">
@@ -21,12 +23,13 @@
         </div>
       </div>
       <div id="unity-mobile-warning">
-        WebGL builds are not supported on mobile devices.
+        Certains dispositifs mobiles peuvent manquer de mémoire pour charger le jeu. Tentative de chargement...
+      </div>
+      <div id="unity-safari-warning">
+        Safari 15 est requis pour charger le jeu. Si vous avez une version antérieure de Safari et que le jeu ne se charge pas, essayez avec Chrome ou Firefox.
       </div>
       <div id="unity-footer">
         <div id="unity-webgl-logo"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">{{{ PRODUCT_NAME }}}</div>
       </div>
     </div>
 	<p style="font-family: sans-serif; text-align: center; font-weight: bold;">About the project: <a href="https://github.com/Mocahteam/SPY" target="_blank">https://github.com/Mocahteam/SPY</a></p>
@@ -56,6 +59,7 @@
       var progressBarFull = document.querySelector("#unity-progress-bar-full");
       var fullscreenButton = document.querySelector("#unity-fullscreen-button");
       var mobileWarning = document.querySelector("#unity-mobile-warning");
+      var safariWarning = document.querySelector("#unity-safari-warning");
 
       // By default Unity keeps WebGL canvas render target size matched with
       // the DOM size of the canvas element (scaled by window.devicePixelRatio)
@@ -63,7 +67,7 @@
       // happening inside the engine, and you would instead like to size up
       // the canvas DOM size and WebGL render target sizes yourself.
       // config.matchWebGLToCanvasSize = false;
-
+	  console.log(navigator.userAgent);
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         container.className = "unity-mobile";
         // Avoid draining fillrate performance on mobile devices,
@@ -77,6 +81,14 @@
         canvas.style.width = "{{{ WIDTH }}}px";
         canvas.style.height = "{{{ HEIGHT }}}px";
       }
+	  
+	  var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+	  if (isSafari){
+		safariWarning.style.display = "block";
+        setTimeout(() => {
+          safariWarning.style.display = "none";
+        }, 5000);
+	  }
 #if BACKGROUND_FILENAME
       canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
 #endif

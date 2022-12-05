@@ -21,6 +21,9 @@ mergeInto(LibraryManager.library, {
 	HideHtmlButtons: function () {
 		var element = document.getElementById("proxyLoadButton");
 		element.style.visibility = 'hidden';
-	}
+	},
   
+	IsMobileBrowser: function () {
+		return (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+	}
 });

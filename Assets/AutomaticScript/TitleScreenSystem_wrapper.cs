@@ -11,6 +11,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject listOfLevels;
 	public UnityEngine.GameObject loadingScenarioContent;
 	public UnityEngine.GameObject scenarioContent;
+	public UnityEngine.GameObject quitButton;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -22,6 +23,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "listOfLevels", listOfLevels);
 		MainLoop.initAppropriateSystemField (system, "loadingScenarioContent", loadingScenarioContent);
 		MainLoop.initAppropriateSystemField (system, "scenarioContent", scenarioContent);
+		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
 	}
 
 	public void importScenario(System.String content)
