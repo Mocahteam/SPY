@@ -40,6 +40,10 @@ public class VirtualKeyboardManager : FSystem {
 				GameObjectManager.setGameObjectState(virtualKeyboard, true);
 				selectedInputField = input.GetComponent<TMP_InputField>();
 				selectedInputField.caretPosition = selectedInputField.text.Length;
+				if (selectedInputField.characterValidation == TMP_InputField.CharacterValidation.Integer)
+					GameObjectManager.setGameObjectState(virtualKeyboard.transform.Find("Panel").Find("Alphabet").gameObject, false);
+				else
+					GameObjectManager.setGameObjectState(virtualKeyboard.transform.Find("Panel").Find("Alphabet").gameObject, true);
 			}
 		});
 	}

@@ -27,7 +27,7 @@
         </div>
       </div>
       <div id="unity-mobile-warning">
-        Certains dispositifs mobiles peuvent manquer de mémoire pour charger le jeu. Tentative de chargement...
+        Certains dispositifs mobiles peuvent manquer de mémoire pour charger le jeu. Tentative de chargement : Veuillez patienter, chargement en cours....
       </div>
       <div id="unity-safari-warning">
         Safari 15 est requis pour charger le jeu. Si vous avez une version antérieure de Safari et que le jeu ne se charge pas, essayez avec Chrome ou Firefox.
@@ -70,15 +70,13 @@
       // the canvas DOM size and WebGL render target sizes yourself.
       // config.matchWebGLToCanvasSize = false;
 	  console.log(navigator.userAgent);
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+	  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
         container.className = "unity-mobile";
         // Avoid draining fillrate performance on mobile devices,
         // and default/override low DPI mode on mobile browsers.
         config.devicePixelRatio = 1;
         mobileWarning.style.display = "block";
-        setTimeout(() => {
-          mobileWarning.style.display = "none";
-        }, 5000);
       } else {
         canvas.style.width = "{{{ WIDTH }}}px";
         canvas.style.height = "{{{ HEIGHT }}}px";
@@ -87,15 +85,11 @@
 	  var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 	  if (isSafari){
 		safariWarning.style.display = "block";
-        setTimeout(() => {
-          safariWarning.style.display = "none";
-        }, 5000);
 	  }
 #if BACKGROUND_FILENAME
       canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
 #endif
       loadingBar.style.display = "block";
-
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
@@ -103,6 +97,9 @@
           progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
           loadingBar.style.display = "none";
+		  mobileWarning.style.display = "none";
+		  safariWarning.style.display = "none";
+		  
           fullscreenButton.onclick = () => {
 				unityInstance.SetFullscreen(1);
           };
@@ -118,7 +115,12 @@
 			reader.readAsText(fileList[0]);
 		  });
         }).catch((message) => {
-          alert(message);
+		  var msg = "Une erreur s'est produite lors du chargement du jeu";
+		  if (isSafari)
+			msg += "\nEssayer d'utiliser le navigateur Chrome ou Firefox";
+		  else if (isMobile)
+		    msg += "\nVotre dispositif mobile ne contient peut être pas assez de mémoire pour charger le jeu, essayer de recharger la page depuis un ordinateur avec le navigateur Chrome ou Firefox de préférence.";
+          alert(msg);
         });
       };
       document.body.appendChild(script);
