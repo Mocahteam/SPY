@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<level>
+  <info>
+    <func name="F5"/>
+    <func name="F6"/>
+    <func name="F7"/>
+    <func name="F8"/>
+  </info>
+  <map>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="3" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Cette salle ne devrait pas vous poser de problèmes maintenant que vous êtes un expert. Cependant, il y a une pièce à récupérer, ce n'est pas obligatoire mais elle pourrait vous donner un meilleur score !" />
+  </dialogs>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="-1" />
+    <blockLimit blockType="TurnLeft" limit="-1" />
+    <blockLimit blockType="TurnRight" limit="-1" />
+    <blockLimit blockType="Wait" limit="-1" />
+    <blockLimit blockType="Activate" limit="-1" />
+    <blockLimit blockType="TurnBack" limit="-1" />
+    <blockLimit blockType="IfThen" limit="-1" />
+    <blockLimit blockType="IfElse" limit="-1" />
+    <blockLimit blockType="ForLoop" limit="-1" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="-1" />
+    <blockLimit blockType="Enemy" limit="-1" />
+    <blockLimit blockType="RedArea" limit="-1" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="-1" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <coin posY="1" posX="6" />
+  <player associatedScriptName="Bob" posY="1" posX="1" direction="0" />
+  <script name="Bob" editMode="0" />
+  <enemy associatedScriptName="Guarde 1" posY="4" posX="6" direction="0" range="3" selfRange="False" typeRange="0" />
+  <script name="Guarde 1" editMode="0">
+      <forever>
+        <action type="Wait"/>
+        <action type="Wait"/>
+        <action type="TurnLeft"/>
+        <action type="Wait"/>
+        <action type="Wait"/>
+        <action type="TurnLeft"/>
+        <action type="Wait"/>
+        <action type="Wait"/>
+        <action type="TurnRight"/>
+        <action type="Wait"/>
+        <action type="Wait"/>
+        <action type="TurnRight"/>
+      </forever>
+  </script>
+</level>

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<level>
+  <info>
+    <func name="F5"/>
+    <func name="F6"/>
+    <func name="F7"/>
+    <func name="F8"/>
+  </info>
+  <map>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="3" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="0" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="2" /><cell value="1" /></line>
+    <line><cell value="1" /><cell value="1" /><cell value="1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="La sortie est au bout de ce couloir !" />
+	<dialog text="Evitons de saturer la ligne de communication en donnant un ordre plus efficace ! Le nombre d'ordres disponible est limité par la valeur indiquée au dessus des ordres." />
+	<dialog text="Utilise l'action 'Boucle', tu pourras y mettre d'autres actions dans cet ordre qui seront répétées le nombre de fois indiqué !&#xA;Attention, tu dois t'arrêter pile sur la sortie." />
+  </dialogs>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="1" />
+    <blockLimit blockType="TurnLeft" limit="-1" />
+    <blockLimit blockType="TurnRight" limit="-1" />
+    <blockLimit blockType="Wait" limit="-1" />
+    <blockLimit blockType="Activate" limit="-1" />
+    <blockLimit blockType="TurnBack" limit="-1" />
+    <blockLimit blockType="IfThen" limit="-1" />
+    <blockLimit blockType="IfElse" limit="-1" />
+    <blockLimit blockType="ForLoop" limit="-1" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="-1" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="-1" />
+  </blockLimits>
+  <player associatedScriptName="Bob" posY="14" posX="1" direction="0" />
+  <script name="Bob" editMode="0" />
+</level>

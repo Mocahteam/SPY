@@ -210,6 +210,7 @@ public class TitleScreenSystem : FSystem {
 		//create level directory buttons
 		foreach (string key in defaultCampaigns.Keys)
 		{
+			Debug.Log(key);
 			GameObject directoryButton = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/Button") as GameObject, listOfCampaigns.transform);
 			directoryButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(key);
 			GameObjectManager.bind(directoryButton);
