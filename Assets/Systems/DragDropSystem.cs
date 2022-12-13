@@ -32,15 +32,17 @@ public class DragDropSystem : FSystem
 	// Les familles
     private Family f_viewportContainerPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les containers éditables
 	private Family f_dropZone = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone))); // Les drops zones
+	private Family f_dropZoneEnabled = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Les drops zones visibles
 	private Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
 	private Family f_operators = FamilyManager.getFamily(new AllOfComponents(typeof(BaseOperator)));
-	private Family f_focusedDropArea = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(ReplacementSlot), typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // the drop area under mouse cursor
 	private Family f_elementToDelete = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToDelete)));
 	private Family f_elementToRefresh = FamilyManager.getFamily(new AllOfComponents(typeof(NeedRefreshHierarchy)));
 	private Family f_defaultDropZone = FamilyManager.getFamily(new AllOfComponents(typeof(Selected)));
 
 	private Family f_playMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family f_editMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+
+	private Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(Outline), typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	// Les variables
 	private GameData gameData;
@@ -214,6 +216,16 @@ public class DragDropSystem : FSystem
 		}
 	}
 
+	private GameObject getFocusedDropArea()
+    {
+		foreach (GameObject go in f_dropZoneEnabled)
+			if (go.transform.GetChild(0).gameObject.activeSelf)
+				return go;
+		foreach (GameObject go in f_replacementSlot)
+			if (go.GetComponent<Outline>().enabled)
+				return go;
+		return null;
+    }
 
 	// Determine si l'element associé à l'événement EndDrag se trouve dans une zone de container ou non
 	// Détruire l'objet si lâché hors d'un container
@@ -221,54 +233,19 @@ public class DragDropSystem : FSystem
 	{
 		if (!Pause && gameData.dragDropEnabled && itemDragged != null)
 		{
+			// On commence par regarder s'il n'y a pas de container pointé, dans ce cas on supprime l'objet drag
+			GameObject dropArea = getFocusedDropArea();
 			// On désactive les dropzones
 			setDropZoneState(false);
-
-			// On commence par regarder s'il n'y a pas de container pointé, dans ce cas on supprime l'objet drag
-			if (f_viewportContainerPointed.Count <= 0 && f_focusedDropArea.Count <= 0)
+			if (dropArea == null)
 			{
 				undoDrop();
 				return;
 			}
 			else // sinon on ajoute l'élément au container pointé
 			{
-				GameObject dropArea = null;
-				// If a drop area is pointer over, we select it
-				if (f_focusedDropArea.Count > 0)
+				if (dropArea.transform.IsChildOf(itemDragged.transform))
 				{
-					// The family can contains several GameObject in particular with nested condition (ie: (A AND B) OR C => in this case if we point A the following element will be pointerover: A, AND, OR and the order is not predictable) => we have to found the deepest Condition
-					GameObject deepestArea = null;
-					foreach (GameObject pointed in f_focusedDropArea)
-						if (deepestArea == null || pointed.transform.IsChildOf(deepestArea.transform))
-							deepestArea = pointed;
-					dropArea = deepestArea;
-				}
-				else // means user drop item not directely on drop area but focus the root container => require to find a target area
-				{
-					// Find the replacement slot if enabled or else the drop zone
-					GameObject rootContainer = f_viewportContainerPointed.First().GetComponentInChildren<UIRootContainer>().gameObject;
-					foreach (Transform child in rootContainer.transform)
-					{
-						// if we found a drop zone we store it
-						if (child.GetComponent<DropZone>())
-							dropArea = child.gameObject;
-						// but if we found an enabled replacement slot we override previous choice and we stop loop
-						if (child.GetComponent<ReplacementSlot>() && child.gameObject.activeSelf)
-						{
-							dropArea = child.gameObject;
-							break;
-						}
-					}
-				}
-				if (dropArea == null)
-				{
-					Debug.LogError("Warning! Unknown case: the drop area can't be found");
-					undoDrop();
-					return;
-				}
-				// check that dropArea is not a child of the dragged element (can appear if we move the mouse fast)
-				else if (dropArea.transform.IsChildOf(itemDragged.transform))
-                {
 					undoDrop();
 					return;
 				}

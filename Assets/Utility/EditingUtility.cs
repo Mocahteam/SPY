@@ -16,17 +16,14 @@ public static class EditingUtility
 		{
 			// if item is not a BaseElement (BasicAction or ControlElement) cancel action, undo drop
 			if (!item.GetComponent<BaseElement>())
+			{
 				return false;
+			}
 
 			// the item is compatible with dropZone
 			Transform targetContainer = null;
 			int siblingIndex = 0;
-			if (dropArea.transform.parent.GetComponent<UIRootContainer>()) // The main container (the one associated to the agent)
-			{
-				targetContainer = dropArea.transform.parent; // target is the parent
-				siblingIndex = dropArea.transform.GetSiblingIndex();
-			}
-			else if (dropArea.transform.parent.GetComponent<BaseElement>()) // BasicAction
+			if (dropArea.transform.parent.GetComponent<BaseElement>()) // BasicAction
 			{
 				targetContainer = dropArea.transform.parent.parent; // target is the grandparent
 				siblingIndex = dropArea.transform.parent.GetSiblingIndex();
@@ -51,11 +48,7 @@ public static class EditingUtility
 		}
 		else if (dropArea.GetComponent<ReplacementSlot>()) // we replace the replacementSlot by the item
 		{
-			// If replacement slot is not in the same type of item => cancel action
 			ReplacementSlot repSlot = dropArea.GetComponent<ReplacementSlot>();
-			if ((repSlot.slotType == ReplacementSlot.SlotType.BaseElement && !item.GetComponent<BaseElement>()) ||
-				(repSlot.slotType == ReplacementSlot.SlotType.BaseCondition && !item.GetComponent<BaseCondition>()))
-				return false;
 			// if replacement slot is for base element => insert item just before replacement slot
 			if (repSlot.slotType == ReplacementSlot.SlotType.BaseElement)
 			{

@@ -21,7 +21,7 @@ public class UISystem : FSystem {
 	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
 	private Family f_resetButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("ResetButton")); // Les petites balayettes de chaque panneau d'édition
 	private Family f_removeButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton")); // Les petites poubelles de chaque panneau d'édition
-	private Family f_pointerOver = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver))); // Tous les objets pointés
+	private Family f_pointerOver = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Tous les objets pointés
 	private Family f_tooltipContent = FamilyManager.getFamily(new AllOfComponents(typeof(TooltipContent))); // Tous les tooltips
 
 	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
@@ -32,12 +32,9 @@ public class UISystem : FSystem {
 
 	private Family f_enabledinventoryBlocks = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
-
-	[DllImport("__Internal")]
-	private static extern bool IsMobileBrowser(); // call javascript
-	private bool isMobile;
-
 	private GameData gameData;
+
+	private float touchUp;
 
 	public GameObject buttonExecute;
 	public GameObject buttonPause;
@@ -84,8 +81,6 @@ public class UISystem : FSystem {
 					GameObjectManager.removeComponent(need);
 		});
 
-		isMobile = Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser();
-
 		MainLoop.instance.StartCoroutine(forceLibraryRefresh());
 	}
 
@@ -124,14 +119,21 @@ public class UISystem : FSystem {
         {
 			setActiveEscapeMenu();
         }
+
 		// With touch device when the finger is up, pointerOver is not removed because OnPointerExit is not called
 		// then be sure to clear pointerOver and Tooltips
-		if (isMobile && Input.touchCount == 0)
+		if (Input.touchCount > 0)
+			touchUp = 0;
+		else
+			touchUp += Time.deltaTime;
+		if (PlayerPrefs.GetInt("interaction") == 1 // 0 means mouse/keyboard; 1 means touch-sensitive
+			&& touchUp > 0.25f)
 		{
 			foreach (GameObject pointed in f_pointerOver)
-				GameObjectManager.removeComponent<PointerOver>(pointed);
+				pointed.GetComponent<PointerSensitive>().OnPointerExit(null);//GameObjectManager.removeComponent<PointerOver>(pointed);
 			foreach (GameObject tooltip in f_tooltipContent)
 				tooltip.GetComponent<TooltipContent>().OnPointerExit(null);
+			touchUp = 0;
 		}
 	}
 

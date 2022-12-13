@@ -15,35 +15,32 @@ public class VirtualKeyboardManager : FSystem {
 	private TMP_InputField selectedInputField;
 	private bool wantToClose = false;
 
-	[DllImport("__Internal")]
-	private static extern bool IsMobileBrowser(); // call javascript
-
 	protected override void onStart()
     {
 		selectedInputField = null;
-		if (Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser())
-		{
-			foreach (GameObject go in f_inputFields)
-				addCallback(go);
+		foreach (GameObject go in f_inputFields)
+			addCallback(go);
 
-			f_inputFields.addEntryCallback(addCallback);
-		}
+		f_inputFields.addEntryCallback(addCallback);
 	}
 
 	private void addCallback(GameObject input)
     {
 		input.GetComponent<TMP_InputField>().onSelect.AddListener(delegate {
-			if (wantToClose)
-				wantToClose = false;
-			else
+			if (PlayerPrefs.GetInt("interaction") == 1) // 0 means mouse/keyboard; 1 means touch-sensitive
 			{
-				GameObjectManager.setGameObjectState(virtualKeyboard, true);
-				selectedInputField = input.GetComponent<TMP_InputField>();
-				selectedInputField.caretPosition = selectedInputField.text.Length;
-				if (selectedInputField.characterValidation == TMP_InputField.CharacterValidation.Integer)
-					GameObjectManager.setGameObjectState(virtualKeyboard.transform.Find("Panel").Find("Alphabet").gameObject, false);
+				if (wantToClose)
+					wantToClose = false;
 				else
-					GameObjectManager.setGameObjectState(virtualKeyboard.transform.Find("Panel").Find("Alphabet").gameObject, true);
+				{
+					GameObjectManager.setGameObjectState(virtualKeyboard, true);
+					selectedInputField = input.GetComponent<TMP_InputField>();
+					selectedInputField.caretPosition = selectedInputField.text.Length;
+					if (selectedInputField.characterValidation == TMP_InputField.CharacterValidation.Integer)
+						GameObjectManager.setGameObjectState(virtualKeyboard.transform.Find("Panel").Find("Alphabet").gameObject, false);
+					else
+						GameObjectManager.setGameObjectState(virtualKeyboard.transform.Find("Panel").Find("Alphabet").gameObject, true);
+				}
 			}
 		});
 	}
