@@ -35,6 +35,7 @@ public class UISystem : FSystem {
 	private GameData gameData;
 
 	private float touchUp;
+	private Coroutine viewCurrentAction = null;
 
 	public GameObject buttonExecute;
 	public GameObject buttonPause;
@@ -58,7 +59,12 @@ public class UISystem : FSystem {
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
 		
-		f_currentActions.addEntryCallback(keepCurrentActionViewable);
+		f_currentActions.addEntryCallback(delegate (GameObject go)
+		{
+			if (viewCurrentAction != null)
+				MainLoop.instance.StopCoroutine(viewCurrentAction);
+			viewCurrentAction = MainLoop.instance.StartCoroutine(keepCurrentActionViewable(go));
+		});
 
 		f_playingMode.addEntryCallback(delegate {
 			copyEditableScriptsToExecutablePanels();
@@ -159,58 +165,46 @@ public class UISystem : FSystem {
 	}
 
 	// keep current executed action viewable in the executable panel
-	private void keepCurrentActionViewable(GameObject go){
+	private IEnumerator keepCurrentActionViewable(GameObject go){
 		if (go.activeInHierarchy)
 		{
-			Vector3 v = GetGUIElementOffset(go.GetComponent<RectTransform>());
-			if (v != Vector3.zero)
-			{ // if not visible in UI
-				ScrollRect containerScrollRect = go.GetComponentInParent<ScrollRect>();
-				containerScrollRect.content.localPosition += GetSnapToPositionToBringChildIntoView(containerScrollRect, go.GetComponent<RectTransform>());
+			RectTransform goRect = go.transform as RectTransform;
+
+			// We look for the script container
+			RectTransform scriptContainer = goRect.parent as RectTransform;
+			while (scriptContainer.tag != "ScriptConstructor")
+				scriptContainer = scriptContainer.parent as RectTransform;
+			RectTransform viewport = scriptContainer.parent as RectTransform;
+
+			float goRectY = Mathf.Abs(scriptContainer.InverseTransformPoint(goRect.transform.position).y);
+
+			Vector2 targetAnchoredPosition = new Vector2(scriptContainer.anchoredPosition.x, scriptContainer.anchoredPosition.y);
+			// we auto focus on current action if it is not visible
+			// check if current action is too high
+			if ((goRectY-goRect.rect.height) - scriptContainer.anchoredPosition.y < 0)
+			{
+				targetAnchoredPosition = new Vector2(
+					targetAnchoredPosition.x,
+					goRectY - (goRect.rect.height * 2f) // move view a little bit higher than last current action position
+				);
+			}
+			// check if current action is too low
+			else if ((goRectY + goRect.rect.height) - scriptContainer.anchoredPosition.y > viewport.rect.height)
+			{
+				targetAnchoredPosition = new Vector2(
+					targetAnchoredPosition.x,
+					-viewport.rect.height + goRectY + goRect.rect.height * 2
+				);
+			}
+
+			float distance = Vector2.Distance(scriptContainer.anchoredPosition, targetAnchoredPosition);
+			while (Vector2.Distance(scriptContainer.anchoredPosition, targetAnchoredPosition) > 0.1f)
+			{
+				scriptContainer.anchoredPosition = Vector2.MoveTowards(scriptContainer.anchoredPosition, targetAnchoredPosition, distance / 10);
+				yield return null;
 			}
 		}
 	}
-
-	public Vector3 GetSnapToPositionToBringChildIntoView(ScrollRect scrollRect, RectTransform child){
-		Canvas.ForceUpdateCanvases();
-		Vector3 viewportLocalPosition = scrollRect.viewport.localPosition;
-		Vector3 childLocalPosition   = child.localPosition;
-		Vector3 result = new Vector3(
-			0,
-			0 - (viewportLocalPosition.y + childLocalPosition.y),
-			0
-		);
-		return result;
-	}
-
-	public Vector3 GetGUIElementOffset(RectTransform rect){
-        Rect screenBounds = new Rect(0f, 0f, Screen.width, Screen.height);
-        Vector3[] objectCorners = new Vector3[4];
-        rect.GetWorldCorners(objectCorners);
-
-
-		var xnew = 0f;
-        var ynew = 0f;
-        var znew = 0f;
- 
-        for (int i = 0; i < objectCorners.Length; i++){
-			if (objectCorners[i].x < screenBounds.xMin)
-                xnew = screenBounds.xMin - objectCorners[i].x;
-
-            if (objectCorners[i].x > screenBounds.xMax)
-                xnew = screenBounds.xMax - objectCorners[i].x;
-
-            if (objectCorners[i].y < screenBounds.yMin)
-                ynew = screenBounds.yMin - objectCorners[i].y;
-
-            if (objectCorners[i].y > screenBounds.yMax)
-                ynew = screenBounds.yMax - objectCorners[i].y;
-				
-        }
- 
-        return new Vector3(xnew, ynew, znew);
- 
-    }
 
 	// On affiche ou non la partie librairie/programmation sequence en fonction de la valeur reçue
 	public void setExecutionView(bool value){

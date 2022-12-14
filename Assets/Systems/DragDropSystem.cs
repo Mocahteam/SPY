@@ -47,12 +47,14 @@ public class DragDropSystem : FSystem
 	// Les variables
 	private GameData gameData;
 	private GameObject itemDragged; // L'item (ici bloc d'action) en cours de drag
+	private Coroutine viewLastDropZone = null;
 	public GameObject mainCanvas; // Le canvas principal
 	public GameObject lastDropZoneUsed; // La dernière dropzone utilisée
 	public AudioSource audioSource; // Pour le son d'ajout de bloc
 	//Pour la gestion du double clic
 	private float lastClickTime;
 	public float catchTime;
+	public RectTransform editableContainers;
 
 	// L'instance
 	public static DragDropSystem instance;
@@ -255,6 +257,7 @@ public class DragDropSystem : FSystem
 					// We restore all UI elements inside the EventSystem
 					foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
 						child.GetComponent<Image>().raycastTarget = true;
+					MainLoop.instance.StartCoroutine(pulseItem(itemDragged));
 				}
 			}
 			// Rafraichissement de l'UI
@@ -365,9 +368,94 @@ public class DragDropSystem : FSystem
 				addDraggedItemOnDropZone(lastDropZoneUsed);
 				// refresh all the hierarchy of parent containers
 				refreshHierarchyContainers(lastDropZoneUsed);
+
+				if (viewLastDropZone != null)
+					MainLoop.instance.StopCoroutine(viewLastDropZone);
+				MainLoop.instance.StartCoroutine(focusOnLastDropZoneUsed());
+				MainLoop.instance.StartCoroutine(pulseItem(itemDragged));
+
 				// Rafraichissement de l'UI
 				GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 				itemDragged = null;
+			}
+		}
+	}
+
+	private IEnumerator pulseItem(GameObject newItem)
+    {
+		float initScaleX = newItem.transform.localScale.x;
+		newItem.transform.localScale = new Vector3(newItem.transform.localScale.x + 0.3f, newItem.transform.localScale.y, newItem.transform.localScale.z);
+		while (newItem.transform.localScale.x > initScaleX)
+		{
+			Debug.Log(newItem.transform.localScale.x);
+			newItem.transform.localScale = new Vector3(newItem.transform.localScale.x-0.01f, newItem.transform.localScale.y, newItem.transform.localScale.z);
+			yield return null;
+		}
+		Debug.Log(newItem.transform.localScale.x+" "+ initScaleX);
+	}
+
+	private IEnumerator focusOnLastDropZoneUsed()
+    {
+		yield return new WaitForSeconds(.25f);
+
+		RectTransform editableCanvas = editableContainers.parent as RectTransform;
+		// get last drop zone reference (depends if last drop zone is a replacement slot, a drop zone of an action or a drop zone of a control block
+		RectTransform lastDropRef = null;
+		if (lastDropZoneUsed.GetComponent<DropZone>())
+		{
+			if (lastDropZoneUsed.transform.parent.GetComponent<BaseElement>()) // BasicAction
+				lastDropRef = lastDropZoneUsed.transform.parent as RectTransform; // target is the parent
+			else if (lastDropZoneUsed.transform.parent.parent.GetComponent<ControlElement>() && lastDropZoneUsed.transform.parent.GetSiblingIndex() == 1) // the dropArea of the first child of a Control block
+				lastDropRef = lastDropZoneUsed.transform.parent.parent as RectTransform; // target is the grandparent
+		}
+		else
+			lastDropRef = lastDropZoneUsed.transform as RectTransform; // This is a replacement slot
+
+		float lastDropZoneUsedY = Mathf.Abs(editableContainers.InverseTransformPoint(lastDropRef.transform.position).y);
+		float lastDropZoneUsedX = Mathf.Abs(editableContainers.InverseTransformPoint(lastDropRef.transform.position).x);
+
+		Vector2 targetAnchoredPosition = new Vector2(editableContainers.anchoredPosition.x, editableContainers.anchoredPosition.y);
+		// we auto focus on last drop zone used only if it is not visible
+		if (lastDropZoneUsedY - editableContainers.anchoredPosition.y < 0 || lastDropZoneUsedY - editableContainers.anchoredPosition.y > editableCanvas.rect.height)
+		{
+			// check if last drop zone used is too high
+			if (lastDropZoneUsedY - editableContainers.anchoredPosition.y < 0)
+			{
+				targetAnchoredPosition = new Vector2(
+					targetAnchoredPosition.x,
+					lastDropZoneUsedY - (lastDropRef.rect.height * 2f) // move view a little bit higher than last drop zone position
+				);
+			}
+			// check if last drop zone used is too low
+			else if (lastDropZoneUsedY - editableContainers.anchoredPosition.y > editableCanvas.rect.height)
+			{
+				targetAnchoredPosition = new Vector2(
+					targetAnchoredPosition.x,
+					-editableCanvas.rect.height + lastDropZoneUsedY + lastDropRef.rect.height / 2
+				);
+			}
+
+			// same for x pos
+			if (lastDropZoneUsedX + editableContainers.anchoredPosition.x < 0)
+			{
+				targetAnchoredPosition = new Vector2(
+					-lastDropZoneUsedX + lastDropRef.rect.width,
+					targetAnchoredPosition.y
+				);
+			}
+			else if (lastDropZoneUsedX + editableContainers.anchoredPosition.x > editableCanvas.rect.width)
+			{
+				targetAnchoredPosition = new Vector2(
+					editableCanvas.rect.width - lastDropZoneUsedX - lastDropRef.rect.width,
+					targetAnchoredPosition.y
+				);
+			}
+
+			float distance = Vector2.Distance(editableContainers.anchoredPosition, targetAnchoredPosition);
+			while (Vector2.Distance(editableContainers.anchoredPosition, targetAnchoredPosition) > 0.1f)
+			{
+				editableContainers.anchoredPosition = Vector2.MoveTowards(editableContainers.anchoredPosition, targetAnchoredPosition, distance / 10);
+				yield return null;
 			}
 		}
 	}

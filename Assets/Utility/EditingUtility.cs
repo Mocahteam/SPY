@@ -196,7 +196,12 @@ public static class EditingUtility
 			// Si activé, on note le nombre de tour de boucle à faire
 			if (!isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
 			{
-				forAct.nbFor = int.Parse(forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text);
+				try
+				{
+					forAct.nbFor = int.Parse(forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text);
+				} catch{
+					forAct.nbFor = 0;
+				}
 				forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 			}// Sinon on met tout à 0
 			else if (isInteractable && !forAct.gameObject.GetComponent<WhileControl>())

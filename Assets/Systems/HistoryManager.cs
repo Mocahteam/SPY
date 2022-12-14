@@ -108,6 +108,8 @@ public class HistoryManager : FSystem
 				}
 			}
 		}
+		(EditableCanvas.transform.GetChild(0).transform as RectTransform).anchoredPosition = new Vector2(0, 0);
+
 		// Add Wait action for each inaction
 		for (int containerCpt = 0; containerCpt < EditableCanvas.transform.GetChild(0).childCount; containerCpt++)
 		{
