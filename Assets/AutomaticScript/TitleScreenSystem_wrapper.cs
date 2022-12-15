@@ -41,6 +41,16 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "launchLevel", null);
 	}
 
+	public void testLevel(TMPro.TMP_Text levelToLoad)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "testLevel", levelToLoad);
+	}
+
+	public void askToLoadLevel(System.String levelToLoad)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "askToLoadLevel", levelToLoad);
+	}
+
 	public void quitGame()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "quitGame", null);

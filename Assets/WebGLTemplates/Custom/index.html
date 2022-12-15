@@ -7,7 +7,7 @@
 		<link rel="shortcut icon" href="TemplateData/favicon.ico">
 		<link rel="stylesheet" href="TemplateData/style.css">
 	</head>
-	<body>
+	<body onresize="resizeCanvas()">
 	<div id="unity-container" class="unity-desktop">
 	  <div id="unity-header">
 		<p style="font-family: sans-serif; text-align: center; font-weight: bold;">About the project: <a href="https://github.com/Mocahteam/SPY" target="_blank">https://github.com/Mocahteam/SPY</a></p>
@@ -91,23 +91,9 @@
 				loadingBar.style.display = "none";
 				mobileWarning.style.display = "none";
 
-				fullscreenButton.onclick = () => {
+				fullscreenButton.addEventListener("click", () => {
 					unityInstance.SetFullscreen(1);
-					if (!container.classList.contains("fullscreenTag")){
-						container.className = "unity-mobile fullscreenTag";
-						canvas.style.width = "";
-						canvas.style.height = "";
-					}
-					else{	
-						if (isMobile)
-							container.className = "unity-mobile";
-						else{
-							container.className = "unity-desktop";
-							canvas.style.width = "{{{ WIDTH }}}px";
-							canvas.style.height = "{{{ HEIGHT }}}px";
-						}
-					}
-				};
+				});
 				const fileSelector = document.getElementById('file-selector');
 				fileSelector.addEventListener('change', (event) => {
 					const fileList = event.target.files;
@@ -119,6 +105,14 @@
 					};
 					reader.readAsText(fileList[0]);
 				});
+			
+				// ask to load a specific level 
+				const queryString = window.location.search;
+				const urlParams = new URLSearchParams(queryString);
+				const levelToLoad = urlParams.get('level');
+				if (levelToLoad != null)
+					unityInstance.SendMessage('Main_Loop', 'askToLoadLevel', levelToLoad);
+				
 			}).catch((message) => {
 				var msg = "Une erreur s'est produite lors du chargement du jeu";
 				var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -128,8 +122,29 @@
 					msg += "\nVotre dispositif mobile ne contient peut être pas assez de mémoire pour charger le jeu, essayer de recharger la page depuis un ordinateur avec le navigateur Chrome ou Firefox de préférence.";
 				alert(msg);
 			});
+			
 		};
 		
+		fullscreenButton.addEventListener("click", () => {
+			if (!container.classList.contains("fullscreenTag")){
+				container.className = "unity-mobile fullscreenTag";
+				canvas.style.width = "";
+				var rect = canvas.getBoundingClientRect();
+				canvas.style.height = (window.innerHeight-rect.top)+"px";
+			}
+			else{	
+				if (isMobile){
+					container.className = "unity-mobile";
+					var rect = canvas.getBoundingClientRect();
+					canvas.style.height = (window.innerHeight-rect.top)+"px";
+				}
+				else{
+					container.className = "unity-desktop";
+					canvas.style.width = "{{{ WIDTH }}}px";
+					canvas.style.height = "{{{ HEIGHT }}}px";
+				}
+			}
+		});
 		
 		if (document.addEventListener)
 		{
@@ -143,8 +158,11 @@
 		{
 			if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement)
 			{
-				if (isMobile)
+				if (isMobile){
 					container.className = "unity-mobile";
+					var rect = canvas.getBoundingClientRect();
+					canvas.style.height = (window.innerHeight-rect.top)+"px";
+				}
 				else{
 					container.className = "unity-desktop";
 					canvas.style.width = "{{{ WIDTH }}}px";
@@ -152,6 +170,13 @@
 				}
 			}
 		}
+		
+        function resizeCanvas(){
+            if (container.classList.contains("fullscreenTag")){
+				var rect = canvas.getBoundingClientRect();
+				canvas.style.height = (window.innerHeight-rect.top)+"px";
+			}
+        }
 		
 		document.body.appendChild(script);
 	</script>
