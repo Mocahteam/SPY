@@ -8,8 +8,7 @@ using Debug = UnityEngine.Debug;
 public class FollowMouseSystem : FSystem
 {
 	private GameData gameData;
-	public GameData prefabGameData;
-	
+
 	public static EndGameManager instance;
 
 	public Camera camera;
@@ -25,16 +24,7 @@ public class FollowMouseSystem : FSystem
 		base.onStart();
 		Application.targetFrameRate = 60;
 		_rectTransform = leftMenu.GetComponent<RectTransform>();
-		if (!GameObject.Find("GameData"))
-		{
-			gameData = UnityEngine.Object.Instantiate(prefabGameData);
-			gameData.name = "GameData";
-			GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
-		}
-		else
-		{
-			gameData = GameObject.Find("GameData").GetComponent<GameData>();
-		}
+		gameData = GameObject.Find("GameData").GetComponent<GameData>();
 	}
 
 	// Use to process your families.

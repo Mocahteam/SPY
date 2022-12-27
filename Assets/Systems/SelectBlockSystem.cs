@@ -4,6 +4,7 @@ using FYFY;
 public class SelectBlockSystem : FSystem
 {
 	private GameData gameData;
+	public GameData prefabGameData;
 	
 	public static SelectBlockSystem instance;
 	public GameObject mover;
@@ -16,8 +17,16 @@ public class SelectBlockSystem : FSystem
 	protected override void onStart()
 	{
 		base.onStart();
-		
-		gameData = GameObject.Find("GameData").GetComponent<GameData>();
+		if (!GameObject.Find("GameData"))
+		{
+			gameData = UnityEngine.Object.Instantiate(prefabGameData);
+			gameData.name = "GameData";
+			GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
+		}
+		else
+		{
+			gameData = GameObject.Find("GameData").GetComponent<GameData>();
+		}
 	}
 
 	public void selectBlock(GameObject obj)

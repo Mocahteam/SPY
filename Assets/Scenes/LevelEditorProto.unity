@@ -4925,9 +4925,9 @@ GameObject:
   - component: {fileID: 361349230}
   - component: {fileID: 361349234}
   - component: {fileID: 361349239}
-  - component: {fileID: 361349240}
   - component: {fileID: 361349241}
   - component: {fileID: 361349242}
+  - component: {fileID: 361349243}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -4960,10 +4960,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _fixedUpdateSystemDescriptions:
-  - _typeAssemblyQualifiedName: FollowMouseSystem, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: FollowMouseSystem
-    _pause: 0
   - _typeAssemblyQualifiedName: CameraSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     _typeFullName: CameraSystem
@@ -4972,7 +4968,11 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     _typeFullName: SelectBlockSystem
     _pause: 0
-  _updateSystemDescriptions: []
+  _updateSystemDescriptions:
+  - _typeAssemblyQualifiedName: FollowMouseSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: FollowMouseSystem
+    _pause: 0
   _lateUpdateSystemDescriptions: []
   _forceUpdateInspector: 0
   _loadingState: 0
@@ -5128,22 +5128,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89ad2e985fc34264ca591497f2e2c403, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &361349240
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 361349215}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 998497da9e885481e9496c34678fbb18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefabGameData: {fileID: 3833649377614804033, guid: 0c781d4c9bf00bb48ad0e4df8f089e03,
-    type: 3}
-  camera: {fileID: 963194227}
-  leftMenu: {fileID: 1962555724}
 --- !u!114 &361349241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5174,7 +5158,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aba2903f935ae409db85e9d39acd985a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefabGameData: {fileID: 3833649377614804033, guid: 0c781d4c9bf00bb48ad0e4df8f089e03,
+    type: 3}
   mover: {fileID: 1488190706}
+--- !u!114 &361349243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 998497da9e885481e9496c34678fbb18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camera: {fileID: 963194227}
+  leftMenu: {fileID: 567685737}
 --- !u!1 &371440127
 GameObject:
   m_ObjectHideFlags: 0
@@ -7155,7 +7155,7 @@ RectTransform:
   m_GameObject: {fileID: 567685737}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.99999994, y: 0.99999994, z: 0.99999994}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 451020364}
@@ -7183,8 +7183,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 976971665}
-  m_Horizontal: 1
-  m_Vertical: 1
+  m_Horizontal: 0
+  m_Vertical: 0
   m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
@@ -23492,8 +23492,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 1493523085}
-  m_Horizontal: 1
-  m_Vertical: 1
+  m_Horizontal: 0
+  m_Vertical: 0
   m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
