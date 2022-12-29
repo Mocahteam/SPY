@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using FYFY;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -24,10 +24,14 @@ public class TitleScreenSystem : FSystem {
 	public GameObject listOfLevels;
 	public GameObject loadingScenarioContent;
 	public GameObject scenarioContent;
+	public GameObject quitButton;
 
 	private GameObject selectedScenario;
 	private Dictionary<string, List<string>> defaultCampaigns; // List of levels for each default campaign
 	private UnityAction localCallback;
+
+	private string loadLevelWithURL = "";
+	private int webGL_levelLoaded = 0;
 
 	[DllImport("__Internal")]
 	private static extern void ShowHtmlButtons(); // call javascript
@@ -79,6 +83,7 @@ public class TitleScreenSystem : FSystem {
 			ShowHtmlButtons();
 			MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
 			MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
+			GameObjectManager.setGameObjectState(quitButton, false);
 		}
 	}
 
@@ -125,6 +130,12 @@ public class TitleScreenSystem : FSystem {
 			// try to load all levels
 			foreach (string levelRaw in levelsListRaw.levelPath)
 				MainLoop.instance.StartCoroutine(GetLevelWebRequest(Application.streamingAssetsPath + "/" + levelRaw));
+			// wait level loading
+			while (webGL_levelLoaded < levelsListRaw.levelPath.Count)
+				yield return null;
+			// Now, if require, we can load requested level by URL
+			if (loadLevelWithURL != "")
+				testLevelPath(loadLevelWithURL);
 		}
 	}
 
@@ -133,6 +144,7 @@ public class TitleScreenSystem : FSystem {
 		UnityWebRequest www = UnityWebRequest.Get(levelUri);
 		yield return www.SendWebRequest();
 
+		webGL_levelLoaded++;
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			localCallback = null;
@@ -243,12 +255,6 @@ public class TitleScreenSystem : FSystem {
 			loadLevelsAndScenarios(directory);
 	}
 
-	protected override void onProcess(int familiesUpdateCount) {
-		if (Input.GetButtonDown("Cancel")) {
-			Application.Quit();
-		}
-	}
-
 	private void showLevels(string campaignKey) {
 		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("SPYMenu").Find("MenuCampaigns").gameObject, false);
 		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("SPYMenu").Find("MenuLevels").gameObject, true);
@@ -293,9 +299,30 @@ public class TitleScreenSystem : FSystem {
 		GameObjectManager.loadScene("MainScene");
 	}
 
+
 	public void launchLevelEditor()
 	{
 		GameObjectManager.loadScene("LevelEditorProto");
+
+	//Used on scenario editing window (see button ButtonTestLevel)
+	public void testLevel(TMP_Text levelToLoad)
+	{
+		testLevelPath(levelToLoad.text);
+	}
+	private void testLevelPath(string levelToLoad)
+	{
+		gameData.scenarioName = "testLevel";
+		gameData.scenario = new List<string>();
+		gameData.levelToLoad = Application.streamingAssetsPath + "/" + levelToLoad;
+		gameData.scenario.Add(gameData.levelToLoad);
+		GameObjectManager.loadScene("MainScene");
+	}
+
+	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/index.html) via le Wrapper du Système
+	public void askToLoadLevel(string levelToLoad)
+    {
+		loadLevelWithURL = levelToLoad;
+
 	}
 
 	// See Quitter button in editor

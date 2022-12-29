@@ -7,6 +7,7 @@ public class DragDropSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject lastDropZoneUsed;
 	public UnityEngine.AudioSource audioSource;
 	public System.Single catchTime;
+	public UnityEngine.RectTransform editableContainers;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -14,6 +15,7 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "lastDropZoneUsed", lastDropZoneUsed);
 		MainLoop.initAppropriateSystemField (system, "audioSource", audioSource);
 		MainLoop.initAppropriateSystemField (system, "catchTime", catchTime);
+		MainLoop.initAppropriateSystemField (system, "editableContainers", editableContainers);
 	}
 
 	public void checkHighlightDropArea(UnityEngine.GameObject dropArea)

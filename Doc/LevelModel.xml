@@ -50,7 +50,7 @@
 	<blockLimits>
 		<!-- 
 			blockLimit (optional): this tag enables to define  the amount of specific programming block available. It contains two attributes:
-				blockType (mandatory): the key of a type of block in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack", "IfThen", "IfElse", "ForLoop", "While", "Forever", "AndOperator", "OrOperator", "NotOperator", "WallFront", "WallLeft", "WallRight", "Enemy", "RedArea", "FieldGate", "Terminal", "Exit"}
+				blockType (mandatory): the key of a type of block in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack", "IfThen", "IfElse", "ForLoop", "While", "Forever", "AndOperator", "OrOperator", "NotOperator", "WallFront", "WallLeft", "WallRight", "PathFront", "PathLeft", "PathRight", "Enemy", "RedArea", "FieldGate", "Terminal", "Exit"}
 				limit (mandatory): >0 the amount of blocks available for the player, ==0 this block type is hidden for the player, <0 unlimited accès of this block type
 		-->
 		<blockLimit blockType="Forward" limit="-1" />
@@ -70,6 +70,9 @@
 		<blockLimit blockType="WallFront" limit="0" />
 		<blockLimit blockType="WallLeft" limit="0" />
 		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
 		<blockLimit blockType="Enemy" limit="0" />
 		<blockLimit blockType="RedArea" limit="0" />
 		<blockLimit blockType="FieldGate" limit="0" />
@@ -298,21 +301,42 @@
 			<elseContainer>
 				<while>
 					<condition>
-						<or>
+						<and>
 							<conditionLeft>
-								<captor type="WallFront" />
+								<or>
+									<conditionLeft>
+										<captor type="WallFront" />
+									</conditionLeft>
+									<conditionRight>
+										<or>
+											<conditionLeft>
+												<captor type="WallLeft" />
+											</conditionLeft>
+											<conditionRight>
+												<captor type="WallRight" />
+											</conditionRight>
+										</or>
+									</conditionRight>
+								</or>
 							</conditionLeft>
 							<conditionRight>
 								<or>
 									<conditionLeft>
-										<captor type="WallLeft" />
+										<captor type="PathFront" />
 									</conditionLeft>
 									<conditionRight>
-										<captor type="WallRight" />
+										<or>
+											<conditionLeft>
+												<captor type="PathLeft" />
+											</conditionLeft>
+											<conditionRight>
+												<captor type="PathRight" />
+											</conditionRight>
+										</or>
 									</conditionRight>
 								</or>
 							</conditionRight>
-						</or>
+						</and>
 					</condition>
 					<container>
 						<action type="Forward" />

@@ -100,7 +100,6 @@ public class DialogSystem : FSystem
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if (gameData.dialogMessage[nDialog].Item2 != null)
 		{
-			GameObjectManager.setGameObjectState(imageGO, true);
 			if (Application.platform == RuntimePlatform.WebGLPlayer){
 				Uri uri = new Uri(gameData.levelToLoad);
 				setImageSprite(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + gameData.dialogMessage[nDialog].Item2);
@@ -175,7 +174,7 @@ public class DialogSystem : FSystem
 				if (tex2D.LoadImage(fileData))
 				{
 					img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
-					setWantedHeight(img);
+					MainLoop.instance.StartCoroutine(setWantedHeight(img));
 				}
 			}
 			catch (Exception e)
@@ -198,15 +197,20 @@ public class DialogSystem : FSystem
 		{
 			Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
 			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
-			setWantedHeight(img);
+			MainLoop.instance.StartCoroutine(setWantedHeight(img));
 		}
 	}
 
-	private void setWantedHeight(Image img)
-    {
+	private IEnumerator setWantedHeight(Image img)
+	{
+		img.gameObject.SetActive(false); // Force disabling image to compute panel height with only buttons and text
+		yield return new WaitForSeconds(0.1f); // take time to update UI
+		RectTransform rectParent = (RectTransform)img.transform.parent;
+		float maxHeight = Screen.height - (rectParent.sizeDelta.y + rectParent.anchoredPosition.y * 2); // compute available space
 		if (gameData.dialogMessage[nDialog].Item3 != -1)
-			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, gameData.dialogMessage[nDialog].Item3);
+			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, Math.Min(gameData.dialogMessage[nDialog].Item3, maxHeight));
 		else
-			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, img.GetComponent<LayoutElement>().preferredHeight);
+			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, Math.Min(img.GetComponent<LayoutElement>().preferredHeight, maxHeight));
+		GameObjectManager.setGameObjectState(img.gameObject, true); // Know we can show image
 	}
 }

@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using TMPro;
 using System.Collections;
 using System;
+using System.Runtime.InteropServices;
+using FYFY_plugins.PointerManager;
 
 /// <summary>
 /// Manage InGame UI (Play/Pause/Stop, reset, go back to main menu...)
@@ -19,6 +21,8 @@ public class UISystem : FSystem {
 	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
 	private Family f_resetButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("ResetButton")); // Les petites balayettes de chaque panneau d'édition
 	private Family f_removeButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton")); // Les petites poubelles de chaque panneau d'édition
+	private Family f_pointerOver = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Tous les objets pointés
+	private Family f_tooltipContent = FamilyManager.getFamily(new AllOfComponents(typeof(TooltipContent))); // Tous les tooltips
 
 	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family f_updateStartButton = FamilyManager.getFamily(new AllOfComponents(typeof(NeedRefreshPlayButton)));
@@ -29,6 +33,9 @@ public class UISystem : FSystem {
 	private Family f_enabledinventoryBlocks = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	private GameData gameData;
+
+	private float touchUp;
+	private Coroutine viewCurrentAction = null;
 
 	public GameObject buttonExecute;
 	public GameObject buttonPause;
@@ -52,7 +59,12 @@ public class UISystem : FSystem {
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
 		
-		f_currentActions.addEntryCallback(keepCurrentActionViewable);
+		f_currentActions.addEntryCallback(delegate (GameObject go)
+		{
+			if (viewCurrentAction != null)
+				MainLoop.instance.StopCoroutine(viewCurrentAction);
+			viewCurrentAction = MainLoop.instance.StartCoroutine(keepCurrentActionViewable(go));
+		});
 
 		f_playingMode.addEntryCallback(delegate {
 			copyEditableScriptsToExecutablePanels();
@@ -113,6 +125,22 @@ public class UISystem : FSystem {
         {
 			setActiveEscapeMenu();
         }
+
+		// With touch device when the finger is up, pointerOver is not removed because OnPointerExit is not called
+		// then be sure to clear pointerOver and Tooltips
+		if (Input.touchCount > 0)
+			touchUp = 0;
+		else
+			touchUp += Time.deltaTime;
+		if (PlayerPrefs.GetInt("interaction") == 1 // 0 means mouse/keyboard; 1 means touch-sensitive
+			&& touchUp > 0.25f)
+		{
+			foreach (GameObject pointed in f_pointerOver)
+				pointed.GetComponent<PointerSensitive>().OnPointerExit(null);//GameObjectManager.removeComponent<PointerOver>(pointed);
+			foreach (GameObject tooltip in f_tooltipContent)
+				tooltip.GetComponent<TooltipContent>().OnPointerExit(null);
+			touchUp = 0;
+		}
 	}
 
 
@@ -137,58 +165,46 @@ public class UISystem : FSystem {
 	}
 
 	// keep current executed action viewable in the executable panel
-	private void keepCurrentActionViewable(GameObject go){
+	private IEnumerator keepCurrentActionViewable(GameObject go){
 		if (go.activeInHierarchy)
 		{
-			Vector3 v = GetGUIElementOffset(go.GetComponent<RectTransform>());
-			if (v != Vector3.zero)
-			{ // if not visible in UI
-				ScrollRect containerScrollRect = go.GetComponentInParent<ScrollRect>();
-				containerScrollRect.content.localPosition += GetSnapToPositionToBringChildIntoView(containerScrollRect, go.GetComponent<RectTransform>());
+			RectTransform goRect = go.transform as RectTransform;
+
+			// We look for the script container
+			RectTransform scriptContainer = goRect.parent as RectTransform;
+			while (scriptContainer.tag != "ScriptConstructor")
+				scriptContainer = scriptContainer.parent as RectTransform;
+			RectTransform viewport = scriptContainer.parent as RectTransform;
+
+			float goRectY = Mathf.Abs(scriptContainer.InverseTransformPoint(goRect.transform.position).y);
+
+			Vector2 targetAnchoredPosition = new Vector2(scriptContainer.anchoredPosition.x, scriptContainer.anchoredPosition.y);
+			// we auto focus on current action if it is not visible
+			// check if current action is too high
+			if ((goRectY-goRect.rect.height) - scriptContainer.anchoredPosition.y < 0)
+			{
+				targetAnchoredPosition = new Vector2(
+					targetAnchoredPosition.x,
+					goRectY - (goRect.rect.height * 2f) // move view a little bit higher than last current action position
+				);
+			}
+			// check if current action is too low
+			else if ((goRectY + goRect.rect.height) - scriptContainer.anchoredPosition.y > viewport.rect.height)
+			{
+				targetAnchoredPosition = new Vector2(
+					targetAnchoredPosition.x,
+					-viewport.rect.height + goRectY + goRect.rect.height * 2
+				);
+			}
+
+			float distance = Vector2.Distance(scriptContainer.anchoredPosition, targetAnchoredPosition);
+			while (Vector2.Distance(scriptContainer.anchoredPosition, targetAnchoredPosition) > 0.1f)
+			{
+				scriptContainer.anchoredPosition = Vector2.MoveTowards(scriptContainer.anchoredPosition, targetAnchoredPosition, distance / 10);
+				yield return null;
 			}
 		}
 	}
-
-	public Vector3 GetSnapToPositionToBringChildIntoView(ScrollRect scrollRect, RectTransform child){
-		Canvas.ForceUpdateCanvases();
-		Vector3 viewportLocalPosition = scrollRect.viewport.localPosition;
-		Vector3 childLocalPosition   = child.localPosition;
-		Vector3 result = new Vector3(
-			0,
-			0 - (viewportLocalPosition.y + childLocalPosition.y),
-			0
-		);
-		return result;
-	}
-
-	public Vector3 GetGUIElementOffset(RectTransform rect){
-        Rect screenBounds = new Rect(0f, 0f, Screen.width, Screen.height);
-        Vector3[] objectCorners = new Vector3[4];
-        rect.GetWorldCorners(objectCorners);
-
-
-		var xnew = 0f;
-        var ynew = 0f;
-        var znew = 0f;
- 
-        for (int i = 0; i < objectCorners.Length; i++){
-			if (objectCorners[i].x < screenBounds.xMin)
-                xnew = screenBounds.xMin - objectCorners[i].x;
-
-            if (objectCorners[i].x > screenBounds.xMax)
-                xnew = screenBounds.xMax - objectCorners[i].x;
-
-            if (objectCorners[i].y < screenBounds.yMin)
-                ynew = screenBounds.yMin - objectCorners[i].y;
-
-            if (objectCorners[i].y > screenBounds.yMax)
-                ynew = screenBounds.yMax - objectCorners[i].y;
-				
-        }
- 
-        return new Vector3(xnew, ynew, znew);
- 
-    }
 
 	// On affiche ou non la partie librairie/programmation sequence en fonction de la valeur reçue
 	public void setExecutionView(bool value){
@@ -296,7 +312,7 @@ public class UISystem : FSystem {
 			// On parcourt les scripts containers pour identifer celui associé au robot 
 			foreach (GameObject container in f_viewportContainer)
 				// Si le container comporte le même nom que le robot
-				if (container.GetComponentInChildren<UIRootContainer>().scriptName == robot.GetComponent<AgentEdit>().associatedScriptName)
+				if (container.GetComponentInChildren<UIRootContainer>().scriptName.ToLower() == robot.GetComponent<AgentEdit>().associatedScriptName.ToLower())
 					// On recupére le container qui contient le script à associer au robot
 					editableContainer = container.transform.Find("ScriptContainer").gameObject;
 

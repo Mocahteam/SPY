@@ -1,6 +1,1186 @@
 {
 	"referentials": [
 		{
+			"name": "SPY",
+			"list": [
+				{
+					"key": "SPY_StepByStep",
+					"parentKey": "",
+					"name": "Résoudre un problème en plusieurs étapes",
+					"description": "Cette fonctionnalité du jeu permet au joueur de décomposer la résolution du problème en sous étapes. Le joueur peut alors exécuter quelques blocs, analyser la situation après le déplacement et poursuivre sa résolution.",
+					"constraints": [
+						{
+							"label": "ExecutionLimit",
+							"tag": "executionLimit",
+							"parameters": [
+								{
+									"attribute": "amount",
+									"constraint": "<=",
+									"value": "1"
+								}
+							]
+						}
+					],
+					"rule": "ExecutionLimit = 0"
+				},
+				{
+					"key": "SPY_Fog",
+					"parentKey": "",
+					"name": "Traduire en langage informatique une consigne exprimée en langage naturel",
+					"description": "Active un filtre qui empêche le joueur de voir toute la scène et donc d'avoir une vision globale du problème. La consigne indique en langage naturel comment résoudre le problème et le joueur doit la traduire en langage formel compréhensible par le robot (utilisation des blocs de programmation du jeu).",
+					"constraints": [
+						{
+							"label": "Fog",
+							"tag": "fog",
+							"parameters": []
+						}
+					],
+					"rule": "Fog >= 1"
+				},
+				{
+					"key": "SPY_ActiveDoor",
+					"parentKey": "",
+					"name": "Ouvrir/Fermer une porte",
+					"description": "Être capable de changer l'état d'un objet, ouvrir/fermer une porte.",
+					"constraints": [
+						{
+							"label": "DoorWithSlotConnected",
+							"tag": "door",
+							"parameters": [
+								{
+									"attribute": "slotId",
+									"constraint": "sameValue",
+									"tag2": "slot",
+									"attribute2": "slotId"
+								}
+							]
+						},
+						{
+							"label": "activateInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "Activate"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "activateInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "Activate"
+								}
+							]
+						}
+						
+					],
+					"rule": "DoorWithSlotConnected >= 1 and (activateInLib >= 1 or activateInScript >= 1)"
+				},
+				{
+					"key": "SPY_ScriptEditable",
+					"parentKey": "",
+					"name": "Nommer une sequence d'action",
+					"description": "Être capable de nommer le canal de communication à utiliser pour cibler le robot à commander.",
+					"constraints": [
+						{
+							"label": "ScriptEditable",
+							"tag": "script",
+							"parameters": [
+								{
+									"attribute": "editMode",
+									"constraint": "=",
+									"value": "2"
+								}
+							]
+						}
+					],
+					"rule": "ScriptEditable > 0"
+				},
+				{
+					"key": "SPY_SelectRightScript",
+					"parentKey": "",
+					"name": "Identifier la bonne solution",
+					"description": "Étant donné plusieurs solutions données, être capable d'identifier une solution permettant de résoudre le problème.",
+					"constraints": [
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"parameters": []
+						},
+						{
+							"label": "ScriptEditable",
+							"tag": "script",
+							"parameters": [
+								{
+									"attribute": "editMode",
+									"constraint": "=",
+									"value": "2"
+								}
+							]
+						},
+						{
+							"label": "AllScript",
+							"tag": "script",
+							"parameters": []
+						},
+						{
+							"label": "CorrectScript",
+							"tag": "script",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "include",
+									"value": "0|1"
+								}
+							]
+						}
+					],
+					"rule": "CorrectScript >= 1 and DragDropDisabled >= 1 and ScriptEditable = AllScript"
+				},
+				{
+					"key": "SPY_CorrectBuggedScript",
+					"parentKey": "",
+					"name": "Corriger une solution erronée",
+					"description": "Étant donné une solution erronée, être capable d'identifier le problème et de le corriger.",
+					"constraints": [
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"parameters": []
+						},
+						{
+							"label": "AllScript",
+							"tag": "script",
+							"parameters": []
+						},
+						{
+							"label": "BuggedScript",
+							"tag": "script",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "2"
+								}
+							]
+						}
+					],
+					"rule": "BuggedScript >= 1 and DragDropDisabled = 0 and BuggedScript = AllScript"
+				},
+				{
+					"key": "SPY_EnemyInGame",
+					"parentKey": "",
+					"name": "Prédire le résultat d'une séquence d'actions",
+					"description": "Être capable d'anticiper les actions d'un ennemi afin d'adapter sa solution en conséquence.",
+					"constraints": [
+						{
+							"label": "ScriptWithContent",
+							"tag": "script",
+							"parameters": [
+								{
+									"attribute": "name",
+									"constraint": "sameValue",
+									"tag2": "enemy",
+									"attribute2": "associatedScriptName"
+								},
+								{
+									"constraint": "hasChild"
+								}
+							]
+						}
+					],
+					"rule": "ScriptWithContent > 0"
+				},
+				{
+					"key": "SPY_RobotsInSameLine",
+					"parentKey": "",
+					"name": "Généraliser une solution",
+					"description": "Etre capable de trouver une solution permettant de résoudre deux problèmes différents. Autrement dit, une ligne de communication pour plusieurs robots.",
+					"constraints": [
+						{
+							"label": "RobotsInSameLine",
+							"tag": "player",
+							"parameters": [
+								{
+									"attribute": "associatedScriptName",
+									"constraint": "sameValue",
+									"tag2": "player",
+									"attribute2": "associatedScriptName"
+								}
+							]
+						}
+					],
+					"rule": "RobotsInSameLine >= 2"
+				},
+				{
+					"key": "SPY_Blocs",
+					"parentKey": "",
+					"name": "Gestions des blocs",
+					"description": "",
+					"constraints": [],
+					"rule": ""
+				},
+				{
+					"key": "SPY_Limitations",
+					"parentKey": "SPY_Blocs",
+					"name": "Limitation de blocs",
+					"description": "",
+					"constraints": [],
+					"rule": ""
+				},
+				{
+					"key": "SPY_Unlimited",
+					"parentKey": "SPY_Limitations",
+					"name": "Blocs illimités",
+					"description": "Ne donner au joueur que des blocs en quantité illimitée. Etre capable de déterminer quand utiliser des blocs.",
+					"constraints": [
+						{
+							"label": "limitedBlocks",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "limit",
+									"constraint": ">",
+									"value": "0"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "-1"
+								}
+							]
+						},
+						{
+							"label": "infiniteBlocks",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "limit",
+									"constraint": "=",
+									"value": "-1"
+								}
+							]
+						}
+					],
+					"rule": "limitedBlocks = 0 and infiniteBlocks >= 1"
+				},
+				{
+					"key": "SPY_Limited",
+					"parentKey": "SPY_Limitations",
+					"name": "Blocs limités",
+					"description": "Ne donner au joueur que des blocs en quantité limitée. Etre capable de combiner des actions dans un ordre valide.",
+					"constraints": [
+						{
+							"label": "unlimitedBlocks",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "limit",
+									"constraint": "=",
+									"value": "-1"
+								}
+							]
+						}
+					],
+					"rule": "unlimitedBlocks = 0"
+				},
+				{
+					"key": "SPY_Actions",
+					"parentKey": "SPY_Blocs",
+					"name": "Liste des blocs d'action",
+					"description": "",
+					"constraints": [],
+					"rule": ""
+				},
+				{
+					"key": "SPY_Action_MoveForward",
+					"parentKey": "SPY_Actions",
+					"name": "Bloc action \"Avancer\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Avancer\".",
+					"constraints": [
+						{
+							"label": "moveInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "Forward"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "moveInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "Forward"
+								}
+							]
+						}
+					],
+					"rule": "moveInLib >= 1 or moveInScript >= 1"
+				},
+				{
+					"key": "SPY_Action_TurnLeft",
+					"parentKey": "SPY_Actions",
+					"name": "Bloc action \"Pivoter à gauche\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Pivoter à gauche\".",
+					"constraints": [
+						{
+							"label": "leftInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "TurnLeft"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "leftInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "TurnLeft"
+								}
+							]
+						}
+					],
+					"rule": "leftInLib >= 1 or leftInScript >= 1"
+				},
+				{
+					"key": "SPY_Action_TurnRight",
+					"parentKey": "SPY_Actions",
+					"name": "Bloc action \"Pivoter à droite\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Pivoter à droite\".",
+					"constraints": [
+						{
+							"label": "rightInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "TurnRight"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "rightInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "TurnRight"
+								}
+							]
+						}
+					],
+					"rule": "rightInLib >= 1 or rightInScript >= 1"
+				},
+				{
+					"key": "SPY_Action_Wait",
+					"parentKey": "SPY_Actions",
+					"name": "Bloc action \"Attendre\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Attendre\".",
+					"constraints": [
+						{
+							"label": "waitInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "Wait"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "waitInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "Wait"
+								}
+							]
+						}
+					],
+					"rule": "waitInLib >= 1 or waitInScript >= 1"
+				},
+				{
+					"key": "SPY_Action_Activate",
+					"parentKey": "SPY_Actions",
+					"name": "Bloc action \"Activer\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Activer\".",
+					"constraints": [
+						{
+							"label": "activateInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "Activate"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "activateInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "Activate"
+								}
+							]
+						}
+					],
+					"rule": "activateInLib >= 1 or activateInScript >= 1"
+				},
+				{
+					"key": "SPY_Action_TurnBack",
+					"parentKey": "SPY_Actions",
+					"name": "Bloc action \"Se retourner\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Se retourner\".",
+					"constraints": [
+						{
+							"label": "turnBackInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "TurnBack"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "turnBackInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "TurnBack"
+								}
+							]
+						}
+					],
+					"rule": "turnBackInLib >= 1 or turnBackInScript >= 1"
+				},
+				{
+					"key": "SPY_Controls",
+					"parentKey": "SPY_Blocs",
+					"name": "Liste des blocs de contrôle",
+					"description": "",
+					"constraints": [],
+					"rule": ""
+				},
+				{
+					"key": "SPY_Control_IfThen",
+					"parentKey": "SPY_Controls",
+					"name": "Bloc de contrôle \"Si\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Si\".",
+					"constraints": [
+						{
+							"label": "ifThenInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "IfThen"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "ifThenInScript",
+							"tag": "if",
+							"parameters": []
+						}
+					],
+					"rule": "ifThenInLib >= 1 or ifThenInScript >= 1"
+				},
+				{
+					"key": "SPY_Control_IfElse",
+					"parentKey": "SPY_Controls",
+					"name": "Bloc de contrôle \"Si/Sinon\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Si/Sinon\".",
+					"constraints": [
+						{
+							"label": "ifElseInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "IfElse"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "ifElseInScript",
+							"tag": "ifElse",
+							"parameters": []
+						}
+					],
+					"rule": "ifElseInLib >= 1 or ifElseInScript >= 1"
+				},
+				{
+					"key": "SPY_Control_ForLoop",
+					"parentKey": "SPY_Controls",
+					"name": "Bloc de contrôle \"Répéter plusieurs fois\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Répéter plusieurs fois\".",
+					"constraints": [
+						{
+							"label": "forLoopInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "ForLoop"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "forLoopInScript",
+							"tag": "for",
+							"parameters": []
+						}
+					],
+					"rule": "forLoopInLib >= 1 or forLoopInScript >= 1"
+				},
+				{
+					"key": "SPY_Control_While",
+					"parentKey": "SPY_Controls",
+					"name": "Bloc de contrôle \"Tant que\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Tant que\".",
+					"constraints": [
+						{
+							"label": "whileInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "While"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "whileInScript",
+							"tag": "while",
+							"parameters": []
+						}
+					],
+					"rule": "whileInLib >= 1 or whileInScript >= 1"
+				},
+				{
+					"key": "SPY_Control_Forever",
+					"parentKey": "SPY_Controls",
+					"name": "Bloc de contrôle \"Répéter sans fin\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Répéter sans fin\".",
+					"constraints": [
+						{
+							"label": "foreverInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "Forever"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "foreverInScript",
+							"tag": "forever",
+							"parameters": []
+						}
+					],
+					"rule": "foreverInLib >= 1 or foreverInScript >= 1"
+				},
+				{
+					"key": "SPY_Operators",
+					"parentKey": "SPY_Blocs",
+					"name": "Liste des opérateurs de contrôle",
+					"description": "",
+					"constraints": [],
+					"rule": ""
+				},
+				{
+					"key": "SPY_Operator_And",
+					"parentKey": "SPY_Operators",
+					"name": "Opérateur de contrôle \"Et\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Et\".",
+					"constraints": [
+						{
+							"label": "andInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "AndOperator"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "andInScript",
+							"tag": "and",
+							"parameters": []
+						}
+					],
+					"rule": "andInLib >= 1 or andInScript >= 1"
+				},
+				{
+					"key": "SPY_Operator_Or",
+					"parentKey": "SPY_Operators",
+					"name": "Opérateur de contrôle \"Ou\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"0u\".",
+					"constraints": [
+						{
+							"label": "orInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "OrOperator"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "orInScript",
+							"tag": "or",
+							"parameters": []
+						}
+					],
+					"rule": "orInLib >= 1 or orInScript >= 1"
+				},
+				{
+					"key": "SPY_Operator_Not",
+					"parentKey": "SPY_Operators",
+					"name": "Opérateur de contrôle \"Non\"",
+					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Non\".",
+					"constraints": [
+						{
+							"label": "notInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "NotOperator"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "notInScript",
+							"tag": "not",
+							"parameters": []
+						}
+					],
+					"rule": "notInLib >= 1 or notInScript >= 1"
+				},
+				{
+					"key": "SPY_Captors",
+					"parentKey": "SPY_Blocs",
+					"name": "Liste des capteurs",
+					"description": "",
+					"constraints": [],
+					"rule": ""
+				},
+				{
+					"key": "SPY_Captor_WallFront",
+					"parentKey": "SPY_Captors",
+					"name": "Capteur \"Mur détecté en face\"",
+					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Mur détecté en face\".",
+					"constraints": [
+						{
+							"label": "wallFrontInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "WallFront"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "wallFrontInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "WallFront"
+								}
+							]
+						}
+					],
+					"rule": "wallFrontInLib >= 1 or wallFrontInScript >= 1"
+				},
+				{
+					"key": "SPY_Captor_WallLeft",
+					"parentKey": "SPY_Captors",
+					"name": "Capteur \"Mur détecté à gauche\"",
+					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Mur détecté à gauche\".",
+					"constraints": [
+						{
+							"label": "wallLeftInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "WallLeft"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "wallLeftInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "WallLeft"
+								}
+							]
+						}
+					],
+					"rule": "wallLeftInLib >= 1 or wallLeftInScript >= 1"
+				},
+				{
+					"key": "SPY_Captor_WallRight",
+					"parentKey": "SPY_Captors",
+					"name": "Capteur \"Mur détecté à droite\"",
+					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Mur détecté à droite\".",
+					"constraints": [
+						{
+							"label": "wallRightInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "WallRight"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "wallRightInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "WallRight"
+								}
+							]
+						}
+					],
+					"rule": "wallRightInLib >= 1 or wallRightInScript >= 1"
+				},
+				{
+					"key": "SPY_Captor_PathFront",
+					"parentKey": "SPY_Captors",
+					"name": "Capteur \"Passage détecté en face\"",
+					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Passage détecté en face\".",
+					"constraints": [
+						{
+							"label": "pathFrontInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "PathFront"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "pathFrontInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "PathFront"
+								}
+							]
+						}
+					],
+					"rule": "pathFrontInLib >= 1 or pathFrontInScript >= 1"
+				},
+				{
+					"key": "SPY_Captor_PathLeft",
+					"parentKey": "SPY_Captors",
+					"name": "Capteur \"Passage détecté à gauche\"",
+					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Passage détecté à gauche\".",
+					"constraints": [
+						{
+							"label": "pathLeftInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "PathLeft"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "pathLeftInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "PathLeft"
+								}
+							]
+						}
+					],
+					"rule": "pathLeftInLib >= 1 or pathLeftInScript >= 1"
+				},
+				{
+					"key": "SPY_Captor_PathRight",
+					"parentKey": "SPY_Captors",
+					"name": "Capteur \"Passage détecté à droite\"",
+					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Passage détecté à droite\".",
+					"constraints": [
+						{
+							"label": "pathRightInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "PathRight"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "pathRightInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "PathRight"
+								}
+							]
+						}
+					],
+					"rule": "pathRightInLib >= 1 or pathRightInScript >= 1"
+				},
+				{
+					"key": "SPY_Captor_Enemy",
+					"parentKey": "SPY_Captors",
+					"name": "Capteur \"Ennemi détecté en face\"",
+					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Ennemi détecté en face\".",
+					"constraints": [
+						{
+							"label": "enemyInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "Enemy"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "enemyInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "Enemy"
+								}
+							]
+						}
+					],
+					"rule": "enemyInLib >= 1 or enemyInScript >= 1"
+				},
+				{
+					"key": "SPY_Captor_RedArea",
+					"parentKey": "SPY_Captors",
+					"name": "Capteur \"Zone surveillée en face\"",
+					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Zone surveillée en face\".",
+					"constraints": [
+						{
+							"label": "redAreaInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "RedArea"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "redAreaInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "RedArea"
+								}
+							]
+						}
+					],
+					"rule": "redAreaInLib >= 1 or redAreaInScript >= 1"
+				},
+				{
+					"key": "SPY_Captor_FieldGate",
+					"parentKey": "SPY_Captors",
+					"name": "Capteur \"Porte détectée en face\"",
+					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Porte détectée en face\".",
+					"constraints": [
+						{
+							"label": "fieldGateInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "FieldGate"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "fieldGateInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "FieldGate"
+								}
+							]
+						}
+					],
+					"rule": "fieldGateInLib >= 1 or fieldGateInScript >= 1"
+				},
+				{
+					"key": "SPY_Captor_Terminal",
+					"parentKey": "SPY_Captors",
+					"name": "Capteur \"Terminal détecté sur ma position\"",
+					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Terminal détecté sur ma position\".",
+					"constraints": [
+						{
+							"label": "terminalInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "Terminal"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "terminalInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "Terminal"
+								}
+							]
+						}
+					],
+					"rule": "terminalInLib >= 1 or terminalInScript >= 1"
+				},
+				{
+					"key": "SPY_Captor_Exit",
+					"parentKey": "SPY_Captors",
+					"name": "Capteur \"Sortie détectée sur ma position\"",
+					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Sortie détectée sur ma position\".",
+					"constraints": [
+						{
+							"label": "exitInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "Exit"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "exitInScript",
+							"tag": "action",
+							"parameters": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "Exit"
+								}
+							]
+						}
+					],
+					"rule": "exitInLib >= 1 or exitInScript >= 1"
+				}
+			]
+		},
+		{
 			"name": "PIAF",
 			"list": [
 				{
@@ -184,7 +1364,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "Wall|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
 									"attribute": "limit",
@@ -200,7 +1380,7 @@
 								{
 									"attribute": "type",
 									"constraint": "include",
-									"value": "Wall|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
 						}
@@ -294,7 +1474,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "Wall|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
 									"attribute": "limit",
@@ -310,7 +1490,7 @@
 								{
 									"attribute": "type",
 									"constraint": "include",
-									"value": "Wall|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
 						},
@@ -520,7 +1700,7 @@
 					"key": "C2.2",
 					"parentKey": "C2",
 					"name": "C2.2 Compléter une séquence d'actions pour atteindre un objectif simple",
-					"description": "Étant donné uns séquence d'actions limitée et un objectif simple (c'est-à-dire ne s'appuyant pas sur des concepts avancés comme les conditions et les boucles), être capable d'ajouter les actions manquantes à la séquence pour atteindre l'objectif.",
+					"description": "Étant donné une séquence d'actions limitée et un objectif simple (c'est-à-dire ne s'appuyant pas sur des concepts avancés comme les conditions et les boucles), être capable d'ajouter les actions manquantes à la séquence pour atteindre l'objectif.",
 					"constraints": [
 						{
 							"label": "AllScript",
@@ -793,7 +1973,7 @@
 							"parameters": [
 								{
 									"attribute": "amount",
-									"constraint": "=",
+									"constraint": "<=",
 									"value": "1"
 								}
 							]
@@ -883,7 +2063,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "Wall|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
 									"attribute": "limit",
@@ -899,7 +2079,7 @@
 								{
 									"attribute": "type",
 									"constraint": "include",
-									"value": "Wall|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
 						},
@@ -981,7 +2161,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "Wall|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
 									"attribute": "limit",
@@ -997,7 +2177,7 @@
 								{
 									"attribute": "type",
 									"constraint": "include",
-									"value": "Wall|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
 						},
@@ -1084,7 +2264,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "include",
-									"value": "Wall|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
 									"attribute": "limit",
@@ -1100,7 +2280,7 @@
 								{
 									"attribute": "type",
 									"constraint": "include",
-									"value": "Wall|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
 						},

@@ -26,11 +26,13 @@ public class ParamCompetenceSystem : FSystem
 	public GameObject prefabComp; // Prefab de l'affichage d'une compétence
 	public GameObject ContentCompMenu; // Panneau qui contient la liste des catégories et compétences
 	public GameObject compatibleLevelsPanel; // Le panneau permettant de gérer les niveaux compatibles
+	public GameObject competenciesPanel; // Le panneau permettant de gérer la sélection des compétences
 	public GameObject levelCompatiblePrefab; // Le préfab d'un bouton d'un niveau compatible
 	public GameObject contentListOfCompatibleLevel; // Le panneau contenant l'ensemble des niveaux compatibles
 	public GameObject contentInfoCompatibleLevel; // Le panneau contenant les info d'un niveau (miniView, dialogues, competences, ...)
 	public GameObject deletableElement; // Un niveau que l'on peut supprimer
 	public GameObject contentScenario; // Le panneau contenant les niveaux sélectionnés pour le scénario
+	public Button testLevel;
 	public Button addToScenario;
 	public GameObject savingPanel;
 
@@ -95,7 +97,7 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	// used on TitleScreen scene
-	public void openPanelSelectComp()
+	public void loadPanelSelectComp()
 	{
 		string referentialsPath = Application.streamingAssetsPath + "/Competencies/competenciesReferential.json";
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
@@ -198,7 +200,7 @@ public class ParamCompetenceSystem : FSystem
 			comp.rule = rawComp.rule;
 
 			// On l'attache au content
-			competency.transform.SetParent(ContentCompMenu.transform);
+			competency.transform.SetParent(ContentCompMenu.transform, false);
 			// On charge le text de la compétence
 			competency.GetComponentInChildren<TMP_Text>().text = rawComp.name;
 			GameObjectManager.bind(competency);
@@ -236,31 +238,34 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	// Used in ButtonShowLevels in ParamCompPanel
-	public void showCompatibleLevels()
+	public void showCompatibleLevels(bool filter)
 	{
 		// default, select all levels
 		List<XmlNode> selectedLevels = new List<XmlNode>();
 		foreach (XmlNode level in gameData.levels.Values)
 			selectedLevels.Add(level);
-		// now, filtering level that not check constraints
-		int nbCompSelected = 0;
-		foreach (GameObject comp in f_competencies)
+		if (filter)
 		{
-			// process only selected competencies
-			if (comp.GetComponentInChildren<Toggle>().isOn)
+			// now, filtering level that not check constraints
+			int nbCompSelected = 0;
+			foreach (GameObject comp in f_competencies)
 			{
-				nbCompSelected++;
-				Competency competency = comp.GetComponent<Competency>();
-				// parse all levels
-				for (int l = selectedLevels.Count - 1; l >= 0; l--)
+				// process only selected competencies
+				if (comp.GetComponentInChildren<Toggle>().isOn)
 				{
-					if (!isCompetencyMatchWithLevel(competency, selectedLevels[l].OwnerDocument))
-						selectedLevels.RemoveAt(l);
+					nbCompSelected++;
+					Competency competency = comp.GetComponent<Competency>();
+					// parse all levels
+					for (int l = selectedLevels.Count - 1; l >= 0; l--)
+					{
+						if (!isCompetencyMatchWithLevel(competency, selectedLevels[l].OwnerDocument))
+							selectedLevels.RemoveAt(l);
+					}
 				}
 			}
+			if (nbCompSelected == 0)
+				selectedLevels.Clear();
 		}
-		if (nbCompSelected == 0)
-			selectedLevels.Clear();
 		
 		if (selectedLevels.Count == 0)
 		{
@@ -269,20 +274,20 @@ public class ParamCompetenceSystem : FSystem
 		}
 		else
 		{
-			// display compatible panel
-			GameObjectManager.setGameObjectState(compatibleLevelsPanel, true);
+			// hide competencies panel
+			GameObjectManager.setGameObjectState(competenciesPanel, false);
 			// remove all old buttons
 			foreach (Transform child in contentListOfCompatibleLevel.transform)
 			{
 				GameObjectManager.unbind(child.gameObject);
 				GameObject.Destroy(child.gameObject);
 			}
-			compatibleLevelsPanel.transform.Find("ButtonTestLevel").GetComponent<Button>().interactable = false;
+			testLevel.interactable = false;
 			addToScenario.interactable = false;
 			// Instanciate one button for each level
 			foreach (XmlNode level in selectedLevels)
 			{
-				GameObject compatibleLevel = GameObject.Instantiate(levelCompatiblePrefab, contentListOfCompatibleLevel.transform);
+				GameObject compatibleLevel = GameObject.Instantiate(levelCompatiblePrefab, contentListOfCompatibleLevel.transform, false);
 				foreach (string levelName in gameData.levels.Keys)
 					if (gameData.levels[levelName] == level)
 					{
@@ -532,7 +537,7 @@ public class ParamCompetenceSystem : FSystem
 		}
 		else
 			contentInfo.text += "Aucune information à afficher sur ce niveau.";
-		compatibleLevelsPanel.transform.Find("ButtonTestLevel").GetComponent<Button>().interactable = true;
+		testLevel.interactable = true;
 		addToScenario.interactable = true;
 	}
 
@@ -596,18 +601,14 @@ public class ParamCompetenceSystem : FSystem
 		go.transform.SetSiblingIndex(go.transform.GetSiblingIndex() + step);
 	}
 
-	//Used on 
-	public void testLevel(TMP_Text levelToLoad)
-	{
-		gameData.scenarioName = "testLevel";
-		gameData.scenario = new List<string>();
-		gameData.levelToLoad = Application.streamingAssetsPath + "/" + levelToLoad.text;
-		gameData.scenario.Add(gameData.levelToLoad);
-		GameObjectManager.loadScene("MainScene");
-	}
-
 	public void refreshUI(RectTransform competency)
 	{
+		MainLoop.instance.StartCoroutine(delayRefreshUI(competency));
+	}
+
+	private IEnumerator delayRefreshUI(RectTransform competency)
+    {
+		yield return null;
 		Competency comp = competency.GetComponentInParent<Competency>();
 		while (comp != null)
 		{

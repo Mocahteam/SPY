@@ -1,113 +1,184 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | {{{ PRODUCT_NAME }}}</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container" class="unity-desktop">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Unity WebGL Player | {{{ PRODUCT_NAME }}}</title>
+		<link rel="shortcut icon" href="TemplateData/favicon.ico">
+		<link rel="stylesheet" href="TemplateData/style.css">
+	</head>
+	<body onresize="resizeCanvas()">
+	<div id="unity-container" class="unity-desktop">
+	  <div id="unity-header">
+		<p style="font-family: sans-serif; text-align: center; font-weight: bold;">About the project: <a href="https://github.com/Mocahteam/SPY" target="_blank">https://github.com/Mocahteam/SPY</a></p>
+		<p style="font-family: sans-serif; text-align: center; font-weight: bold;">Other projects: <a href="https://webia.lip6.fr/~muratetm/projects.php?LANG=en" target="_blank">https://webia.lip6.fr/~muratetm/projects.php?LANG=en</a></p>
+	  </div>
 	  <div>
 		<label id="proxyLoadButton" style="visibility:hidden;" for="file-selector" class="loadButton">Importer un scénario</label>
 		<input id="file-selector" style="visibility:hidden;" type="file" accept=".xml">
+		<div id="unity-fullscreen-button"></div>
+		<div id="unity-build-title">{{{ PRODUCT_NAME }}} : Agrandir/Réduire =></div>
 	  </div>
-      <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}}></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-mobile-warning">
-        WebGL builds are not supported on mobile devices.
-      </div>
-      <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">{{{ PRODUCT_NAME }}}</div>
-      </div>
-    </div>
-	<p style="font-family: sans-serif; text-align: center; font-weight: bold;">About the project: <a href="https://github.com/Mocahteam/SPY" target="_blank">https://github.com/Mocahteam/SPY</a></p>
-	<p style="font-family: sans-serif; text-align: center; font-weight: bold;">Other projects: <a href="https://webia.lip6.fr/~muratetm/projects.php?LANG=en" target="_blank">https://webia.lip6.fr/~muratetm/projects.php?LANG=en</a></p>
-    <script>
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
-      var config = {
-        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
-        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
-        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+	  <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}}></canvas>
+	  <div id="unity-loading-bar">
+		<div id="unity-logo"></div>
+		<div id="unity-progress-bar-empty">
+		  <div id="unity-progress-bar-full"></div>
+		</div>
+	  </div>
+	  <div id="unity-mobile-warning">
+		Certains dispositifs mobiles peuvent manquer de mémoire pour charger le jeu. Tentative de chargement : Veuillez patienter, chargement en cours....
+	  </div>
+	  <div id="unity-footer">
+		<div id="unity-webgl-logo"></div>
+	  </div>
+	</div>
+	<script>
+		var buildUrl = "Build";
+		var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
+		var config = {
+			dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+			frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+			codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
 #if MEMORY_FILENAME
-        memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
+			memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
 #endif
 #if SYMBOLS_FILENAME
-        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+			symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
 #endif
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "{{{ COMPANY_NAME }}}",
-        productName: "{{{ PRODUCT_NAME }}}",
-        productVersion: "{{{ PRODUCT_VERSION }}}",
-      };
+			streamingAssetsUrl: "StreamingAssets",
+			companyName: "{{{ COMPANY_NAME }}}",
+			productName: "{{{ PRODUCT_NAME }}}",
+			productVersion: "{{{ PRODUCT_VERSION }}}",
+		};
 
-      var container = document.querySelector("#unity-container");
-      var canvas = document.querySelector("#unity-canvas");
-      var loadingBar = document.querySelector("#unity-loading-bar");
-      var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      var mobileWarning = document.querySelector("#unity-mobile-warning");
+		var container = document.querySelector("#unity-container");
+		var canvas = document.querySelector("#unity-canvas");
+		var loadingBar = document.querySelector("#unity-loading-bar");
+		var progressBarFull = document.querySelector("#unity-progress-bar-full");
+		var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+		var mobileWarning = document.querySelector("#unity-mobile-warning");
 
-      // By default Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
+		// By default Unity keeps WebGL canvas render target size matched with
+		// the DOM size of the canvas element (scaled by window.devicePixelRatio)
+		// Set this to false if you want to decouple this synchronization from
+		// happening inside the engine, and you would instead like to size up
+		// the canvas DOM size and WebGL render target sizes yourself.
+		// config.matchWebGLToCanvasSize = false;
+		console.log(navigator.userAgent);
+		var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+		if (isMobile) {
+			container.className = "unity-mobile";
+			// Avoid draining fillrate performance on mobile devices,
+			// and default/override low DPI mode on mobile browsers.
+			config.devicePixelRatio = 1;
+			mobileWarning.style.display = "block";
+		} else {
+			canvas.style.width = "{{{ WIDTH }}}px";
+			canvas.style.height = "{{{ HEIGHT }}}px";
+		}
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        container.className = "unity-mobile";
-        // Avoid draining fillrate performance on mobile devices,
-        // and default/override low DPI mode on mobile browsers.
-        config.devicePixelRatio = 1;
-        mobileWarning.style.display = "block";
-        setTimeout(() => {
-          mobileWarning.style.display = "none";
-        }, 5000);
-      } else {
-        canvas.style.width = "{{{ WIDTH }}}px";
-        canvas.style.height = "{{{ HEIGHT }}}px";
-      }
 #if BACKGROUND_FILENAME
-      canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
+		canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
 #endif
-      loadingBar.style.display = "block";
+		loadingBar.style.display = "block";
+		var script = document.createElement("script");
+		script.src = loaderUrl;
+		script.onload = () => {
+			createUnityInstance(canvas, config, (progress) => {
+				progressBarFull.style.width = 100 * progress + "%";
+			}).then((unityInstance) => {
+				loadingBar.style.display = "none";
+				mobileWarning.style.display = "none";
 
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          progressBarFull.style.width = 100 * progress + "%";
-        }).then((unityInstance) => {
-          loadingBar.style.display = "none";
-          fullscreenButton.onclick = () => {
-            unityInstance.SetFullscreen(1);
-          };
-		  const fileSelector = document.getElementById('file-selector');
-		  fileSelector.addEventListener('change', (event) => {
-			const fileList = event.target.files;
-			var reader = new FileReader();
-			reader.onload = function(){
-			  const data = {name: fileList[0].name, content: reader.result};
-			  unityInstance.SendMessage('Main_Loop', 'importScenario', JSON.stringify(data));
-			  fileSelector.value = "";
-			};
-			reader.readAsText(fileList[0]);
-		  });
-        }).catch((message) => {
-          alert(message);
-        });
-      };
-      document.body.appendChild(script);
-    </script>
-  </body>
+				fullscreenButton.addEventListener("click", () => {
+					unityInstance.SetFullscreen(1);
+				});
+				const fileSelector = document.getElementById('file-selector');
+				fileSelector.addEventListener('change', (event) => {
+					const fileList = event.target.files;
+					var reader = new FileReader();
+					reader.onload = function(){
+						const data = {name: fileList[0].name, content: reader.result};
+						unityInstance.SendMessage('Main_Loop', 'importScenario', JSON.stringify(data));
+						fileSelector.value = "";
+					};
+					reader.readAsText(fileList[0]);
+				});
+			
+				// ask to load a specific level 
+				const queryString = window.location.search;
+				const urlParams = new URLSearchParams(queryString);
+				const levelToLoad = urlParams.get('level');
+				if (levelToLoad != null)
+					unityInstance.SendMessage('Main_Loop', 'askToLoadLevel', levelToLoad);
+				
+			}).catch((message) => {
+				var msg = "Une erreur s'est produite lors du chargement du jeu";
+				var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+				if (isSafari)
+					msg += "\nEssayer d'utiliser le navigateur Chrome ou Firefox";
+				else if (isMobile)
+					msg += "\nVotre dispositif mobile ne contient peut être pas assez de mémoire pour charger le jeu, essayer de recharger la page depuis un ordinateur avec le navigateur Chrome ou Firefox de préférence.";
+				alert(msg);
+			});
+			
+		};
+		
+		fullscreenButton.addEventListener("click", () => {
+			if (!container.classList.contains("fullscreenTag")){
+				container.className = "unity-mobile fullscreenTag";
+				canvas.style.width = "";
+				var rect = canvas.getBoundingClientRect();
+				canvas.style.height = (window.innerHeight-rect.top)+"px";
+			}
+			else{	
+				if (isMobile){
+					container.className = "unity-mobile";
+					var rect = canvas.getBoundingClientRect();
+					canvas.style.height = (window.innerHeight-rect.top)+"px";
+				}
+				else{
+					container.className = "unity-desktop";
+					canvas.style.width = "{{{ WIDTH }}}px";
+					canvas.style.height = "{{{ HEIGHT }}}px";
+				}
+			}
+		});
+		
+		if (document.addEventListener)
+		{
+			document.addEventListener('fullscreenchange', exitHandler, false);
+			document.addEventListener('mozfullscreenchange', exitHandler, false);
+			document.addEventListener('MSFullscreenChange', exitHandler, false);
+			document.addEventListener('webkitfullscreenchange', exitHandler, false);
+		}
+
+		function exitHandler()
+		{
+			if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement)
+			{
+				if (isMobile){
+					container.className = "unity-mobile";
+					var rect = canvas.getBoundingClientRect();
+					canvas.style.height = (window.innerHeight-rect.top)+"px";
+				}
+				else{
+					container.className = "unity-desktop";
+					canvas.style.width = "{{{ WIDTH }}}px";
+					canvas.style.height = "{{{ HEIGHT }}}px";
+				}
+			}
+		}
+		
+        function resizeCanvas(){
+            if (container.classList.contains("fullscreenTag")){
+				var rect = canvas.getBoundingClientRect();
+				canvas.style.height = (window.innerHeight-rect.top)+"px";
+			}
+        }
+		
+		document.body.appendChild(script);
+	</script>
+	</body>
 </html>

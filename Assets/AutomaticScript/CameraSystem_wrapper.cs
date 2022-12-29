@@ -20,9 +20,34 @@ public class CameraSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "dragSpeed", dragSpeed);
 	}
 
+	public void set_UIFrontBack(System.Single value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "set_UIFrontBack", value);
+	}
+
+	public void set_UILeftRight(System.Single value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "set_UILeftRight", value);
+	}
+
+	public void set_UIRotate(System.Single value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "set_UIRotate", value);
+	}
+
+	public void set_UIZoom(System.Single value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "set_UIZoom", value);
+	}
+
 	public void focusOnAgent(UnityEngine.GameObject agent)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "focusOnAgent", agent);
+	}
+
+	public void focusNextAgent()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "focusNextAgent", null);
 	}
 
 }

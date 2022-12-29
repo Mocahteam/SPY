@@ -274,7 +274,7 @@ public class EditableContainerSystem : FSystem
 				{
 					// On met à jour le nom de tous les agents qui auraient le même nom pour garder l'association avec le container editable
 					foreach (GameObject agent in f_agent)
-						if (agent.GetComponent<AgentEdit>().associatedScriptName == oldName)
+						if (agent.GetComponent<AgentEdit>().associatedScriptName.ToLower() == oldName.ToLower())
 						{
 							agent.GetComponent<AgentEdit>().associatedScriptName = newName;
 							agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().text = newName;
@@ -297,7 +297,7 @@ public class EditableContainerSystem : FSystem
 	{
 		Transform editableContainers = EditableCanvas.transform.Find("EditableContainers");
 		foreach (Transform container in editableContainers)
-			if (container.GetComponentInChildren<UIRootContainer>().scriptName == nameTested)
+			if (container.GetComponentInChildren<UIRootContainer>().scriptName.ToLower() == nameTested.ToLower())
 				return true;
 
 		return false;
@@ -315,7 +315,7 @@ public class EditableContainerSystem : FSystem
 		{
 			bool nameSame = false;
 			foreach (GameObject agent in f_agent)
-				if (container.GetComponent<UIRootContainer>().scriptName == agent.GetComponent<AgentEdit>().associatedScriptName)
+				if (container.GetComponent<UIRootContainer>().scriptName.ToLower() == agent.GetComponent<AgentEdit>().associatedScriptName.ToLower())
 					nameSame = true;
 
 			// Si même nom trouvé on met l'arriére plan blanc
@@ -330,7 +330,7 @@ public class EditableContainerSystem : FSystem
 		{
 			bool nameSame = false;
 			foreach (GameObject container in f_scriptContainer)
-				if (container.GetComponent<UIRootContainer>().scriptName == agent.GetComponent<AgentEdit>().associatedScriptName)
+				if (container.GetComponent<UIRootContainer>().scriptName.ToLower() == agent.GetComponent<AgentEdit>().associatedScriptName.ToLower())
 					nameSame = true;
 
 			// Si même nom trouvé on met l'arriére transparent
