@@ -32,9 +32,9 @@ public class DragDropSystem : FSystem
 	// Les familles
     private Family f_viewportContainerPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les container contenant les containers éditables
 	private Family f_dropZone = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone))); // Les drops zones
+	private Family f_dropZoneEnabled = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Les drops zones visibles
 	private Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
 	private Family f_operators = FamilyManager.getFamily(new AllOfComponents(typeof(BaseOperator)));
-	private Family f_focusedDropArea = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(ReplacementSlot), typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // the drop area under mouse cursor
 	private Family f_elementToDelete = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToDelete)));
 	private Family f_elementToRefresh = FamilyManager.getFamily(new AllOfComponents(typeof(NeedRefreshHierarchy)));
 	private Family f_defaultDropZone = FamilyManager.getFamily(new AllOfComponents(typeof(Selected)));
@@ -42,15 +42,19 @@ public class DragDropSystem : FSystem
 	private Family f_playMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family f_editMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
+	private Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(Outline), typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+
 	// Les variables
 	private GameData gameData;
 	private GameObject itemDragged; // L'item (ici bloc d'action) en cours de drag
+	private Coroutine viewLastDropZone = null;
 	public GameObject mainCanvas; // Le canvas principal
 	public GameObject lastDropZoneUsed; // La dernière dropzone utilisée
 	public AudioSource audioSource; // Pour le son d'ajout de bloc
 	//Pour la gestion du double clic
 	private float lastClickTime;
 	public float catchTime;
+	public RectTransform editableContainers;
 
 	// L'instance
 	public static DragDropSystem instance;
@@ -214,6 +218,16 @@ public class DragDropSystem : FSystem
 		}
 	}
 
+	private GameObject getFocusedDropArea()
+    {
+		foreach (GameObject go in f_dropZoneEnabled)
+			if (go.transform.GetChild(0).gameObject.activeSelf)
+				return go;
+		foreach (GameObject go in f_replacementSlot)
+			if (go.GetComponent<Outline>().enabled)
+				return go;
+		return null;
+    }
 
 	// Determine si l'element associé à l'événement EndDrag se trouve dans une zone de container ou non
 	// Détruire l'objet si lâché hors d'un container
@@ -221,54 +235,19 @@ public class DragDropSystem : FSystem
 	{
 		if (!Pause && gameData.dragDropEnabled && itemDragged != null)
 		{
+			// On commence par regarder s'il n'y a pas de container pointé, dans ce cas on supprime l'objet drag
+			GameObject dropArea = getFocusedDropArea();
 			// On désactive les dropzones
 			setDropZoneState(false);
-
-			// On commence par regarder s'il n'y a pas de container pointé, dans ce cas on supprime l'objet drag
-			if (f_viewportContainerPointed.Count <= 0 && f_focusedDropArea.Count <= 0)
+			if (dropArea == null)
 			{
 				undoDrop();
 				return;
 			}
 			else // sinon on ajoute l'élément au container pointé
 			{
-				GameObject dropArea = null;
-				// If a drop area is pointer over, we select it
-				if (f_focusedDropArea.Count > 0)
+				if (dropArea.transform.IsChildOf(itemDragged.transform))
 				{
-					// The family can contains several GameObject in particular with nested condition (ie: (A AND B) OR C => in this case if we point A the following element will be pointerover: A, AND, OR and the order is not predictable) => we have to found the deepest Condition
-					GameObject deepestArea = null;
-					foreach (GameObject pointed in f_focusedDropArea)
-						if (deepestArea == null || pointed.transform.IsChildOf(deepestArea.transform))
-							deepestArea = pointed;
-					dropArea = deepestArea;
-				}
-				else // means user drop item not directely on drop area but focus the root container => require to find a target area
-				{
-					// Find the replacement slot if enabled or else the drop zone
-					GameObject rootContainer = f_viewportContainerPointed.First().GetComponentInChildren<UIRootContainer>().gameObject;
-					foreach (Transform child in rootContainer.transform)
-					{
-						// if we found a drop zone we store it
-						if (child.GetComponent<DropZone>())
-							dropArea = child.gameObject;
-						// but if we found an enabled replacement slot we override previous choice and we stop loop
-						if (child.GetComponent<ReplacementSlot>() && child.gameObject.activeSelf)
-						{
-							dropArea = child.gameObject;
-							break;
-						}
-					}
-				}
-				if (dropArea == null)
-				{
-					Debug.LogError("Warning! Unknown case: the drop area can't be found");
-					undoDrop();
-					return;
-				}
-				// check that dropArea is not a child of the dragged element (can appear if we move the mouse fast)
-				else if (dropArea.transform.IsChildOf(itemDragged.transform))
-                {
 					undoDrop();
 					return;
 				}
@@ -278,6 +257,7 @@ public class DragDropSystem : FSystem
 					// We restore all UI elements inside the EventSystem
 					foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
 						child.GetComponent<Image>().raycastTarget = true;
+					MainLoop.instance.StartCoroutine(pulseItem(itemDragged));
 				}
 			}
 			// Rafraichissement de l'UI
@@ -388,9 +368,94 @@ public class DragDropSystem : FSystem
 				addDraggedItemOnDropZone(lastDropZoneUsed);
 				// refresh all the hierarchy of parent containers
 				refreshHierarchyContainers(lastDropZoneUsed);
+
+				if (viewLastDropZone != null)
+					MainLoop.instance.StopCoroutine(viewLastDropZone);
+				MainLoop.instance.StartCoroutine(focusOnLastDropZoneUsed());
+				MainLoop.instance.StartCoroutine(pulseItem(itemDragged));
+
 				// Rafraichissement de l'UI
 				GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 				itemDragged = null;
+			}
+		}
+	}
+
+	private IEnumerator pulseItem(GameObject newItem)
+    {
+		float initScaleX = newItem.transform.localScale.x;
+		newItem.transform.localScale = new Vector3(newItem.transform.localScale.x + 0.3f, newItem.transform.localScale.y, newItem.transform.localScale.z);
+		while (newItem.transform.localScale.x > initScaleX)
+		{
+			Debug.Log(newItem.transform.localScale.x);
+			newItem.transform.localScale = new Vector3(newItem.transform.localScale.x-0.01f, newItem.transform.localScale.y, newItem.transform.localScale.z);
+			yield return null;
+		}
+		Debug.Log(newItem.transform.localScale.x+" "+ initScaleX);
+	}
+
+	private IEnumerator focusOnLastDropZoneUsed()
+    {
+		yield return new WaitForSeconds(.25f);
+
+		RectTransform editableCanvas = editableContainers.parent as RectTransform;
+		// get last drop zone reference (depends if last drop zone is a replacement slot, a drop zone of an action or a drop zone of a control block
+		RectTransform lastDropRef = null;
+		if (lastDropZoneUsed.GetComponent<DropZone>())
+		{
+			if (lastDropZoneUsed.transform.parent.GetComponent<BaseElement>()) // BasicAction
+				lastDropRef = lastDropZoneUsed.transform.parent as RectTransform; // target is the parent
+			else if (lastDropZoneUsed.transform.parent.parent.GetComponent<ControlElement>() && lastDropZoneUsed.transform.parent.GetSiblingIndex() == 1) // the dropArea of the first child of a Control block
+				lastDropRef = lastDropZoneUsed.transform.parent.parent as RectTransform; // target is the grandparent
+		}
+		else
+			lastDropRef = lastDropZoneUsed.transform as RectTransform; // This is a replacement slot
+
+		float lastDropZoneUsedY = Mathf.Abs(editableContainers.InverseTransformPoint(lastDropRef.transform.position).y);
+		float lastDropZoneUsedX = Mathf.Abs(editableContainers.InverseTransformPoint(lastDropRef.transform.position).x);
+
+		Vector2 targetAnchoredPosition = new Vector2(editableContainers.anchoredPosition.x, editableContainers.anchoredPosition.y);
+		// we auto focus on last drop zone used only if it is not visible
+		if (lastDropZoneUsedY - editableContainers.anchoredPosition.y < 0 || lastDropZoneUsedY - editableContainers.anchoredPosition.y > editableCanvas.rect.height)
+		{
+			// check if last drop zone used is too high
+			if (lastDropZoneUsedY - editableContainers.anchoredPosition.y < 0)
+			{
+				targetAnchoredPosition = new Vector2(
+					targetAnchoredPosition.x,
+					lastDropZoneUsedY - (lastDropRef.rect.height * 2f) // move view a little bit higher than last drop zone position
+				);
+			}
+			// check if last drop zone used is too low
+			else if (lastDropZoneUsedY - editableContainers.anchoredPosition.y > editableCanvas.rect.height)
+			{
+				targetAnchoredPosition = new Vector2(
+					targetAnchoredPosition.x,
+					-editableCanvas.rect.height + lastDropZoneUsedY + lastDropRef.rect.height / 2
+				);
+			}
+
+			// same for x pos
+			if (lastDropZoneUsedX + editableContainers.anchoredPosition.x < 0)
+			{
+				targetAnchoredPosition = new Vector2(
+					-lastDropZoneUsedX + lastDropRef.rect.width,
+					targetAnchoredPosition.y
+				);
+			}
+			else if (lastDropZoneUsedX + editableContainers.anchoredPosition.x > editableCanvas.rect.width)
+			{
+				targetAnchoredPosition = new Vector2(
+					editableCanvas.rect.width - lastDropZoneUsedX - lastDropRef.rect.width,
+					targetAnchoredPosition.y
+				);
+			}
+
+			float distance = Vector2.Distance(editableContainers.anchoredPosition, targetAnchoredPosition);
+			while (Vector2.Distance(editableContainers.anchoredPosition, targetAnchoredPosition) > 0.1f)
+			{
+				editableContainers.anchoredPosition = Vector2.MoveTowards(editableContainers.anchoredPosition, targetAnchoredPosition, distance / 10);
+				yield return null;
 			}
 		}
 	}

@@ -5,7 +5,7 @@ using FYFY;
 public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public string text;
-    private Tooltip tooltip;
+    private Tooltip tooltip = null;
 
     private bool isOver = false;
 
@@ -32,8 +32,11 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        tooltip.HideTooltip();
-        isOver = false;
+        if (tooltip != null)
+        {
+            tooltip.HideTooltip();
+            isOver = false;
+        }
     }
 
     public void OnDisable()
