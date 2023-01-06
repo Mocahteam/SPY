@@ -792,7 +792,6 @@ GameObject:
   - component: {fileID: 6212442862781197195}
   - component: {fileID: 6487265639385602109}
   - component: {fileID: 3551912877790429152}
-  - component: {fileID: 2223508410353476937}
   - component: {fileID: 3803817207563583226}
   m_Layer: 5
   m_Name: InputField (TMP)
@@ -921,8 +920,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2223508410353476937}
-        m_TargetAssemblyTypeName: checkPositiveNumber, Assembly-CSharp
+      - m_Target: {fileID: 6195889844468152799}
+        m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
         m_MethodName: onlyPositiveInteger
         m_Mode: 0
         m_Arguments:
@@ -969,18 +968,6 @@ MonoBehaviour:
   m_isRichTextEditingAllowed: 0
   m_LineLimit: 0
   m_InputValidator: {fileID: 0}
---- !u!114 &2223508410353476937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5207514993391684504}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2683ec9bf57ede47b06119776b121b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3803817207563583226
 MonoBehaviour:
   m_ObjectHideFlags: 0

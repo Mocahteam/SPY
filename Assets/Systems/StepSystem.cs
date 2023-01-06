@@ -112,12 +112,22 @@ public class StepSystem : FSystem {
     // See PauseButton, ContinueButton in editor
     public void autoExecuteStep(bool on){
         Pause = !on;
+        GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+        {
+            verb = on ? "resumed" : "paused",
+            objectType = "program"
+        });
     }
 
     // See NextStepButton in editor
     public void goToNextStep(){
         Pause = false;
         newStepAskedByPlayer = true;
+        GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+        {
+            verb = "stepped",
+            objectType = "program"
+        });
     }
 
     // See StopButton in editor

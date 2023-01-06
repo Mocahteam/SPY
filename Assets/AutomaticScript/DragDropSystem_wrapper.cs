@@ -63,4 +63,9 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "checkDoubleClick", element);
 	}
 
+	public void onlyPositiveInteger()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "onlyPositiveInteger", null);
+	}
+
 }

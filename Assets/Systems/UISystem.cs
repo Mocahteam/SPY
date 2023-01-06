@@ -2,10 +2,7 @@ using UnityEngine;
 using FYFY;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using TMPro;
 using System.Collections;
-using System;
-using System.Runtime.InteropServices;
 using FYFY_plugins.PointerManager;
 
 /// <summary>
@@ -245,6 +242,14 @@ public class UISystem : FSystem {
 	// Permet de revenir à la scéne titre
 	public void returnToTitleScreen(){
 		initZeroVariableLevel();
+		GameObjectManager.addComponent<ActionPerformedForLRS>(gameData.LevelGO, new
+		{
+			verb = "exited",
+			objectType = "level",
+			activityExtensions = new Dictionary<string, string>() {
+					{ "value", gameData.levelToLoad.Replace(Application.streamingAssetsPath + "/", "") }
+				}
+		});
 		gameData.actionsHistory = null;
 		GameObjectManager.loadScene("TitleScreen");
 	}
@@ -264,7 +269,16 @@ public class UISystem : FSystem {
 
 	// See NextLevel button in editor
 	// On charge la scéne suivante
-	public void nextLevel(){
+	public void nextLevel()
+	{
+		GameObjectManager.addComponent<ActionPerformedForLRS>(gameData.LevelGO, new
+		{
+			verb = "exited",
+			objectType = "level",
+			activityExtensions = new Dictionary<string, string>() {
+					{ "value", gameData.levelToLoad.Replace(Application.streamingAssetsPath + "/", "") }
+				}
+		});
 		// On imcrémente le numéro du niveau
 		gameData.levelToLoad = gameData.scenario[gameData.scenario.FindIndex(x => x == gameData.levelToLoad)+1];
 		// On efface l'historique
@@ -276,7 +290,16 @@ public class UISystem : FSystem {
 
 	// See ReloadLevel and RestartLevel buttons in editor
 	// Fait recommencer la scéne mais en gardant l'historique des actions
-	public void retry(){
+	public void retry()
+	{
+		GameObjectManager.addComponent<ActionPerformedForLRS>(gameData.LevelGO, new
+		{
+			verb = "exited",
+			objectType = "level",
+			activityExtensions = new Dictionary<string, string>() {
+					{ "value", gameData.levelToLoad.Replace(Application.streamingAssetsPath + "/", "") }
+				}
+		});
 		if (gameData.actionsHistory != null)
 			UnityEngine.Object.DontDestroyOnLoad(gameData.actionsHistory);
 		restartScene();
@@ -354,17 +377,4 @@ public class UISystem : FSystem {
 			menuEchap.SetActive(true);
 		}
     }
-
-	// see inputFiels in ForBloc prefab in inspector
-	public void onlyPositiveInteger(GameObject input, string newValue)
-	{
-		int res;
-		bool success = Int32.TryParse(newValue, out res);
-		if (!success || (success && Int32.Parse(newValue) < 0))
-		{
-			input.GetComponent<TMP_InputField>().text = "0";
-			res = 0;
-		}
-		input.GetComponentInParent<ForControl>(true).nbFor = res;
-	}
 }

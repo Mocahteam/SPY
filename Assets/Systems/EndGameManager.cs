@@ -3,6 +3,7 @@ using FYFY;
 using System.Collections;
 using TMPro;
 using System.IO;
+using System.Collections.Generic;
 
 /// <summary>
 /// This system check if the end of the level is reached and display end panel accordingly
@@ -109,14 +110,24 @@ public class EndGameManager : FSystem {
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
+			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			{
+				verb = "completed",
+				objectType = "level",
+				result = true,
+				success = -1,
+				resultExtensions = new Dictionary<string, string>() {
+					{ "error", "Detected" }
+				}
+			}));
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Win)
 		{
-			int score = (10000 / (gameData.totalActionBlocUsed + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
+			int _score = (10000 / (gameData.totalActionBlocUsed + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
 			Transform verticalCanvas = endPanel.transform.Find("VerticalCanvas");
 			GameObjectManager.setGameObjectState(verticalCanvas.Find("ScoreCanvas").gameObject, true);
-			verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez gagné !\nScore: " + score;
-			setScoreStars(score, verticalCanvas.Find("ScoreCanvas"));
+			verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez gagné !\nScore: " + _score;
+			setScoreStars(_score, verticalCanvas.Find("ScoreCanvas"));
 
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = false;
@@ -128,6 +139,16 @@ public class EndGameManager : FSystem {
 			//Check if next level exists in campaign
 			if (gameData.scenario.FindIndex(x => x == gameData.levelToLoad) >= gameData.scenario.Count - 1)
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
+			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			{
+				verb = "completed",
+				objectType = "level",
+				result = true,
+				success = 1,
+				resultExtensions = new Dictionary<string, string>() {
+					{ "score", _score.ToString() }
+				}
+			}));
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.BadCondition)
 		{
@@ -141,6 +162,14 @@ public class EndGameManager : FSystem {
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
+			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			{
+				verb = "bugged",
+				objectType = "program",
+				activityExtensions = new Dictionary<string, string>() {
+					{ "error", "BadCondition" }
+				}
+			}));
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoMoreAttempt)
 		{
@@ -154,6 +183,16 @@ public class EndGameManager : FSystem {
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
+			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			{
+				verb = "completed",
+				objectType = "level",
+				result = true,
+				success = -1,
+				resultExtensions = new Dictionary<string, string>() {
+					{ "error", "NoMoreAttempt" }
+				}
+			}));
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoAction)
 		{
@@ -167,6 +206,14 @@ public class EndGameManager : FSystem {
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
+			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			{
+				verb = "bugged",
+				objectType = "program",
+				activityExtensions = new Dictionary<string, string>() {
+					{ "error", "NoActionToExecute" }
+				}
+			}));
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.InfiniteLoop)
 		{
@@ -180,6 +227,14 @@ public class EndGameManager : FSystem {
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
+			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			{
+				verb = "bugged",
+				objectType = "program",
+				activityExtensions = new Dictionary<string, string>() {
+					{ "error", "InfiniteLoop" }
+				}
+			}));
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Error)
 		{
@@ -193,7 +248,22 @@ public class EndGameManager : FSystem {
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
+			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			{
+				verb = "bugged",
+				objectType = "level",
+				activityExtensions = new Dictionary<string, string>() {
+					{ "error", "XMLError" }
+				}
+			}));
 		}
+	}
+
+	private IEnumerator delaySendStatement(GameObject src, object componentValues)
+    {
+		yield return null;
+		GameObjectManager.addComponent<ActionPerformedForLRS>(src, componentValues);
+
 	}
 
 	// Gére le nombre d'étoile à afficher selon le score obtenue

@@ -1,6 +1,8 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -80,6 +82,17 @@ public class DragDropSystem : FSystem
 		});
 		f_playMode.addEntryCallback(delegate {
 			Pause = true;
+			string scriptsContent = "";
+			foreach (Transform viewportScriptContainer in editableContainers)
+				scriptsContent += exportScriptToString(viewportScriptContainer.Find("ScriptContainer"), null);
+			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+			{
+				verb = "executed",
+				objectType = "program",
+				activityExtensions = new Dictionary<string, string>() {
+				{ "content", scriptsContent }
+			}
+			});
 		});
 		f_editMode.addEntryCallback(delegate {
 			Pause = false;
@@ -173,6 +186,164 @@ public class DragDropSystem : FSystem
 		}
 	}
 
+	private string exportScriptToString(Transform scriptContainer, GameObject focusedArea)
+    {
+		string scriptsContent = scriptContainer.Find("Header").GetComponentInChildren<TMP_InputField>().text + " {";
+		// on ignore le premier fils (le header) et le dernier (la drop zone)
+		for (int i = 1; i < scriptContainer.childCount - 1; i++)
+			scriptsContent += " " + exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>(), focusedArea);
+		if (scriptContainer.GetChild(scriptContainer.childCount-1).gameObject == focusedArea)
+			scriptsContent += " ####";
+		scriptsContent += " }\n";
+		return scriptsContent;
+	}
+
+	private string exportBlockToString(Highlightable script, GameObject focusedArea)
+    {
+		if (script == null)
+			return "";
+		else {
+			string export = "";
+			if (script is BasicAction)
+			{
+				if (script.GetComponentInChildren<DropZone>(true).gameObject == focusedArea)
+					export += "#### ";
+				export += (script as BasicAction).actionType.ToString() +  ";";
+			}
+			else if (script is BaseCaptor)
+			{
+				ReplacementSlot localRS = script.GetComponent<ReplacementSlot>();
+				if (localRS.gameObject == focusedArea)
+					export += "##";
+				export += (script as BaseCaptor).captorType.ToString();
+				if (localRS.gameObject == focusedArea)
+					export += "##";
+			}
+			else if (script is BaseOperator)
+			{
+				ReplacementSlot localRS = script.GetComponent<ReplacementSlot>();
+				if (localRS.gameObject == focusedArea)
+					export += "##";
+				BaseOperator ope = script as BaseOperator;
+				Transform container = script.transform.Find("Container");
+				if (ope.operatorType == BaseOperator.OperatorType.NotOperator)
+				{
+					export += "NOT (";
+
+					if (container.Find("EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(container.GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ")";
+				}
+				else if (ope.operatorType == BaseOperator.OperatorType.AndOperator)
+				{
+					export += "(";
+
+					if (container.Find("EmptyConditionalSlot1").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(container.GetChild(0).GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ") AND (";
+
+					if (container.Find("EmptyConditionalSlot2").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(container.GetChild(1).GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ")";
+				}
+				else if (ope.operatorType == BaseOperator.OperatorType.OrOperator)
+				{
+					export += "(";
+
+					if (container.Find("EmptyConditionalSlot1").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(container.GetChild(0).GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ") OR (";
+
+					if (container.Find("EmptyConditionalSlot2").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(container.GetChild(1).GetComponentInChildren<BaseCondition>(true), focusedArea);
+					
+					export += ")";
+				}
+				if (localRS.gameObject == focusedArea)
+					export += "##";
+			}
+			else if (script is ControlElement)
+			{
+				if (script.transform.Find("Header").GetComponentInChildren<DropZone>(true).gameObject == focusedArea)
+					export += "#### ";
+				ControlElement control = script as ControlElement;
+				if (script is WhileControl)
+				{
+					export += "WHILE (";
+
+					if (script.transform.Find("ConditionContainer").Find("EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(script.transform.Find("ConditionContainer").GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ")";
+				}
+				else if (script is ForControl)
+				{
+					export += "REPEAT (";
+					if (script.gameObject == focusedArea)
+						export += "##";
+					export += (script as ForControl).nbFor;
+					if (script.gameObject == focusedArea)
+						export += "##";
+					export += ")";
+				}
+				else if (script is ForeverControl)
+					export += "FOREVER";
+				else if (script is IfControl)
+				{
+					export += "IF (";
+
+					if (script.transform.Find("ConditionContainer").Find("EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(script.transform.Find("ConditionContainer").GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ")";
+				}
+
+				export += " {";
+				
+				Transform container = script.transform.Find("Container");
+				// parcourir tous les enfants jusqu'à l'avant dernier (le dernier étant la dropzone)
+				for (int i = 0; i < container.childCount - 1; i++)
+					export += " " + exportBlockToString(container.GetChild(i).GetComponent<BaseElement>(), focusedArea);
+				if (container.GetChild(container.childCount - 1).gameObject == focusedArea)
+					export += " ####";
+				
+				export += " }";
+				
+				if (script is IfElseControl)
+				{
+					export += " ELSE {";
+
+					Transform containerElse = script.transform.Find("ElseContainer");
+					// parcourir tous les enfants jusqu'à l'avant dernier (le dernier étant la dropzone)
+					for (int i = 0; i < containerElse.childCount - 1; i++)
+						export += " " + exportBlockToString(containerElse.GetChild(i).GetComponent<BaseElement>(), focusedArea);
+					if (containerElse.GetChild(containerElse.childCount - 1).gameObject == focusedArea)
+						export += " ####";
+
+					export += " }";
+				}
+			}
+			return export;
+		}
+    }
 
 	// Lors de la selection (début d'un drag) d'un bloc dans la zone d'édition
 	public void beginDragElementFromEditableScript(BaseEventData element)
@@ -183,6 +354,15 @@ public class DragDropSystem : FSystem
 			itemDragged = element.selectedObject;
 			Transform parent = itemDragged.transform.parent;
 
+			string content = exportBlockToString(itemDragged.GetComponent<Highlightable>(), null);
+
+			GameObject removedFromArea = null;
+			Transform nextBrother = itemDragged.transform.parent.GetChild(itemDragged.transform.GetSiblingIndex() + 1);
+			if (nextBrother.GetComponentInChildren<DropZone>(true))
+				removedFromArea = nextBrother.GetComponentInChildren<DropZone>(true).gameObject;
+			else // means next brother is a replacement slot
+				removedFromArea = nextBrother.GetComponentInChildren<ReplacementSlot>(true).gameObject;
+
 			// On active les dropzones 
 			setDropZoneState(true);
 
@@ -190,8 +370,13 @@ public class DragDropSystem : FSystem
 			EditingUtility.manageEmptyZone(itemDragged);
 
 			// On l'associe (temporairement) au Canvas Main
-			GameObjectManager.setGameObjectParent(itemDragged, mainCanvas, true);
+			itemDragged.transform.SetParent(mainCanvas.transform, false); // We need to perform it immediatelly to write change in statement
 			itemDragged.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+			GameObjectManager.refresh(itemDragged);
+
+			// compute context after removing item dragged
+			string context = exportScriptToString(nextBrother.GetComponentInParent<UIRootContainer>().transform, removedFromArea);
+
 			// exclude all UI elements that can disturb the drag from the EventSystem
 			foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
 				child.GetComponent<Image>().raycastTarget = false;
@@ -206,6 +391,15 @@ public class DragDropSystem : FSystem
 			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
 			refreshHierarchyContainers(parent.gameObject);
+			GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
+			{
+				verb = "deleted",
+				objectType = "block",
+				activityExtensions = new Dictionary<string, string>() {
+					{ "content", content },
+					{ "context", context }
+				}
+			});
 		}
 	}
 
@@ -270,6 +464,9 @@ public class DragDropSystem : FSystem
 	// Add the dragged item on the drop area
 	private bool addDraggedItemOnDropZone (GameObject dropArea)
     {
+		string content = exportBlockToString(itemDragged.GetComponent<Highlightable>(), null);
+		string context = exportScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
+
 		if (!EditingUtility.addItemOnDropArea(itemDragged, dropArea))
 		{
 			undoDrop();
@@ -291,6 +488,17 @@ public class DragDropSystem : FSystem
 
 		// Lance le son de dépôt du block d'action
 		audioSource.Play();
+
+		GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
+		{
+			verb = "inserted",
+			objectType = "block",
+			activityExtensions = new Dictionary<string, string>() {
+				{ "content", content },
+				{ "context", context }
+			}
+		});
+
 		return true;
 	}
 
@@ -309,14 +517,45 @@ public class DragDropSystem : FSystem
 	{
 		// On vérifie qu'il y a bien un objet pointé pour la suppression
 		if(!Pause && gameData.dragDropEnabled && elementToDelete != null)
-        {
+		{
+			string content = exportBlockToString(elementToDelete.GetComponent<Highlightable>(), null);
+
+			GameObject removedFromArea = null;
+			Transform nextBrother = elementToDelete.transform.parent.GetChild(elementToDelete.transform.GetSiblingIndex() + 1);
+			if (nextBrother.GetComponentInChildren<DropZone>(true))
+				removedFromArea = nextBrother.GetComponentInChildren<DropZone>(true).gameObject;
+			else // means next brother is a replacement slot
+				removedFromArea = nextBrother.GetComponentInChildren<ReplacementSlot>(true).gameObject;
+
 			// Réactivation d'une EmptyZone si nécessaire
 			EditingUtility.manageEmptyZone(elementToDelete);
+
+			// On l'associe (temporairement) au Canvas Main
+			elementToDelete.transform.SetParent(mainCanvas.transform, false); // We need to perform it immediatelly to write change in statement
+			elementToDelete.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+			GameObjectManager.refresh(elementToDelete);
+			// compute context after removing item dragged
+			string context = exportScriptToString(nextBrother.GetComponentInParent<UIRootContainer>().transform, removedFromArea);
+
 			//On associe à l'élément le component ResetBlocLimit pour déclancher le script de destruction de l'élément
 			GameObjectManager.addComponent<ResetBlocLimit>(elementToDelete);
 			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 			// refresh all the hierarchy of parent containers
 			refreshHierarchyContainers(elementToDelete);
+
+			NeedToDelete ntd = elementToDelete.GetComponent<NeedToDelete>();
+			if (ntd == null || !ntd.silent)
+			{
+				GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+				{
+					verb = "deleted",
+					objectType = "block",
+					activityExtensions = new Dictionary<string, string>() {
+					{ "content", content },
+					{ "context", context }
+				}
+				});
+			}
 		}
 	}
 
@@ -387,11 +626,9 @@ public class DragDropSystem : FSystem
 		newItem.transform.localScale = new Vector3(newItem.transform.localScale.x + 0.3f, newItem.transform.localScale.y, newItem.transform.localScale.z);
 		while (newItem.transform.localScale.x > initScaleX)
 		{
-			Debug.Log(newItem.transform.localScale.x);
 			newItem.transform.localScale = new Vector3(newItem.transform.localScale.x-0.01f, newItem.transform.localScale.y, newItem.transform.localScale.z);
 			yield return null;
 		}
-		Debug.Log(newItem.transform.localScale.x+" "+ initScaleX);
 	}
 
 	private IEnumerator focusOnLastDropZoneUsed()
@@ -477,5 +714,33 @@ public class DragDropSystem : FSystem
 			lastClickTime = Time.time;
 			return false;
 		}
+	}
+
+	// see inputFiels in ForBloc prefab in inspector
+	public void onlyPositiveInteger(GameObject forBlock, string newValue)
+	{
+		int oldValue = forBlock.GetComponent<ForControl>().nbFor;
+		Transform input = forBlock.transform.Find("Header");
+		int res;
+		bool success = Int32.TryParse(newValue, out res);
+		if (!success || (success && Int32.Parse(newValue) < 0))
+		{
+			input.GetComponent<TMP_InputField>().text = "0";
+			res = 0;
+		}
+		forBlock.GetComponent<ForControl>().nbFor = res;
+		// compute context
+		string context = exportScriptToString(forBlock.GetComponentInParent<UIRootContainer>().transform, forBlock);
+
+		GameObjectManager.addComponent<ActionPerformedForLRS>(forBlock, new
+		{
+			verb = "modified",
+			objectType = "block",
+			activityExtensions = new Dictionary<string, string>() {
+				{ "context", context },
+				{ "oldValue", oldValue.ToString()},
+				{ "value", res.ToString()}
+			}
+		});
 	}
 }

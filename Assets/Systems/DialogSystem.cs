@@ -6,6 +6,7 @@ using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
 using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// Manage dialogs at the begining of the level
@@ -62,6 +63,12 @@ public class DialogSystem : FSystem
 	{
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
 		nDialog = 0;
+
+		GameObjectManager.addComponent<ActionPerformedForLRS>(gameData.LevelGO, new
+		{
+			verb = "openned",
+			objectType = "briefing"
+		});
 
 		configureDialog();
 	}
@@ -156,6 +163,12 @@ public class DialogSystem : FSystem
 	{
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 		nDialog = gameData.dialogMessage.Count;
+
+		GameObjectManager.addComponent<ActionPerformedForLRS>(gameData.LevelGO, new
+		{
+			verb = "closed",
+			objectType = "briefing"
+		});
 	}
 
 	// Affiche l'image associée au dialogue

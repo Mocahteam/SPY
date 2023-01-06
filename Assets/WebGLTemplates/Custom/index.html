@@ -10,6 +10,7 @@
 	<body onresize="resizeCanvas()">
 	<div id="unity-container" class="unity-desktop">
 	  <div id="unity-header">
+		<img src="TemplateData/Logo_SU.png" alt="Logo SU" height="40px" style="float: left"><img src="TemplateData/LogoLIP6.png" alt="Logo LIP6" height="40px" style="float: right">
 		<p style="font-family: sans-serif; text-align: center; font-weight: bold;">About the project: <a href="https://github.com/Mocahteam/SPY" target="_blank">https://github.com/Mocahteam/SPY</a></p>
 		<p style="font-family: sans-serif; text-align: center; font-weight: bold;">Other projects: <a href="https://webia.lip6.fr/~muratetm/projects.php?LANG=en" target="_blank">https://webia.lip6.fr/~muratetm/projects.php?LANG=en</a></p>
 	  </div>
@@ -100,17 +101,22 @@
 					var reader = new FileReader();
 					reader.onload = function(){
 						const data = {name: fileList[0].name, content: reader.result};
+						// see TitleScreenSystem
 						unityInstance.SendMessage('Main_Loop', 'importScenario', JSON.stringify(data));
 						fileSelector.value = "";
 					};
 					reader.readAsText(fileList[0]);
 				});
+				
+				// reset LRS userName (see SendStatements)
+				unityInstance.SendMessage('Main_Loop', 'resetUserUniqueID');
 			
-				// ask to load a specific level 
+				// ask to load a specific level
 				const queryString = window.location.search;
 				const urlParams = new URLSearchParams(queryString);
 				const levelToLoad = urlParams.get('level');
 				if (levelToLoad != null)
+					// see TitleScreenSystem
 					unityInstance.SendMessage('Main_Loop', 'askToLoadLevel', levelToLoad);
 				
 			}).catch((message) => {
@@ -121,6 +127,7 @@
 				else if (isMobile)
 					msg += "\nVotre dispositif mobile ne contient peut être pas assez de mémoire pour charger le jeu, essayer de recharger la page depuis un ordinateur avec le navigateur Chrome ou Firefox de préférence.";
 				alert(msg);
+				console.log(message);
 			});
 			
 		};

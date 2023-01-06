@@ -8083,6 +8083,7 @@ GameObject:
   - component: {fileID: 361349241}
   - component: {fileID: 361349242}
   - component: {fileID: 361349243}
+  - component: {fileID: 361349244}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -8345,6 +8346,10 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: VirtualKeyboardManager, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: VirtualKeyboardManager
+    _pause: 0
+  - _typeAssemblyQualifiedName: SendStatements, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: SendStatements
     _pause: 0
   _lateUpdateSystemDescriptions:
   - _typeAssemblyQualifiedName: HighLightSystem, Assembly-CSharp, Version=0.0.0.0,
@@ -8681,6 +8686,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settingsPanel: {fileID: 1873516075}
   canvasScaler: {fileID: 1410401869}
+--- !u!114 &361349244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a01cbfe3b9516db4ca61fe2a246495f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &371440127
 GameObject:
   m_ObjectHideFlags: 0
@@ -13019,8 +13036,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 665381104}
   m_HandleRect: {fileID: 665381103}
   m_Direction: 2
-  m_Value: 0.99999446
-  m_Size: 0.69935536
+  m_Value: 0.9999954
+  m_Size: 0.63488966
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
