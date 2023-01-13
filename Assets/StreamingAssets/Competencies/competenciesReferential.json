@@ -6,7 +6,7 @@
 				{
 					"key": "SPY_StepByStep",
 					"parentKey": "",
-					"name": "Résoudre un problème en plusieurs étapes",
+					"name": "F1 Résoudre un problème en plusieurs étapes",
 					"description": "Cette fonctionnalité du jeu permet au joueur de décomposer la résolution du problème en sous étapes. Le joueur peut alors exécuter quelques blocs, analyser la situation après le déplacement et poursuivre sa résolution.",
 					"constraints": [
 						{
@@ -26,7 +26,7 @@
 				{
 					"key": "SPY_Fog",
 					"parentKey": "",
-					"name": "Traduire en langage informatique une consigne exprimée en langage naturel",
+					"name": "F2 Traduire en langage informatique une consigne exprimée en langage naturel",
 					"description": "Active un filtre qui empêche le joueur de voir toute la scène et donc d'avoir une vision globale du problème. La consigne indique en langage naturel comment résoudre le problème et le joueur doit la traduire en langage formel compréhensible par le robot (utilisation des blocs de programmation du jeu).",
 					"constraints": [
 						{
@@ -40,7 +40,7 @@
 				{
 					"key": "SPY_ActiveDoor",
 					"parentKey": "",
-					"name": "Ouvrir/Fermer une porte",
+					"name": "F3 Ouvrir/Fermer une porte",
 					"description": "Être capable de changer l'état d'un objet, ouvrir/fermer une porte.",
 					"constraints": [
 						{
@@ -89,7 +89,7 @@
 				{
 					"key": "SPY_ScriptEditable",
 					"parentKey": "",
-					"name": "Nommer une sequence d'action",
+					"name": "F4 Nommer une sequence d'action",
 					"description": "Être capable de nommer le canal de communication à utiliser pour cibler le robot à commander.",
 					"constraints": [
 						{
@@ -109,7 +109,7 @@
 				{
 					"key": "SPY_SelectRightScript",
 					"parentKey": "",
-					"name": "Identifier la bonne solution",
+					"name": "F5 Identifier la bonne solution",
 					"description": "Étant donné plusieurs solutions données, être capable d'identifier une solution permettant de résoudre le problème.",
 					"constraints": [
 						{
@@ -150,7 +150,7 @@
 				{
 					"key": "SPY_CorrectBuggedScript",
 					"parentKey": "",
-					"name": "Corriger une solution erronée",
+					"name": "F6 Corriger une solution erronée",
 					"description": "Étant donné une solution erronée, être capable d'identifier le problème et de le corriger.",
 					"constraints": [
 						{
@@ -180,7 +180,7 @@
 				{
 					"key": "SPY_EnemyInGame",
 					"parentKey": "",
-					"name": "Prédire le résultat d'une séquence d'actions",
+					"name": "F7 Prédire le résultat d'une séquence d'actions",
 					"description": "Être capable d'anticiper les actions d'un ennemi afin d'adapter sa solution en conséquence.",
 					"constraints": [
 						{
@@ -204,7 +204,7 @@
 				{
 					"key": "SPY_RobotsInSameLine",
 					"parentKey": "",
-					"name": "Généraliser une solution",
+					"name": "F8 Généraliser une solution",
 					"description": "Etre capable de trouver une solution permettant de résoudre deux problèmes différents. Autrement dit, une ligne de communication pour plusieurs robots.",
 					"constraints": [
 						{
@@ -241,7 +241,7 @@
 				{
 					"key": "SPY_Unlimited",
 					"parentKey": "SPY_Limitations",
-					"name": "Blocs illimités",
+					"name": "F9 Blocs illimités",
 					"description": "Ne donner au joueur que des blocs en quantité illimitée. Etre capable de déterminer quand utiliser des blocs.",
 					"constraints": [
 						{
@@ -277,7 +277,7 @@
 				{
 					"key": "SPY_Limited",
 					"parentKey": "SPY_Limitations",
-					"name": "Blocs limités",
+					"name": "F10 Blocs limités",
 					"description": "Ne donner au joueur que des blocs en quantité limitée. Etre capable de combiner des actions dans un ordre valide.",
 					"constraints": [
 						{
@@ -305,7 +305,7 @@
 				{
 					"key": "SPY_Action_MoveForward",
 					"parentKey": "SPY_Actions",
-					"name": "Bloc action \"Avancer\"",
+					"name": "F11 Bloc action \"Avancer\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Avancer\".",
 					"constraints": [
 						{
@@ -341,7 +341,7 @@
 				{
 					"key": "SPY_Action_TurnLeft",
 					"parentKey": "SPY_Actions",
-					"name": "Bloc action \"Pivoter à gauche\"",
+					"name": "F12 Bloc action \"Pivoter à gauche\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Pivoter à gauche\".",
 					"constraints": [
 						{
@@ -377,7 +377,7 @@
 				{
 					"key": "SPY_Action_TurnRight",
 					"parentKey": "SPY_Actions",
-					"name": "Bloc action \"Pivoter à droite\"",
+					"name": "F13 Bloc action \"Pivoter à droite\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Pivoter à droite\".",
 					"constraints": [
 						{
@@ -413,7 +413,7 @@
 				{
 					"key": "SPY_Action_Wait",
 					"parentKey": "SPY_Actions",
-					"name": "Bloc action \"Attendre\"",
+					"name": "F14 Bloc action \"Attendre\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Attendre\".",
 					"constraints": [
 						{
@@ -449,7 +449,7 @@
 				{
 					"key": "SPY_Action_Activate",
 					"parentKey": "SPY_Actions",
-					"name": "Bloc action \"Activer\"",
+					"name": "F15 Bloc action \"Activer\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Activer\".",
 					"constraints": [
 						{
@@ -485,7 +485,7 @@
 				{
 					"key": "SPY_Action_TurnBack",
 					"parentKey": "SPY_Actions",
-					"name": "Bloc action \"Se retourner\"",
+					"name": "F16 Bloc action \"Se retourner\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Se retourner\".",
 					"constraints": [
 						{
@@ -529,7 +529,7 @@
 				{
 					"key": "SPY_Control_IfThen",
 					"parentKey": "SPY_Controls",
-					"name": "Bloc de contrôle \"Si\"",
+					"name": "F17 Bloc de contrôle \"Si\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Si\".",
 					"constraints": [
 						{
@@ -559,7 +559,7 @@
 				{
 					"key": "SPY_Control_IfElse",
 					"parentKey": "SPY_Controls",
-					"name": "Bloc de contrôle \"Si/Sinon\"",
+					"name": "F18 Bloc de contrôle \"Si/Sinon\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Si/Sinon\".",
 					"constraints": [
 						{
@@ -589,7 +589,7 @@
 				{
 					"key": "SPY_Control_ForLoop",
 					"parentKey": "SPY_Controls",
-					"name": "Bloc de contrôle \"Répéter plusieurs fois\"",
+					"name": "F19 Bloc de contrôle \"Répéter plusieurs fois\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Répéter plusieurs fois\".",
 					"constraints": [
 						{
@@ -619,7 +619,7 @@
 				{
 					"key": "SPY_Control_While",
 					"parentKey": "SPY_Controls",
-					"name": "Bloc de contrôle \"Tant que\"",
+					"name": "F20 Bloc de contrôle \"Tant que\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Tant que\".",
 					"constraints": [
 						{
@@ -649,7 +649,7 @@
 				{
 					"key": "SPY_Control_Forever",
 					"parentKey": "SPY_Controls",
-					"name": "Bloc de contrôle \"Répéter sans fin\"",
+					"name": "F21 Bloc de contrôle \"Répéter sans fin\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Répéter sans fin\".",
 					"constraints": [
 						{
@@ -687,7 +687,7 @@
 				{
 					"key": "SPY_Operator_And",
 					"parentKey": "SPY_Operators",
-					"name": "Opérateur de contrôle \"Et\"",
+					"name": "F22 Opérateur de contrôle \"Et\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Et\".",
 					"constraints": [
 						{
@@ -717,7 +717,7 @@
 				{
 					"key": "SPY_Operator_Or",
 					"parentKey": "SPY_Operators",
-					"name": "Opérateur de contrôle \"Ou\"",
+					"name": "F23 Opérateur de contrôle \"Ou\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"0u\".",
 					"constraints": [
 						{
@@ -747,7 +747,7 @@
 				{
 					"key": "SPY_Operator_Not",
 					"parentKey": "SPY_Operators",
-					"name": "Opérateur de contrôle \"Non\"",
+					"name": "F24 Opérateur de contrôle \"Non\"",
 					"description": "Donner au joueur la possibilité d'utiliser des blocs \"Non\".",
 					"constraints": [
 						{
@@ -785,7 +785,7 @@
 				{
 					"key": "SPY_Captor_WallFront",
 					"parentKey": "SPY_Captors",
-					"name": "Capteur \"Mur détecté en face\"",
+					"name": "F25 Capteur \"Mur détecté en face\"",
 					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Mur détecté en face\".",
 					"constraints": [
 						{
@@ -821,7 +821,7 @@
 				{
 					"key": "SPY_Captor_WallLeft",
 					"parentKey": "SPY_Captors",
-					"name": "Capteur \"Mur détecté à gauche\"",
+					"name": "F26 Capteur \"Mur détecté à gauche\"",
 					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Mur détecté à gauche\".",
 					"constraints": [
 						{
@@ -857,7 +857,7 @@
 				{
 					"key": "SPY_Captor_WallRight",
 					"parentKey": "SPY_Captors",
-					"name": "Capteur \"Mur détecté à droite\"",
+					"name": "F27 Capteur \"Mur détecté à droite\"",
 					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Mur détecté à droite\".",
 					"constraints": [
 						{
@@ -893,7 +893,7 @@
 				{
 					"key": "SPY_Captor_PathFront",
 					"parentKey": "SPY_Captors",
-					"name": "Capteur \"Passage détecté en face\"",
+					"name": "F28 Capteur \"Passage détecté en face\"",
 					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Passage détecté en face\".",
 					"constraints": [
 						{
@@ -929,7 +929,7 @@
 				{
 					"key": "SPY_Captor_PathLeft",
 					"parentKey": "SPY_Captors",
-					"name": "Capteur \"Passage détecté à gauche\"",
+					"name": "F29 Capteur \"Passage détecté à gauche\"",
 					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Passage détecté à gauche\".",
 					"constraints": [
 						{
@@ -965,7 +965,7 @@
 				{
 					"key": "SPY_Captor_PathRight",
 					"parentKey": "SPY_Captors",
-					"name": "Capteur \"Passage détecté à droite\"",
+					"name": "F30 Capteur \"Passage détecté à droite\"",
 					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Passage détecté à droite\".",
 					"constraints": [
 						{
@@ -1001,7 +1001,7 @@
 				{
 					"key": "SPY_Captor_Enemy",
 					"parentKey": "SPY_Captors",
-					"name": "Capteur \"Ennemi détecté en face\"",
+					"name": "F31 Capteur \"Ennemi détecté en face\"",
 					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Ennemi détecté en face\".",
 					"constraints": [
 						{
@@ -1037,7 +1037,7 @@
 				{
 					"key": "SPY_Captor_RedArea",
 					"parentKey": "SPY_Captors",
-					"name": "Capteur \"Zone surveillée en face\"",
+					"name": "F32 Capteur \"Zone surveillée en face\"",
 					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Zone surveillée en face\".",
 					"constraints": [
 						{
@@ -1073,7 +1073,7 @@
 				{
 					"key": "SPY_Captor_FieldGate",
 					"parentKey": "SPY_Captors",
-					"name": "Capteur \"Porte détectée en face\"",
+					"name": "F33 Capteur \"Porte détectée en face\"",
 					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Porte détectée en face\".",
 					"constraints": [
 						{
@@ -1109,7 +1109,7 @@
 				{
 					"key": "SPY_Captor_Terminal",
 					"parentKey": "SPY_Captors",
-					"name": "Capteur \"Terminal détecté sur ma position\"",
+					"name": "F34 Capteur \"Terminal détecté sur ma position\"",
 					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Terminal détecté sur ma position\".",
 					"constraints": [
 						{
@@ -1145,7 +1145,7 @@
 				{
 					"key": "SPY_Captor_Exit",
 					"parentKey": "SPY_Captors",
-					"name": "Capteur \"Sortie détectée sur ma position\"",
+					"name": "F35 Capteur \"Sortie détectée sur ma position\"",
 					"description": "Donner au joueur la possibilité d'utiliser des capteurs \"Sortie détectée sur ma position\".",
 					"constraints": [
 						{
@@ -1459,7 +1459,7 @@
 							]
 						}
 					],
-					"rule": "(EnemyWithScriptAndRange = ScriptWithContent or EnemyWithScriptAndSelf = ScriptWithContent) and ScriptWithContent <> 0"
+					"rule": "(EnemyWithScriptAndRange = ScriptWithContent or EnemyWithScriptAndSelf = ScriptWithContent) and ScriptWithContent > 0"
 				},
 				{
 					"key": "C1.6",
@@ -1667,17 +1667,6 @@
 							]
 						},
 						{
-							"label": "ActionInScript",
-							"tag": "action",
-							"parameters": [
-								{
-									"attribute": "type",
-									"constraint": "include",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
-								}
-							]
-						},
-						{
 							"label": "UnlimitedActionInLib",
 							"tag": "blockLimit",
 							"parameters": [
@@ -1694,7 +1683,7 @@
 							"parameters": []
 						}
 					],
-					"rule": "UnlimitedActionInLib = 0 and DragDropDisabled = 0 and (AvailableActionInLib >= 1 or ActionInScript >= 1)"
+					"rule": "UnlimitedActionInLib = 0 and DragDropDisabled = 0 and AvailableActionInLib >= 1"
 				},
 				{
 					"key": "C2.2",
@@ -1708,6 +1697,11 @@
 							"parameters": []
 						},
 						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"parameters": []
+						},
+						{
 							"label": "BuggedScript",
 							"tag": "script",
 							"parameters": [
@@ -1715,6 +1709,9 @@
 									"attribute": "type",
 									"constraint": "=",
 									"value": "2"
+								},
+								{
+									"constraint": "hasChild"
 								}
 							]
 						},
@@ -1731,17 +1728,6 @@
 									"attribute": "limit",
 									"constraint": ">",
 									"value": "0"
-								}
-							]
-						},
-						{
-							"label": "ActionInScript",
-							"tag": "action",
-							"parameters": [
-								{
-									"attribute": "type",
-									"constraint": "include",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
 								}
 							]
 						},
@@ -1787,7 +1773,7 @@
 							"parameters": []
 						}
 					],
-					"rule": "BuggedScript = AllScript and (AvailableActionInLib >=1 or ActionInScript >= 1) and ControlInLib = 0 and IfInScript = 0 and IfElseInScript = 0 and ForInScript = 0 and WhileInScript = 0 and ForeverInScript = 0"
+					"rule": "DragDropDisabled = 0 and BuggedScript = AllScript and AvailableActionInLib >=1 and ControlInLib = 0 and IfInScript = 0 and IfElseInScript = 0 and ForInScript = 0 and WhileInScript = 0 and ForeverInScript = 0"
 				},
 				{
 					"key": "C2.3",
@@ -2412,25 +2398,9 @@
 									"value": "1"
 								}
 							]
-						},
-						{
-							"label": "ActionInLib",
-							"tag": "blockLimit",
-							"parameters": [
-								{
-									"attribute": "blockType",
-									"constraint": "include",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
 						}
 					],
-					"rule": "DragDropDisabled = 0 and AllScript = NonOptimalScript and ActionInLib >= 1"
+					"rule": "DragDropDisabled = 0 and AllScript = NonOptimalScript"
 				},
 				{
 					"key": "C5",
@@ -2512,25 +2482,9 @@
 									"value": "2"
 								}
 							]
-						},
-						{
-							"label": "ActionInLib",
-							"tag": "blockLimit",
-							"parameters": [
-								{
-									"attribute": "blockType",
-									"constraint": "include",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
 						}
 					],
-					"rule": "DragDropDisabled = 0 and AllScript = BuggedScript and ActionInLib >= 1"
+					"rule": "DragDropDisabled = 0 and AllScript = BuggedScript"
 				},
 				{
 					"key": "C6.4",
@@ -2538,6 +2492,11 @@
 					"name": "C6.4 Étendre ou modifier une séquence d'actions pour atteindre un nouvel objectif",
 					"description": "A partir d'une séquence d'actions donnée dont le résultat est connu (la séquence est complète par rapport à un objectif précédent), pouvoir la réutiliser et l'adapter pour atteindre un autre (nouvel) objectif.",
 					"constraints": [
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"parameters": []
+						},
 						{
 							"label": "RobotsInSameLine",
 							"tag": "player",
@@ -2567,7 +2526,7 @@
 							]
 						}
 					],
-					"rule": "RobotsInSameLine >= 2 and ActionInLib >= 1"
+					"rule": "DragDropDisabled = 0 and RobotsInSameLine >= 2 and ActionInLib >= 1"
 				}
 			]
 		},
@@ -2578,7 +2537,7 @@
 					"key": "D3",
 					"parentKey": "",
 					"name": "DOMAINE 3 : Création de contenus",
-					"description": "Le CRCN (Cadre de Référence des Compétences Numériques) est inspiré du cadre européen DigComp 2.1 (Digital Competence Framework for Citizens, 2017). Il est entré en vigueur à la rentrée scolaire 2019. Il est valable de l'école primaire à l'université.<br><br>Un bilan de la maîtrise des compétences numériques des élèves est réalisé en classe de cours moyen deuxième année (CM2) et en classe de sixième pour le cycle 3.<br><br>Il fixe 16 compétences numériques attendues dans 5 domaines d’activité et huit niveaux de maîtrise de ces compétences (article D. 121-1 du code de l’éducation).<br><br>SPY permet de travailler la compétence 3.4 \"Programmer\" du comaine 3 \"Création de contenus\". ",
+					"description": "Le CRCN (Cadre de Référence des Compétences Numériques) est inspiré du cadre européen DigComp 2.1 (Digital Competence Framework for Citizens, 2017). Il est entré en vigueur à la rentrée scolaire 2019. Il est valable de l'école primaire à l'université.<br><br>Un bilan de la maîtrise des compétences numériques des élèves est réalisé en classe de cours moyen deuxième année (CM2) et en classe de sixième pour le cycle 3.<br><br>Il fixe 16 compétences numériques attendues dans 5 domaines d’activité et huit niveaux de maîtrise de ces compétences (article D. 121-1 du code de l’éducation).<br><br>SPY permet de travailler la compétence 3.4 \"Programmer\" du domaine 3 \"Création de contenus\". ",
 					"constraints": [],
 					"rule": ""
 				},
