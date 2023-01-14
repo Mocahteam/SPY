@@ -29,7 +29,7 @@ public static class GBL_Interface {
     //Statements will be sent to all addresses in this list
     public static List<GBLConfig> lrsAddresses = new List<GBLConfig>() {
         // Root statement to Dev store in editor and Prod store else
-        Application.isEditor ? new GBLConfig("https://lrsmocah.lip6.fr/data/xAPI", "a4b46f0307a8671674fd4f55139ae5bebb9a4a4d", "cb1992c04168586866dd55f51a0d1f6589e45335") : new GBLConfig("https://lrsmocah.lip6.fr/data/xAPI", "dc2cfee1883f369feb56c964c219f50555d00507", "213c1323b76f6d53fdcd979df168543a3c57d961")
+        Application.isEditor ? new GBLConfig("https://lrsmocah.lip6.fr/data/xAPI", "66f8639e5b78254c75c5be12aacd8cde19bdd397", "0e63fe7a313fc7aed79577a453259702342fc604") : new GBLConfig("https://lrsmocah.lip6.fr/data/xAPI", "dc2cfee1883f369feb56c964c219f50555d00507", "213c1323b76f6d53fdcd979df168543a3c57d961")
     };
 	public static string userUUID = ""; // Muratet : overrided in SendStatements system
     public static string playerName = ""; // Muratet : overrided in SendStatements system
