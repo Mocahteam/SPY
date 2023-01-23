@@ -1,5 +1,7 @@
 ﻿using FYFY;
 using System.Collections;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -14,10 +16,14 @@ public class StepSystem : FSystem {
     private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
     private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
+    private Family f_executablePanels = FamilyManager.getFamily(new AnyOfTags("ScriptConstructor"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+
     private float timeStepCpt;
 	private GameData gameData;
     private int nbStep;
     private bool newStepAskedByPlayer;
+
+    public RectTransform editableContainers;
 
     protected override void onStart()
     {
@@ -57,10 +63,10 @@ public class StepSystem : FSystem {
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
         //Organize each steps
-        if (f_newEnd.Count == 0 && (playerHasNextAction() || timeStepCpt > 0))
+        if (f_newEnd.Count == 0 && (playerHasNextAction() || timeStepCpt > 0 || newStepAskedByPlayer))
         {
             //activate step
-            if (timeStepCpt <= 0)
+            if (timeStepCpt <= 0 || newStepAskedByPlayer)
             {
                 GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
                 gameData.totalStep++;
@@ -112,21 +118,60 @@ public class StepSystem : FSystem {
     // See PauseButton, ContinueButton in editor
     public void autoExecuteStep(bool on){
         Pause = !on;
-        GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+
+        if (Pause)
         {
-            verb = on ? "resumed" : "paused",
-            objectType = "program"
-        });
+            string scriptsContent = "";
+            foreach (GameObject executablePanel in f_executablePanels)
+                scriptsContent += exportExecutableScriptToString(executablePanel.transform);
+
+            GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+            {
+                verb ="paused",
+                objectType = "program",
+                activityExtensions = new Dictionary<string, string>() {
+                    { "context", scriptsContent }
+                }
+            });
+        } else
+        {
+            GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+            {
+                verb = "resumed",
+                objectType = "program"
+            });
+        }
+    }
+
+    private string exportExecutableScriptToString(Transform scriptContainer)
+    {
+        string scriptsContent = scriptContainer.parent.parent.parent.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text + " {";
+        for (int i = 0; i < scriptContainer.childCount; i++)
+            scriptsContent += " " + EditingUtility.exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>(), null, true);
+        scriptsContent += " }\n";
+        return scriptsContent;
     }
 
     // See NextStepButton in editor
     public void goToNextStep(){
         Pause = false;
         newStepAskedByPlayer = true;
+        MainLoop.instance.StartCoroutine(delayStatement());
+    }
+
+    private IEnumerator delayStatement()
+    {
+        yield return new WaitForSeconds(.25f);
+        string scriptsContent = "";
+        foreach (GameObject executablePanel in f_executablePanels)
+            scriptsContent += exportExecutableScriptToString(executablePanel.transform);
         GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
         {
             verb = "stepped",
-            objectType = "program"
+            objectType = "program",
+            activityExtensions = new Dictionary<string, string>() {
+                { "context", scriptsContent }
+            }
         });
     }
 
@@ -144,5 +189,10 @@ public class StepSystem : FSystem {
     // See ContinueButton in editor
     public void setToDefaultTimeStep(){
         gameData.gameSpeed_current = gameData.gameSpeed_default;
+    }
+
+    public void startStepImmediate()
+    {
+        timeStepCpt = 0.1f; // To quickly start the next step
     }
 }

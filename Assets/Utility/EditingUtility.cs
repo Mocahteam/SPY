@@ -465,4 +465,158 @@ public static class EditingUtility
 				removeComments(child);
 		}
 	}
+
+	public static string exportBlockToString(Highlightable script, GameObject focusedArea, bool highlightCurrentAction = false)
+	{
+		if (script == null)
+			return "";
+		else
+		{
+			string export = "";
+			if (script is BasicAction)
+			{
+				DropZone dz = script.GetComponentInChildren<DropZone>(true);
+				if (dz != null && dz.gameObject == focusedArea)
+					export += "#### ";
+				if (script.GetComponent<CurrentAction>())
+					export += "* ";
+				export += (script as BasicAction).actionType.ToString() + ";";
+			}
+			else if (script is BaseCaptor)
+			{
+				ReplacementSlot localRS = script.GetComponent<ReplacementSlot>();
+				if (localRS.gameObject == focusedArea)
+					export += "##";
+				export += (script as BaseCaptor).captorType.ToString();
+				if (localRS.gameObject == focusedArea)
+					export += "##";
+			}
+			else if (script is BaseOperator)
+			{
+				ReplacementSlot localRS = script.GetComponent<ReplacementSlot>();
+				if (localRS.gameObject == focusedArea)
+					export += "##";
+				BaseOperator ope = script as BaseOperator;
+				Transform container = script.transform.Find("Container");
+				if (ope.operatorType == BaseOperator.OperatorType.NotOperator)
+				{
+					export += "NOT (";
+
+					if (container.Find("EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(container.GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ")";
+				}
+				else if (ope.operatorType == BaseOperator.OperatorType.AndOperator)
+				{
+					export += "(";
+
+					if (container.Find("EmptyConditionalSlot1").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(container.GetChild(0).GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ") AND (";
+
+					if (container.Find("EmptyConditionalSlot2").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(container.GetChild(container.childCount - 2).GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ")";
+				}
+				else if (ope.operatorType == BaseOperator.OperatorType.OrOperator)
+				{
+					export += "(";
+
+					if (container.Find("EmptyConditionalSlot1").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(container.GetChild(0).GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ") OR (";
+
+					if (container.Find("EmptyConditionalSlot2").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(container.GetChild(container.childCount - 2).GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ")";
+				}
+				if (localRS.gameObject == focusedArea)
+					export += "##";
+			}
+			else if (script is ControlElement)
+			{
+				DropZone dz = script.transform.Find("Header").GetComponentInChildren<DropZone>(true);
+				if (dz != null && dz.gameObject == focusedArea)
+					export += "#### ";
+				ControlElement control = script as ControlElement;
+				if (script is WhileControl)
+				{
+					export += "WHILE (";
+
+					if (script.transform.Find("ConditionContainer").Find("EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(script.transform.Find("ConditionContainer").GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ")";
+				}
+				else if (script is ForControl)
+				{
+					export += "REPEAT (";
+					if (script.gameObject == focusedArea)
+						export += "##";
+					export += (script as ForControl).nbFor;
+					if (script.gameObject == focusedArea)
+						export += "##";
+					export += ")";
+				}
+				else if (script is ForeverControl)
+					export += "FOREVER";
+				else if (script is IfControl)
+				{
+					export += "IF (";
+
+					if (script.transform.Find("ConditionContainer").Find("EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+						export += "####";
+					else
+						export += exportBlockToString(script.transform.Find("ConditionContainer").GetComponentInChildren<BaseCondition>(true), focusedArea);
+
+					export += ")";
+				}
+
+				export += " {";
+
+				Transform container = script.transform.Find("Container");
+				// parcourir tous les enfants et exclure les zone de drop
+				for (int i = 0; i < container.childCount; i++)
+					if (container.GetChild(i).GetComponent<ReplacementSlot>() == null)
+						export += " " + exportBlockToString(container.GetChild(i).GetComponent<BaseElement>(), focusedArea);
+				if (container.GetChild(container.childCount - 1).gameObject == focusedArea)
+					export += " ####";
+
+				export += " }";
+
+				if (script is IfElseControl)
+				{
+					export += " ELSE {";
+
+					Transform containerElse = script.transform.Find("ElseContainer");
+					// parcourir tous les enfants et exclure les zone de drop
+					for (int i = 0; i < containerElse.childCount; i++)
+						if (containerElse.GetChild(i).GetComponent<ReplacementSlot>() == null)
+							export += " " + exportBlockToString(containerElse.GetChild(i).GetComponent<BaseElement>(), focusedArea);
+					if (containerElse.GetChild(containerElse.childCount - 1).gameObject == focusedArea)
+						export += " ####";
+
+					export += " }";
+				}
+			}
+			return export;
+		}
+	}
 }

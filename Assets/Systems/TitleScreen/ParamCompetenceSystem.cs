@@ -189,6 +189,7 @@ public class ParamCompetenceSystem : FSystem
 		{
 			// On instancie la compétence
 			GameObject competency = UnityEngine.Object.Instantiate(prefabComp);
+			competency.SetActive(false);
 			competency.name = rawComp.key;
 			Competency comp = competency.GetComponent<Competency>();
 			comp.parentKey = rawComp.parentKey;
@@ -206,12 +207,18 @@ public class ParamCompetenceSystem : FSystem
 			GameObjectManager.bind(competency);
 		}
 
+		MainLoop.instance.StartCoroutine(buildCompetenciesHierarchy());
+	}
+
+	private IEnumerator buildCompetenciesHierarchy()
+    {
 		// move sub-competencies
-		Competency[] competencies = ContentCompMenu.transform.GetComponentsInChildren<Competency>();
+		Competency[] competencies = ContentCompMenu.transform.GetComponentsInChildren<Competency>(true);
 		foreach (Competency comp in competencies)
 		{
 			// Check if this competency has a parent
 			if (comp.parentKey != "")
+			{
 				// Look for this parent
 				foreach (Competency parentComp in competencies)
 					if (parentComp.gameObject.name == comp.parentKey)
@@ -220,8 +227,12 @@ public class ParamCompetenceSystem : FSystem
 						comp.transform.SetParent(parentComp.transform.Find("SubCompetencies"), false);
 						// enable Hide button
 						parentComp.transform.Find("Header").Find("ButtonHide").gameObject.SetActive(true);
-						LayoutRebuilder.ForceRebuildLayoutImmediate(parentComp.transform.Find("SubCompetencies") as RectTransform);
+						//LayoutRebuilder.ForceRebuildLayoutImmediate(parentComp.transform.Find("SubCompetencies") as RectTransform);
+						break;
 					}
+			}
+			comp.gameObject.SetActive(true);
+			yield return null;
 		}
 		LayoutRebuilder.ForceRebuildLayoutImmediate(ContentCompMenu.transform as RectTransform);
 	}

@@ -3,9 +3,11 @@ using FYFY;
 
 public class StepSystem_wrapper : BaseWrapper
 {
+	public UnityEngine.RectTransform editableContainers;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
+		MainLoop.initAppropriateSystemField (system, "editableContainers", editableContainers);
 	}
 
 	public void autoExecuteStep(System.Boolean on)
@@ -31,6 +33,11 @@ public class StepSystem_wrapper : BaseWrapper
 	public void setToDefaultTimeStep()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setToDefaultTimeStep", null);
+	}
+
+	public void startStepImmediate()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "startStepImmediate", null);
 	}
 
 }

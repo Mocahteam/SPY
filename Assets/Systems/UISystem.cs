@@ -16,7 +16,6 @@ public class UISystem : FSystem {
 	private Family f_agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private Family f_viewportContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les containers viewport
 	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
-	private Family f_resetButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("ResetButton")); // Les petites balayettes de chaque panneau d'édition
 	private Family f_removeButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton")); // Les petites poubelles de chaque panneau d'édition
 	private Family f_pointerOver = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Tous les objets pointés
 	private Family f_tooltipContent = FamilyManager.getFamily(new AllOfComponents(typeof(TooltipContent))); // Tous les tooltips
@@ -101,10 +100,15 @@ public class UISystem : FSystem {
 			// Hide menu panel
 			GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, false);
 			// Inactive of each editable panel
-			foreach (GameObject brush in f_resetButton)
+			foreach (GameObject brush in f_removeButton)
+			{
+				// Disable trash button
 				brush.GetComponent<Button>().interactable = false;
-			foreach (GameObject trash in f_removeButton)
-				trash.GetComponent<Button>().interactable = false;
+				// Disable reset button
+				brush.transform.parent.GetChild(brush.transform.GetSiblingIndex() - 1).GetComponent<Button>().interactable = false;
+				// Disable naming TMP
+				brush.transform.parent.GetComponentInChildren<TMPro.TMP_InputField>().interactable = false;
+			}
 			// Sauvegarde de l'état d'avancement des niveaux (niveau et étoile)
 			int currentLevelNum = gameData.scenario.FindIndex(x => x == gameData.levelToLoad);
 			if (PlayerPrefs.GetInt(gameData.scenarioName,0) < currentLevelNum + 1)
