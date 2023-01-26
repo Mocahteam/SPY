@@ -53,7 +53,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   x: 0
-  z: 0
+  y: 0
+  targetX: -1
+  targetY: -1
 --- !u!114 &8936784549097885255
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,9 +217,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 884027c6c0273814ebb677a51949b7db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scriptContainer: {fileID: 0}
-  uiContainer: {fileID: 0}
-  currentAction: 0
+  executableScript: {fileID: 0}
+  executablePanel: {fileID: 0}
+  scriptFinished: 0
+  nbOfInactions: 0
 --- !u!114 &9018447352748071422
 MonoBehaviour:
   m_ObjectHideFlags: 0

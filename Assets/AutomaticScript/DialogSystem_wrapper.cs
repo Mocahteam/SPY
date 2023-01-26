@@ -49,9 +49,4 @@ public class DialogSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "closeDialogPanel", null);
 	}
 
-	public void setImageSprite()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "setImageSprite", null);
-	}
-
 }

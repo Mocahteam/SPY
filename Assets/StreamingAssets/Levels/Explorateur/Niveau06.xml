@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "3" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "2" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="Une porte bloque le passage !" camY="2" camX="1" />
+	<dialog text="Regarde ! Il y a un ordinateur qui contrôle la porte." img="terminalSolo.png" camY="3" camX="1" />
+	<dialog text="Il suffit d'utiliser l'action 'Activer' sur la case de l'ordinateur pour ouvrir la porte." img="ActivateIcon.png" imgHeight="45" camY="5" camX="1" />
+  </dialogs>
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="-1" />
+    <blockLimit blockType="TurnLeft" limit="-1" />
+    <blockLimit blockType="TurnRight" limit="-1" />
+    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Activate" limit="-1" />
+    <blockLimit blockType="TurnBack" limit="0" />
+    <blockLimit blockType="IfThen" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="ForLoop" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="0" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <coin posY="1" posX="1" />
+  <console state="1" posY="3" posX="1" direction="3">
+    <slot slotId="0" />
+  </console>
+  <door posY="2" posX="1" slotId="0" direction="0" />
+  <player associatedScriptName="Karl" posY="5" posX="1" direction="0" />
+  <script name="Karl" editMode="0" />
+  <score twoStars="9499" threeStars="10499"/>
+</level>

@@ -109,10 +109,10 @@ public class DialogSystem : FSystem
 		{
 			if (Application.platform == RuntimePlatform.WebGLPlayer){
 				Uri uri = new Uri(gameData.levelToLoad);
-				setImageSprite(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + gameData.dialogMessage[nDialog].Item2);
+				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + gameData.dialogMessage[nDialog].Item2));
 			}
 			else
-				setImageSprite(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.levelToLoad) + "/Images/" + gameData.dialogMessage[nDialog].Item2);
+				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.levelToLoad) + "/Images/" + gameData.dialogMessage[nDialog].Item2));
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO, false);
@@ -121,6 +121,22 @@ public class DialogSystem : FSystem
         {
 			GameObjectManager.addComponent<FocusCamOn>(MainLoop.instance.gameObject, new { camX = gameData.dialogMessage[nDialog].Item4, camY = gameData.dialogMessage[nDialog].Item5 });
 		}
+		// set sound
+		AudioSource audio = dialogPanel.GetComponent<AudioSource>();
+		if (gameData.dialogMessage[nDialog].Item6 != null)
+		{
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
+			{
+				Uri uri = new Uri(gameData.levelToLoad);
+				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Sounds/" + gameData.dialogMessage[nDialog].Item6));
+			}
+			else
+				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, Path.GetDirectoryName(gameData.levelToLoad) + "/Sounds/" + gameData.dialogMessage[nDialog].Item6));
+		}
+		else
+			audio.Stop();
+		// set background
+		dialogPanel.transform.parent.GetComponent<Image>().enabled = !gameData.dialogMessage[nDialog].Item7;
 
 		// Be sure all buttons are disabled
 		setActiveOKButton(false);
@@ -171,32 +187,6 @@ public class DialogSystem : FSystem
 		});
 	}
 
-	// Affiche l'image associée au dialogue
-	public void setImageSprite(Image img, string path)
-	{
-		if (Application.platform == RuntimePlatform.WebGLPlayer)
-		{
-			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, path));
-		}
-		else
-		{
-			Texture2D tex2D = new Texture2D(2, 2); //create new "empty" texture
-			try
-			{
-				byte[] fileData = File.ReadAllBytes(path); //load image from SPY/path
-				if (tex2D.LoadImage(fileData))
-				{
-					img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
-					MainLoop.instance.StartCoroutine(setWantedHeight(img));
-				}
-			}
-			catch (Exception e)
-			{
-				Debug.Log(e.Message);
-			}
-		}
-	}
-
 	private IEnumerator GetTextureWebRequest(Image img, string path)
 	{
 		UnityWebRequest www = UnityWebRequestTexture.GetTexture(path);
@@ -211,6 +201,19 @@ public class DialogSystem : FSystem
 			Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
 			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
 			MainLoop.instance.StartCoroutine(setWantedHeight(img));
+		}
+	}
+	private IEnumerator GetAudioWebRequest(AudioSource audio, string path)
+	{
+		UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.MPEG);
+		yield return www.SendWebRequest();
+
+		if (www.result != UnityWebRequest.Result.Success)
+			Debug.Log(www.error);
+		else
+		{
+			audio.clip = DownloadHandlerAudioClip.GetContent(www);
+			audio.Play();
 		}
 	}
 

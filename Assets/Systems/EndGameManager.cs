@@ -126,7 +126,7 @@ public class EndGameManager : FSystem {
 			int _score = (10000 / (gameData.totalActionBlocUsed + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
 			Transform verticalCanvas = endPanel.transform.Find("VerticalCanvas");
 			GameObjectManager.setGameObjectState(verticalCanvas.Find("ScoreCanvas").gameObject, true);
-			verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez gagné !\nScore: " + _score;
+			Debug.Log("Score: " + _score);
 			setScoreStars(_score, verticalCanvas.Find("ScoreCanvas"));
 
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
@@ -138,7 +138,11 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, true);
 			//Check if next level exists in campaign
 			if (gameData.scenario.FindIndex(x => x == gameData.levelToLoad) >= gameData.scenario.Count - 1)
+			{
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
+				verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez terminé ce scénario !";
+			} else
+				verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez gagné !";
 			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
 			{
 				verb = "completed",
@@ -263,7 +267,6 @@ public class EndGameManager : FSystem {
     {
 		yield return null;
 		GameObjectManager.addComponent<ActionPerformedForLRS>(src, componentValues);
-
 	}
 
 	// Gére le nombre d'étoile à afficher selon le score obtenue

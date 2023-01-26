@@ -10,7 +10,7 @@ public class GameData : MonoBehaviour {
 	public List<string> scenario; // The scenario to play
 	public string levelToLoad; // level index to load in levels dictionary
 	public int[] levelToLoadScore; //levelToLoadScore[0] = best score (3 stars) ; levelToLoadScore[1] = medium score (2 stars)
-	public List<(string,string,float, int, int)> dialogMessage; //list of (dialogText, imageName, imageHeight, camX, camY)
+	public List<(string,string,float, int, int, string, bool)> dialogMessage; //list of (dialogText, imageName, imageHeight, camX, camY, soundName, enableInteraction)
 	public Dictionary<string, int> actionBlockLimit; //Is block available in library?
 	public string scoreKey = "score";
 	public int totalStep;

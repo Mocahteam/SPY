@@ -44,6 +44,7 @@ public class DragDropSystem : FSystem
 	private Family f_editMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 	private Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(Outline), typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 
 	// Les variables
 	private GameData gameData;
@@ -96,6 +97,16 @@ public class DragDropSystem : FSystem
 		f_editMode.addEntryCallback(delegate {
 			Pause = false;
 		});
+
+		f_newEnd.addEntryCallback(levelFinished);
+	}
+	
+	// Si victoire désactive le drag&drop
+	private void levelFinished(GameObject go)
+	{
+		// En cas de fin de niveau
+		if (go.GetComponent<NewEnd>().endType == NewEnd.Win)
+			Pause = true;
 	}
 
 	// toggle toutes les dropzones
