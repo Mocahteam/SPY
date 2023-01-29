@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using FYFY;
+using FYFY_plugins.CollisionManager;
 using System.Collections;
 
 /// <summary>
@@ -8,6 +9,7 @@ using System.Collections;
 public class MoveSystem : FSystem {
 
 	private Family f_movable = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
+	private Family f_drone = FamilyManager.getFamily(new NoneOfComponents(typeof(InCollision3D), typeof(Rigidbody)), new AnyOfTags("Drone"));
 	private Family f_forceMove = FamilyManager.getFamily(new AllOfComponents(typeof(ForceMoveAnimation)));
 
 	public float turnSpeed;
@@ -25,6 +27,7 @@ public class MoveSystem : FSystem {
 			initAgentDirection(movable);
 		f_movable.addEntryCallback(initAgentDirection);
 		f_forceMove.addEntryCallback(onForceMove);
+		f_drone.addEntryCallback(resetVelocity);
 	}
 
 	private void initAgentDirection(GameObject agent)
@@ -61,15 +64,18 @@ public class MoveSystem : FSystem {
 
 	private void playMoveAnimation(GameObject go)
     {
-		if (gameData.gameSpeed_current == gameData.gameSpeed_default)
+		if (go.GetComponent<Animator>() != null)
 		{
-			go.GetComponent<Animator>().SetFloat("Walk", 1f);
-			go.GetComponent<Animator>().SetFloat("Run", -1f);
-		}
-		else
-		{
-			go.GetComponent<Animator>().SetFloat("Walk", -1f);
-			go.GetComponent<Animator>().SetFloat("Run", 1f);
+			if (gameData.gameSpeed_current == gameData.gameSpeed_default)
+			{
+				go.GetComponent<Animator>().SetFloat("Walk", 1f);
+				go.GetComponent<Animator>().SetFloat("Run", -1f);
+			}
+			else
+			{
+				go.GetComponent<Animator>().SetFloat("Walk", -1f);
+				go.GetComponent<Animator>().SetFloat("Run", 1f);
+			}
 		}
 	}
 
@@ -123,4 +129,9 @@ public class MoveSystem : FSystem {
 					go.GetComponent<Animator>().SetFloat("Rotate", -1f);
 		}
 	}
+
+	private void resetVelocity(GameObject go)
+    {
+		go.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
+    }
 }

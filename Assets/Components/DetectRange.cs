@@ -6,6 +6,6 @@ public class DetectRange : MonoBehaviour {
 	public int range;
 
 	public bool selfRange;
-	public enum Type {Line, Cone, Around};
+	public enum Type {Line, Cross, Cone, Around};
 	public Type type;
 }

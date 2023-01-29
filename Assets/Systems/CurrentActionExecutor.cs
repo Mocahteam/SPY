@@ -29,7 +29,7 @@ public class CurrentActionExecutor : FSystem {
 			{
 				conflict = false;
 				foreach (GameObject agent2 in f_agent)
-					if (agent != agent2 && agent.tag == agent2.tag)
+					if (agent != agent2 && agent.tag == agent2.tag && agent.tag == "Player")
 					{
 						Position r1Pos = agent.GetComponent<Position>();
 						Position r2Pos = agent2.GetComponent<Position>();

@@ -194,7 +194,7 @@ public class LevelGenerator : FSystem {
 
 	IEnumerator delayReadXMLScript(XmlNode scriptNode, string name, UIRootContainer.EditMode editMode, UIRootContainer.SolutionType type)
     {
-		yield return null;
+		yield return null; // wait agent was created
 		readXMLScript(scriptNode, name, editMode, type);
 	}
 
@@ -234,7 +234,7 @@ public class LevelGenerator : FSystem {
 				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Robot Kyle") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
 				break;
 			case "enemy": // Enemy
-				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,5f,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
+				entity = Object.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,3.8f,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
 				break;
 		}
 
@@ -437,10 +437,6 @@ public class LevelGenerator : FSystem {
 	private void readXMLScript(XmlNode scriptNode, string name, UIRootContainer.EditMode editMode, UIRootContainer.SolutionType type)
 	{
 		if(scriptNode != null){
-			List<GameObject> script = new List<GameObject>();
-			foreach(XmlNode actionNode in scriptNode.ChildNodes){
-				script.Add(readXMLInstruction(actionNode));
-			}
 
 			// Look for another script with the same name. If one already exists, we don't create one more.
 			if (!scriptNameUsed.Contains(name))
@@ -452,6 +448,9 @@ public class LevelGenerator : FSystem {
 					ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
 					if (scriptRef.executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text == name)
 					{
+						List<GameObject> script = new List<GameObject>();
+						foreach (XmlNode actionNode in scriptNode.ChildNodes)
+							script.Add(readXMLInstruction(actionNode));
 						GameObject tmpContainer = GameObject.Instantiate(scriptRef.executableScript);
 						foreach (GameObject go in script)
 							go.transform.SetParent(tmpContainer.transform, false); //add actions to container
@@ -467,7 +466,12 @@ public class LevelGenerator : FSystem {
 					}
 				}
 				if (!droneFound)
+				{
+					List<GameObject> script = new List<GameObject>();
+					foreach (XmlNode actionNode in scriptNode.ChildNodes)
+						script.Add(readXMLInstruction(actionNode));
 					GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = name, editState = editMode, typeState = type, script = script });
+				}
 			}
 			else
             {

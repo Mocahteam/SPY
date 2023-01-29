@@ -2,22 +2,22 @@
 <level>
 	<map>
 		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
 		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
 		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
 		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
 		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
 		<line><cell value= "1" /><cell value= "1" /><cell value= "2" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
 		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
 	</map>
-	<dialogs>
-		<dialog text="Vous pouvez mettre plus d'un bloc dans un bloc 'Répéter'."/>
-	</dialogs>
 	<executionLimit amount="1" />
 	<blockLimits>
-		<blockLimit blockType="Forward" limit="2" />
+		<blockLimit blockType="Forward" limit="3" />
 		<blockLimit blockType="TurnLeft" limit="1" />
 		<blockLimit blockType="TurnRight" limit="1" />
 		<blockLimit blockType="Wait" limit="0" />
@@ -40,7 +40,8 @@
 		<blockLimit blockType="Terminal" limit="0" />
 		<blockLimit blockType="Exit" limit="0" />
 	</blockLimits>
-	<player associatedScriptName="Karl" posY="7" posX="2" direction="2" />
+    <coin posY="2" posX="6" />
+	<player associatedScriptName="Karl" posY="10" posX="2" direction="2" />
 	<script name="Karl" editMode="0" />
-	<score twoStars="0" threeStars="4943"/>
+	<score twoStars="0" threeStars="9655"/>
 </level>
