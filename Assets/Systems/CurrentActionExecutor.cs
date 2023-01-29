@@ -8,7 +8,7 @@ public class CurrentActionExecutor : FSystem {
 	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Door"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family f_activableConsole = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
     private Family f_newCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
-	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Player"));
+	private Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)));
 
 	protected override void onStart()
 	{
@@ -18,28 +18,28 @@ public class CurrentActionExecutor : FSystem {
 
 	protected override void onProcess(int familiesUpdateCount)
 	{
-		foreach (GameObject robot in f_player)
+		foreach (GameObject agent in f_agent)
 		{
 			// count inaction if a robot have no CurrentAction
-			if (robot.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>(true) == null)
-				robot.GetComponent<ScriptRef>().nbOfInactions++;
-			// Cancel move if target position is used
+			if (agent.tag == "Player" && agent.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>(true) == null)
+				agent.GetComponent<ScriptRef>().nbOfInactions++;
+			// Cancel move if target position is used by another agent
 			bool conflict = true;
 			while (conflict)
 			{
 				conflict = false;
-				foreach (GameObject robot2 in f_player)
-					if (robot != robot2 && robot.tag == robot2.tag)
+				foreach (GameObject agent2 in f_agent)
+					if (agent != agent2 && agent.tag == agent2.tag)
 					{
-						Position r1Pos = robot.GetComponent<Position>();
-						Position r2Pos = robot2.GetComponent<Position>();
+						Position r1Pos = agent.GetComponent<Position>();
+						Position r2Pos = agent2.GetComponent<Position>();
 						// check if the two robots move on the same position => forbiden
 						if (r2Pos.targetX != -1 && r2Pos.targetY != -1 && r1Pos.targetX == r2Pos.targetX && r1Pos.targetY == r2Pos.targetY)
 						{
 							r2Pos.targetX = -1;
 							r2Pos.targetY = -1;
 							conflict = true;
-							GameObjectManager.addComponent<ForceMoveAnimation>(robot2);
+							GameObjectManager.addComponent<ForceMoveAnimation>(agent2);
 						}
 						// one robot doesn't move and the other try to move on its position => forbiden
 						else if (r2Pos.targetX == -1 && r2Pos.targetY == -1 && r1Pos.targetX == r2Pos.x && r1Pos.targetY == r2Pos.y)
@@ -47,7 +47,7 @@ public class CurrentActionExecutor : FSystem {
 							r1Pos.targetX = -1;
 							r1Pos.targetY = -1;
 							conflict = true;
-							GameObjectManager.addComponent<ForceMoveAnimation>(robot);
+							GameObjectManager.addComponent<ForceMoveAnimation>(agent);
 						}
 						// the two robot want to exchange their position => forbiden
 						else if (r1Pos.targetX == r2Pos.x && r1Pos.targetY == r2Pos.y && r1Pos.x == r2Pos.targetX && r1Pos.y == r2Pos.targetY)
@@ -57,8 +57,8 @@ public class CurrentActionExecutor : FSystem {
 							r2Pos.targetX = -1;
 							r2Pos.targetY = -1;
 							conflict = true;
-							GameObjectManager.addComponent<ForceMoveAnimation>(robot);
-							GameObjectManager.addComponent<ForceMoveAnimation>(robot2);
+							GameObjectManager.addComponent<ForceMoveAnimation>(agent);
+							GameObjectManager.addComponent<ForceMoveAnimation>(agent2);
 						}
 
 					}
@@ -66,7 +66,7 @@ public class CurrentActionExecutor : FSystem {
 		}
 
 		// Record valid movements
-		foreach (GameObject robot in f_player)
+		foreach (GameObject robot in f_agent)
 		{
 			Position pos = robot.GetComponent<Position>();
 			if (pos.targetX != -1 && pos.targetY != -1)
