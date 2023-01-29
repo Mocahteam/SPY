@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+	<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+	<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+	<line><cell value= "1" /><cell value=" 0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "2" /><cell value= "1" /></line>
+	<line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "3" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+	<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+  </map>
+  <dragdropDisabled />
+  <executionLimit amount="1" />
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="0" />
+    <blockLimit blockType="TurnLeft" limit="0" />
+    <blockLimit blockType="TurnRight" limit="0" />
+    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="0" />
+    <blockLimit blockType="IfThen" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="ForLoop" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="0" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <coin posY="1" posX="5" />
+  <coin posY="3" posX="7" />
+  <console state="1" posY="2" posX="1" direction="0">
+    <slot slotId="0" />
+  </console>
+  <door posY="4" posX="5" slotId="0" direction="0" />
+  <console state="1" posY="5" posX="7" direction="0">
+    <slot slotId="1" />
+  </console>
+  <door posY="3" posX="4" slotId="1" direction="3" />
+  <player associatedScriptName="Bob" posY="5" posX="1" direction="0" />
+  <player associatedScriptName="Karl" posY="2" posX="9" direction="1" />
+  <script name="Essai1" editMode="2" type="0">
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+    <action type="Wait"/>
+    <action type="Forward"/>
+    <action type="Activate"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+  </script>
+  <script name="Essai2" editMode="2" type="2">
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Activate"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Wait"/>
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Wait"/>
+    <action type="Forward"/>
+  </script>
+  <script name="Essai3" editMode="2" type="0">
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Activate"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Wait"/>
+    <action type="Forward"/>
+  </script>
+  <score twoStars="0" threeStars="13524"/>
+</level>

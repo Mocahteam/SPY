@@ -99,16 +99,6 @@ public class UISystem : FSystem {
 			GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.gameObject, false);
 			// Hide menu panel
 			GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, false);
-			// Inactive of each editable panel
-			foreach (GameObject brush in f_removeButton)
-			{
-				// Disable trash button
-				brush.GetComponent<Button>().interactable = false;
-				// Disable reset button
-				brush.transform.parent.GetChild(brush.transform.GetSiblingIndex() - 1).GetComponent<Button>().interactable = false;
-				// Disable naming TMP
-				brush.transform.parent.GetComponentInChildren<TMPro.TMP_InputField>().interactable = false;
-			}
 			// Sauvegarde de l'état d'avancement des niveaux (niveau et étoile)
 			int currentLevelNum = gameData.scenario.FindIndex(x => x == gameData.levelToLoad);
 			if (PlayerPrefs.GetInt(gameData.scenarioName,0) < currentLevelNum + 1)

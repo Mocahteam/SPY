@@ -35,6 +35,7 @@ public class EditableContainerSystem : FSystem
 	private Family f_refreshSize = FamilyManager.getFamily(new AllOfComponents(typeof(RefreshSizeOfEditableContainer)));
 	private Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
 	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
+	private Family f_forceRemoveContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ForceRemoveContainer)));
 
 	// Les variables
 	public GameObject agentSelected = null;
@@ -74,6 +75,10 @@ public class EditableContainerSystem : FSystem
 				addContainerButton.interactable = false;
 			}
 		});
+		f_forceRemoveContainer.addEntryCallback(delegate (GameObject go)
+		{
+			removeContainer(go, true);
+		});
 	}
 
     protected override void onProcess(int familiesUpdateCount)
@@ -81,18 +86,17 @@ public class EditableContainerSystem : FSystem
         if (f_refreshSize.Count > 0) // better to process like this than callback on family (here we are sure to process all components
         {
 			// Update size of parent GameObject
-			MainLoop.instance.StartCoroutine(setEditableSize());
+			MainLoop.instance.StartCoroutine(setEditableSize(false));
 			foreach(GameObject go in f_refreshSize)
 				foreach (RefreshSizeOfEditableContainer trigger in go.GetComponents<RefreshSizeOfEditableContainer>())
 					GameObjectManager.removeComponent(trigger);
 		}
-		if (f_addSpecificContainer.Count > 0)
-			foreach (GameObject go in f_addSpecificContainer)
-				foreach (AddSpecificContainer asc in go.GetComponents<AddSpecificContainer>())
-				{
-					addSpecificContainer(asc.title, asc.editState, asc.typeState, asc.script);
-					GameObjectManager.removeComponent(asc);
-				}
+		foreach (GameObject go in f_addSpecificContainer)
+			foreach (AddSpecificContainer asc in go.GetComponents<AddSpecificContainer>())
+			{
+				addSpecificContainer(asc.title, asc.editState, asc.typeState, asc.script);
+				GameObjectManager.removeComponent(asc);
+			}
     }
 
 	// utilisé sur le OnSelect du ContainerName dans le prefab ViewportScriptContainer
@@ -105,7 +109,6 @@ public class EditableContainerSystem : FSystem
 	public void addContainer()
 	{
 		string newName = addSpecificContainer();
-		MainLoop.instance.StartCoroutine(syncEditableScrollBars());
 		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
 		{
 			verb = "created",
@@ -114,18 +117,6 @@ public class EditableContainerSystem : FSystem
 				{ "value", newName }
 			}
 		});
-	}
-
-	// Move editable view on the last editable container
-	private IEnumerator syncEditableScrollBars()
-	{
-		// delay three times because we have to wait addSpecificContainer end (that call setEditableSize coroutine)
-		yield return null;
-		yield return null;
-		yield return null;
-		// move scroll bar on the last added container
-		EditableCanvas.GetComponentInParent<ScrollRect>().verticalScrollbar.value = 1;
-		EditableCanvas.GetComponentInParent<ScrollRect>().horizontalScrollbar.value = 1;
 	}
 
 	// Ajouter un container à la scéne retourne son nom définitif
@@ -211,14 +202,14 @@ public class EditableContainerSystem : FSystem
 				GameObjectManager.addComponent<NeedRefreshHierarchy>(dropArea);
 
 			// Update size of parent GameObject
-			MainLoop.instance.StartCoroutine(setEditableSize());
+			MainLoop.instance.StartCoroutine(setEditableSize(true));
 			return name;
 		}
 		else
 			return "";
 	}
 
-	private IEnumerator setEditableSize()
+	private IEnumerator setEditableSize(bool autoScroll)
 	{
 		yield return null;
 		yield return null;
@@ -234,6 +225,14 @@ public class EditableContainerSystem : FSystem
 		yield return null;
 		// compute new size
 		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(maxWidth, editableContainers.rect.width));
+
+		if (autoScroll)
+		{
+			yield return null;
+			// move scroll bar on the last added container
+			EditableCanvas.GetComponentInParent<ScrollRect>().verticalScrollbar.value = 1;
+			EditableCanvas.GetComponentInParent<ScrollRect>().horizontalScrollbar.value = 1;
+		}
 	}
 
 	// Empty the script window
@@ -257,18 +256,21 @@ public class EditableContainerSystem : FSystem
 
 	// Remove the script window
 	// See RemoveButton in ViewportScriptContainer prefab in editor
-	public void removeContainer(GameObject container)
+	public void removeContainer(GameObject container, bool silent)
 	{
 		GameObject scriptContainerPointer = container.transform.GetChild(0).gameObject;
 
-		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+		if (!silent)
 		{
-			verb = "deleted",
-			objectType = "script",
-			activityExtensions = new Dictionary<string, string>() {
+			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+			{
+				verb = "deleted",
+				objectType = "script",
+				activityExtensions = new Dictionary<string, string>() {
 				{ "value", scriptContainerPointer.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text }
 			}
-		});
+			});
+		}
 
 		deleteContent(scriptContainerPointer);
 		MainLoop.instance.StartCoroutine(realDelete(container));
@@ -288,7 +290,7 @@ public class EditableContainerSystem : FSystem
 		GameObjectManager.unbind(container);
 		Object.Destroy(container);
 		// Update size of parent GameObject
-		MainLoop.instance.StartCoroutine(setEditableSize());
+		MainLoop.instance.StartCoroutine(setEditableSize(true));
 	}
 
 	// Rename the script window

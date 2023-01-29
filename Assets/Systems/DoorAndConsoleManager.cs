@@ -15,6 +15,8 @@ public class DoorAndConsoleManager : FSystem {
 
 	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
 
+	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+
 	private GameData gameData;
 
 	public GameObject doorPathPrefab;
@@ -106,8 +108,23 @@ public class DoorAndConsoleManager : FSystem {
 					while (consolePos.x + x != doorPos.x)
 					{
 						GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, gameData.LevelGO.transform.position + new Vector3(consolePos.y * 3, 3, (consolePos.x + x + xStep / 2f) * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
-						path.transform.Find("West").gameObject.SetActive(true);
-						path.transform.Find("East").gameObject.SetActive(true);
+						bool isWallInPos = isWall(consolePos.x + x, consolePos.y);
+						bool isWallInStep = isWall(consolePos.x + x + xStep, consolePos.y);
+
+						Transform west;
+						if (xStep < 0 && isWallInPos || xStep > 0 && isWallInStep)
+							west = path.transform.Find("WestUp");
+						else
+							west = path.transform.Find("West");
+						west.gameObject.SetActive(true);
+
+						Transform east;
+						if (xStep < 0 && isWallInStep || xStep > 0 && isWallInPos)
+							east = path.transform.Find("EastUp");
+						else
+							east = path.transform.Find("East");
+						east.gameObject.SetActive(true);
+
 						path.GetComponent<DoorPath>().slotId = doorSlot.slotID;
 						foreach (SpriteRenderer sr in path.GetComponentsInChildren<SpriteRenderer>())
 							sr.color = isOn ? pathOn : pathOff;
@@ -118,8 +135,23 @@ public class DoorAndConsoleManager : FSystem {
 					while (consolePos.y + y != doorPos.y)
 					{
 						GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, gameData.LevelGO.transform.position + new Vector3((consolePos.y + y + yStep / 2f) * 3, 3, (consolePos.x + x) * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
-						path.transform.Find("South").gameObject.SetActive(true);
-						path.transform.Find("North").gameObject.SetActive(true);
+						bool isWallInPos = isWall(consolePos.x + x, consolePos.y + y);
+						bool isWallInStep = isWall(consolePos.x + x, consolePos.y + y + yStep);
+
+						Transform south;
+						if (yStep < 0 && isWallInPos || yStep > 0 && isWallInStep)
+							south = path.transform.Find("SouthUp");
+						else
+							south = path.transform.Find("South");
+						south.gameObject.SetActive(true);
+
+						Transform north;
+						if (yStep < 0 && isWallInStep || yStep > 0 && isWallInPos)
+							north = path.transform.Find("NorthUp");
+						else
+							north = path.transform.Find("North");
+						north.gameObject.SetActive(true);
+
 						path.GetComponent<DoorPath>().slotId = doorSlot.slotID;
 						foreach (SpriteRenderer sr in path.GetComponentsInChildren<SpriteRenderer>())
 							sr.color = isOn ? pathOn : pathOff;
@@ -130,5 +162,16 @@ public class DoorAndConsoleManager : FSystem {
 
             }
         }
+    }
+
+	private bool isWall(float x, float y)
+    {
+		foreach(GameObject wall in f_wall)
+        {
+			Position posWall = wall.GetComponent<Position>();
+			if (posWall.x == x && posWall.y == y)
+				return true;
+        }
+		return false;
     }
 }

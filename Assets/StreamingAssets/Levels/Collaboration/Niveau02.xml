@@ -1,18 +1,19 @@
 <?xml version="1.0"?>
 <level>
   <map>
-    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "2" /><cell value= "2" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "3" /><cell value= "3" /><cell value= "1" /></line>
-	<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "2" /><cell value= "2" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "3" /><cell value= "0" /><cell value= "3" /><cell value= "1" /></line>
+	<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
   </map>
   <dialogs>
-	<dialog text="Deux robots ne peuvent se déplacer sur la même case."/>
+	<dialog text="Tu peux maintenant utiliser la nouvelle action 'Attendre'. Elle permet d'ordonner au robot de faire une pose avant de passer à l'action suivante." img="WaitIcon.png" imgHeight="45" />
+	<dialog text="Attention, deux robots ne peuvent se déplacer sur la même case !"/>
   </dialogs>
   <blockLimits>
     <blockLimit blockType="Forward" limit="-1" />
     <blockLimit blockType="TurnLeft" limit="0" />
     <blockLimit blockType="TurnRight" limit="0" />
-    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Wait" limit="-1" />
     <blockLimit blockType="Activate" limit="0" />
     <blockLimit blockType="TurnBack" limit="0" />
     <blockLimit blockType="IfThen" limit="0" />
@@ -31,10 +32,10 @@
     <blockLimit blockType="Exit" limit="0" />
   </blockLimits>
   <coin posY="1" posX="6" />
-  <coin posY="1" posX="7" />
+  <coin posY="1" posX="8" />
   <player associatedScriptName="Bob" posY="1" posX="1" direction="2" />
   <player associatedScriptName="Karl" posY="1" posX="2" direction="2" />
   <script name="Bob" editMode="0" />
   <script name="Karl" editMode="0" />
-  <score twoStars="13742" threeStars="14742"/>
+  <score twoStars="13483" threeStars="14483"/>
 </level>

@@ -3,6 +3,7 @@ using FYFY;
 using System.Collections;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 /// <summary>
 /// Manage history to accumulate player attempt when resolving the level in several steps.
@@ -14,6 +15,7 @@ public class HistoryManager : FSystem
 	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
 	private Family f_removeButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton"));
+	private Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
 
 	private GameData gameData;
 
@@ -53,17 +55,6 @@ public class HistoryManager : FSystem
 		}
 		// for other end type, nothing to do more
 	}
-
-
-	private IEnumerator delayLoadHistory()
-	{
-		// delay three frame, time the editable container will be created
-		yield return null;
-		yield return null;
-		yield return null;
-		loadHistory();
-	}
-
 
 	// Add the executed scripts to the containers history
 	public void saveHistory()
@@ -135,6 +126,7 @@ public class HistoryManager : FSystem
 					GameObject newWait = EditingUtility.createEditableBlockFromLibrary(libraryWait, canvas);
 					newWait.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
 					newWait.transform.SetAsLastSibling();
+					gameData.totalActionBlocUsed++;
 				}
 				else if (minNbOfInaction > 1)
 				{
@@ -152,6 +144,7 @@ public class HistoryManager : FSystem
 					// Set drop/empty zone
 					forContainer.GetChild(forContainer.childCount - 2).gameObject.SetActive(true); // enable drop zone
 					forContainer.GetChild(forContainer.childCount - 1).gameObject.SetActive(false); // disable empty zone
+					gameData.totalActionBlocUsed = gameData.totalActionBlocUsed+2;
 				}
 			}
 		}
@@ -165,56 +158,81 @@ public class HistoryManager : FSystem
 			trash.GetComponent<Button>().interactable = false;
 	}
 
+
 	// Restore saved scripts in history inside editable script containers
-	private void loadHistory()
+	private IEnumerator delayLoadHistory()
 	{
 		if (gameData != null && gameData.actionsHistory != null)
 		{
-			// For security, erase all editable containers
-			foreach (Transform viewportForEditableContainer in EditableCanvas.transform.GetChild(0))
-				for (int i = viewportForEditableContainer.GetChild(0).childCount - 1; i >= 0; i--)
-				{
-					Transform child = viewportForEditableContainer.GetChild(0).GetChild(i);
-					if (child.GetComponent<BaseElement>())
-					{
-						gameData.totalActionBlocUsed -= child.GetComponentsInChildren<BaseElement>(true).Length;
-						gameData.totalActionBlocUsed -= child.GetComponentsInChildren<BaseCondition>(true).Length;
-						GameObjectManager.unbind(child.gameObject);
-						child.transform.SetParent(null); // because destroying is not immediate, we remove this child from its parent, then Unity can take the time he wants to destroy GameObject
-						GameObject.Destroy(child.gameObject);
-					}
-				}
+			// Wait that AddSpecificContainer was created
+			yield return null;
+			yield return null;
+
+			// Wait that default editable canvas are created
+			while (f_addSpecificContainer.Count > 0)
+				yield return null;
+
+
+			// Remove all default canvas and restore all blocs
+			Transform editableContainers = EditableCanvas.transform.GetChild(0);
+			foreach (Transform viewportForEditableContainer in editableContainers)
+				GameObjectManager.addComponent<ForceRemoveContainer>(viewportForEditableContainer.gameObject);
+
+			while (editableContainers.childCount > 0)
+				yield return null;
+
+			gameData.totalActionBlocUsed = 0;
 			// Restore history
 			for (int i = 0; i < gameData.actionsHistory.transform.childCount; i++)
 			{
-				Transform history_viewportForEditableContainer = gameData.actionsHistory.transform.GetChild(i);
-				// the first child is the script container that contains script elements
-				foreach (Transform history_child in history_viewportForEditableContainer.GetChild(0))
-				{
+				Transform history_EditableContainer = gameData.actionsHistory.transform.GetChild(i).GetChild(0);
+				UIRootContainer uiRC = history_EditableContainer.GetComponent<UIRootContainer>();
+				List<GameObject> script = new List<GameObject>();
+				foreach (Transform history_child in history_EditableContainer)
 					if (history_child.GetComponent<BaseElement>())
-					{
-						// copy this child inside the appropriate editable container
-						Transform history_childCopy = GameObject.Instantiate(history_child, EditableCanvas.transform.GetChild(0).GetChild(i).GetChild(0));
-						// Place this child copy at the end of the container
-						history_childCopy.SetAsFirstSibling();
-						history_childCopy.SetSiblingIndex(history_childCopy.parent.childCount - 2);
-						GameObjectManager.bind(history_childCopy.gameObject);
-					}
-				}
+						script.Add(history_child.gameObject);
+				GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = uiRC.scriptName, editState = uiRC.editState, typeState = uiRC.type, script = script });
 			}
+
+			// Wait that history AddSpecificContainer are created
+			yield return null;
+			yield return null;
+			// Wait that history canvas are created
+			while (f_addSpecificContainer.Count > 0)
+				yield return null;
 			// Count used elements
 			foreach (Transform viewportForEditableContainer in EditableCanvas.transform.GetChild(0))
 			{
 				foreach (BaseElement act in viewportForEditableContainer.GetComponentsInChildren<BaseElement>(true))
+				{
 					GameObjectManager.addComponent<Dropped>(act.gameObject);
+					gameData.totalActionBlocUsed--; // cancel this drop count, already count with AddSpecificContainer
+				}
 				foreach (BaseCondition act in viewportForEditableContainer.GetComponentsInChildren<BaseCondition>(true))
+				{
 					GameObjectManager.addComponent<Dropped>(act.gameObject);
+					gameData.totalActionBlocUsed--; // cancel this drop count, already count with AddSpecificContainer
+				}
 			}
 			//destroy history
 			GameObject.Destroy(gameData.actionsHistory);
 			LayoutRebuilder.ForceRebuildLayoutImmediate(EditableCanvas.GetComponent<RectTransform>());
 			//enable Play button
 			buttonExecute.GetComponent<Button>().interactable = true;
+			// disable editable container if won
+			if (f_newEnd.Count > 0 && f_newEnd.First().GetComponent<NewEnd>().endType == NewEnd.Win)
+			{
+				// Inactive of each editable panel
+				foreach (GameObject brush in f_removeButton)
+				{
+					// Disable trash button
+					brush.GetComponent<Button>().interactable = false;
+					// Disable reset button
+					brush.transform.parent.GetChild(brush.transform.GetSiblingIndex() - 1).GetComponent<Button>().interactable = false;
+					// Disable naming TMP
+					brush.transform.parent.GetComponentInChildren<TMPro.TMP_InputField>().interactable = false;
+				}
+			}
 		}
 	}
 }

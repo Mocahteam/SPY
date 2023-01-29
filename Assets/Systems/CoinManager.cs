@@ -35,6 +35,7 @@ public class CoinManager : FSystem {
                 if(target.CompareTag("Coin")){
                     gameData.totalCoin++;
                     target.GetComponent<AudioSource>().Play();
+					target.GetComponent<Collider>().enabled = false;
                     MainLoop.instance.StartCoroutine(coinDestroy(target));					
 				}
 			}			

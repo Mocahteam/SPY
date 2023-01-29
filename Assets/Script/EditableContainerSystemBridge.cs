@@ -9,7 +9,7 @@ public class EditableContainerSystemBridge : MonoBehaviour
 
 	public void removeContainer()
 	{
-		EditableContainerSystem.instance.removeContainer(gameObject);
+		EditableContainerSystem.instance.removeContainer(gameObject, false);
 	}
 
 	public void newNameContainer(string name)
