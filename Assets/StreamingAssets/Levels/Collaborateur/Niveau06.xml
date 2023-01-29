@@ -1,19 +1,24 @@
 <?xml version="1.0"?>
 <level>
   <map>
-	<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-	<line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-	<line><cell value= "1" /><cell value=" 0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "3" /><cell value= "1" /></line>
-	<line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "2" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "2" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+	<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	<line><cell value= "1" /><cell value= "2" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+	<line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "3" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+	<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
   </map>
+  <dialogs>
+	<dialog text="Tu ne peux pas modifier les programmes proposés, lesquels sont les bons ?" />
+  </dialogs>
+  <dragdropDisabled />
   <executionLimit amount="1" />
   <blockLimits>
     <blockLimit blockType="Forward" limit="0" />
     <blockLimit blockType="TurnLeft" limit="0" />
     <blockLimit blockType="TurnRight" limit="0" />
-    <blockLimit blockType="Wait" limit="-1" />
+    <blockLimit blockType="Wait" limit="0" />
     <blockLimit blockType="Activate" limit="0" />
     <blockLimit blockType="TurnBack" limit="0" />
     <blockLimit blockType="IfThen" limit="0" />
@@ -31,33 +36,53 @@
     <blockLimit blockType="Terminal" limit="0" />
     <blockLimit blockType="Exit" limit="0" />
   </blockLimits>
-  <coin posY="1" posX="3" />
-  <coin posY="2" posX="7" />
-  <player associatedScriptName="Bob" posY="4" posX="1" direction="2" />
-  <player associatedScriptName="Karl" posY="4" posX="5" direction="3" />
-  <script name="Bob" editMode="0" type="2">
+  <coin posY="1" posX="4" />
+  <coin posY="3" posX="6" />
+  
+  <player associatedScriptName="Bob" posY="2" posX="1" direction="2" />
+  <console state="1" posY="2" posX="2" direction="0">
+    <slot slotId="0" />
+  </console>
+  <door posY="4" posX="4" slotId="0" direction="0" />
+  
+  <player associatedScriptName="Karl" posY="5" posX="7" direction="3" />
+  <console state="1" posY="5" posX="7" direction="0">
+    <slot slotId="1" />
+  </console>
+  <door posY="3" posX="3" slotId="1" direction="3" />
+  <script name="Essai1" editMode="2" type="0">
+    <action type="Activate"/>
     <action type="Forward"/>
     <action type="Forward"/>
     <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+  </script>
+  <script name="Essai2" editMode="2" type="2">
+    <action type="Forward"/>
+    <action type="Activate"/>
+	<action type="TurnRight"/>
     <action type="Forward"/>
 	<action type="TurnLeft"/>
     <action type="Forward"/>
     <action type="Forward"/>
-	<action type="TurnRight"/>
     <action type="Forward"/>
     <action type="Forward"/>
   </script>
-  <script name="Karl" editMode="0" type="2">
+  <script name="Essai3" editMode="2" type="0">
+    <action type="Wait"/>
     <action type="Forward"/>
-    <action type="Forward"/>
-    <action type="Forward"/>
-	<action type="TurnRight"/>
-    <action type="Forward"/>
-    <action type="Forward"/>
+    <action type="Activate"/>
 	<action type="TurnRight"/>
     <action type="Forward"/>
 	<action type="TurnLeft"/>
     <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
   </script>
-  <score twoStars="13733" threeStars="14221"/>
+  <score twoStars="0" threeStars="13524"/>
 </level>

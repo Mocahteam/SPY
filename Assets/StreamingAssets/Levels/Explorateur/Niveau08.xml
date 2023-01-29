@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <level>
   <map>
-    <line><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
     <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "2" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
   </map>
   <blockLimits>
     <blockLimit blockType="Forward" limit="-1" />
@@ -30,16 +30,20 @@
     <blockLimit blockType="Terminal" limit="0" />
     <blockLimit blockType="Exit" limit="0" />
   </blockLimits>
-  <console state="1" posY="4" posX="2" direction="0">
+  <console state="1" posY="3" posX="1" direction="0">
     <slot slotId="0" />
   </console>
-  <console state="1" posY="2" posX="1" direction="0">
+  <console state="1" posY="3" posX="3" direction="0">
     <slot slotId="1" />
   </console>
-  <coin posY="1" posX="3" />
-  <door posY="3" posX="1" slotId="0" direction="0" />
-  <door posY="2" posX="2" slotId="1" direction="3" />
-  <player associatedScriptName="Karl" posY="4" posX="3" direction="3" />
+  <console state="1" posY="4" posX="2" direction="1">
+    <slot slotId="2" />
+  </console>
+  <coin posY="1" posX="2" />
+  <door posY="4" posX="2" slotId="0" direction="0" />
+  <door posY="4" posX="2" slotId="1" direction="0" />
+  <door posY="2" posX="2" slotId="2" direction="0" />
+  <player associatedScriptName="Karl" posY="3" posX="2" direction="0" />
   <script name="Karl" editMode="0" />
-  <score twoStars="8153" threeStars="9153"/>
+  <score twoStars="7882" threeStars="8882"/>
 </level>

@@ -9,7 +9,7 @@ using System.Collections;
 public class MoveSystem : FSystem {
 
 	private Family f_movable = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
-	private Family f_drone = FamilyManager.getFamily(new NoneOfComponents(typeof(InCollision3D), typeof(Rigidbody)), new AnyOfTags("Drone"));
+	private Family f_drone = FamilyManager.getFamily(new NoneOfComponents(typeof(InCollision3D)), new AllOfComponents(typeof(Rigidbody)), new AnyOfTags("Drone"));
 	private Family f_forceMove = FamilyManager.getFamily(new AllOfComponents(typeof(ForceMoveAnimation)));
 
 	public float turnSpeed;
