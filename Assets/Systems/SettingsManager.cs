@@ -51,11 +51,13 @@ public class SettingsManager : FSystem {
 				break;
 		}
 		PlayerPrefs.SetInt("quality", value);
+		PlayerPrefs.Save();
 	}
 
 	public void setInteraction(int value)
 	{
 		PlayerPrefs.SetInt("interaction", value);
+		PlayerPrefs.Save();
 	}
 
 	public void setUISize(int value)
@@ -63,6 +65,7 @@ public class SettingsManager : FSystem {
 		if (canvasScaler != null)
 			canvasScaler.uiScaleMode = value == 1 ? CanvasScaler.ScaleMode.ConstantPhysicalSize : CanvasScaler.ScaleMode.ConstantPixelSize;
 		PlayerPrefs.SetInt("UISize", value);
+		PlayerPrefs.Save();
 	}
 
 }

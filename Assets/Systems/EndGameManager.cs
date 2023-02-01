@@ -137,7 +137,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, true);
 			//Check if next level exists in campaign
-			if (gameData.scenario.FindIndex(x => x == gameData.levelToLoad) >= gameData.scenario.Count - 1)
+			if (gameData.scenario.FindIndex(x => x.src == gameData.levelToLoad.src) >= gameData.scenario.Count - 1)
 			{
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 				verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez terminé ce scénario !";

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
 using FYFY_plugins.PointerManager;
+using System;
 
 /// <summary>
 /// Manage InGame UI (Play/Pause/Stop, reset, go back to main menu...)
@@ -100,7 +101,7 @@ public class UISystem : FSystem {
 			// Hide menu panel
 			GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, false);
 			// Sauvegarde de l'état d'avancement des niveaux (niveau et étoile)
-			int currentLevelNum = gameData.scenario.FindIndex(x => x == gameData.levelToLoad);
+			int currentLevelNum = gameData.scenario.FindIndex(x => x.src == gameData.levelToLoad.src);
 			if (PlayerPrefs.GetInt(gameData.scenarioName,0) < currentLevelNum + 1)
 				PlayerPrefs.SetInt(gameData.scenarioName, currentLevelNum + 1);
 			PlayerPrefs.Save();
@@ -241,7 +242,7 @@ public class UISystem : FSystem {
 			verb = "exited",
 			objectType = "level",
 			activityExtensions = new Dictionary<string, string>() {
-					{ "value", gameData.levelToLoad.Replace(Application.streamingAssetsPath + "/", "") }
+					{ "value", gameData.levelToLoad.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
 				}
 		});
 		gameData.actionsHistory = null;
@@ -270,11 +271,11 @@ public class UISystem : FSystem {
 			verb = "exited",
 			objectType = "level",
 			activityExtensions = new Dictionary<string, string>() {
-					{ "value", gameData.levelToLoad.Replace(Application.streamingAssetsPath + "/", "") }
+					{ "value", gameData.levelToLoad.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
 				}
 		});
 		// On imcrémente le numéro du niveau
-		gameData.levelToLoad = gameData.scenario[gameData.scenario.FindIndex(x => x == gameData.levelToLoad)+1];
+		gameData.levelToLoad = gameData.scenario[gameData.scenario.FindIndex(x => x.src == gameData.levelToLoad.src)+1];
 		// On efface l'historique
 		gameData.actionsHistory = null;
 		// On recharge la scéne (mais avec le nouveau numéro de niveau)
@@ -291,7 +292,7 @@ public class UISystem : FSystem {
 			verb = "exited",
 			objectType = "level",
 			activityExtensions = new Dictionary<string, string>() {
-					{ "value", gameData.levelToLoad.Replace(Application.streamingAssetsPath + "/", "") }
+					{ "value", gameData.levelToLoad.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
 				}
 		});
 		if (gameData.actionsHistory != null)

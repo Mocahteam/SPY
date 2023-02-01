@@ -12,6 +12,7 @@ public class CameraSystem : FSystem {
 	// Contains current UI focused
 	private Family f_UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver)));
 	private Family f_focusOn = FamilyManager.getFamily(new AllOfComponents(typeof(FocusCamOn)));
+	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 
 	private Transform targetAgent; // if defined camera follow this target
 	private Transform lastAgentFocused = null;
@@ -61,6 +62,8 @@ public class CameraSystem : FSystem {
 			MainLoop.instance.StartCoroutine(travelingOnPos());
 			GameObjectManager.removeComponent(newTarget);
 		});
+
+		f_playingMode.addEntryCallback(focusOnNearestAgent);
 	}
 
 	// Use to process your families.
@@ -201,6 +204,25 @@ public class CameraSystem : FSystem {
 		lastAgentFocused = targetAgent;
 		GameObjectManager.setGameObjectParent(mainCamera.transform.parent.parent.gameObject, agent, true);
 		MainLoop.instance.StartCoroutine(travelingOnAgent());
+	}
+
+	private void focusOnNearestAgent(GameObject unused)
+    {
+		if (targetAgent != null)
+			return;
+		Transform cameraTarget = mainCamera.transform.parent.parent;
+		float minDistance = float.MaxValue;
+		GameObject agentCandidate = null;
+		foreach (GameObject agent in f_player) {
+			float localDistance = Vector3.Distance(cameraTarget.position, agent.transform.position);
+			if (localDistance < minDistance)
+			{
+				agentCandidate = agent;
+				minDistance = localDistance;
+			}
+		}
+		if (agentCandidate != null)
+			focusOnAgent(agentCandidate);
 	}
 
 	public void focusNextAgent()

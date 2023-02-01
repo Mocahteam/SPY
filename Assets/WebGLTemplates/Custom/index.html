@@ -107,17 +107,18 @@
 					};
 					reader.readAsText(fileList[0]);
 				});
-				
-				// reset LRS userName (see SendStatements)
-				unityInstance.SendMessage('Main_Loop', 'resetUserUniqueID');
 			
-				// ask to load a specific level
+				// parse url parameters
 				const queryString = window.location.search;
 				const urlParams = new URLSearchParams(queryString);
 				const levelToLoad = urlParams.get('level');
 				if (levelToLoad != null)
 					// see TitleScreenSystem
 					unityInstance.SendMessage('Main_Loop', 'askToLoadLevel', levelToLoad);
+				const silent = urlParams.get('silent');
+				if (silent == null)
+					// see TitleScreenSystem
+					unityInstance.SendMessage('Main_Loop', 'enableSendStatement');
 				
 			}).catch((message) => {
 				var msg = "Une erreur s'est produite lors du chargement du jeu";

@@ -99,21 +99,8 @@ public class ParamCompetenceSystem : FSystem
 	// used on TitleScreen scene
 	public void loadPanelSelectComp()
 	{
-		string referentialsPath = Application.streamingAssetsPath + "/Competencies/competenciesReferential.json";
-		if (Application.platform == RuntimePlatform.WebGLPlayer)
-			MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath));
-		else
-		{
-            try
-            {
-				createReferentials(File.ReadAllText(referentialsPath));
-			}
-            catch (Exception e)
-			{
-				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + referentialsPath + " : " + e.Message, OkButton = "", CancelButton = "OK", call = localCallback });
-			}
-		}
+		string referentialsPath = new Uri(Application.streamingAssetsPath + "/Competencies/competenciesReferential.json").AbsoluteUri;
+		MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath));
 	}
 
 	private IEnumerator GetCompetenciesWebRequest(string referentialsPath)
@@ -227,7 +214,6 @@ public class ParamCompetenceSystem : FSystem
 						comp.transform.SetParent(parentComp.transform.Find("SubCompetencies"), false);
 						// enable Hide button
 						parentComp.transform.Find("Header").Find("ButtonHide").gameObject.SetActive(true);
-						//LayoutRebuilder.ForceRebuildLayoutImmediate(parentComp.transform.Find("SubCompetencies") as RectTransform);
 						break;
 					}
 			}
@@ -251,6 +237,8 @@ public class ParamCompetenceSystem : FSystem
 	// Used in ButtonShowLevels in ParamCompPanel
 	public void showCompatibleLevels(bool filter)
 	{
+		// load competencies (required for level analysis)
+		loadPanelSelectComp();
 		// default, select all levels
 		List<XmlNode> selectedLevels = new List<XmlNode>();
 		foreach (XmlNode level in gameData.levels.Values)
@@ -296,16 +284,35 @@ public class ParamCompetenceSystem : FSystem
 			testLevel.interactable = false;
 			addToScenario.interactable = false;
 			// Instanciate one button for each level
+			List<GameObject> sortedLevels = new List<GameObject>();
 			foreach (XmlNode level in selectedLevels)
 			{
-				GameObject compatibleLevel = GameObject.Instantiate(levelCompatiblePrefab, contentListOfCompatibleLevel.transform, false);
 				foreach (string levelName in gameData.levels.Keys)
 					if (gameData.levels[levelName] == level)
 					{
-						compatibleLevel.GetComponentInChildren<TMP_Text>().text = levelName.Replace(Application.streamingAssetsPath + "/", "");
+						string currentName = levelName.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "");
+						GameObject compatibleLevel = GameObject.Instantiate(levelCompatiblePrefab);
+						compatibleLevel.GetComponentInChildren<TMP_Text>().text = currentName;
+						int i = 0;
+						while (i < sortedLevels.Count)
+						{
+							if (String.Compare(currentName, sortedLevels[i].GetComponentInChildren<TMP_Text>().text) == -1)
+							{
+								sortedLevels.Insert(i, compatibleLevel);
+								break;
+							}
+							i++;
+						}
+						if (i == sortedLevels.Count)
+							sortedLevels.Add(compatibleLevel);
 						break;
 					}
-				GameObjectManager.bind(compatibleLevel);
+			}
+			// Add buttons to UI
+			foreach (GameObject level in sortedLevels)
+            {
+				level.transform.SetParent(contentListOfCompatibleLevel.transform, false);
+				GameObjectManager.bind(level);
 			}
 		}
 	}
@@ -494,28 +501,13 @@ public class ParamCompetenceSystem : FSystem
 	{
 		// Display Title
 		contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text = path;
+		// erase previous miniView
+		setMiniView(null);
 		// Display miniView
-		string imgPath = Application.streamingAssetsPath + "/" + path.Replace(".xml", ".png");
-		if (Application.platform == RuntimePlatform.WebGLPlayer)
-		{
-			MainLoop.instance.StartCoroutine(GetMiniViewWebRequest(imgPath));
-		}
-		else
-		{
-			try 
-			{
-				Texture2D tex2D = new Texture2D(2, 2); //create new "empty" texture
-				byte[] fileData = File.ReadAllBytes(imgPath); //load image from SPY/path
-				if (tex2D.LoadImage(fileData))
-					setMiniView(tex2D);
-			}
-			catch
-			{
-				setMiniView(null);
-			}
-		}
+		string imgPath = new Uri(Application.streamingAssetsPath + "/" + path.Replace(".xml", ".png")).AbsoluteUri;
+		MainLoop.instance.StartCoroutine(GetMiniViewWebRequest(imgPath));
 
-		XmlNode levelSelected = gameData.levels[Application.streamingAssetsPath + "/" + path];
+		XmlNode levelSelected = gameData.levels[new Uri(Application.streamingAssetsPath + "/" + path).AbsoluteUri];
 
 		TMP_Text contentInfo = contentInfoCompatibleLevel.transform.Find("levelTextInfo").GetComponent<TMP_Text>();
 		contentInfo.text = "";
@@ -532,7 +524,6 @@ public class ParamCompetenceSystem : FSystem
 				contentInfo.text += txt;
 			else
 				contentInfo.text += "\tAucun texte défini\n";
-			LayoutRebuilder.ForceRebuildLayoutImmediate(contentInfo.transform as RectTransform);
 			// Display competencies
 			contentInfo.text += "\n<b>Compétences en jeu :</b>\n";
 			txt = "";
@@ -545,6 +536,7 @@ public class ParamCompetenceSystem : FSystem
 				contentInfo.text += txt;
 			else
 				contentInfo.text += "\tAucune compétence identifiée pour ce niveau\n";
+			LayoutRebuilder.ForceRebuildLayoutImmediate(contentInfo.transform as RectTransform);
 		}
 		else
 			contentInfo.text += "Aucune information à afficher sur ce niveau.";
@@ -687,7 +679,7 @@ public class ParamCompetenceSystem : FSystem
 		string scenarioExport = "<?xml version=\"1.0\"?>\n";
 		scenarioExport += "<scenario>\n";
 		foreach (Transform child in contentScenario.transform)
-			scenarioExport += "\t<level name = \"" + child.GetComponentInChildren<TMP_Text>().text + "\" />\n";
+			scenarioExport += "\t<level src = \"" + child.GetComponentInChildren<TMP_Text>().text + "\" />\n";
 		scenarioExport += "</scenario>";
 		return scenarioExport;
 	}
@@ -699,7 +691,13 @@ public class ParamCompetenceSystem : FSystem
 		{
 			// Create all necessary directories if they don't exist
 			Directory.CreateDirectory(Application.persistentDataPath + "/Scenario");
-			File.WriteAllText(Application.persistentDataPath + "/Scenario/" + scenarioName.text, scenarioExport);
+			string path = Application.persistentDataPath + "/Scenario/" + scenarioName.text;
+			File.WriteAllText(path, scenarioExport);
+			// Add/Replace scenario content in memory
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml(scenarioExport);
+			TitleScreenSystem.instance.updateScenarioContent(path, doc);
+
 			localCallback = null;
 			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Le scénario a été enregistré dans le fichier : " + Application.persistentDataPath + "/Scenario/" + scenarioName.text, OkButton = "", CancelButton = "OK", call = localCallback });
 		}

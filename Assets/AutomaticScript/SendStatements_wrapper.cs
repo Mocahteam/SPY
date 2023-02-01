@@ -13,9 +13,4 @@ public class SendStatements_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "initGBLXAPI", null);
 	}
 
-	public void resetUserUniqueID()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "resetUserUniqueID", null);
-	}
-
 }

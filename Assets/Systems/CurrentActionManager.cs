@@ -318,13 +318,19 @@ public class CurrentActionManager : FSystem
 				foreach (GameObject door in f_door)
 					if (door.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 					 door.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+					{
 						ifok = true;
+						break;
+					}
 				break;
 			case "Enemy": // enemies
 				foreach (GameObject drone in f_drone)
 					if (drone.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 						drone.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+					{
 						ifok = true;
+						break;
+					}
 				break;
 			case "Terminal": // consoles
 				vec = new Vector2(0, 0);
@@ -332,14 +338,20 @@ public class CurrentActionManager : FSystem
 				{
 					if (console.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 						console.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+					{
 						ifok = true;
+						break;
+					}
 				}
 				break;
 			case "RedArea": // detectors
 				foreach (GameObject detector in f_redDetector)
 					if (detector.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 					 detector.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+					{
 						ifok = true;
+						break;
+					}
 				break;
 			case "Exit": // exits
 				vec = new Vector2(0, 0);
@@ -347,7 +359,10 @@ public class CurrentActionManager : FSystem
 				{
 					if (exit.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 					 exit.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+					{
 						ifok = true;
+						break;
+					}
 				}
 				break;
 		}

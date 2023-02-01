@@ -108,11 +108,11 @@ public class DialogSystem : FSystem
 		if (gameData.dialogMessage[nDialog].Item2 != null)
 		{
 			if (Application.platform == RuntimePlatform.WebGLPlayer){
-				Uri uri = new Uri(gameData.levelToLoad);
+				Uri uri = new Uri(gameData.levelToLoad.src);
 				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + gameData.dialogMessage[nDialog].Item2));
 			}
 			else
-				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.levelToLoad) + "/Images/" + gameData.dialogMessage[nDialog].Item2));
+				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.levelToLoad.src) + "/Images/" + gameData.dialogMessage[nDialog].Item2));
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO, false);
@@ -127,11 +127,11 @@ public class DialogSystem : FSystem
 		{
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 			{
-				Uri uri = new Uri(gameData.levelToLoad);
+				Uri uri = new Uri(gameData.levelToLoad.src);
 				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Sounds/" + gameData.dialogMessage[nDialog].Item6));
 			}
 			else
-				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, Path.GetDirectoryName(gameData.levelToLoad) + "/Sounds/" + gameData.dialogMessage[nDialog].Item6));
+				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, Path.GetDirectoryName(gameData.levelToLoad.src) + "/Sounds/" + gameData.dialogMessage[nDialog].Item6));
 		}
 		else
 			audio.Stop();

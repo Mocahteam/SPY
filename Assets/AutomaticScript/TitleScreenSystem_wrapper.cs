@@ -12,6 +12,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject loadingScenarioContent;
 	public UnityEngine.GameObject scenarioContent;
 	public UnityEngine.GameObject quitButton;
+	public UnityEngine.GameObject loadingScreen;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -24,6 +25,12 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "loadingScenarioContent", loadingScenarioContent);
 		MainLoop.initAppropriateSystemField (system, "scenarioContent", scenarioContent);
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
+		MainLoop.initAppropriateSystemField (system, "loadingScreen", loadingScreen);
+	}
+
+	public void updateScenarioContent()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "updateScenarioContent", null);
 	}
 
 	public void importScenario(System.String content)
@@ -31,9 +38,9 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "importScenario", content);
 	}
 
-	public void updateScenarioList()
+	public void displayScenarioList()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "updateScenarioList", null);
+		MainLoop.callAppropriateSystemMethod (system, "displayScenarioList", null);
 	}
 
 	public void launchLevel()
@@ -49,6 +56,11 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public void askToLoadLevel(System.String levelToLoad)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "askToLoadLevel", levelToLoad);
+	}
+
+	public void enableSendStatement()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "enableSendStatement", null);
 	}
 
 	public void quitGame()
