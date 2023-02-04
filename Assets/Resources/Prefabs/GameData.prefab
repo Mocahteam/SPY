@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3833649377614804032}
   - component: {fileID: 3833649377614804033}
+  - component: {fileID: 2951319979171891393}
   m_Layer: 0
   m_Name: GameData
   m_TagString: Untagged
@@ -46,7 +47,9 @@ MonoBehaviour:
   LevelGO: {fileID: 0}
   scenarioName: 
   scenario: []
-  levelToLoad: 
+  levelToLoad:
+    src: 
+    name: 
   levelToLoadScore: 
   scoreKey: score
   totalStep: 0
@@ -57,4 +60,18 @@ MonoBehaviour:
   gameSpeed_default: 1
   gameSpeed_current: 1
   dragDropEnabled: 1
-  disableSendStatement: 1
+  sendStatementEnabled: 0
+--- !u!114 &2951319979171891393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3833649377614804046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5448e2904b31bfd47b6af1c44041c1a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  schoolClass: Dev
+  isTeacher: 1

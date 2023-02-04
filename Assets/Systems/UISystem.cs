@@ -34,6 +34,7 @@ public class UISystem : FSystem {
 	private float touchUp;
 	private Coroutine viewCurrentAction = null;
 
+	public GameObject LevelGO;
 	public GameObject buttonExecute;
 	public GameObject buttonPause;
 	public GameObject buttonNextStep;
@@ -100,11 +101,6 @@ public class UISystem : FSystem {
 			GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.gameObject, false);
 			// Hide menu panel
 			GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, false);
-			// Sauvegarde de l'état d'avancement des niveaux (niveau et étoile)
-			int currentLevelNum = gameData.scenario.FindIndex(x => x.src == gameData.levelToLoad.src);
-			if (PlayerPrefs.GetInt(gameData.scenarioName,0) < currentLevelNum + 1)
-				PlayerPrefs.SetInt(gameData.scenarioName, currentLevelNum + 1);
-			PlayerPrefs.Save();
 		}
 		// for other end type, nothing to do more
 	}
@@ -237,7 +233,7 @@ public class UISystem : FSystem {
 	// Permet de revenir à la scéne titre
 	public void returnToTitleScreen(){
 		initZeroVariableLevel();
-		GameObjectManager.addComponent<ActionPerformedForLRS>(gameData.LevelGO, new
+		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
 			verb = "exited",
 			objectType = "level",
@@ -266,7 +262,7 @@ public class UISystem : FSystem {
 	// On charge la scéne suivante
 	public void nextLevel()
 	{
-		GameObjectManager.addComponent<ActionPerformedForLRS>(gameData.LevelGO, new
+		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
 			verb = "exited",
 			objectType = "level",
@@ -287,7 +283,7 @@ public class UISystem : FSystem {
 	// Fait recommencer la scéne mais en gardant l'historique des actions
 	public void retry()
 	{
-		GameObjectManager.addComponent<ActionPerformedForLRS>(gameData.LevelGO, new
+		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
 			verb = "exited",
 			objectType = "level",

@@ -136,8 +136,22 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, true);
+
+			// Sauvegarde de l'état d'avancement des niveaux dans le scénario
+			int currentLevelNum = gameData.scenario.FindIndex(x => x.src == gameData.levelToLoad.src);
+			UserData ud = gameData.GetComponent<UserData>();
+			if (ud.progression != null && (!ud.progression.ContainsKey(gameData.scenarioName) || ud.progression[gameData.scenarioName] < currentLevelNum + 1))
+			{
+				ud.progression[gameData.scenarioName] = currentLevelNum + 1;
+				GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
+			}
+
+			if (PlayerPrefs.GetInt(gameData.scenarioName, 0) < currentLevelNum + 1)
+				PlayerPrefs.SetInt(gameData.scenarioName, currentLevelNum + 1);
+			PlayerPrefs.Save();
+
 			//Check if next level exists in campaign
-			if (gameData.scenario.FindIndex(x => x.src == gameData.levelToLoad.src) >= gameData.scenario.Count - 1)
+			if (currentLevelNum >= gameData.scenario.Count - 1)
 			{
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 				verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez terminé ce scénario !";
@@ -301,11 +315,19 @@ public class EndGameManager : FSystem {
 		}
 
 		//save score only if better score
-		int savedScore = PlayerPrefs.GetInt(gameData.levelToLoad + gameData.scoreKey, 0);
+		UserData ud = gameData.GetComponent<UserData>();
+		int savedScore = ud.highScore != null ? (ud.highScore.ContainsKey(gameData.levelToLoad.src) ? ud.highScore[gameData.levelToLoad.src] : 0) : PlayerPrefs.GetInt(gameData.levelToLoad.src + gameData.scoreKey, 0);
+		
 		if (savedScore < scoredStars)
 		{
-			PlayerPrefs.SetInt(gameData.levelToLoad + gameData.scoreKey, scoredStars);
+			PlayerPrefs.SetInt(gameData.levelToLoad.src + gameData.scoreKey, scoredStars);
 			PlayerPrefs.Save();
+			if (ud.highScore != null)
+			{
+				ud.highScore[gameData.levelToLoad.src] = scoredStars;
+				// ask to save progression
+				GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
+			}
 		}
 	}
 

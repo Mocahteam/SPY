@@ -4,7 +4,6 @@ using FYFY;
 public class DragDropSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject mainCanvas;
-	public UnityEngine.GameObject lastDropZoneUsed;
 	public UnityEngine.AudioSource audioSource;
 	public System.Single catchTime;
 	public UnityEngine.RectTransform editableContainers;
@@ -12,7 +11,6 @@ public class DragDropSystem_wrapper : BaseWrapper
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
-		MainLoop.initAppropriateSystemField (system, "lastDropZoneUsed", lastDropZoneUsed);
 		MainLoop.initAppropriateSystemField (system, "audioSource", audioSource);
 		MainLoop.initAppropriateSystemField (system, "catchTime", catchTime);
 		MainLoop.initAppropriateSystemField (system, "editableContainers", editableContainers);

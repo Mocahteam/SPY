@@ -51,7 +51,7 @@ public class DragDropSystem : FSystem
 	private GameObject itemDragged; // L'item (ici bloc d'action) en cours de drag
 	private Coroutine viewLastDropZone = null;
 	public GameObject mainCanvas; // Le canvas principal
-	public GameObject lastDropZoneUsed; // La dernière dropzone utilisée
+	private GameObject lastDropZoneUsed; // La dernière dropzone utilisée
 	public AudioSource audioSource; // Pour le son d'ajout de bloc
 	//Pour la gestion du double clic
 	private float lastClickTime;

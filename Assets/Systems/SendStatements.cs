@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 using FYFY;
-using DIG.GBLXAPI;
-using System;
+using System.Collections;
+using Newtonsoft.Json;
+using UnityEngine.Networking;
 
 public class SendStatements : FSystem {
 
     private Family f_actionForLRS = FamilyManager.getFamily(new AllOfComponents(typeof(ActionPerformedForLRS)));
+    private Family f_saveProgression = FamilyManager.getFamily(new AllOfComponents(typeof(SendUserData)));
 
     public static SendStatements instance;
 
     private GameData gameData;
+    private UserData userData;
 
     public SendStatements()
     {
@@ -20,36 +23,17 @@ public class SendStatements : FSystem {
     {
         GameObject gd = GameObject.Find("GameData");
         if (gd != null)
+        {
             gameData = gd.GetComponent<GameData>();
-        initGBLXAPI();
-    }
-
-    public void initGBLXAPI()
-    {
-        if (!GBLXAPI.IsInit)
-            GBLXAPI.Init(GBL_Interface.lrsAddresses);
-
-        GBLXAPI.debugMode = false;
-
-        if (!PlayerPrefs.HasKey("playerName"))
-        {
-            string sessionID = Environment.MachineName + "-" + DateTime.Now.ToString("yyyy.MM.dd.hh.mm.ss");
-            //Generate player name unique to each playing session (computer name + date + hour)
-            GBL_Interface.playerName = String.Format("{0:X}", sessionID.GetHashCode());
-            GBL_Interface.userUUID = GBL_Interface.playerName;
-            PlayerPrefs.SetString("playerName", GBL_Interface.playerName);
-            PlayerPrefs.Save();
+            userData = gd.GetComponent<UserData>();
         }
-        else
-        {
-            GBL_Interface.playerName = PlayerPrefs.GetString("playerName");
-            GBL_Interface.userUUID = GBL_Interface.playerName;
-        }
+
+        f_saveProgression.addEntryCallback(saveUserData);
     }
 
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
-        if (!gameData.disableSendStatement)
+        if (gameData.sendStatementEnabled)
         {
             // Do not use callbacks because in case in the same frame actions are removed on a GO and another component is added in another system, family will not trigger again callback because component will not be processed
             foreach (GameObject go in f_actionForLRS)
@@ -91,5 +75,28 @@ public class SendStatements : FSystem {
                 }
             }
         }
-	}
+    }
+
+    private void saveUserData (GameObject go)
+    {
+        if (gameData.sendStatementEnabled)
+        {
+            MainLoop.instance.StartCoroutine(PostUserData());
+            foreach (SendUserData sp in go.GetComponents<SendUserData>())
+                GameObjectManager.removeComponent(sp);
+        }
+    }
+
+    private IEnumerator PostUserData()
+    {
+        string progession = JsonConvert.SerializeObject(userData.progression);
+        string highScore = JsonConvert.SerializeObject(userData.highScore);
+        Debug.Log(progession + "_" + highScore);
+        UnityWebRequest www = UnityWebRequest.Post("https://spy.lip6.fr/ServerREST_LIP6/", "{\"idSession\":\"" + GBL_Interface.playerName + "\",\"class\":\""+userData.schoolClass+"\",\"isTeacher\":\""+(userData.isTeacher ? 1 : 0)+"\",\"progression\":" + progession + ",\"highScore\":" + highScore + "}");
+
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+            Debug.LogWarning(www.error);
+    }
 }

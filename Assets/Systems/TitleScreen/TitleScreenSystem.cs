@@ -10,13 +10,18 @@ using UnityEngine.Networking;
 using System;
 using UnityEngine.Events;
 using System.Runtime.InteropServices;
+using DIG.GBLXAPI;
+using Newtonsoft.Json;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
 /// </summary>
 public class TitleScreenSystem : FSystem {
+	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
+
 	private GameData gameData;
-	public GameData prefabGameData;
+	private UserData userData;
+	public GameObject prefabGameData;
 	public GameObject mainCanvas;
 	public GameObject campagneMenu;
 	public GameObject compLevelButton;
@@ -25,7 +30,8 @@ public class TitleScreenSystem : FSystem {
 	public GameObject loadingScenarioContent;
 	public GameObject scenarioContent;
 	public GameObject quitButton;
-	public GameObject loadingScreen; 
+	public GameObject loadingScreen;
+	public GameObject sessionIdPanel;
 
 	private GameObject selectedScenario;
 	private Dictionary<string, List<DataLevel>> defaultCampaigns; // List of levels for each default campaign
@@ -65,15 +71,19 @@ public class TitleScreenSystem : FSystem {
 	{
 		if (!GameObject.Find("GameData"))
 		{
-			gameData = UnityEngine.Object.Instantiate(prefabGameData);
-			gameData.name = "GameData";
+			GameObject go = UnityEngine.Object.Instantiate(prefabGameData);
+			go.name = "GameData";
+			gameData = go.GetComponent<GameData>();
+			userData = go.GetComponent<UserData>();
 			if (webGL_askToEnableSendSystem)
-				gameData.disableSendStatement = false;
+				gameData.sendStatementEnabled = true;
 			GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
 		}
 		else
 		{
-			gameData = GameObject.Find("GameData").GetComponent<GameData>();
+			GameObject go = GameObject.Find("GameData");
+			gameData = go.GetComponent<GameData>();
+			userData = go.GetComponent<UserData>();
 		}
 
 		gameData.levels = new Dictionary<string, XmlNode>();
@@ -85,6 +95,94 @@ public class TitleScreenSystem : FSystem {
 		GameObjectManager.setGameObjectState(campagneMenu, false);
 
 		MainLoop.instance.StartCoroutine(GetScenariosAndLevels());
+
+		if (!GameObject.Find("GBLXAPI"))	
+			initGBLXAPI();
+	}
+
+	public void initGBLXAPI()
+	{
+		if (!GBLXAPI.IsInit)
+			GBLXAPI.Init(GBL_Interface.lrsAddresses);
+
+		GBLXAPI.debugMode = false;
+
+		string sessionID = Environment.MachineName + "-" + DateTime.Now.ToString("yyyy.MM.dd.hh.mm.ss");
+		//Generate player name unique to each playing session (computer name + date + hour)
+		GBL_Interface.playerName = String.Format("{0:X}", sessionID.GetHashCode());
+		GBL_Interface.userUUID = GBL_Interface.playerName;
+		foreach (GameObject go in f_sessionId)
+			go.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
+
+		userData.progression = null;
+		userData.highScore = null;
+
+		if (gameData.sendStatementEnabled || !Application.isEditor)
+			GameObjectManager.setGameObjectState(sessionIdPanel, true);
+	}
+
+	// See Ok button in SetClass panel in TitleScreen scene
+	public void resetProgression(GameObject go)
+    {
+		PlayerPrefs.SetString("playerName", GBL_Interface.playerName);
+		PlayerPrefs.Save();
+		// clear progression
+		userData.progression = new Dictionary<string, int>();
+		userData.highScore = new Dictionary<string, int>();
+		userData.schoolClass = go.GetComponentInChildren<TMP_InputField>().text;
+		userData.isTeacher = go.GetComponentInChildren<Toggle>().isOn;
+		GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
+	}
+
+	// See Ok button in SetSessionId panel in TitleScreen scene
+	public void GetProgression(TMP_InputField idSession)
+    {
+		MainLoop.instance.StartCoroutine(GetProgressionWebRequest(idSession.text));
+	}
+
+	private IEnumerator GetProgressionWebRequest(string idSession)
+    {
+		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession="+idSession);
+
+		yield return www.SendWebRequest();
+		if (www.result != UnityWebRequest.Result.Success || www.downloadHandler.text == "")
+		{
+			Debug.LogWarning(www.error);
+			if (!PlayerPrefs.HasKey("playerName"))
+			{
+				PlayerPrefs.SetString("playerName", GBL_Interface.playerName);
+				PlayerPrefs.Save();
+			}
+			else
+			{
+				GBL_Interface.playerName = PlayerPrefs.GetString("playerName");
+				GBL_Interface.userUUID = GBL_Interface.playerName;
+			}
+
+			userData.progression = null;
+			userData.highScore = null;
+
+			localCallback = null;
+			localCallback += delegate {
+				GameObjectManager.setGameObjectState(sessionIdPanel, true);
+				GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("ShowSessionId").gameObject, false);
+				GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("SetSessionId").gameObject, true);
+			};
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Impossible de récupérer les données de progression pour " + idSession + ". Les données locales vont être utilisées.\n\nSouhaites-tu essayer d'entrer un nouveau code ?", OkButton = "Oui", CancelButton = "Non", call = localCallback });
+		}
+		else
+		{
+			string progression = www.downloadHandler.text.Substring(0, www.downloadHandler.text.IndexOf("#SEP#"));
+			string highScore = www.downloadHandler.text.Substring(www.downloadHandler.text.IndexOf("#SEP#")+5);
+			userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(progression);
+			userData.highScore = JsonConvert.DeserializeObject<Dictionary<string, int>>(highScore);
+			GBL_Interface.playerName = idSession;
+			GBL_Interface.userUUID = idSession;
+			PlayerPrefs.SetString("playerName", idSession);
+			PlayerPrefs.Save();
+		}
+		foreach (GameObject go in f_sessionId)
+			go.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
 	}
 
 	private IEnumerator GetScenariosAndLevels()
@@ -96,8 +194,8 @@ public class TitleScreenSystem : FSystem {
 			ShowHtmlButtons();
 			GameObjectManager.setGameObjectState(quitButton, false);
 			// Load scenario and levels from server
-			GetScenarioWebRequest();
-			GetLevelsWebRequest();
+			MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
+			MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
 		}
 		else
 		{
@@ -138,7 +236,6 @@ public class TitleScreenSystem : FSystem {
 		else
 		{
 			string scenarioJson = www.downloadHandler.text;
-
 			WebGlScenarioList scenarioListRaw = JsonUtility.FromJson<WebGlScenarioList>(scenarioJson);
 			// try to load all scenarios
 			foreach (WebGlDataLevels scenarioRaw in scenarioListRaw.scenarios)
@@ -316,13 +413,13 @@ public class TitleScreenSystem : FSystem {
 			button.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate { launchLevel(campaignKey, levelData); });
 			GameObjectManager.bind(button);
 			//locked levels
-			if (i <= PlayerPrefs.GetInt(campaignKey, 0)) //by default first level of directory is the only unlocked level of directory
+			if ((userData.progression != null && userData.progression.ContainsKey(campaignKey) && userData.progression[campaignKey] >= i) || (userData.progression == null && PlayerPrefs.GetInt(campaignKey, 0) >= i) || i == 0) //by default first level of directory is the only unlocked level of directory
 				button.GetComponentInChildren<Button>().interactable = true;
 			//unlocked levels
 			else
 				button.GetComponentInChildren<Button>().interactable = false;
 			//scores
-			int scoredStars = PlayerPrefs.GetInt(levelData + gameData.scoreKey, 0); //0 star by default
+			int scoredStars = (userData.highScore != null ? (userData.highScore.ContainsKey(levelData.src) ? userData.highScore[levelData.src] : 0) : PlayerPrefs.GetInt(levelData.src + gameData.scoreKey, 0)); //0 star by default
 			Transform scoreCanvas = button.transform.Find("ScoreCanvas");
 			for (int nbStar = 0; nbStar < 4; nbStar++)
 			{
@@ -370,7 +467,7 @@ public class TitleScreenSystem : FSystem {
 		if (gameData == null)
 			webGL_askToEnableSendSystem = true;
 		else
-			gameData.disableSendStatement = false;
+			gameData.sendStatementEnabled = true;
 	}
 
 	// See Quitter button in editor

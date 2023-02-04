@@ -38,7 +38,6 @@ public class EditableContainerSystem : FSystem
 	private Family f_forceRemoveContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ForceRemoveContainer)));
 
 	// Les variables
-	public GameObject agentSelected = null;
 	private UIRootContainer containerSelected; // Le container selectionné
 	public GameObject EditableCanvas;
 	public GameObject prefabViewportScriptContainer;

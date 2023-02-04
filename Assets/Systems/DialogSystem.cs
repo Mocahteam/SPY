@@ -16,6 +16,7 @@ public class DialogSystem : FSystem
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
+	public GameObject LevelGO;
 	private GameData gameData;
 	public GameObject dialogPanel;
 	public GameObject showDialogsMenu;
@@ -64,13 +65,15 @@ public class DialogSystem : FSystem
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
 		nDialog = 0;
 
-		GameObjectManager.addComponent<ActionPerformedForLRS>(gameData.LevelGO, new
+		string content = configureDialog();
+		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
 			verb = "openned",
-			objectType = "briefing"
+			objectType = "briefing",
+			activityExtensions = new Dictionary<string, string>() {
+				{ "content", content }
+			}
 		});
-
-		configureDialog();
 	}
 
 	// See NextButton in editor
@@ -79,7 +82,17 @@ public class DialogSystem : FSystem
 	{
 		nDialog++; // On incrémente le nombre de dialogue
 
-		configureDialog();
+		string content = configureDialog();
+
+		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+		{
+			verb = "interacted",
+			objectType = "briefing",
+			activityExtensions = new Dictionary<string, string>() {
+				{ "value", "next" },
+				{ "content", content }
+			}
+		});
 	}
 
 	// See PreviousButton in editor
@@ -88,11 +101,12 @@ public class DialogSystem : FSystem
 	{
 		nDialog--; // On décrémente le nombre de dialogue
 
-		configureDialog();
+		string content = configureDialog();
 	}
 
-	private void configureDialog()
+	private string configureDialog()
     {
+		string dialogReturn = "";
 		// set text
 		GameObject textGO = dialogPanel.transform.Find("Text").gameObject;
 		if (gameData.dialogMessage[nDialog].Item1 != null)
@@ -100,6 +114,7 @@ public class DialogSystem : FSystem
 			GameObjectManager.setGameObjectState(textGO, true);
 			textGO.GetComponent<TextMeshProUGUI>().text = gameData.dialogMessage[nDialog].Item1;
 			LayoutRebuilder.ForceRebuildLayoutImmediate(textGO.transform as RectTransform);
+			dialogReturn = gameData.dialogMessage[nDialog].Item1;
 		}
 		else
 			GameObjectManager.setGameObjectState(textGO, false);
@@ -149,6 +164,7 @@ public class DialogSystem : FSystem
 			setActivePrevButton(true);
 		if (nDialog + 1 >= gameData.dialogMessage.Count)
 			setActiveOKButton(true);
+		return dialogReturn;
 	}
 
 
@@ -180,7 +196,7 @@ public class DialogSystem : FSystem
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 		nDialog = gameData.dialogMessage.Count;
 
-		GameObjectManager.addComponent<ActionPerformedForLRS>(gameData.LevelGO, new
+		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
 			verb = "closed",
 			objectType = "briefing"
@@ -203,6 +219,7 @@ public class DialogSystem : FSystem
 			MainLoop.instance.StartCoroutine(setWantedHeight(img));
 		}
 	}
+
 	private IEnumerator GetAudioWebRequest(AudioSource audio, string path)
 	{
 		UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.MPEG);

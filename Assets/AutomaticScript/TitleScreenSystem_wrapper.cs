@@ -3,7 +3,7 @@ using FYFY;
 
 public class TitleScreenSystem_wrapper : BaseWrapper
 {
-	public GameData prefabGameData;
+	public UnityEngine.GameObject prefabGameData;
 	public UnityEngine.GameObject mainCanvas;
 	public UnityEngine.GameObject campagneMenu;
 	public UnityEngine.GameObject compLevelButton;
@@ -13,6 +13,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject scenarioContent;
 	public UnityEngine.GameObject quitButton;
 	public UnityEngine.GameObject loadingScreen;
+	public UnityEngine.GameObject sessionIdPanel;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -26,6 +27,22 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "scenarioContent", scenarioContent);
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
 		MainLoop.initAppropriateSystemField (system, "loadingScreen", loadingScreen);
+		MainLoop.initAppropriateSystemField (system, "sessionIdPanel", sessionIdPanel);
+	}
+
+	public void initGBLXAPI()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "initGBLXAPI", null);
+	}
+
+	public void resetProgression(UnityEngine.GameObject go)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "resetProgression", go);
+	}
+
+	public void GetProgression(TMPro.TMP_InputField idSession)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "GetProgression", idSession);
 	}
 
 	public void updateScenarioContent()

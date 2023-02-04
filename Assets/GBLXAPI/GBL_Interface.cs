@@ -31,17 +31,17 @@ public static class GBL_Interface {
         // Root statement to Dev store in editor and Prod store else
         Application.isEditor ? new GBLConfig("https://lrsmocah.lip6.fr/data/xAPI", "a4b46f0307a8671674fd4f55139ae5bebb9a4a4d", "cb1992c04168586866dd55f51a0d1f6589e45335") : new GBLConfig("https://lrsmocah.lip6.fr/data/xAPI", "dc2cfee1883f369feb56c964c219f50555d00507", "213c1323b76f6d53fdcd979df168543a3c57d961")
     };
-	public static string userUUID = ""; // Muratet : overrided in SendStatements system
-    public static string playerName = ""; // Muratet : overrided in SendStatements system
+	public static string userUUID = ""; // Muratet : overrided in TitleScreenSystem system
+    public static string playerName = ""; // Muratet : overrided in TitleScreenSystem system
 
     // ------------------------------------------------------------------------
-	// Sample Gameplay GBLxAPI Triggers
-	// ------------------------------------------------------------------------
-	/*
+    // Sample Gameplay GBLxAPI Triggers
+    // ------------------------------------------------------------------------
+    /*
 	Here is where you will put functions to be called whenever you want to send a GBLxAPI statement.
 	 */
-	
-	public static void SendStatement(string verb, string activityType, Dictionary<string, string> activityExtensions = null)
+
+    public static void SendStatement(string verb, string activityType, Dictionary<string, string> activityExtensions = null)
     {
         ActivityBuilder.IOptional activityBuilder = GBLXAPI.Activity
             .WithID("https://www.lip6.fr/mocah/ELS/" + activityType)

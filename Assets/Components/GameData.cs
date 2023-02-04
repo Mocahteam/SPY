@@ -4,7 +4,6 @@ using System.Xml;
 
 public class GameData : MonoBehaviour {
 	// Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
-	public GameObject LevelGO;
 	public Dictionary<string, XmlNode> levels; // The Associated XmlNode to its path
 	public string scenarioName; // name of the scenario (campaign)
 	public List<DataLevel> scenario; // The scenario to play
@@ -21,5 +20,5 @@ public class GameData : MonoBehaviour {
 	public float gameSpeed_default = 1f;
 	public float gameSpeed_current = 1f;
 	public bool dragDropEnabled = true;
-	public bool disableSendStatement = true;
+	public bool sendStatementEnabled = true;
 }

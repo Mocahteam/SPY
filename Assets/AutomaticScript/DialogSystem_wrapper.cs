@@ -3,12 +3,14 @@ using FYFY;
 
 public class DialogSystem_wrapper : BaseWrapper
 {
+	public UnityEngine.GameObject LevelGO;
 	public UnityEngine.GameObject dialogPanel;
 	public UnityEngine.GameObject showDialogsMenu;
 	public UnityEngine.GameObject showDialogsBottom;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
+		MainLoop.initAppropriateSystemField (system, "LevelGO", LevelGO);
 		MainLoop.initAppropriateSystemField (system, "dialogPanel", dialogPanel);
 		MainLoop.initAppropriateSystemField (system, "showDialogsMenu", showDialogsMenu);
 		MainLoop.initAppropriateSystemField (system, "showDialogsBottom", showDialogsBottom);

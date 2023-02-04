@@ -8,9 +8,4 @@ public class SendStatements_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void initGBLXAPI()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "initGBLXAPI", null);
-	}
-
 }

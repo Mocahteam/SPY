@@ -23,6 +23,7 @@ public class LevelGenerator : FSystem {
 	private Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)), new AnyOfTags("Drone")); // On récupére les agents pouvant être édités
 	private Family f_draggableElement = FamilyManager.getFamily(new AnyOfComponents(typeof(ElementToDrag)));
 
+	public GameObject LevelGO;
 	private List<List<int>> map;
 	private GameData gameData;
 	private int nbAgentCreate = 0; // Nombre d'agents créés
@@ -33,7 +34,6 @@ public class LevelGenerator : FSystem {
 	public GameObject editableCanvas;// Le container qui contient les Viewport/script containers
 	public GameObject scriptContainer;
 	public GameObject library; // Le viewport qui contient la librairie
-	public GameObject EditableContenair; // Le container qui contient les séquences éditables
 	public TMP_Text levelName;
 	public GameObject canvas;
 	public GameObject buttonExecute;
@@ -47,14 +47,13 @@ public class LevelGenerator : FSystem {
 	}
 
 	protected override void onStart()
-    {
+	{
 		GameObject gameDataGO = GameObject.Find("GameData");
 		if (gameDataGO == null)
 			GameObjectManager.loadScene("TitleScreen");
 		else
 		{
 			gameData = gameDataGO.GetComponent<GameData>();
-			gameData.LevelGO = GameObject.Find("Level");
 			if (gameData.levels.ContainsKey(gameData.levelToLoad.src))
 				XmlToLevel(gameData.levels[gameData.levelToLoad.src].OwnerDocument);
 			else
@@ -62,7 +61,7 @@ public class LevelGenerator : FSystem {
 			levelName.text = gameData.levelToLoad.name;
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlButtons();
-            GameObjectManager.addComponent<ActionPerformedForLRS>(gameData.LevelGO, new
+            GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 			{
 				verb = "launched",
 				objectType = "level",
@@ -232,10 +231,10 @@ public class LevelGenerator : FSystem {
 		GameObject entity = null;
 		switch(type){
 			case "player": // Robot
-				entity = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Robot Kyle") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
+				entity = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Robot Kyle") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(0,0,0), LevelGO.transform);
 				break;
 			case "enemy": // Enemy
-				entity = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,3.8f,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
+				entity = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,3.8f,gridX*3), Quaternion.Euler(0,0,0), LevelGO.transform);
 				break;
 		}
 
@@ -294,7 +293,7 @@ public class LevelGenerator : FSystem {
 	}
 
 	private void createDoor(int gridX, int gridY, Direction.Dir orientation, int slotID){
-		GameObject door = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Door") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
+		GameObject door = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Door") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(0,0,0), LevelGO.transform);
 
 		door.GetComponentInChildren<ActivationSlot>().slotID = slotID;
 		door.GetComponentInChildren<Position>().x = gridX;
@@ -305,7 +304,7 @@ public class LevelGenerator : FSystem {
 
 	private void createDecoration(string name, int gridX, int gridY, Direction.Dir orientation)
 	{
-		GameObject decoration = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/"+name) as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY * 3, 3, gridX * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
+		GameObject decoration = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/"+name) as GameObject, LevelGO.transform.position + new Vector3(gridY * 3, 3, gridX * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
 
 		decoration.GetComponent<Position>().x = gridX;
 		decoration.GetComponent<Position>().y = gridY;
@@ -315,7 +314,7 @@ public class LevelGenerator : FSystem {
 
 	private void createConsole(int state, int gridX, int gridY, List<int> slotIDs, Direction.Dir orientation)
 	{
-		GameObject activable = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/ActivableConsole") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY * 3, 3, gridX * 3), Quaternion.Euler(0, 0, 0), gameData.LevelGO.transform);
+		GameObject activable = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/ActivableConsole") as GameObject, LevelGO.transform.position + new Vector3(gridY * 3, 3, gridX * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
 
 		activable.GetComponent<Activable>().slotID = slotIDs;
 		DoorPath path = activable.GetComponentInChildren<DoorPath>();
@@ -334,9 +333,9 @@ public class LevelGenerator : FSystem {
 	private void createSpawnExit(int gridX, int gridY, bool type){
 		GameObject spawnExit;
 		if(type)
-			spawnExit = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterSpawn") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(-90,0,0), gameData.LevelGO.transform);
+			spawnExit = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterSpawn") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(-90,0,0), LevelGO.transform);
 		else
-			spawnExit = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterExit") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(-90,0,0), gameData.LevelGO.transform);
+			spawnExit = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterExit") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(-90,0,0), LevelGO.transform);
 
 		spawnExit.GetComponent<Position>().x = gridX;
 		spawnExit.GetComponent<Position>().y = gridY;
@@ -344,19 +343,19 @@ public class LevelGenerator : FSystem {
 	}
 
 	private void createCoin(int gridX, int gridY){
-		GameObject coin = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Coin") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(90,0,0), gameData.LevelGO.transform);
+		GameObject coin = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Coin") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(90,0,0), LevelGO.transform);
 		coin.GetComponent<Position>().x = gridX;
 		coin.GetComponent<Position>().y = gridY;
 		GameObjectManager.bind(coin);
 	}
 
 	private void createCell(int gridX, int gridY){
-		GameObject cell = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Cell") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,0,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
+		GameObject cell = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Cell") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,0,gridX*3), Quaternion.Euler(0,0,0), LevelGO.transform);
 		GameObjectManager.bind(cell);
 	}
 
 	private void createWall(int gridX, int gridY, bool visible = true){
-		GameObject wall = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Wall") as GameObject, gameData.LevelGO.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(0,0,0), gameData.LevelGO.transform);
+		GameObject wall = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Wall") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,3,gridX*3), Quaternion.Euler(0,0,0), LevelGO.transform);
 		wall.GetComponent<Position>().x = gridX;
 		wall.GetComponent<Position>().y = gridY;
 		if (!visible)
