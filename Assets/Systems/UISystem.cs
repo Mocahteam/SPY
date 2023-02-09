@@ -254,7 +254,7 @@ public class UISystem : FSystem {
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
 		gameData.levelToLoadScore = null;
-		gameData.dialogMessage = new List<(string, string, float, int, int, string, bool)>();
+		gameData.dialogMessage = new List<(string, string, float, int, int, string, string, bool)>();
 }
 
 

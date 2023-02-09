@@ -81,7 +81,7 @@ public class LevelGenerator : FSystem {
 		gameData.totalExecute = 0;
 		gameData.totalCoin = 0;
 		gameData.levelToLoadScore = null;
-		gameData.dialogMessage = new List<(string, string, float, int, int, string, bool)>();
+		gameData.dialogMessage = new List<(string, string, float, int, int, string, string, bool)>();
 		gameData.actionBlockLimit = new Dictionary<string, int>();
 		map = new List<List<int>>();
 
@@ -170,7 +170,7 @@ public class LevelGenerator : FSystem {
 			}
 		}
 		eraseMap();
-		generateMap();
+		generateMap(doc.GetElementsByTagName("hideExits").Count > 0);
 		MainLoop.instance.StartCoroutine(delayGameLoaded());
 	}
 
@@ -199,8 +199,8 @@ public class LevelGenerator : FSystem {
 	}
 
 	// read the map and create wall, ground, spawn and exit
-	private void generateMap(){
-		for(int y = 0; y< map.Count; y++){
+	private void generateMap(bool hideExits){
+		for (int y = 0; y< map.Count; y++){
 			for(int x = 0; x < map[y].Count; x++){
 				switch (map[y][x]){
 					case -1: // void
@@ -219,7 +219,7 @@ public class LevelGenerator : FSystem {
 						break;
 					case 3: // Exit
 						createCell(x,y);
-						createSpawnExit(x,y,false);
+						createSpawnExit(x,y,false, hideExits);
 						break;
 				}
 			}
@@ -330,13 +330,19 @@ public class LevelGenerator : FSystem {
 		GameObjectManager.bind(activable);
 	}
 
-	private void createSpawnExit(int gridX, int gridY, bool type){
+	private void createSpawnExit(int gridX, int gridY, bool type, bool hideExit = false){
 		GameObject spawnExit;
 		if(type)
 			spawnExit = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterSpawn") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(-90,0,0), LevelGO.transform);
 		else
 			spawnExit = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterExit") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(-90,0,0), LevelGO.transform);
 
+		if (hideExit)
+        {
+			Component.Destroy(spawnExit.GetComponent<Renderer>());
+			Component.Destroy(spawnExit.GetComponent<ParticleSystem>());
+        }
+			
 		spawnExit.GetComponent<Position>().x = gridX;
 		spawnExit.GetComponent<Position>().y = gridY;
 		GameObjectManager.bind(spawnExit);
@@ -403,10 +409,13 @@ public class LevelGenerator : FSystem {
 			string srcSound = null;
 			if (dialog.Attributes.GetNamedItem("sound") != null)
 				srcSound = dialog.Attributes.GetNamedItem("sound").Value;
+			string srcVideo = null;
+			if (dialog.Attributes.GetNamedItem("video") != null)
+				srcVideo = dialog.Attributes.GetNamedItem("video").Value;
 			bool enableInteraction = false;
 			if (dialog.Attributes.GetNamedItem("enableInteraction") != null)
 				enableInteraction = int.Parse(dialog.Attributes.GetNamedItem("enableInteraction").Value) == 1;
-			gameData.dialogMessage.Add((text, srcImg, imgHeight, camX, camY, srcSound, enableInteraction));
+			gameData.dialogMessage.Add((text, srcImg, imgHeight, camX, camY, srcSound, srcVideo, enableInteraction));
 		}
 	}
 

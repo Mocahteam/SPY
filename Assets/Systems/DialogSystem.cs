@@ -7,6 +7,7 @@ using System.Collections;
 using UnityEngine.Networking;
 using System;
 using System.Collections.Generic;
+using UnityEngine.Video;
 
 /// <summary>
 /// Manage dialogs at the begining of the level
@@ -150,8 +151,20 @@ public class DialogSystem : FSystem
 		}
 		else
 			audio.Stop();
+		// set video
+		VideoPlayer videoPlayer = dialogPanel.GetComponentInChildren<VideoPlayer>(true);
+		if (gameData.dialogMessage[nDialog].Item7 != null)
+		{
+			GameObjectManager.setGameObjectState(videoPlayer.gameObject, true);
+			videoPlayer.url = gameData.dialogMessage[nDialog].Item7;
+			RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
+			rawImage.enabled = false;
+			MainLoop.instance.StartCoroutine(waitLoadingVideo());
+		}
+		else
+			GameObjectManager.setGameObjectState(videoPlayer.gameObject, false);
 		// set background
-		dialogPanel.transform.parent.GetComponent<Image>().enabled = !gameData.dialogMessage[nDialog].Item7;
+		dialogPanel.transform.parent.GetComponent<Image>().enabled = !gameData.dialogMessage[nDialog].Item8;
 
 		// Be sure all buttons are disabled
 		setActiveOKButton(false);
@@ -167,6 +180,21 @@ public class DialogSystem : FSystem
 		return dialogReturn;
 	}
 
+	private IEnumerator waitLoadingVideo()
+    {
+		VideoPlayer videoPlayer = dialogPanel.GetComponentInChildren<VideoPlayer>(true);
+		while (!videoPlayer.isPrepared)
+			yield return null;
+		setVideoSize();
+	}
+
+	private void setVideoSize()
+    {
+		VideoPlayer videoPlayer = dialogPanel.GetComponentInChildren<VideoPlayer>(true);
+		RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
+		rawImage.enabled = true;
+		rawImage.rectTransform.sizeDelta = new Vector2(videoPlayer.width * rawImage.rectTransform.rect.height / videoPlayer.height, rawImage.rectTransform.rect.height);
+	}
 
 	// Active ou non le bouton Ok du panel dialogue
 	public void setActiveOKButton(bool active)

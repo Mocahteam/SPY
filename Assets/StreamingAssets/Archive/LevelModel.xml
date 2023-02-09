@@ -12,7 +12,7 @@
 						0 a ground cell that enables agent movement
 						1 a wall cell that blocks agent movement
 						2 a ground cell with a spawn object
-						3 a ground cell with a teleport object (at least one required to detect the end of the level)
+						3 a ground cell with a teleport object (at least one to detect the end of the level)
 			-->
 			<cell value="-1" />
 			<cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
@@ -29,15 +29,10 @@
 		<!-- 
 			dialog (at least one): this tag describes one of the dialogs of this level. It contains five attributes:
 				text (optional): the text to display
-				img (optional): the name of the image to load. This file has to be placed inside the "Images" directory. Both "Images" directory and this level file have to be in the same directory.
+				img (optional): the name of the image to load. This file has to be placed inside the "Images" directory. Both "Images" directory in this level file have to be in the same directory.
 				imgHeight (optional): the height of the image in the dialog panel
 				camX (optional): the X position to focus camera on the map grid
 				camY (optional): the Y position to focus camera on the map grid
-				sound (optional): the name of the sound to load. This file has to be placed inside the "Sounds" directory. Both "Sounds" directory and this level file have to be in the same directory.
-				video (optional): the URI of the video to load.
-				enableInteraction (optional):
-					0 -> Locked (default): the player can't interact with game while this dialog is shown
-					1 -> Unlocked: the player can't interact with game while this dialog is shown
 		-->
 		<dialog text="Exemple of briefing text."/>
 	</dialogs>
@@ -48,13 +43,10 @@
 	<!-- executionLimit (optional): this tag enables to limit the number of times the player can click on the play button to solve the level. -->
 	<executionLimit amount="1" />
 
-	<!-- fog (optional): this tag enables a mask on the last player created (see player tag) that hides all the map except around this player -->
+	<!-- fog (optional):this tag enables a mask on the last player created (see player tag) that hides all the map except around this player -->
 	<fog />
-
-	<!-- hideExits (optional): this tag enables to hide exists (teleports, ie cells with value 3 in map description). The exits are still in position but not visible for the player.  -->
-	<hideExits />
   
-	<!-- blockLimits (optional): this tag enables to limit the amount of programming blocks available. It is composed by a set of blockLimit -->
+	<!-- blockLimits (optional):this tag enables to limit the amount of programming blocks available. It is composed by a set of blockLimit -->
 	<blockLimits>
 		<!-- 
 			blockLimit (optional): this tag enables to define  the amount of specific programming block available. It contains two attributes:
@@ -62,30 +54,30 @@
 				limit (mandatory): >0 the amount of blocks available for the player, ==0 this block type is hidden for the player, <0 unlimited accès of this block type
 		-->
 		<blockLimit blockType="Forward" limit="-1" />
-		<blockLimit blockType="TurnLeft" limit="4" />
-		<blockLimit blockType="TurnRight" limit="4" />
-		<blockLimit blockType="Wait" limit="0" />
-		<blockLimit blockType="Activate" limit="0" />
-		<blockLimit blockType="TurnBack" limit="0" />
-		<blockLimit blockType="IfThen" limit="0" />
-		<blockLimit blockType="IfElse" limit="0" />
-		<blockLimit blockType="ForLoop" limit="0" />
-		<blockLimit blockType="While" limit="0" />
-		<blockLimit blockType="Forever" limit="0" />
-		<blockLimit blockType="AndOperator" limit="0" />
-		<blockLimit blockType="OrOperator" limit="0" />
-		<blockLimit blockType="NotOperator" limit="0" />
-		<blockLimit blockType="WallFront" limit="0" />
-		<blockLimit blockType="WallLeft" limit="0" />
-		<blockLimit blockType="WallRight" limit="0" />
-		<blockLimit blockType="PathFront" limit="0" />
-		<blockLimit blockType="PathLeft" limit="0" />
-		<blockLimit blockType="PathRight" limit="0" />
-		<blockLimit blockType="Enemy" limit="0" />
-		<blockLimit blockType="RedArea" limit="0" />
-		<blockLimit blockType="FieldGate" limit="0" />
-		<blockLimit blockType="Terminal" limit="0" />
-		<blockLimit blockType="Exit" limit="0" />
+		<blockLimit blockType="TurnLeft" limit="-1" />
+		<blockLimit blockType="TurnRight" limit="-1" />
+		<blockLimit blockType="Wait" limit="-1" />
+		<blockLimit blockType="Activate" limit="-1" />
+		<blockLimit blockType="TurnBack" limit="-1" />
+		<blockLimit blockType="IfThen" limit="-1" />
+		<blockLimit blockType="IfElse" limit="-1" />
+		<blockLimit blockType="ForLoop" limit="-1" />
+		<blockLimit blockType="While" limit="-1" />
+		<blockLimit blockType="Forever" limit="-1" />
+		<blockLimit blockType="AndOperator" limit="-1" />
+		<blockLimit blockType="OrOperator" limit="-1" />
+		<blockLimit blockType="NotOperator" limit="-1" />
+		<blockLimit blockType="WallFront" limit="-1" />
+		<blockLimit blockType="WallLeft" limit="-1" />
+		<blockLimit blockType="WallRight" limit="-1" />
+		<blockLimit blockType="PathFront" limit="-1" />
+		<blockLimit blockType="PathLeft" limit="-1" />
+		<blockLimit blockType="PathRight" limit="-1" />
+		<blockLimit blockType="Enemy" limit="-1" />
+		<blockLimit blockType="RedArea" limit="-1" />
+		<blockLimit blockType="FieldGate" limit="-1" />
+		<blockLimit blockType="Terminal" limit="-1" />
+		<blockLimit blockType="Exit" limit="-1" />
 	</blockLimits>
   
 	<!-- 
@@ -158,9 +150,8 @@
 				False -> the enemy ignores cell under it
 			typeRange (mandatory):
 				0 -> Line view
-				1 -> Cross view
-				2 -> Cone view (not implemented) 
-				3 -> Around view (not implemented)
+				1 -> Cone view (not implemented) 
+				2 -> Around view (not implemented)
 	-->
   <enemy associatedScriptName="Guarde" posY="3" posX="4" direction="3" range="2" selfRange="False" typeRange="0" />
   
