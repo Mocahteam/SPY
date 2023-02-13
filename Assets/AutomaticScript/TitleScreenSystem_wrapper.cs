@@ -14,6 +14,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject quitButton;
 	public UnityEngine.GameObject loadingScreen;
 	public UnityEngine.GameObject sessionIdPanel;
+	public UnityEngine.GameObject deletableElement;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -28,6 +29,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
 		MainLoop.initAppropriateSystemField (system, "loadingScreen", loadingScreen);
 		MainLoop.initAppropriateSystemField (system, "sessionIdPanel", sessionIdPanel);
+		MainLoop.initAppropriateSystemField (system, "deletableElement", deletableElement);
 	}
 
 	public void initGBLXAPI()
@@ -65,9 +67,9 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "launchLevel", null);
 	}
 
-	public void testLevel(TMPro.TMP_Text levelToLoad)
+	public void testLevel(DataLevelBehaviour dlb)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "testLevel", levelToLoad);
+		MainLoop.callAppropriateSystemMethod (system, "testLevel", dlb);
 	}
 
 	public void askToLoadLevel(System.String levelToLoad)

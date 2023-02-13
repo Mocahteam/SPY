@@ -16,16 +16,22 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
 
     public void showLevelInfo()
     {
-        ParamCompetenceSystem.instance.showLevelInfo(GetComponentInChildren<TMP_Text>().text);
+        TryGetComponent<DataLevelBehaviour>(out DataLevelBehaviour overridedData);
+        ParamCompetenceSystem.instance.showLevelInfo(GetComponentInChildren<TMP_Text>().text, overridedData);
     }
 
-    public void removeLevelFromScenario()
+    public void removeItemFromParent()
     {
-        ParamCompetenceSystem.instance.removeLevelFromScenario(gameObject);
+        ParamCompetenceSystem.instance.removeItemFromParent(gameObject);
     }
 
-    public void moveLevelInScenario(int step)
+    public void moveItemInParent(int step)
     {
-        ParamCompetenceSystem.instance.moveLevelInScenario(gameObject, step);
+        ParamCompetenceSystem.instance.moveItemInParent(gameObject, step);
+    }
+
+    public void showBriefingOverride()
+    {
+        ParamCompetenceSystem.instance.showBriefingOverride(gameObject.GetComponent< DataLevelBehaviour>());
     }
 }

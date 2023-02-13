@@ -17,6 +17,8 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.UI.Button testLevel;
 	public UnityEngine.UI.Button addToScenario;
 	public UnityEngine.GameObject savingPanel;
+	public UnityEngine.GameObject editBriefingPanel;
+	public UnityEngine.GameObject briefingItemPrefab;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -34,6 +36,8 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "testLevel", testLevel);
 		MainLoop.initAppropriateSystemField (system, "addToScenario", addToScenario);
 		MainLoop.initAppropriateSystemField (system, "savingPanel", savingPanel);
+		MainLoop.initAppropriateSystemField (system, "editBriefingPanel", editBriefingPanel);
+		MainLoop.initAppropriateSystemField (system, "briefingItemPrefab", briefingItemPrefab);
 	}
 
 	public void loadPanelSelectComp()
@@ -56,9 +60,9 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "showCompatibleLevels", filter);
 	}
 
-	public void showLevelInfo(System.String path)
+	public void showLevelInfo()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "showLevelInfo", path);
+		MainLoop.callAppropriateSystemMethod (system, "showLevelInfo", null);
 	}
 
 	public void addCurrentLevelToScenario()
@@ -71,14 +75,14 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "infoCompetence", comp);
 	}
 
-	public void removeLevelFromScenario(UnityEngine.GameObject go)
+	public void removeItemFromParent(UnityEngine.GameObject go)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "removeLevelFromScenario", go);
+		MainLoop.callAppropriateSystemMethod (system, "removeItemFromParent", go);
 	}
 
-	public void moveLevelInScenario()
+	public void moveItemInParent()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "moveLevelInScenario", null);
+		MainLoop.callAppropriateSystemMethod (system, "moveItemInParent", null);
 	}
 
 	public void refreshUI(UnityEngine.RectTransform competency)
@@ -94,6 +98,21 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public void displaySavingPanel()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "displaySavingPanel", null);
+	}
+
+	public void showBriefingOverride(DataLevelBehaviour dataLevel)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "showBriefingOverride", dataLevel);
+	}
+
+	public void saveBriefingOverride()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "saveBriefingOverride", null);
+	}
+
+	public void addNewBriefing(UnityEngine.GameObject parent)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "addNewBriefing", parent);
 	}
 
 }

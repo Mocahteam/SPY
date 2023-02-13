@@ -29,12 +29,12 @@
 		<!-- 
 			dialog (at least one): this tag describes one of the dialogs of this level. It contains five attributes:
 				text (optional): the text to display
-				img (optional): the name of the image to load. This file has to be placed inside the "Images" directory. Both "Images" directory and this level file have to be in the same directory.
+				img (optional): the name of the image to load. This file has to be placed inside the "Images" directory. Both "Images" directory and this level file have to be in the same directory. A valid URL working also.
 				imgHeight (optional): the height of the image in the dialog panel
 				camX (optional): the X position to focus camera on the map grid
 				camY (optional): the Y position to focus camera on the map grid
-				sound (optional): the name of the sound to load. This file has to be placed inside the "Sounds" directory. Both "Sounds" directory and this level file have to be in the same directory.
-				video (optional): the URI of the video to load.
+				sound (optional): the name of the sound to load. This file has to be placed inside the "Sounds" directory. Both "Sounds" directory and this level file have to be in the same directory. A valid URL working also.
+				video (optional): a valide URL of the video to load.
 				enableInteraction (optional):
 					0 -> Locked (default): the player can't interact with game while this dialog is shown
 					1 -> Unlocked: the player can't interact with game while this dialog is shown

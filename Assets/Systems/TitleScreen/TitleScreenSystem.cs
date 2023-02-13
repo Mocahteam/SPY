@@ -32,6 +32,7 @@ public class TitleScreenSystem : FSystem {
 	public GameObject quitButton;
 	public GameObject loadingScreen;
 	public GameObject sessionIdPanel;
+	public GameObject deletableElement;
 
 	private GameObject selectedScenario;
 	private Dictionary<string, List<DataLevel>> defaultCampaigns; // List of levels for each default campaign
@@ -342,6 +343,15 @@ public class TitleScreenSystem : FSystem {
 					// if not def, use file name
 					dl.name = Path.GetFileNameWithoutExtension(dl.src);
 
+				// load overrided dialogs
+				foreach (XmlNode subChild in child.ChildNodes)
+					if (subChild.Name.Equals("dialogs"))
+					{
+						dl.overridedDialogs = new List<Dialog>();
+						EditingUtility.readXMLDialogs(subChild, dl.overridedDialogs);
+						break;
+					}
+
 				levelList.Add(dl);
 			}
 		defaultCampaigns[Path.GetFileName(uri)] = levelList;
@@ -439,20 +449,20 @@ public class TitleScreenSystem : FSystem {
 	}
 
 	//Used on scenario editing window (see button ButtonTestLevel)
-	public void testLevel(TMP_Text levelToLoad)
-	{
-		testLevelPath(levelToLoad.text);
-	}
-	private void testLevelPath(string levelToLoad)
+	public void testLevel(DataLevelBehaviour dlb)
 	{
 		gameData.scenarioName = "testLevel";
 		gameData.scenario = new List<DataLevel>();
-		DataLevel testLevel = new DataLevel();
-		testLevel.src = new Uri(Application.streamingAssetsPath + "/" + levelToLoad).AbsoluteUri;
-		testLevel.name = Path.GetFileNameWithoutExtension(testLevel.src);
-		gameData.levelToLoad = testLevel;
-		gameData.scenario.Add(testLevel);
+		gameData.scenario.Add(dlb.data);
+		gameData.levelToLoad = dlb.data;
 		GameObjectManager.loadScene("MainScene");
+	}
+
+	private void testLevelPath(string levelToLoad)
+	{
+		DataLevelBehaviour dlb = new DataLevelBehaviour();
+		dlb.data.src = new Uri(Application.streamingAssetsPath + "/" + levelToLoad).AbsoluteUri;
+		testLevel(dlb);
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/index.html) via le Wrapper du Système
@@ -515,9 +525,10 @@ public class TitleScreenSystem : FSystem {
 
 			foreach (DataLevel levelPath in defaultCampaigns[selectedScenario.GetComponentInChildren<TMP_Text>().text])
 			{
-				GameObject newLevel = GameObject.Instantiate(Resources.Load("Prefabs/deletableElement") as GameObject, scenarioContent.transform);
+				GameObject newLevel = GameObject.Instantiate(deletableElement, scenarioContent.transform);
 				newLevel.GetComponentInChildren<TMP_Text>().text = levelPath.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "");
 				LayoutRebuilder.ForceRebuildLayoutImmediate(newLevel.transform as RectTransform);
+				newLevel.GetComponent<DataLevelBehaviour>().data = levelPath;
 				GameObjectManager.bind(newLevel);
 			}
 			LayoutRebuilder.ForceRebuildLayoutImmediate(scenarioContent.transform as RectTransform);

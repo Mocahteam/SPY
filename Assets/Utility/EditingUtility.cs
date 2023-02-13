@@ -619,4 +619,29 @@ public static class EditingUtility
 			return export;
 		}
 	}
+
+	public static void readXMLDialogs(XmlNode dialogs, List<Dialog> target)
+	{
+		foreach (XmlNode dialogXML in dialogs.ChildNodes)
+		{
+			Dialog dialog = new Dialog();
+			if (dialogXML.Attributes.GetNamedItem("text") != null)
+				dialog.text = dialogXML.Attributes.GetNamedItem("text").Value;
+			if (dialogXML.Attributes.GetNamedItem("img") != null)
+				dialog.img = dialogXML.Attributes.GetNamedItem("img").Value;
+			if (dialogXML.Attributes.GetNamedItem("imgHeight") != null)
+				dialog.imgHeight = float.Parse(dialogXML.Attributes.GetNamedItem("imgHeight").Value);
+			if (dialogXML.Attributes.GetNamedItem("camX") != null)
+				dialog.camX = int.Parse(dialogXML.Attributes.GetNamedItem("camX").Value);
+			if (dialogXML.Attributes.GetNamedItem("camY") != null)
+				dialog.camY = int.Parse(dialogXML.Attributes.GetNamedItem("camY").Value);
+			if (dialogXML.Attributes.GetNamedItem("sound") != null)
+				dialog.sound = dialogXML.Attributes.GetNamedItem("sound").Value;
+			if (dialogXML.Attributes.GetNamedItem("video") != null)
+				dialog.video = dialogXML.Attributes.GetNamedItem("video").Value;
+			if (dialogXML.Attributes.GetNamedItem("enableInteraction") != null)
+				dialog.enableInteraction = int.Parse(dialogXML.Attributes.GetNamedItem("enableInteraction").Value) == 1;
+			target.Add(dialog);
+		}
+	}
 }
