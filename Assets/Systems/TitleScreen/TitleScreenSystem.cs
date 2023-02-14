@@ -237,8 +237,7 @@ public class TitleScreenSystem : FSystem {
 		else
 		{
 			string scenarioJson = www.downloadHandler.text;
-			WebGlScenarioList scenarioListRaw = JsonUtility.FromJson<WebGlScenarioList>(scenarioJson);
-			// try to load all scenarios
+			WebGlScenarioList scenarioListRaw = JsonConvert.DeserializeObject<WebGlScenarioList>(scenarioJson);
 			foreach (WebGlDataLevels scenarioRaw in scenarioListRaw.scenarios)
 			{
 				defaultCampaigns[scenarioRaw.scenarioName] = new List<DataLevel>();

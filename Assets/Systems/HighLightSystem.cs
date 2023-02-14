@@ -12,6 +12,7 @@ public class HighLightSystem : FSystem {
 	private Family f_nonhighlighted = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(LibraryItemRef)));
 	private Family f_highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new AnyOfComponents( typeof(CurrentAction), typeof(PointerOver)));
 	private Family f_nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new NoneOfComponents(typeof(CurrentAction), typeof(PointerOver)));
+	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 
 	public GameObject dialogPanel;
 
@@ -64,7 +65,7 @@ public class HighLightSystem : FSystem {
 			while (parent != null)
             {
 				if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
-					parent.transform.GetChild(0).GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().currentActionColor;
+					parent.transform.GetChild(1).GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().currentActionColor;
 				parent = parent.parent;
 			}
 		}
@@ -85,24 +86,30 @@ public class HighLightSystem : FSystem {
 	}
 
 	public void unHighLightItem(GameObject go){
-		// manage the case of script execution
+		// manage the case of items in script
         if (go.GetComponent<BaseElement>()) { 
 			go.GetComponent<Image>().color = go.GetComponent<BaseElement>().baseColor;
-			Transform parent = go.transform.parent;
-			while (parent != null)
+			// case in playing mode
+			if (f_playingMode.Count > 0)
 			{
-				if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
-					parent.transform.GetChild(0).GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().forBaseColor;
-				parent = parent.parent;
+				Transform parent = go.transform.parent;
+				while (parent != null)
+				{
+					if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
+						parent.transform.GetChild(1).GetComponent<Image>().color = parent.GetComponent<BaseElement>().baseColor;
+					parent = parent.parent;
+				}
 			}
 		}
 		// the case of item inside library panel
 		else if (go.GetComponent<ElementToDrag>())
 			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
 		// the case of world GameObjects (robot, ground...)
-		else if (go.GetComponentInChildren<Renderer>(true)){
+		else if (go.GetComponentInChildren<Renderer>(true))
+		{
 			go.GetComponentInChildren<Renderer>(true).material.color = go.GetComponent<Highlightable>().baseColor;
-			if(go.GetComponent<ScriptRef>()){
+			if (go.GetComponent<ScriptRef>())
+			{
 				Image img = go.GetComponent<ScriptRef>().executablePanel.transform.Find("Scroll View").GetComponent<Image>();
 				img.color = img.GetComponent<Highlightable>().baseColor;
 			}

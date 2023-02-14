@@ -3,6 +3,7 @@ using FYFY;
 using System.Collections;
 using Newtonsoft.Json;
 using UnityEngine.Networking;
+using DIG.GBLXAPI.Internal;
 
 public class SendStatements : FSystem {
 
@@ -11,6 +12,7 @@ public class SendStatements : FSystem {
 
     public static SendStatements instance;
 
+    private LrsRemoteQueue statementQueue;
     private GameData gameData;
     private UserData userData;
 
@@ -27,6 +29,12 @@ public class SendStatements : FSystem {
             gameData = gd.GetComponent<GameData>();
             userData = gd.GetComponent<UserData>();
         }
+
+        GameObject GBLXAPI = GameObject.Find("GBLXAPI");
+        if (GBLXAPI != null)
+            statementQueue = GBLXAPI.GetComponent<LrsRemoteQueue>();
+        else
+            statementQueue = null;
 
         f_saveProgression.addEntryCallback(saveUserData);
     }
@@ -84,6 +92,8 @@ public class SendStatements : FSystem {
             MainLoop.instance.StartCoroutine(PostUserData());
             foreach (SendUserData sp in go.GetComponents<SendUserData>())
                 GameObjectManager.removeComponent(sp);
+            if (statementQueue != null)
+                statementQueue.flushQueuedStatements(true);
         }
     }
 

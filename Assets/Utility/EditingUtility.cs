@@ -267,29 +267,19 @@ public static class EditingUtility
 			selectable.interactable = isInteractable;
 
 		// On défini la couleur de l'action selon l'agent à qui appartiendra la script
-		Color actionColor;
-		switch (agentTag)
-		{
-			case "Player":
-				actionColor = MainLoop.instance.GetComponent<AgentColor>().playerAction;
-				break;
-			case "Drone":
-				actionColor = MainLoop.instance.GetComponent<AgentColor>().droneAction;
-				break;
-			default: // agent by default = robot
-				actionColor = MainLoop.instance.GetComponent<AgentColor>().playerAction;
-				break;
-		}
-
-		foreach (BaseElement act in copyGO.GetComponentsInChildren<BaseElement>(true))
-		{
-			act.gameObject.GetComponent<Image>().color = actionColor;
-			if (act.GetComponent<ControlElement>() && agentTag == "Drone")
-				foreach (Transform child in act.gameObject.transform) {
-					Image childImg = child.GetComponent<Image>();
-					if (childImg != null)
-						childImg.color = actionColor;
-				}
+		if (agentTag == "Drone") {
+			Color actionColor = MainLoop.instance.GetComponent<AgentColor>().droneAction;
+			foreach (BaseElement act in copyGO.GetComponentsInChildren<BaseElement>(true))
+			{
+				act.gameObject.GetComponent<Image>().color = actionColor;
+				if (act.GetComponent<ControlElement>() && agentTag == "Drone")
+					foreach (Transform child in act.gameObject.transform)
+					{
+						Image childImg = child.GetComponent<Image>();
+						if (child.name != "3DEffect" && childImg != null)
+							childImg.color = actionColor;
+					}
+			}
 		}
 
 		return copyGO;

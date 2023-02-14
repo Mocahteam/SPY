@@ -597,6 +597,19 @@ public class LevelGenerator : FSystem {
 				break;
         }
 
+		if (!gameData.dragDropEnabled)
+		{
+			Color disabledColor = MainLoop.instance.GetComponent<AgentColor>().droneAction;
+			obj.GetComponent<Image>().color = disabledColor;
+			if (obj.GetComponent<ControlElement>())
+				foreach (Transform child in obj.gameObject.transform)
+				{
+					Image childImg = child.GetComponent<Image>();
+					if (child.name != "3DEffect"&& childImg != null)
+						childImg.color = disabledColor;
+				}
+		}
+
 		return obj;
 	}
 
@@ -679,8 +692,21 @@ public class LevelGenerator : FSystem {
 			case "captor":
 				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName(conditionNode.Attributes.GetNamedItem("type").Value), canvas);
 				break;
-        }
+		}
 
-		return obj;
+		if (!gameData.dragDropEnabled)
+		{
+			Color disabledColor = MainLoop.instance.GetComponent<AgentColor>().droneAction;
+			obj.GetComponent<Image>().color = disabledColor;
+			if (obj.GetComponent<BaseOperator>())
+				foreach (Transform child in obj.gameObject.transform)
+				{
+					Image childImg = child.GetComponent<Image>();
+					if (child.name != "3DEffect" && childImg != null)
+						childImg.color = disabledColor;
+				}
+		}
+
+			return obj;
 	}
 }

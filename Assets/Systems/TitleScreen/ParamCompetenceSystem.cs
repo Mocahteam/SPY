@@ -533,6 +533,9 @@ public class ParamCompetenceSystem : FSystem
 			}
 			else
 				dlb.data = overridedData.data;
+
+			// Display introTexts
+			contentInfo.text = "<b>Textes de briefing " + ((overridedData == null || overridedData.data.overridedDialogs == null) ? "(par défaut)" : "(personnalisé)") + " :</b>\n";
 			// if no overrided dialogs, load default
 			if (dlb.data.overridedDialogs == null)
 			{
@@ -541,13 +544,10 @@ public class ParamCompetenceSystem : FSystem
 				if (XMLDialogs.Count > 0)
 					EditingUtility.readXMLDialogs(XMLDialogs[0], dlb.data.overridedDialogs);
 			}
-
-			// Display introTexts
-			contentInfo.text = "<b>Textes de briefing "+(overridedData == null || overridedData.data.overridedDialogs == null ? "(par défaut)" : "(personnalisé)") + " :</b>\n";
 			string txt = "";
 			foreach (Dialog item in dlb.data.overridedDialogs)
 				if (item.text != null)
-					txt += "\t" + item.text + "\n";
+					txt += item.text + "\n";
             if (txt != "")
 				contentInfo.text += txt;
 			else
