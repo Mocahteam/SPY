@@ -99,6 +99,9 @@ public class TitleScreenSystem : FSystem {
 
 		if (!GameObject.Find("GBLXAPI"))	
 			initGBLXAPI();
+		else
+			foreach (GameObject go in f_sessionId)
+				go.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
 	}
 
 	public void initGBLXAPI()

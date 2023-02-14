@@ -70,8 +70,8 @@ public class HighLightSystem : FSystem {
 			}
 		}
 		// second manage sensitive UI inside editable panel
-		else if(go.GetComponent<BaseElement>() && go.GetComponent<PointerOver>())
-			go.GetComponent<Image>().color = go.GetComponent<BaseElement>().highlightedColor;
+		else if((go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) && go.GetComponent<PointerOver>())
+			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
 		// third sensitive UI inside library panel
 		else if (go.GetComponent<ElementToDrag>() && go.GetComponent<PointerOver>())
 			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
@@ -87,8 +87,8 @@ public class HighLightSystem : FSystem {
 
 	public void unHighLightItem(GameObject go){
 		// manage the case of items in script
-        if (go.GetComponent<BaseElement>()) { 
-			go.GetComponent<Image>().color = go.GetComponent<BaseElement>().baseColor;
+        if (go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) { 
+			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
 			// case in playing mode
 			if (f_playingMode.Count > 0)
 			{
@@ -96,7 +96,7 @@ public class HighLightSystem : FSystem {
 				while (parent != null)
 				{
 					if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
-						parent.transform.GetChild(1).GetComponent<Image>().color = parent.GetComponent<BaseElement>().baseColor;
+						parent.transform.GetChild(1).GetComponent<Image>().color = parent.GetComponent<Highlightable>().baseColor;
 					parent = parent.parent;
 				}
 			}
