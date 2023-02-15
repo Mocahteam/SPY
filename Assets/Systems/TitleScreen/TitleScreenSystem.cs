@@ -530,7 +530,7 @@ public class TitleScreenSystem : FSystem {
 				GameObject newLevel = GameObject.Instantiate(deletableElement, scenarioContent.transform);
 				newLevel.GetComponentInChildren<TMP_Text>().text = levelPath.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "");
 				LayoutRebuilder.ForceRebuildLayoutImmediate(newLevel.transform as RectTransform);
-				newLevel.GetComponent<DataLevelBehaviour>().data = levelPath;
+				newLevel.GetComponent<DataLevelBehaviour>().data = levelPath.clone();
 				GameObjectManager.bind(newLevel);
 			}
 			LayoutRebuilder.ForceRebuildLayoutImmediate(scenarioContent.transform as RectTransform);

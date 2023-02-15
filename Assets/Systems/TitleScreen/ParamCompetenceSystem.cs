@@ -519,6 +519,10 @@ public class ParamCompetenceSystem : FSystem
 		MainLoop.instance.StartCoroutine(GetMiniViewWebRequest(imgPath));
 
 		XmlNode levelSelected = gameData.levels[new Uri(Application.streamingAssetsPath + "/" + path).AbsoluteUri];
+		List<Dialog> defaultDialogs = new List<Dialog>();
+		XmlNodeList XMLDialogs = levelSelected.OwnerDocument.GetElementsByTagName("dialogs");
+		if (XMLDialogs.Count > 0)
+			EditingUtility.readXMLDialogs(XMLDialogs[0], defaultDialogs);
 
 		TMP_Text contentInfo = contentInfoCompatibleLevel.transform.Find("levelTextInfo").GetComponent<TMP_Text>();
 		contentInfo.text = "";
@@ -532,22 +536,22 @@ public class ParamCompetenceSystem : FSystem
 				dlb.data.overridedDialogs = null; // to load default
 			}
 			else
-				dlb.data = overridedData.data;
-
-			// Display introTexts
-			contentInfo.text = "<b>Textes de briefing " + ((overridedData == null || overridedData.data.overridedDialogs == null) ? "(par défaut)" : "(personnalisé)") + " :</b>\n";
+				dlb.data = overridedData.data.clone();
 			// if no overrided dialogs, load default
 			if (dlb.data.overridedDialogs == null)
-			{
-				dlb.data.overridedDialogs = new List<Dialog>();
-				XmlNodeList XMLDialogs = levelSelected.OwnerDocument.GetElementsByTagName("dialogs");
-				if (XMLDialogs.Count > 0)
-					EditingUtility.readXMLDialogs(XMLDialogs[0], dlb.data.overridedDialogs);
-			}
+				dlb.data.overridedDialogs = defaultDialogs;
+
+			// Display introTexts
+			contentInfo.text = "<b>Textes de briefing " + (dlb.data.dialogsEqualsTo(defaultDialogs) ? "(par défaut)" : "(personnalisé)") + " :</b>\n";
 			string txt = "";
-			foreach (Dialog item in dlb.data.overridedDialogs)
+			for (int i = 0; i < dlb.data.overridedDialogs.Count; i++) {
+				Dialog item = dlb.data.overridedDialogs[i];
+				txt += "\n---PAGE"+(i+1)+"---\n";
 				if (item.text != null)
 					txt += item.text + "\n";
+				if (item.img != null || item.sound != null || item.video != null)
+					txt += "\n"+(item.img != null ? "<<IMAGE>>" : "") + (item.sound != null ? "<<SON>>" : "") + (item.video != null ? "<<VIDEO>>" : "")+"\n";
+			}
             if (txt != "")
 				contentInfo.text += txt;
 			else
@@ -609,7 +613,7 @@ public class ParamCompetenceSystem : FSystem
 		newLevel.GetComponentInChildren<TMP_Text>().text = contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text;
 		LayoutRebuilder.ForceRebuildLayoutImmediate(newLevel.transform as RectTransform);
 		LayoutRebuilder.ForceRebuildLayoutImmediate(contentScenario.transform as RectTransform);
-		newLevel.GetComponent<DataLevelBehaviour>().data = contentInfoCompatibleLevel.GetComponent<DataLevelBehaviour>().data;
+		newLevel.GetComponent<DataLevelBehaviour>().data = contentInfoCompatibleLevel.GetComponent<DataLevelBehaviour>().data.clone();
 		GameObjectManager.bind(newLevel);
 	}
 
@@ -798,34 +802,40 @@ public class ParamCompetenceSystem : FSystem
 					input.text = dataLevel.data.name;
 			}
 
-			if (dataLevel.data.overridedDialogs != null)
+			if (dataLevel.data.overridedDialogs == null)
+            {
+				XmlNode levelSelected = gameData.levels[dataLevel.data.src];
+				dataLevel.data.overridedDialogs = new List<Dialog>();
+				XmlNodeList XMLDialogs = levelSelected.OwnerDocument.GetElementsByTagName("dialogs");
+				if (XMLDialogs.Count > 0)
+					EditingUtility.readXMLDialogs(XMLDialogs[0], dataLevel.data.overridedDialogs);
+			}
+
+			// add briefing items
+			foreach (Dialog dialog in dataLevel.data.overridedDialogs)
 			{
-				// add briefing items
-				foreach (Dialog dialog in dataLevel.data.overridedDialogs)
+				GameObject newItem = GameObject.Instantiate(briefingItemPrefab, viewportContent, true);
+				GameObjectManager.bind(newItem);
+				foreach (TMP_InputField input in newItem.GetComponentsInChildren<TMP_InputField>(true))
 				{
-					GameObject newItem = GameObject.Instantiate(briefingItemPrefab, viewportContent, true);
-					GameObjectManager.bind(newItem);
-					foreach (TMP_InputField input in newItem.GetComponentsInChildren<TMP_InputField>(true))
-					{
-						if (input.name == "Text_input" && dialog.text != null)
-							input.text = dialog.text;
-						else if (input.name == "ImgPath_input" && dialog.img != null)
-							input.text = dialog.img;
-						else if (input.name == "ImgSize_input" && dialog.imgHeight != -1)
-							input.text = "" + dialog.imgHeight;
-						else if (input.name == "CamX_input" && dialog.camX != -1)
-							input.text = "" + dialog.camX;
-						else if (input.name == "CamY_input" && dialog.camY != -1)
-							input.text = "" + dialog.camY;
-						else if (input.name == "SoundPath_input" && dialog.sound != null)
-							input.text = dialog.sound;
-						else if (input.name == "VideoPath_input" && dialog.video != null)
-							input.text = dialog.video;
-						else
-							input.text = "";
-					}
-					newItem.GetComponentInChildren<Toggle>().isOn = dialog.enableInteraction;
+					if (input.name == "Text_input" && dialog.text != null)
+						input.text = dialog.text;
+					else if (input.name == "ImgPath_input" && dialog.img != null)
+						input.text = dialog.img;
+					else if (input.name == "ImgSize_input" && dialog.imgHeight != -1)
+						input.text = "" + dialog.imgHeight;
+					else if (input.name == "CamX_input" && dialog.camX != -1)
+						input.text = "" + dialog.camX;
+					else if (input.name == "CamY_input" && dialog.camY != -1)
+						input.text = "" + dialog.camY;
+					else if (input.name == "SoundPath_input" && dialog.sound != null)
+						input.text = dialog.sound;
+					else if (input.name == "VideoPath_input" && dialog.video != null)
+						input.text = dialog.video;
+					else
+						input.text = "";
 				}
+				newItem.GetComponentInChildren<Toggle>().isOn = dialog.enableInteraction;
 			}
 		}
     }
