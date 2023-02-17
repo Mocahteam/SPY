@@ -53,6 +53,67 @@
 			]
 		},
 		{
+			"scenarioName": "4 - Selectionneur",
+			"levels": [
+				{
+					"src": "Levels/BlocklyMaze/Niveau06.xml",
+					"name": "Niveau01",
+					"overridedDialogs": [
+						{"text": "Un bloc 'Si' va exécuter ce qu'il contient seulement si la condition est vraie. Essaye de tourner à gauche s'il y a un chemin vers la gauche.", "img": "ifPathLeft.png", "imgHeight": 200, "enableInteraction": false}
+					]
+				},
+				{
+					"src": "Levels/Infiltration/Niveau14.xml", 
+					"name": "Niveau02", 
+					"overridedDialogs": [
+						{"text": "Tien la visibilité est réduite ici...", "enableInteraction": false},
+						{"text": "Le bloc 'Si' devrait à nouveau t'être utile...", "img": "ifWall.png", "imgHeight": 200, "enableInteraction": false},
+						{"text": "Une indication... le robot doit avancer de 11 cases et tourner à droite à chaque fois qu'il rencontrera un mur sur son passage.", "enableInteraction": true}
+					]
+				},
+				{
+					"src": "Levels/Infiltration/Niveau15.xml",
+					"name": "Niveau03",
+					"overridedDialogs": [
+						{"text": "Contrairement à la boucle 'Répéter' pour laquelle tu dois indiquer le nombre de répétitions, la boucle 'Tant que' répète les actions tant que la condition est vraie. Tu peux donc utiliser les capteurs dans une boucle 'Tant que'", "img": "whileWall.png", "imgHeight": 200, "enableInteraction": false},
+						{"text": "Tu disposes aussi d'un nouveau capteur qui te permet de tester si le robot se trouve sur la case du téléporteur.", "img": "https://spy.lip6.fr/StreamingAssets/Levels/BlocklyMaze/Images/exit.png", "imgHeight": 50, "enableInteraction": false},
+						{"text": "Tu disposes aussi du bloc 'Non' qui permet de savoir si une condition est fausse.", "img": "https://spy.lip6.fr/StreamingAssets/Levels/BlocklyMaze/Images/notOperator.png", "imgHeight": 75, "enableInteraction": false}
+					]
+				},
+				{
+					"src": "Levels/BlocklyMaze/Niveau07.xml",
+					"name": "Niveau04",
+					"overridedDialogs": [
+						{"text": "Tu disposes maintenant de 3 capteurs qui indiquent vrai si un passage se trouve devant le robot, à gauche ou à droite.", "img": "pathCaptors.png", "imgHeight": 45, "enableInteraction": false}
+					]
+				},
+				{
+					"src": "Levels/BlocklyMaze/Niveau08.xml",
+					"name": "Niveau05",
+					"overridedDialogs": [
+						{"text": "Observe l'algorigramme ci-dessous, il devrait t'aider à trouver la solution", "img": "https://spy.lip6.fr/StreamingAssets/Levels/Selectionneur/Images/algorigrammeBM8.png", "imgHeight": 600, "enableInteraction": true}
+					]
+				},
+				{
+					"src": "Levels/Infiltration/Niveau16.xml", 
+					"name": "Niveau06", 
+					"overridedDialogs": [
+						{"text": "Tu dispose pour ce niveau d'un nouveau bloc, le bloc 'Ou'. A toi de deviner comment l'utiliser mais observe bien la forme des blocs que tu peux glisser dedans...", "enableInteraction": false},
+					]
+				},
+				{
+					"src": "Levels/Infiltration/Niveau20.xml",
+					"name": "Niveau07",
+					"overridedDialogs": [
+						{"text": "Tu ne peux utiliser ici qu'une seule ligne de communication pour contrôler les deux robots. A toi de trouver un programme générique pour permettre aux deux robots d'atteindre leur sortie", "enableInteraction": false}
+					]
+				},
+				{
+					"src": "Levels/Selectionneur/Niveau01.xml", "name": "Niveau08"
+				}
+			]
+		},
+		{
 			"scenarioName": "Infiltration",
 			"levels": [
 				{"src": "Levels/Infiltration/Niveau01.xml", "name": "Niveau01"},

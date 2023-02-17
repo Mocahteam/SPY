@@ -1,17 +1,43 @@
 <?xml version="1.0"?>
 <scenario>
-    <level src = "Levels/BlocklyMaze/Niveau06.xml" name="Niveau01">
+	<level src = "Levels/BlocklyMaze/Niveau06.xml" name = "Niveau01" >
 		<dialogs>
-			<dialog text="Nouveau texte" img="http://fake.img" imgHeight="100" camX="3" camY="4" sound="http://fake.sound" video="http://fake.video" enableInteraction="1" />
-			<dialog />
+			<dialog text ="Un bloc 'Si' va exécuter ce qu'il contient seulement si la condition est vraie. Essaye de tourner à gauche s'il y a un chemin vers la gauche." img="ifPathLeft.png" imgHeight="200" enableInteraction="0" />
 		</dialogs>
 	</level>
-    <level src = "Levels/BlocklyMaze/Niveau07.xml" name="Niveau02" />
-    <level src = "Levels/BlocklyMaze/Niveau08.xml" name="Niveau03" />
-    <level src = "Levels/BlocklyMaze/Niveau09.xml" name="Niveau04" />
-    <level src = "Levels/Infiltration/Niveau13.xml" name="Niveau05" />
-    <level src = "Levels/Infiltration/Niveau14.xml" name="Niveau06" />
-    <level src = "Levels/Infiltration/Niveau15.xml" name="Niveau07" />
-    <level src = "Levels/Infiltration/Niveau16.xml" name="Niveau08" />
-    <level src = "Levels/Infiltration/Niveau20.xml" name="Niveau09" />
+	<level src = "Levels/Infiltration/Niveau14.xml" name = "Niveau02" >
+		<dialogs>
+			<dialog text ="Tien la visibilité est réduite ici..." enableInteraction="0" />
+			<dialog text ="Le bloc 'Si' devrait à nouveau t'être utile..." img="ifWall.png" imgHeight="200" enableInteraction="0" />
+			<dialog text ="Une indication... le robot doit avancer de 11 cases et tourner à droite à chaque fois qu'il rencontrera un mur sur son passage." enableInteraction="1" />
+		</dialogs>
+	</level>
+	<level src = "Levels/Infiltration/Niveau15.xml" name = "Niveau03" >
+		<dialogs>
+			<dialog text ="Contrairement à la boucle 'Répéter' pour laquelle tu dois indiquer le nombre de répétitions, la boucle 'Tant que' répète les actions tant que la condition est vraie. Tu peux donc utiliser les capteurs dans une boucle 'Tant que'" img="whileWall.png" imgHeight="200" enableInteraction="0" />
+			<dialog text ="Tu disposes aussi d'un nouveau capteur qui te permet de tester si le robot se trouve sur la case du téléporteur." img="https://spy.lip6.fr/StreamingAssets/Levels/BlocklyMaze/Images/exit.png" imgHeight="50" enableInteraction="0" />
+			<dialog text ="Tu disposes aussi du bloc 'Non' qui permet de savoir si une condition est fausse." img="https://spy.lip6.fr/StreamingAssets/Levels/BlocklyMaze/Images/notOperator.png" imgHeight="75" enableInteraction="0" />
+		</dialogs>
+	</level>
+	<level src = "Levels/BlocklyMaze/Niveau07.xml" name = "Niveau04" >
+		<dialogs>
+			<dialog text ="Tu disposes maintenant de 3 capteurs qui indiquent vrai si un passage se trouve devant le robot, à gauche ou à droite." img="pathCaptors.png" imgHeight="45" enableInteraction="0" />
+		</dialogs>
+	</level>
+	<level src = "Levels/BlocklyMaze/Niveau08.xml" name = "Niveau05" >
+		<dialogs>
+			<dialog text ="Observe l'algorigramme ci-dessous, il devrait t'aider à trouver la solution" img="https://spy.lip6.fr/StreamingAssets/Levels/Selectionneur/Images/algorigrammeBM8.png" imgHeight="600" enableInteraction="1" />
+		</dialogs>
+	</level>
+	<level src = "Levels/Infiltration/Niveau16.xml" name = "Niveau06" >
+		<dialogs>
+			<dialog text ="Tu dispose pour ce niveau d'un nouveau bloc, le bloc 'Ou'. A toi de deviner comment l'utiliser mais observe bien la forme des blocs que tu peux glisser dedans..." enableInteraction="0" />
+		</dialogs>
+	</level>
+	<level src = "Levels/Infiltration/Niveau20.xml" name = "Niveau07" >
+		<dialogs>
+			<dialog text ="Tu ne peux utiliser ici qu'une seule ligne de communication pour contrôler les deux robots. A toi de trouver un programme générique pour permettre aux deux robots d'atteindre leur sortie" enableInteraction="0" />
+		</dialogs>
+	</level>
+	<level src = "Levels/Selectionneur/Niveau01.xml" name = "Niveau08" />
 </scenario>
