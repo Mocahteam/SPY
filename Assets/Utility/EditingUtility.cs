@@ -1,5 +1,6 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
+using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using TMPro;
@@ -632,6 +633,17 @@ public static class EditingUtility
 			if (dialogXML.Attributes.GetNamedItem("enableInteraction") != null)
 				dialog.enableInteraction = int.Parse(dialogXML.Attributes.GetNamedItem("enableInteraction").Value) == 1;
 			target.Add(dialog);
+		}
+	}
+
+	public static IEnumerator pulseItem(GameObject newItem)
+	{
+		float initScaleX = newItem.transform.localScale.x;
+		newItem.transform.localScale = new Vector3(newItem.transform.localScale.x + 0.3f, newItem.transform.localScale.y, newItem.transform.localScale.z);
+		while (newItem.transform.localScale.x > initScaleX)
+		{
+			newItem.transform.localScale = new Vector3(newItem.transform.localScale.x - 0.01f, newItem.transform.localScale.y, newItem.transform.localScale.z);
+			yield return null;
 		}
 	}
 }

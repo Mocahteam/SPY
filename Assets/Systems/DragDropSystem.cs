@@ -314,7 +314,7 @@ public class DragDropSystem : FSystem
 					// We restore all UI elements inside the EventSystem
 					foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
 						child.GetComponent<Image>().raycastTarget = true;
-					MainLoop.instance.StartCoroutine(pulseItem(itemDragged));
+					MainLoop.instance.StartCoroutine(EditingUtility.pulseItem(itemDragged));
 				}
 			}
 			// Rafraichissement de l'UI
@@ -475,23 +475,12 @@ public class DragDropSystem : FSystem
 				if (viewLastDropZone != null)
 					MainLoop.instance.StopCoroutine(viewLastDropZone);
 				MainLoop.instance.StartCoroutine(focusOnLastDropZoneUsed());
-				MainLoop.instance.StartCoroutine(pulseItem(itemDragged));
+				MainLoop.instance.StartCoroutine(EditingUtility.pulseItem(itemDragged));
 
 				// Rafraichissement de l'UI
 				GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 				itemDragged = null;
 			}
-		}
-	}
-
-	private IEnumerator pulseItem(GameObject newItem)
-    {
-		float initScaleX = newItem.transform.localScale.x;
-		newItem.transform.localScale = new Vector3(newItem.transform.localScale.x + 0.3f, newItem.transform.localScale.y, newItem.transform.localScale.z);
-		while (newItem.transform.localScale.x > initScaleX)
-		{
-			newItem.transform.localScale = new Vector3(newItem.transform.localScale.x-0.01f, newItem.transform.localScale.y, newItem.transform.localScale.z);
-			yield return null;
 		}
 	}
 

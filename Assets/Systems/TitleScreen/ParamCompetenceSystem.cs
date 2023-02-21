@@ -814,7 +814,7 @@ public class ParamCompetenceSystem : FSystem
 			// add briefing items
 			foreach (Dialog dialog in dataLevel.data.overridedDialogs)
 			{
-				GameObject newItem = GameObject.Instantiate(briefingItemPrefab, viewportContent, true);
+				GameObject newItem = GameObject.Instantiate(briefingItemPrefab, viewportContent, false);
 				GameObjectManager.bind(newItem);
 				foreach (TMP_InputField input in newItem.GetComponentsInChildren<TMP_InputField>(true))
 				{
@@ -886,7 +886,7 @@ public class ParamCompetenceSystem : FSystem
 
 	public void addNewBriefing(GameObject parent)
     {
-		GameObject newItem = GameObject.Instantiate(briefingItemPrefab, parent.transform, true);
+		GameObject newItem = GameObject.Instantiate(briefingItemPrefab, parent.transform, false);
 		GameObjectManager.bind(newItem);
 	}
 }

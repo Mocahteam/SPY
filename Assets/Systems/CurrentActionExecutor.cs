@@ -117,6 +117,7 @@ public class CurrentActionExecutor : FSystem {
 				ca.agent.GetComponent<Animator>().SetTrigger("Action");
 				break;
 		}
+		ca.StartCoroutine(EditingUtility.pulseItem(ca.gameObject));
 		// notify agent moving
 		if (ca.agent.CompareTag("Drone") && !ca.agent.GetComponent<Moved>())
 			GameObjectManager.addComponent<Moved>(ca.agent);
