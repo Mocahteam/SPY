@@ -3,7 +3,6 @@ using FYFY;
 
 public class ParamCompetenceSystem_wrapper : BaseWrapper
 {
-	public TMPro.TMP_Dropdown referentialSelector;
 	public UnityEngine.GameObject panelInfoComp;
 	public UnityEngine.GameObject prefabComp;
 	public UnityEngine.GameObject ContentCompMenu;
@@ -19,10 +18,10 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject savingPanel;
 	public UnityEngine.GameObject editBriefingPanel;
 	public UnityEngine.GameObject briefingItemPrefab;
+	public TMPro.TMP_InputField scenarioAbstract;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
-		MainLoop.initAppropriateSystemField (system, "referentialSelector", referentialSelector);
 		MainLoop.initAppropriateSystemField (system, "panelInfoComp", panelInfoComp);
 		MainLoop.initAppropriateSystemField (system, "prefabComp", prefabComp);
 		MainLoop.initAppropriateSystemField (system, "ContentCompMenu", ContentCompMenu);
@@ -38,21 +37,17 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "savingPanel", savingPanel);
 		MainLoop.initAppropriateSystemField (system, "editBriefingPanel", editBriefingPanel);
 		MainLoop.initAppropriateSystemField (system, "briefingItemPrefab", briefingItemPrefab);
+		MainLoop.initAppropriateSystemField (system, "scenarioAbstract", scenarioAbstract);
 	}
 
-	public void loadPanelSelectComp()
+	public void refreshCompetencies()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "loadPanelSelectComp", null);
+		MainLoop.callAppropriateSystemMethod (system, "refreshCompetencies", null);
 	}
 
-	public void createCompetencies(System.Int32 referentialId)
+	public void selectCompetencies(System.Int32 referentialId)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "createCompetencies", referentialId);
-	}
-
-	public void cleanCompPanel()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "cleanCompPanel", null);
+		MainLoop.callAppropriateSystemMethod (system, "selectCompetencies", referentialId);
 	}
 
 	public void showCompatibleLevels(System.Boolean filter)

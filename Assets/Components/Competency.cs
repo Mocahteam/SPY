@@ -4,6 +4,6 @@ public class Competency : MonoBehaviour
 {
 	public string parentKey;
 	public string description;
-	public ParamCompetenceSystem.RawConstraint[] constraints;
+	public EditingUtility.RawConstraint[] constraints;
 	public string rule;
 }

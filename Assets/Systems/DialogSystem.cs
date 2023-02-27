@@ -55,7 +55,7 @@ public class DialogSystem : FSystem
 	protected override void onProcess(int familiesUpdateCount)
 	{
 		//Activate DialogPanel if there is a message
-		if (gameData != null && nDialog < gameData.levelToLoad.overridedDialogs.Count && !dialogPanel.transform.parent.gameObject.activeSelf)
+		if (gameData != null && gameData.levelToLoad.overridedDialogs != null && nDialog < gameData.levelToLoad.overridedDialogs.Count && !dialogPanel.transform.parent.gameObject.activeSelf)
 			showDialogPanel();
 	}
 

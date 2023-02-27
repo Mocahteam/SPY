@@ -1,7 +1,9 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Xml;
 using TMPro;
 using UnityEngine;
@@ -9,6 +11,24 @@ using UnityEngine.UI;
 
 public static class EditingUtility
 {
+
+	[Serializable]
+	public class RawParams
+	{
+		public string attribute;
+		public string constraint;
+		public string value;
+		public string tag2;
+		public string attribute2;
+	}
+
+	[Serializable]
+	public class RawConstraint
+	{
+		public string label;
+		public string tag;
+		public RawParams[] parameters;
+	}
 	// Add an item on a drop area
 	// return true if the item was added and false otherwise
 	public static bool addItemOnDropArea(GameObject item, GameObject dropArea)
@@ -147,7 +167,7 @@ public static class EditingUtility
 					if (GameObjectManager.isBound(dropZone.gameObject))
 						GameObjectManager.unbind(dropZone.gameObject);
 					dropZone.transform.SetParent(null);
-					Object.Destroy(dropZone.gameObject);
+					GameObject.Destroy(dropZone.gameObject);
 				}
 				//remove empty zones for BaseElements
 				foreach (ReplacementSlot emptyZone in child.GetComponentsInChildren<ReplacementSlot>(true))
@@ -156,7 +176,7 @@ public static class EditingUtility
 						if (GameObjectManager.isBound(emptyZone.gameObject))
 							GameObjectManager.unbind(emptyZone.gameObject);
 						emptyZone.transform.SetParent(null);
-						Object.Destroy(emptyZone.gameObject);
+						GameObject.Destroy(emptyZone.gameObject);
 					}
 				}
 				child.SetParent(targetContainer.transform, false);
@@ -645,5 +665,184 @@ public static class EditingUtility
 			newItem.transform.localScale = new Vector3(newItem.transform.localScale.x - 0.01f, newItem.transform.localScale.y, newItem.transform.localScale.z);
 			yield return null;
 		}
+	}
+
+	public static bool isCompetencyMatchWithLevel(Competency competency, XmlDocument level)
+	{
+		// check all constraints of the competency
+		Dictionary<string, List<XmlNode>> constraintsState = new Dictionary<string, List<XmlNode>>();
+		foreach (RawConstraint constraint in competency.constraints)
+		{
+
+			if (constraintsState.ContainsKey(constraint.label))
+			{
+				// if a constraint with this label is defined and no XmlNode identified, useless to check this new one
+				if (constraintsState[constraint.label].Count == 0)
+					continue;
+			}
+			else
+			{
+				// init this constraint with all XmlNode of required tag
+				List<XmlNode> tagList = new List<XmlNode>();
+				foreach (XmlNode tag in level.GetElementsByTagName(constraint.tag))
+					tagList.Add(tag);
+				constraintsState.Add(constraint.label, tagList);
+			}
+
+			// check if this constraint is true
+			List<XmlNode> tags = constraintsState[constraint.label];
+			foreach (RawParams parameter in constraint.parameters)
+			{
+				int levelAttrValue;
+				switch (parameter.constraint)
+				{
+					// Check if the value of an attribute of the tag is equal to a given value
+					case "=":
+						for (int t = tags.Count - 1; t >= 0; t--)
+							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null || tags[t].Attributes.GetNamedItem(parameter.attribute).Value != parameter.value)
+								tags.RemoveAt(t);
+						break;
+					// Check if the value of an attribute of the tag is not equal to a given value
+					case "<>":
+						for (int t = tags.Count - 1; t >= 0; t--)
+							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null || tags[t].Attributes.GetNamedItem(parameter.attribute).Value == parameter.value)
+								tags.RemoveAt(t);
+						break;
+					// Check if the value of an attribute of the tag is greater than a given value (for limit attribute consider -1 as infinite value)
+					case ">":
+						for (int t = tags.Count - 1; t >= 0; t--)
+						{
+							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
+								tags.RemoveAt(t);
+							else
+							{
+								try
+								{
+									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(parameter.attribute).Value);
+									if (levelAttrValue <= int.Parse(parameter.value) && (parameter.attribute != "limit" || levelAttrValue != -1)) // because -1 means infinity for block limit
+										tags.RemoveAt(t);
+								}
+								catch
+								{
+									tags.RemoveAt(t);
+								}
+							}
+						}
+						break;
+					// Check if the value of an attribute of the tag is smaller than a given value (for limit attribute consider -1 as infinite value)
+					case "<":
+						for (int t = tags.Count - 1; t >= 0; t--)
+						{
+							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
+								tags.RemoveAt(t);
+							else
+							{
+								try
+								{
+									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(parameter.attribute).Value);
+									if (levelAttrValue >= int.Parse(parameter.value) || (parameter.attribute == "limit" && levelAttrValue == -1)) // because -1 means infinity for block limit
+										tags.RemoveAt(t);
+								}
+								catch
+								{
+									tags.RemoveAt(t);
+								}
+							}
+						}
+						break;
+					// Check if the value of an attribute of the tag is greater than or equal a given value (for limit attribute consider -1 as infinite value)
+					case ">=":
+						for (int t = tags.Count - 1; t >= 0; t--)
+						{
+							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
+								tags.RemoveAt(t);
+							else
+							{
+								try
+								{
+									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(parameter.attribute).Value);
+									if (levelAttrValue < int.Parse(parameter.value) && (parameter.attribute != "limit" || levelAttrValue != -1)) // because -1 means infinity for block limit
+										tags.RemoveAt(t);
+								}
+								catch
+								{
+									tags.RemoveAt(t);
+								}
+							}
+						}
+						break;
+					// Check if the value of an attribute of the tag is smaller than or equal a given value (for limit attribute consider -1 as infinite value)
+					case "<=":
+						for (int t = tags.Count - 1; t >= 0; t--)
+						{
+							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
+								tags.RemoveAt(t);
+							else
+							{
+								try
+								{
+									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(parameter.attribute).Value);
+									if (levelAttrValue > int.Parse(parameter.value) || (parameter.attribute == "limit" && levelAttrValue == -1)) // because -1 means infinity for block limit
+										tags.RemoveAt(t);
+								}
+								catch
+								{
+									tags.RemoveAt(t);
+								}
+							}
+						}
+						break;
+					// Check if the attribute of the tag is included inside a given value
+					case "include":
+						for (int t = tags.Count - 1; t >= 0; t--)
+						{
+							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null || !parameter.value.Contains(tags[t].Attributes.GetNamedItem(parameter.attribute).Value))
+								tags.RemoveAt(t);
+						}
+						break;
+					// Check if the value of an attribute of a tag is equal to the value of an attribute of another tag
+					case "sameValue":
+						for (int t = tags.Count - 1; t >= 0; t--)
+						{
+							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
+								tags.RemoveAt(t);
+							else
+							{
+								bool found = false;
+								foreach (XmlNode node in tags[t].OwnerDocument.GetElementsByTagName(parameter.tag2))
+								{
+									if (node != tags[t] && node.Attributes.GetNamedItem(parameter.attribute2) != null && node.Attributes.GetNamedItem(parameter.attribute2).Value == tags[t].Attributes.GetNamedItem(parameter.attribute).Value)
+									{
+										found = true;
+										break;
+									}
+								}
+								if (!found)
+									tags.RemoveAt(t);
+							}
+						}
+						break;
+					// Check if a tag contains at least one child
+					case "hasChild":
+						for (int t = tags.Count - 1; t >= 0; t--)
+						{
+							if (!tags[t].HasChildNodes)
+								tags.RemoveAt(t);
+						}
+						break;
+				}
+			}
+		}
+		// check the rule (combination of constraints)
+		string rule = competency.rule;
+		foreach (string key in constraintsState.Keys)
+		{
+			rule = rule.Replace(key, "" + constraintsState[key].Count);
+		}
+		DataTable dt = new DataTable();
+		if (rule != "")
+			return (bool)dt.Compute(rule, "");
+		else
+			return false;
 	}
 }

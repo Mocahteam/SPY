@@ -17,12 +17,13 @@ public class ParamCompetenceSystem : FSystem
 	public static ParamCompetenceSystem instance;
 
 	// Familles
-	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les Toogles compétences
+	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
+	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
 	private UnityAction localCallback;
 	private DataLevelBehaviour overridedBriefing;
+	private int previousReferentialSelected = -1;
 
 	// Variables
-	public TMP_Dropdown referentialSelector; // Liste déroulante listant les référentiels
 	public GameObject panelInfoComp; // Panneau d'information des compétences
 	public GameObject prefabComp; // Prefab de l'affichage d'une compétence
 	public GameObject ContentCompMenu; // Panneau qui contient la liste des catégories et compétences
@@ -38,6 +39,7 @@ public class ParamCompetenceSystem : FSystem
 	public GameObject savingPanel;
 	public GameObject editBriefingPanel;
 	public GameObject briefingItemPrefab;
+	public TMP_InputField scenarioAbstract;
 
 	[DllImport("__Internal")]
 	private static extern void Save(string content); // call javascript
@@ -46,31 +48,13 @@ public class ParamCompetenceSystem : FSystem
 	private static extern bool IsMobileBrowser(); // call javascript
 
 	[Serializable]
-	public class RawParams
-	{
-		public string attribute;
-		public string constraint;
-		public string value;
-		public string tag2;
-		public string attribute2;
-	}
-
-	[Serializable]
-	public class RawConstraint
-	{
-		public string label;
-		public string tag;
-		public RawParams[] parameters;
-	}
-
-	[Serializable]
 	public class RawComp
 	{
 		public string key;
 		public string parentKey;
 		public string name;
 		public string description;
-		public RawConstraint[] constraints;
+		public EditingUtility.RawConstraint[] constraints;
 		public string rule;
 	}
 
@@ -100,11 +84,7 @@ public class ParamCompetenceSystem : FSystem
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
-	}
-
-	// used on TitleScreen scene
-	public void loadPanelSelectComp()
-	{
+		// load competencies (required for level analysis)
 		string referentialsPath = new Uri(Application.streamingAssetsPath + "/Competencies/competenciesReferential.json").AbsoluteUri;
 		MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath));
 	}
@@ -127,7 +107,8 @@ public class ParamCompetenceSystem : FSystem
 
 	private void createReferentials(string jsonContent)
 	{
-		referentialSelector.ClearOptions();
+		foreach (GameObject selector in f_compSelector)
+			selector.GetComponent<TMP_Dropdown>().ClearOptions();
 
 		try
 		{
@@ -145,35 +126,58 @@ public class ParamCompetenceSystem : FSystem
 			referentials.Add(new TMP_Dropdown.OptionData(rlc.name));
 		if (referentials.Count > 0)
 		{
-			referentialSelector.AddOptions(referentials);
-			// Be sure dropdone is active
-			GameObjectManager.setGameObjectState(referentialSelector.gameObject, true);
+			foreach (GameObject selector in f_compSelector)
+			{
+				selector.GetComponent<TMP_Dropdown>().AddOptions(referentials);
+				// Be sure dropdone is active
+				GameObjectManager.setGameObjectState(selector, true);
+			}
 		}
 		else
 		{
-			// Hide dropdown
-			GameObjectManager.setGameObjectState(referentialSelector.gameObject, false);
+			foreach (GameObject selector in f_compSelector)
+				// Hide dropdown
+				GameObjectManager.setGameObjectState(selector, false);
 		}
 
-		createCompetencies(referentialSelector.value);
+		refreshCompetencies();
+	}
+
+	// see CompetenciesFilter in TitleScreen
+	public void refreshCompetencies()
+    {
+		createCompetencies(f_compSelector.First().GetComponent<TMP_Dropdown>().value);
 	}
 
 	// used in DropdownReferential dropdown 
-	public void createCompetencies(int referentialId)
+	public void selectCompetencies(int referentialId)
 	{
+		if (previousReferentialSelected != referentialId)
+		{
+			previousReferentialSelected = referentialId;
+			createCompetencies(referentialId);
+		}
+	}
+
+	private void createCompetencies(int referentialId)
+	{
+		// set all competency selectors with the same value
+		foreach (GameObject selector in f_compSelector)
+			selector.GetComponent<TMP_Dropdown>().value = referentialId;
+
 		// remove all old competencies
 		for (int i = ContentCompMenu.transform.childCount - 1; i >= 0; i--)
-        {
+		{
 			Transform child = ContentCompMenu.transform.GetChild(i);
 			GameObjectManager.unbind(child.gameObject);
 			child.SetParent(null);
 			GameObject.Destroy(child.gameObject);
-        }
+		}
 
 		if (referentialId >= rawReferentials.referentials.Count || referentialId < 0)
 		{
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Référentiel numéro "+referentialId+" non défini.", OkButton = "", CancelButton = "OK", call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Référentiel numéro " + referentialId + " non défini.", OkButton = "", CancelButton = "OK", call = localCallback });
 			return;
 		}
 
@@ -229,17 +233,6 @@ public class ParamCompetenceSystem : FSystem
 		LayoutRebuilder.ForceRebuildLayoutImmediate(ContentCompMenu.transform as RectTransform);
 	}
 
-	public void cleanCompPanel()
-	{
-		for (int i = ContentCompMenu.transform.childCount - 1; i >= 0; i--)
-		{
-			Transform child = ContentCompMenu.transform.GetChild(i);
-			GameObjectManager.unbind(child.gameObject);
-			UnityEngine.Object.Destroy(child.gameObject);
-		}
-
-	}
-
 	// Used in ButtonShowLevels in ParamCompPanel
 	public void showCompatibleLevels(bool filter)
 	{
@@ -248,8 +241,6 @@ public class ParamCompetenceSystem : FSystem
 			localCallback = null;
 			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Cette partie du logiciel n'est pas conçue pour être utilisée sur smartphone ou tablette.\n\nNous vous conseillons de basculer sur un ordinateur en mode plein écran pour éditer vos scénarios.", OkButton = "", CancelButton = "OK", call = localCallback });
 		}
-		// load competencies (required for level analysis)
-		loadPanelSelectComp();
 		// default, select all levels
 		List<XmlNode> selectedLevels = new List<XmlNode>();
 		foreach (XmlNode level in gameData.levels.Values)
@@ -268,7 +259,7 @@ public class ParamCompetenceSystem : FSystem
 					// parse all levels
 					for (int l = selectedLevels.Count - 1; l >= 0; l--)
 					{
-						if (!isCompetencyMatchWithLevel(competency, selectedLevels[l].OwnerDocument))
+						if (!EditingUtility.isCompetencyMatchWithLevel(competency, selectedLevels[l].OwnerDocument))
 							selectedLevels.RemoveAt(l);
 					}
 				}
@@ -328,186 +319,6 @@ public class ParamCompetenceSystem : FSystem
 		}
 	}
 
-	private bool isCompetencyMatchWithLevel(Competency competency, XmlDocument level)
-	{
-
-		// check all constraints of the competency
-		Dictionary<string, List<XmlNode>> constraintsState = new Dictionary<string, List<XmlNode>>();
-		foreach (RawConstraint constraint in competency.constraints)
-		{
-
-			if (constraintsState.ContainsKey(constraint.label))
-			{
-				// if a constraint with this label is defined and no XmlNode identified, useless to check this new one
-				if (constraintsState[constraint.label].Count == 0)
-					continue;
-			}
-			else
-			{
-				// init this constraint with all XmlNode of required tag
-				List<XmlNode> tagList = new List<XmlNode>();
-				foreach (XmlNode tag in level.GetElementsByTagName(constraint.tag))
-					tagList.Add(tag);
-				constraintsState.Add(constraint.label, tagList);
-			}
-
-			// check if this constraint is true
-			List<XmlNode> tags = constraintsState[constraint.label];
-			foreach (RawParams parameter in constraint.parameters)
-			{
-				int levelAttrValue;
-				switch (parameter.constraint)
-				{
-					// Check if the value of an attribute of the tag is equal to a given value
-					case "=":
-						for (int t = tags.Count - 1; t >= 0; t--)
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null || tags[t].Attributes.GetNamedItem(parameter.attribute).Value != parameter.value)
-								tags.RemoveAt(t);
-						break;
-					// Check if the value of an attribute of the tag is not equal to a given value
-					case "<>":
-						for (int t = tags.Count - 1; t >= 0; t--)
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null || tags[t].Attributes.GetNamedItem(parameter.attribute).Value == parameter.value)
-								tags.RemoveAt(t);
-						break;
-					// Check if the value of an attribute of the tag is greater than a given value (for limit attribute consider -1 as infinite value)
-					case ">":
-						for (int t = tags.Count - 1; t >= 0; t--)
-						{
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
-								tags.RemoveAt(t);
-							else
-							{
-								try
-								{
-									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(parameter.attribute).Value);
-									if (levelAttrValue <= int.Parse(parameter.value) && (parameter.attribute != "limit" || levelAttrValue != -1)) // because -1 means infinity for block limit
-										tags.RemoveAt(t);
-								}
-								catch
-								{
-									tags.RemoveAt(t);
-								}
-							}
-						}
-						break;
-					// Check if the value of an attribute of the tag is smaller than a given value (for limit attribute consider -1 as infinite value)
-					case "<":
-						for (int t = tags.Count - 1; t >= 0; t--)
-						{
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
-								tags.RemoveAt(t);
-							else
-							{
-								try
-								{
-									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(parameter.attribute).Value);
-									if (levelAttrValue >= int.Parse(parameter.value) || (parameter.attribute == "limit" && levelAttrValue == -1)) // because -1 means infinity for block limit
-										tags.RemoveAt(t);
-								}
-								catch
-								{
-									tags.RemoveAt(t);
-								}
-							}
-						}
-						break;
-					// Check if the value of an attribute of the tag is greater than or equal a given value (for limit attribute consider -1 as infinite value)
-					case ">=":
-						for (int t = tags.Count - 1; t >= 0; t--)
-						{
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
-								tags.RemoveAt(t);
-							else
-							{
-								try
-								{
-									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(parameter.attribute).Value);
-									if (levelAttrValue < int.Parse(parameter.value) && (parameter.attribute != "limit" || levelAttrValue != -1)) // because -1 means infinity for block limit
-										tags.RemoveAt(t);
-								}
-								catch
-								{
-									tags.RemoveAt(t);
-								}
-							}
-						}
-						break;
-					// Check if the value of an attribute of the tag is smaller than or equal a given value (for limit attribute consider -1 as infinite value)
-					case "<=":
-						for (int t = tags.Count - 1; t >= 0; t--)
-						{
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
-								tags.RemoveAt(t);
-							else
-							{
-								try
-								{
-									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(parameter.attribute).Value);
-									if (levelAttrValue > int.Parse(parameter.value) || (parameter.attribute == "limit" && levelAttrValue == -1)) // because -1 means infinity for block limit
-										tags.RemoveAt(t);
-								}
-								catch
-								{
-									tags.RemoveAt(t);
-								}
-							}
-						}
-						break;
-					// Check if the attribute of the tag is included inside a given value
-					case "include":
-						for (int t = tags.Count - 1; t >= 0; t--)
-						{
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null || !parameter.value.Contains(tags[t].Attributes.GetNamedItem(parameter.attribute).Value))
-								tags.RemoveAt(t);
-						}
-						break;
-					// Check if the value of an attribute of a tag is equal to the value of an attribute of another tag
-					case "sameValue":
-						for (int t = tags.Count - 1; t >= 0; t--)
-						{
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
-								tags.RemoveAt(t);
-							else
-							{
-								bool found = false;
-								foreach (XmlNode node in tags[t].OwnerDocument.GetElementsByTagName(parameter.tag2))
-								{
-									if (node != tags[t] && node.Attributes.GetNamedItem(parameter.attribute2) != null && node.Attributes.GetNamedItem(parameter.attribute2).Value == tags[t].Attributes.GetNamedItem(parameter.attribute).Value)
-									{
-										found = true;
-										break;
-									}
-								}
-								if (!found)
-									tags.RemoveAt(t);
-							}
-						}
-						break;
-					// Check if a tag contains at least one child
-					case "hasChild":
-						for (int t = tags.Count - 1; t >= 0; t--)
-						{
-							if (!tags[t].HasChildNodes)
-								tags.RemoveAt(t);
-						}
-						break;
-				}
-			}
-		}
-		// check the rule (combination of constraints)
-		string rule = competency.rule;
-		foreach (string key in constraintsState.Keys)
-		{
-			rule = rule.Replace(key, "" + constraintsState[key].Count);
-		}
-		DataTable dt = new DataTable();
-		if (rule != "")
-			return (bool)dt.Compute(rule, "");
-		else
-			return false;
-	}
-
 	public void showLevelInfo(string path, DataLevelBehaviour overridedData = null)
 	{
 		// Display Title
@@ -561,7 +372,7 @@ public class ParamCompetenceSystem : FSystem
 			txt = "";
 			foreach (GameObject comp in f_competencies)
 			{
-				if (isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), levelSelected.OwnerDocument))
+				if (EditingUtility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), levelSelected.OwnerDocument))
 					txt += "\t" + comp.GetComponent<Competency>().GetComponentInChildren<TMP_Text>().text + "\n";
 			}
 			if (txt != "")
@@ -710,7 +521,7 @@ public class ParamCompetenceSystem : FSystem
 	private string buildScenarioContent()
     {
 		string scenarioExport = "<?xml version=\"1.0\"?>\n";
-		scenarioExport += "<scenario>\n";
+		scenarioExport += "<scenario desc=\""+ scenarioAbstract.text + "\">\n";
 		foreach (Transform child in contentScenario.transform)
 		{
 			DataLevel dataLevel = child.GetComponent<DataLevelBehaviour>().data;

@@ -2,12 +2,14 @@
 	"scenarios": [
 		{
 			"scenarioName": "0 - Tutoriel",
+			"description": "Commence par ce scénario si tu n'as jamais joué à SPY.\n\nTu apprendras les bases du jeu et notemment comment donner des ordres au robot.",
 			"levels": [
 				{"src": "Levels/Tutoriel/Tutoriel.xml", "name": "Tutoriel"}
 			]
 		},
 		{
 			"scenarioName": "1 - Explorateur",
+			"description": "Dans ce scénario tu devras réaliser plusieurs défis en utilisant des actions simples.\n\nTon objectif sera d'utiliser les bonnes actions, dans le bon ordre.",
 			"levels": [
 				{"src": "Levels/Explorateur/Niveau01.xml", "name": "Niveau01"},
 				{"src": "Levels/Explorateur/Niveau02.xml", "name": "Niveau02"},
@@ -22,6 +24,7 @@
 		},
 		{
 			"scenarioName": "2 - Collaborateur",
+			"description": "Dans ce scénario tu vas contrôler plusieurs robots.\n\nTu devras bien faire attention à quels robots tes programmes seront envoyés.",
 			"levels": [
 				{"src": "Levels/Tutoriel/NommerScript.xml", "name": "Niveau01"},
 				{"src": "Levels/Collaborateur/Niveau01.xml", "name": "Niveau02"},
@@ -39,6 +42,7 @@
 		},
 		{
 			"scenarioName": "3 - Repetiteur",
+			"description": "Dans ce scénario tu vas apprendre à optimiser tes programmes en répétant une ou plusieurs actions.\n\nTu devras aussi faire attention aux gardes qui surveillent certaines zones et les éviter.",
 			"levels": [
 				{"src": "Levels/Repetiteur/Niveau01.xml", "name": "Niveau01"},
 				{"src": "Levels/Repetiteur/Niveau02.xml", "name": "Niveau02"},
@@ -54,6 +58,7 @@
 		},
 		{
 			"scenarioName": "4 - Selectionneur",
+			"description": "Dans ce scénario tu vas rendre ton robot intelligent pour qu'il choisisse les actions à faire en fonction de son environnement.",
 			"levels": [
 				{
 					"src": "Levels/BlocklyMaze/Niveau06.xml",
@@ -115,6 +120,7 @@
 		},
 		{
 			"scenarioName": "Infiltration",
+			"description": "Dans ce scénario tu devras récupérer des documents qui nous ont été volés.\n\nTa mission ? Programmer un robot pour l'infiltrer dans la base, éviter les gardes, récupérer les documents et ressortir  sans qu'il soit repéré. Bonne chance !",
 			"levels": [
 				{"src": "Levels/Infiltration/Niveau01.xml", "name": "Niveau01"},
 				{"src": "Levels/Infiltration/Niveau02.xml", "name": "Niveau02"},
@@ -142,6 +148,7 @@
 		},
 		{
 			"scenarioName": "BlocklyMaze",
+			"description": "Ce scénario est une réplique du jeu BlocklyMaze",
 			"levels": [
 				{"src": "Levels/BlocklyMaze/Niveau01.xml", "name": "Niveau01"},
 				{"src": "Levels/BlocklyMaze/Niveau02.xml", "name": "Niveau02"},

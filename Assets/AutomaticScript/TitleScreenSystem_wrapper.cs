@@ -15,6 +15,8 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject loadingScreen;
 	public UnityEngine.GameObject sessionIdPanel;
 	public UnityEngine.GameObject deletableElement;
+	public TMPro.TMP_InputField scenarioAbstract;
+	public UnityEngine.GameObject detailsCampaign;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -30,6 +32,8 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "loadingScreen", loadingScreen);
 		MainLoop.initAppropriateSystemField (system, "sessionIdPanel", sessionIdPanel);
 		MainLoop.initAppropriateSystemField (system, "deletableElement", deletableElement);
+		MainLoop.initAppropriateSystemField (system, "scenarioAbstract", scenarioAbstract);
+		MainLoop.initAppropriateSystemField (system, "detailsCampaign", detailsCampaign);
 	}
 
 	public void initGBLXAPI()
@@ -60,6 +64,11 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public void displayScenarioList()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "displayScenarioList", null);
+	}
+
+	public void delayRefreshCompetencies(UnityEngine.Transform content)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "delayRefreshCompetencies", content);
 	}
 
 	public void launchLevel()

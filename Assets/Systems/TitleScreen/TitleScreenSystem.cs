@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 /// </summary>
 public class TitleScreenSystem : FSystem {
 	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
+	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
 
 	private GameData gameData;
 	private UserData userData;
@@ -33,9 +34,11 @@ public class TitleScreenSystem : FSystem {
 	public GameObject loadingScreen;
 	public GameObject sessionIdPanel;
 	public GameObject deletableElement;
+	public TMP_InputField scenarioAbstract;
+	public GameObject detailsCampaign;
 
 	private GameObject selectedScenario;
-	private Dictionary<string, List<DataLevel>> defaultCampaigns; // List of levels for each default campaign
+	private Dictionary<string, WebGlScenario> defaultCampaigns; // List of levels for each default campaign
 	private UnityAction localCallback;
 
 	private string loadLevelWithURL = "";
@@ -47,16 +50,17 @@ public class TitleScreenSystem : FSystem {
 	private static extern void ShowHtmlButtons(); // call javascript
 
 	[Serializable]
-	public class WebGlDataLevels
+	public class WebGlScenario
     {
 		public string scenarioName;
+		public string description;
 		public List<DataLevel> levels;
     }
 
 	[Serializable]
 	public class WebGlScenarioList
     {
-		public List<WebGlDataLevels> scenarios;
+		public List<WebGlScenario> scenarios;
     }
 
 
@@ -90,7 +94,7 @@ public class TitleScreenSystem : FSystem {
 		gameData.levels = new Dictionary<string, XmlNode>();
 		gameData.scenario = new List<DataLevel>();
 
-		defaultCampaigns = new Dictionary<string, List<DataLevel>>();
+		defaultCampaigns = new Dictionary<string, WebGlScenario>();
 		selectedScenario = null;
 
 		GameObjectManager.setGameObjectState(campagneMenu, false);
@@ -241,13 +245,12 @@ public class TitleScreenSystem : FSystem {
 		{
 			string scenarioJson = www.downloadHandler.text;
 			WebGlScenarioList scenarioListRaw = JsonConvert.DeserializeObject<WebGlScenarioList>(scenarioJson);
-			foreach (WebGlDataLevels scenarioRaw in scenarioListRaw.scenarios)
+			foreach (WebGlScenario scenarioRaw in scenarioListRaw.scenarios)
 			{
-				defaultCampaigns[scenarioRaw.scenarioName] = new List<DataLevel>();
+				defaultCampaigns[scenarioRaw.scenarioName] = scenarioRaw;
 				foreach (DataLevel levelPath in scenarioRaw.levels)
 				{
 					levelPath.src = new Uri(Application.streamingAssetsPath + "/" + levelPath.src).AbsoluteUri;
-					defaultCampaigns[scenarioRaw.scenarioName].Add(levelPath);
 				}
 			}
 		}
@@ -266,7 +269,7 @@ public class TitleScreenSystem : FSystem {
 		else
 		{
 			string levelsJson = www.downloadHandler.text;
-			WebGlDataLevels levelsListRaw = JsonUtility.FromJson<WebGlDataLevels>(levelsJson);
+			WebGlScenario levelsListRaw = JsonUtility.FromJson<WebGlScenario>(levelsJson);
 			// try to load all levels
 			foreach (DataLevel levelRaw in levelsListRaw.levels)
 				MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(new Uri(Application.streamingAssetsPath + "/" + levelRaw.src).AbsoluteUri));
@@ -330,7 +333,14 @@ public class TitleScreenSystem : FSystem {
 
 	public void updateScenarioContent(string uri, XmlDocument doc)
 	{
-		List<DataLevel> levelList = new List<DataLevel>();
+		WebGlScenario scenario = new WebGlScenario();
+		scenario.scenarioName = Path.GetFileNameWithoutExtension(uri);
+		XmlNode xmlScenario = doc.GetElementsByTagName("scenario")[0];
+		if (xmlScenario.Attributes.GetNamedItem("desc") != null)
+			scenario.description = xmlScenario.Attributes.GetNamedItem("desc").Value;
+		else
+			scenario.description = "";
+		scenario.levels = new List<DataLevel>();
 		foreach (XmlNode child in doc.GetElementsByTagName("scenario")[0])
 			if (child.Name.Equals("level"))
 			{
@@ -354,9 +364,9 @@ public class TitleScreenSystem : FSystem {
 						break;
 					}
 
-				levelList.Add(dl);
+				scenario.levels.Add(dl);
 			}
-		defaultCampaigns[Path.GetFileName(uri)] = levelList;
+		defaultCampaigns[Path.GetFileName(uri)] = scenario;
 	}
 
 	private class JavaScriptData
@@ -402,8 +412,58 @@ public class TitleScreenSystem : FSystem {
 			directoryButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = Path.GetFileNameWithoutExtension(key);
 			GameObjectManager.bind(directoryButton);
 			// add on click
-			directoryButton.GetComponent<Button>().onClick.AddListener(delegate { showLevels(key); });
+			directoryButton.GetComponent<Button>().onClick.AddListener(delegate { showDetails(key); });
 		}
+	}
+
+	private void showDetails(string campaignKey)
+	{
+		detailsCampaign.SetActive(false); // in order to play animation on next activation
+		GameObjectManager.setGameObjectState(detailsCampaign, true);
+		Transform content = detailsCampaign.transform.GetChild(0).GetChild(0).GetChild(0);
+
+		TMP_Text title = content.GetChild(0).GetComponent<TMP_Text>();
+		title.text = campaignKey;
+
+		TMP_Text campaignDescription = content.GetChild(1).GetComponent<TMP_Text>();
+		campaignDescription.text = defaultCampaigns[campaignKey].description+"\n\n";
+
+		delayRefreshCompetencies(content);
+
+		Button bt_showLevels = detailsCampaign.transform.GetComponentInChildren<Button>();
+		bt_showLevels.onClick.RemoveAllListeners();
+		bt_showLevels.onClick.AddListener(delegate { showLevels(campaignKey); });
+		bt_showLevels.onClick.AddListener(delegate { GameObjectManager.setGameObjectState(detailsCampaign, false); });
+	}
+
+	public void delayRefreshCompetencies(Transform content)
+    {
+		MainLoop.instance.StartCoroutine(refreshCompetencies(content));
+    }
+
+	public IEnumerator refreshCompetencies(Transform content)
+    {
+		yield return new WaitForSeconds(0.1f);
+		TMP_Text compDetails = content.GetChild(4).GetComponent<TMP_Text>();
+		// Display competencies
+		compDetails.text = "<b>Compétences en jeu dans ce scénario :</b>\n";
+		string txt = "";
+		foreach (GameObject comp in f_competencies)
+		{
+			foreach (DataLevel levelKey in defaultCampaigns[content.GetChild(0).GetComponent<TMP_Text>().text].levels)
+				if (EditingUtility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.src].OwnerDocument))
+				{
+					txt += "\t" + comp.GetComponent<Competency>().GetComponentInChildren<TMP_Text>().text + "\n";
+					break;
+				}
+		}
+		if (txt != "")
+			compDetails.text += txt;
+		else
+			compDetails.text += "\tAucune compétence identifiée pour ce niveau\n";
+		LayoutRebuilder.ForceRebuildLayoutImmediate(content as RectTransform);
+		// auto move to the top od the panel
+		(content as RectTransform).anchoredPosition = new Vector2(0, 0);
 	}
 
 	private void showLevels(string campaignKey) {
@@ -416,10 +476,12 @@ public class TitleScreenSystem : FSystem {
 			GameObject.Destroy(child.gameObject);
         }
 
+		// set scenario name
+		listOfLevels.transform.parent.parent.parent.GetChild(0).GetComponent<TMP_Text>().text = Path.GetFileNameWithoutExtension(campaignKey);
 		// create level buttons for this campaign
-		for (int i = 0; i < defaultCampaigns[campaignKey].Count; i++)
+		for (int i = 0; i < defaultCampaigns[campaignKey].levels.Count; i++)
 		{
-			DataLevel levelData = defaultCampaigns[campaignKey][i];
+			DataLevel levelData = defaultCampaigns[campaignKey].levels[i];
 			GameObject button = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/LevelButton") as GameObject, listOfLevels.transform);
 			button.transform.Find("Button").GetChild(0).GetComponent<TextMeshProUGUI>().text = levelData.name;
 			button.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate { launchLevel(campaignKey, levelData); });
@@ -446,7 +508,7 @@ public class TitleScreenSystem : FSystem {
 	public void launchLevel(string campaignKey, DataLevel levelToLoad) {
 		gameData.scenarioName = campaignKey;
 		gameData.levelToLoad = levelToLoad;
-		gameData.scenario = defaultCampaigns[campaignKey];
+		gameData.scenario = defaultCampaigns[campaignKey].levels;
 		GameObjectManager.loadScene("MainScene");
 	}
 
@@ -525,7 +587,9 @@ public class TitleScreenSystem : FSystem {
 				GameObject.Destroy(child.gameObject);
             }
 
-			foreach (DataLevel levelPath in defaultCampaigns[selectedScenario.GetComponentInChildren<TMP_Text>().text])
+			scenarioAbstract.text = defaultCampaigns[selectedScenario.GetComponentInChildren<TMP_Text>().text].description;
+
+			foreach (DataLevel levelPath in defaultCampaigns[selectedScenario.GetComponentInChildren<TMP_Text>().text].levels)
 			{
 				GameObject newLevel = GameObject.Instantiate(deletableElement, scenarioContent.transform);
 				newLevel.GetComponentInChildren<TMP_Text>().text = levelPath.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "");
