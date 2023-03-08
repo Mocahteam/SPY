@@ -665,6 +665,7 @@ public static class EditingUtility
 			newItem.transform.localScale = new Vector3(newItem.transform.localScale.x - 0.01f, newItem.transform.localScale.y, newItem.transform.localScale.z);
 			yield return null;
 		}
+		newItem.transform.localScale = new Vector3(1, 1, 1);
 	}
 
 	public static bool isCompetencyMatchWithLevel(Competency competency, XmlDocument level)
