@@ -19,7 +19,6 @@ public class CameraSystem : FSystem {
 	private Vector3 targetPos; // if defined camera focus in this position (grid definition)
 	private float smoothSpeed = 0.125f;
 	private Vector3 offset = new Vector3(0, 2f, 0);
-	private float lastCall = 0;
 
 	private Camera mainCamera;
 
@@ -97,18 +96,18 @@ public class CameraSystem : FSystem {
 			rotateCamera(UI_rotateValue, 0);
 
 		// manage orthographic/perspective
-		if (Input.GetKey(KeyCode.V))
+		if (Input.GetKeyDown(KeyCode.V))
 			ToggleOrthographicPerspective();
 
 		// autofocus on nearest agent
-		if (Input.GetKey(KeyCode.C))
+		if (Input.GetKeyDown(KeyCode.C))
 			focusOnNearestAgent(null);
 
 		// Zoom in/out with keyboard
 		if (Input.GetKey(KeyCode.R))
+			zoomIn(0.1f);
+		else if (Input.GetKey(KeyCode.F))
 			zoomOut(0.1f);
-		else if (Input.GetKey(KeyCode.P))
-			zoomOut(-0.1f);
 
 		// Move camera with wheel click
 		if (Input.GetMouseButton(2))
@@ -197,15 +196,11 @@ public class CameraSystem : FSystem {
 
 	public void ToggleOrthographicPerspective()
     {
-		if (Time.time - lastCall > 0.25f)
-		{
-			lastCall = Time.time;
-			mainCamera.orthographic = !mainCamera.orthographic;
-			mainCamera.transform.parent.rotation = new Quaternion(0, 0, 0, 0);
-			if (mainCamera.orthographic)
-				mainCamera.transform.parent.Rotate(Vector3.back, -27); // -27 is a magic constant to put camera in direction of ground
-			PlayerPrefs.SetInt("orthographicView", mainCamera.orthographic ? 1 : 0);
-		}
+		mainCamera.orthographic = !mainCamera.orthographic;
+		mainCamera.transform.parent.rotation = new Quaternion(0, 0, 0, 0);
+		if (mainCamera.orthographic)
+			mainCamera.transform.parent.Rotate(Vector3.back, -27); // -27 is a magic constant to put camera in direction of ground
+		PlayerPrefs.SetInt("orthographicView", mainCamera.orthographic ? 1 : 0);
 	}
 
 	public void set_UIFrontBack(float value)

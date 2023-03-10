@@ -14,6 +14,9 @@ public class HighLightSystem : FSystem {
 	private Family f_nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new NoneOfComponents(typeof(CurrentAction), typeof(PointerOver)));
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 
+	private Family f_focusedSyncColors = FamilyManager.getFamily(new AllOfComponents(typeof(SynColors), typeof(Selectable), typeof(PointerOver)));
+	private Family f_unfocusedSyncColors = FamilyManager.getFamily(new AllOfComponents(typeof(SynColors), typeof(Selectable)), new NoneOfComponents(typeof(PointerOver)));
+
 	public GameObject dialogPanel;
 
 	protected override void onStart()
@@ -23,6 +26,20 @@ public class HighLightSystem : FSystem {
 		f_nonhighlighted.addEntryCallback(unHighLightItem);
 		f_highlightedAction.addEntryCallback(highLightItem);
 		f_nonCurrentAction.addEntryCallback(unHighLightItem);
+
+		f_focusedSyncColors.addEntryCallback(delegate (GameObject go) {
+			propagateColor(go, true);
+		});
+		f_unfocusedSyncColors.addEntryCallback(delegate (GameObject go) {
+			propagateColor(go, false);
+		});
+	}
+
+	private void propagateColor(GameObject go, bool useHighlightColor)
+    {
+		Color color = useHighlightColor ? go.GetComponent<Selectable>().colors.highlightedColor : go.GetComponent<Selectable>().colors.normalColor;
+		foreach (Image img in go.GetComponent<SynColors>().targets)
+			img.color = color;
 	}
 
 	// Use to process your families.
@@ -40,9 +57,9 @@ public class HighLightSystem : FSystem {
 	private void initBaseColor(GameObject go)
 	{
 		// check if it is a script instruction
-		if ((go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) && go.GetComponent<Image>())
+		if ((go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) && go.GetComponent<Selectable>())
 		{
-			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Image>().color;
+			go.GetComponent<Highlightable>().baseColor = go.GetComponent<Selectable>().colors.normalColor;
 		}
 		// check if it is a word object (robot, ground...)
 		if (go.GetComponentInChildren<Renderer>(true))
@@ -60,21 +77,15 @@ public class HighLightSystem : FSystem {
 		// first process currentAction in agents panels
 		if(go.GetComponent<CurrentAction>())
 		{
-			go.GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().currentActionColor;
+			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
 			Transform parent = go.transform.parent;
 			while (parent != null)
             {
 				if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
-					parent.transform.GetChild(1).GetComponent<Image>().color = MainLoop.instance.GetComponent<AgentColor>().currentActionColor;
+					parent.transform.GetChild(1).GetComponent<Image>().color = parent.GetComponent<Highlightable>().highlightedColor;
 				parent = parent.parent;
 			}
 		}
-		// second manage sensitive UI inside editable panel
-		else if((go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) && go.GetComponent<PointerOver>())
-			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
-		// third sensitive UI inside library panel
-		//else if (go.GetComponent<ElementToDrag>() && go.GetComponent<PointerOver>())
-		//	go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
 		// then process world GameObjects (Walls, drone, robots...)
 		else if (go.GetComponentInChildren<Renderer>(true)){
 			go.GetComponentInChildren<Renderer>(true).material.color = go.GetComponent<Highlightable>().highlightedColor;
@@ -86,24 +97,17 @@ public class HighLightSystem : FSystem {
 	}
 
 	public void unHighLightItem(GameObject go){
-		// manage the case of items in script
-        if (go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) { 
+		// manage the case of items in script in playing mode
+        if ((go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) && f_playingMode.Count > 0) { 
 			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
-			// case in playing mode
-			if (f_playingMode.Count > 0)
+			Transform parent = go.transform.parent;
+			while (parent != null)
 			{
-				Transform parent = go.transform.parent;
-				while (parent != null)
-				{
-					if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
-						parent.transform.GetChild(1).GetComponent<Image>().color = parent.GetComponent<Highlightable>().baseColor;
-					parent = parent.parent;
-				}
+				if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
+					parent.transform.GetChild(1).GetComponent<Image>().color = parent.GetComponent<Highlightable>().baseColor;
+				parent = parent.parent;
 			}
 		}
-		// the case of item inside library panel
-		//else if (go.GetComponent<ElementToDrag>())
-		//	go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
 		// the case of world GameObjects (robot, ground...)
 		else if (go.GetComponentInChildren<Renderer>(true))
 		{

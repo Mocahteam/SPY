@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.67058825, b: 0.09803922, a: 1}
+  m_Color: {r: 1, g: 0.6347826, b: 0, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1078,6 +1078,7 @@ GameObject:
   - component: {fileID: 8271414900723056485}
   - component: {fileID: 5172015576826857277}
   - component: {fileID: 7009909761143629927}
+  - component: {fileID: 8720702901403157198}
   m_Layer: 5
   m_Name: Control_IfElse
   m_TagString: Untagged
@@ -1175,7 +1176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.67058825, b: 0.09803922, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1232,7 +1233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseColor: {r: 1, g: 0.67058825, b: 0.09803922, a: 0.39215687}
-  highlightedColor: {r: 1, g: 0.8156863, b: 0.4862745, a: 1}
+  highlightedColor: {r: 1, g: 1, b: 0, a: 1}
   next: {fileID: 0}
   firstChild: {fileID: 0}
   condition: []
@@ -1259,10 +1260,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_NormalColor: {r: 1, g: 0.67058825, b: 0.09803922, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.8156863, b: 0.4862745, a: 1}
+    m_PressedColor: {r: 0.7058824, g: 0.5372549, b: 0.23529412, a: 1}
+    m_SelectedColor: {r: 1, g: 0.8156863, b: 0.4862745, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -1408,6 +1409,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da366280509c2874aa0abd598cabb17a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8720702901403157198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4857904994598048877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dfd155565e079141a506899adc2ccfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targets:
+  - {fileID: 2798095356330505193}
+  - {fileID: 5457255980217725082}
+  - {fileID: 7788384374358472948}
+  - {fileID: 7156484149148676784}
+  - {fileID: 3776551140850282692}
+  - {fileID: 6412225393933000497}
+  - {fileID: 8968412658408134560}
+  - {fileID: 6800397740393684143}
+  - {fileID: 5643636318455621931}
 --- !u!1 &5036360544868033408
 GameObject:
   m_ObjectHideFlags: 0
@@ -2962,6 +2985,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EmptySlot
+      objectReference: {fileID: 0}
+    - target: {fileID: 614420622717238934, guid: 1831bcfd2f71d1349926e116b59dd962,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3193154101199377904, guid: 1831bcfd2f71d1349926e116b59dd962,
         type: 3}

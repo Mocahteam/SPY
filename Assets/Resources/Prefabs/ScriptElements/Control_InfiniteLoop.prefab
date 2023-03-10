@@ -189,6 +189,7 @@ GameObject:
   - component: {fileID: 5308914122993031288}
   - component: {fileID: 8881532605589861155}
   - component: {fileID: 4385729529893367979}
+  - component: {fileID: 9132275227789319838}
   m_Layer: 5
   m_Name: Control_InfiniteLoop
   m_TagString: Untagged
@@ -252,7 +253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.67058825, b: 0.09803922, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -290,10 +291,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_NormalColor: {r: 1, g: 0.67058825, b: 0.09803922, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.8156863, b: 0.4862745, a: 1}
+    m_PressedColor: {r: 0.7058824, g: 0.5372549, b: 0.23529412, a: 1}
+    m_SelectedColor: {r: 1, g: 0.8156863, b: 0.4862745, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -468,7 +469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseColor: {r: 1, g: 1, b: 1, a: 1}
-  highlightedColor: {r: 1, g: 0.8156863, b: 0.4862745, a: 1}
+  highlightedColor: {r: 1, g: 1, b: 0, a: 1}
   next: {fileID: 0}
   firstChild: {fileID: 0}
 --- !u!114 &5308914122993031288
@@ -508,6 +509,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da366280509c2874aa0abd598cabb17a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &9132275227789319838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589826222410828797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dfd155565e079141a506899adc2ccfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targets:
+  - {fileID: 6458784915697038195}
+  - {fileID: 2689569717925276025}
 --- !u!1 &826004141106048123
 GameObject:
   m_ObjectHideFlags: 0

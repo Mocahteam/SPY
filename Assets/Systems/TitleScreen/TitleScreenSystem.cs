@@ -155,7 +155,6 @@ public class TitleScreenSystem : FSystem {
 
 			Vector2 targetAnchoredPosition = new Vector2(contentPanel.anchoredPosition.x, contentPanel.anchoredPosition.y);
 			// we auto focus on selected object only if it is not visible
-			Debug.Log(selectedInContent_Y + " " + contentPanel.anchoredPosition.y + " " + viewport.anchoredPosition.y);
 			if (selectedInContent_Y - contentPanel.anchoredPosition.y < 0 || (selectedInContent_Y + (selected.transform as RectTransform).rect.height) - contentPanel.anchoredPosition.y > viewport.rect.height)
 			{
 				// check if selected object is too high

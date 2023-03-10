@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI;
 using FYFY_plugins.PointerManager;
+using UnityEngine.EventSystems;
 
 /// Ce systéme gére tous les éléments d'édition des agents par l'utilisateur.
 /// Il gére entre autre:
@@ -273,6 +274,8 @@ public class EditableContainerSystem : FSystem
 
 		deleteContent(scriptContainerPointer);
 		MainLoop.instance.StartCoroutine(realDelete(container));
+
+		EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
 	}
 
 	private void deleteContent (GameObject container)

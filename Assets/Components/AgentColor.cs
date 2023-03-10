@@ -7,5 +7,4 @@ public class AgentColor : MonoBehaviour
     public Color playerBackground;
     public Color droneAction;
     public Color droneBackground;
-    public Color currentActionColor;
 }

@@ -100,9 +100,67 @@ public class DragDropSystem : FSystem
 
 		f_newEnd.addEntryCallback(levelFinished);
 	}
-	
-	// Si victoire désactive le drag&drop
-	private void levelFinished(GameObject go)
+
+	protected override void onProcess(int familiesUpdateCount)
+	{
+
+		if (Input.GetKeyDown(KeyCode.Return) && f_editMode.Count > 0)
+		{
+			if (itemDragged == null)
+			{
+				GameObject current = EventSystem.current.currentSelectedGameObject;
+				if (current.GetComponent<ElementToDrag>())
+				{
+					initBlockFromLibrary(current);
+					itemDragged.transform.position = new Vector3(itemDragged.transform.position.x + 20, itemDragged.transform.position.y - 20, itemDragged.transform.position.z);
+					EventSystem.current.SetSelectedGameObject(itemDragged);
+				}
+			}
+            else
+            {
+				endDragElement();
+				EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
+			}
+		}
+
+		if (Input.GetKey(KeyCode.LeftArrow) && itemDragged != null)
+			moveItemDragged(-0.5f, 0);
+		if (Input.GetKey(KeyCode.RightArrow) && itemDragged != null)
+			moveItemDragged(0.5f, 0);
+		if (Input.GetKey(KeyCode.UpArrow) && itemDragged != null)
+			moveItemDragged(0, 0.5f);
+		if (Input.GetKey(KeyCode.DownArrow) && itemDragged != null)
+			moveItemDragged(0, -0.5f);
+	}
+
+	private void moveItemDragged(float x, float y)
+    {
+		itemDragged.transform.position = new Vector3(itemDragged.transform.position.x + x, itemDragged.transform.position.y + y, itemDragged.transform.position.z);
+		EventSystem.current.SetSelectedGameObject(itemDragged);
+		foreach(GameObject dropZone in f_dropZoneEnabled)
+        {
+			RectTransform rectDropZone = dropZone.transform as RectTransform;
+			RectTransform rectTrigger = rectDropZone.Find("DropZoneTrigger") as RectTransform;
+			Vector3 itemPosInDropZone = rectDropZone.InverseTransformPoint(itemDragged.transform.position);
+			if (Math.Abs(itemPosInDropZone.x) < rectTrigger.rect.width / 2 && Math.Abs(itemPosInDropZone.y) < rectTrigger.rect.height / 2)
+				checkHighlightDropArea(dropZone);
+			else
+				GameObjectManager.setGameObjectState(dropZone.transform.Find("PositionBar").gameObject, false);
+		}
+		foreach (GameObject replacementSlot in f_replacementSlot)
+		{
+			RectTransform rectRepSlot = replacementSlot.transform as RectTransform;
+			RectTransform rectTrigger = rectRepSlot.Find("EventManager") as RectTransform;
+			Vector3 itemPosInDropZone = rectRepSlot.InverseTransformPoint(itemDragged.transform.position);
+			if (Math.Abs(itemPosInDropZone.x) < rectTrigger.rect.width / 2 && Math.Abs(itemPosInDropZone.y) < rectTrigger.rect.height / 2)
+				checkHighlightDropArea(replacementSlot);
+			else
+				replacementSlot.GetComponent<Outline>().enabled = false;
+		}
+	}
+
+    // Si victoire désactive le drag&drop
+    private void levelFinished(GameObject go)
 	{
 		// En cas de fin de niveau
 		if (go.GetComponent<NewEnd>().endType == NewEnd.Win)
@@ -195,17 +253,20 @@ public class DragDropSystem : FSystem
     {
 		// On verifie si c'est un évènement généré par le bouton gauche de la souris
 		if (!Pause && gameData.dragDropEnabled && (element as PointerEventData).button == PointerEventData.InputButton.Left && element.selectedObject != null)
-		{
-			// On active les dropzones
-			setDropZoneState(true);
-			// On crée le bloc action associé à l'élément
-			itemDragged = EditingUtility.createEditableBlockFromLibrary(element.selectedObject, mainCanvas);
-			// On l'ajoute aux familles de FYFY
-			GameObjectManager.bind(itemDragged);
-			// exclude all UI elements that can disturb the drag from the EventSystem
-			foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
-				child.GetComponent<Image>().raycastTarget = false;
-		}
+			initBlockFromLibrary(element.selectedObject);
+	}
+
+	private void initBlockFromLibrary(GameObject model)
+    {
+		// On active les dropzones
+		setDropZoneState(true);
+		// On crée le bloc action associé à l'élément
+		itemDragged = EditingUtility.createEditableBlockFromLibrary(model, mainCanvas);
+		// On l'ajoute aux familles de FYFY
+		GameObjectManager.bind(itemDragged);
+		// exclude all UI elements that can disturb the drag from the EventSystem
+		foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
+			child.GetComponent<Image>().raycastTarget = false;
 	}
 
 	// Lors de la selection (début d'un drag) d'un bloc dans la zone d'édition
