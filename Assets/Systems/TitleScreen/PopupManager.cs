@@ -2,6 +2,8 @@
 using FYFY;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
+using System.Collections;
 
 /// <summary>
 /// Manage popup windows to display messages to the user
@@ -12,6 +14,7 @@ public class PopupManager : FSystem {
 	public TMP_Text messageForUser; // Zone de texte pour les messages d'erreur adressés à l'utilisateur
 
 	private Family f_newMessageForUser = FamilyManager.getFamily(new AllOfComponents(typeof(MessageForUser)));
+	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 
 	// L'instance
@@ -39,10 +42,29 @@ public class PopupManager : FSystem {
 		buttons.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(mfu.call);
 		GameObjectManager.setGameObjectState(buttons.transform.GetChild(1).gameObject, mfu.CancelButton != "");
 		buttons.transform.GetChild(1).GetComponentInChildren<TMP_Text>().text = mfu.CancelButton;
+
 		panelInfoUser.SetActive(true); // not use GameObjectManager here else ForceRebuildLayout doesn't work
 		LayoutRebuilder.ForceRebuildLayoutImmediate(messageForUser.transform as RectTransform);
 		LayoutRebuilder.ForceRebuildLayoutImmediate(messageForUser.transform.parent as RectTransform);
 
+		if (mfu.OkButton != "")
+			EventSystem.current.SetSelectedGameObject(buttons.transform.GetChild(0).gameObject);
+		else if (mfu.CancelButton != "")
+			EventSystem.current.SetSelectedGameObject(buttons.transform.GetChild(1).gameObject);
+
 		GameObjectManager.removeComponent(mfu);
+	}
+
+	// See ok and cancel buttons in MessagePanel (TitleScreen)
+	public void focusLastButton()
+    {
+		MainLoop.instance.StartCoroutine(delayFocusLastButton());
+    }
+
+	private IEnumerator delayFocusLastButton()
+    {
+		yield return new WaitForSeconds(.25f);
+		if (f_buttons.Count > 0 && (EventSystem.current.currentSelectedGameObject == null || !EventSystem.current.currentSelectedGameObject.activeInHierarchy))
+			EventSystem.current.SetSelectedGameObject(f_buttons.getAt(f_buttons.Count - 1));
 	}
 }

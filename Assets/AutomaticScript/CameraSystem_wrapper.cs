@@ -20,6 +20,11 @@ public class CameraSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "dragSpeed", dragSpeed);
 	}
 
+	public void ToggleOrthographicPerspective()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "ToggleOrthographicPerspective", null);
+	}
+
 	public void set_UIFrontBack(System.Single value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "set_UIFrontBack", value);

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections;
 using FYFY_plugins.PointerManager;
 using System;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Manage InGame UI (Play/Pause/Stop, reset, go back to main menu...)
@@ -35,6 +36,7 @@ public class UISystem : FSystem {
 	private Coroutine viewCurrentAction = null;
 
 	public GameObject LevelGO;
+	public GameObject buttonMenu;
 	public GameObject buttonExecute;
 	public GameObject buttonPause;
 	public GameObject buttonNextStep;
@@ -110,9 +112,10 @@ public class UISystem : FSystem {
 	{
         //Active/désactive le menu echap si on appuit sur echap
         if (Input.GetKeyDown(KeyCode.Escape))
-        {
 			setActiveEscapeMenu();
-        }
+
+		if (Input.GetKeyDown(KeyCode.Tab))
+			EventSystem.current.SetSelectedGameObject(buttonMenu);
 
 		// With touch device when the finger is up, pointerOver is not removed because OnPointerExit is not called
 		// then be sure to clear pointerOver and Tooltips
@@ -213,6 +216,7 @@ public class UISystem : FSystem {
 		// Define Menu button states
 		GameObjectManager.setGameObjectState(buttonExecute, !value);
 		GameObjectManager.setGameObjectState(buttonPause, value);
+		EventSystem.current.SetSelectedGameObject(value ? buttonPause : buttonExecute);
 		GameObjectManager.setGameObjectState(buttonNextStep, false);
 		GameObjectManager.setGameObjectState(buttonContinue, false);
 		GameObjectManager.setGameObjectState(buttonSpeed, value);
@@ -361,10 +365,12 @@ public class UISystem : FSystem {
         if (menuEchap.activeInHierarchy)
         {
 			menuEchap.SetActive(false);
+			EventSystem.current.SetSelectedGameObject(buttonMenu);
 		}// Et inversement
         else
         {
 			menuEchap.SetActive(true);
+			EventSystem.current.SetSelectedGameObject(menuEchap.GetComponentInChildren<Button>().gameObject);
 		}
     }
 }

@@ -73,8 +73,8 @@ public class HighLightSystem : FSystem {
 		else if((go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) && go.GetComponent<PointerOver>())
 			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
 		// third sensitive UI inside library panel
-		else if (go.GetComponent<ElementToDrag>() && go.GetComponent<PointerOver>())
-			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
+		//else if (go.GetComponent<ElementToDrag>() && go.GetComponent<PointerOver>())
+		//	go.GetComponent<Image>().color = go.GetComponent<Highlightable>().highlightedColor;
 		// then process world GameObjects (Walls, drone, robots...)
 		else if (go.GetComponentInChildren<Renderer>(true)){
 			go.GetComponentInChildren<Renderer>(true).material.color = go.GetComponent<Highlightable>().highlightedColor;
@@ -102,8 +102,8 @@ public class HighLightSystem : FSystem {
 			}
 		}
 		// the case of item inside library panel
-		else if (go.GetComponent<ElementToDrag>())
-			go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
+		//else if (go.GetComponent<ElementToDrag>())
+		//	go.GetComponent<Image>().color = go.GetComponent<Highlightable>().baseColor;
 		// the case of world GameObjects (robot, ground...)
 		else if (go.GetComponentInChildren<Renderer>(true))
 		{

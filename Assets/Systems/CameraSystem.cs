@@ -19,6 +19,7 @@ public class CameraSystem : FSystem {
 	private Vector3 targetPos; // if defined camera focus in this position (grid definition)
 	private float smoothSpeed = 0.125f;
 	private Vector3 offset = new Vector3(0, 2f, 0);
+	private float lastCall = 0;
 
 	private Camera mainCamera;
 
@@ -50,6 +51,8 @@ public class CameraSystem : FSystem {
 	protected override void onStart()
 	{
 		mainCamera = Camera.main;
+		if (PlayerPrefs.GetInt("orthographicView", 0) == 1)
+			ToggleOrthographicPerspective();
 
 		// set current camera target (the first player)
 		f_player.addEntryCallback(delegate (GameObject go) { focusOnAgent(go); });
@@ -69,29 +72,43 @@ public class CameraSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		// move camera front/back depending on Vertical axis
-		if (Input.GetAxis("Vertical") != 0 || UI_frontBackValue != 0)
+		if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.S) || UI_frontBackValue != 0)
 		{
 			if (UI_frontBackValue == 0)
-				moveFrontBack(Input.GetAxis("Vertical"));
+				moveFrontBack(Input.GetKey(KeyCode.Z) ? 1 : -1);
 			else
 				moveFrontBack(UI_frontBackValue);
 		}
 		// move camera left/right de pending on Horizontal axis
-		if (Input.GetAxis("Horizontal") != 0 || UI_leftRightValue != 0)
+		if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.D) || UI_leftRightValue != 0)
 		{
 			if (UI_leftRightValue == 0)
-				moveLeftRight(Input.GetAxis("Horizontal"));
+				moveLeftRight(Input.GetKey(KeyCode.Q) ? -1 : 1);
 			else
 				moveLeftRight(UI_leftRightValue);
 		}
 
 		// rotate camera with "A" and "E" keys
 		if (Input.GetKey(KeyCode.A))
-			rotateCamera(-1, 0);
-		else if (Input.GetKey(KeyCode.E))
 			rotateCamera(1, 0);
+		else if (Input.GetKey(KeyCode.E))
+			rotateCamera(-1, 0);
 		else if (UI_rotateValue != 0)
 			rotateCamera(UI_rotateValue, 0);
+
+		// manage orthographic/perspective
+		if (Input.GetKey(KeyCode.V))
+			ToggleOrthographicPerspective();
+
+		// autofocus on nearest agent
+		if (Input.GetKey(KeyCode.C))
+			focusOnNearestAgent(null);
+
+		// Zoom in/out with keyboard
+		if (Input.GetKey(KeyCode.R))
+			zoomOut(0.1f);
+		else if (Input.GetKey(KeyCode.P))
+			zoomOut(-0.1f);
 
 		// Move camera with wheel click
 		if (Input.GetMouseButton(2))
@@ -153,6 +170,10 @@ public class CameraSystem : FSystem {
 		{
 			mainCamera.transform.position -= new Vector3(value * mainCamera.transform.forward.x * cameraZoomSpeed, value * mainCamera.transform.forward.y * cameraZoomSpeed, value * mainCamera.transform.forward.z * cameraZoomSpeed);
 		}
+		// sync orthographic view
+		mainCamera.orthographicSize += value;
+		if (mainCamera.orthographicSize > cameraZoomMax / 2)
+			mainCamera.orthographicSize = cameraZoomMax / 2;
 	}
 
 	private void zoomIn(float value)
@@ -167,6 +188,24 @@ public class CameraSystem : FSystem {
 		relativePos = mainCamera.transform.InverseTransformPoint(mainCamera.transform.parent.parent.position);
 		if (relativePos.z < 0)
 			mainCamera.transform.localPosition = Vector3.zero;
+
+		// sync orthographic view
+		mainCamera.orthographicSize -= value;
+		if (mainCamera.orthographicSize < cameraZoomMin / 4)
+			mainCamera.orthographicSize = cameraZoomMin / 4;
+	}
+
+	public void ToggleOrthographicPerspective()
+    {
+		if (Time.time - lastCall > 0.25f)
+		{
+			lastCall = Time.time;
+			mainCamera.orthographic = !mainCamera.orthographic;
+			mainCamera.transform.parent.rotation = new Quaternion(0, 0, 0, 0);
+			if (mainCamera.orthographic)
+				mainCamera.transform.parent.Rotate(Vector3.back, -27); // -27 is a magic constant to put camera in direction of ground
+			PlayerPrefs.SetInt("orthographicView", mainCamera.orthographic ? 1 : 0);
+		}
 	}
 
 	public void set_UIFrontBack(float value)
@@ -265,7 +304,8 @@ public class CameraSystem : FSystem {
 		while (targetAgent != null && mainCamera.transform.parent.parent.position != targetAgent.position + offset)
 		{
 			mainCamera.transform.parent.parent.position = Vector3.MoveTowards(mainCamera.transform.parent.parent.position, targetAgent.position + offset, smoothSpeed);
-			mainCamera.transform.LookAt(mainCamera.transform.parent.parent);
+			if (!mainCamera.orthographic)
+				mainCamera.transform.LookAt(mainCamera.transform.parent.parent);
 			yield return null;
 		}
 	}

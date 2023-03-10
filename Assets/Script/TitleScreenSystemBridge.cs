@@ -8,4 +8,9 @@ public class TitleScreenSystemBridge : MonoBehaviour
     {
         TitleScreenSystem.instance.onScenarioSelected(gameObject);
     }
+
+    public void loadScenario()
+    {
+        gameObject.transform.parent.parent.parent.parent.Find("Buttons").Find("LoadButton").GetComponent<Button>().onClick.Invoke();
+    }
 }

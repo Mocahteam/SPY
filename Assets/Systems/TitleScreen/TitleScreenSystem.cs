@@ -12,6 +12,7 @@ using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using DIG.GBLXAPI;
 using Newtonsoft.Json;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -30,6 +31,7 @@ public class TitleScreenSystem : FSystem {
 	public GameObject listOfLevels;
 	public GameObject loadingScenarioContent;
 	public GameObject scenarioContent;
+	public GameObject playButton;
 	public GameObject quitButton;
 	public GameObject loadingScreen;
 	public GameObject sessionIdPanel;
@@ -40,6 +42,8 @@ public class TitleScreenSystem : FSystem {
 	private GameObject selectedScenario;
 	private Dictionary<string, WebGlScenario> defaultCampaigns; // List of levels for each default campaign
 	private UnityAction localCallback;
+
+	private GameObject lastSelected;
 
 	private string loadLevelWithURL = "";
 	private int webGL_levelLoaded = 0;
@@ -91,6 +95,8 @@ public class TitleScreenSystem : FSystem {
 			userData = go.GetComponent<UserData>();
 		}
 
+		EventSystem.current.SetSelectedGameObject(playButton);
+
 		gameData.levels = new Dictionary<string, XmlNode>();
 		gameData.scenario = new List<DataLevel>();
 
@@ -126,11 +132,57 @@ public class TitleScreenSystem : FSystem {
 		userData.highScore = null;
 
 		if (gameData.sendStatementEnabled || !Application.isEditor)
+		{
 			GameObjectManager.setGameObjectState(sessionIdPanel, true);
+			// select ok button
+			EventSystem.current.SetSelectedGameObject(sessionIdPanel.transform.Find("ShowSessionId").Find("Buttons").Find("OkButton").gameObject);
+		}
 	}
 
-	// See Ok button in SetClass panel in TitleScreen scene
-	public void resetProgression(GameObject go)
+    protected override void onProcess(int familiesUpdateCount)
+    {
+		// Get the currently selected UI element from the event system.
+		GameObject selected = EventSystem.current.currentSelectedGameObject;
+		// Do nothing if there are none OR if the selected game object is not a child of a scroll rect OR if the selected game object is the same as it was last frame,
+		// meaning we haven't to move.
+		if (selected != null && selected.GetComponentInParent<ScrollRect>() != null && selected != lastSelected)
+		{
+			// Get the content
+			RectTransform viewport = selected.GetComponentInParent<ScrollRect>().viewport;
+			RectTransform contentPanel = selected.GetComponentInParent<ScrollRect>().content;
+
+			float selectedInContent_Y = Mathf.Abs(contentPanel.InverseTransformPoint(selected.transform.position).y);
+
+			Vector2 targetAnchoredPosition = new Vector2(contentPanel.anchoredPosition.x, contentPanel.anchoredPosition.y);
+			// we auto focus on selected object only if it is not visible
+			Debug.Log(selectedInContent_Y + " " + contentPanel.anchoredPosition.y + " " + viewport.anchoredPosition.y);
+			if (selectedInContent_Y - contentPanel.anchoredPosition.y < 0 || (selectedInContent_Y + (selected.transform as RectTransform).rect.height) - contentPanel.anchoredPosition.y > viewport.rect.height)
+			{
+				// check if selected object is too high
+				if (selectedInContent_Y - contentPanel.anchoredPosition.y < 0)
+				{
+					targetAnchoredPosition = new Vector2(
+						targetAnchoredPosition.x,
+						selectedInContent_Y
+					);
+				}
+				// selected object is too low
+				else 
+				{
+					targetAnchoredPosition = new Vector2(
+						targetAnchoredPosition.x,
+						-viewport.rect.height + selectedInContent_Y + (selected.transform as RectTransform).rect.height
+					);
+				}
+				
+				contentPanel.anchoredPosition = targetAnchoredPosition;
+			}
+			lastSelected = selected;
+		}
+	}
+
+    // See Ok button in SetClass panel in TitleScreen scene
+    public void resetProgression(GameObject go)
     {
 		PlayerPrefs.SetString("playerName", GBL_Interface.playerName);
 		PlayerPrefs.Save();
@@ -445,25 +497,28 @@ public class TitleScreenSystem : FSystem {
     {
 		yield return new WaitForSeconds(0.1f);
 		TMP_Text compDetails = content.GetChild(4).GetComponent<TMP_Text>();
-		// Display competencies
-		compDetails.text = "<b>Compétences en jeu dans ce scénario :</b>\n";
-		string txt = "";
-		foreach (GameObject comp in f_competencies)
+		if (defaultCampaigns.ContainsKey(content.GetChild(0).GetComponent<TMP_Text>().text))
 		{
-			foreach (DataLevel levelKey in defaultCampaigns[content.GetChild(0).GetComponent<TMP_Text>().text].levels)
-				if (EditingUtility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.src].OwnerDocument))
-				{
-					txt += "\t" + comp.GetComponent<Competency>().GetComponentInChildren<TMP_Text>().text + "\n";
-					break;
-				}
+			// Display competencies
+			compDetails.text = "<b>Compétences en jeu dans ce scénario :</b>\n";
+			string txt = "";
+			foreach (GameObject comp in f_competencies)
+			{
+				foreach (DataLevel levelKey in defaultCampaigns[content.GetChild(0).GetComponent<TMP_Text>().text].levels)
+					if (EditingUtility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.src].OwnerDocument))
+					{
+						txt += "\t" + comp.GetComponent<Competency>().GetComponentInChildren<TMP_Text>().text + "\n";
+						break;
+					}
+			}
+			if (txt != "")
+				compDetails.text += txt;
+			else
+				compDetails.text += "\tAucune compétence identifiée pour ce niveau\n";
+			LayoutRebuilder.ForceRebuildLayoutImmediate(content as RectTransform);
+			// auto move to the top od the panel
+			(content as RectTransform).anchoredPosition = new Vector2(0, 0);
 		}
-		if (txt != "")
-			compDetails.text += txt;
-		else
-			compDetails.text += "\tAucune compétence identifiée pour ce niveau\n";
-		LayoutRebuilder.ForceRebuildLayoutImmediate(content as RectTransform);
-		// auto move to the top od the panel
-		(content as RectTransform).anchoredPosition = new Vector2(0, 0);
 	}
 
 	private void showLevels(string campaignKey) {

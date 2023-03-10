@@ -4,6 +4,7 @@ using FYFY;
 public class UISystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject LevelGO;
+	public UnityEngine.GameObject buttonMenu;
 	public UnityEngine.GameObject buttonExecute;
 	public UnityEngine.GameObject buttonPause;
 	public UnityEngine.GameObject buttonNextStep;
@@ -17,6 +18,7 @@ public class UISystem_wrapper : BaseWrapper
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "LevelGO", LevelGO);
+		MainLoop.initAppropriateSystemField (system, "buttonMenu", buttonMenu);
 		MainLoop.initAppropriateSystemField (system, "buttonExecute", buttonExecute);
 		MainLoop.initAppropriateSystemField (system, "buttonPause", buttonPause);
 		MainLoop.initAppropriateSystemField (system, "buttonNextStep", buttonNextStep);

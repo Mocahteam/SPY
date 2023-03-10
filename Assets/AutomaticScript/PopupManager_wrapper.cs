@@ -12,4 +12,9 @@ public class PopupManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "messageForUser", messageForUser);
 	}
 
+	public void focusLastButton()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "focusLastButton", null);
+	}
+
 }

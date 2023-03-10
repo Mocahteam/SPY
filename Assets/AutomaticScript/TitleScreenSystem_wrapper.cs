@@ -11,6 +11,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject listOfLevels;
 	public UnityEngine.GameObject loadingScenarioContent;
 	public UnityEngine.GameObject scenarioContent;
+	public UnityEngine.GameObject playButton;
 	public UnityEngine.GameObject quitButton;
 	public UnityEngine.GameObject loadingScreen;
 	public UnityEngine.GameObject sessionIdPanel;
@@ -28,6 +29,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "listOfLevels", listOfLevels);
 		MainLoop.initAppropriateSystemField (system, "loadingScenarioContent", loadingScenarioContent);
 		MainLoop.initAppropriateSystemField (system, "scenarioContent", scenarioContent);
+		MainLoop.initAppropriateSystemField (system, "playButton", playButton);
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
 		MainLoop.initAppropriateSystemField (system, "loadingScreen", loadingScreen);
 		MainLoop.initAppropriateSystemField (system, "sessionIdPanel", sessionIdPanel);

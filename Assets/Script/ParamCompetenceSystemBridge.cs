@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ParamCompetenceSystemBridge : MonoBehaviour
@@ -33,5 +34,10 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
     public void showBriefingOverride()
     {
         ParamCompetenceSystem.instance.showBriefingOverride(gameObject.GetComponent< DataLevelBehaviour>());
+    }
+
+    public void setNextFocusedGameObject(GameObject go)
+    {
+        EventSystem.current.SetSelectedGameObject(go);
     }
 }

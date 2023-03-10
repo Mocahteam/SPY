@@ -11,6 +11,7 @@ using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using System.Collections;
 using UnityEngine.Networking;
+using UnityEngine.EventSystems;
 
 public class ParamCompetenceSystem : FSystem
 {
@@ -19,6 +20,7 @@ public class ParamCompetenceSystem : FSystem
 	// Familles
 	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
 	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
+	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private UnityAction localCallback;
 	private DataLevelBehaviour overridedBriefing;
 	private int previousReferentialSelected = -1;
@@ -277,6 +279,7 @@ public class ParamCompetenceSystem : FSystem
 		{
 			// hide competencies panel
 			GameObjectManager.setGameObjectState(competenciesPanel, false);
+			GameObjectManager.setGameObjectState(compatibleLevelsPanel, true);
 			// remove all old buttons
 			foreach (Transform child in contentListOfCompatibleLevel.transform)
 			{
@@ -437,6 +440,20 @@ public class ParamCompetenceSystem : FSystem
 
 	public void removeItemFromParent(GameObject go)
 	{
+		if (EventSystem.current.currentSelectedGameObject.transform.IsChildOf(go.transform)) {
+			if (go.transform.parent.childCount > 1)
+            {
+				if (go.transform.GetSiblingIndex() < go.transform.parent.childCount - 1)
+					EventSystem.current.SetSelectedGameObject(go.transform.parent.GetChild(go.transform.GetSiblingIndex() + 1).gameObject.GetComponentInChildren<Button>().gameObject);
+				else
+					EventSystem.current.SetSelectedGameObject(go.transform.parent.GetChild(go.transform.GetSiblingIndex() - 1).gameObject.GetComponentInChildren<Button>().gameObject);
+			}
+            else
+            {
+				if (f_buttons.Count > 0)
+					EventSystem.current.SetSelectedGameObject(f_buttons.First());
+			}
+		}
 		GameObjectManager.unbind(go);
 		GameObject.Destroy(go);
 	}
@@ -585,7 +602,10 @@ public class ParamCompetenceSystem : FSystem
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 			Save(buildScenarioContent());
 		else
+		{
 			GameObjectManager.setGameObjectState(savingPanel, true);
+			EventSystem.current.SetSelectedGameObject(savingPanel.transform.Find("Panel").Find("Buttons").Find("CancelButton").gameObject);
+		}
 	}
 
 	public void showBriefingOverride(DataLevelBehaviour dataLevel)
@@ -595,7 +615,9 @@ public class ParamCompetenceSystem : FSystem
 		else
 		{
 			overridedBriefing = dataLevel;
+			GameObjectManager.setGameObjectState(compatibleLevelsPanel, false);
 			GameObjectManager.setGameObjectState(editBriefingPanel, true);
+			EventSystem.current.SetSelectedGameObject(editBriefingPanel.transform.Find("CloseButton").gameObject);
 			// remove all old briefing items
 			Transform viewportContent = editBriefingPanel.transform.Find("Scroll View").GetChild(0).GetChild(0);
 			while (viewportContent.childCount > 3) {

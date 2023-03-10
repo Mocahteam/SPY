@@ -8,6 +8,7 @@ using UnityEngine.Networking;
 using System;
 using System.Collections.Generic;
 using UnityEngine.Video;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Manage dialogs at the begining of the level
@@ -66,7 +67,7 @@ public class DialogSystem : FSystem
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
 		nDialog = 0;
 
-		string content = configureDialog();
+		string content = configureDialog(0);
 		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
 			verb = "openned",
@@ -83,7 +84,7 @@ public class DialogSystem : FSystem
 	{
 		nDialog++; // On incrémente le nombre de dialogue
 
-		string content = configureDialog();
+		string content = configureDialog(1);
 
 		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
 		{
@@ -102,10 +103,20 @@ public class DialogSystem : FSystem
 	{
 		nDialog--; // On décrémente le nombre de dialogue
 
-		string content = configureDialog();
+		string content = configureDialog(-1);
+
+		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+		{
+			verb = "interacted",
+			objectType = "briefing",
+			activityExtensions = new Dictionary<string, string>() {
+				{ "value", "previous" },
+				{ "content", content }
+			}
+		});
 	}
 
-	private string configureDialog()
+	private string configureDialog(int way)
     {
 		string dialogReturn = "";
 		// set text
@@ -183,12 +194,21 @@ public class DialogSystem : FSystem
 		setActiveNextButton(false);
 		setActivePrevButton(false);
 
+		// if way is > 0 means we pass to next dialog => process previous dialog first in order to put selected go on ok/next button
+		if (way > 0)
+			if (nDialog > 0)
+				setActivePrevButton(true);
+
 		if (nDialog + 1 < gameData.levelToLoad.overridedDialogs.Count)
 			setActiveNextButton(true);
-		if (nDialog > 0)
-			setActivePrevButton(true);
 		if (nDialog + 1 >= gameData.levelToLoad.overridedDialogs.Count)
 			setActiveOKButton(true);
+
+		// if way is < 0 means we pass to previous dialog => process previous dialog in second to put selected go on previous button
+		if (way < 0)
+			if (nDialog > 0)
+				setActivePrevButton(true);
+
 		return dialogReturn;
 	}
 
@@ -211,21 +231,30 @@ public class DialogSystem : FSystem
 	// Active ou non le bouton Ok du panel dialogue
 	public void setActiveOKButton(bool active)
 	{
-		GameObjectManager.setGameObjectState(dialogPanel.transform.Find("Buttons").Find("OKButton").gameObject, active);
+		GameObject okButtons = dialogPanel.transform.Find("Buttons").Find("OKButton").gameObject;
+		GameObjectManager.setGameObjectState(okButtons, active);
+		if (active)
+			EventSystem.current.SetSelectedGameObject(okButtons);
 	}
 
 
 	// Active ou non le bouton next du panel dialogue
 	public void setActiveNextButton(bool active)
 	{
-		GameObjectManager.setGameObjectState(dialogPanel.transform.Find("Buttons").Find("NextButton").gameObject, active);
+		GameObject nextButton = dialogPanel.transform.Find("Buttons").Find("NextButton").gameObject;
+		GameObjectManager.setGameObjectState(nextButton, active);
+		if (active)
+			EventSystem.current.SetSelectedGameObject(nextButton);
 	}
 
 
 	// Active ou non le bouton next du panel dialogue
 	public void setActivePrevButton(bool active)
 	{
-		dialogPanel.transform.Find("Buttons").Find("PrevButton").gameObject.GetComponent<Button>().interactable = active;
+		GameObject prevButton = dialogPanel.transform.Find("Buttons").Find("PrevButton").gameObject;
+		prevButton.GetComponent<Button>().interactable = active;
+		if (active)
+			EventSystem.current.SetSelectedGameObject(prevButton);
 	}
 
 
