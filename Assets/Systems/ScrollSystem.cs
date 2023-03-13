@@ -1,4 +1,5 @@
 using FYFY;
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,7 +8,14 @@ using UnityEngine.UI;
 // Bubble scroll event in editable panel
 public class ScrollSystem : FSystem
 {
+    private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
+
     public ScrollRect scrollRect;
+
+    public RectTransform autoScrollUp;
+    public RectTransform autoScrollDown;
+    public RectTransform autoScrollLeft;
+    public RectTransform autoScrollRight;
 
     private float verticalSpeed;
     private float horizontalSpeed;
@@ -31,6 +39,29 @@ public class ScrollSystem : FSystem
         {
             scrollRect.verticalScrollbar.value += verticalSpeed;
             scrollRect.horizontalScrollbar.value += horizontalSpeed;
+
+            // check if we overlap autoscrolls
+            if (f_dragging.Count > 0)
+            {
+                setVerticalSpeed(0);
+                setHorizontalSpeed(0);
+                // check up
+                Vector3 draggedInAutoScroll = autoScrollUp.InverseTransformPoint(f_dragging.First().transform.position);
+                if (Math.Abs(draggedInAutoScroll.x) < autoScrollUp.rect.width / 2 && 0 < draggedInAutoScroll.y && draggedInAutoScroll.y < autoScrollUp.rect.height)
+                    setVerticalSpeed(0.01f);
+                // check down
+                draggedInAutoScroll = autoScrollDown.InverseTransformPoint(f_dragging.First().transform.position);
+                if (Math.Abs(draggedInAutoScroll.x) < autoScrollDown.rect.width / 2 && 0 < draggedInAutoScroll.y && draggedInAutoScroll.y < autoScrollDown.rect.height)
+                    setVerticalSpeed(-0.01f);
+                // check left
+                draggedInAutoScroll = autoScrollLeft.InverseTransformPoint(f_dragging.First().transform.position);
+                if (0 < draggedInAutoScroll.x && draggedInAutoScroll.x < autoScrollLeft.rect.width && Math.Abs(draggedInAutoScroll.y) < autoScrollLeft.rect.height / 2)
+                    setHorizontalSpeed(-0.01f);
+                // check right
+                draggedInAutoScroll = autoScrollRight.InverseTransformPoint(f_dragging.First().transform.position);
+                if (0 < draggedInAutoScroll.x && draggedInAutoScroll.x < autoScrollRight.rect.width && Math.Abs(draggedInAutoScroll.y) < autoScrollRight.rect.height / 2)
+                    setHorizontalSpeed(0.01f);
+            }
         }
     }
 

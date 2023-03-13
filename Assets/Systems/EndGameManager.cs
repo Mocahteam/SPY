@@ -4,6 +4,7 @@ using System.Collections;
 using TMPro;
 using System.IO;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// This system check if the end of the level is reached and display end panel accordingly
@@ -107,6 +108,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
+			MainLoop.instance.StartCoroutine(delayNewButtonFocused(endPanel.transform.Find("ReloadState").gameObject));
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -155,8 +157,13 @@ public class EndGameManager : FSystem {
 			{
 				GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
 				verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez terminé ce scénario !";
-			} else
+				MainLoop.instance.StartCoroutine(delayNewButtonFocused(endPanel.transform.Find("MainMenu").gameObject));
+			}
+			else
+			{
 				verticalCanvas.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez gagné !";
+				MainLoop.instance.StartCoroutine(delayNewButtonFocused(endPanel.transform.Find("NextLevel").gameObject));
+			}
 			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
 			{
 				verb = "completed",
@@ -177,6 +184,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
+			MainLoop.instance.StartCoroutine(delayNewButtonFocused(endPanel.transform.Find("ReloadState").gameObject));
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -198,6 +206,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
+			MainLoop.instance.StartCoroutine(delayNewButtonFocused(endPanel.transform.Find("ReloadLevel").gameObject));
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -221,6 +230,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
+			MainLoop.instance.StartCoroutine(delayNewButtonFocused(endPanel.transform.Find("ReloadState").gameObject));
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -242,6 +252,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
+			MainLoop.instance.StartCoroutine(delayNewButtonFocused(endPanel.transform.Find("ReloadState").gameObject));
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -263,6 +274,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ReloadState").gameObject, false);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("NextLevel").gameObject, false);
+			MainLoop.instance.StartCoroutine(delayNewButtonFocused(endPanel.transform.Find("MainMenu").gameObject));
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -275,6 +287,12 @@ public class EndGameManager : FSystem {
 				}
 			}));
 		}
+	}
+
+	private IEnumerator delayNewButtonFocused(GameObject target)
+    {
+		yield return new WaitForSeconds(0.5f); // Wait other scripts define wanted selected button to override it
+		EventSystem.current.SetSelectedGameObject(target);
 	}
 
 	private IEnumerator delaySendStatement(GameObject src, object componentValues)

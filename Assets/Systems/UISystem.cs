@@ -6,6 +6,7 @@ using System.Collections;
 using FYFY_plugins.PointerManager;
 using System;
 using UnityEngine.EventSystems;
+using TMPro;
 
 /// <summary>
 /// Manage InGame UI (Play/Pause/Stop, reset, go back to main menu...)
@@ -29,6 +30,10 @@ public class UISystem : FSystem {
 	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 	private Family f_enabledinventoryBlocks = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+
+	private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
+
+	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	private GameData gameData;
 
@@ -78,7 +83,8 @@ public class UISystem : FSystem {
 		f_enabledinventoryBlocks.addEntryCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
 		f_enabledinventoryBlocks.addExitCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
 
-		f_newEnd.addEntryCallback(levelFinished);
+		f_newEnd.addEntryCallback(delegate { levelFinished(true); });
+		f_newEnd.addExitCallback(delegate { levelFinished(false); });
 
 		f_updateStartButton.addEntryCallback(delegate {
 			MainLoop.instance.StartCoroutine(updatePlayButton());
@@ -91,31 +97,31 @@ public class UISystem : FSystem {
 	}
 
 	// Lors d'une fin d'exécution de séquence, gére les différents éléments à ré-afficher ou si il faut sauvegarder la progression du joueur
-	private void levelFinished(GameObject go)
+	private void levelFinished(bool state)
 	{
 		// On réaffiche les différents panels pour la création de séquence
 		setExecutionView(false);
 
-		// En cas de fin de niveau
-		if (go.GetComponent<NewEnd>().endType == NewEnd.Win)
-		{
-			// Hide library panel
-			GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.gameObject, false);
-			// Hide menu panel
-			GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, false);
-		}
-		// for other end type, nothing to do more
+		// Hide library panel
+		GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.gameObject, !state);
+		// Hide menu panel
+		GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, !state);
 	}
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount)
 	{
-        //Active/désactive le menu echap si on appuit sur echap
-        if (Input.GetKeyDown(KeyCode.Escape))
+        //Active/désactive le menu echap si on appuit sur echap et que le focus n'est pas sur un input field et qu'on n'est pas en train de drag un element
+        if (Input.GetKeyDown(KeyCode.Escape) && (EventSystem.current.currentSelectedGameObject == null || (EventSystem.current.currentSelectedGameObject != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null)) && f_dragging.Count == 0)
 			setActiveEscapeMenu();
 
 		if (Input.GetKeyDown(KeyCode.Tab))
-			EventSystem.current.SetSelectedGameObject(buttonMenu);
+		{
+			if (buttonMenu.activeInHierarchy)
+				EventSystem.current.SetSelectedGameObject(buttonMenu);
+			else
+				EventSystem.current.SetSelectedGameObject(f_buttons.getAt(f_buttons.Count - 1));
+		}
 
 		// With touch device when the finger is up, pointerOver is not removed because OnPointerExit is not called
 		// then be sure to clear pointerOver and Tooltips
@@ -127,7 +133,7 @@ public class UISystem : FSystem {
 			&& touchUp > 0.25f)
 		{
 			foreach (GameObject pointed in f_pointerOver)
-				pointed.GetComponent<PointerSensitive>().OnPointerExit(null);//GameObjectManager.removeComponent<PointerOver>(pointed);
+				pointed.GetComponent<PointerSensitive>().OnPointerExit(null);
 			foreach (GameObject tooltip in f_tooltipContent)
 				tooltip.GetComponent<TooltipContent>().OnPointerExit(null);
 			touchUp = 0;

@@ -139,6 +139,16 @@ public class TitleScreenSystem : FSystem {
 		}
 	}
 
+	// see CloseSettings button in SettingsWindow in TitleScreen scene
+	public void closeSettingsAndSelectNextFocusedButton(GameObject settingsWindows)
+    {
+		GameObjectManager.setGameObjectState(settingsWindows, false);
+		if (sessionIdPanel.activeInHierarchy)
+			EventSystem.current.SetSelectedGameObject(sessionIdPanel.transform.Find("ShowSessionId").Find("Settings").gameObject);
+		else
+			EventSystem.current.SetSelectedGameObject(playButton.transform.parent.Find("Parameters").gameObject);
+    }
+
     protected override void onProcess(int familiesUpdateCount)
     {
 		// Get the currently selected UI element from the event system.

@@ -7,6 +7,7 @@ using System.Data;
 using System.Xml;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public static class EditingUtility
@@ -281,24 +282,36 @@ public static class EditingUtility
 			}
 		}
 
-		foreach (PointerSensitive pointerSensitive in copyGO.GetComponentsInChildren<PointerSensitive>(true))
-			pointerSensitive.enabled = isInteractable;
+		foreach (EventTrigger eventTrigger in copyGO.GetComponentsInChildren<EventTrigger>(true))
+			Component.Destroy(eventTrigger);
 
-		foreach (Selectable selectable in copyGO.GetComponentsInChildren<Selectable>(true))
-			selectable.interactable = isInteractable;
-
-		// On défini la couleur de l'action selon l'agent à qui appartiendra la script
+		// On défini la couleur de l'action selon l'agent à qui appartiendra le script
 		if (agentTag == "Drone") {
-			Color actionColor = MainLoop.instance.GetComponent<AgentColor>().droneAction;
 			foreach (BaseElement act in copyGO.GetComponentsInChildren<BaseElement>(true))
 			{
-				act.gameObject.GetComponent<Image>().color = actionColor;
-				if (act.GetComponent<ControlElement>() && agentTag == "Drone")
+				Selectable sel = act.GetComponent<Selectable>();
+				sel.interactable = false;
+				Color disabledColor = sel.colors.disabledColor;
+
+				if (act.GetComponent<ControlElement>())
 					foreach (Transform child in act.gameObject.transform)
 					{
 						Image childImg = child.GetComponent<Image>();
 						if (child.name != "3DEffect" && childImg != null)
-							childImg.color = actionColor;
+							childImg.color = disabledColor;
+					}
+			}
+			foreach (BaseCondition act in copyGO.GetComponentsInChildren<BaseCondition>(true))
+			{
+				Selectable sel = act.GetComponent<Selectable>();
+				sel.interactable = false;
+				Color disabledColor = sel.colors.disabledColor;
+				if (act.GetComponent<BaseOperator>())
+					foreach (Transform child in act.gameObject.transform)
+					{
+						Image childImg = child.GetComponent<Image>();
+						if (child.name != "3DEffect" && childImg != null)
+							childImg.color = disabledColor;
 					}
 			}
 		}

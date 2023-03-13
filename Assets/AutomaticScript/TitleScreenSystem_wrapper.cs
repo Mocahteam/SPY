@@ -43,6 +43,11 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "initGBLXAPI", null);
 	}
 
+	public void closeSettingsAndSelectNextFocusedButton(UnityEngine.GameObject settingsWindows)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "closeSettingsAndSelectNextFocusedButton", settingsWindows);
+	}
+
 	public void resetProgression(UnityEngine.GameObject go)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "resetProgression", go);

@@ -153,9 +153,14 @@ public class HistoryManager : FSystem
 		buttonAddEditableContainer.GetComponent<Button>().interactable = false;
 		buttonAddEditableContainer.GetComponent<TooltipContent>().text = "Ajout impossible après avoir\ncommencé à résoudre le niveau";
 
-		//Disable remove container buttons
+		//Disable remove container buttons and naming input field
 		foreach (GameObject trash in f_removeButton)
+		{
 			trash.GetComponent<Button>().interactable = false;
+			TMP_InputField name_input = trash.transform.parent.Find("ContainerName").GetComponent<TMP_InputField>();
+			name_input.interactable = false;
+			name_input.GetComponent<TooltipContent>().text = "Ce programme sera envoyé à " + name_input.text + ".<br><i>Vous ne pouvez pas le changer</i>.";
+		}
 	}
 
 

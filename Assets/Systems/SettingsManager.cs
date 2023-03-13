@@ -29,7 +29,6 @@ public class SettingsManager : FSystem {
 
 	protected override void onStart()
 	{
-		settingsPanel.Find("InteractionMode").GetComponentInChildren<TMP_Dropdown>().interactable = Application.platform == RuntimePlatform.WebGLPlayer;
 		settingsPanel.Find("Quality").GetComponentInChildren<TMP_Dropdown>().value = PlayerPrefs.GetInt("quality", 2);
 		settingsPanel.Find("InteractionMode").GetComponentInChildren<TMP_Dropdown>().value = PlayerPrefs.GetInt("interaction", Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 1 : 0);
 		settingsPanel.Find("UISize").GetComponentInChildren<TMP_Dropdown>().value = PlayerPrefs.GetInt("UISize", 0);

@@ -1,6 +1,7 @@
 using UnityEngine;
 using FYFY;
 using TMPro;
+using UnityEngine.UI;
 
 /// <summary>
 /// This manager enables to save the game state and to restore it on demand for instance when the player is detected by drones, he can reset the game on a state just before the previous execution
@@ -115,7 +116,11 @@ public class GameStateManager : FSystem {
             ForControl fc = f_forControls.getAt(i).GetComponent<ForControl>();
             fc.currentFor = save.rawSave.currentLoopParams[i].currentFor;
             fc.nbFor = save.rawSave.currentLoopParams[i].nbFor;
-            fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = fc.nbFor.ToString();
+            LinkedWith lw = fc.GetComponentInParent<ScrollRect>().transform.parent.GetComponentInChildren<LinkedWith>();
+            if (lw != null) // "for" of a drone in the executable panel
+                fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = fc.currentFor+" / "+fc.nbFor.ToString();
+            else // "for" in an editable panel
+                fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = fc.nbFor.ToString();
         }
 
         // If amount enabled, reduce by 1

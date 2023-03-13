@@ -31,12 +31,13 @@ public class EditableContainerSystem : FSystem
 {
 	// Les familles
 	private Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édités
-	private Family f_viewportContainerPointed = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver), typeof(ViewportContainer))); // Les containers contenant les containers éditables
 	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
 	private Family f_refreshSize = FamilyManager.getFamily(new AllOfComponents(typeof(RefreshSizeOfEditableContainer)));
 	private Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
 	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
 	private Family f_forceRemoveContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ForceRemoveContainer)));
+	private Family f_removeButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton")); // Les petites poubelles de chaque panneau d'édition
+	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 
 	// Les variables
 	private UIRootContainer containerSelected; // Le container selectionné
@@ -62,8 +63,7 @@ public class EditableContainerSystem : FSystem
 
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
 		f_gameLoaded.addEntryCallback(delegate {
-			GameObject gameDataGO = GameObject.Find("GameData");
-			if (gameDataGO != null && !gameDataGO.GetComponent<GameData>().dragDropEnabled)
+			if (!gameData.dragDropEnabled)
 			{
 				foreach (GameObject container in f_scriptContainer)
 				{
@@ -78,6 +78,36 @@ public class EditableContainerSystem : FSystem
 		f_forceRemoveContainer.addEntryCallback(delegate (GameObject go)
 		{
 			removeContainer(go, true);
+		});
+		f_newEnd.addEntryCallback(delegate
+		{
+			foreach (GameObject container in f_scriptContainer)
+			{
+				Transform header = container.transform.Find("Header");
+				header.Find("ResetButton").GetComponent<Button>().interactable = false;
+				header.Find("RemoveButton").GetComponent<Button>().interactable = false;
+				header.Find("ContainerName").GetComponent<TMP_InputField>().interactable = false;
+			}
+			addContainerButton.interactable = false;
+		});
+		f_newEnd.addExitCallback(delegate
+		{
+			foreach (GameObject container in f_scriptContainer)
+			{
+				Transform header = container.transform.Find("Header");
+				header.Find("ResetButton").GetComponent<Button>().interactable = true;
+
+				if (container.GetComponentInChildren<UIRootContainer>().editState != UIRootContainer.EditMode.Locked && gameData.actionsHistory == null) { 
+					Transform containerName = header.Find("ContainerName");
+					containerName.GetComponent<TMP_InputField>().interactable = true;
+					containerName.GetComponent<TooltipContent>().text = "Indiquez ici le nom du robot<br>à qui envoyer le programme.";
+					if (gameData.dragDropEnabled)
+						header.Find("RemoveButton").GetComponent<Button>().interactable = true;
+				}
+			}
+
+			if (gameData.actionsHistory == null && gameData.dragDropEnabled)
+				addContainerButton.interactable = true;
 		});
 	}
 
@@ -165,10 +195,11 @@ public class EditableContainerSystem : FSystem
 			// Si on est en mode Lock, on bloque l'édition et on interdit de supprimer le script
 			if (editState == UIRootContainer.EditMode.Locked)
 			{
-				cloneContainer.GetComponentInChildren<TMP_InputField>().interactable = false;
 				Transform header = cloneContainer.transform.Find("ScriptContainer").Find("Header");
 				header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-				header.Find("ContainerName").GetComponent<TooltipContent>().text = "Ce programme sera envoyé à " + name + ".<br><i>Vous ne pouvez pas le changer</i>.";
+				Transform containerName = header.Find("ContainerName");
+				containerName.GetComponent<TooltipContent>().text = "Ce programme sera envoyé à " + name + ".<br><i>Vous ne pouvez pas le changer</i>.";
+				containerName.GetComponent<TMP_InputField>().interactable = false;
 			}
 			cloneContainer.GetComponentInChildren<UIRootContainer>().editState = editState;
 
@@ -237,21 +268,18 @@ public class EditableContainerSystem : FSystem
 
 	// Empty the script window
 	// See ResetButton in ViewportScriptContainer prefab in editor
-	public void resetScriptContainer()
+	public void resetScriptContainer(GameObject scriptContainer)
 	{
-		// On récupére le container pointé lors du clic de la balayette
-		GameObject scriptContainerPointer = f_viewportContainerPointed.First().transform.Find("ScriptContainer").gameObject;
-
 		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
 		{
 			verb = "cleaned",
 			objectType = "script",
 			activityExtensions = new Dictionary<string, string>() {
-				{ "value", scriptContainerPointer.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text }
+				{ "value", scriptContainer.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text }
 			}
 		});
 
-		deleteContent(scriptContainerPointer);
+		deleteContent(scriptContainer);
 	}
 
 	// Remove the script window

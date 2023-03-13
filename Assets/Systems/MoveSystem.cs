@@ -2,6 +2,7 @@
 using FYFY;
 using FYFY_plugins.CollisionManager;
 using System.Collections;
+using FYFY_plugins.TriggerManager;
 
 /// <summary>
 /// Manage position and Direction component to move agent accordingly
@@ -11,6 +12,8 @@ public class MoveSystem : FSystem {
 	private Family f_movable = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
 	private Family f_drone = FamilyManager.getFamily(new NoneOfComponents(typeof(InCollision3D)), new AllOfComponents(typeof(Rigidbody)), new AnyOfTags("Drone"));
 	private Family f_forceMove = FamilyManager.getFamily(new AllOfComponents(typeof(ForceMoveAnimation)));
+	private Family f_end = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private Family f_robotcollision = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
 
 	public float turnSpeed;
 	public float moveSpeed;
@@ -28,6 +31,35 @@ public class MoveSystem : FSystem {
 		f_movable.addEntryCallback(initAgentDirection);
 		f_forceMove.addEntryCallback(onForceMove);
 		f_drone.addEntryCallback(resetVelocity);
+		f_end.addEntryCallback(onNewEnd);
+	}
+
+	private void onNewEnd(GameObject end)
+    {
+		// En cas de victoire
+		if (end.GetComponent<NewEnd>().endType == NewEnd.Win)
+		{
+			foreach (GameObject go in f_movable)
+			{
+				if (go.GetComponent<Animator>() && go.tag == "Player")
+					go.GetComponent<Animator>().SetInteger("Danse", Mathf.FloorToInt(Random.Range(1, 11)));
+			}
+		}
+		// en cas de détection
+		else if (end.GetComponent<NewEnd>().endType == NewEnd.Detected)
+		{
+			foreach (GameObject robot in f_robotcollision)
+			{
+				Triggered3D trigger = robot.GetComponent<Triggered3D>();
+				foreach (GameObject target in trigger.Targets)
+				{
+					//Check if the player collide with a detection cell
+					if (target.GetComponent<Detector>() != null)
+						robot.GetComponent<Animator>().SetTrigger("Death");
+				}
+			}
+		}
+		// for other end type, nothing to do more
 	}
 
 	private void initAgentDirection(GameObject agent)
@@ -134,4 +166,11 @@ public class MoveSystem : FSystem {
     {
 		go.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
     }
+
+	public  void idleAnimations()
+	{
+		foreach (GameObject go in f_movable)
+			if (go.GetComponent<Animator>() && go.tag == "Player")
+				go.GetComponent<Animator>().SetTrigger("Idle");
+	}
 }

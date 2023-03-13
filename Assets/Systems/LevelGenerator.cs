@@ -599,8 +599,10 @@ public class LevelGenerator : FSystem {
 
 		if (!gameData.dragDropEnabled)
 		{
-			Color disabledColor = MainLoop.instance.GetComponent<AgentColor>().droneAction;
-			obj.GetComponent<Image>().color = disabledColor;
+			Selectable sel = obj.GetComponent<Selectable>();
+			sel.interactable = false;
+			Color disabledColor = sel.colors.disabledColor;
+
 			if (obj.GetComponent<ControlElement>())
 				foreach (Transform child in obj.gameObject.transform)
 				{
@@ -696,8 +698,10 @@ public class LevelGenerator : FSystem {
 
 		if (!gameData.dragDropEnabled)
 		{
-			Color disabledColor = MainLoop.instance.GetComponent<AgentColor>().droneAction;
-			obj.GetComponent<Image>().color = disabledColor;
+			Selectable sel = obj.GetComponent<Selectable>();
+			sel.interactable = false;
+			Color disabledColor = sel.colors.disabledColor;
+
 			if (obj.GetComponent<BaseOperator>())
 				foreach (Transform child in obj.gameObject.transform)
 				{

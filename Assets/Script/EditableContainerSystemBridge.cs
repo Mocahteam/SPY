@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class EditableContainerSystemBridge : MonoBehaviour
 {
-	public void resetScriptContainer()
+	public void resetScriptContainer(GameObject scriptContainer)
 	{
-		EditableContainerSystem.instance.resetScriptContainer();
+		EditableContainerSystem.instance.resetScriptContainer(scriptContainer);
 	}
 
 	public void removeContainer()
