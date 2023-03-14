@@ -223,6 +223,28 @@ public class CameraSystem : FSystem {
 		UI_zoomValue = value;
 	}
 
+	public void submitRotate(float value)
+    {
+		rotateCamera(value, 0);
+	}
+	public void submitFrontBack(float value)
+	{
+		moveFrontBack(value);
+	}
+
+	public void submitLeftRight(float value)
+    {
+		moveLeftRight(value);
+	}
+
+	public void submitZoom(float value)
+    {
+		if (value > 0)
+			zoomOut(value);
+		else
+			zoomIn(-value);
+	}
+
 	private void rotateCamera(float x, float y)
 	{
 		mainCamera.transform.parent.parent.Rotate(Vector3.up, 90f * x * cameraRotationSpeed * Time.deltaTime);

@@ -11,7 +11,7 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void Start()
     {
-        GameObject tooltipGO = GameObject.Find("TooltipUI");
+        GameObject tooltipGO = GameObject.Find("TooltipUI_Pointer");
         if (!tooltipGO)
         {
             GameObjectManager.unbind(gameObject);

@@ -45,6 +45,26 @@ public class CameraSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "set_UIZoom", value);
 	}
 
+	public void submitRotate(System.Single value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "submitRotate", value);
+	}
+
+	public void submitFrontBack(System.Single value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "submitFrontBack", value);
+	}
+
+	public void submitLeftRight(System.Single value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "submitLeftRight", value);
+	}
+
+	public void submitZoom(System.Single value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "submitZoom", value);
+	}
+
 	public void focusOnAgent(UnityEngine.GameObject agent)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "focusOnAgent", agent);
