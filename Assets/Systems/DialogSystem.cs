@@ -308,11 +308,11 @@ public class DialogSystem : FSystem
 		img.gameObject.SetActive(false); // Force disabling image to compute panel height with only buttons and text
 		yield return new WaitForSeconds(0.1f); // take time to update UI
 		RectTransform rectParent = (RectTransform)img.transform.parent;
-		float maxHeight = Screen.height - (rectParent.sizeDelta.y + rectParent.anchoredPosition.y * 2); // compute available space
+		float maxHeight = Screen.height - (rectParent.sizeDelta.y + 20); // compute available space add 20 to include top and bottom margin
 		if (gameData.levelToLoad.overridedDialogs[nDialog].imgHeight != -1)
 			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, Math.Min(gameData.levelToLoad.overridedDialogs[nDialog].imgHeight, maxHeight));
 		else
 			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, Math.Min(img.GetComponent<LayoutElement>().preferredHeight, maxHeight));
-		GameObjectManager.setGameObjectState(img.gameObject, true); // Know we can show image
+		GameObjectManager.setGameObjectState(img.gameObject, true); // now we can show image
 	}
 }
