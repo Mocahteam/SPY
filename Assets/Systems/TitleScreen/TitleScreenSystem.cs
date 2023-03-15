@@ -21,6 +21,8 @@ public class TitleScreenSystem : FSystem {
 	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
 	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
 
+	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+
 	private GameData gameData;
 	private UserData userData;
 	public GameObject prefabGameData;
@@ -38,6 +40,7 @@ public class TitleScreenSystem : FSystem {
 	public GameObject deletableElement;
 	public TMP_InputField scenarioAbstract;
 	public GameObject detailsCampaign;
+	public GameObject virtualKeyboard;
 
 	private GameObject selectedScenario;
 	private Dictionary<string, WebGlScenario> defaultCampaigns; // List of levels for each default campaign
@@ -150,7 +153,15 @@ public class TitleScreenSystem : FSystem {
     }
 
     protected override void onProcess(int familiesUpdateCount)
-    {
+	{
+
+		if (Input.GetKeyDown(KeyCode.Tab))
+		{
+			if (virtualKeyboard.activeInHierarchy)
+				EventSystem.current.SetSelectedGameObject(virtualKeyboard.transform.Find("Panel").Find("Close").gameObject);
+			else
+				EventSystem.current.SetSelectedGameObject(f_buttons.getAt(f_buttons.Count - 1));
+		}
 		// Get the currently selected UI element from the event system.
 		GameObject selected = EventSystem.current.currentSelectedGameObject;
 		// Do nothing if there are none OR if the selected game object is not a child of a scroll rect OR if the selected game object is the same as it was last frame,

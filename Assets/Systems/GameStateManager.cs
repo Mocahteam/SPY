@@ -116,11 +116,15 @@ public class GameStateManager : FSystem {
             ForControl fc = f_forControls.getAt(i).GetComponent<ForControl>();
             fc.currentFor = save.rawSave.currentLoopParams[i].currentFor;
             fc.nbFor = save.rawSave.currentLoopParams[i].nbFor;
-            LinkedWith lw = fc.GetComponentInParent<ScrollRect>().transform.parent.GetComponentInChildren<LinkedWith>();
-            if (lw != null) // "for" of a drone in the executable panel
-                fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = fc.currentFor+" / "+fc.nbFor.ToString();
-            else // "for" in an editable panel
-                fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = fc.nbFor.ToString();
+            ScrollRect parentScrollRect = fc.GetComponentInParent<ScrollRect>();
+            if (parentScrollRect != null)
+            {
+                LinkedWith lw = parentScrollRect.transform.parent.GetComponentInChildren<LinkedWith>();
+                if (lw != null) // "for" of a drone in the executable panel
+                    fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = fc.currentFor + " / " + fc.nbFor.ToString();
+                else // "for" in an editable panel
+                    fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = fc.nbFor.ToString();
+            }
         }
 
         // If amount enabled, reduce by 1

@@ -6467,6 +6467,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 350375281}
     m_Modifications:
+    - target: {fileID: 788814607239806306, guid: c730839317428ec4aa62a94711b0357d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788814607239806306, guid: c730839317428ec4aa62a94711b0357d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1645587993}
+    - target: {fileID: 788814607239806306, guid: c730839317428ec4aa62a94711b0357d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: closeKeyboard
+      objectReference: {fileID: 0}
+    - target: {fileID: 788814607239806306, guid: c730839317428ec4aa62a94711b0357d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: VirtualKeyboardManager_wrapper, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 4388592723321896893, guid: c730839317428ec4aa62a94711b0357d,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -6490,7 +6510,7 @@ PrefabInstance:
     - target: {fileID: 4388592723321896893, guid: c730839317428ec4aa62a94711b0357d,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 230
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4388592723321896893, guid: c730839317428ec4aa62a94711b0357d,
         type: 3}
@@ -12062,7 +12082,7 @@ MonoBehaviour:
         m_MethodName: SetSelectedGameObject
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 1173974970}
+          m_ObjectArgument: {fileID: 342818488}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -16933,9 +16953,9 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.6839622, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 0.68235296, g: 1, b: 1, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -19171,9 +19191,9 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.6839622, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 0.68235296, g: 1, b: 1, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -25558,6 +25578,7 @@ MonoBehaviour:
     type: 3}
   scenarioAbstract: {fileID: 1685947151}
   detailsCampaign: {fileID: 1558813775}
+  virtualKeyboard: {fileID: 379255380}
 --- !u!114 &1645587986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27477,7 +27498,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 121.75
+  m_fontSize: 140
   m_fontSizeBase: 150
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -27662,9 +27683,9 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.4009434, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.68235296, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.4, g: 1, b: 1, a: 1}
+    m_SelectedColor: {r: 0.68235296, g: 1, b: 1, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -29070,7 +29091,7 @@ MonoBehaviour:
         m_MethodName: SetSelectedGameObject
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 1025426153}
+          m_ObjectArgument: {fileID: 724609811}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -30741,9 +30762,9 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.6839622, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 0.68235296, g: 1, b: 1, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1

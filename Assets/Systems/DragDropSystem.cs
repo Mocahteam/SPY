@@ -738,7 +738,7 @@ public class DragDropSystem : FSystem
 		Transform input = forBlock.transform.Find("Header");
 		int res;
 		bool success = Int32.TryParse(newValue, out res);
-		if (!success || (success && Int32.Parse(newValue) < 0))
+		if (!success || (success && Int32.Parse(newValue) <= 0))
 		{
 			input.GetComponentInChildren<TMP_InputField>().text = "0";
 			res = 0;

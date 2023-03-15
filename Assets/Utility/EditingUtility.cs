@@ -671,6 +671,7 @@ public static class EditingUtility
 
 	public static IEnumerator pulseItem(GameObject newItem)
 	{
+		newItem.transform.localScale = new Vector3(1, 1, 1);
 		float initScaleX = newItem.transform.localScale.x;
 		newItem.transform.localScale = new Vector3(newItem.transform.localScale.x + 0.3f, newItem.transform.localScale.y, newItem.transform.localScale.z);
 		while (newItem.transform.localScale.x > initScaleX)

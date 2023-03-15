@@ -18,6 +18,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject deletableElement;
 	public TMPro.TMP_InputField scenarioAbstract;
 	public UnityEngine.GameObject detailsCampaign;
+	public UnityEngine.GameObject virtualKeyboard;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -36,6 +37,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "deletableElement", deletableElement);
 		MainLoop.initAppropriateSystemField (system, "scenarioAbstract", scenarioAbstract);
 		MainLoop.initAppropriateSystemField (system, "detailsCampaign", detailsCampaign);
+		MainLoop.initAppropriateSystemField (system, "virtualKeyboard", virtualKeyboard);
 	}
 
 	public void initGBLXAPI()

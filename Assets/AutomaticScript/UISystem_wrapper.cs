@@ -14,6 +14,7 @@ public class UISystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject menuEchap;
 	public UnityEngine.GameObject canvas;
 	public UnityEngine.GameObject libraryPanel;
+	public UnityEngine.GameObject virtualKeyboard;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -28,6 +29,7 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "menuEchap", menuEchap);
 		MainLoop.initAppropriateSystemField (system, "canvas", canvas);
 		MainLoop.initAppropriateSystemField (system, "libraryPanel", libraryPanel);
+		MainLoop.initAppropriateSystemField (system, "virtualKeyboard", virtualKeyboard);
 	}
 
 	public void setExecutionView(System.Boolean value)
