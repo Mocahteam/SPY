@@ -9,6 +9,6 @@ To get out of the maze, the player has to program the robot to avoid obstacles. 
  
 In sum players have to observe and model the simulation (abstraction), decompose their strategy in sub-steps (decomposition), determine the best solution (evaluation), plan the actions to perform (algorithmic thinking) and reuse and adapt previous solutions on new problems (generalization).
 
-You can play the game at: [https://webia.lip6.fr/~muratetm/SPY/](https://webia.lip6.fr/~muratetm/SPY/)
+You can play the game at: [https://spy.lip6.fr/](https://spy.lip6.fr/)
 
 SPY is developed with Unity and the [FYFY](https://github.com/Mocahteam/FYFY) library.
