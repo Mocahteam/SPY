@@ -159,7 +159,7 @@ public class DialogSystem : FSystem
 		if (gameData.levelToLoad.overridedDialogs[nDialog].sound != null)
 		{
 			if (gameData.levelToLoad.overridedDialogs[nDialog].sound.ToLower().StartsWith("http"))
-				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), gameData.levelToLoad.overridedDialogs[nDialog].sound));
+				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, gameData.levelToLoad.overridedDialogs[nDialog].sound));
 			else
 			{
 				if (Application.platform == RuntimePlatform.WebGLPlayer)
@@ -280,9 +280,6 @@ public class DialogSystem : FSystem
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			Debug.Log(www.error);
-			yield return new WaitForSeconds(0.5f);
-			// try again
-			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, path));
 		}
 		else
 		{
@@ -300,9 +297,6 @@ public class DialogSystem : FSystem
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			Debug.Log(www.error);
-			yield return new WaitForSeconds(0.5f);
-			// try again
-			MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, path));
 		}
 		else
 		{
