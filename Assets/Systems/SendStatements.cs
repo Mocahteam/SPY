@@ -101,7 +101,7 @@ public class SendStatements : FSystem {
     {
         string progession = JsonConvert.SerializeObject(userData.progression);
         string highScore = JsonConvert.SerializeObject(userData.highScore);
-        Debug.Log(progession + "_" + highScore);
+        Debug.Log(GBL_Interface.playerName+"_"+ userData.schoolClass + "_"+progession + "_" + highScore);
         UnityWebRequest www = UnityWebRequest.Post("https://spy.lip6.fr/ServerREST_LIP6/", "{\"idSession\":\"" + GBL_Interface.playerName + "\",\"class\":\""+userData.schoolClass+"\",\"isTeacher\":\""+(userData.isTeacher ? 1 : 0)+"\",\"progression\":" + progession + ",\"highScore\":" + highScore + "}");
 
         yield return www.SendWebRequest();

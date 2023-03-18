@@ -12,6 +12,8 @@ public class TooltipKeyboardSystem : FSystem {
     private Family f_tooltips = FamilyManager.getFamily(new AllOfComponents(typeof(TooltipContent)));
 
 	public Tooltip tooltipUI_Keyboard; // Be sure in inspector that this component is disabled to avoid Update process
+    public GameObject tooltipUI_Pointer;
+
     public EventSystem eventSystem;
 
     private GameObject lastSelected;
@@ -24,6 +26,8 @@ public class TooltipKeyboardSystem : FSystem {
             if (eventSystem.currentSelectedGameObject == go)
             {
                 if (go != lastSelected) {
+                    if (tooltipUI_Pointer.activeInHierarchy)
+                        tooltipUI_Pointer.GetComponent<Tooltip>().HideTooltip();
                     tooltipUI_Keyboard.ShowTooltip(go.GetComponent<TooltipContent>().text);
                     // recaller la position du tooltip pour qu'il soit dirigé vers le centre de l'écran
                     RectTransform backgroundRectTransform = tooltipUI_Keyboard.transform as RectTransform;

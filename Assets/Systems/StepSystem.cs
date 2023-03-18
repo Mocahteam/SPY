@@ -63,11 +63,11 @@ public class StepSystem : FSystem {
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
         //Organize each steps
-        if (f_newEnd.Count == 0 && (playerHasNextAction() || timeStepCpt > 0 || newStepAskedByPlayer))
+        if (f_newEnd.Count == 0 && playerHasNextAction()) // pas de fin et encore au moins une action à exécuter
         {
-            //activate step
-            if (timeStepCpt <= 0 || newStepAskedByPlayer)
+            if (timeStepCpt <= 0 || newStepAskedByPlayer) // temps d'un pas de simulation écoulé ou nouvelle action demandée par le joueur
             {
+                // new step
                 GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
                 gameData.totalStep++;
                 nbStep++;
@@ -77,13 +77,18 @@ public class StepSystem : FSystem {
                     Pause = true;
                 }
             }
-            else
+            else // temps d'un pas non encore écoulé et pas d'action demandée par le joueur
                 timeStepCpt -= Time.deltaTime;
         }
-        else // newEnd_f.Count > 0 || (!playerHasNextAction && timeStep CPt <=0)
+        else // fin détectée ou plus d'action à exécuter
         {
-            MainLoop.instance.StartCoroutine(delayCheckEnd());
-            Pause = true;
+            if (timeStepCpt > 0)
+                timeStepCpt -= Time.deltaTime;
+            else
+            {
+                MainLoop.instance.StartCoroutine(delayCheckEnd());
+                Pause = true;
+            }
         }
     }
 

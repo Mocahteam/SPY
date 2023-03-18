@@ -19,6 +19,8 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public TMPro.TMP_InputField scenarioAbstract;
 	public UnityEngine.GameObject detailsCampaign;
 	public UnityEngine.GameObject virtualKeyboard;
+	public TMPro.TMP_Text progress;
+	public TMPro.TMP_Text logs;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -38,6 +40,8 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "scenarioAbstract", scenarioAbstract);
 		MainLoop.initAppropriateSystemField (system, "detailsCampaign", detailsCampaign);
 		MainLoop.initAppropriateSystemField (system, "virtualKeyboard", virtualKeyboard);
+		MainLoop.initAppropriateSystemField (system, "progress", progress);
+		MainLoop.initAppropriateSystemField (system, "logs", logs);
 	}
 
 	public void initGBLXAPI()
@@ -58,6 +62,11 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public void GetProgression(TMPro.TMP_InputField idSession)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "GetProgression", idSession);
+	}
+
+	public void forceLaunch()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "forceLaunch", null);
 	}
 
 	public void updateScenarioContent()

@@ -41,6 +41,8 @@ public class TitleScreenSystem : FSystem {
 	public TMP_InputField scenarioAbstract;
 	public GameObject detailsCampaign;
 	public GameObject virtualKeyboard;
+	public TMP_Text progress;
+	public TMP_Text logs;
 
 	private GameObject selectedScenario;
 	private Dictionary<string, WebGlScenario> defaultCampaigns; // List of levels for each default campaign
@@ -81,22 +83,17 @@ public class TitleScreenSystem : FSystem {
 
 	protected override void onStart()
 	{
-		if (!GameObject.Find("GameData"))
+		GameObject go = GameObject.Find("GameData");
+		if (go == null)
 		{
-			GameObject go = UnityEngine.Object.Instantiate(prefabGameData);
+			go = UnityEngine.Object.Instantiate(prefabGameData);
 			go.name = "GameData";
-			gameData = go.GetComponent<GameData>();
-			userData = go.GetComponent<UserData>();
-			if (webGL_askToEnableSendSystem)
-				gameData.sendStatementEnabled = true;
-			GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
 		}
-		else
-		{
-			GameObject go = GameObject.Find("GameData");
-			gameData = go.GetComponent<GameData>();
-			userData = go.GetComponent<UserData>();
-		}
+		gameData = go.GetComponent<GameData>();
+		userData = go.GetComponent<UserData>();
+		if (webGL_askToEnableSendSystem)
+			gameData.sendStatementEnabled = true;
+		GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
 
 		EventSystem.current.SetSelectedGameObject(playButton);
 
@@ -113,8 +110,8 @@ public class TitleScreenSystem : FSystem {
 		if (!GameObject.Find("GBLXAPI"))	
 			initGBLXAPI();
 		else
-			foreach (GameObject go in f_sessionId)
-				go.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
+			foreach (GameObject sID in f_sessionId)
+				sID.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
 	}
 
 	public void initGBLXAPI()
@@ -204,8 +201,6 @@ public class TitleScreenSystem : FSystem {
     // See Ok button in SetClass panel in TitleScreen scene
     public void resetProgression(GameObject go)
     {
-		PlayerPrefs.SetString("playerName", GBL_Interface.playerName);
-		PlayerPrefs.Save();
 		// clear progression
 		userData.progression = new Dictionary<string, int>();
 		userData.highScore = new Dictionary<string, int>();
@@ -217,7 +212,7 @@ public class TitleScreenSystem : FSystem {
 	// See Ok button in SetSessionId panel in TitleScreen scene
 	public void GetProgression(TMP_InputField idSession)
     {
-		MainLoop.instance.StartCoroutine(GetProgressionWebRequest(idSession.text));
+		MainLoop.instance.StartCoroutine(GetProgressionWebRequest(idSession.text.ToUpper()));
 	}
 
 	private IEnumerator GetProgressionWebRequest(string idSession)
@@ -228,38 +223,43 @@ public class TitleScreenSystem : FSystem {
 		if (www.result != UnityWebRequest.Result.Success || www.downloadHandler.text == "")
 		{
 			Debug.LogWarning(www.error);
-			if (!PlayerPrefs.HasKey("playerName"))
-			{
-				PlayerPrefs.SetString("playerName", GBL_Interface.playerName);
-				PlayerPrefs.Save();
-			}
-			else
-			{
-				GBL_Interface.playerName = PlayerPrefs.GetString("playerName");
-				GBL_Interface.userUUID = GBL_Interface.playerName;
-			}
-
-			userData.progression = null;
-			userData.highScore = null;
-
 			localCallback = null;
 			localCallback += delegate {
 				GameObjectManager.setGameObjectState(sessionIdPanel, true);
 				GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("ShowSessionId").gameObject, false);
 				GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("SetSessionId").gameObject, true);
 			};
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Impossible de récupérer les données de progression pour " + idSession + ". Les données locales vont être utilisées.\n\nSouhaites-tu essayer d'entrer un nouveau code ?", OkButton = "Oui", CancelButton = "Non", call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Impossible de récupérer les données de progression pour \"" + idSession + "\".", OkButton = "Réessayer", CancelButton = "", call = localCallback });
 		}
 		else
 		{
-			string progression = www.downloadHandler.text.Substring(0, www.downloadHandler.text.IndexOf("#SEP#"));
-			string highScore = www.downloadHandler.text.Substring(www.downloadHandler.text.IndexOf("#SEP#")+5);
-			userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(progression);
-			userData.highScore = JsonConvert.DeserializeObject<Dictionary<string, int>>(highScore);
-			GBL_Interface.playerName = idSession;
-			GBL_Interface.userUUID = idSession;
-			PlayerPrefs.SetString("playerName", idSession);
-			PlayerPrefs.Save();
+			string[] stringSeparators = new string[] { "#SEP#" };
+			string[] tokens = www.downloadHandler.text.Split(stringSeparators, StringSplitOptions.None);
+			Debug.Log(www.downloadHandler.text);
+			if (tokens.Length != 4)
+			{
+				Debug.LogWarning(www.error);
+				localCallback = null;
+				localCallback += delegate {
+					GameObjectManager.setGameObjectState(sessionIdPanel, true);
+					GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("ShowSessionId").gameObject, false);
+					GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("SetSessionId").gameObject, true);
+				};
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Données de progression pour la session \"" + idSession + "\" mal formées.", OkButton = "Annuler", CancelButton = "", call = localCallback });
+			}
+			else
+			{
+				userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[0]);
+				if (userData.progression == null)
+					userData.progression = new Dictionary<string, int>();
+				userData.highScore = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[1]);
+				if (userData.highScore == null)
+					userData.highScore = new Dictionary<string, int>();
+				userData.schoolClass = tokens[2];
+				userData.isTeacher = tokens[3] == "1";
+				GBL_Interface.playerName = idSession;
+				GBL_Interface.userUUID = idSession;
+			}
 		}
 		foreach (GameObject go in f_sessionId)
 			go.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
@@ -269,6 +269,7 @@ public class TitleScreenSystem : FSystem {
 	{
 		// Enable Loading screen
 		GameObjectManager.setGameObjectState(loadingScreen, true);
+		logs.text = "";
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
 			ShowHtmlButtons();
@@ -311,7 +312,8 @@ public class TitleScreenSystem : FSystem {
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + Application.streamingAssetsPath + "/WebGlData/ScenarioList.json : " + www.error, OkButton = "", CancelButton = "OK", call = localCallback });
+			localCallback += delegate { MainLoop.instance.StartCoroutine(GetScenarioWebRequest()); };
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + Application.streamingAssetsPath + "/WebGlData/ScenarioList.json : " + www.error, OkButton = "Réessayer", CancelButton = "Annuler", call = localCallback });
 		}
 		else
 		{
@@ -336,7 +338,8 @@ public class TitleScreenSystem : FSystem {
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + Application.streamingAssetsPath + "/WebGlData/LevelsList.json : " + www.error, OkButton = "", CancelButton = "OK", call = localCallback });
+			localCallback += delegate { MainLoop.instance.StartCoroutine(GetLevelsWebRequest()); };
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + Application.streamingAssetsPath + "/WebGlData/LevelsList.json : " + www.error, OkButton = "Réessayer", CancelButton = "Annuler", call = localCallback });
 		}
 		else
 		{
@@ -352,7 +355,7 @@ public class TitleScreenSystem : FSystem {
 	private IEnumerator exploreLevelsAndScenarios(string path)
 	{
 		// try to load all child files
-		string[] files = Directory.GetFiles(path);
+		string[] files = Directory.GetFiles(path,"*.xml");
 		webGL_levelToLoad += files.Length;
 		foreach (string fileName in files)
 		{
@@ -373,17 +376,30 @@ public class TitleScreenSystem : FSystem {
 		UnityWebRequest www = UnityWebRequest.Get(uri);
 		yield return www.SendWebRequest();
 
-		webGL_levelLoaded++;
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + uri + " : " + www.error, OkButton = "", CancelButton = "OK", call = localCallback });
+			logs.text = "<color=\"red\">(Echec) " + uri + "</color>\n"+ logs.text;
+			yield return new WaitForSeconds(0.5f);
+			if (webGL_levelLoaded < webGL_levelToLoad) // will be true if player force launch
+			{
+				logs.text = "<color=\"orange\">(Nouvel essai) " + uri + "</color>\n" + logs.text;
+				MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(uri));
+			}
+			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
 		}
 		else
 		{
+			webGL_levelLoaded++;
+			progress.text = Mathf.Floor(((float)webGL_levelLoaded / webGL_levelToLoad) * 100) + "%";
+			logs.text = "<color=\"green\">(Ok) " + uri + "</color>\n"+ logs.text;
 			string xmlContent = www.downloadHandler.text;
 			LoadLevelOrScenario(uri, xmlContent);
 		}
+	}
+
+	public void forceLaunch()
+    {
+		webGL_levelLoaded = webGL_levelToLoad;
 	}
 
 	private void LoadLevelOrScenario(string uri, string xmlContent)
@@ -438,7 +454,7 @@ public class TitleScreenSystem : FSystem {
 
 				scenario.levels.Add(dl);
 			}
-		defaultCampaigns[Path.GetFileName(uri)] = scenario;
+		defaultCampaigns[Path.GetFileNameWithoutExtension(uri)] = scenario;
 	}
 
 	private class JavaScriptData

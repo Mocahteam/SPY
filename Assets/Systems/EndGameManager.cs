@@ -5,6 +5,7 @@ using TMPro;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 /// <summary>
 /// This system check if the end of the level is reached and display end panel accordingly
@@ -293,6 +294,7 @@ public class EndGameManager : FSystem {
     {
 		yield return new WaitForSeconds(0.5f); // Wait other scripts define wanted selected button to override it
 		EventSystem.current.SetSelectedGameObject(target);
+		LayoutRebuilder.ForceRebuildLayoutImmediate(target.transform.parent.parent as RectTransform);
 	}
 
 	private IEnumerator delaySendStatement(GameObject src, object componentValues)

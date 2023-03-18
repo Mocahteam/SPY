@@ -99,7 +99,8 @@ public class ParamCompetenceSystem : FSystem
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + referentialsPath + " : " + www.error, OkButton = "", CancelButton = "OK", call = localCallback });
+			localCallback += delegate { MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath)); };
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + referentialsPath + " : " + www.error, OkButton = "Réessayer", CancelButton = "Annuler", call = localCallback });
 		}
 		else
 		{

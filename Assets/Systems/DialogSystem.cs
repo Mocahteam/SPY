@@ -280,6 +280,9 @@ public class DialogSystem : FSystem
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			Debug.Log(www.error);
+			yield return new WaitForSeconds(0.5f);
+			// try again
+			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, path));
 		}
 		else
 		{
@@ -295,7 +298,12 @@ public class DialogSystem : FSystem
 		yield return www.SendWebRequest();
 
 		if (www.result != UnityWebRequest.Result.Success)
+		{
 			Debug.Log(www.error);
+			yield return new WaitForSeconds(0.5f);
+			// try again
+			MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, path));
+		}
 		else
 		{
 			audio.clip = DownloadHandlerAudioClip.GetContent(www);
