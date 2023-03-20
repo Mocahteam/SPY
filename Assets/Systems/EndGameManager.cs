@@ -146,7 +146,6 @@ public class EndGameManager : FSystem {
 			if (ud.progression != null && (!ud.progression.ContainsKey(gameData.scenarioName) || ud.progression[gameData.scenarioName] < currentLevelNum + 1))
 			{
 				ud.progression[gameData.scenarioName] = currentLevelNum + 1;
-				GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
 			}
 
 			if (PlayerPrefs.GetInt(gameData.scenarioName, 0) < currentLevelNum + 1)
@@ -301,6 +300,9 @@ public class EndGameManager : FSystem {
     {
 		yield return null;
 		GameObjectManager.addComponent<ActionPerformedForLRS>(src, componentValues);
+		yield return null;
+		yield return null;
+		GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
 	}
 
 	// Gére le nombre d'étoile à afficher selon le score obtenue

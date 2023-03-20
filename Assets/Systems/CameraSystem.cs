@@ -17,7 +17,6 @@ public class CameraSystem : FSystem {
 	private Transform targetAgent; // if defined camera follow this target
 	private Transform lastAgentFocused = null;
 	private Vector3 targetPos; // if defined camera focus in this position (grid definition)
-	private float smoothSpeed = 0.125f;
 	private Vector3 offset = new Vector3(0, 2f, 0);
 
 	private Camera mainCamera;
@@ -318,9 +317,12 @@ public class CameraSystem : FSystem {
 
 	private IEnumerator travelingOnAgent()
     {
+		float distance = 0;
+		if (targetAgent != null)
+			distance = Vector3.Distance(mainCamera.transform.parent.parent.position, targetAgent.position + offset);
 		while (targetAgent != null && mainCamera.transform.parent.parent.position != targetAgent.position + offset)
 		{
-			mainCamera.transform.parent.parent.position = Vector3.MoveTowards(mainCamera.transform.parent.parent.position, targetAgent.position + offset, smoothSpeed);
+			mainCamera.transform.parent.parent.position = Vector3.MoveTowards(mainCamera.transform.parent.parent.position, targetAgent.position + offset, distance*Time.deltaTime);
 			if (!mainCamera.orthographic)
 				mainCamera.transform.LookAt(mainCamera.transform.parent.parent);
 			yield return null;
@@ -329,9 +331,10 @@ public class CameraSystem : FSystem {
 
 	private IEnumerator travelingOnPos()
 	{
+		float distance = Vector3.Distance(mainCamera.transform.parent.parent.localPosition, targetPos);
 		while (targetAgent == null && mainCamera.transform.parent.parent.localPosition != targetPos)
 		{
-			mainCamera.transform.parent.parent.localPosition = Vector3.MoveTowards(mainCamera.transform.parent.parent.localPosition, targetPos, smoothSpeed);
+			mainCamera.transform.parent.parent.localPosition = Vector3.MoveTowards(mainCamera.transform.parent.parent.localPosition, targetPos, distance*Time.deltaTime);
 			yield return null;
 		}
 	}

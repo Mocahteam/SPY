@@ -166,7 +166,12 @@ namespace DIG.GBLXAPI.Internal
 			if (endPoint.states[idState].success)
 				Debug.Log("Statements with idState " + idState + " sent with success");
 			else
+			{
 				Debug.LogWarning("Statements with idState " + idState + " failed with error: " + endPoint.states[idState].response);
+				Debug.LogWarning("Try again...");
+				yield return new WaitForSeconds(0.5f);
+				StartCoroutine(SendStatementCoroutine(endPoint, queuedStatements));
+			}
 
 			// Client callback with result
 			foreach (QueuedStatement qs in queuedStatements)

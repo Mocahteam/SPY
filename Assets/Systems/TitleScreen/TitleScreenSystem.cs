@@ -51,8 +51,8 @@ public class TitleScreenSystem : FSystem {
 	private GameObject lastSelected;
 
 	private string loadLevelWithURL = "";
-	private int webGL_levelLoaded = 0;
-	private int webGL_levelToLoad = 0;
+	private int webGL_fileLoaded = 0;
+	private int webGL_fileToLoad = 0;
 	private bool webGL_askToEnableSendSystem = false;
 
 	[DllImport("__Internal")]
@@ -212,17 +212,34 @@ public class TitleScreenSystem : FSystem {
 	// See Ok button in SetSessionId panel in TitleScreen scene
 	public void GetProgression(TMP_InputField idSession)
     {
+		webGL_fileToLoad = 1;
+		webGL_fileLoaded = 0;
 		MainLoop.instance.StartCoroutine(GetProgressionWebRequest(idSession.text.ToUpper()));
+		MainLoop.instance.StartCoroutine(WaitLoadingData());
 	}
 
 	private IEnumerator GetProgressionWebRequest(string idSession)
     {
 		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession="+idSession);
-
+		GameObjectManager.setGameObjectState(loadingScreen, true);
+		logs.text = "";
+		progress.text = "0%";
 		yield return www.SendWebRequest();
-		if (www.result != UnityWebRequest.Result.Success || www.downloadHandler.text == "")
+
+		if (www.result != UnityWebRequest.Result.Success)
 		{
-			Debug.LogWarning(www.error);
+			logs.text = "<color=\"red\">Echec de récupération des données de la session \"" + idSession + "\"</color>\n" + logs.text;
+			yield return new WaitForSeconds(0.5f);
+			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
+			{
+				logs.text = "<color=\"orange\">Nouvelle tentative de récupération des données de la session \"" + idSession + "\"</color>\n" + logs.text;
+				MainLoop.instance.StartCoroutine(GetProgressionWebRequest(idSession));
+			}
+			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
+		}
+		else if (www.downloadHandler.text == "")
+		{
+			webGL_fileLoaded++;
 			localCallback = null;
 			localCallback += delegate {
 				GameObjectManager.setGameObjectState(sessionIdPanel, true);
@@ -233,6 +250,7 @@ public class TitleScreenSystem : FSystem {
 		}
 		else
 		{
+			webGL_fileLoaded++;
 			string[] stringSeparators = new string[] { "#SEP#" };
 			string[] tokens = www.downloadHandler.text.Split(stringSeparators, StringSplitOptions.None);
 			Debug.Log(www.downloadHandler.text);
@@ -245,10 +263,12 @@ public class TitleScreenSystem : FSystem {
 					GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("ShowSessionId").gameObject, false);
 					GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("SetSessionId").gameObject, true);
 				};
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Données de progression pour la session \"" + idSession + "\" mal formées.", OkButton = "Annuler", CancelButton = "", call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Session corrompue, veuillez entrer un nouveau code de session.", OkButton = "Réessayer", CancelButton = "", call = localCallback });
 			}
 			else
 			{
+				localCallback = null;
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Session \"" + idSession + "\" chargée avec succès.", OkButton = "", CancelButton = "Ok", call = localCallback });
 				userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[0]);
 				if (userData.progression == null)
 					userData.progression = new Dictionary<string, int>();
@@ -260,9 +280,9 @@ public class TitleScreenSystem : FSystem {
 				GBL_Interface.playerName = idSession;
 				GBL_Interface.userUUID = idSession;
 			}
+			foreach (GameObject go in f_sessionId)
+				go.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
 		}
-		foreach (GameObject go in f_sessionId)
-			go.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
 	}
 
 	private IEnumerator GetScenariosAndLevels()
@@ -270,11 +290,15 @@ public class TitleScreenSystem : FSystem {
 		// Enable Loading screen
 		GameObjectManager.setGameObjectState(loadingScreen, true);
 		logs.text = "";
+		progress.text = "0%";
+		webGL_fileLoaded = 0;
+		webGL_fileToLoad = 0;
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
 			ShowHtmlButtons();
 			GameObjectManager.setGameObjectState(quitButton, false);
 			// Load scenario and levels from server
+			webGL_fileToLoad += 2;
 			MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
 			MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
 		}
@@ -290,12 +314,12 @@ public class TitleScreenSystem : FSystem {
 		yield return new WaitForSeconds(0.5f);
 
 		// wait level loading
-		MainLoop.instance.StartCoroutine(WaitLoadingScenariosAndLevels());
+		MainLoop.instance.StartCoroutine(WaitLoadingData());
 	}
 
-	private IEnumerator WaitLoadingScenariosAndLevels()
+	private IEnumerator WaitLoadingData()
     {
-		while (webGL_levelLoaded < webGL_levelToLoad)
+		while (webGL_fileLoaded < webGL_fileToLoad)
 			yield return null;
 		// Now, if require, we can load requested level by URL
 		if (loadLevelWithURL != "")
@@ -306,17 +330,24 @@ public class TitleScreenSystem : FSystem {
 
 	private IEnumerator GetScenarioWebRequest()
 	{
-		UnityWebRequest www = UnityWebRequest.Get(new Uri(Application.streamingAssetsPath + "/WebGlData/ScenarioList.json").AbsoluteUri);
+		string uri = new Uri(Application.streamingAssetsPath + "/WebGlData/ScenarioList.json").AbsoluteUri;
+		UnityWebRequest www = UnityWebRequest.Get(uri);
 		yield return www.SendWebRequest();
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			localCallback = null;
-			localCallback += delegate { MainLoop.instance.StartCoroutine(GetScenarioWebRequest()); };
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + Application.streamingAssetsPath + "/WebGlData/ScenarioList.json : " + www.error, OkButton = "Réessayer", CancelButton = "Annuler", call = localCallback });
+			logs.text = "<color=\"red\">(Echec) " + uri + "</color>\n" + logs.text;
+			yield return new WaitForSeconds(0.5f);
+			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
+			{
+				logs.text = "<color=\"orange\">(Nouvel essai) " + uri + "</color>\n" + logs.text;
+				MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
+			}
+			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
 		}
 		else
 		{
+			webGL_fileLoaded++;
 			string scenarioJson = www.downloadHandler.text;
 			WebGlScenarioList scenarioListRaw = JsonConvert.DeserializeObject<WebGlScenarioList>(scenarioJson);
 			foreach (WebGlScenario scenarioRaw in scenarioListRaw.scenarios)
@@ -332,23 +363,30 @@ public class TitleScreenSystem : FSystem {
 
 	private IEnumerator GetLevelsWebRequest()
 	{
-		UnityWebRequest www = UnityWebRequest.Get(new Uri(Application.streamingAssetsPath + "/WebGlData/LevelsList.json").AbsoluteUri);
+		string uri = new Uri(Application.streamingAssetsPath + "/WebGlData/LevelsList.json").AbsoluteUri;
+		UnityWebRequest www = UnityWebRequest.Get(uri);
 		yield return www.SendWebRequest();
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			localCallback = null;
-			localCallback += delegate { MainLoop.instance.StartCoroutine(GetLevelsWebRequest()); };
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur lors de l'accès au document " + Application.streamingAssetsPath + "/WebGlData/LevelsList.json : " + www.error, OkButton = "Réessayer", CancelButton = "Annuler", call = localCallback });
+			logs.text = "<color=\"red\">(Echec) " + uri + "</color>\n" + logs.text;
+			yield return new WaitForSeconds(0.5f);
+			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
+			{
+				logs.text = "<color=\"orange\">(Nouvel essai) " + uri + "</color>\n" + logs.text;
+				MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
+			}
+			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
 		}
 		else
 		{
+			webGL_fileLoaded++;
 			string levelsJson = www.downloadHandler.text;
 			WebGlScenario levelsListRaw = JsonUtility.FromJson<WebGlScenario>(levelsJson);
+			webGL_fileToLoad += levelsListRaw.levels.Count;
 			// try to load all levels
 			foreach (DataLevel levelRaw in levelsListRaw.levels)
 				MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(new Uri(Application.streamingAssetsPath + "/" + levelRaw.src).AbsoluteUri));
-			webGL_levelToLoad = levelsListRaw.levels.Count;
 		}
 	}
 
@@ -356,7 +394,7 @@ public class TitleScreenSystem : FSystem {
 	{
 		// try to load all child files
 		string[] files = Directory.GetFiles(path,"*.xml");
-		webGL_levelToLoad += files.Length;
+		webGL_fileToLoad += files.Length;
 		foreach (string fileName in files)
 		{
 			yield return null;
@@ -380,7 +418,7 @@ public class TitleScreenSystem : FSystem {
 		{
 			logs.text = "<color=\"red\">(Echec) " + uri + "</color>\n"+ logs.text;
 			yield return new WaitForSeconds(0.5f);
-			if (webGL_levelLoaded < webGL_levelToLoad) // will be true if player force launch
+			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
 			{
 				logs.text = "<color=\"orange\">(Nouvel essai) " + uri + "</color>\n" + logs.text;
 				MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(uri));
@@ -389,8 +427,8 @@ public class TitleScreenSystem : FSystem {
 		}
 		else
 		{
-			webGL_levelLoaded++;
-			progress.text = Mathf.Floor(((float)webGL_levelLoaded / webGL_levelToLoad) * 100) + "%";
+			webGL_fileLoaded++;
+			progress.text = Mathf.Floor(((float)webGL_fileLoaded / webGL_fileToLoad) * 100) + "%";
 			logs.text = "<color=\"green\">(Ok) " + uri + "</color>\n"+ logs.text;
 			string xmlContent = www.downloadHandler.text;
 			LoadLevelOrScenario(uri, xmlContent);
@@ -399,7 +437,7 @@ public class TitleScreenSystem : FSystem {
 
 	public void forceLaunch()
     {
-		webGL_levelLoaded = webGL_levelToLoad;
+		webGL_fileLoaded = webGL_fileToLoad;
 	}
 
 	private void LoadLevelOrScenario(string uri, string xmlContent)

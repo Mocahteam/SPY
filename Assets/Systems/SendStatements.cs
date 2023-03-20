@@ -89,7 +89,7 @@ public class SendStatements : FSystem {
     {
         if (gameData.sendStatementEnabled)
         {
-            MainLoop.instance.StartCoroutine(PostUserData());
+            MainLoop.instance.StartCoroutine(PostUserData(GBL_Interface.playerName, userData.schoolClass, userData.isTeacher, JsonConvert.SerializeObject(userData.progression), JsonConvert.SerializeObject(userData.highScore)));
             foreach (SendUserData sp in go.GetComponents<SendUserData>())
                 GameObjectManager.removeComponent(sp);
             if (statementQueue != null)
@@ -97,16 +97,21 @@ public class SendStatements : FSystem {
         }
     }
 
-    private IEnumerator PostUserData()
+    private IEnumerator PostUserData(string idSession, string schoolClass, bool isTeacher, string progression, string highScore)
     {
-        string progession = JsonConvert.SerializeObject(userData.progression);
-        string highScore = JsonConvert.SerializeObject(userData.highScore);
-        Debug.Log(GBL_Interface.playerName+"_"+ userData.schoolClass + "_"+progession + "_" + highScore);
-        UnityWebRequest www = UnityWebRequest.Post("https://spy.lip6.fr/ServerREST_LIP6/", "{\"idSession\":\"" + GBL_Interface.playerName + "\",\"class\":\""+userData.schoolClass+"\",\"isTeacher\":\""+(userData.isTeacher ? 1 : 0)+"\",\"progression\":" + progession + ",\"highScore\":" + highScore + "}");
+        progression = progression == "null" ? "{}" : progression;
+        highScore = highScore == "null" ? "{}" : highScore;
+        Debug.Log(idSession + "_"+ schoolClass + "_"+progression + "_" + highScore);
+        UnityWebRequest www = UnityWebRequest.Post("https://spy.lip6.fr/ServerREST_LIP6/", "{\"idSession\":\"" + idSession + "\",\"class\":\"" + schoolClass + "\",\"isTeacher\":\""+(isTeacher ? 1 : 0)+"\",\"progression\":" + progression + ",\"highScore\":" + highScore + "}");
 
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
+        {
             Debug.LogWarning(www.error);
+            yield return new WaitForSeconds(0.5f);
+            // try again
+            MainLoop.instance.StartCoroutine(PostUserData(idSession, schoolClass, isTeacher, progression, highScore));
+        }
     }
 }
