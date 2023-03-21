@@ -199,11 +199,12 @@ public class TitleScreenSystem : FSystem {
 	}
 
     // See Ok button in SetClass panel in TitleScreen scene
-    public void resetProgression(GameObject go)
+    public void synchUserData(GameObject go)
     {
-		// clear progression
-		userData.progression = new Dictionary<string, int>();
-		userData.highScore = new Dictionary<string, int>();
+		if (userData.progression == null)
+			userData.progression = new Dictionary<string, int>();
+		if (userData.highScore == null)
+			userData.highScore = new Dictionary<string, int>();
 		userData.schoolClass = go.GetComponentInChildren<TMP_InputField>().text;
 		userData.isTeacher = go.GetComponentInChildren<Toggle>().isOn;
 		GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
@@ -277,6 +278,9 @@ public class TitleScreenSystem : FSystem {
 					userData.highScore = new Dictionary<string, int>();
 				userData.schoolClass = tokens[2];
 				userData.isTeacher = tokens[3] == "1";
+				Transform setClass = sessionIdPanel.transform.Find("SetClass");
+				setClass.GetComponentInChildren<TMP_InputField>(true).text = userData.schoolClass;
+				setClass.GetComponentInChildren<Toggle>().isOn = userData.isTeacher;
 				GBL_Interface.playerName = idSession;
 				GBL_Interface.userUUID = idSession;
 			}

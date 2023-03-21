@@ -54,9 +54,9 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "closeSettingsAndSelectNextFocusedButton", settingsWindows);
 	}
 
-	public void resetProgression(UnityEngine.GameObject go)
+	public void synchUserData(UnityEngine.GameObject go)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "resetProgression", go);
+		MainLoop.callAppropriateSystemMethod (system, "synchUserData", go);
 	}
 
 	public void GetProgression(TMPro.TMP_InputField idSession)
