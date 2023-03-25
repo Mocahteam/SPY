@@ -5,7 +5,6 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject prefabGameData;
 	public UnityEngine.GameObject mainCanvas;
-	public UnityEngine.GameObject campagneMenu;
 	public UnityEngine.GameObject compLevelButton;
 	public UnityEngine.GameObject listOfCampaigns;
 	public UnityEngine.GameObject listOfLevels;
@@ -26,7 +25,6 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "prefabGameData", prefabGameData);
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
-		MainLoop.initAppropriateSystemField (system, "campagneMenu", campagneMenu);
 		MainLoop.initAppropriateSystemField (system, "compLevelButton", compLevelButton);
 		MainLoop.initAppropriateSystemField (system, "listOfCampaigns", listOfCampaigns);
 		MainLoop.initAppropriateSystemField (system, "listOfLevels", listOfLevels);
@@ -74,9 +72,9 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "updateScenarioContent", null);
 	}
 
-	public void importScenario(System.String content)
+	public void importLevelOrScenario(System.String content)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "importScenario", content);
+		MainLoop.callAppropriateSystemMethod (system, "importLevelOrScenario", content);
 	}
 
 	public void displayScenarioList()
@@ -127,6 +125,11 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public void loadScenario()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "loadScenario", null);
+	}
+
+	public void downloadLevel(DataLevelBehaviour dlb)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "downloadLevel", dlb);
 	}
 
 }

@@ -37,4 +37,4 @@ def multi_replace(search, replace, path):
         print(x)
     return True
 
-multi_replace("\"For\"", "\"ForLoop\"", ".")
+multi_replace("script name", "script outputLine", ".")

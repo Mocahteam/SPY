@@ -54,11 +54,12 @@ public class LevelGenerator : FSystem {
 		else
 		{
 			gameData = gameDataGO.GetComponent<GameData>();
-			if (gameData.levels.ContainsKey(gameData.levelToLoad.src))
-				XmlToLevel(gameData.levels[gameData.levelToLoad.src].OwnerDocument);
+			DataLevel levelToLoad = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad];
+			if (gameData.levels.ContainsKey(levelToLoad.src))
+				XmlToLevel(gameData.levels[levelToLoad.src].OwnerDocument);
 			else
 				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Error });
-			levelName.text = gameData.levelToLoad.name;
+			levelName.text = levelToLoad.name;
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlButtons();
             GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
@@ -66,7 +67,9 @@ public class LevelGenerator : FSystem {
 				verb = "launched",
 				objectType = "level",
 				activityExtensions = new Dictionary<string, string>() {
-					{ "value", gameData.levelToLoad.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
+					{ "value", levelToLoad.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") },
+					{ "context", gameData.selectedScenario },
+					{ "progress", levelToLoad.name }
 				}
 			});
 		}
@@ -82,10 +85,11 @@ public class LevelGenerator : FSystem {
 		gameData.levelToLoadScore = null;
 		// check if dialogs are defined in the scenario
 		bool dialogsOverrided = true;
-		if (gameData.levelToLoad.overridedDialogs == null)
+		DataLevel levelToLoad = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad];
+		if (levelToLoad.overridedDialogs == null)
 		{
 			dialogsOverrided = false;
-			gameData.levelToLoad.overridedDialogs = new List<Dialog>();
+			levelToLoad.overridedDialogs = new List<Dialog>();
 		}
 		gameData.actionBlockLimit = new Dictionary<string, int>();
 		map = new List<List<int>>();
@@ -107,7 +111,7 @@ public class LevelGenerator : FSystem {
 					break;
 				case "dialogs":
 					if (!dialogsOverrided)
-						EditingUtility.readXMLDialogs(child, gameData.levelToLoad.overridedDialogs);
+						EditingUtility.readXMLDialogs(child, levelToLoad.overridedDialogs);
 					break;
 				case "executionLimit":
 					int amount = int.Parse(child.Attributes.GetNamedItem("amount").Value);
@@ -138,7 +142,9 @@ public class LevelGenerator : FSystem {
 				case "player":
 				case "enemy":
 					string nameAgentByUser = "";
-					XmlNode agentName = child.Attributes.GetNamedItem("associatedScriptName");
+					XmlNode agentName = child.Attributes.GetNamedItem("inputLine"); 
+					if (agentName == null)
+						agentName = child.Attributes.GetNamedItem("associatedScriptName"); // for retrocompatibility
 					if (agentName != null && agentName.Value != "")
 						nameAgentByUser = agentName.Value;
 					GameObject agent = createEntity(nameAgentByUser, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value),
@@ -165,8 +171,11 @@ public class LevelGenerator : FSystem {
 					XmlNode typeNode = child.Attributes.GetNamedItem("type");
 					if (typeNode != null && int.TryParse(typeNode.Value, out tmpValue))
 						typeByUser = (UIRootContainer.SolutionType)tmpValue;
+					XmlNode name = child.Attributes.GetNamedItem("outputLine");
+					if (name == null)
+						name = child.Attributes.GetNamedItem("name"); // for retrocompatibility
 					// Script has to be created after agents
-					MainLoop.instance.StartCoroutine(delayReadXMLScript(child, child.Attributes.GetNamedItem("name").Value, editModeByUser, typeByUser));
+					MainLoop.instance.StartCoroutine(delayReadXMLScript(child, name.Value, editModeByUser, typeByUser));
 					break;
 				case "score":
 					gameData.levelToLoadScore = new int[2];

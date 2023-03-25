@@ -39,18 +39,18 @@
   <coin posY="1" posX="4" />
   <coin posY="3" posX="6" />
   
-  <player associatedScriptName="Bob" posY="2" posX="1" direction="2" />
+  <player inputLine="Bob" posY="2" posX="1" direction="2" />
   <console state="1" posY="2" posX="2" direction="0">
     <slot slotId="0" />
   </console>
   <door posY="4" posX="4" slotId="0" direction="0" />
   
-  <player associatedScriptName="Karl" posY="5" posX="7" direction="3" />
+  <player inputLine="Karl" posY="5" posX="7" direction="3" />
   <console state="1" posY="5" posX="7" direction="0">
     <slot slotId="1" />
   </console>
   <door posY="3" posX="3" slotId="1" direction="3" />
-  <script name="Essai1" editMode="2" type="0">
+  <script outputLine="Essai1" editMode="2" type="0">
     <action type="Activate"/>
     <action type="Forward"/>
     <action type="Forward"/>
@@ -62,7 +62,7 @@
     <action type="Forward"/>
     <action type="Wait"/>
   </script>
-  <script name="Essai2" editMode="2" type="2">
+  <script outputLine="Essai2" editMode="2" type="2">
     <action type="Forward"/>
     <action type="Activate"/>
 	<action type="TurnRight"/>
@@ -74,7 +74,7 @@
     <action type="Forward"/>
     <action type="Wait"/>
   </script>
-  <script name="Essai3" editMode="2" type="0">
+  <script outputLine="Essai3" editMode="2" type="0">
     <action type="Wait"/>
     <action type="Forward"/>
     <action type="Activate"/>

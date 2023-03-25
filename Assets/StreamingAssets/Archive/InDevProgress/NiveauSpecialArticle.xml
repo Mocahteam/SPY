@@ -45,10 +45,10 @@
     <slot slotId="0" />
   </console>
   <door posY="4" posX="2" slotId="0" direction="0" />
-  <player associatedScriptName="Bob" posY="6" posX="2" direction="0" />
-  <script name="Bob" editMode="0" />
-  <enemy associatedScriptName="Guarde 1" posY="3" posX="4" direction="1" range="2" selfRange="False" typeRange="0" />
-  <script name="Guarde 1" editMode="0">
+  <player inputLine="Bob" posY="6" posX="2" direction="0" />
+  <script outputLine="Bob" editMode="0" />
+  <enemy inputLine="Guarde 1" posY="3" posX="4" direction="1" range="2" selfRange="False" typeRange="0" />
+  <script outputLine="Guarde 1" editMode="0">
         <action type="Wait"/>
         <action type="TurnRight"/>
   </script>

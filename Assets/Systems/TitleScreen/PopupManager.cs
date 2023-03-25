@@ -52,7 +52,9 @@ public class PopupManager : FSystem {
 		else if (mfu.CancelButton != "")
 			EventSystem.current.SetSelectedGameObject(buttons.transform.GetChild(1).gameObject);
 
-		GameObjectManager.removeComponent(mfu);
+		// in case of several messages pop in one frame
+		foreach(MessageForUser message in go.GetComponents<MessageForUser>())
+			GameObjectManager.removeComponent(message);
 	}
 
 	// See ok and cancel buttons in MessagePanel (TitleScreen)

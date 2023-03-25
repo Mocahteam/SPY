@@ -141,19 +141,18 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, true);
 
 			// Sauvegarde de l'état d'avancement des niveaux dans le scénario
-			int currentLevelNum = gameData.scenario.FindIndex(x => x.src == gameData.levelToLoad.src);
 			UserData ud = gameData.GetComponent<UserData>();
-			if (ud.progression != null && (!ud.progression.ContainsKey(gameData.scenarioName) || ud.progression[gameData.scenarioName] < currentLevelNum + 1))
+			if (ud.progression != null && (!ud.progression.ContainsKey(gameData.selectedScenario) || ud.progression[gameData.selectedScenario] < gameData.levelToLoad + 1))
 			{
-				ud.progression[gameData.scenarioName] = currentLevelNum + 1;
+				ud.progression[gameData.selectedScenario] = gameData.levelToLoad + 1;
 			}
 
-			if (PlayerPrefs.GetInt(gameData.scenarioName, 0) < currentLevelNum + 1)
-				PlayerPrefs.SetInt(gameData.scenarioName, currentLevelNum + 1);
+			if (PlayerPrefs.GetInt(gameData.selectedScenario, 0) < gameData.levelToLoad + 1)
+				PlayerPrefs.SetInt(gameData.selectedScenario, gameData.levelToLoad + 1);
 			PlayerPrefs.Save();
 
 			//Check if next level exists in campaign
-			if (currentLevelNum >= gameData.scenario.Count - 1)
+			if (gameData.levelToLoad >= gameData.scenarios[gameData.selectedScenario].levels.Count - 1)
 			{
 				GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
 				endPanel.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez terminé ce scénario !";
@@ -338,15 +337,16 @@ public class EndGameManager : FSystem {
 
 		//save score only if better score
 		UserData ud = gameData.GetComponent<UserData>();
-		int savedScore = ud.highScore != null ? (ud.highScore.ContainsKey(gameData.levelToLoad.src) ? ud.highScore[gameData.levelToLoad.src] : 0) : PlayerPrefs.GetInt(gameData.levelToLoad.src + gameData.scoreKey, 0);
+		DataLevel levelToLoad = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad];
+		int savedScore = ud.highScore != null ? (ud.highScore.ContainsKey(levelToLoad.src) ? ud.highScore[levelToLoad.src] : 0) : PlayerPrefs.GetInt(levelToLoad.src + gameData.scoreKey, 0);
 		
 		if (savedScore < scoredStars)
 		{
-			PlayerPrefs.SetInt(gameData.levelToLoad.src + gameData.scoreKey, scoredStars);
+			PlayerPrefs.SetInt(levelToLoad.src + gameData.scoreKey, scoredStars);
 			PlayerPrefs.Save();
 			if (ud.highScore != null)
 			{
-				ud.highScore[gameData.levelToLoad.src] = scoredStars;
+				ud.highScore[levelToLoad.src] = scoredStars;
 				// ask to save progression
 				GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
 			}

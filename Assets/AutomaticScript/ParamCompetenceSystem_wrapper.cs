@@ -14,6 +14,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject deletableElement;
 	public UnityEngine.GameObject contentScenario;
 	public UnityEngine.UI.Button testLevel;
+	public UnityEngine.UI.Button downloadLevel;
 	public UnityEngine.UI.Button addToScenario;
 	public UnityEngine.GameObject savingPanel;
 	public UnityEngine.GameObject editBriefingPanel;
@@ -33,6 +34,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "deletableElement", deletableElement);
 		MainLoop.initAppropriateSystemField (system, "contentScenario", contentScenario);
 		MainLoop.initAppropriateSystemField (system, "testLevel", testLevel);
+		MainLoop.initAppropriateSystemField (system, "downloadLevel", downloadLevel);
 		MainLoop.initAppropriateSystemField (system, "addToScenario", addToScenario);
 		MainLoop.initAppropriateSystemField (system, "savingPanel", savingPanel);
 		MainLoop.initAppropriateSystemField (system, "editBriefingPanel", editBriefingPanel);

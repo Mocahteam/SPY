@@ -6,7 +6,6 @@ using System.IO;
 using System.Xml;
 using System.Collections.Generic;
 using System;
-using System.Data;
 using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using System.Collections;
@@ -37,6 +36,7 @@ public class ParamCompetenceSystem : FSystem
 	public GameObject deletableElement; // Un niveau que l'on peut supprimer
 	public GameObject contentScenario; // Le panneau contenant les niveaux sélectionnés pour le scénario
 	public Button testLevel;
+	public Button downloadLevel;
 	public Button addToScenario;
 	public GameObject savingPanel;
 	public GameObject editBriefingPanel;
@@ -89,6 +89,8 @@ public class ParamCompetenceSystem : FSystem
 		// load competencies (required for level analysis)
 		string referentialsPath = new Uri(Application.streamingAssetsPath + "/Competencies/competenciesReferential.json").AbsoluteUri;
 		MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath));
+		if (Application.platform != RuntimePlatform.WebGLPlayer)
+			GameObjectManager.setGameObjectState(downloadLevel.gameObject, false);
 	}
 
 	private IEnumerator GetCompetenciesWebRequest(string referentialsPath)
@@ -288,6 +290,7 @@ public class ParamCompetenceSystem : FSystem
 				GameObject.Destroy(child.gameObject);
 			}
 			testLevel.interactable = false;
+			downloadLevel.interactable = false;
 			addToScenario.interactable = false;
 			// Instanciate one button for each level
 			List<GameObject> sortedLevels = new List<GameObject>();
@@ -325,70 +328,81 @@ public class ParamCompetenceSystem : FSystem
 
 	public void showLevelInfo(string path, DataLevelBehaviour overridedData = null)
 	{
-		// Display Title
-		contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text = path;
-		// erase previous miniView
-		setMiniView(null);
-		// Display miniView
-		string imgPath = new Uri(Application.streamingAssetsPath + "/" + path.Replace(".xml", ".png")).AbsoluteUri;
-		MainLoop.instance.StartCoroutine(GetMiniViewWebRequest(imgPath));
+		string absolutePath = new Uri(Application.streamingAssetsPath + "/" + path).AbsoluteUri;
 
-		XmlNode levelSelected = gameData.levels[new Uri(Application.streamingAssetsPath + "/" + path).AbsoluteUri];
-		List<Dialog> defaultDialogs = new List<Dialog>();
-		XmlNodeList XMLDialogs = levelSelected.OwnerDocument.GetElementsByTagName("dialogs");
-		if (XMLDialogs.Count > 0)
-			EditingUtility.readXMLDialogs(XMLDialogs[0], defaultDialogs);
-
-		TMP_Text contentInfo = contentInfoCompatibleLevel.transform.Find("levelTextInfo").GetComponent<TMP_Text>();
-		contentInfo.text = "";
-		if (levelSelected != null)
+		if (gameData.levels.ContainsKey(absolutePath))
 		{
-			DataLevelBehaviour dlb = contentInfoCompatibleLevel.GetComponent<DataLevelBehaviour>();
-			if (overridedData == null)
-			{
-				dlb.data.src = new Uri(Application.streamingAssetsPath + "/" + path).AbsoluteUri;
-				dlb.data.name = Path.GetFileNameWithoutExtension(path);
-				dlb.data.overridedDialogs = null; // to load default
-			}
-			else
-				dlb.data = overridedData.data.clone();
-			// if no overrided dialogs, load default
-			if (dlb.data.overridedDialogs == null)
-				dlb.data.overridedDialogs = defaultDialogs;
+			// Display Title
+			contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text = path;
+			// erase previous miniView
+			setMiniView(null);
+			// Display miniView
+			string imgPath = new Uri(Application.streamingAssetsPath + "/" + path.Replace(".xml", ".png")).AbsoluteUri;
+			MainLoop.instance.StartCoroutine(GetMiniViewWebRequest(imgPath));
+			XmlNode levelSelected = gameData.levels[absolutePath];
+			List<Dialog> defaultDialogs = new List<Dialog>();
+			XmlNodeList XMLDialogs = levelSelected.OwnerDocument.GetElementsByTagName("dialogs");
+			if (XMLDialogs.Count > 0)
+				EditingUtility.readXMLDialogs(XMLDialogs[0], defaultDialogs);
 
-			// Display introTexts
-			contentInfo.text = "<b>Textes de briefing " + (dlb.data.dialogsEqualsTo(defaultDialogs) ? "(par défaut)" : "(personnalisé)") + " :</b>\n";
-			string txt = "";
-			for (int i = 0; i < dlb.data.overridedDialogs.Count; i++) {
-				Dialog item = dlb.data.overridedDialogs[i];
-				txt += "\n---PAGE"+(i+1)+"---\n";
-				if (item.text != null)
-					txt += item.text + "\n";
-				if (item.img != null || item.sound != null || item.video != null)
-					txt += "\n"+(item.img != null ? "<<IMAGE>>" : "") + (item.sound != null ? "<<SON>>" : "") + (item.video != null ? "<<VIDEO>>" : "")+"\n";
-			}
-            if (txt != "")
-				contentInfo.text += txt;
-			else
-				contentInfo.text += "\tAucun texte défini\n";
-			// Display competencies
-			contentInfo.text += "\n<b>Compétences en jeu :</b>\n";
-			txt = "";
-			foreach (GameObject comp in f_competencies)
+			TMP_Text contentInfo = contentInfoCompatibleLevel.transform.Find("levelTextInfo").GetComponent<TMP_Text>();
+			contentInfo.text = "";
+			if (levelSelected != null)
 			{
-				if (EditingUtility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), levelSelected.OwnerDocument))
-					txt += "\t" + comp.GetComponent<Competency>().GetComponentInChildren<TMP_Text>().text + "\n";
+				DataLevelBehaviour dlb = contentInfoCompatibleLevel.GetComponent<DataLevelBehaviour>();
+				if (overridedData == null)
+				{
+					dlb.data.src = absolutePath;
+					dlb.data.name = Path.GetFileNameWithoutExtension(path);
+					dlb.data.overridedDialogs = null; // to load default
+				}
+				else
+					dlb.data = overridedData.data.clone();
+				// if no overrided dialogs, load default
+				if (dlb.data.overridedDialogs == null)
+					dlb.data.overridedDialogs = defaultDialogs;
+
+				// Display introTexts
+				contentInfo.text = "<b>Textes de briefing " + (dlb.data.dialogsEqualsTo(defaultDialogs) ? "(par défaut)" : "(personnalisé)") + " :</b>\n";
+				string txt = "";
+				for (int i = 0; i < dlb.data.overridedDialogs.Count; i++)
+				{
+					Dialog item = dlb.data.overridedDialogs[i];
+					txt += "\n---PAGE" + (i + 1) + "---\n";
+					if (item.text != null)
+						txt += item.text + "\n";
+					if (item.img != null || item.sound != null || item.video != null)
+						txt += "\n" + (item.img != null ? "<<IMAGE>>" : "") + (item.sound != null ? "<<SON>>" : "") + (item.video != null ? "<<VIDEO>>" : "") + "\n";
+				}
+				if (txt != "")
+					contentInfo.text += txt;
+				else
+					contentInfo.text += "\tAucun texte défini\n";
+				// Display competencies
+				contentInfo.text += "\n<b>Compétences en jeu :</b>\n";
+				txt = "";
+				foreach (GameObject comp in f_competencies)
+				{
+					if (EditingUtility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), levelSelected.OwnerDocument))
+						txt += "\t" + comp.GetComponent<Competency>().GetComponentInChildren<TMP_Text>().text + "\n";
+				}
+				if (txt != "")
+					contentInfo.text += txt;
+				else
+					contentInfo.text += "\tAucune compétence identifiée pour ce niveau\n";
+				LayoutRebuilder.ForceRebuildLayoutImmediate(contentInfo.transform as RectTransform);
 			}
-			if (txt != "")
-				contentInfo.text += txt;
 			else
-				contentInfo.text += "\tAucune compétence identifiée pour ce niveau\n";
-			LayoutRebuilder.ForceRebuildLayoutImmediate(contentInfo.transform as RectTransform);
+				contentInfo.text += "Aucune information à afficher sur ce niveau.";
+			testLevel.interactable = true;
+			downloadLevel.interactable = true;
+			addToScenario.interactable = true;
 		}
-		else
-			contentInfo.text += "Aucune information à afficher sur ce niveau.";
-		testLevel.interactable = true;
-		addToScenario.interactable = true;
+        else
+        {
+			localCallback = null;
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = "Erreur ! Le niveau \"" + path + "\" n'est pas présent dans la base de donnée, veuillez importer le fichier manquant.", OkButton = "", CancelButton = "OK", call = localCallback });
+		}
 	}
 
 	private IEnumerator GetMiniViewWebRequest(string miniViewUri)

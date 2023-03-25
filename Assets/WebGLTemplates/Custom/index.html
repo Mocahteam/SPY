@@ -15,8 +15,8 @@
 		<p style="font-family: sans-serif; text-align: center; font-weight: bold;">Other projects: <a href="https://webia.lip6.fr/~muratetm/projects.php?LANG=en" target="_blank">https://webia.lip6.fr/~muratetm/projects.php?LANG=en</a></p>
 	  </div>
 	  <div id="unity-header2">
-		<label id="proxyLoadButton" style="visibility:hidden;" for="file-selector" class="loadButton">Importer un scénario</label>
-		<input id="file-selector" style="visibility:hidden;" type="file" accept=".xml">
+		<label id="proxyLoadFiles" style="visibility:hidden;" for="files-selector" class="loadButton">Importer des scénarios et des niveaux</label>
+		<input id="files-selector" style="visibility:hidden;" type="file" accept=".xml" multiple>
 		<div id="unity-fullscreen-button"></div>
 		<div id="unity-build-title">{{{ PRODUCT_NAME }}} : Agrandir/Réduire =></div>
 	  </div>
@@ -95,17 +95,20 @@
 				fullscreenButton.addEventListener("click", () => {
 					unityInstance.SetFullscreen(1);
 				});
-				const fileSelector = document.getElementById('file-selector');
+				
+				const fileSelector = document.getElementById('files-selector');
 				fileSelector.addEventListener('change', (event) => {
 					const fileList = event.target.files;
-					var reader = new FileReader();
-					reader.onload = function(){
-						const data = {name: fileList[0].name, content: reader.result};
-						// see TitleScreenSystem
-						unityInstance.SendMessage('Main_Loop', 'importScenario', JSON.stringify(data));
-						fileSelector.value = "";
-					};
-					reader.readAsText(fileList[0]);
+					for (let file of fileList){
+						var reader = new FileReader();
+						reader.onload = function(event){
+							const data = {name: file.name, content: event.target.result};
+							// see TitleScreenSystem
+							unityInstance.SendMessage('Main_Loop', 'importLevelOrScenario', JSON.stringify(data));
+						};
+						reader.readAsText(file);
+					}
+					fileSelector.value = "";
 				});
 			
 				// parse url parameters
@@ -127,6 +130,8 @@
 					msg += "\nEssayer d'utiliser le navigateur Chrome ou Firefox";
 				else if (isMobile)
 					msg += "\nVotre dispositif mobile ne contient peut être pas assez de mémoire pour charger le jeu, essayer de recharger la page depuis un ordinateur avec le navigateur Chrome ou Firefox de préférence.";
+				else
+					msg += "\nEssayez de rafraîchir la page...";
 				alert(msg);
 				console.log(message);
 			});

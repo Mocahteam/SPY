@@ -24,6 +24,7 @@ public class DialogSystem : FSystem
 	public GameObject showDialogsMenu;
 	public GameObject showDialogsBottom;
 	private int nDialog = 0;
+	private List<Dialog> overridedDialogs;
 
 	protected override void onStart()
 	{
@@ -31,10 +32,10 @@ public class DialogSystem : FSystem
 		if (go != null)
 		{
 			gameData = go.GetComponent<GameData>();
-
+			overridedDialogs = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].overridedDialogs;
 			// Always disable bottom button, it will be enabled at the end of the dialogs (see Ok button)
 			GameObjectManager.setGameObjectState(showDialogsBottom, false);
-			if (gameData.levelToLoad.overridedDialogs.Count == 0)
+			if (overridedDialogs.Count == 0)
 				showDialogsMenu.GetComponent<Button>().interactable = false;
             else
 				showDialogsMenu.GetComponent<Button>().interactable = true;
@@ -45,7 +46,7 @@ public class DialogSystem : FSystem
 		});
 
 		f_editingMode.addEntryCallback(delegate {
-			if (gameData.levelToLoad.overridedDialogs.Count > 0)
+			if (overridedDialogs.Count > 0)
 				GameObjectManager.setGameObjectState(showDialogsBottom, true);
 		});
 
@@ -56,7 +57,7 @@ public class DialogSystem : FSystem
 	protected override void onProcess(int familiesUpdateCount)
 	{
 		//Activate DialogPanel if there is a message
-		if (gameData != null && gameData.levelToLoad.overridedDialogs != null && nDialog < gameData.levelToLoad.overridedDialogs.Count && !dialogPanel.transform.parent.gameObject.activeSelf)
+		if (gameData != null && overridedDialogs != null && nDialog < overridedDialogs.Count && !dialogPanel.transform.parent.gameObject.activeSelf)
 			showDialogPanel();
 	}
 
@@ -121,65 +122,65 @@ public class DialogSystem : FSystem
 		string dialogReturn = "";
 		// set text
 		GameObject textGO = dialogPanel.transform.Find("Text").gameObject;
-		if (gameData.levelToLoad.overridedDialogs[nDialog].text != null)
+		if (overridedDialogs[nDialog].text != null)
 		{
 			GameObjectManager.setGameObjectState(textGO, true);
-			textGO.GetComponent<TextMeshProUGUI>().text = gameData.levelToLoad.overridedDialogs[nDialog].text;
+			textGO.GetComponent<TextMeshProUGUI>().text = overridedDialogs[nDialog].text;
 			LayoutRebuilder.ForceRebuildLayoutImmediate(textGO.transform as RectTransform);
-			dialogReturn = gameData.levelToLoad.overridedDialogs[nDialog].text;
+			dialogReturn = overridedDialogs[nDialog].text;
 		}
 		else
 			GameObjectManager.setGameObjectState(textGO, false);
 		// set image
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
-		if (gameData.levelToLoad.overridedDialogs[nDialog].img != null)
+		if (overridedDialogs[nDialog].img != null)
 		{
-			if (gameData.levelToLoad.overridedDialogs[nDialog].img.ToLower().StartsWith("http"))
-				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), gameData.levelToLoad.overridedDialogs[nDialog].img));
+			if (overridedDialogs[nDialog].img.ToLower().StartsWith("http"))
+				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), overridedDialogs[nDialog].img));
 			else
 			{
 				if (Application.platform == RuntimePlatform.WebGLPlayer)
 				{
-					Uri uri = new Uri(gameData.levelToLoad.src);
-					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + gameData.levelToLoad.overridedDialogs[nDialog].img));
+					Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src);
+					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + overridedDialogs[nDialog].img));
 				}
 				else
-					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.levelToLoad.src) + "/Images/" + gameData.levelToLoad.overridedDialogs[nDialog].img));
+					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) + "/Images/" + overridedDialogs[nDialog].img));
 			}
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO, false);
 		// set camera pos
-		if (gameData.levelToLoad.overridedDialogs[nDialog].camX != -1 && gameData.levelToLoad.overridedDialogs[nDialog].camY != -1)
+		if (overridedDialogs[nDialog].camX != -1 && overridedDialogs[nDialog].camY != -1)
         {
-			GameObjectManager.addComponent<FocusCamOn>(MainLoop.instance.gameObject, new { camX = gameData.levelToLoad.overridedDialogs[nDialog].camX, camY = gameData.levelToLoad.overridedDialogs[nDialog].camY });
+			GameObjectManager.addComponent<FocusCamOn>(MainLoop.instance.gameObject, new { camX = overridedDialogs[nDialog].camX, camY = overridedDialogs[nDialog].camY });
 		}
 		// set sound
 		AudioSource audio = dialogPanel.GetComponent<AudioSource>();
-		if (gameData.levelToLoad.overridedDialogs[nDialog].sound != null)
+		if (overridedDialogs[nDialog].sound != null)
 		{
-			if (gameData.levelToLoad.overridedDialogs[nDialog].sound.ToLower().StartsWith("http"))
-				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, gameData.levelToLoad.overridedDialogs[nDialog].sound));
+			if (overridedDialogs[nDialog].sound.ToLower().StartsWith("http"))
+				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, overridedDialogs[nDialog].sound));
 			else
 			{
 				if (Application.platform == RuntimePlatform.WebGLPlayer)
 				{
-					Uri uri = new Uri(gameData.levelToLoad.src);
-					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Sounds/" + gameData.levelToLoad.overridedDialogs[nDialog].sound));
+					Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src);
+					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Sounds/" + overridedDialogs[nDialog].sound));
 				}
 				else
-					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, Path.GetDirectoryName(gameData.levelToLoad.src) + "/Sounds/" + gameData.levelToLoad.overridedDialogs[nDialog].sound));
+					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) + "/Sounds/" + overridedDialogs[nDialog].sound));
 			}
 		}
 		else
 			audio.Stop();
 		// set video
 		VideoPlayer videoPlayer = dialogPanel.GetComponentInChildren<VideoPlayer>(true);
-		if (gameData.levelToLoad.overridedDialogs[nDialog].video != null)
+		if (overridedDialogs[nDialog].video != null)
 		{
-			Debug.Log(gameData.levelToLoad.overridedDialogs[nDialog].video);
+			Debug.Log(overridedDialogs[nDialog].video);
 			GameObjectManager.setGameObjectState(videoPlayer.gameObject, true);
-			videoPlayer.url = gameData.levelToLoad.overridedDialogs[nDialog].video;
+			videoPlayer.url = overridedDialogs[nDialog].video;
 			RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
 			rawImage.enabled = false;
 			MainLoop.instance.StartCoroutine(waitLoadingVideo());
@@ -187,7 +188,7 @@ public class DialogSystem : FSystem
 		else
 			GameObjectManager.setGameObjectState(videoPlayer.gameObject, false);
 		// set background
-		dialogPanel.transform.parent.GetComponent<Image>().enabled = !gameData.levelToLoad.overridedDialogs[nDialog].enableInteraction;
+		dialogPanel.transform.parent.GetComponent<Image>().enabled = !overridedDialogs[nDialog].enableInteraction;
 
 		// Be sure all buttons are disabled
 		setActiveOKButton(false);
@@ -199,9 +200,9 @@ public class DialogSystem : FSystem
 			if (nDialog > 0)
 				setActivePrevButton(true);
 
-		if (nDialog + 1 < gameData.levelToLoad.overridedDialogs.Count)
+		if (nDialog + 1 < overridedDialogs.Count)
 			setActiveNextButton(true);
-		if (nDialog + 1 >= gameData.levelToLoad.overridedDialogs.Count)
+		if (nDialog + 1 >= overridedDialogs.Count)
 			setActiveOKButton(true);
 
 		// if way is < 0 means we pass to previous dialog => process previous dialog in second to put selected go on previous button
@@ -263,7 +264,7 @@ public class DialogSystem : FSystem
 	public void closeDialogPanel()
 	{
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
-		nDialog = gameData.levelToLoad.overridedDialogs.Count;
+		nDialog = overridedDialogs.Count;
 
 		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
@@ -311,8 +312,8 @@ public class DialogSystem : FSystem
 		yield return new WaitForSeconds(0.1f); // take time to update UI
 		RectTransform rectParent = (RectTransform)img.transform.parent;
 		float maxHeight = Screen.height - (rectParent.sizeDelta.y + 20); // compute available space add 20 to include top and bottom margin
-		if (gameData.levelToLoad.overridedDialogs[nDialog].imgHeight != -1)
-			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, Math.Min(gameData.levelToLoad.overridedDialogs[nDialog].imgHeight, maxHeight));
+		if (overridedDialogs[nDialog].imgHeight != -1)
+			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, Math.Min(overridedDialogs[nDialog].imgHeight, maxHeight));
 		else
 			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, Math.Min(img.GetComponent<LayoutElement>().preferredHeight, maxHeight));
 		GameObjectManager.setGameObjectState(img.gameObject, true); // now we can show image

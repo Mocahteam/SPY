@@ -32,10 +32,10 @@
     <blockLimit blockType="Exit" limit="0" />
   </blockLimits>
   <coin posY="3" posX="5" />
-  <player associatedScriptName="Bob" posY="5" posX="3" direction="0" />
-  <script name="Bob" editMode="0" />
-  <enemy associatedScriptName="Guarde" posY="2" posX="2" direction="2" range="1" selfRange="False" typeRange="0" />
-  <script name="Guarde">
+  <player inputLine="Bob" posY="5" posX="3" direction="0" />
+  <script outputLine="Bob" editMode="0" />
+  <enemy inputLine="Guarde" posY="2" posX="2" direction="2" range="1" selfRange="False" typeRange="0" />
+  <script outputLine="Guarde">
       <forever>
         <action type="Forward"/>
         <action type="Forward"/>

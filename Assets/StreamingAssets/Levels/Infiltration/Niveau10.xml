@@ -41,30 +41,18 @@
   <decoration name="Modern Furniture/Prefabs/Book Rack" posY="2" posX="6" direction="0" /> 
   <decoration name="Modern Furniture/Prefabs/Coffee Table" posY="3" posX="7" direction="2" /> 
   <decoration name="Modern Furniture/Prefabs/Triangle Chair" posY="3" posX="6" direction="2" /> 
-  <player associatedScriptName="Bob" posY="5" posX="2" direction="0" />
-  <script name="Essai1" editMode="2" type="2">
+  <player inputLine="Bob" posY="5" posX="2" direction="0" />
+  <script outputLine="Essai1" editMode="2" type="2">
     <action type="Forward"/>
     <action type="Forward"/>
     <action type="Forward"/>
     <action type="Forward"/>
   </script>
-  <script name="Essai2" editMode="2" type="2">
+  <script outputLine="Essai2" editMode="2" type="2">
     <action type="Forward"/>
 	<action type="TurnRight"/>
     <action type="Forward"/>
 	<action type="TurnLeft"/>
-    <action type="Forward"/>
-    <action type="Forward"/>
-	<action type="TurnRight"/>
-    <action type="Forward"/>
-	<action type="TurnLeft"/>
-    <action type="Forward"/>
-  </script>
-  <script name="Essai3" editMode="2" type="0">
-    <action type="Forward"/>
-	<action type="TurnLeft"/>
-    <action type="Forward"/>
-	<action type="TurnRight"/>
     <action type="Forward"/>
     <action type="Forward"/>
 	<action type="TurnRight"/>
@@ -72,6 +60,18 @@
 	<action type="TurnLeft"/>
     <action type="Forward"/>
   </script>
-  <enemy associatedScriptName="Guarde" posY="3" posX="4" direction="3" range="2" selfRange="False" typeRange="0" />
+  <script outputLine="Essai3" editMode="2" type="0">
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+  </script>
+  <enemy inputLine="Guarde" posY="3" posX="4" direction="3" range="2" selfRange="False" typeRange="0" />
   <score twoStars="0" threeStars="3854"/>
 </level>

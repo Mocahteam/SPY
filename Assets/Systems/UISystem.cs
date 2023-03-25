@@ -251,7 +251,7 @@ public class UISystem : FSystem {
 			verb = "exited",
 			objectType = "level",
 			activityExtensions = new Dictionary<string, string>() {
-					{ "value", gameData.levelToLoad.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
+					{ "value", gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
 				}
 		});
 		gameData.actionsHistory = null;
@@ -279,11 +279,11 @@ public class UISystem : FSystem {
 			verb = "exited",
 			objectType = "level",
 			activityExtensions = new Dictionary<string, string>() {
-					{ "value", gameData.levelToLoad.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
+					{ "value", gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
 				}
 		});
 		// On imcrémente le numéro du niveau
-		gameData.levelToLoad = gameData.scenario[gameData.scenario.FindIndex(x => x.src == gameData.levelToLoad.src)+1];
+		gameData.levelToLoad++;
 		// On efface l'historique
 		gameData.actionsHistory = null;
 		// On recharge la scéne (mais avec le nouveau numéro de niveau)
@@ -300,7 +300,7 @@ public class UISystem : FSystem {
 			verb = "exited",
 			objectType = "level",
 			activityExtensions = new Dictionary<string, string>() {
-					{ "value", gameData.levelToLoad.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
+					{ "value", gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
 				}
 		});
 		if (gameData.actionsHistory != null)

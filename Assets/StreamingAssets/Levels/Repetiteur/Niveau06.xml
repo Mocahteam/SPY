@@ -37,10 +37,10 @@
 		<blockLimit blockType="Exit" limit="0" />
 	</blockLimits>
     <coin posY="6" posX="6" />
-	<player associatedScriptName="Karl" posY="3" posX="3" direction="0" />
-	<script name="Karl" editMode="0" />
-	<enemy associatedScriptName="Guarde" posY="2" posX="6" direction="3" range="3" selfRange="True" typeRange="0" />
-	<script name="Guarde" editMode="0" >
+	<player inputLine="Karl" posY="3" posX="3" direction="0" />
+	<script outputLine="Karl" editMode="0" />
+	<enemy inputLine="Guarde" posY="2" posX="6" direction="3" range="3" selfRange="True" typeRange="0" />
+	<script outputLine="Guarde" editMode="0" >
 		<for nbFor="6">
 			<action type="Forward"/>
 			<action type="Wait"/>

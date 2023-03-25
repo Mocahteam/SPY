@@ -4,10 +4,10 @@ using System.Xml;
 
 public class GameData : MonoBehaviour {
 	// Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
-	public Dictionary<string, XmlNode> levels; // The Associated XmlNode to its path
-	public string scenarioName; // name of the scenario (campaign)
-	public List<DataLevel> scenario; // The scenario to play
-	public DataLevel levelToLoad; // level to load in levels dictionary
+	public Dictionary<string, XmlNode> levels; // The associated XmlNode to its path
+	public Dictionary<string, WebGlScenario> scenarios; // The associated scenario description to its name
+	public string selectedScenario; // name of the scenario to play
+	public int levelToLoad; // level to load inside the selected scenario
 	public int[] levelToLoadScore; //levelToLoadScore[0] = best score (3 stars) ; levelToLoadScore[1] = medium score (2 stars)
 	public Dictionary<string, int> actionBlockLimit; //Is block available in library?
 	public string scoreKey = "score";

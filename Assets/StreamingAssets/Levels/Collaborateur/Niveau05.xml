@@ -33,9 +33,9 @@
   </blockLimits>
   <coin posY="1" posX="3" />
   <coin posY="2" posX="7" />
-  <player associatedScriptName="Bob" posY="4" posX="1" direction="2" />
-  <player associatedScriptName="Karl" posY="4" posX="5" direction="3" />
-  <script name="Bob" editMode="0" type="2">
+  <player inputLine="Bob" posY="4" posX="1" direction="2" />
+  <player inputLine="Karl" posY="4" posX="5" direction="3" />
+  <script outputLine="Bob" editMode="0" type="2">
     <action type="Forward"/>
     <action type="Forward"/>
     <action type="Forward"/>
@@ -47,7 +47,7 @@
     <action type="Forward"/>
     <action type="Forward"/>
   </script>
-  <script name="Karl" editMode="0" type="2">
+  <script outputLine="Karl" editMode="0" type="2">
     <action type="Forward"/>
     <action type="Forward"/>
     <action type="Forward"/>
