@@ -6,6 +6,7 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System;
 
 /// <summary>
 /// This system check if the end of the level is reached and display end panel accordingly
@@ -338,15 +339,16 @@ public class EndGameManager : FSystem {
 		//save score only if better score
 		UserData ud = gameData.GetComponent<UserData>();
 		DataLevel levelToLoad = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad];
-		int savedScore = ud.highScore != null ? (ud.highScore.ContainsKey(levelToLoad.src) ? ud.highScore[levelToLoad.src] : 0) : PlayerPrefs.GetInt(levelToLoad.src + gameData.scoreKey, 0);
+		string highScoreKey = levelToLoad.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "");
+		int savedScore = ud.highScore != null ? (ud.highScore.ContainsKey(highScoreKey) ? ud.highScore[highScoreKey] : 0) : PlayerPrefs.GetInt(highScoreKey + gameData.scoreKey, 0);
 		
 		if (savedScore < scoredStars)
 		{
-			PlayerPrefs.SetInt(levelToLoad.src + gameData.scoreKey, scoredStars);
+			PlayerPrefs.SetInt(highScoreKey + gameData.scoreKey, scoredStars);
 			PlayerPrefs.Save();
 			if (ud.highScore != null)
 			{
-				ud.highScore[levelToLoad.src] = scoredStars;
+				ud.highScore[highScoreKey] = scoredStars;
 				// ask to save progression
 				GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
 			}

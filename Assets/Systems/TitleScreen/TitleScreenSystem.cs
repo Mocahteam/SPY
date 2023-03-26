@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using DIG.GBLXAPI;
 using Newtonsoft.Json;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -234,7 +235,9 @@ public class TitleScreenSystem : FSystem {
     {
 		webGL_fileToLoad = 1;
 		webGL_fileLoaded = 0;
-		MainLoop.instance.StartCoroutine(GetProgressionWebRequest(idSession.text.ToUpper()));
+		string formatedString = idSession.text.ToUpper();
+		formatedString = String.Concat(formatedString.Where(c => !Char.IsWhiteSpace(c)));
+		MainLoop.instance.StartCoroutine(GetProgressionWebRequest(formatedString));
 		MainLoop.instance.StartCoroutine(WaitLoadingData());
 	}
 
@@ -477,7 +480,7 @@ public class TitleScreenSystem : FSystem {
 		EditingUtility.removeComments(doc);
 		// a valid level must have only one tag "level" and no tag "scenario"
 		if (doc.GetElementsByTagName("level").Count == 1 && doc.GetElementsByTagName("scenario").Count == 0)
-			gameData.levels.Add(new Uri(uri).AbsoluteUri, doc.GetElementsByTagName("level")[0]);
+			gameData.levels[new Uri(uri).AbsoluteUri] = doc.GetElementsByTagName("level")[0];
 		// a valid scenario must have only one tag "scenario"
 		else if (doc.GetElementsByTagName("scenario").Count == 1)
 			updateScenarioContent(uri, doc);
@@ -653,7 +656,8 @@ public class TitleScreenSystem : FSystem {
 			else
 				button.GetComponentInChildren<Button>().interactable = false;
 			//scores
-			int scoredStars = (userData.highScore != null ? (userData.highScore.ContainsKey(levelData.src) ? userData.highScore[levelData.src] : 0) : PlayerPrefs.GetInt(levelData.src + gameData.scoreKey, 0)); //0 star by default
+			string highScoreKey = levelData.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "");
+			int scoredStars = (userData.highScore != null ? (userData.highScore.ContainsKey(highScoreKey) ? userData.highScore[highScoreKey] : 0) : PlayerPrefs.GetInt(highScoreKey + gameData.scoreKey, 0)); //0 star by default
 			Transform scoreCanvas = button.transform.Find("ScoreCanvas");
 			for (int nbStar = 0; nbStar < 4; nbStar++)
 			{
