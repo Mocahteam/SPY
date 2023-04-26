@@ -33,9 +33,14 @@
 							"label": "Fog",
 							"tag": "fog",
 							"parameters": []
+						},
+						{
+							"label": "HideExits",
+							"tag": "hideExits",
+							"parameters": []
 						}
 					],
-					"rule": "Fog >= 1"
+					"rule": "Fog >= 1 or HideExits >= 1"
 				},
 				{
 					"key": "SPY_ActiveDoor",
@@ -188,10 +193,10 @@
 							"tag": "script",
 							"parameters": [
 								{
-									"attribute": "name",
+									"attribute": "outputLine",
 									"constraint": "sameValue",
 									"tag2": "enemy",
-									"attribute2": "associatedScriptName"
+									"attribute2": "inputLine"
 								},
 								{
 									"constraint": "hasChild"
@@ -212,10 +217,10 @@
 							"tag": "player",
 							"parameters": [
 								{
-									"attribute": "associatedScriptName",
+									"attribute": "inputLine",
 									"constraint": "sameValue",
 									"tag2": "player",
-									"attribute2": "associatedScriptName"
+									"attribute2": "inputLine"
 								}
 							]
 						}
@@ -1414,10 +1419,10 @@
 							"tag": "enemy",
 							"parameters": [
 								{
-									"attribute": "associatedScriptName",
+									"attribute": "inputLine",
 									"constraint": "sameValue",
 									"tag2": "script",
-									"attribute2": "name"
+									"attribute2": "outputLine"
 								},
 								{
 									"attribute": "range",
@@ -1431,10 +1436,10 @@
 							"tag": "enemy",
 							"parameters": [
 								{
-									"attribute": "associatedScriptName",
+									"attribute": "inputLine",
 									"constraint": "sameValue",
 									"tag2": "script",
-									"attribute2": "name"
+									"attribute2": "outputLine"
 								},
 								{
 									"attribute": "selfRange",
@@ -1448,10 +1453,10 @@
 							"tag": "script",
 							"parameters": [
 								{
-									"attribute": "name",
+									"attribute": "outputLine",
 									"constraint": "sameValue",
 									"tag2": "enemy",
-									"attribute2": "associatedScriptName"
+									"attribute2": "inputLine"
 								},
 								{
 									"constraint": "hasChild"
@@ -2415,16 +2420,49 @@
 					"parentKey": "C5",
 					"name": "C5.1 Représenter des objets ou séquences d'actions au moyen d'une représentation formelle",
 					"description": "Être capable de représenter un objet ou une action en utilisant un mode de représentation défini avec précision (non ambigu).",
-					"constraints": [],
-					"rule": ""
+					"constraints": [
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"parameters": []
+						},
+						{
+							"label": "AvailableActionInLib",
+							"tag": "blockLimit",
+							"parameters": [
+								{
+									"attribute": "blockType",
+									"constraint": "include",
+									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
+								},
+								{
+									"attribute": "limit",
+									"constraint": ">",
+									"value": "0"
+								}
+							]
+						}
+					],
+					"rule": "DragDropDisabled = 0 and AvailableActionInLib >= 1"
 				},
 				{
 					"key": "C5.2",
 					"parentKey": "C5",
 					"name": "C5.2 Traduire des objets ou séquences d'actions entre représentations formelles",
 					"description": "Être capable d'utiliser un autre langage / code formel pour représenter des objets ou séquences d'actions formellement définis.",
-					"constraints": [],
-					"rule": ""
+					"constraints": [
+						{
+							"label": "Fog",
+							"tag": "fog",
+							"parameters": []
+						},
+						{
+							"label": "HideExits",
+							"tag": "hideExits",
+							"parameters": []
+						}
+					],
+					"rule": "Fog >= 1 or HideExits >= 1"
 				},
 				{
 					"key": "C6",
@@ -2502,10 +2540,10 @@
 							"tag": "player",
 							"parameters": [
 								{
-									"attribute": "associatedScriptName",
+									"attribute": "inputLine",
 									"constraint": "sameValue",
 									"tag2": "player",
-									"attribute2": "associatedScriptName"
+									"attribute2": "inputLine"
 								}
 							]
 						},
