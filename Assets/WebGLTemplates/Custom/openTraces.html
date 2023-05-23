@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en-us">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>SPY Open traces</title>
+		<link rel="shortcut icon" href="TemplateData/favicon.ico">
+		<link rel="stylesheet" href="TemplateData/style.css">
+	</head>
+	<body>
+	  <div id="unity-header">
+		<img src="TemplateData/Logo_SU.png" alt="Logo SU" height="40px" style="float: left"><img src="TemplateData/LogoLIP6.png" alt="Logo LIP6" height="40px" style="float: right">
+		<p style="font-family: sans-serif; text-align: center; font-weight: bold;">Accès aux traces de SPY</p>
+		<p style="font-family: sans-serif;"><a href="https://spy.lip6.fr/">Retourner au jeu</a></p>
+		<p style="font-family: sans-serif;">Accès aux données de SPY&nbsp;: <a href="https://lrsels.lip6.fr/" target="_blank">https://lrsels.lip6.fr/</a>
+			<ul>
+				<li style="font-family: sans-serif;">E-Mail de connexion public&nbsp;: SPY_public@fake.fr</li>
+				<li style="font-family: sans-serif;">Mot de passe de connexion public&nbsp;: SPY_public</li>
+			</ul>
+		</p>
+		<p style="font-family: sans-serif;">SPY est un jeu open source (<a href="https://github.com/Mocahteam/SPY" target="_blank">https://github.com/Mocahteam/SPY</a>) libre d'utilisation. SPY est aussi partagé du point de vue des données d'interactions générées par le jeu. L'ensemble des interactions sont tracées au format <a href="https://adlnet.gov/projects/xapi/" target="_blank">xAPI</a> et stockées sur un LRS (Learning Record Store).</p>
+		<p style="font-family: sans-serif;">Chaque trace au format xAPI est appelé statement et se compose d'un triplet <b>Acteur/Verbe/Objet</b> (Qui&nbsp;? Fait quoi&nspb;? Sur quoi&nbsp;?). Chaque nouvelle connexion au jeu génère un identifiant de session anonyme unique que le joueur peut noter en vue de recharger sa progression ultérieurement. Cet identifiant de session définit l'acteur du statement. Les verbes et les objets permettent de caractériser le contenu des interactions.</p>
+		<p style="font-family: sans-serif;">Les interactions actuellement tracées sont les suivantes&nbsp;: lancement du niveau, ouverture des dialogues, passage au dialogue suivant, passage au dialogue précédent, fermeture des dialogues, création d'une zone de programme, nettoyage d'une zone de programme, suppression d'une zone de programme, renommage d'une zone de programme, insertion d'un bloc, suppression d'un bloc, modification d'un bloc, exécution d'un programme, mise en pause de l'exécution, exécution pas à pas, arrêt de l'exécution d'un programme, fin du niveau, fermeture du niveau. Certains statements contiennent des extensions qui permettent de stoker des informations complémentaires comme par exemple les conditions de fin du niveau (succès/échec, score) ou le contexte dans lequel un bloc a été ajouté/supprimé.</p>
+		<p style="font-family: sans-serif;"><a href="https://spy.lip6.fr/">Retourner au jeu</a></p>
+	  </div>
+	</body>
+</html>

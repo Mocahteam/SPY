@@ -113,7 +113,7 @@ public class TitleScreenSystem : FSystem {
                 MainLoop.instance.StartCoroutine(delayOpeningScenarioEditor());
 				EventSystem.current.SetSelectedGameObject(spyMenu.Find("MenuLevels").Find("Retour").gameObject);
 			}
-            else
+            else if (gameData.selectedScenario != "")
             {
 				// reload last openned scenario
 				playButton.GetComponent<Button>().onClick.Invoke();
@@ -123,6 +123,12 @@ public class TitleScreenSystem : FSystem {
 				EventSystem.current.SetSelectedGameObject(spyMenu.Find("MenuLevels").Find("Retour").gameObject);
 			}
 			
+		}
+
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			ShowHtmlButtons();
+			GameObjectManager.setGameObjectState(quitButton, false);
 		}
 
 		selectedScenarioGO = null;
@@ -243,7 +249,7 @@ public class TitleScreenSystem : FSystem {
 
 	private IEnumerator GetProgressionWebRequest(string idSession)
     {
-		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession="+idSession);
+		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession=" + idSession);
 		GameObjectManager.setGameObjectState(loadingScreen, true);
 		logs.text = "";
 		progress.text = "0%";
@@ -321,8 +327,6 @@ public class TitleScreenSystem : FSystem {
 		webGL_fileToLoad = 0;
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-			ShowHtmlButtons();
-			GameObjectManager.setGameObjectState(quitButton, false);
 			// Load scenario and levels from server
 			webGL_fileToLoad += 2;
 			MainLoop.instance.StartCoroutine(GetScenarioWebRequest());

@@ -29,7 +29,7 @@ public static class GBL_Interface {
     //Statements will be sent to all addresses in this list
     public static List<GBLConfig> lrsAddresses = new List<GBLConfig>() {
         // Root statement to Dev store in editor and Prod store else
-        Application.isEditor ? new GBLConfig("https://lrsmocah.lip6.fr/data/xAPI", "a4b46f0307a8671674fd4f55139ae5bebb9a4a4d", "cb1992c04168586866dd55f51a0d1f6589e45335") : new GBLConfig("https://lrsmocah.lip6.fr/data/xAPI", "dc2cfee1883f369feb56c964c219f50555d00507", "213c1323b76f6d53fdcd979df168543a3c57d961")
+        Application.isEditor ? new GBLConfig("https://lrsels.lip6.fr/data/xAPI", "e6efcf3eac5c03e121af621dae0df3a50c8733f0", "ffda037ebf1368a89e5b8b59d30a1b77beebc27e") : new GBLConfig("https://lrsels.lip6.fr/data/xAPI", "9fe9fa9a494f2b34b3cf355dcf20219d7be35b14", "b547a66817be9c2dbad2a5f583e704397c9db809")
     };
 	public static string userUUID = ""; // Muratet : overrided in TitleScreenSystem system
     public static string playerName = ""; // Muratet : overrided in TitleScreenSystem system
@@ -44,7 +44,7 @@ public static class GBL_Interface {
     public static void SendStatement(string verb, string activityType, Dictionary<string, string> activityExtensions = null)
     {
         ActivityBuilder.IOptional activityBuilder = GBLXAPI.Activity
-            .WithID("https://www.lip6.fr/mocah/ELS/" + activityType)
+            .WithID("https://www.lip6.fr/mocah/SPY/" + activityType)
             .WithType(activityType);
         if (activityExtensions != null)
         {
@@ -70,7 +70,7 @@ public static class GBL_Interface {
         float duration = 0)
     {
         ActivityBuilder.IOptional activityBuilder = GBLXAPI.Activity
-            .WithID("https://www.lip6.fr/mocah/ELS/" + activityType)
+            .WithID("https://www.lip6.fr/mocah/SPY/" + activityType)
             .WithType(activityType);
         if (activityExtensions != null)
         {
