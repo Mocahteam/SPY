@@ -1,5 +1,6 @@
 using FYFY;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,15 +15,15 @@ public class UserData : MonoBehaviour {
 
 	private void OnApplicationFocus(bool hasFocus)
 	{
-		catchApplicationState(hasFocus);
+		StartCoroutine(catchApplicationState(hasFocus));
 	}
 
 	private void OnApplicationPause(bool pauseStatus)
 	{
-		catchApplicationState(!pauseStatus);
+		StartCoroutine(catchApplicationState(!pauseStatus));
 	}
 
-	private void catchApplicationState(bool hasFocus)
+	private IEnumerator catchApplicationState(bool hasFocus)
 	{
 		if (!hasFocus) // player click outside the game
 			lastFocusOut = DateTime.Now.ToUniversalTime().Ticks;
@@ -36,6 +37,8 @@ public class UserData : MonoBehaviour {
 				GameData gd = GameObject.Find("GameData").GetComponent<GameData>();
 				gd.selectedScenario = "";
 				gd.actionsHistory = null;
+				yield return null;
+				yield return null;
 				GameObjectManager.loadScene("TitleScreen");
 			}
 		}

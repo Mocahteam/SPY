@@ -147,22 +147,7 @@ public class TitleScreenSystem : FSystem {
 
 		GBLXAPI.debugMode = false;
 
-		string sessionID = Environment.MachineName + "-" + DateTime.Now.ToString("yyyy.MM.dd.hh.mm.ss");
-		//Generate player name unique to each playing session (computer name + date + hour)
-		GBL_Interface.playerName = String.Format("{0:X}", sessionID.GetHashCode());
-		GBL_Interface.userUUID = GBL_Interface.playerName;
-		foreach (GameObject go in f_sessionId)
-			go.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
-
-		userData.progression = null;
-		userData.highScore = null;
-
-		if (gameData.sendStatementEnabled || !Application.isEditor)
-		{
-			GameObjectManager.setGameObjectState(sessionIdPanel, true);
-			// select ok button
-			EventSystem.current.SetSelectedGameObject(sessionIdPanel.transform.Find("ShowSessionId").Find("Buttons").Find("OkButton").gameObject);
-		}
+		MainLoop.instance.StartCoroutine(FindAvailableSessionId());
 	}
 
 	// see CloseSettings button in SettingsWindow in TitleScreen scene
@@ -245,6 +230,59 @@ public class TitleScreenSystem : FSystem {
 		formatedString = String.Concat(formatedString.Where(c => !Char.IsWhiteSpace(c)));
 		MainLoop.instance.StartCoroutine(GetProgressionWebRequest(formatedString));
 		MainLoop.instance.StartCoroutine(WaitLoadingData());
+	}
+
+	private IEnumerator FindAvailableSessionId()
+    {
+		string sessionID = Environment.MachineName + "-" + DateTime.Now.ToString("yyyy.MM.dd.hh.mm.ss"); //Generate player name unique to each playing session (computer name + date)
+
+		string formatedString = String.Format("{0:X}", sessionID.GetHashCode());
+
+		// Make a request to check if this sessionId is already used
+		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession=" + formatedString);
+		GameObjectManager.setGameObjectState(loadingScreen, true);
+		logs.text = "";
+		progress.text = "0%";
+		yield return www.SendWebRequest();
+
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			logs.text = "<color=\"red\">Echec de vérification de la disponibilité du code de session \"" + formatedString + "\"</color>\n" + logs.text;
+			yield return new WaitForSeconds(0.5f);
+			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
+			{
+				logs.text = "<color=\"orange\">Nouvelle tentative de vérification de la disponibilité du code de session \"" + formatedString + "\"</color>\n" + logs.text;
+				MainLoop.instance.StartCoroutine(FindAvailableSessionId());
+			}
+			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
+        }
+        else
+		{
+			// If content is "", means this sessionId is available (no progression data associated to this sessionId)
+			if (www.downloadHandler.text == "")
+			{
+				GBL_Interface.playerName = formatedString;
+				GBL_Interface.userUUID = formatedString;
+				foreach (GameObject go in f_sessionId)
+					go.GetComponent<TMP_Text>().text = formatedString;
+
+				userData.progression = null;
+				userData.highScore = null;
+
+				if (gameData.sendStatementEnabled || !Application.isEditor)
+				{
+					GameObjectManager.setGameObjectState(sessionIdPanel, true);
+					// select ok button
+					EventSystem.current.SetSelectedGameObject(sessionIdPanel.transform.Find("ShowSessionId").Find("Buttons").Find("OkButton").gameObject);
+				}
+				// Disable Loading screen
+				GameObjectManager.setGameObjectState(loadingScreen, false);
+			}
+			else {
+				// means this sessionId is already used, try to find another
+				MainLoop.instance.StartCoroutine(FindAvailableSessionId());
+			}
+		}
 	}
 
 	private IEnumerator GetProgressionWebRequest(string idSession)
