@@ -375,7 +375,6 @@ public class CameraSystem : FSystem {
 					{ "content", param }
 				}
 			});
-
 			last_action_time = cur_time;
 			//Debug.Log("Log " + camera_action);
 		}
