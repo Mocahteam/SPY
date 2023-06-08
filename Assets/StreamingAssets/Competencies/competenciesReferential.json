@@ -150,7 +150,7 @@
 							]
 						}
 					],
-					"rule": "CorrectScript >= 1 and DragDropDisabled >= 1 and ScriptEditable = AllScript"
+					"rule": "CorrectScript >= 1 and DragDropDisabled >= 1 and ScriptEditable = AllScript and AllScript >= 2"
 				},
 				{
 					"key": "SPY_CorrectBuggedScript",
@@ -1778,7 +1778,7 @@
 							"parameters": []
 						}
 					],
-					"rule": "DragDropDisabled = 0 and BuggedScript = AllScript and AvailableActionInLib >=1 and ControlInLib = 0 and IfInScript = 0 and IfElseInScript = 0 and ForInScript = 0 and WhileInScript = 0 and ForeverInScript = 0"
+					"rule": "DragDropDisabled = 0 and BuggedScript = AllScript and BuggedScript >= 1 and AvailableActionInLib >=1 and ControlInLib = 0 and IfInScript = 0 and IfElseInScript = 0 and ForInScript = 0 and WhileInScript = 0 and ForeverInScript = 0"
 				},
 				{
 					"key": "C2.3",
@@ -2375,7 +2375,7 @@
 							]
 						}
 					],
-					"rule": "DragDropDisabled >= 1 and AllScript = ScriptEditable and (CorrectScript + NonOptimalScript) = AllScript"
+					"rule": "DragDropDisabled >= 1 and AllScript = ScriptEditable and (CorrectScript + NonOptimalScript) = AllScript and AllScript > 0"
 				},
 				{
 					"key": "C4.3",
@@ -2405,7 +2405,7 @@
 							]
 						}
 					],
-					"rule": "DragDropDisabled = 0 and AllScript = NonOptimalScript"
+					"rule": "DragDropDisabled = 0 and AllScript = NonOptimalScript and NonOptimalScript > 0"
 				},
 				{
 					"key": "C5",
@@ -2522,7 +2522,7 @@
 							]
 						}
 					],
-					"rule": "DragDropDisabled = 0 and AllScript = BuggedScript"
+					"rule": "DragDropDisabled = 0 and AllScript = BuggedScript and BuggedScript > 0"
 				},
 				{
 					"key": "C6.4",
