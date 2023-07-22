@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using FYFY;
 using FYFY_plugins.PointerManager;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -297,8 +296,10 @@ public class CameraSystem : FSystem {
 			}
 		}
 		if (agentCandidate != null)
+		{
 			focusOnAgent(agentCandidate);
 			camera_logging("focusOnNearestAgent", agentCandidate.ToString());
+		}
 	}
 
 	public void focusNextAgent()
