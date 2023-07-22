@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 5688242783878916740}
   - component: {fileID: 4418068244119050922}
   - component: {fileID: 5398451711570853583}
+  - component: {fileID: 2587477506047014650}
   m_Layer: 5
   m_Name: EmptySlot
   m_TagString: Untagged
@@ -190,6 +191,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Zone r\xE9serv\xE9e aux blocs \"Action\" ou \"Contr\xF4le\""
+--- !u!114 &2587477506047014650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 614420622717238934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TrackedObjects:
+  - id: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+        asm: Unity.Localization}
+      data:
+        m_Target: {fileID: 5398451711570853583}
+        m_TrackedProperties:
+          items:
+          - id: 1
+        m_UpdateType: 0
+        m_Changed:
+          m_PersistentCalls:
+            m_Calls: []
+    00000001:
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 27630720307200
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: text
 --- !u!1 &1060737230579591396
 GameObject:
   m_ObjectHideFlags: 0

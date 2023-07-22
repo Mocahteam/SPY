@@ -1824,6 +1824,7 @@ GameObject:
   - component: {fileID: 4772182845295066087}
   - component: {fileID: -4398288742179866985}
   - component: {fileID: 176730054516014038}
+  - component: {fileID: 6444491553609950384}
   m_Layer: 0
   m_Name: Robot Kyle
   m_TagString: Player
@@ -1884,6 +1885,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   x: 0
   y: 0
+  targetX: -1
+  targetY: -1
 --- !u!114 &6913258410562652475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1991,6 +1994,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   associatedScriptName: "N\xB01"
+--- !u!114 &6444491553609950384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5823726797354950846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TrackedObjects:
+  - id: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+        asm: Unity.Localization}
+      data:
+        m_Target: {fileID: -4398288742179866985}
+        m_TrackedProperties:
+          items:
+          - id: 1
+        m_UpdateType: 0
+        m_Changed:
+          m_PersistentCalls:
+            m_Calls: []
+    00000001:
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 26103297396736
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: text
 --- !u!1 &6122943781904512377
 GameObject:
   m_ObjectHideFlags: 0
