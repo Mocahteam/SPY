@@ -115,7 +115,7 @@ public class TitleScreenSystem : FSystem {
 			}
             else if (gameData.selectedScenario != "")
             {
-				// reload last openned scenario
+				// reload last opened scenario
 				playButton.GetComponent<Button>().onClick.Invoke();
 				showLevels(gameData.selectedScenario);
 				GameObjectManager.setGameObjectState(spyMenu.Find("MenuCampaigns").gameObject, false); // be sure campaign menu is disabled

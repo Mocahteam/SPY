@@ -71,7 +71,7 @@ public class DialogSystem : FSystem
 		string content = configureDialog(0);
 		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
-			verb = "openned",
+			verb = "opened",
 			objectType = "briefing",
 			activityExtensions = new Dictionary<string, string>() {
 				{ "content", content }

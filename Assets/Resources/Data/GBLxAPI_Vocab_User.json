@@ -3,9 +3,9 @@
     "activity": {
         "block": {
             "description": {
-                "en-US": "a block"
+                "en-US": "a programming block"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/activity-types/block",
+            "id": "https://spy.lip6.fr/xapi/activity-types/block",
             "name": {
                 "en-US": "block"
             }
@@ -14,16 +14,16 @@
             "description": {
                 "en-US": "the briefing panel"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/activity-types/briefing",
+            "id": "https://spy.lip6.fr/xapi/activity-types/briefing",
             "name": {
                 "en-US": "briefing"
             }
         },
         "program": {
             "description": {
-                "en-US": "a set of blocks"
+                "en-US": "a set of programming blocks"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/activity-types/program",
+            "id": "https://spy.lip6.fr/xapi/activity-types/program",
             "name": {
                 "en-US": "program"
             }
@@ -32,7 +32,7 @@
             "description": {
                 "en-US": "a panel that contains a program"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/activity-types/script",
+            "id": "https://spy.lip6.fr/xapi/activity-types/script",
             "name": {
                 "en-US": "script"
             }
@@ -44,9 +44,9 @@
     "extension": {
         "content": {
             "description": {
-                "en-US": "content of a sequence of blocks"
+                "en-US": "content of a sequence of blocks."
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/extensions/content",
+            "id": "https://spy.lip6.fr/xapi/extensions/content",
             "name": {
                 "en-US": "content"
             }
@@ -55,25 +55,25 @@
             "description": {
                 "en-US": "context in wich a block is added/removed"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/extensions/from",
+            "id": "https://spy.lip6.fr/xapi/extensions/context",
             "name": {
                 "en-US": "context"
             }
         },
         "error": {
             "description": {
-                "en-US": "error type"
+                "en-US": "error type (detected, badcondition, infiniteloop\u2026)"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/extensions/error",
+            "id": "https://spy.lip6.fr/xapi/extensions/error",
             "name": {
                 "en-US": "error"
             }
         },
         "oldvalue": {
             "description": {
-                "en-US": "old value of an object"
+                "en-US": "old value of an object. used in combination with value extension."
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/extensions/oldvalue",
+            "id": "https://spy.lip6.fr/xapi/extensions/oldvalue",
             "name": {
                 "en-US": "oldvalue"
             }
@@ -82,7 +82,7 @@
             "description": {
                 "en-US": "score at the end of a level"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/extensions/score",
+            "id": "https://spy.lip6.fr/xapi/extensions/score",
             "name": {
                 "en-US": "score"
             }
@@ -91,7 +91,7 @@
             "description": {
                 "en-US": "value of an object"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/extensions/value",
+            "id": "https://spy.lip6.fr/xapi/extensions/value",
             "name": {
                 "en-US": "value"
             }
@@ -104,26 +104,16 @@
     "skills": {},
     "state": {},
     "subdomain": {},
-    "time": {
-        "": {
-            "description": {
-                "en-US": "old value of an object"
-            },
-            "id": "",
-            "name": {
-                "en-US": ""
-            }
-        }
-    },
+    "time": {},
     "topic": {},
     "type": {},
     "value": {},
     "verb": {
         "bugged": {
             "description": {
-                "en-US": "indicates an error during program execution (boucle infinie, expression mal form\u00e9e, aucune action \u00e0 ex\u00e9cuter\u2026)"
+                "en-US": "indicates an error occurs during programs execution"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/bugged",
+            "id": "https://spy.lip6.fr/xapi/verbs/bugged",
             "name": {
                 "en-US": "bugged"
             }
@@ -132,7 +122,7 @@
             "description": {
                 "en-US": "indicates that the actor cleans a script"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/cleaned",
+            "id": "https://spy.lip6.fr/xapi/verbs/cleaned",
             "name": {
                 "en-US": "cleaned"
             }
@@ -141,7 +131,7 @@
             "description": {
                 "en-US": "indicates that the actor closes briefing dialogs"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/closed",
+            "id": "https://spy.lip6.fr/xapi/verbs/closed",
             "name": {
                 "en-US": "closed"
             }
@@ -150,34 +140,34 @@
             "description": {
                 "en-US": "indicates that the actor creates a new script"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/created",
+            "id": "https://spy.lip6.fr/xapi/verbs/created",
             "name": {
                 "en-US": "created"
             }
         },
         "deleted": {
             "description": {
-                "en-US": "indicates that the actor removes a block from the program"
+                "en-US": "indicates that the actor removes a block from a script"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/deleted",
+            "id": "https://spy.lip6.fr/xapi/verbs/deleted",
             "name": {
                 "en-US": "deleted"
             }
         },
         "executed": {
             "description": {
-                "en-US": "indicates that the actor executes a program"
+                "en-US": "indicates that the actor executes programs"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/executed",
+            "id": "https://spy.lip6.fr/xapi/verbs/executed",
             "name": {
                 "en-US": "executed"
             }
         },
         "inserted": {
             "description": {
-                "en-US": "indicates that the actor inserts a new block inside the program"
+                "en-US": "indicates that the actor inserts a new block inside a script"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/inserted",
+            "id": "https://spy.lip6.fr/xapi/verbs/inserted",
             "name": {
                 "en-US": "inserted"
             }
@@ -186,25 +176,25 @@
             "description": {
                 "en-US": "indicates that the actor modifies for loop nb steps"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/modified",
+            "id": "https://spy.lip6.fr/xapi/verbs/modified",
             "name": {
                 "en-US": "modified"
             }
         },
-        "openned": {
+        "opened": {
             "description": {
                 "en-US": "indicates that the actor opens briefing dialogs"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/openned",
+            "id": "https://spy.lip6.fr/xapi/verbs/opened",
             "name": {
-                "en-US": "openned"
+                "en-US": "opened"
             }
         },
         "paused": {
             "description": {
-                "en-US": "indicates that the actor pauses execution"
+                "en-US": "indicates that the actor pauses execution of programs"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/paused",
+            "id": "https://spy.lip6.fr/xapi/verbs/paused",
             "name": {
                 "en-US": "paused"
             }
@@ -213,34 +203,34 @@
             "description": {
                 "en-US": "indicates that the actor renames a script"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/renamed",
+            "id": "https://spy.lip6.fr/xapi/verbs/renamed",
             "name": {
                 "en-US": "renamed"
             }
         },
         "resumed": {
             "description": {
-                "en-US": "indicates that the actor resumes execution"
+                "en-US": "indicates that the actor resumes execution of programs"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/resumed",
+            "id": "https://spy.lip6.fr/xapi/verbs/resumed",
             "name": {
                 "en-US": "resumed"
             }
         },
         "stepped": {
             "description": {
-                "en-US": "indicates that the actor executes a new step"
+                "en-US": "indicates that the actor executes a new step of the programs"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/stepped",
+            "id": "https://spy.lip6.fr/xapi/verbs/stepped",
             "name": {
                 "en-US": "stepped"
             }
         },
         "stopped": {
             "description": {
-                "en-US": "indicates that the actor stops execution"
+                "en-US": "indicates that the actor stops programs execution"
             },
-            "id": "https://www.lip6.fr/mocah/invaliduri/verbs/stopped",
+            "id": "https://spy.lip6.fr/xapi/verbs/stopped",
             "name": {
                 "en-US": "stopped"
             }

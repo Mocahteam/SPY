@@ -1531,33 +1531,6 @@
 							"parameters": []
 						},
 						{
-							"label": "ActionInLib",
-							"tag": "blockLimit",
-							"parameters": [
-								{
-									"attribute": "blockType",
-									"constraint": "include",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
-						{
-							"label": "ActionInScript",
-							"tag": "action",
-							"parameters": [
-								{
-									"attribute": "type",
-									"constraint": "include",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
-								}
-							]
-						},
-						{
 							"label": "ActivateInLib",
 							"tag": "blockLimit",
 							"parameters": [
@@ -1598,7 +1571,7 @@
 						}
 						
 					],
-					"rule": "((ActionInLib + ActionInScript) >= 1 and (CaptorInLib + CaptorInScript) >= 1 and (ControlInLib + IfInScript + IfElseInScript + WhileInScript) >= 1) or DoorWithSlotConnected >= 1"
+					"rule": "((CaptorInLib + CaptorInScript) >= 1 and (ControlInLib + IfInScript + IfElseInScript + WhileInScript) >= 1) or ((ActivateInLib + ActivateInScript) >= 1 and DoorWithSlotConnected >= 1)"
 				},
 				{
 					"key": "C1.7",
@@ -1635,6 +1608,9 @@
 									"attribute": "type",
 									"constraint": "=",
 									"value": "0"
+								},
+								{
+									"constraint": "hasChild"
 								}
 							]
 						}
@@ -1964,7 +1940,7 @@
 							"parameters": [
 								{
 									"attribute": "amount",
-									"constraint": "<=",
+									"constraint": "=",
 									"value": "1"
 								}
 							]
@@ -2375,7 +2351,7 @@
 							]
 						}
 					],
-					"rule": "DragDropDisabled >= 1 and AllScript = ScriptEditable and (CorrectScript + NonOptimalScript) = AllScript and AllScript > 0"
+					"rule": "DragDropDisabled >= 1 and AllScript = ScriptEditable and (CorrectScript + NonOptimalScript) = AllScript and CorrectScript > 0"
 				},
 				{
 					"key": "C4.3",

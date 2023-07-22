@@ -42,7 +42,16 @@ namespace DIG.GBLXAPI.Builders
             _activity = new Activity();
         }
 
-        public IOptional WithID(string iriString) { return WithID(new Uri(iriString)); }
+        public IOptional WithID(string key) {
+            try
+            {
+                var activityToken = _standardsObject[JActivityKey][key.ToLower()];
+
+                return WithID(new Uri((string)activityToken["id"]));
+
+            }
+            catch (NullReferenceException) { throw new VocabMissingException("activity id", key); }
+        }
 
         public IOptional WithID(Uri iri)
         {
