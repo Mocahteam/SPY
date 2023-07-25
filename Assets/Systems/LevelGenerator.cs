@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Xml;
 using UnityEngine.UI;
 using TMPro;
-using System.IO;
 using System.Collections;
-using UnityEngine.Networking;
 using System.Runtime.InteropServices;
 using System;
 
@@ -59,7 +57,7 @@ public class LevelGenerator : FSystem {
 				XmlToLevel(gameData.levels[levelToLoad.src].OwnerDocument);
 			else
 				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Error });
-			levelName.text = levelToLoad.name;
+			levelName.text = EditingUtility.extractLocale(levelToLoad.name);
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlButtons();
             GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new

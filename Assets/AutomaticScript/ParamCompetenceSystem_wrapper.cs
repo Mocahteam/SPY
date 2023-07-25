@@ -20,6 +20,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject editBriefingPanel;
 	public UnityEngine.GameObject briefingItemPrefab;
 	public TMPro.TMP_InputField scenarioAbstract;
+	public TMPro.TMP_InputField scenarioName;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -40,6 +41,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "editBriefingPanel", editBriefingPanel);
 		MainLoop.initAppropriateSystemField (system, "briefingItemPrefab", briefingItemPrefab);
 		MainLoop.initAppropriateSystemField (system, "scenarioAbstract", scenarioAbstract);
+		MainLoop.initAppropriateSystemField (system, "scenarioName", scenarioName);
 	}
 
 	public void refreshCompetencies()

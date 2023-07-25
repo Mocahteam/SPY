@@ -8,6 +8,7 @@ using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 public static class EditingUtility
@@ -859,5 +860,27 @@ public static class EditingUtility
 			return (bool)dt.Compute(rule, "");
 		else
 			return false;
+	}
+
+	// used for localization process to integrate inside expression some data
+	public static string getFormatedText(string expression, params object[] data)
+	{
+		for (int i = 0; i < data.Length; i++)
+			expression = expression.Replace("#" + i + "#", data[i].ToString());
+		return expression;
+	}
+
+	public static string extractLocale(string content)
+    {
+		if (content == null) return "";
+		string localKey = LocalizationSettings.Instance.GetSelectedLocale().Identifier.Code;
+		if (content.Contains("[" + localKey + "]") && content.Contains("[/" + localKey + "]"))
+        {
+			int start = content.IndexOf("[" + localKey + "]") + localKey.Length + 2;
+			int length = content.IndexOf("[/" + localKey + "]") - start;
+			return content.Substring(start, length);
+		}
+		else
+			return content;
 	}
 }

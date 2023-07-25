@@ -106,7 +106,7 @@ public class BlocLimitationManager : FSystem
 				{
 					// limited action => init and show counter
 					GameObject counterText = draggableGO.transform.GetChild(1).gameObject;
-					counterText.GetComponent<TextMeshProUGUI>().text = "Reste " + gameData.actionBlockLimit[draggableGO.name].ToString();
+					counterText.GetComponent<TextMeshProUGUI>().text = EditingUtility.getFormatedText(gameData.localization[41], gameData.actionBlockLimit[draggableGO.name].ToString());
 					GameObjectManager.setGameObjectState(counterText, true);
 				}
 			}

@@ -125,9 +125,10 @@ public class DialogSystem : FSystem
 		if (overridedDialogs[nDialog].text != null)
 		{
 			GameObjectManager.setGameObjectState(textGO, true);
-			textGO.GetComponent<TextMeshProUGUI>().text = overridedDialogs[nDialog].text;
+			string localeDependent = EditingUtility.extractLocale(overridedDialogs[nDialog].text);
+			textGO.GetComponent<TextMeshProUGUI>().text = localeDependent;
 			LayoutRebuilder.ForceRebuildLayoutImmediate(textGO.transform as RectTransform);
-			dialogReturn = overridedDialogs[nDialog].text;
+			dialogReturn = localeDependent;
 		}
 		else
 			GameObjectManager.setGameObjectState(textGO, false);
@@ -135,17 +136,18 @@ public class DialogSystem : FSystem
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if (overridedDialogs[nDialog].img != null)
 		{
-			if (overridedDialogs[nDialog].img.ToLower().StartsWith("http"))
-				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), overridedDialogs[nDialog].img));
+			string localeDependent = EditingUtility.extractLocale(overridedDialogs[nDialog].img);
+			if (localeDependent.ToLower().StartsWith("http"))
+				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), localeDependent));
 			else
 			{
 				if (Application.platform == RuntimePlatform.WebGLPlayer)
 				{
 					Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src);
-					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + overridedDialogs[nDialog].img));
+					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + localeDependent));
 				}
 				else
-					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) + "/Images/" + overridedDialogs[nDialog].img));
+					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) + "/Images/" + localeDependent));
 			}
 		}
 		else
@@ -157,33 +159,38 @@ public class DialogSystem : FSystem
 		}
 		// set sound
 		AudioSource audio = dialogPanel.GetComponent<AudioSource>();
+		audio.Stop();
 		if (overridedDialogs[nDialog].sound != null)
 		{
-			if (overridedDialogs[nDialog].sound.ToLower().StartsWith("http"))
-				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, overridedDialogs[nDialog].sound));
-			else
+			string localeDependent = EditingUtility.extractLocale(overridedDialogs[nDialog].sound);
+			if (localeDependent.ToLower().StartsWith("http"))
+				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, localeDependent));
+			else if (localeDependent != "")
 			{
 				if (Application.platform == RuntimePlatform.WebGLPlayer)
 				{
 					Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src);
-					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Sounds/" + overridedDialogs[nDialog].sound));
+					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Sounds/" + localeDependent));
 				}
 				else
-					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) + "/Sounds/" + overridedDialogs[nDialog].sound));
+					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) + "/Sounds/" + localeDependent));
 			}
 		}
-		else
-			audio.Stop();
 		// set video
 		VideoPlayer videoPlayer = dialogPanel.GetComponentInChildren<VideoPlayer>(true);
 		if (overridedDialogs[nDialog].video != null)
 		{
-			Debug.Log(overridedDialogs[nDialog].video);
-			GameObjectManager.setGameObjectState(videoPlayer.gameObject, true);
-			videoPlayer.url = overridedDialogs[nDialog].video;
-			RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
-			rawImage.enabled = false;
-			MainLoop.instance.StartCoroutine(waitLoadingVideo());
+			string localeDependent = EditingUtility.extractLocale(overridedDialogs[nDialog].video);
+			if (localeDependent != "")
+			{
+				GameObjectManager.setGameObjectState(videoPlayer.gameObject, true);
+				videoPlayer.url = localeDependent;
+				RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
+				rawImage.enabled = false;
+				MainLoop.instance.StartCoroutine(waitLoadingVideo());
+			}
+			else
+				GameObjectManager.setGameObjectState(videoPlayer.gameObject, false);
 		}
 		else
 			GameObjectManager.setGameObjectState(videoPlayer.gameObject, false);
