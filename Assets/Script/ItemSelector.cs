@@ -53,7 +53,7 @@ public class ItemSelector : MonoBehaviour
     }
 
     /// <summary>
-    /// Select local accrodingly to the langage selector
+    /// Select locale accrodingly to the langage selector
     /// </summary>
     public void changeLocale()
     {
@@ -61,5 +61,12 @@ public class ItemSelector : MonoBehaviour
             LocalizationSettings.Instance.SetSelectedLocale(LocalizationSettings.Instance.GetAvailableLocales().GetLocale("fr"));
         if (currentItem == 1)
             LocalizationSettings.Instance.SetSelectedLocale(LocalizationSettings.Instance.GetAvailableLocales().GetLocale("en"));
+        PlayerPrefs.SetString("locale", LocalizationSettings.Instance.GetSelectedLocale().Identifier.Code);
+    }
+
+    public void switchTo (string locale)
+    {
+        if (locale != LocalizationSettings.Instance.GetSelectedLocale().Identifier.Code)
+            nextItem();
     }
 }

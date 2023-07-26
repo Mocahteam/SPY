@@ -21,6 +21,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject virtualKeyboard;
 	public TMPro.TMP_Text progress;
 	public TMPro.TMP_Text logs;
+	public ItemSelector languageSelector;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -42,6 +43,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "virtualKeyboard", virtualKeyboard);
 		MainLoop.initAppropriateSystemField (system, "progress", progress);
 		MainLoop.initAppropriateSystemField (system, "logs", logs);
+		MainLoop.initAppropriateSystemField (system, "languageSelector", languageSelector);
 	}
 
 	public void initGBLXAPI()

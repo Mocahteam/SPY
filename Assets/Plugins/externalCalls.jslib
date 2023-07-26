@@ -39,5 +39,12 @@ mergeInto(LibraryManager.library, {
 		element.click();
 
 		document.body.removeChild(element);
+	},
+
+	GetBrowserLanguage: function(){
+		if ((navigator.language && navigator.language.includes("fr")) || (navigator.userLanguage && navigator.userLanguage.includes("fr")))
+			return "fr";
+		else
+			return "en";
 	}
 });

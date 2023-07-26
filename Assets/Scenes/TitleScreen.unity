@@ -3844,6 +3844,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 191250880}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &191250882 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7168561694483261118, guid: 255eb573d84a4684eb07e9d7db1ae744,
+    type: 3}
+  m_PrefabInstance: {fileID: 191250880}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1588766899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ec794be66585534caf3e8935e3f6fab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &208505602
 GameObject:
   m_ObjectHideFlags: 0
@@ -29951,6 +29963,7 @@ GameObject:
   - component: {fileID: 1645587992}
   - component: {fileID: 1645587993}
   - component: {fileID: 1645587994}
+  - component: {fileID: 1645587995}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -29990,6 +30003,7 @@ MonoBehaviour:
   virtualKeyboard: {fileID: 379255380}
   progress: {fileID: 1485429161}
   logs: {fileID: 2000914689}
+  languageSelector: {fileID: 191250882}
 --- !u!114 &1645587986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30043,6 +30057,10 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: SendStatements, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: SendStatements
+    _pause: 0
+  - _typeAssemblyQualifiedName: SyncLocalization, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: SyncLocalization
     _pause: 0
   _lateUpdateSystemDescriptions: []
   _forceUpdateInspector: 0
@@ -30174,6 +30192,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a01cbfe3b9516db4ca61fe2a246495f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1645587995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645587984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfaf62cfdbf311b4eaed1e362f47e99c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1649896675

@@ -44,6 +44,7 @@ public class TitleScreenSystem : FSystem {
 	public GameObject virtualKeyboard;
 	public TMP_Text progress;
 	public TMP_Text logs;
+	public ItemSelector languageSelector;
 
 	private GameObject selectedScenarioGO;
 	private UnityAction localCallback;
@@ -62,6 +63,9 @@ public class TitleScreenSystem : FSystem {
 
 	[DllImport("__Internal")]
 	private static extern void DownloadLevel(string uri); // call javascript
+
+	[DllImport("__Internal")]
+	private static extern string GetBrowserLanguage(); // call javascript
 
 	[Serializable]
 	public class WebGlScenarioList
@@ -390,7 +394,15 @@ public class TitleScreenSystem : FSystem {
     {
 		while (webGL_fileLoaded < webGL_fileToLoad)
 			yield return null;
-		// Now, if require, we can load requested level by URL
+
+		// Now, we can switch to appropriate language
+		string locale = "fr";
+		if (PlayerPrefs.HasKey("locale"))
+			locale = PlayerPrefs.GetString("locale");
+		else if (Application.platform == RuntimePlatform.WebGLPlayer)
+			locale = GetBrowserLanguage();
+		languageSelector.switchTo(locale);
+		// and, if require, we can load requested level by URL
 		if (loadLevelWithURL != "")
 			testLevelPath(loadLevelWithURL);
 		// Disable Loading screen
