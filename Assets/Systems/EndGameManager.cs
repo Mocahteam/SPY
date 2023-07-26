@@ -104,7 +104,7 @@ public class EndGameManager : FSystem {
 		if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Detected)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
-			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = "Vous avez été repéré !";
+			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[42];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -156,12 +156,12 @@ public class EndGameManager : FSystem {
 			if (gameData.levelToLoad >= gameData.scenarios[gameData.selectedScenario].levels.Count - 1)
 			{
 				GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-				endPanel.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez terminé ce scénario !";
+				endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[43];
 				MainLoop.instance.StartCoroutine(delayNewButtonFocused(buttons.Find("MainMenu").gameObject));
 			}
 			else
 			{
-				endPanel.GetComponentInChildren<TextMeshProUGUI>().text = "Bravo vous avez gagné !";
+				endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[44];
 				MainLoop.instance.StartCoroutine(delayNewButtonFocused(buttons.Find("NextLevel").gameObject));
 			}
 			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
@@ -178,7 +178,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.BadCondition)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
-			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = "Une condition est mal remplie !";
+			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[45];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -200,7 +200,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoMoreAttempt)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
-			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = "Vous n'avez pas réussi à atteindre le téléporteur et vous n'avez plus d'exécution disponible.\nEssayez de résoudre ce niveau en moins de coup !";
+			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[46];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);
@@ -224,7 +224,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoAction)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
-			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = "Aucune action ne peut être exécutée !";
+			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[47];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -246,7 +246,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.InfiniteLoop)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
-			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = "ATTENTION, boucle infinie détectée...\nRisque de surchauffe du processeur du robot, interuption du programme d'urgence !";
+			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[48];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -268,7 +268,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Error)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
-			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = "ERREUR de chargement du niveau, veuillez retourner au menu principal !";
+			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[49];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);
