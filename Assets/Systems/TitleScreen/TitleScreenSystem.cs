@@ -14,6 +14,7 @@ using DIG.GBLXAPI;
 using Newtonsoft.Json;
 using UnityEngine.EventSystems;
 using System.Linq;
+using UnityEngine.Localization.Settings;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -112,6 +113,7 @@ public class TitleScreenSystem : FSystem {
 		}
 		else // means we come back from a playing session, streaming assets are already loaded
 		{
+			languageSelector.switchTo(LocalizationSettings.Instance.GetSelectedLocale().Identifier.Code); // force to sync UI
 			Transform spyMenu = playButton.transform.parent.parent;
 			if (gameData.selectedScenario == testLevelToken) // reload scenario editor
             {

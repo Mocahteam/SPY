@@ -66,7 +66,11 @@ public class ItemSelector : MonoBehaviour
 
     public void switchTo (string locale)
     {
-        if (locale != LocalizationSettings.Instance.GetSelectedLocale().Identifier.Code)
-            nextItem();
+        if (locale == "fr")
+            currentItem = 0;
+        else
+            currentItem = 1;
+        itemUI.text = items[currentItem];
+        changeLocale();
     }
 }
