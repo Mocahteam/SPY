@@ -65,9 +65,6 @@ public class TitleScreenSystem : FSystem {
 	[DllImport("__Internal")]
 	private static extern void DownloadLevel(string uri); // call javascript
 
-	[DllImport("__Internal")]
-	private static extern string GetBrowserLanguage(); // call javascript
-
 	[Serializable]
 	public class WebGlScenarioList
     {
@@ -113,7 +110,6 @@ public class TitleScreenSystem : FSystem {
 		}
 		else // means we come back from a playing session, streaming assets are already loaded
 		{
-			languageSelector.switchTo(LocalizationSettings.Instance.GetSelectedLocale().Identifier.Code); // force to sync UI
 			Transform spyMenu = playButton.transform.parent.parent;
 			if (gameData.selectedScenario == testLevelToken) // reload scenario editor
             {
@@ -397,13 +393,6 @@ public class TitleScreenSystem : FSystem {
 		while (webGL_fileLoaded < webGL_fileToLoad)
 			yield return null;
 
-		// Now, we can switch to appropriate language
-		string locale = "fr";
-		if (PlayerPrefs.HasKey("locale"))
-			locale = PlayerPrefs.GetString("locale");
-		else if (Application.platform == RuntimePlatform.WebGLPlayer)
-			locale = GetBrowserLanguage();
-		languageSelector.switchTo(locale);
 		// and, if require, we can load requested level by URL
 		if (loadLevelWithURL != "")
 			testLevelPath(loadLevelWithURL);
@@ -675,7 +664,7 @@ public class TitleScreenSystem : FSystem {
 				foreach (DataLevel levelKey in gameData.scenarios[content.GetChild(0).GetComponent<TMP_Text>().text].levels)
 					if (gameData.levels.ContainsKey(levelKey.src) && EditingUtility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.src].OwnerDocument))
 					{
-						txt += "\t" + EditingUtility.extractLocale(comp.GetComponent<Competency>().name) + "\n";
+						txt += "\t" + EditingUtility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
 						break;
 					}
 			}

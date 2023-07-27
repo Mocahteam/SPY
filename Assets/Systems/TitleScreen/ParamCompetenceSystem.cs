@@ -196,7 +196,7 @@ public class ParamCompetenceSystem : FSystem
 			competency.name = rawComp.key;
 			Competency comp = competency.GetComponent<Competency>();
 			comp.parentKey = rawComp.parentKey;
-			comp.name = rawComp.name;
+			comp.id = rawComp.name;
 			comp.description = EditingUtility.extractLocale(rawComp.description);
 			comp.constraints = rawComp.constraints;
 			if (comp.constraints.Length == 0)
@@ -207,7 +207,7 @@ public class ParamCompetenceSystem : FSystem
 			// On l'attache au content
 			competency.transform.SetParent(ContentCompMenu.transform, false);
 			// On charge le text de la compétence
-			competency.GetComponentInChildren<TMP_Text>().text = EditingUtility.extractLocale(comp.name);
+			competency.GetComponentInChildren<TMP_Text>().text = EditingUtility.extractLocale(comp.id);
 			GameObjectManager.bind(competency);
 		}
 

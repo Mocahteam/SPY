@@ -28,7 +28,6 @@ mergeInto(LibraryManager.library, {
 	},
 	
     DownloadLevel: function (uri) {
-		console.log(Pointer_stringify(uri));
 		var element = document.createElement('a');
 		element.setAttribute('href', Pointer_stringify(uri));
 		element.setAttribute('target', "_blank");
@@ -42,9 +41,17 @@ mergeInto(LibraryManager.library, {
 	},
 
 	GetBrowserLanguage: function(){
+		var ret = ""
 		if ((navigator.language && navigator.language.includes("fr")) || (navigator.userLanguage && navigator.userLanguage.includes("fr")))
-			return "fr";
+			ret = "fr";
 		else
-			return "en";
+			ret = "en";
+		//Get size of the string
+		var bufferSize = lengthBytesUTF8(ret) + 1;
+		//Allocate memory space
+		var buffer = _malloc(bufferSize);
+		//Copy old data to the new one then return it
+		stringToUTF8(ret, buffer, bufferSize);
+		return buffer;
 	}
 });

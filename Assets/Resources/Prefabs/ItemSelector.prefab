@@ -314,9 +314,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8885153913726410274}
-  - component: {fileID: 7168561694483261118}
   - component: {fileID: 8515957669112636987}
   - component: {fileID: 1319448247578837923}
+  - component: {fileID: 2394834407326306543}
+  - component: {fileID: 1114118652617201232}
   m_Layer: 5
   m_Name: ItemSelector
   m_TagString: Untagged
@@ -346,23 +347,6 @@ RectTransform:
   m_AnchoredPosition: {x: -20, y: 20}
   m_SizeDelta: {x: 530.51, y: 100}
   m_Pivot: {x: 1, y: 0}
---- !u!114 &7168561694483261118
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8885153913726410275}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ec794be66585534caf3e8935e3f6fab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentItem: 0
-  items:
-  - "Fran\xE7ais"
-  - English
-  itemUI: {fileID: 8885153913586096301}
 --- !u!222 &8515957669112636987
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -397,6 +381,31 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &2394834407326306543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8885153913726410275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e116e5b047c41d241b98b8eaeff131a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemUI: {fileID: 8885153913586096301}
+--- !u!114 &1114118652617201232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8885153913726410275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd7f562fcf1256a4f94badfe5b6f4a27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8885153914220435126
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,8 +497,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7168561694483261118}
-        m_TargetAssemblyTypeName: ItemSelector, Assembly-CSharp
+      - m_Target: {fileID: 1114118652617201232}
+        m_TargetAssemblyTypeName: SyncLocalizationBridge, Assembly-CSharp
         m_MethodName: nextItem
         m_Mode: 1
         m_Arguments:
@@ -611,8 +620,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7168561694483261118}
-        m_TargetAssemblyTypeName: ItemSelector, Assembly-CSharp
+      - m_Target: {fileID: 1114118652617201232}
+        m_TargetAssemblyTypeName: SyncLocalizationBridge, Assembly-CSharp
         m_MethodName: prevItem
         m_Mode: 1
         m_Arguments:
