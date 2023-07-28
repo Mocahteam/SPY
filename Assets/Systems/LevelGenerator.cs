@@ -145,7 +145,7 @@ public class LevelGenerator : FSystem {
 						agentName = child.Attributes.GetNamedItem("associatedScriptName"); // for retrocompatibility
 					if (agentName != null && agentName.Value != "")
 						nameAgentByUser = agentName.Value;
-					GameObject agent = createEntity(nameAgentByUser, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value),
+					GameObject agent = createEntity(EditingUtility.extractLocale(nameAgentByUser), int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value),
 					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), child.Name);
 					if (child.Name == "enemy")
 					{
@@ -173,7 +173,7 @@ public class LevelGenerator : FSystem {
 					if (name == null)
 						name = child.Attributes.GetNamedItem("name"); // for retrocompatibility
 					// Script has to be created after agents
-					MainLoop.instance.StartCoroutine(delayReadXMLScript(child, name.Value, editModeByUser, typeByUser));
+					MainLoop.instance.StartCoroutine(delayReadXMLScript(child, EditingUtility.extractLocale(name.Value), editModeByUser, typeByUser));
 					break;
 				case "score":
 					gameData.levelToLoadScore = new int[2];
