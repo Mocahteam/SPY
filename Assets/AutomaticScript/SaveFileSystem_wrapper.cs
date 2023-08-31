@@ -3,7 +3,7 @@ using FYFY;
 
 public class SaveFileSystem_wrapper : BaseWrapper
 {
-	public UnityEngine.UI.InputField executionLimitField;
+	public TMPro.TMP_InputField executionLimitField;
 	public UnityEngine.GameObject editableContainer;
 	public LevelData levelData;
 	public PaintableGrid paintableGrid;

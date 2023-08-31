@@ -837,7 +837,7 @@ GameObject:
   - component: {fileID: 5221037723421323205}
   - component: {fileID: 2079570025442524327}
   m_Layer: 5
-  m_Name: InputField (TMP)
+  m_Name: LimitField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1407,7 +1407,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.6509804, b: 0.42835256, a: 1}
+  m_Color: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1437,8 +1437,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockName: 
-  blockCategory: 0
-  blockIcon: {fileID: 0}
+  hideColor: {r: 0.5568628, g: 0.5568628, b: 0.5568628, a: 1}
+  limitedColor: {r: 0.6509804, g: 0.58431375, b: 0, a: 1}
+  unlimitedColor: {r: 0, g: 0.6509804, b: 0.42745098, a: 1}
 --- !u!114 &760616443742464546
 MonoBehaviour:
   m_ObjectHideFlags: 0

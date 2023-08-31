@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using FYFY;
 using UnityEngine.UI;
@@ -11,16 +10,6 @@ public class EditorLevelDataSystem : FSystem {
 	private Family f_newLoading = FamilyManager.getFamily(new AllOfComponents(typeof(NewLevelToLoad)));
 
 	public static EditorLevelDataSystem instance;
-
-	public Sprite backgroundAction;
-	public Sprite backgroundControl;
-	public Sprite backgroundOperator;
-	public Sprite backgroundSensor;
-
-	public Color actionColor;
-	public Color controlColor;
-	public Color operatorColor;
-	public Color sensorColor;
 	
 	public LevelData levelData;
 	public GameObject scrollViewContent;
@@ -28,7 +17,8 @@ public class EditorLevelDataSystem : FSystem {
 	public Toggle dragAndDropToggle;
 	public Toggle fogToggle;
 	public Toggle hideExitsToggle;
-	public GameObject scoreContainer;
+	public TMP_InputField score2Input;
+	public TMP_InputField score3Input;
 
 	private GameData gameData;
 
@@ -78,7 +68,7 @@ public class EditorLevelDataSystem : FSystem {
 		XmlNode root = doc.ChildNodes[1];
 
 		// check if dragdropDisabled node exists and set levelData accordingly
-		dragAndDropToggle.isOn = doc.GetElementsByTagName("dragdropDisabled").Count > 0;
+		dragAndDropToggle.isOn = doc.GetElementsByTagName("dragdropDisabled").Count == 0;
 		fogToggle.isOn = doc.GetElementsByTagName("fog").Count > 0;
 		hideExitsToggle.isOn = doc.GetElementsByTagName("hideExits").Count > 0;
 
@@ -116,16 +106,16 @@ public class EditorLevelDataSystem : FSystem {
 							// sync LimitBlock with data
 							blockData.transform.Find("LimitToggle").GetComponent<Toggle>().isOn = blockAmount <= 0;
 							// enable LimitField depending on LimitBlock state
-							blockData.transform.Find("LimitField").GetComponent<InputField>().interactable = blockAmount > 0;
+							blockData.transform.Find("LimitField").GetComponent<TMP_InputField>().interactable = blockAmount > 0;
 						} // else nothing to do default data is hiden block
 
 						// in all cases set the inputfield to the file data
-						blockData.transform.Find("LimitField").GetComponent<InputField>().text = blockAmount.ToString();
+						blockData.transform.Find("LimitField").GetComponent<TMP_InputField>().text = blockAmount.ToString();
 					}
 					break;
 				case "score":
-					scoreContainer.transform.Find("TwoStar").GetComponent<TMP_InputField>().text = child.Attributes.GetNamedItem("twoStars")?.Value;
-					scoreContainer.transform.Find("ThreeStar").GetComponent<TMP_InputField>().text = child.Attributes.GetNamedItem("threeStars")?.Value;
+					score2Input.text = child.Attributes.GetNamedItem("twoStars")?.Value;
+					score3Input.text = child.Attributes.GetNamedItem("threeStars")?.Value;
 					break;
 			}
 		}
@@ -197,9 +187,15 @@ public class EditorLevelDataSystem : FSystem {
 		TMP_InputField inputField = source.GetComponentInChildren<TMP_InputField>();
 		inputField.interactable = !newState;
 		if (newState)
+		{
 			inputField.text = "0";
+			source.GetComponent<Image>().color = source.GetComponent<EditorBlockData>().hideColor;
+		}
 		else
+		{
 			inputField.text = "1";
+			source.GetComponent<Image>().color = source.GetComponent<EditorBlockData>().limitedColor;
+		}
 	}
 
 	// See editBlockPrefab
@@ -208,9 +204,15 @@ public class EditorLevelDataSystem : FSystem {
 		TMP_InputField inputField = source.GetComponentInChildren<TMP_InputField>();
 		inputField.interactable = !newState;
 		if (newState)
+		{
 			inputField.text = "-1";
+			source.GetComponent<Image>().color = source.GetComponent<EditorBlockData>().unlimitedColor;
+		}
 		else
+		{
 			inputField.text = "1";
+			source.GetComponent<Image>().color = source.GetComponent<EditorBlockData>().limitedColor;
+		}
 	}
 
 	// See DragDropDisabled panel
@@ -241,23 +243,23 @@ public class EditorLevelDataSystem : FSystem {
 	public void scoreTwoStarsExit(string newData)
 	{
 		if (string.IsNullOrEmpty(newData))
-			scoreContainer.transform.Find("TwoStar").GetComponent<TMP_InputField>().text = "0";
+			score2Input.text = "0";
 
 		int twoStarsScore = int.Parse(newData);
-		int threeStarsScore = int.TryParse(scoreContainer.transform.Find("ThreeStar").GetComponent<TMP_InputField>().text, out int x) ? x : 0;
+		int threeStarsScore = int.TryParse(score3Input.text, out int x) ? x : 0;
 		if (twoStarsScore > threeStarsScore)
-			scoreContainer.transform.Find("ThreeStar").GetComponent<TMP_InputField>().text = newData;
+			score3Input.text = newData;
 	}
 
 	public void scoreThreeStarsExit(string newData)
 	{
 		if (string.IsNullOrEmpty(newData))
-			scoreContainer.transform.Find("ThreeStar").GetComponent<TMP_InputField>().text = "0";
+			score3Input.text = "0";
 
 		int threeStarsScore = int.Parse(newData);
-		int twoStarsScore = int.TryParse(scoreContainer.transform.Find("TwoStar").GetComponent<TMP_InputField>().text, out int x) ? x : 0;
+		int twoStarsScore = int.TryParse(score2Input.text, out int x) ? x : 0;
 		if (twoStarsScore > threeStarsScore)
-			scoreContainer.transform.Find("TwoStar").GetComponent<TMP_InputField>().text = newData;
+			score2Input.text = newData;
 	}
 }
 

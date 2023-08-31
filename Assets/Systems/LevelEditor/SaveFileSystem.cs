@@ -11,7 +11,7 @@ public class SaveFileSystem : FSystem
 {
 	private Family f_editorblocks = FamilyManager.getFamily(new AllOfComponents(typeof(EditorBlockData)));
 
-	public InputField executionLimitField;
+	public TMP_InputField executionLimitField;
 	public GameObject editableContainer;
 	public LevelData levelData;
 	public PaintableGrid paintableGrid;
@@ -57,32 +57,10 @@ public class SaveFileSystem : FSystem
 		}
 		rootNode.Add(mapNode);
 
-		var familyDialogs = 
-			FamilyManager.getFamily(new AllOfComponents(typeof(DialogListEntry)))
-				.Select(go => go.GetComponent<DialogListEntry>()).ToList();
-
-		if (familyDialogs.Count > 0)
-		{
-			var dialogNode = new XElement("dialogs");
-			foreach (var dialog in familyDialogs)
-			{
-				var dialogSubNode = new XElement("dialog", new XAttribute("text", dialog.dialogText));
-				if (dialog.cameraMove)
-				{
-					dialogSubNode.Add(new XAttribute("camX", dialog.cameraMoveX));
-					dialogSubNode.Add(new XAttribute("camY", dialog.cameraMoveY));
-				}
-				dialogNode.Add(dialogSubNode);
-			}
-
-			rootNode.Add(dialogNode);
-		}
-
-
 
 		/* Ne pas oublier de remettre ça dans la sauvegarde...
 		if (levelData.dragdropDisabled)
-			rootNode.Add(new XElement("dragdropDisabled"));
+			rootNode.Add(new XElement("dragdropDisabled")); Attention au sens du bouléen (inversé)
 
 		if (levelData.executionLimitEnabled)
 		{
@@ -247,7 +225,7 @@ public class SaveFileSystem : FSystem
 				continue;
 			}
 			
-			var limitStr = go.GetComponentInChildren<InputField>().text;
+			var limitStr = go.GetComponentInChildren<TMP_InputField>().text;
 			var limit = !string.IsNullOrEmpty(limitStr) ? int.Parse(limitStr) : 1;
 
 			result[blockName] = limit;
