@@ -57,7 +57,7 @@ public class LevelGenerator : FSystem {
 				XmlToLevel(gameData.levels[levelToLoad.src].OwnerDocument);
 			else
 				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Error });
-			levelName.text = EditingUtility.extractLocale(levelToLoad.name);
+			levelName.text = Utility.extractLocale(levelToLoad.name);
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlButtons();
             GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
@@ -93,7 +93,7 @@ public class LevelGenerator : FSystem {
 		map = new List<List<int>>();
 
 		// remove comments
-		EditingUtility.removeComments(doc);
+		Utility.removeComments(doc);
 
 		XmlNode root = doc.ChildNodes[1];
 
@@ -109,7 +109,7 @@ public class LevelGenerator : FSystem {
 					break;
 				case "dialogs":
 					if (!dialogsOverrided)
-						EditingUtility.readXMLDialogs(child, levelToLoad.overridedDialogs);
+						Utility.readXMLDialogs(child, levelToLoad.overridedDialogs);
 					break;
 				case "executionLimit":
 					int amount = int.Parse(child.Attributes.GetNamedItem("amount").Value);
@@ -145,7 +145,7 @@ public class LevelGenerator : FSystem {
 						agentName = child.Attributes.GetNamedItem("associatedScriptName"); // for retrocompatibility
 					if (agentName != null && agentName.Value != "")
 						nameAgentByUser = agentName.Value;
-					GameObject agent = createEntity(EditingUtility.extractLocale(nameAgentByUser), int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value),
+					GameObject agent = createEntity(Utility.extractLocale(nameAgentByUser), int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value),
 					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), child.Name);
 					if (child.Name == "enemy")
 					{
@@ -173,7 +173,7 @@ public class LevelGenerator : FSystem {
 					if (name == null)
 						name = child.Attributes.GetNamedItem("name"); // for retrocompatibility
 					// Script has to be created after agents
-					MainLoop.instance.StartCoroutine(delayReadXMLScript(child, EditingUtility.extractLocale(name.Value), editModeByUser, typeByUser));
+					MainLoop.instance.StartCoroutine(delayReadXMLScript(child, Utility.extractLocale(name.Value), editModeByUser, typeByUser));
 					break;
 				case "score":
 					gameData.levelToLoadScore = new int[2];
@@ -444,7 +444,7 @@ public class LevelGenerator : FSystem {
 						GameObject tmpContainer = GameObject.Instantiate(scriptRef.executableScript);
 						foreach (GameObject go in script)
 							go.transform.SetParent(tmpContainer.transform, false); //add actions to container
-						EditingUtility.fillExecutablePanel(tmpContainer, scriptRef.executableScript, drone.tag);
+						Utility.fillExecutablePanel(tmpContainer, scriptRef.executableScript, drone.tag);
 						// bind all child
 						foreach (Transform child in scriptRef.executableScript.transform)
 							GameObjectManager.bind(child.gameObject);
@@ -487,7 +487,7 @@ public class LevelGenerator : FSystem {
         switch (actionNode.Name)
         {
 			case "if":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("IfThen"), canvas);
+				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("IfThen"), canvas);
 
 				conditionContainer = obj.transform.Find("ConditionContainer");
 				firstContainerBloc = obj.transform.Find("Container");
@@ -505,7 +505,7 @@ public class LevelGenerator : FSystem {
 							// Parse xml condition
 							GameObject child = readXMLCondition(containerNode.FirstChild);
 							// Add child to empty zone
-							EditingUtility.addItemOnDropArea(child, emptyZone);
+							Utility.addItemOnDropArea(child, emptyZone);
 						}
 					}
 					else if (containerNode.Name == "container")
@@ -517,7 +517,7 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "ifElse":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("IfElse"), canvas);
+				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("IfElse"), canvas);
 				conditionContainer = obj.transform.Find("ConditionContainer");
 				firstContainerBloc = obj.transform.Find("Container");
 				secondContainerBloc = obj.transform.Find("ElseContainer");
@@ -535,7 +535,7 @@ public class LevelGenerator : FSystem {
 							// Parse xml condition
 							GameObject child = readXMLCondition(containerNode.FirstChild);
 							// Add child to empty zone
-							EditingUtility.addItemOnDropArea(child, emptyZone);
+							Utility.addItemOnDropArea(child, emptyZone);
 						}
 					}
 					else if (containerNode.Name == "thenContainer")
@@ -552,7 +552,7 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "for":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("ForLoop"), canvas);
+				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("ForLoop"), canvas);
 				firstContainerBloc = obj.transform.Find("Container");
 				BaseElement action = obj.GetComponent<ForControl>();
 
@@ -564,7 +564,7 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "while":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("While"), canvas);
+				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("While"), canvas);
 				firstContainerBloc = obj.transform.Find("Container");
 				conditionContainer = obj.transform.Find("ConditionContainer");
 
@@ -581,7 +581,7 @@ public class LevelGenerator : FSystem {
 							// Parse xml condition
 							GameObject child = readXMLCondition(containerNode.FirstChild);
 							// Add child to empty zone
-							EditingUtility.addItemOnDropArea(child, emptyZone);
+							Utility.addItemOnDropArea(child, emptyZone);
 						}
 					}
 					else if (containerNode.Name == "container")
@@ -593,14 +593,14 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "forever":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("Forever"), canvas);
+				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("Forever"), canvas);
 				firstContainerBloc = obj.transform.Find("Container");
 
 				if (actionNode.HasChildNodes)
 					processXMLInstruction(firstContainerBloc, actionNode);
 				break;
 			case "action":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName(actionNode.Attributes.GetNamedItem("type").Value), canvas);
+				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName(actionNode.Attributes.GetNamedItem("type").Value), canvas);
 				break;
         }
 
@@ -627,7 +627,7 @@ public class LevelGenerator : FSystem {
 		// The first child of a control container is an emptySolt
 		GameObject emptySlot = gameContainer.GetChild(0).gameObject;
 		foreach (XmlNode eleNode in xmlContainer.ChildNodes)
-			EditingUtility.addItemOnDropArea(readXMLInstruction(eleNode), emptySlot);
+			Utility.addItemOnDropArea(readXMLInstruction(eleNode), emptySlot);
 	}
 
 	// Transforme le noeud d'action XML en gameObject élément/opérator
@@ -637,7 +637,7 @@ public class LevelGenerator : FSystem {
 		switch (conditionNode.Name)
         {
 			case "and":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("AndOperator"), canvas);
+				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("AndOperator"), canvas);
 				slots = obj.GetComponentsInChildren<ReplacementSlot>(true);
 				if (conditionNode.HasChildNodes)
 				{
@@ -655,7 +655,7 @@ public class LevelGenerator : FSystem {
 							// Parse xml condition
 							GameObject child = readXMLCondition(andNode.FirstChild);
 							// Add child to empty zone
-							EditingUtility.addItemOnDropArea(child, emptyZone);
+							Utility.addItemOnDropArea(child, emptyZone);
 						}
 						emptyZone = null;
 					}
@@ -663,7 +663,7 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "or":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("OrOperator"), canvas);
+				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("OrOperator"), canvas);
 				slots = obj.GetComponentsInChildren<ReplacementSlot>(true);
 				if (conditionNode.HasChildNodes)
 				{
@@ -681,7 +681,7 @@ public class LevelGenerator : FSystem {
 							// Parse xml condition
 							GameObject child = readXMLCondition(orNode.FirstChild);
 							// Add child to empty zone
-							EditingUtility.addItemOnDropArea(child, emptyZone);
+							Utility.addItemOnDropArea(child, emptyZone);
 						}
 						emptyZone = null;
 					}
@@ -689,17 +689,17 @@ public class LevelGenerator : FSystem {
 				break;
 
 			case "not":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName("NotOperator"), canvas);
+				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("NotOperator"), canvas);
 				if (conditionNode.HasChildNodes)
 				{
 					GameObject emptyZone = obj.transform.Find("Container").GetChild(1).gameObject;
 					GameObject child = readXMLCondition(conditionNode.FirstChild);
 					// Add child to empty zone
-					EditingUtility.addItemOnDropArea(child, emptyZone);
+					Utility.addItemOnDropArea(child, emptyZone);
 				}
 				break;
 			case "captor":
-				obj = EditingUtility.createEditableBlockFromLibrary(getLibraryItemByName(conditionNode.Attributes.GetNamedItem("type").Value), canvas);
+				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName(conditionNode.Attributes.GetNamedItem("type").Value), canvas);
 				break;
 		}
 

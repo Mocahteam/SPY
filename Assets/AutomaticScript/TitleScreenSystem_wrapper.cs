@@ -96,6 +96,11 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "launchLevel", null);
 	}
 
+	public void launchLevelEditor()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "launchLevelEditor", null);
+	}
+
 	public void testLevel(DataLevelBehaviour dlb)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "testLevel", dlb);

@@ -346,7 +346,7 @@ public class UISystem : FSystem {
 			if (editableContainer != null)
 			{
 				// we fill the executable container with actions of the editable container
-				EditingUtility.fillExecutablePanel(editableContainer, executableContainer, robot.tag);
+				Utility.fillExecutablePanel(editableContainer, executableContainer, robot.tag);
 				// bind all child
 				foreach (Transform child in executableContainer.transform)
 					GameObjectManager.bind(child.gameObject);

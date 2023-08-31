@@ -1,5 +1,4 @@
 using FYFY;
-using FYFY_plugins.PointerManager;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +10,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
-public static class EditingUtility
+public static class Utility
 {
 
 	[Serializable]

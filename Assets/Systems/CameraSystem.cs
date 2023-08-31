@@ -117,8 +117,31 @@ public class CameraSystem : FSystem {
 		{
 			Cursor.lockState = CursorLockMode.Locked;
 			Cursor.visible = false;
-			Transform cameraTarget = mainCamera.transform.parent.parent;
-			cameraTarget.Translate(Input.GetAxisRaw("Mouse Y") * Time.deltaTime * dragSpeed, 0, -Input.GetAxisRaw("Mouse X") * Time.deltaTime * dragSpeed);
+
+			float mouseY = Input.GetAxisRaw("Mouse Y");
+			float mouseX = Input.GetAxisRaw("Mouse X");
+
+			float dist = Mathf.Abs(Mathf.Abs(mouseX) - Mathf.Abs(mouseY));
+			if (Mathf.Abs(mouseY) > Mathf.Abs(mouseX))
+			{
+				mouseY = mouseY > 0 ? -1 : (mouseY < 0 ? 1 : 0);
+				mouseX = (mouseX > 0 ? -dist : (mouseX < 0 ? dist : 0));
+			}
+			else if (Mathf.Abs(mouseX) > Mathf.Abs(mouseY))
+			{
+				mouseY = mouseY > 0 ? -dist : (mouseY < 0 ? dist : 0);
+				mouseX = (mouseX > 0 ? -1 : (mouseX < 0 ? 1 : 0));
+			}
+			else
+			{
+				mouseY = mouseY > 0 ? -1 : (mouseY < 0 ? 1 : 0);
+				mouseX = (mouseX > 0 ? -1 : (mouseX < 0 ? 1 : 0));
+			}
+
+			if (mouseY != 0)
+				moveFrontBack(mouseY * dragSpeed);
+			if (mouseX != 0)
+				moveLeftRight(mouseX * dragSpeed);
 			unfocusAgent();
 		}
 

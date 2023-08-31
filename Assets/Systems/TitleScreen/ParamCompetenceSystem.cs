@@ -57,7 +57,7 @@ public class ParamCompetenceSystem : FSystem
 		public string parentKey;
 		public string name;
 		public string description;
-		public EditingUtility.RawConstraint[] constraints;
+		public Utility.RawConstraint[] constraints;
 		public string rule;
 	}
 
@@ -103,7 +103,7 @@ public class ParamCompetenceSystem : FSystem
 		{
 			localCallback = null;
 			localCallback += delegate { MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath)); };
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = EditingUtility.getFormatedText(gameData.localization[6], referentialsPath, www.error), OkButton = gameData.localization[5], CancelButton = gameData.localization[2], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[6], referentialsPath, www.error), OkButton = gameData.localization[5], CancelButton = gameData.localization[2], call = localCallback });
 		}
 		else
 		{
@@ -122,7 +122,7 @@ public class ParamCompetenceSystem : FSystem
 		} catch (Exception e)
 		{
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = EditingUtility.getFormatedText(gameData.localization[7], e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[7], e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
 			return;
 		}
 
@@ -183,7 +183,7 @@ public class ParamCompetenceSystem : FSystem
 		if (referentialId >= rawReferentials.referentials.Count || referentialId < 0)
 		{
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = EditingUtility.getFormatedText(gameData.localization[8], referentialId), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[8], referentialId), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
 			return;
 		}
 
@@ -197,7 +197,7 @@ public class ParamCompetenceSystem : FSystem
 			Competency comp = competency.GetComponent<Competency>();
 			comp.parentKey = rawComp.parentKey;
 			comp.id = rawComp.name;
-			comp.description = EditingUtility.extractLocale(rawComp.description);
+			comp.description = Utility.extractLocale(rawComp.description);
 			comp.constraints = rawComp.constraints;
 			if (comp.constraints.Length == 0)
 				// disable checkbox
@@ -207,7 +207,7 @@ public class ParamCompetenceSystem : FSystem
 			// On l'attache au content
 			competency.transform.SetParent(ContentCompMenu.transform, false);
 			// On charge le text de la compétence
-			competency.GetComponentInChildren<TMP_Text>().text = EditingUtility.extractLocale(comp.id);
+			competency.GetComponentInChildren<TMP_Text>().text = Utility.extractLocale(comp.id);
 			GameObjectManager.bind(competency);
 		}
 
@@ -266,7 +266,7 @@ public class ParamCompetenceSystem : FSystem
 					// parse all levels
 					for (int l = selectedLevels.Count - 1; l >= 0; l--)
 					{
-						if (!EditingUtility.isCompetencyMatchWithLevel(competency, selectedLevels[l].OwnerDocument))
+						if (!Utility.isCompetencyMatchWithLevel(competency, selectedLevels[l].OwnerDocument))
 							selectedLevels.RemoveAt(l);
 					}
 				}
@@ -345,7 +345,7 @@ public class ParamCompetenceSystem : FSystem
 			List<Dialog> defaultDialogs = new List<Dialog>();
 			XmlNodeList XMLDialogs = levelSelected.OwnerDocument.GetElementsByTagName("dialogs");
 			if (XMLDialogs.Count > 0)
-				EditingUtility.readXMLDialogs(XMLDialogs[0], defaultDialogs);
+				Utility.readXMLDialogs(XMLDialogs[0], defaultDialogs);
 
 			TMP_Text contentInfo = contentInfoCompatibleLevel.transform.Find("levelTextInfo").GetComponent<TMP_Text>();
 			contentInfo.text = "";
@@ -372,9 +372,9 @@ public class ParamCompetenceSystem : FSystem
 					Dialog item = dlb.data.overridedDialogs[i];
 					txt += "\n---"+ gameData.localization[37] + (i + 1) + "---\n";
 					if (item.text != null)
-						txt += EditingUtility.extractLocale(item.text) + "\n";
-					if (EditingUtility.extractLocale(item.img) != "" || EditingUtility.extractLocale(item.sound) != "" || EditingUtility.extractLocale(item.video) != "")
-						txt += "\n" + (EditingUtility.extractLocale(item.img) != "" ? "<<"+ gameData.localization[38] + ">>" : "") + (EditingUtility.extractLocale(item.sound) != "" ? "<<" + gameData.localization[39] + ">>" : "") + (EditingUtility.extractLocale(item.video) != "" ? "<<" + gameData.localization[40] + ">>" : "") + "\n";
+						txt += Utility.extractLocale(item.text) + "\n";
+					if (Utility.extractLocale(item.img) != "" || Utility.extractLocale(item.sound) != "" || Utility.extractLocale(item.video) != "")
+						txt += "\n" + (Utility.extractLocale(item.img) != "" ? "<<"+ gameData.localization[38] + ">>" : "") + (Utility.extractLocale(item.sound) != "" ? "<<" + gameData.localization[39] + ">>" : "") + (Utility.extractLocale(item.video) != "" ? "<<" + gameData.localization[40] + ">>" : "") + "\n";
 				}
 				if (txt != "")
 					contentInfo.text += txt;
@@ -385,7 +385,7 @@ public class ParamCompetenceSystem : FSystem
 				txt = "";
 				foreach (GameObject comp in f_competencies)
 				{
-					if (EditingUtility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), levelSelected.OwnerDocument))
+					if (Utility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), levelSelected.OwnerDocument))
 						txt += "\t" + comp.GetComponent<Competency>().GetComponentInChildren<TMP_Text>().text + "\n";
 				}
 				if (txt != "")
@@ -403,7 +403,7 @@ public class ParamCompetenceSystem : FSystem
         else
         {
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = EditingUtility.getFormatedText(gameData.localization[11], path), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[11], path), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
 		}
 	}
 
@@ -530,7 +530,7 @@ public class ParamCompetenceSystem : FSystem
 			foreach (char someChar in Path.GetInvalidFileNameChars())
 				if (Char.IsPunctuation(someChar) || Char.IsSymbol(someChar))
 					invalidChars += someChar+" ";
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = EditingUtility.getFormatedText(gameData.localization[12], invalidChars), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[12], invalidChars), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
 			// Be sure saving windows is enabled
 			GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
 		}
@@ -543,7 +543,7 @@ public class ParamCompetenceSystem : FSystem
 			{
 				localCallback = null;
 				localCallback += delegate { saveToFile(scenarioName); };
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = EditingUtility.getFormatedText(gameData.localization[13], scenarioName.text), OkButton = gameData.localization[3], CancelButton = gameData.localization[4], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[13], scenarioName.text), OkButton = gameData.localization[3], CancelButton = gameData.localization[4], call = localCallback });
 				// Be sure saving windows is enabled
 				GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
 			}
@@ -602,12 +602,12 @@ public class ParamCompetenceSystem : FSystem
 			File.WriteAllText(path, scenarioExport);
 
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = EditingUtility.getFormatedText(gameData.localization[14], Application.persistentDataPath, scenarioName.text), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[14], Application.persistentDataPath, scenarioName.text), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
 		}
 		catch (Exception e)
 		{
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = EditingUtility.getFormatedText(gameData.localization[15], e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[15], e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
 		}
 		// Be sure saving windows is disabled
 		GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, false);
@@ -658,7 +658,7 @@ public class ParamCompetenceSystem : FSystem
 				dataLevel.data.overridedDialogs = new List<Dialog>();
 				XmlNodeList XMLDialogs = levelSelected.OwnerDocument.GetElementsByTagName("dialogs");
 				if (XMLDialogs.Count > 0)
-					EditingUtility.readXMLDialogs(XMLDialogs[0], dataLevel.data.overridedDialogs);
+					Utility.readXMLDialogs(XMLDialogs[0], dataLevel.data.overridedDialogs);
 			}
 
 			// add briefing items

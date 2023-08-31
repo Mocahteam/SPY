@@ -125,7 +125,7 @@ public class DialogSystem : FSystem
 		if (overridedDialogs[nDialog].text != null)
 		{
 			GameObjectManager.setGameObjectState(textGO, true);
-			string localeDependent = EditingUtility.extractLocale(overridedDialogs[nDialog].text);
+			string localeDependent = Utility.extractLocale(overridedDialogs[nDialog].text);
 			textGO.GetComponent<TextMeshProUGUI>().text = localeDependent;
 			LayoutRebuilder.ForceRebuildLayoutImmediate(textGO.transform as RectTransform);
 			dialogReturn = localeDependent;
@@ -136,7 +136,7 @@ public class DialogSystem : FSystem
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
 		if (overridedDialogs[nDialog].img != null)
 		{
-			string localeDependent = EditingUtility.extractLocale(overridedDialogs[nDialog].img);
+			string localeDependent = Utility.extractLocale(overridedDialogs[nDialog].img);
 			if (localeDependent.ToLower().StartsWith("http"))
 				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), localeDependent));
 			else
@@ -162,7 +162,7 @@ public class DialogSystem : FSystem
 		audio.Stop();
 		if (overridedDialogs[nDialog].sound != null)
 		{
-			string localeDependent = EditingUtility.extractLocale(overridedDialogs[nDialog].sound);
+			string localeDependent = Utility.extractLocale(overridedDialogs[nDialog].sound);
 			if (localeDependent.ToLower().StartsWith("http"))
 				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, localeDependent));
 			else if (localeDependent != "")
@@ -180,7 +180,7 @@ public class DialogSystem : FSystem
 		VideoPlayer videoPlayer = dialogPanel.GetComponentInChildren<VideoPlayer>(true);
 		if (overridedDialogs[nDialog].video != null)
 		{
-			string localeDependent = EditingUtility.extractLocale(overridedDialogs[nDialog].video);
+			string localeDependent = Utility.extractLocale(overridedDialogs[nDialog].video);
 			if (localeDependent != "")
 			{
 				GameObjectManager.setGameObjectState(videoPlayer.gameObject, true);

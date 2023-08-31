@@ -14,7 +14,6 @@ using DIG.GBLXAPI;
 using Newtonsoft.Json;
 using UnityEngine.EventSystems;
 using System.Linq;
-using UnityEngine.Localization.Settings;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -250,11 +249,11 @@ public class TitleScreenSystem : FSystem {
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			logs.text = "<color=\"red\">" + EditingUtility.getFormatedText(gameData.localization[21], formatedString) + "</color>\n" + logs.text;
+			logs.text = "<color=\"red\">" + Utility.getFormatedText(gameData.localization[21], formatedString) + "</color>\n" + logs.text;
 			yield return new WaitForSeconds(0.5f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
 			{
-				logs.text = "<color=\"orange\">" + EditingUtility.getFormatedText(gameData.localization[22], formatedString) + "</color>\n" + logs.text;
+				logs.text = "<color=\"orange\">" + Utility.getFormatedText(gameData.localization[22], formatedString) + "</color>\n" + logs.text;
 				MainLoop.instance.StartCoroutine(FindAvailableSessionId());
 			}
 			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
@@ -298,11 +297,11 @@ public class TitleScreenSystem : FSystem {
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			logs.text = "<color=\"red\">" + EditingUtility.getFormatedText(gameData.localization[23], idSession) + "</color>\n" + logs.text;
+			logs.text = "<color=\"red\">" + Utility.getFormatedText(gameData.localization[23], idSession) + "</color>\n" + logs.text;
 			yield return new WaitForSeconds(0.5f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
 			{
-				logs.text = "<color=\"orange\">" + EditingUtility.getFormatedText(gameData.localization[24], idSession) + "</color>\n" + logs.text;
+				logs.text = "<color=\"orange\">" + Utility.getFormatedText(gameData.localization[24], idSession) + "</color>\n" + logs.text;
 				MainLoop.instance.StartCoroutine(GetProgressionWebRequest(idSession));
 			}
 			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
@@ -316,7 +315,7 @@ public class TitleScreenSystem : FSystem {
 				GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("ShowSessionId").gameObject, false);
 				GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("SetSessionId").gameObject, true);
 			};
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = EditingUtility.getFormatedText(gameData.localization[16], idSession), OkButton = gameData.localization[5], CancelButton = gameData.localization[0], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[16], idSession), OkButton = gameData.localization[5], CancelButton = gameData.localization[0], call = localCallback });
 		}
 		else
 		{
@@ -338,7 +337,7 @@ public class TitleScreenSystem : FSystem {
 			else
 			{
 				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = EditingUtility.getFormatedText(gameData.localization[18], idSession), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[18], idSession), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
 				userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[0]);
 				if (userData.progression == null)
 					userData.progression = new Dictionary<string, int>();
@@ -523,7 +522,7 @@ public class TitleScreenSystem : FSystem {
     {
 		XmlDocument doc = new XmlDocument();
 		doc.LoadXml(xmlContent);
-		EditingUtility.removeComments(doc);
+		Utility.removeComments(doc);
 		// a valid level must have only one tag "level" and no tag "scenario"
 		if (doc.GetElementsByTagName("level").Count == 1 && doc.GetElementsByTagName("scenario").Count == 0)
 			gameData.levels[new Uri(uri).AbsoluteUri] = doc.GetElementsByTagName("level")[0];
@@ -567,7 +566,7 @@ public class TitleScreenSystem : FSystem {
 					if (subChild.Name.Equals("dialogs"))
 					{
 						dl.overridedDialogs = new List<Dialog>();
-						EditingUtility.readXMLDialogs(subChild, dl.overridedDialogs);
+						Utility.readXMLDialogs(subChild, dl.overridedDialogs);
 						break;
 					}
 
@@ -595,7 +594,7 @@ public class TitleScreenSystem : FSystem {
 		}
 		catch (Exception e) {
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = EditingUtility.getFormatedText(gameData.localization[20], jsd.name, e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[20], jsd.name, e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
 		}
 	}
 
@@ -618,7 +617,7 @@ public class TitleScreenSystem : FSystem {
 		foreach (string key in sortedScenarios)
 		{
 			GameObject directoryButton = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/Button") as GameObject, listOfCampaigns.transform);
-			directoryButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = EditingUtility.extractLocale(gameData.scenarios[key].name);
+			directoryButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = Utility.extractLocale(gameData.scenarios[key].name);
 			GameObjectManager.bind(directoryButton);
 			// add on click
 			directoryButton.GetComponent<Button>().onClick.AddListener(delegate { showScenarioDetails(key); });
@@ -635,7 +634,7 @@ public class TitleScreenSystem : FSystem {
 		title.text = campaignKey;
 
 		TMP_Text campaignDescription = content.GetChild(1).GetComponent<TMP_Text>();
-		campaignDescription.text = EditingUtility.extractLocale(gameData.scenarios[campaignKey].description)+"\n\n";
+		campaignDescription.text = Utility.extractLocale(gameData.scenarios[campaignKey].description)+"\n\n";
 
 		delayRefreshCompetencies(content);
 
@@ -662,9 +661,9 @@ public class TitleScreenSystem : FSystem {
 			foreach (GameObject comp in f_competencies)
 			{
 				foreach (DataLevel levelKey in gameData.scenarios[content.GetChild(0).GetComponent<TMP_Text>().text].levels)
-					if (gameData.levels.ContainsKey(levelKey.src) && EditingUtility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.src].OwnerDocument))
+					if (gameData.levels.ContainsKey(levelKey.src) && Utility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.src].OwnerDocument))
 					{
-						txt += "\t" + EditingUtility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
+						txt += "\t" + Utility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
 						break;
 					}
 			}
@@ -689,13 +688,13 @@ public class TitleScreenSystem : FSystem {
         }
 
 		// set scenario name
-		listOfLevels.transform.parent.parent.parent.GetChild(0).GetComponent<TMP_Text>().text = EditingUtility.extractLocale(gameData.scenarios[campaignKey].name);
+		listOfLevels.transform.parent.parent.parent.GetChild(0).GetComponent<TMP_Text>().text = Utility.extractLocale(gameData.scenarios[campaignKey].name);
 		// create level buttons for this campaign
 		for (int i = 0; i < gameData.scenarios[campaignKey].levels.Count; i++)
 		{
 			DataLevel levelData = gameData.scenarios[campaignKey].levels[i];
 			GameObject button = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/LevelButton") as GameObject, listOfLevels.transform);
-			button.transform.Find("Button").GetChild(0).GetComponent<TextMeshProUGUI>().text = EditingUtility.extractLocale(levelData.name);
+			button.transform.Find("Button").GetChild(0).GetComponent<TextMeshProUGUI>().text = Utility.extractLocale(levelData.name);
 			int id = i;
 			button.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate { launchLevel(campaignKey, id); });
 			GameObjectManager.bind(button);
@@ -723,6 +722,11 @@ public class TitleScreenSystem : FSystem {
 		gameData.selectedScenario = campaignKey;
 		gameData.levelToLoad = levelToLoad;
 		GameObjectManager.loadScene("MainScene");
+	}
+
+	public void launchLevelEditor()
+    {
+		GameObjectManager.loadScene("EditorScene");
 	}
 
 	//Used on scenario editing window (see button ButtonTestLevel)

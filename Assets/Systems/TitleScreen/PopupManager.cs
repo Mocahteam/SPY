@@ -36,13 +36,15 @@ public class PopupManager : FSystem {
 		MessageForUser mfu = go.GetComponent<MessageForUser>();
 		messageForUser.text = mfu.message;
 		GameObject buttons = panelInfoUser.transform.Find("Panel").Find("Buttons").gameObject;
+
 		GameObjectManager.setGameObjectState(buttons.transform.GetChild(0).gameObject, mfu.OkButton != "");
-		buttons.transform.GetChild(0).GetComponentInChildren<TMP_Text>().text = mfu.OkButton;
+		buttons.transform.GetChild(0).GetComponentInChildren<TMP_Text>(true).text = mfu.OkButton;
 		buttons.transform.GetChild(0).GetComponent<Button>().onClick.RemoveAllListeners();
 		buttons.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(mfu.call);
-		GameObjectManager.setGameObjectState(buttons.transform.GetChild(1).gameObject, mfu.CancelButton != "");
-		buttons.transform.GetChild(1).GetComponentInChildren<TMP_Text>().text = mfu.CancelButton;
 
+		GameObjectManager.setGameObjectState(buttons.transform.GetChild(1).gameObject, mfu.CancelButton != "");
+		buttons.transform.GetChild(1).GetComponentInChildren<TMP_Text>(true).text = mfu.CancelButton;
+		
 		panelInfoUser.SetActive(true); // not use GameObjectManager here else ForceRebuildLayout doesn't work
 		LayoutRebuilder.ForceRebuildLayoutImmediate(messageForUser.transform as RectTransform);
 		LayoutRebuilder.ForceRebuildLayoutImmediate(messageForUser.transform.parent as RectTransform);
@@ -53,7 +55,7 @@ public class PopupManager : FSystem {
 			EventSystem.current.SetSelectedGameObject(buttons.transform.GetChild(1).gameObject);
 
 		// in case of several messages pop in one frame
-		foreach(MessageForUser message in go.GetComponents<MessageForUser>())
+		foreach (MessageForUser message in go.GetComponents<MessageForUser>())
 			GameObjectManager.removeComponent(message);
 	}
 

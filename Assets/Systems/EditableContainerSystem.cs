@@ -211,7 +211,7 @@ public class EditableContainerSystem : FSystem
 			{
 				for (int k = 0; k < script.Count; k++)
 				{
-					EditingUtility.addItemOnDropArea(script[k], dropArea);
+					Utility.addItemOnDropArea(script[k], dropArea);
 					// On compte le nombre de bloc utilisé pour l'initialisation
 					gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseElement>(true).Length;
 					gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseCondition>(true).Length;

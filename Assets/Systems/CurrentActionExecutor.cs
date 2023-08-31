@@ -119,7 +119,7 @@ public class CurrentActionExecutor : FSystem {
 		}
 		ca.StopAllCoroutines();
 		if (ca.gameObject.activeInHierarchy)
-			ca.StartCoroutine(EditingUtility.pulseItem(ca.gameObject));
+			ca.StartCoroutine(Utility.pulseItem(ca.gameObject));
 		// notify agent moving
 		if (ca.agent.CompareTag("Drone") && !ca.agent.GetComponent<Moved>())
 			GameObjectManager.addComponent<Moved>(ca.agent);
