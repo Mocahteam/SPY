@@ -6,7 +6,8 @@ public class CameraSystemBridge : MonoBehaviour
     public void PauseCameraSystem(bool value)
     {
         // Comment faire pour mettre le systéme en pause puis le relancer
-        CameraSystem.instance.Pause = value;
+        if (CameraSystem.instance != null) // is null in level editor
+            CameraSystem.instance.Pause = value;
     }
 
     public void locateAgent(LinkedWith agent)

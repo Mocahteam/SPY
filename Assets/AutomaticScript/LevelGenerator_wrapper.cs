@@ -8,7 +8,6 @@ public class LevelGenerator_wrapper : BaseWrapper
 	public UnityEngine.GameObject scriptContainer;
 	public UnityEngine.GameObject library;
 	public TMPro.TMP_Text levelName;
-	public UnityEngine.GameObject canvas;
 	public UnityEngine.GameObject buttonExecute;
 	private void Start()
 	{
@@ -18,7 +17,6 @@ public class LevelGenerator_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "scriptContainer", scriptContainer);
 		MainLoop.initAppropriateSystemField (system, "library", library);
 		MainLoop.initAppropriateSystemField (system, "levelName", levelName);
-		MainLoop.initAppropriateSystemField (system, "canvas", canvas);
 		MainLoop.initAppropriateSystemField (system, "buttonExecute", buttonExecute);
 	}
 

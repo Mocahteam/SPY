@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Xml;
 using System.Collections.Generic;
 using TMPro;
+using System.Collections;
 
 public class EditorLevelDataSystem : FSystem {
 	public Family f_editorblocks = FamilyManager.getFamily(new AllOfComponents(typeof(EditorBlockData)));
@@ -19,6 +20,7 @@ public class EditorLevelDataSystem : FSystem {
 	public Toggle hideExitsToggle;
 	public TMP_InputField score2Input;
 	public TMP_InputField score3Input;
+	public Transform editableContainers;
 
 	private GameData gameData;
 
@@ -33,7 +35,12 @@ public class EditorLevelDataSystem : FSystem {
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
-		
+
+		// all blocks are unlimited inside level editor
+		gameData.actionBlockLimit = new Dictionary<string, int>();
+		foreach(GameObject block in f_editorblocks)
+			gameData.actionBlockLimit[block.GetComponent<EditorBlockData>().name] = -1;
+
 		resetMetaData();
 
 		f_newLoading.addEntryCallback(loadLevel);
@@ -46,15 +53,14 @@ public class EditorLevelDataSystem : FSystem {
 		fogToggle.isOn = false;
 		hideExitsToggle.isOn = false;
 
-		foreach(GameObject go in f_editorblocks)
+		// Remove all existing editable area
+		foreach (Transform viewportForEditableContainer in editableContainers)
+			GameObjectManager.addComponent<ForceRemoveContainer>(viewportForEditableContainer.gameObject);
+
+		foreach (GameObject go in f_editorblocks)
         {
 			go.transform.Find("HideToggle").GetComponent<Toggle>().isOn = true;
 		}
-	}
-
-	// Use to process your families.
-	protected override void onProcess(int familiesUpdateCount)
-	{
 	}
 
 	private void loadLevel(GameObject go)
@@ -80,100 +86,111 @@ public class EditorLevelDataSystem : FSystem {
 					// dialogs are defined in the scenario editor
 					break;
 				case "executionLimit":
-					executionLimitContainer.GetComponentInChildren<Toggle>(true).isOn = true;
-					executionLimitContainer.GetComponentInChildren<TMP_InputField>(true).text = child.Attributes.GetNamedItem("amount")?.Value;
+					try
+					{
+						executionLimitContainer.GetComponentInChildren<Toggle>(true).isOn = true;
+						executionLimitContainer.GetComponentInChildren<TMP_InputField>(true).text = child.Attributes.GetNamedItem("amount")?.Value;
+					}
+					catch
+					{
+						Debug.Log("Warning: Skipped executionLimit from file " + levelKey + ". Wrong data!");
+					}
 					break;
 				case "blockLimits":
-					// stack all EditorBlockData by name
-					Dictionary<string, EditorBlockData> name2EditorBlockData = new Dictionary<string, EditorBlockData>();
-					foreach (GameObject editorBlock in f_editorblocks)
+					try
 					{
-						EditorBlockData component = editorBlock.GetComponent<EditorBlockData>();
-						name2EditorBlockData[component.blockName] = component;
-					}
-					// set loaded data to game objects
-					foreach (XmlNode limitNode in child.ChildNodes)
-					{
-						string blockName = limitNode.Attributes.GetNamedItem("blockType").Value;
-						int blockAmount = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
-						EditorBlockData blockData = name2EditorBlockData[blockName];
-						if (blockAmount != 0)
+						// stack all EditorBlockData by name
+						Dictionary<string, EditorBlockData> name2EditorBlockData = new Dictionary<string, EditorBlockData>();
+						foreach (GameObject editorBlock in f_editorblocks)
 						{
-							// blockAmount != 0 => means block is not hiden
-							blockData.transform.Find("HideToggle").GetComponent<Toggle>().isOn = false;
-							// enable LimitBlock
-							blockData.transform.Find("LimitToggle").GetComponent<Toggle>().interactable = true;
-							// sync LimitBlock with data
-							blockData.transform.Find("LimitToggle").GetComponent<Toggle>().isOn = blockAmount <= 0;
-							// enable LimitField depending on LimitBlock state
-							blockData.transform.Find("LimitField").GetComponent<TMP_InputField>().interactable = blockAmount > 0;
-						} // else nothing to do default data is hiden block
+							EditorBlockData component = editorBlock.GetComponent<EditorBlockData>();
+							name2EditorBlockData[component.blockName] = component;
+						}
+						// set loaded data to game objects
+						foreach (XmlNode limitNode in child.ChildNodes)
+						{
+							string blockName = limitNode.Attributes.GetNamedItem("blockType").Value;
+							int blockAmount = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
+							EditorBlockData blockData = name2EditorBlockData[blockName];
+							if (blockAmount != 0)
+							{
+								// blockAmount != 0 => means block is not hiden
+								blockData.transform.Find("HideToggle").GetComponent<Toggle>().isOn = false;
+								// enable LimitBlock
+								blockData.transform.Find("LimitToggle").GetComponent<Toggle>().interactable = true;
+								// sync LimitBlock with data
+								blockData.transform.Find("LimitToggle").GetComponent<Toggle>().isOn = blockAmount <= 0;
+								// enable LimitField depending on LimitBlock state
+								blockData.transform.Find("LimitField").GetComponent<TMP_InputField>().interactable = blockAmount > 0;
+							} // else nothing to do default data is hiden block
 
-						// in all cases set the inputfield to the file data
-						blockData.transform.Find("LimitField").GetComponent<TMP_InputField>().text = blockAmount.ToString();
+							// in all cases set the inputfield to the file data
+							blockData.transform.Find("LimitField").GetComponent<TMP_InputField>().text = blockAmount.ToString();
+						}
+					}
+					catch
+					{
+						Debug.Log("Warning: Skipped blockLimits from file " + levelKey + ". Wrong data!");
 					}
 					break;
 				case "score":
-					score2Input.text = child.Attributes.GetNamedItem("twoStars")?.Value;
-					score3Input.text = child.Attributes.GetNamedItem("threeStars")?.Value;
+					try
+					{
+						score2Input.text = child.Attributes.GetNamedItem("twoStars")?.Value;
+						score3Input.text = child.Attributes.GetNamedItem("threeStars")?.Value;
+					}
+					catch
+					{
+						Debug.Log("Warning: Skipped score from file " + levelKey + ". Wrong data!");
+					}
+					break;
+				case "script":
+					try
+					{
+						UIRootContainer.EditMode editModeByUser = UIRootContainer.EditMode.Locked;
+						XmlNode editMode = child.Attributes.GetNamedItem("editMode");
+						int tmpValue;
+						if (editMode != null && int.TryParse(editMode.Value, out tmpValue))
+							editModeByUser = (UIRootContainer.EditMode)tmpValue;
+						UIRootContainer.SolutionType typeByUser = UIRootContainer.SolutionType.Undefined;
+						XmlNode typeNode = child.Attributes.GetNamedItem("type");
+						if (typeNode != null && int.TryParse(typeNode.Value, out tmpValue))
+							typeByUser = (UIRootContainer.SolutionType)tmpValue;
+						XmlNode name = child.Attributes.GetNamedItem("outputLine");
+						if (name == null)
+							name = child.Attributes.GetNamedItem("name"); // for retrocompatibility
+
+						// Ask to create script
+						/* We can't used :
+						GameObjectManager.addComponent<ScriptToLoad>(MainLoop.instance.gameObject, new
+						{
+							scriptNode = child,
+							scriptName = Utility.extractLocale(name.Value),
+							editMode = editModeByUser,
+							type = typeByUser
+						});
+						because we get exception "not IConvertible" when we try to get the component !!! something wrong with XmlNode attribute of ScriptToLoad component...
+						Solution: we add ScriptToLoad component to the MainLoop immediately, we init each of its attributes and we ask to refresh the MainLoop to update families*/
+						ScriptToLoad stl = MainLoop.instance.gameObject.AddComponent<ScriptToLoad>();
+						stl.scriptNode = child;
+						stl.scriptName = Utility.extractLocale(name.Value);
+						stl.editMode = editModeByUser;
+						stl.type = typeByUser;
+						MainLoop.instance.StartCoroutine(delayRefreshMainLoop());
+					}
+					catch
+					{
+						Debug.Log("Warning: Skipped script from file " + levelKey + ". Wrong data!");
+					}
 					break;
 			}
 		}
+	}
 
-		/*
-		if (File.Exists(levelData.filePath))
-		{
-			var xmlScriptGenerator = new XmlScriptGenerator(mainCanvas);
-			var xmlFile = XDocument.Load(levelData.filePath);
-			var scripts = new List<XElement>();
-			var robots = new Dictionary<string, Tuple<int, int>>();
-			foreach (var element in xmlFile.Descendants("level").Elements())
-			{
-				Tuple<int, int> position;
-				ObjectDirection orientation;
-				int slotId;
-				string associatedScriptName;
-				switch (element.Name.LocalName)
-				{
-					
-					case "script": => à passer dans le système qui gère les scripts ???
-						scripts.Add(element);
-						var scriptName = element.Attribute("outputLine").Value;
-						var editMode = ScriptEditMode.Locked;
-						var scriptType = ScriptType.Undefined;
-						if (element.Attribute("editMode") != null)
-						{
-							editMode = (ScriptEditMode) int.Parse(element.Attribute("editMode").Value);
-						}
-						if (element.Attribute("type") != null)
-						{
-							scriptType = (ScriptType) int.Parse(element.Attribute("type").Value);
-						}
-						Robot.setParams(scriptName, scriptType, editMode);
-						
-						break;
-					default:
-						Debug.Log($"Ignored unexpected node type: {element.Name}");
-						
-						break;
-				}
-			}
-
-			foreach (var scriptElement in scripts)
-			{
-				var node = new XmlDocument().ReadNode(scriptElement.CreateReader());
-				xmlScriptGenerator.readXMLScript(node, node.Attributes.GetNamedItem("outputLine").Value, UIRootContainer.EditMode.Editable, UIRootContainer.SolutionType.Undefined);
-			}
-
-			levelData.requireRefresh = true;
-		}
-		else
-		{
-			initGrid();
-		}
-
-		levelData.isReady = true;
-		GameObjectManager.setGameObjectState(paintableGrid.gameObject, true);*/
+	private IEnumerator delayRefreshMainLoop()
+    {
+		yield return null;
+		GameObjectManager.refresh(MainLoop.instance.gameObject);
 	}
 
 	// See editBlockPrefab

@@ -4,8 +4,8 @@ using TMPro;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI;
-using FYFY_plugins.PointerManager;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 /// Ce systéme gére tous les éléments d'édition des agents par l'utilisateur.
 /// Il gére entre autre:
@@ -36,7 +36,6 @@ public class EditableContainerSystem : FSystem
 	private Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
 	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
 	private Family f_forceRemoveContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ForceRemoveContainer)));
-	private Family f_removeButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton")); // Les petites poubelles de chaque panneau d'édition
 	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 
 	// Les variables
@@ -45,6 +44,8 @@ public class EditableContainerSystem : FSystem
 	public GameObject prefabViewportScriptContainer;
 	public Button addContainerButton;
 	public int maxWidth;
+
+	private bool isEditorContext;
 
 	private GameData gameData;
 
@@ -57,57 +58,66 @@ public class EditableContainerSystem : FSystem
 	}
 	protected override void onStart()
 	{
+
+		isEditorContext = SceneManager.GetActiveScene().name == "EditorScene";
+
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
 
-		MainLoop.instance.StartCoroutine(tcheckLinkName());
-		f_gameLoaded.addEntryCallback(delegate {
-			if (!gameData.dragDropEnabled)
+		if (!isEditorContext)
+		{
+			MainLoop.instance.StartCoroutine(tcheckLinkName());
+			f_gameLoaded.addEntryCallback(delegate
+			{
+				if (!gameData.dragDropEnabled)
+				{
+					foreach (GameObject container in f_scriptContainer)
+					{
+						Transform header = container.transform.Find("Header");
+						header.Find("ResetButton").GetComponent<Button>().interactable = false;
+						header.Find("RemoveButton").GetComponent<Button>().interactable = false;
+						GameObjectManager.removeComponent<TooltipContent>(header.Find("ProgramText").gameObject);
+					}
+					addContainerButton.interactable = false;
+				}
+			});
+			f_newEnd.addEntryCallback(delegate
 			{
 				foreach (GameObject container in f_scriptContainer)
 				{
 					Transform header = container.transform.Find("Header");
 					header.Find("ResetButton").GetComponent<Button>().interactable = false;
 					header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-					GameObjectManager.removeComponent<TooltipContent>(header.Find("ProgramText").gameObject);
+					header.Find("ContainerName").GetComponent<TMP_InputField>().interactable = false;
 				}
 				addContainerButton.interactable = false;
-			}
-		});
+			});
+			f_newEnd.addExitCallback(delegate
+			{
+				foreach (GameObject container in f_scriptContainer)
+				{
+					Transform header = container.transform.Find("Header");
+					header.Find("ResetButton").GetComponent<Button>().interactable = true;
+
+					if (container.GetComponentInChildren<UIRootContainer>().editState != UIRootContainer.EditMode.Locked && gameData.actionsHistory == null)
+					{
+						Transform containerName = header.Find("ContainerName");
+						containerName.GetComponent<TMP_InputField>().interactable = true;
+						containerName.GetComponent<TooltipContent>().text = "Indiquez ici le nom du robot<br>à qui envoyer le programme.";
+						if (gameData.dragDropEnabled)
+							header.Find("RemoveButton").GetComponent<Button>().interactable = true;
+					}
+				}
+
+				if (gameData.actionsHistory == null && gameData.dragDropEnabled)
+					addContainerButton.interactable = true;
+			});
+		}
+
 		f_forceRemoveContainer.addEntryCallback(delegate (GameObject go)
 		{
 			removeContainer(go, true);
-		});
-		f_newEnd.addEntryCallback(delegate
-		{
-			foreach (GameObject container in f_scriptContainer)
-			{
-				Transform header = container.transform.Find("Header");
-				header.Find("ResetButton").GetComponent<Button>().interactable = false;
-				header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-				header.Find("ContainerName").GetComponent<TMP_InputField>().interactable = false;
-			}
-			addContainerButton.interactable = false;
-		});
-		f_newEnd.addExitCallback(delegate
-		{
-			foreach (GameObject container in f_scriptContainer)
-			{
-				Transform header = container.transform.Find("Header");
-				header.Find("ResetButton").GetComponent<Button>().interactable = true;
-
-				if (container.GetComponentInChildren<UIRootContainer>().editState != UIRootContainer.EditMode.Locked && gameData.actionsHistory == null) { 
-					Transform containerName = header.Find("ContainerName");
-					containerName.GetComponent<TMP_InputField>().interactable = true;
-					containerName.GetComponent<TooltipContent>().text = "Indiquez ici le nom du robot<br>à qui envoyer le programme.";
-					if (gameData.dragDropEnabled)
-						header.Find("RemoveButton").GetComponent<Button>().interactable = true;
-				}
-			}
-
-			if (gameData.actionsHistory == null && gameData.dragDropEnabled)
-				addContainerButton.interactable = true;
 		});
 	}
 
@@ -144,8 +154,8 @@ public class EditableContainerSystem : FSystem
 			verb = "created",
 			objectType = "script",
 			activityExtensions = new Dictionary<string, string>() {
-				{ "value", newName }
-			}
+			{ "value", newName }
+		}
 		});
 	}
 
@@ -192,15 +202,30 @@ public class EditableContainerSystem : FSystem
 			}
 			MainLoop.instance.StartCoroutine(tcheckLinkName());
 
-			// Si on est en mode Lock, on bloque l'édition et on interdit de supprimer le script
-			if (editState == UIRootContainer.EditMode.Locked)
+			// on paramètre le mode et le type différemment si on est dans l'éditeur ou dans le player
+			Transform panel = cloneContainer.transform.Find("ScriptContainer").Find("LevelEditorPanel");
+			if (!isEditorContext)
 			{
-				Transform header = cloneContainer.transform.Find("ScriptContainer").Find("Header");
-				header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-				Transform containerName = header.Find("ContainerName");
-				containerName.GetComponent<TooltipContent>().text = "Ce programme sera envoyé à " + name + ".<br><i>Vous ne pouvez pas le changer</i>.";
-				containerName.GetComponent<TMP_InputField>().interactable = false;
+				// si on est dans le player on cache l'UI permettant de configurer le mode et le type
+				panel.gameObject.SetActive(false);
+				// et si on est en mode Lock, on bloque l'édition et on interdit de supprimer le script
+				if (editState == UIRootContainer.EditMode.Locked)
+				{
+					Transform header = cloneContainer.transform.Find("ScriptContainer").Find("Header");
+					header.Find("RemoveButton").GetComponent<Button>().interactable = false;
+					Transform containerName = header.Find("ContainerName");
+					containerName.GetComponent<TooltipContent>().text = "Ce programme sera envoyé à " + name + ".<br><i>Vous ne pouvez pas le changer</i>.";
+					containerName.GetComponent<TMP_InputField>().interactable = false;
+				}
 			}
+            else
+            {
+				// si on est dans l'éditeur on affiche l'UI permettant de configurer le mode et le type
+				panel.gameObject.SetActive(true);
+				panel.Find("EditMode_Dropdown").GetComponent<TMP_Dropdown>().value = (int)editState;
+				panel.Find("ProgType_Dropdown").GetComponent<TMP_Dropdown>().value = (int)typeState;
+			}
+				
 			cloneContainer.GetComponentInChildren<UIRootContainer>().editState = editState;
 
 			cloneContainer.GetComponentInChildren<UIRootContainer>().type = typeState;
@@ -275,8 +300,8 @@ public class EditableContainerSystem : FSystem
 			verb = "cleaned",
 			objectType = "script",
 			activityExtensions = new Dictionary<string, string>() {
-				{ "value", scriptContainer.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text }
-			}
+			{ "value", scriptContainer.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text }
+		}
 		});
 
 		deleteContent(scriptContainer);
@@ -295,8 +320,8 @@ public class EditableContainerSystem : FSystem
 				verb = "deleted",
 				objectType = "script",
 				activityExtensions = new Dictionary<string, string>() {
-				{ "value", scriptContainerPointer.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text }
-			}
+					{ "value", scriptContainerPointer.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text }
+				}
 			});
 		}
 
@@ -352,9 +377,9 @@ public class EditableContainerSystem : FSystem
 					verb = "renamed",
 					objectType = "script",
 					activityExtensions = new Dictionary<string, string>() {
-						{ "oldValue", oldName },
-						{ "value", newName }
-					}
+					{ "oldValue", oldName },
+					{ "value", newName }
+				}
 				});
 			}
 			else

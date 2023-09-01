@@ -2093,6 +2093,7 @@ GameObject:
   - component: {fileID: 361349244}
   - component: {fileID: 361349245}
   - component: {fileID: 361349246}
+  - component: {fileID: 361349247}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -2171,7 +2172,6 @@ MonoBehaviour:
   scriptContainer: {fileID: 1273315146}
   library: {fileID: 1962555724}
   levelName: {fileID: 278433493}
-  canvas: {fileID: 1410401867}
   buttonExecute: {fileID: 1504297949}
 --- !u!114 &361349221
 MonoBehaviour:
@@ -2307,6 +2307,10 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: LevelGenerator, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: LevelGenerator
+    _pause: 0
+  - _typeAssemblyQualifiedName: ScriptGenerator, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: ScriptGenerator
     _pause: 0
   - _typeAssemblyQualifiedName: MoveSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
@@ -2747,6 +2751,19 @@ MonoBehaviour:
   tooltipUI_Keyboard: {fileID: 1655199958}
   tooltipUI_Pointer: {fileID: 786552406}
   eventSystem: {fileID: 1306805417}
+--- !u!114 &361349247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb43cfe2a03fb84449329cc2a44740c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCanvas: {fileID: 1410401867}
 --- !u!1 &369729339
 GameObject:
   m_ObjectHideFlags: 0
@@ -20261,11 +20278,6 @@ PrefabInstance:
     - target: {fileID: 8507923395372093633, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: m_Delegates.Array.data[2].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 361349218}
-    - target: {fileID: 8507923395372093633, guid: 3dce7a0df7989214ea5dbb548f234c1c,
-        type: 3}
-      propertyPath: m_Delegates.Array.data[3].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 361349218}
     - target: {fileID: 8507923395449626448, guid: 3dce7a0df7989214ea5dbb548f234c1c,
