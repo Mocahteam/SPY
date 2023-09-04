@@ -1,22 +1,39 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
 using UnityEngine;
 using FYFY;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Events;
+using System.IO;
+using System.Runtime.InteropServices;
+using UnityEngine.EventSystems;
+using System.Xml;
+using System.Collections.Generic;
 
 public class SaveFileSystem : FSystem
 {
 	private Family f_editorblocks = FamilyManager.getFamily(new AllOfComponents(typeof(EditorBlockData)));
 
-	public TMP_InputField executionLimitField;
+	public TMP_InputField saveName;
+
+	public Toggle DragDrop;
+	public Toggle Fog;
+	public Toggle ExecutionLimit;
+	public Toggle HideExits;
+	public TMP_InputField score2;
+	public TMP_InputField score3;
+
 	public GameObject editableContainer;
 	public LevelData levelData;
 	public PaintableGrid paintableGrid;
 
 	public static SaveFileSystem instance;
+
+	private GameData gameData;
+	private UnityAction localCallback;
+
+	[DllImport("__Internal")]
+	private static extern void Save(string content); // call javascript
 
 	public SaveFileSystem()
 	{
@@ -24,7 +41,11 @@ public class SaveFileSystem : FSystem
 	}
 	
 	// Use to init system before the first onProcess call
-	protected override void onStart(){
+	protected override void onStart()
+	{
+		GameObject go = GameObject.Find("GameData");
+		if (go != null)
+			gameData = go.GetComponent<GameData>();
 	}
 
 	// Use to process your families.
@@ -34,106 +55,194 @@ public class SaveFileSystem : FSystem
 			saveXmlFile();
 	}
 
-	public void SaveAndQuit()
-	{
-		saveXmlFile();
-		GameObjectManager.loadScene("TitleScreen");
+	public void testLevel()
+    {
+		string exportXML = buildLevelContent();
+		XmlDocument doc = new XmlDocument();
+		doc.LoadXml(exportXML);
+		Utility.removeComments(doc);
+		gameData.levels[TitleScreenSystem.testFromLevelEditor] = doc.GetElementsByTagName("level")[0];
+		gameData.selectedScenario = TitleScreenSystem.testFromLevelEditor;
+		WebGlScenario test = new WebGlScenario();
+		test.levels = new List<DataLevel>();
+		DataLevel dl = new DataLevel();
+		dl.src = TitleScreenSystem.testFromLevelEditor;
+		dl.name = TitleScreenSystem.testFromLevelEditor;
+		test.levels.Add(dl);
+		gameData.scenarios[TitleScreenSystem.testFromLevelEditor] = test;
+		gameData.levelToLoad = 0;
+		GameObjectManager.loadScene("MainScene");
 	}
 
+	// See Button Save
+	public void displaySavingPanel()
+	{
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+			Save(buildLevelContent());
+		else
+		{
+			if (levelData.levelName != null || levelData.levelName != "")
+				saveName.text = Path.GetFileNameWithoutExtension(levelData.levelName);
+			GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
+			EventSystem.current.SetSelectedGameObject(saveName.transform.parent.Find("Buttons").Find("CancelButton").gameObject);
+		}
+	}
+
+	// see ValidateMessageButton (only called in standalone context, not used for WebGL)
 	public void saveXmlFile()
 	{
-		var xDocument = new XDocument();
-		var rootNode = new XElement("level");
-
-		var mapNode = new XElement("map");
-		for (var i = 0; i < paintableGrid.grid.GetLength(1); i++)
+		if (!Utility.CheckSaveNameValidity(saveName.text))
 		{
-			var lineNode = new XElement("line");
-			for (var j = 0; j < paintableGrid.grid.GetLength(0); j++)
+			localCallback = null;
+			string invalidChars = "";
+			foreach (char someChar in Path.GetInvalidFileNameChars())
+				if (Char.IsPunctuation(someChar) || Char.IsSymbol(someChar))
+					invalidChars += someChar + " ";
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[12], invalidChars), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			// Be sure saving windows is enabled
+			GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
+		}
+		else
+		{
+			// remove file extension
+			if (!saveName.text.EndsWith(".xml"))
+				saveName.text += ".xml";
+			if (File.Exists(Application.persistentDataPath + "/Levels/" + saveName.text))
 			{
-				lineNode.Add(new XElement("cell", new XAttribute("value", (int)paintableGrid.grid[j, i])));
+				localCallback = null;
+				localCallback += delegate { saveToFile(); };
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[13], saveName.text), OkButton = gameData.localization[3], CancelButton = gameData.localization[4], call = localCallback });
+				// Be sure saving windows is enabled
+				GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
 			}
-			mapNode.Add(lineNode);
+			else
+				saveToFile();
 		}
-		rootNode.Add(mapNode);
+	}
 
+	private void saveToFile()
+	{
+		string levelExport = buildLevelContent();
 
-		/* Ne pas oublier de remettre ça dans la sauvegarde...
-		if (levelData.dragdropDisabled)
-			rootNode.Add(new XElement("dragdropDisabled")); Attention au sens du bouléen (inversé)
-
-		if (levelData.executionLimitEnabled)
+		try
 		{
-			var amount = string.IsNullOrEmpty(executionLimitField.text) ? "1" : executionLimitField.text;
-			rootNode.Add(new XElement("executionLimit", new XAttribute("amount", amount == "0" ? "1" : amount)));
+			// Create all necessary directories if they don't exist
+			Directory.CreateDirectory(Application.persistentDataPath + "/Levels");
+			string path = Application.persistentDataPath + "/Levels/" + saveName.text;
+			// Add/Replace level content in memory
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml(levelExport);
+			gameData.levels[new Uri(path).AbsoluteUri] = doc.GetElementsByTagName("level")[0];
+			// Write on disk
+			File.WriteAllText(path, levelExport);
+			levelData.levelName = saveName.text;
+			levelData.filePath = new Uri(path).AbsoluteUri;
+
+			localCallback = null;
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[14], Application.persistentDataPath, "Levels", saveName.text), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+		}
+		catch (Exception e)
+		{
+			localCallback = null;
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[15], e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+		}
+		// Be sure saving windows is disabled
+		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, false);
+	}
+
+	private string buildLevelContent()
+	{
+		string levelExport = "<?xml version=\"1.0\"?>\n";
+		levelExport += "<level>\n";
+
+		levelExport += "\t<map>\n";
+		// crop unused map
+		int minLine = int.MaxValue;
+		int minCol = int.MaxValue;
+		int maxLine = -1;
+		int maxCol = -1;
+		for (int line = 0; line < UtilityEditor.gridMaxSize; line++)
+			for (int col = 0; col < UtilityEditor.gridMaxSize; col++)
+				if (paintableGrid.grid[line, col] != Cell.Void)
+                {
+					minLine = line < minLine ? line : minLine;
+					minCol = col < minCol ? col : minCol;
+					maxLine = line > maxLine ? line : maxLine;
+					maxCol = col > maxCol ? col : maxCol;
+				}
+		// process only map section used
+		// Add a first line with void cells
+		levelExport += "\t\t<line>";
+		for (int col = minCol; col <= maxCol+2; col++)
+			levelExport += "<cell value=\"" + (int)Cell.Void + "\" />";
+		levelExport += "</line>\n";
+		// parse the maps section used
+		for (var line = minLine; line <= maxLine; line++)
+		{
+			levelExport += "\t\t<line>";
+			// Add a first column with void cells
+			levelExport += "<cell value=\"" + (int)Cell.Void + "\" />";
+			for (int col = minCol; col <= maxCol; col++)
+				levelExport += "<cell value=\""+ (int)paintableGrid.grid[line, col] + "\" />";
+			// Add a last column with void cells
+			levelExport += "<cell value=\"" + (int)Cell.Void + "\" />";
+			levelExport += "</line>\n";
+		}
+		// Add a last line with void cells
+		levelExport += "\t\t<line>";
+		for (int col = minCol; col <= maxCol + 2; col++)
+			levelExport += "<cell value=\"" + (int)Cell.Void + "\" />";
+		levelExport += "</line>\n";
+		levelExport += "\t</map>\n\n";
+
+		if (!DragDrop.isOn)
+			levelExport += "\t<dragdropDisabled />\n\n";
+
+		if (ExecutionLimit.isOn)
+		{
+			string value = ExecutionLimit.transform.parent.GetComponentInChildren<TMP_InputField>(true).text;
+			levelExport += "\t<executionLimit amount=\"" + (value == "" ? "0" : value) + "\" />\n\n";
 		}
 
-		if (levelData.fogEnabled)
-			rootNode.Add(new XElement("fog"));
-		*/
-		
-		var blockLimits = getBLockLimits();
-		var xmlBlockLimits = new XElement("blockLimits");
-		foreach (var key in blockLimits.Keys)
+		if (Fog.isOn)
+			levelExport += "\t<fog />\n\n";
+
+		if (HideExits.isOn)
+			levelExport += "\t<hideExits />\n\n";
+
+		levelExport += "\t<score twoStars=\""+(score2.text == "" ? "0" : score2.text)+"\" threeStars=\""+ (score3.text == "" ? "0" : score3.text) + "\"/>\n\n";
+
+		levelExport += "\t<blockLimits>\n";
+		foreach (GameObject blockLimit in f_editorblocks)
 		{
-			xmlBlockLimits.Add(new XElement("blockLimit", new XAttribute("blockType", key), new XAttribute("limit", blockLimits[key])));
+			EditorBlockData ebd = blockLimit.GetComponent<EditorBlockData>();
+			levelExport += "\t\t<blockLimits blockType=\"" + ebd.blockName + "\" limit=\"" + ebd.GetComponentInChildren<TMP_InputField>(true).text + "\" />\n";
 		}
-		rootNode.Add(xmlBlockLimits);
+		levelExport += "\t</blockLimits>\n\n";
 
-		var robots = new Dictionary<string, Robot>();
-
-		foreach (var foCoords in paintableGrid.floorObjects.Keys)
+		foreach (Tuple<int, int> foCoords in paintableGrid.floorObjects.Keys)
 		{
-			var fo = paintableGrid.floorObjects[foCoords];
+			FloorObject fo = paintableGrid.floorObjects[foCoords];
 			switch (fo)
 			{
 				case Console c:
-					XElement consoleElem = new XElement("console",
-							new XAttribute("state", c.state ? 1 : 0),
-							new XAttribute("posY", c.col),
-							new XAttribute("posX", c.line),
-							new XAttribute("direction", (int)c.orientation));
+					levelExport += "\t<console state=\""+ (c.state ? "1" : "0") + "\" posX=\"" + (c.col+1 - minCol) + "\" posY=\""+ (c.line+1 - minLine) + "\" direction=\""+ (int)c.orientation + "\">\n";
 					// add each slot
-					foreach(string slot in c.slots)
-						consoleElem.Add(new XElement("slot", new XAttribute("slotId", slot)));
-					rootNode.Add(consoleElem);
+					foreach (string slot in c.slots)
+						levelExport += "\t\t<slot slotId=\""+ slot + "\" />\n";
+					levelExport += "\t</console>\n\n";
 					break;
 				case Door d:
-					rootNode.Add(
-						new XElement("door", 
-							new XAttribute("posY", d.col),
-							new XAttribute("posX", d.line),
-							new XAttribute("direction", (int) d.orientation),
-							new XAttribute("slotId", d.slot)));
+					levelExport += "\t<door posX=\"" + (d.col+1 - minCol) + "\" posY=\"" + (d.line+ 1 - minLine) + "\" slotId=\""+ d.slot + "\" direction=\""+ (int)d.orientation + "\" />\n\n";
 					break;
 				case PlayerRobot pr:
-					rootNode.Add(
-						new XElement("player",
-							new XAttribute("associatedScriptName", pr.inputLine),
-							new XAttribute("posY", pr.col),
-							new XAttribute("posX", pr.line),
-							new XAttribute("direction", (int) pr.orientation)));
-					robots[pr.inputLine] = pr;
+					levelExport += "\t<player inputLine=\""+ pr.inputLine + "\" posX=\"" + (pr.col + 1 - minCol) + "\" posY=\"" + (pr.line + 1 - minLine) + "\" direction=\"" + (int)pr.orientation + "\" />\n\n";
 					break;
 				case EnemyRobot er:
-					rootNode.Add(
-						new XElement("enemy",
-							new XAttribute("associatedScriptName", er.inputLine),
-							new XAttribute("posY", er.col),
-							new XAttribute("posX", er.line),
-							new XAttribute("direction", (int) er.orientation),
-							new XAttribute("range", er.range),
-							new XAttribute("selfRange", er.selfRange ? "True" : "False"),
-							new XAttribute("typeRange", (int) er.typeRange)));
-					robots[er.inputLine] = er;
+					levelExport += "\t<enemy inputLine=\"" + er.inputLine + "\" posX=\"" + (er.col + 1 - minCol) + "\" posY=\"" + (er.line + 1 - minLine) + "\" direction=\"" + (int)er.orientation + "\" range=\""+ er.range + "\" selfRange=\""+(er.selfRange ? "True" : "False") +"\" typeRange=\""+ (int)er.typeRange + "\" />\n\n";
 					break;
 				case DecorationObject deco:
-					rootNode.Add(
-						new XElement("decoration",
-							new XAttribute("name", deco.path),
-							new XAttribute("posY", deco.col),
-							new XAttribute("posX", deco.line),
-							new XAttribute("direction", (int) deco.orientation)));
+					levelExport += "\t<decoration name=\""+ deco.path + "\" posX=\"" + (deco.col + 1 - minCol) + "\" posY=\"" + (deco.line + 1 - minLine) + "\" direction=\"" + (int)deco.orientation + "\" />\n\n";
 					break;
 
 				default:
@@ -142,286 +251,30 @@ public class SaveFileSystem : FSystem
 						Debug.Log("Unexpected floor object type, object ignored: " + fo.type);
 						break;
 					}
-
-					rootNode.Add(new XElement("coin", 
-						new XAttribute("posY", fo.col), 
-						new XAttribute("posX", fo.line)));
+					levelExport += "\t<coin posX=\"" + (fo.col + 1 - minCol) + "\" posY=\"" + (fo.line + 1 - minLine) + "\" />\n\n";
 					break;
 			}
 		}
 
-		for (var i = 0; i < editableContainer.transform.childCount; i++)
+		for (int i = 0; i < editableContainer.transform.childCount; i++)
 		{
-			var editorViewportScriptContainer = editableContainer.transform.GetChild(i).Find("ScriptContainer");
-			var header = editorViewportScriptContainer.Find("Header");
-			var scriptName = header.Find("ContainerName").GetComponent<TMP_InputField>().text;
-			var scriptNode = getXmlScript(editorViewportScriptContainer.gameObject, "script");
-			if (!robots.ContainsKey(scriptName))
-			{
-				scriptNode.Add(new XAttribute("name", scriptName),
-					new XAttribute("editMode", 0),
-					new XAttribute("type", 3));
-				rootNode.Add(scriptNode);
-				continue;
-			}
+			Transform editorViewportScriptContainer = editableContainer.transform.GetChild(i).Find("ScriptContainer");
+			string scriptName = editorViewportScriptContainer.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text;
+			TMP_Dropdown editMode = editorViewportScriptContainer.Find("LevelEditorPanel").Find("EditMode_Dropdown").GetComponent<TMP_Dropdown>();
+			TMP_Dropdown type = editorViewportScriptContainer.Find("LevelEditorPanel").Find("ProgType_Dropdown").GetComponent<TMP_Dropdown>();
+			levelExport += "\t<script outputLine=\""+ scriptName + "\" editMode=\""+ editMode.value + "\" type=\""+ type.value + "\">\n";
 
-			var robot = robots[scriptName];
-			var scriptParams = robot.getScriptParams();
-			scriptNode.Add(new XAttribute("name", robot.inputLine), 
-				new XAttribute("editMode", (int) scriptParams.Item2),
-				new XAttribute("type", (int) scriptParams.Item1));
-			
-			rootNode.Add(scriptNode);
+			// on ignore les fils sans Highlightable
+			for (int j = 0; j < editorViewportScriptContainer.childCount; j++)
+			{
+				Highlightable h = editorViewportScriptContainer.GetChild(j).GetComponent<Highlightable>();
+				if (h != null)
+					levelExport += Utility.exportBlockToString(h, null, Utility.ExportType.XML, 2);
+			}
+			levelExport += "\t</script>\n\n";
 		}
 
-		/* Ne pas oublier de remettre ça dans la sauvegarde...
-		if (levelData.scoreEnabled)
-		{
-			rootNode.Add(new XElement("score", new XAttribute("twoStars", levelData.scoreTwoStars),
-				new XAttribute("threeStars", levelData.scoreThreeStars)));
-		}*/
-		
-		xDocument.Add(rootNode);
-
-		if (levelData.filePath.Contains(Application.streamingAssetsPath))
-		{
-			Debug.Log("Trying to write to streaming assets...");
-			try
-			{
-				xDocument.Save(levelData.filePath);
-			}
-			catch (Exception e)
-			{
-				Debug.Log($"Caught {e.Message} while trying to write to streaming assets");
-			}
-		}
-		else
-		{
-			xDocument.Save(levelData.filePath);
-		}
-
-		Debug.Log($"Done: \n{xDocument}");
-	}
-
-	private Dictionary<string, int> getBLockLimits()
-	{
-		var result = new Dictionary<string, int>();
-		foreach (var go in f_editorblocks)
-		{
-			var data = go.GetComponent<EditorBlockData>();
-			var blockName = data.blockName;
-			var hideToggled = go.GetComponentsInChildren<Toggle>()[1].isOn;
-			var unlimitedToggled = go.GetComponentsInChildren<Toggle>()[0].isOn;
-
-			if (hideToggled)
-			{
-				result[blockName] = 0;
-				continue;
-			}
-
-			if (unlimitedToggled)
-			{
-				result[blockName] = -1;
-				continue;
-			}
-			
-			var limitStr = go.GetComponentInChildren<TMP_InputField>().text;
-			var limit = !string.IsNullOrEmpty(limitStr) ? int.Parse(limitStr) : 1;
-
-			result[blockName] = limit;
-		}
-
-		return result;
-	}
-
-	// Static methods could be moved out
-	public static XElement getXmlScript(GameObject cur, string name, XAttribute attribute = null)
-	{
-		var result = new XElement(name);
-		if(attribute != null)
-			result.Add(attribute);
-		
-		for (var i = 0; i < cur.transform.childCount; i++)
-		{
-			var child = cur.transform.GetChild(i).gameObject;
-			var actionComponent = child.GetComponent<BasicAction>();
-			if (actionComponent)
-			{
-				result.Add(getXmlAction(actionComponent.actionType));
-				continue;
-			}
-			
-			// IfElse inherits from IfControl so it must be checked first
-			
-			var ifElseComponent = child.GetComponent<IfElseControl>();
-			if (ifElseComponent)
-			{
-				var conditionXml = new XElement("condition", getXmlCondition(child.transform.Find("ConditionContainer").GetChild(0).gameObject));
-				var thenContainer = child.transform.Find("Container");
-				var elseContainer = child.transform.Find("ElseContainer");
-				var thenXml = getXmlScript(thenContainer.gameObject, "thenContainer");
-				var elseXml = getXmlScript(elseContainer.gameObject, "elseContainer");
-				result.Add(new XElement("ifElse", conditionXml, thenXml, elseXml));
-				
-				continue;
-			}
-			
-			var ifThenComponent = child.GetComponent<IfControl>();
-			if (ifThenComponent)
-			{
-				var conditionXml = new XElement("condition", getXmlCondition(child.transform.Find("ConditionContainer").GetChild(0).gameObject));
-				var thenContainer = child.transform.Find("Container");
-				var thenXml = getXmlScript(thenContainer.gameObject, "container");
-				result.Add(new XElement("if", conditionXml, thenXml));
-				continue;
-			}
-			
-			// WhileComponent inherits from ForControl so it must be checked before the latter
-			
-			var whileComponent = child.GetComponent<WhileControl>();
-			if (whileComponent)
-			{
-				var conditionXml = new XElement("condition", getXmlCondition(child.transform.Find("ConditionContainer").GetChild(0).gameObject));
-				var thenContainer = child.transform.Find("Container");
-				var thenXml = getXmlScript(thenContainer.gameObject, "container");
-				result.Add(new XElement("while", conditionXml, thenXml));
-				continue;
-			}
-			
-			var forComponent = child.GetComponent<ForControl>();
-			if (forComponent)
-			{
-				var nbForStr = forComponent.transform.Find("Header").GetComponentInChildren<TMP_InputField>().text;
-				var nbFor = string.IsNullOrEmpty(nbForStr) ? "0" : nbForStr;
-				result.Add(getXmlScript(child.transform.Find("Container").gameObject, "for", new XAttribute("nbFor", nbFor)));
-				continue;
-			}
-
-			var foreverComponent = child.GetComponent<ForeverControl>();
-			if (foreverComponent)
-			{
-				var thenContainer = child.transform.Find("Container");
-				var thenXml = getXmlScript(thenContainer.gameObject, "forever");
-				result.Add(new XElement(thenXml));
-			}
-		}
-		return result;
-	}
-
-	private static XElement getXmlCondition(GameObject cur)
-	{
-		var captor = cur.GetComponent<BaseCaptor>();
-		string name;
-		if (captor)
-		{
-			name = captor.captorType switch
-			{
-				BaseCaptor.CaptorType.WallFront => "WallFront",
-				BaseCaptor.CaptorType.WallLeft => "WallLeft",
-				BaseCaptor.CaptorType.WallRight => "WallRight",
-				BaseCaptor.CaptorType.Enemy => "Enemy",
-				BaseCaptor.CaptorType.RedArea => "RedArea",
-				BaseCaptor.CaptorType.FieldGate => "FieldGate",
-				BaseCaptor.CaptorType.Terminal => "Terminal",
-				BaseCaptor.CaptorType.Exit => "Exit",
-				_ => throw new ArgumentOutOfRangeException()
-			};
-			return new XElement("captor", new XAttribute("type", name));
-		}
-
-		var operatorComponent = cur.GetComponent<BaseOperator>();
-		if (!operatorComponent)
-		{
-			Debug.Log("Invalid condition");
-			return new XElement("InvalidOperator");
-		}
-
-		name = operatorComponent.operatorType switch
-		{
-			BaseOperator.OperatorType.AndOperator => "and",
-			BaseOperator.OperatorType.OrOperator => "or",
-			BaseOperator.OperatorType.NotOperator => "not",
-			_ => throw new ArgumentOutOfRangeException()
-		};
-
-		var result = new XElement(name);
-
-		var container = cur.transform.Find("Container");
-		switch (operatorComponent.operatorType)
-		{
-			case BaseOperator.OperatorType.AndOperator:
-			case BaseOperator.OperatorType.OrOperator:
-				
-				var conditions = new List<GameObject>();
-				for (var i = 0; i < container.childCount; i++)
-				{
-					var child = container.GetChild(i);
-					if (child.GetComponent<BaseOperator>())
-					{
-						conditions.Add(child.gameObject);
-						continue;
-					}
-
-					if (child.GetComponent<BaseCondition>())
-					{
-						conditions.Add(child.gameObject);
-					}
-				}
-
-				if (conditions.Count != 2)
-				{
-					Debug.Log("Invalid condition");
-					return new XElement("InvalidCondition");
-				}
-				result.Add(new XElement("conditionLeft", getXmlCondition(conditions[0])));
-				result.Add(new XElement("conditionRight", getXmlCondition(conditions[1])));
-				
-				break;
-			case BaseOperator.OperatorType.NotOperator:
-				for (var i = 0; i < container.childCount; i++)
-				{
-					var child = container.GetChild(i);
-					if (child.GetComponent<BaseOperator>())
-					{
-						result.Add(getXmlCondition(child.gameObject));
-						break;
-					}
-
-					if (!child.GetComponent<BaseCondition>()) 
-						continue;
-					
-					result.Add(getXmlCondition(child.gameObject));
-					break;
-				}
-
-				if (result.Elements().Count() != 1)
-				{
-					Debug.Log("Invalid condition");
-					return new XElement("InvalidCondition");
-				}
-				
-				break;
-			default:
-				Debug.Log("Invalid condition");
-				return new XElement("InvalidCondition");
-		}
-
-		return result;
-	}
-
-	private static XElement getXmlAction(BasicAction.ActionType type)
-	{
-		var actionString = type switch
-		{
-			BasicAction.ActionType.Activate => "Activate",
-			BasicAction.ActionType.Forward => "Forward",
-			BasicAction.ActionType.TurnLeft => "TurnLeft",
-			BasicAction.ActionType.TurnRight => "TurnRight",
-			BasicAction.ActionType.Wait => "Wait",
-			BasicAction.ActionType.TurnBack => "TurnBack",
-			_ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-		};
-
-		return new XElement("action", new XAttribute("type", actionString));
+		levelExport += "</level>";
+		return levelExport;
 	}
 }

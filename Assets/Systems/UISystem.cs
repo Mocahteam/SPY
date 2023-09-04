@@ -251,7 +251,7 @@ public class UISystem : FSystem {
 			verb = "exited",
 			objectType = "level",
 			activityExtensions = new Dictionary<string, string>() {
-					{ "value", gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
+					{ "value", Utility.extractFileName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) }
 				}
 		});
 		gameData.actionsHistory = null;
@@ -279,7 +279,7 @@ public class UISystem : FSystem {
 			verb = "exited",
 			objectType = "level",
 			activityExtensions = new Dictionary<string, string>() {
-					{ "value", gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
+					{ "value", Utility.extractFileName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) }
 				}
 		});
 		// On imcrémente le numéro du niveau
@@ -300,7 +300,7 @@ public class UISystem : FSystem {
 			verb = "exited",
 			objectType = "level",
 			activityExtensions = new Dictionary<string, string>() {
-					{ "value", gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") }
+					{ "value", Utility.extractFileName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) }
 				}
 		});
 		if (gameData.actionsHistory != null)

@@ -52,6 +52,8 @@ public class EditorLevelDataSystem : FSystem {
 		dragAndDropToggle.isOn = true;
 		fogToggle.isOn = false;
 		hideExitsToggle.isOn = false;
+		score2Input.text = "";
+		score3Input.text = "";
 
 		// Remove all existing editable area
 		foreach (Transform viewportForEditableContainer in editableContainers)
@@ -69,6 +71,7 @@ public class EditorLevelDataSystem : FSystem {
 
 		string levelKey = go.GetComponent<NewLevelToLoad>().levelKey;
 		XmlDocument doc = gameData.levels[levelKey].OwnerDocument;
+		Utility.removeComments(doc);
 		// remove comments
 		Utility.removeComments(doc);
 		XmlNode root = doc.ChildNodes[1];

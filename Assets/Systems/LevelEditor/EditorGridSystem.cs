@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using System.Xml.Linq;
 using UnityEngine;
 using FYFY;
-using TMPro;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using FYFY_plugins.PointerManager;
@@ -15,6 +13,7 @@ public class EditorGridSystem : FSystem
 	private Family f_UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver)));
 	private Family f_brushes = FamilyManager.getFamily(new AllOfComponents(typeof(CellBrush)));
 	private Family f_newLoading = FamilyManager.getFamily(new AllOfComponents(typeof(NewLevelToLoad)));
+	private Family f_mapCanvasEnabled = FamilyManager.getFamily(new AnyOfTags("EditorMapCanvas"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	public static EditorGridSystem instance;
 	public Tile voidTile;
@@ -68,7 +67,7 @@ public class EditorGridSystem : FSystem
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount)
 	{
-		if (!paintableGrid.gridActive)
+		if (f_mapCanvasEnabled.Count == 0 || f_UIfocused.Count > 0)
 		{
 			Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 			return;
@@ -132,12 +131,13 @@ public class EditorGridSystem : FSystem
 
 		string levelKey = go.GetComponent<NewLevelToLoad>().levelKey;
 		XmlDocument doc = gameData.levels[levelKey].OwnerDocument;
+		Utility.removeComments(doc);
 		// remove comments
 		Utility.removeComments(doc);
 		XmlNode root = doc.ChildNodes[1];
 
 		Tuple<int, int> position;
-		ObjectDirection orientation;
+		Direction.Dir orientation;
 		string inputLine;
 		foreach (XmlNode child in root.ChildNodes)
 		{
@@ -181,7 +181,7 @@ public class EditorGridSystem : FSystem
 					try
 					{
 						position = getPositionFromXElement(child);
-						orientation = (ObjectDirection)int.Parse(child.Attributes.GetNamedItem("direction").Value);
+						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
 
 						setTile(position.Item1, position.Item2, Cell.Console, orientation);
 						
@@ -204,7 +204,7 @@ public class EditorGridSystem : FSystem
 					try
 					{
 						position = getPositionFromXElement(child);
-						orientation = (ObjectDirection)int.Parse(child.Attributes.GetNamedItem("direction").Value);
+						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
 						setTile(position.Item1, position.Item2, Cell.Door, orientation);
 						string slotId = child.Attributes.GetNamedItem("slotId").Value;
 						((Door)paintableGrid.floorObjects[position]).slot = slotId;
@@ -218,7 +218,7 @@ public class EditorGridSystem : FSystem
 					try
 					{
 						position = getPositionFromXElement(child);
-						orientation = (ObjectDirection)int.Parse(child.Attributes.GetNamedItem("direction").Value);
+						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
 						setTile(position.Item1, position.Item2, Cell.Player, orientation);
 						inputLine = child.Attributes.GetNamedItem("inputLine").Value;
 						((PlayerRobot)paintableGrid.floorObjects[position]).inputLine = inputLine;
@@ -232,7 +232,7 @@ public class EditorGridSystem : FSystem
 					try
 					{
 						position = getPositionFromXElement(child);
-						orientation = (ObjectDirection)int.Parse(child.Attributes.GetNamedItem("direction").Value);
+						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
 						setTile(position.Item1, position.Item2, Cell.Enemy, orientation);
 						inputLine = child.Attributes.GetNamedItem("inputLine").Value;
 						int enemyRange = int.Parse(child.Attributes.GetNamedItem("range").Value);
@@ -241,7 +241,7 @@ public class EditorGridSystem : FSystem
 						((EnemyRobot)paintableGrid.floorObjects[position]).inputLine = inputLine;
 						((EnemyRobot)paintableGrid.floorObjects[position]).range = enemyRange;
 						((EnemyRobot)paintableGrid.floorObjects[position]).selfRange = selfRange;
-						((EnemyRobot)paintableGrid.floorObjects[position]).typeRange = (EnemyTypeRange)typeRange;
+						((EnemyRobot)paintableGrid.floorObjects[position]).typeRange = (DetectRange.Type)typeRange;
 					}
 					catch
 					{
@@ -252,7 +252,7 @@ public class EditorGridSystem : FSystem
 					try
 					{
 						position = getPositionFromXElement(child);
-						orientation = (ObjectDirection)int.Parse(child.Attributes.GetNamedItem("direction").Value);
+						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
 						string decoPath = child.Attributes.GetNamedItem("name").Value;
 						setTile(position.Item1, position.Item2, Cell.Decoration, orientation);
 						((DecorationObject)paintableGrid.floorObjects[position]).path = decoPath;
@@ -281,7 +281,7 @@ public class EditorGridSystem : FSystem
 		return new Vector2Int(vec.x + _gridSize.x / 2, _gridSize.y / 2 + vec.y * -1);
 	}
 
-	public void setTile(int line, int col, Cell cell, ObjectDirection rotation = ObjectDirection.Up)
+	public void setTile(int line, int col, Cell cell, Direction.Dir rotation = Direction.Dir.North)
 	{
 		var tuplePos = new Tuple<int, int>(line, col);
 		if ((int)cell < 10000) // non-configurable cell
@@ -306,7 +306,7 @@ public class EditorGridSystem : FSystem
 						Cell.Decoration => new DecorationObject(defaultDecoration, rotation, line, col),
 						Cell.Door => new Door(rotation, line, col),
 						Cell.Console => new Console(rotation, line, col),
-						Cell.Coin => new FloorObject(Cell.Coin, ObjectDirection.Up, line, col, false, false),
+						Cell.Coin => new FloorObject(Cell.Coin, Direction.Dir.North, line, col, false, false),
 						_ => null
 					};
 			}
@@ -334,7 +334,7 @@ public class EditorGridSystem : FSystem
 			null);
 	}
 	
-	private void rotateObject(ObjectDirection newOrientation, int line, int col)
+	private void rotateObject(Direction.Dir newOrientation, int line, int col)
 	{
 		var newpos = new Vector3Int(col - _gridSize.x / 2,
 			_gridSize.y / 2 - line, -1);
@@ -343,15 +343,15 @@ public class EditorGridSystem : FSystem
 		paintableGrid.GetComponent<Tilemap>().SetTransformMatrix(newpos, Matrix4x4.Rotate(quat));
 	}
 
-	private int orientationToInt(ObjectDirection orientation)
+	private int orientationToInt(Direction.Dir orientation)
 	{
 		return orientation switch
 		{
-			ObjectDirection.Up => 0,
-			ObjectDirection.Right => 270,
-			ObjectDirection.Down => 180,
-			ObjectDirection.Left => 90,
-			_ => orientationToInt((ObjectDirection) ((int) orientation % 4))
+			Direction.Dir.North => 0,
+			Direction.Dir.East => 270,
+			Direction.Dir.South => 180,
+			Direction.Dir.West => 90,
+			_ => orientationToInt((Direction.Dir) ((int) orientation % 4))
 		};
 	}
 	
@@ -397,47 +397,16 @@ public enum Cell
 	Coin = 10005
 }
 
-public enum ObjectDirection
-{
-	Up = 0,
-	Down = 1,
-	Right = 2,
-	Left = 3
-}
-
-public enum EnemyTypeRange
-{
-	LineView = 0,
-	//The following two are unimplemented
-	ConeView = 1,
-	AroundView = 2
-}
-
-public enum ScriptType
-{
-	Optimal = 0,
-	NonOptimal = 1,
-	Bugged = 2,
-	Undefined = 3
-}
-
-public enum ScriptEditMode
-{
-	Locked = 0,
-	Sync = 1,
-	Editable = 2
-}
-
 public class FloorObject
 {
 	public Cell type;
-	public ObjectDirection orientation;
+	public Direction.Dir orientation;
 	public bool orientable;
 	public bool selectable;
 	public int line;
 	public int col;
 
-	public FloorObject(Cell type, ObjectDirection orientation, int line, int col, bool orientable = true, bool selectable = true)
+	public FloorObject(Cell type, Direction.Dir orientation, int line, int col, bool orientable = true, bool selectable = true)
 	{
 		this.type = type;
 		this.orientation = orientation;
@@ -452,7 +421,7 @@ public class DecorationObject : FloorObject
 {
 	public string path;
 
-	public DecorationObject(string path, ObjectDirection orientation, int line, int col) : base(Cell.Decoration, orientation, line, col)
+	public DecorationObject(string path, Direction.Dir orientation, int line, int col) : base(Cell.Decoration, orientation, line, col)
 	{
 		this.path = path;
 	}
@@ -463,7 +432,7 @@ public class Console : FloorObject
 	public string[] slots;
 	public bool state;
 
-	public Console(ObjectDirection orientation, int line, int col) : base(Cell.Console, orientation, line, col)
+	public Console(Direction.Dir orientation, int line, int col) : base(Cell.Console, orientation, line, col)
 	{
 		this.slots = new string[0];
 		this.state = true;
@@ -474,7 +443,7 @@ public class Door : FloorObject
 {
 	public string slot;
 
-	public Door(ObjectDirection orientation, int line, int col) : base(Cell.Door, orientation, line, col)
+	public Door(Direction.Dir orientation, int line, int col) : base(Cell.Door, orientation, line, col)
 	{
 		this.slot = "0";
 	}
@@ -483,63 +452,18 @@ public class Door : FloorObject
 public class Robot : FloorObject
 {
 	public string inputLine;
-	private static readonly Dictionary<string, Tuple<ScriptType, ScriptEditMode>> ScriptParams = 
-		new Dictionary<string, Tuple<ScriptType, ScriptEditMode>>();
 
-	protected Robot(Cell cellType, string associatedScriptName, ObjectDirection orientation, int line, int col
-		, bool orientable = true, ScriptType scriptType = ScriptType.Undefined, ScriptEditMode editMode = ScriptEditMode.Editable) : base(cellType, orientation, line, col, orientable)
+	protected Robot(Cell cellType, string associatedScriptName, Direction.Dir orientation, int line, int col
+		, bool orientable = true, UIRootContainer.SolutionType scriptType = UIRootContainer.SolutionType.Undefined, UIRootContainer.EditMode editMode = UIRootContainer.EditMode.Editable) : base(cellType, orientation, line, col, orientable)
 	{
 		this.inputLine = associatedScriptName;
-		if (!hasScriptParams())
-		{
-			setScriptParams(scriptType, editMode);
-		}
-	}
-
-	public void editInputLine(string newName)
-	{
-		inputLine = newName;
-	}
-
-	public Tuple<ScriptType, ScriptEditMode> getScriptParams()
-	{
-		if (ScriptParams.ContainsKey(inputLine))
-			return ScriptParams[inputLine];
-		ScriptParams[inputLine] =
-			new Tuple<ScriptType, ScriptEditMode>(ScriptType.Undefined, ScriptEditMode.Editable);
-		return ScriptParams[inputLine];
-	}
-
-	public void setScriptParams(ScriptType robotScriptType, ScriptEditMode editMode)
-	{
-		ScriptParams[inputLine] = new Tuple<ScriptType, ScriptEditMode>(robotScriptType, editMode);
-	}
-
-	public bool hasScriptParams()
-	{
-		return ScriptParams.ContainsKey(inputLine);
-	}
-
-	public static void setParams(string name, ScriptType type, ScriptEditMode editMode)
-	{
-		ScriptParams[name] = new Tuple<ScriptType, ScriptEditMode>(type, editMode);
-	}
-
-	public static Tuple<ScriptType, ScriptEditMode> getScriptParamsFromName(string name)
-	{
-		return ScriptParams.ContainsKey(name) ? ScriptParams[name] : null;
-	}
-
-	public static bool nameHasScriptParams(string name)
-	{
-		return ScriptParams.ContainsKey(name);
 	}
 }
 
 public class PlayerRobot : Robot
 {
-	public PlayerRobot(string associatedScriptName, ObjectDirection orientation, int line, int col,
-		bool orientable = true, ScriptType scriptType = ScriptType.Undefined, ScriptEditMode editMode = ScriptEditMode.Editable) : 
+	public PlayerRobot(string associatedScriptName, Direction.Dir orientation, int line, int col,
+		bool orientable = true, UIRootContainer.SolutionType scriptType = UIRootContainer.SolutionType.Undefined, UIRootContainer.EditMode editMode = UIRootContainer.EditMode.Editable) : 
 		base(Cell.Player, associatedScriptName, orientation, line, col, orientable, scriptType, editMode)
 	{
 	}
@@ -547,18 +471,17 @@ public class PlayerRobot : Robot
 
 public class EnemyRobot : Robot
 {
-	public EnemyTypeRange typeRange;
+	public DetectRange.Type typeRange;
 	public bool selfRange;
 	public int range;
 
-	public EnemyRobot(string associatedScriptName, ObjectDirection orientation, int line, int col, 
-		ScriptType scriptType = ScriptType.Undefined, ScriptEditMode editMode = ScriptEditMode.Editable,
-		bool selfRange = false, EnemyTypeRange typeRange = EnemyTypeRange.LineView, bool orientable = true, bool selectable = true, int range = 3)
+	public EnemyRobot(string associatedScriptName, Direction.Dir orientation, int line, int col,
+		UIRootContainer.SolutionType scriptType = UIRootContainer.SolutionType.Undefined, UIRootContainer.EditMode editMode = UIRootContainer.EditMode.Editable,
+		bool selfRange = false, DetectRange.Type typeRange = DetectRange.Type.Line, bool orientable = true, bool selectable = true, int range = 3)
 		: base(Cell.Enemy, associatedScriptName,orientation, line, col, orientable, scriptType, editMode)
 	{
 		this.typeRange = typeRange;
 		this.selfRange = selfRange;
 		this.range = range;
-		this.inputLine = associatedScriptName;
 	}
 }

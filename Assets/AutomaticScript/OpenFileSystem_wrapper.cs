@@ -12,6 +12,11 @@ public class OpenFileSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "levelData", levelData);
 	}
 
+	public void refreshListOfLevels()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "refreshListOfLevels", null);
+	}
+
 	public void onLevelSelected(UnityEngine.GameObject go)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "onLevelSelected", go);

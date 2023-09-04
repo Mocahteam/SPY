@@ -59,7 +59,7 @@ public class PopupManager : FSystem {
 			GameObjectManager.removeComponent(message);
 	}
 
-	// See ok and cancel buttons in MessagePanel (TitleScreen)
+	// See ok and cancel buttons in PopupPanel (TitleScreen)
 	public void focusLastButton()
     {
 		MainLoop.instance.StartCoroutine(delayFocusLastButton());

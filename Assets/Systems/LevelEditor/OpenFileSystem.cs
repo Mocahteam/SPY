@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using FYFY;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Application = UnityEngine.Application;
 
 public class OpenFileSystem : FSystem {
@@ -30,27 +29,41 @@ public class OpenFileSystem : FSystem {
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
 
-		// remove all old scenario
-		foreach (Transform child in loadingLevelContent.transform)
-		{
-			GameObjectManager.unbind(child.gameObject);
-			GameObject.Destroy(child.gameObject);
+		refreshListOfLevels();
+
+		f_newLoading.addEntryCallback(levelLoaded);
+
+		// reload edited level
+		if (gameData.selectedScenario == TitleScreenSystem.testFromLevelEditor)
+        {
+			gameData.selectedScenario = "";
+			GameObjectManager.addComponent<NewLevelToLoad>(gameData.gameObject, new { levelKey = TitleScreenSystem.testFromLevelEditor });
 		}
+	}
+
+	public void refreshListOfLevels()
+	{
+		// remove all old buttons
+		foreach(Transform button in loadingLevelContent.transform)
+        {
+			GameObjectManager.unbind(button.gameObject);
+			button.SetParent(null);
+			GameObject.Destroy(button.gameObject);
+        }
 
 		//create levels buttons
 		List<string> buttonsName = new List<string>();
 		foreach (string key in gameData.levels.Keys)
-			buttonsName.Add(key.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, ""));
+			if (key != TitleScreenSystem.testFromLevelEditor) // // we don't create a button for tested level
+				buttonsName.Add(Utility.extractFileName(key));
 		buttonsName.Sort();
 		foreach (string key in buttonsName)
-        {
+		{
 			GameObject levelItem = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/LevelEditor/LevelAvailable") as GameObject, loadingLevelContent.transform);
 			levelItem.GetComponent<TextMeshProUGUI>().text = key;
 			GameObjectManager.bind(levelItem);
 		}
 		selectedLevelGO = null;
-
-		f_newLoading.addEntryCallback(levelLoaded);
 	}
 
 	public void onLevelSelected(GameObject go)
@@ -67,13 +80,18 @@ public class OpenFileSystem : FSystem {
 	// See LoadButton GameObject
 	public void loadLevel()
     {
-		if (selectedLevelGO != null && gameData.levels.ContainsKey(new Uri(Application.streamingAssetsPath + "/" + selectedLevelGO.GetComponentInChildren<TMP_Text>().text).AbsoluteUri))
-		{
+		if (selectedLevelGO != null)
+        {
 			levelData.levelName = selectedLevelGO.GetComponentInChildren<TMP_Text>().text;
-			levelData.filePath = new Uri(Application.streamingAssetsPath + "/" + levelData.levelName).AbsoluteUri;
+			if (gameData.levels.ContainsKey(new Uri(Application.streamingAssetsPath + "/" + selectedLevelGO.GetComponentInChildren<TMP_Text>().text).AbsoluteUri))
+				levelData.filePath = new Uri(Application.streamingAssetsPath + "/" + levelData.levelName).AbsoluteUri;
+			else if (gameData.levels.ContainsKey(new Uri(Application.persistentDataPath + "/" + selectedLevelGO.GetComponentInChildren<TMP_Text>().text).AbsoluteUri))
+				levelData.filePath = new Uri(Application.persistentDataPath + "/" + levelData.levelName).AbsoluteUri;
+			else
+				levelData.filePath = levelData.levelName;
 			GameObjectManager.addComponent<NewLevelToLoad>(gameData.gameObject, new { levelKey = levelData.filePath });
 		}
-    }
+	}
 
 	private void levelLoaded(GameObject go)
 	{

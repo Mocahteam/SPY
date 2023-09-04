@@ -146,10 +146,10 @@ public class TilePopupSystem : FSystem
 	public void rotateObject(int newOrientation)
 	{
 		var newpos = coordsToGridCoords(paintableGrid.selectedObject.col, paintableGrid.selectedObject.line);
-		var quat = Quaternion.Euler(0, 0, orientationToInt((ObjectDirection)newOrientation));
+		var quat = Quaternion.Euler(0, 0, orientationToInt((Direction.Dir)newOrientation));
 
 		paintableGrid.GetComponent<Tilemap>().SetTransformMatrix(newpos, Matrix4x4.Rotate(quat));
-		paintableGrid.selectedObject.orientation = (ObjectDirection)newOrientation;
+		paintableGrid.selectedObject.orientation = (Direction.Dir)newOrientation;
 	}
 
 	private Vector3Int coordsToGridCoords(int col, int line)
@@ -158,14 +158,14 @@ public class TilePopupSystem : FSystem
 			UtilityEditor.gridMaxSize / 2 - line, -1);
 	}
 
-	private int orientationToInt(ObjectDirection orientation)
+	private int orientationToInt(Direction.Dir orientation)
 	{
 		return orientation switch
 		{
-			ObjectDirection.Up => 0,
-			ObjectDirection.Right => 270,
-			ObjectDirection.Down => 180,
-			ObjectDirection.Left => 90,
+			Direction.Dir.North => 0,
+			Direction.Dir.East => 270,
+			Direction.Dir.South => 180,
+			Direction.Dir.West => 90,
 			_ => throw new ArgumentOutOfRangeException(nameof(orientation), orientation, "Impossible orientation")
 		};
 	}
@@ -195,7 +195,7 @@ public class TilePopupSystem : FSystem
 	public void popupRangeDropDown(int newData)
 	{
 		if (paintableGrid.selectedObject != null)
-			((EnemyRobot)paintableGrid.selectedObject).typeRange = (EnemyTypeRange)newData;
+			((EnemyRobot)paintableGrid.selectedObject).typeRange = (DetectRange.Type)newData;
 	}
 
 	// see consoleSlotsPopup GameObject

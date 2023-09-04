@@ -339,7 +339,7 @@ public class EndGameManager : FSystem {
 		//save score only if better score
 		UserData ud = gameData.GetComponent<UserData>();
 		DataLevel levelToLoad = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad];
-		string highScoreKey = levelToLoad.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "");
+		string highScoreKey = Utility.extractFileName(levelToLoad.src);
 		int savedScore = ud.highScore != null ? (ud.highScore.ContainsKey(highScoreKey) ? ud.highScore[highScoreKey] : 0) : PlayerPrefs.GetInt(highScoreKey + gameData.scoreKey, 0);
 		
 		if (savedScore < scoredStars)

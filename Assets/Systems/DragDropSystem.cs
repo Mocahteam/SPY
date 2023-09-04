@@ -279,9 +279,12 @@ public class DragDropSystem : FSystem
 	private string exportEditableScriptToString(Transform scriptContainer, GameObject focusedArea)
 	{
 		string scriptsContent = scriptContainer.Find("Header").GetComponentInChildren<TMP_InputField>().text + " {";
-		// on ignore le premier fils (le header) et le dernier (la drop zone)
-		for (int i = 1; i < scriptContainer.childCount - 1; i++)
-			scriptsContent += " " + Utility.exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>(), focusedArea);
+		// on ignore les fils sans Highlightable
+		for (int i = 0; i < scriptContainer.childCount; i++)
+		{
+			if (scriptContainer.GetChild(i).GetComponent<Highlightable>())
+				scriptsContent += " " + Utility.exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>(), focusedArea);
+		}
 		if (scriptContainer.GetChild(scriptContainer.childCount - 1).gameObject == focusedArea)
 			scriptsContent += " ####";
 		scriptsContent += " }\n";
@@ -369,7 +372,7 @@ public class DragDropSystem : FSystem
 		GameObjectManager.addComponent<Dragging>(itemDragged);
 		Transform parent = itemDragged.transform.parent;
 
-		string content = Utility.exportBlockToString(itemDragged.GetComponent<Highlightable>(), null);
+		string content = Utility.exportBlockToString(itemDragged.GetComponent<Highlightable>());
 
 		GameObject removedFromArea = null;
 		Transform nextBrother = itemDragged.transform.parent.GetChild(itemDragged.transform.GetSiblingIndex() + 1);
@@ -485,7 +488,7 @@ public class DragDropSystem : FSystem
 	// Add the dragged item on the drop area
 	private bool addDraggedItemOnDropZone (GameObject dropArea)
     {
-		string content = Utility.exportBlockToString(itemDragged.GetComponent<Highlightable>(), null);
+		string content = Utility.exportBlockToString(itemDragged.GetComponent<Highlightable>());
 		string context = exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
 
 		if (!Utility.addItemOnDropArea(itemDragged, dropArea))
@@ -540,7 +543,7 @@ public class DragDropSystem : FSystem
 		// On vérifie qu'il y a bien un objet pointé pour la suppression
 		if (!Pause && gameData.dragDropEnabled && elementToDelete != null)
 		{
-			string content = Utility.exportBlockToString(elementToDelete.GetComponent<Highlightable>(), null);
+			string content = Utility.exportBlockToString(elementToDelete.GetComponent<Highlightable>());
 
 			GameObject removedFromArea = null;
 			Transform nextBrother = elementToDelete.transform.parent.GetChild(elementToDelete.transform.GetSiblingIndex() + 1);
@@ -560,7 +563,7 @@ public class DragDropSystem : FSystem
 			elementToDelete.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 			GameObjectManager.refresh(elementToDelete);
 			// compute context after removing item dragged
-			string context = exportEditableScriptToString(nextBrother.GetComponentInParent<UIRootContainer>().transform, removedFromArea);
+			string context = exportEditableScriptToString(nextBrother.gameObject.GetComponentInParent<UIRootContainer>(true).transform, removedFromArea);
 
 			//On associe à l'élément le component ResetBlocLimit pour déclancher le script de destruction de l'élément
 			GameObjectManager.addComponent<ResetBlocLimit>(elementToDelete);
@@ -616,7 +619,7 @@ public class DragDropSystem : FSystem
 	// Si double clic sur l'élément de la bibliothèque (voir l'inspector), ajoute le bloc d'action au dernier container utilisé
 	public void checkDoubleClick(BaseEventData element)
     {
-		if (!Pause && gameData.dragDropEnabled && doubleClick() && !itemDragged)
+		if (!Pause && gameData.dragDropEnabled && doubleClick() && !itemDragged && f_dropArea.Count > 0)
 		{
 			// if no drop zone used, try to get the last
 			if (lastDropZoneUsed == null)

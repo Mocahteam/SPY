@@ -62,7 +62,7 @@ public class LevelGenerator : FSystem {
 				verb = "launched",
 				objectType = "level",
 				activityExtensions = new Dictionary<string, string>() {
-					{ "value", levelToLoad.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "") },
+					{ "value", Utility.extractFileName(levelToLoad.src) },
 					{ "context", gameData.selectedScenario },
 					{ "progress", levelToLoad.name }
 				}

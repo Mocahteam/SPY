@@ -301,7 +301,7 @@ public class ParamCompetenceSystem : FSystem
 				foreach (string levelName in gameData.levels.Keys)
 					if (gameData.levels[levelName] == level)
 					{
-						string currentName = levelName.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "");
+						string currentName = Utility.extractFileName(levelName);
 						GameObject compatibleLevel = GameObject.Instantiate(levelCompatiblePrefab);
 						compatibleLevel.GetComponentInChildren<TMP_Text>().text = currentName;
 						int i = 0;
@@ -330,7 +330,13 @@ public class ParamCompetenceSystem : FSystem
 
 	public void showLevelInfo(string path, DataLevelBehaviour overridedData = null)
 	{
-		string absolutePath = new Uri(Application.streamingAssetsPath + "/" + path).AbsoluteUri;
+		string absolutePath = new Uri(Application.persistentDataPath + "/" + path).AbsoluteUri;
+		string mainPath = Application.persistentDataPath;
+		if (!gameData.levels.ContainsKey(absolutePath))
+		{
+			absolutePath = new Uri(Application.streamingAssetsPath + "/" + path).AbsoluteUri;
+			mainPath = Application.streamingAssetsPath;
+		}
 
 		if (gameData.levels.ContainsKey(absolutePath))
 		{
@@ -339,7 +345,7 @@ public class ParamCompetenceSystem : FSystem
 			// erase previous miniView
 			setMiniView(null);
 			// Display miniView
-			string imgPath = new Uri(Application.streamingAssetsPath + "/" + path.Replace(".xml", ".png")).AbsoluteUri;
+			string imgPath = new Uri(mainPath + "/" + path.Replace(".xml", ".png")).AbsoluteUri;
 			MainLoop.instance.StartCoroutine(GetMiniViewWebRequest(imgPath));
 			XmlNode levelSelected = gameData.levels[absolutePath];
 			List<Dialog> defaultDialogs = new List<Dialog>();
@@ -500,30 +506,9 @@ public class ParamCompetenceSystem : FSystem
 		LayoutRebuilder.ForceRebuildLayoutImmediate(competency.transform.parent as RectTransform);
 	}
 
-	/// <summary>
-	/// Called when trying to save
-	/// </summary>
-	private bool CheckSaveNameValidity(string nameCandidate)
-	{
-		bool isValid = true;
-
-		isValid = nameCandidate != "";
-
-		char[] chars = Path.GetInvalidFileNameChars();
-
-		foreach (char c in chars)
-			if (nameCandidate.IndexOf(c) != -1)
-			{
-				isValid = false;
-				break;
-			}
-
-		return isValid;
-	}
-
 	public void saveScenario(TMP_InputField scenarioName)
 	{
-		if (!CheckSaveNameValidity(scenarioName.text))
+		if (!Utility.CheckSaveNameValidity(scenarioName.text))
 		{
 			localCallback = null;
 			string invalidChars = "";
@@ -602,7 +587,7 @@ public class ParamCompetenceSystem : FSystem
 			File.WriteAllText(path, scenarioExport);
 
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[14], Application.persistentDataPath, scenarioName.text), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[14], Application.persistentDataPath, "Scenario", scenarioName.text), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
 		}
 		catch (Exception e)
 		{
@@ -730,7 +715,7 @@ public class ParamCompetenceSystem : FSystem
 				dialog.enableInteraction = child.GetComponentInChildren<Toggle>().isOn;
 				overridedBriefing.data.overridedDialogs.Add(dialog);
 			}
-			showLevelInfo(path.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, ""), overridedBriefing);
+			showLevelInfo(Utility.extractFileName(path), overridedBriefing);
 		}
     }
 

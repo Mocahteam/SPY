@@ -286,8 +286,9 @@ public class EditableContainerSystem : FSystem
 		{
 			yield return null;
 			// move scroll bar on the last added container
-			EditableCanvas.GetComponentInParent<ScrollRect>().verticalScrollbar.value = 1;
-			EditableCanvas.GetComponentInParent<ScrollRect>().horizontalScrollbar.value = 1;
+			ScrollRect scroll = EditableCanvas.GetComponentInParent<ScrollRect>(true);
+			scroll.verticalScrollbar.value = 1;
+			scroll.horizontalScrollbar.value = 1;
 		}
 	}
 

@@ -56,7 +56,8 @@ public class TitleScreenSystem : FSystem {
 	private int webGL_fileToLoad = 0;
 	private bool webGL_askToEnableSendSystem = false;
 
-	private const string testLevelToken = "testLevel";
+	private const string testFromScenarioEditor = "testFromScenarioEditor";
+	public const string testFromLevelEditor = "testFromLevelEditor";
 
 	[DllImport("__Internal")]
 	private static extern void ShowHtmlButtons(); // call javascript
@@ -110,10 +111,14 @@ public class TitleScreenSystem : FSystem {
 		else // means we come back from a playing session, streaming assets are already loaded
 		{
 			Transform spyMenu = playButton.transform.parent.parent;
-			if (gameData.selectedScenario == testLevelToken) // reload scenario editor
+			if (gameData.selectedScenario == testFromScenarioEditor) // reload scenario editor
             {
                 MainLoop.instance.StartCoroutine(delayOpeningScenarioEditor());
 				EventSystem.current.SetSelectedGameObject(spyMenu.Find("MenuLevels").Find("Retour").gameObject);
+			}
+			else if (gameData.selectedScenario == testFromLevelEditor) // reload level editor
+            {
+				launchLevelEditor();
 			}
             else if (gameData.selectedScenario != "")
             {
@@ -611,7 +616,7 @@ public class TitleScreenSystem : FSystem {
 		//create scenarios' button
 		List<string> sortedScenarios = new List<string>();
 		foreach (string key in gameData.scenarios.Keys)
-			if (key != testLevelToken) // we don't create a button for testLevel scenario
+			if (key != testFromScenarioEditor && key != testFromLevelEditor) // we don't create a button for tested level
 				sortedScenarios.Add(key);
 		sortedScenarios.Sort();
 		foreach (string key in sortedScenarios)
@@ -705,7 +710,7 @@ public class TitleScreenSystem : FSystem {
 			else
 				button.GetComponentInChildren<Button>().interactable = false;
 			//scores
-			string highScoreKey = levelData.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "");
+			string highScoreKey = Utility.extractFileName(levelData.src);
 			int scoredStars = (userData.highScore != null ? (userData.highScore.ContainsKey(highScoreKey) ? userData.highScore[highScoreKey] : 0) : PlayerPrefs.GetInt(highScoreKey + gameData.scoreKey, 0)); //0 star by default
 			Transform scoreCanvas = button.transform.Find("ScoreCanvas");
 			for (int nbStar = 0; nbStar < 4; nbStar++)
@@ -732,11 +737,11 @@ public class TitleScreenSystem : FSystem {
 	//Used on scenario editing window (see button ButtonTestLevel)
 	public void testLevel(DataLevelBehaviour dlb)
 	{
-		gameData.selectedScenario = testLevelToken;
+		gameData.selectedScenario = testFromScenarioEditor;
 		WebGlScenario test = new WebGlScenario();
 		test.levels = new List<DataLevel>();
 		test.levels.Add(dlb.data);
-		gameData.scenarios[testLevelToken] = test;
+		gameData.scenarios[testFromScenarioEditor] = test;
 		gameData.levelToLoad = 0;
 		GameObjectManager.loadScene("MainScene");
 	}
@@ -783,7 +788,7 @@ public class TitleScreenSystem : FSystem {
 		//create level directory buttons
 		foreach (string key in gameData.scenarios.Keys)
 		{
-			if (key != testLevelToken) // we don't add new line for testLevel
+			if (key != testFromScenarioEditor && key != testFromLevelEditor) // we don't add new line for tested levels
 			{
 				GameObject scenarioItem = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/ScenarioAvailable") as GameObject, loadingScenarioContent.transform);
 				scenarioItem.GetComponent<TextMeshProUGUI>().text = key;
@@ -815,7 +820,7 @@ public class TitleScreenSystem : FSystem {
 			foreach (DataLevel levelPath in gameData.scenarios[selectedScenarioGO.GetComponentInChildren<TMP_Text>().text].levels)
 			{
 				GameObject newLevel = GameObject.Instantiate(deletableElement, scenarioContent.transform);
-				newLevel.GetComponentInChildren<TMP_Text>().text = levelPath.src.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "");
+				newLevel.GetComponentInChildren<TMP_Text>().text = Utility.extractFileName(levelPath.src);
 				LayoutRebuilder.ForceRebuildLayoutImmediate(newLevel.transform as RectTransform);
 				newLevel.GetComponent<DataLevelBehaviour>().data = levelPath.clone();
 				GameObjectManager.bind(newLevel);

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Xml;
 using TMPro;
 using UnityEngine;
@@ -490,154 +491,172 @@ public static class Utility
 		}
 	}
 
-	public static string exportBlockToString(Highlightable script, GameObject focusedArea, bool highlightCurrentAction = false)
+	public enum ExportType
+    {
+		PseudoCode,
+		XML
+	}
+
+	private static string indent(int level)
+	{
+		string result = "";
+		for (int i = 0; i < level; i++)
+			result += "\t";
+		return result;
+	}
+
+	public static string exportBlockToString(Highlightable script, GameObject focusedArea = null, ExportType exportType = ExportType.PseudoCode, int indentLevel = 0)
 	{
 		if (script == null)
 			return "";
 		else
 		{
 			string export = "";
+			// Cas d'une ACTION
 			if (script is BasicAction)
 			{
 				DropZone dz = script.GetComponentInChildren<DropZone>(true);
 				if (dz != null && dz.gameObject == focusedArea)
-					export += "#### ";
-				if (script.GetComponent<CurrentAction>())
-					export += "* ";
-				export += (script as BasicAction).actionType.ToString() + ";";
+					export += exportType == ExportType.PseudoCode ? "#### " : indent(indentLevel) + "<!--####-->\n";
+
+				if (exportType == ExportType.PseudoCode)
+					export += (script.GetComponent<CurrentAction>() ? "* " : "") + (script as BasicAction).actionType.ToString() + ";";
+				else
+					export += indent(indentLevel) + "<action type=\"" + (script as BasicAction).actionType + "\"/>"+(script.GetComponent<CurrentAction>() ? "<!-- Current Action -->" : "") +"\n";
 			}
+			// Cas d'un CAPTOR
 			else if (script is BaseCaptor)
 			{
 				ReplacementSlot localRS = script.GetComponent<ReplacementSlot>();
 				if (localRS.gameObject == focusedArea)
-					export += "##";
-				export += (script as BaseCaptor).captorType.ToString();
+					export += exportType == ExportType.PseudoCode ? "##" : indent(indentLevel) + "<!--##-->\n";
+
+				if (exportType == ExportType.PseudoCode)
+					export += (script as BaseCaptor).captorType.ToString();
+				else
+					export += indent(indentLevel) + "<captor type=\"" + (script as BaseCaptor).captorType + "\"/>\n";
+
 				if (localRS.gameObject == focusedArea)
-					export += "##";
+					export += exportType == ExportType.PseudoCode ? "##" : indent(indentLevel) + "<!--##-->\n";
 			}
+			// Cas d'un OPERATOR
 			else if (script is BaseOperator)
 			{
 				ReplacementSlot localRS = script.GetComponent<ReplacementSlot>();
 				if (localRS.gameObject == focusedArea)
-					export += "##";
+					export += exportType == ExportType.PseudoCode ? "##" : indent(indentLevel) + "<!--##-->\n";
 				BaseOperator ope = script as BaseOperator;
 				Transform container = script.transform.Find("Container");
+				// Cas du NOT
 				if (ope.operatorType == BaseOperator.OperatorType.NotOperator)
 				{
-					export += "NOT (";
+					export += exportType == ExportType.PseudoCode ? "NOT (" : indent(indentLevel) + "<not>\n";
 
 					if (container.Find("EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
-						export += "####";
+						export += exportType == ExportType.PseudoCode ? "####" : indent(indentLevel+1) + "<!--####-->\n";
 					else
-						export += exportBlockToString(container.GetComponentInChildren<BaseCondition>(true), focusedArea);
+						export += exportBlockToString(container.GetComponentInChildren<BaseCondition>(true), focusedArea, exportType, indentLevel + 1);
 
-					export += ")";
+					export += exportType == ExportType.PseudoCode ? ")" : indent(indentLevel) + "</not>\n";
 				}
-				else if (ope.operatorType == BaseOperator.OperatorType.AndOperator)
+				// Cas du AND et du OR
+				else if (ope.operatorType == BaseOperator.OperatorType.AndOperator || ope.operatorType == BaseOperator.OperatorType.OrOperator)
 				{
-					export += "(";
+					export += exportType == ExportType.PseudoCode ? "(" : indent(indentLevel) + "<"+(ope.operatorType == BaseOperator.OperatorType.AndOperator ? "and" : "or") +">\n" + indent(indentLevel+1) + "<conditionLeft>\n" ;
 
 					if (container.Find("EmptyConditionalSlot1").GetComponent<ReplacementSlot>().gameObject == focusedArea)
-						export += "####";
+						export += exportType == ExportType.PseudoCode ? "####" : indent(indentLevel + 2) + "<!--####-->\n";
 					else
-						export += exportBlockToString(container.GetChild(0).GetComponentInChildren<BaseCondition>(true), focusedArea);
+						export += exportBlockToString(container.GetChild(0).GetComponentInChildren<BaseCondition>(true), focusedArea, exportType, indentLevel+2);
 
-					export += ") AND (";
+					export += exportType == ExportType.PseudoCode ? ") " + (ope.operatorType == BaseOperator.OperatorType.AndOperator ? "AND" : "OR") + " (" : indent(indentLevel + 1) + "</conditionLeft>\n" + indent(indentLevel + 1) + "<conditionRight>\n";
 
 					if (container.Find("EmptyConditionalSlot2").GetComponent<ReplacementSlot>().gameObject == focusedArea)
-						export += "####";
+						export += exportType == ExportType.PseudoCode ? "####" : indent(indentLevel + 2) + "<!--####-->\n";
 					else
-						export += exportBlockToString(container.GetChild(container.childCount - 2).GetComponentInChildren<BaseCondition>(true), focusedArea);
+						export += exportBlockToString(container.GetChild(container.childCount - 2).GetComponentInChildren<BaseCondition>(true), focusedArea, exportType, indentLevel + 2);
 
-					export += ")";
-				}
-				else if (ope.operatorType == BaseOperator.OperatorType.OrOperator)
-				{
-					export += "(";
-
-					if (container.Find("EmptyConditionalSlot1").GetComponent<ReplacementSlot>().gameObject == focusedArea)
-						export += "####";
-					else
-						export += exportBlockToString(container.GetChild(0).GetComponentInChildren<BaseCondition>(true), focusedArea);
-
-					export += ") OR (";
-
-					if (container.Find("EmptyConditionalSlot2").GetComponent<ReplacementSlot>().gameObject == focusedArea)
-						export += "####";
-					else
-						export += exportBlockToString(container.GetChild(container.childCount - 2).GetComponentInChildren<BaseCondition>(true), focusedArea);
-
-					export += ")";
+					export += exportType == ExportType.PseudoCode ? ")" : indent(indentLevel + 1) + "</conditionRight>\n" + indent(indentLevel) + "</" + (ope.operatorType == BaseOperator.OperatorType.AndOperator ? "and" : "or") + ">\n";
 				}
 				if (localRS.gameObject == focusedArea)
-					export += "##";
+					export += exportType == ExportType.PseudoCode ? "##" : indent(indentLevel) + "<!--##-->\n";
 			}
+			// Cas des structures de contrôle
 			else if (script is ControlElement)
 			{
 				DropZone dz = script.transform.Find("Header").GetComponentInChildren<DropZone>(true);
 				if (dz != null && dz.gameObject == focusedArea)
-					export += "#### ";
+					export += exportType == ExportType.PseudoCode ? "#### " : indent(indentLevel) + "<!--####-->\n";
 				ControlElement control = script as ControlElement;
+				// Cas du WHILE
 				if (script is WhileControl)
 				{
-					export += "WHILE (";
+					export += exportType == ExportType.PseudoCode ? "WHILE (" : indent(indentLevel) + "<while>\n" + indent(indentLevel+1) + "<condition>\n";
 
 					if (script.transform.Find("ConditionContainer").Find("EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
-						export += "####";
+						export += exportType == ExportType.PseudoCode ? "####" : indent(indentLevel + 2) + "<!--####-->\n";
 					else
-						export += exportBlockToString(script.transform.Find("ConditionContainer").GetComponentInChildren<BaseCondition>(true), focusedArea);
+						export += exportBlockToString(script.transform.Find("ConditionContainer").GetComponentInChildren<BaseCondition>(true), focusedArea, exportType, indentLevel + 2);
 
-					export += ")";
+					export += exportType == ExportType.PseudoCode ? ") {" : indent(indentLevel + 1) + "</condition>\n" + indent(indentLevel + 1) + "<container>\n";
+					indentLevel++; // on a un niveau de plus pour le While
 				}
+				// Cas du FOR
 				else if (script is ForControl)
 				{
-					export += "REPEAT (";
-					if (script.gameObject == focusedArea)
-						export += "##";
+					export += exportType == ExportType.PseudoCode ? "REPEAT ("+(script.gameObject == focusedArea ? "##" : "") : indent(indentLevel) + "<for nbFor=\"";
+
 					export += (script as ForControl).nbFor;
-					if (script.gameObject == focusedArea)
-						export += "##";
-					export += ")";
+
+					export += exportType == ExportType.PseudoCode ? (script.gameObject == focusedArea ? "##" : "") + ") {" : ("\">"+ (script.gameObject == focusedArea ? "<!--####-->" : "") + "\n");
 				}
+				// Cas du FOREVER
 				else if (script is ForeverControl)
-					export += "FOREVER";
+					export += exportType == ExportType.PseudoCode ? "FOREVER {" : indent(indentLevel) + "<forever>\n";
+				// Cas du IF et du IF/ELSE
 				else if (script is IfControl)
 				{
-					export += "IF (";
+					export += exportType == ExportType.PseudoCode ? "IF (" : indent(indentLevel) + (script is IfElseControl ? "<ifElse>\n" : "<if>\n") + indent(indentLevel+1) + "<condition>\n";
 
 					if (script.transform.Find("ConditionContainer").Find("EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
-						export += "####";
+						export += exportType == ExportType.PseudoCode ? "####" : indent(indentLevel + 2) + "<!--####-->\n";
 					else
-						export += exportBlockToString(script.transform.Find("ConditionContainer").GetComponentInChildren<BaseCondition>(true), focusedArea);
+						export += exportBlockToString(script.transform.Find("ConditionContainer").GetComponentInChildren<BaseCondition>(true), focusedArea, exportType, indentLevel + 2);
 
-					export += ")";
+					export += exportType == ExportType.PseudoCode ? ") {" : indent(indentLevel + 1) + "</condition>\n" + indent(indentLevel + 1) + (script is IfElseControl ? "<thenContainer>\n" : "<container>\n");
+					indentLevel++; // on a un niveau de plus pour le If et le IfElse
 				}
-
-				export += " {";
 
 				Transform container = script.transform.Find("Container");
 				// parcourir tous les enfants et exclure les zone de drop
 				for (int i = 0; i < container.childCount; i++)
 					if (container.GetChild(i).GetComponent<ReplacementSlot>() == null)
-						export += " " + exportBlockToString(container.GetChild(i).GetComponent<BaseElement>(), focusedArea);
+						export += (exportType == ExportType.PseudoCode ? " " : "") + exportBlockToString(container.GetChild(i).GetComponent<BaseElement>(), focusedArea, exportType, indentLevel + 1);
 				if (container.GetChild(container.childCount - 1).gameObject == focusedArea)
-					export += " ####";
+					export += exportType == ExportType.PseudoCode ? " ####" : indent(indentLevel + 1) + "<!--####-->\n";
 
-				export += " }";
+				export += exportType == ExportType.PseudoCode ? " }" : script switch {
+					WhileControl wc => indent(indentLevel) + "</container>\n" + indent(indentLevel-1) + "</while>\n",
+					ForControl loop => indent(indentLevel) + "</for>\n",
+					ForeverControl forever => indent(indentLevel) + "</forever>\n",
+					IfElseControl ifelse => indent(indentLevel) + "</thenContainer>\n",
+					IfControl ic => indent(indentLevel) + "</container>\n" + indent(indentLevel-1) + "</if>\n",
+					_ => ""
+				};
 
 				if (script is IfElseControl)
 				{
-					export += " ELSE {";
+					export += exportType == ExportType.PseudoCode ? " ELSE {" : indent(indentLevel) + "<elseContainer>\n";
 
 					Transform containerElse = script.transform.Find("ElseContainer");
 					// parcourir tous les enfants et exclure les zone de drop
 					for (int i = 0; i < containerElse.childCount; i++)
 						if (containerElse.GetChild(i).GetComponent<ReplacementSlot>() == null)
-							export += " " + exportBlockToString(containerElse.GetChild(i).GetComponent<BaseElement>(), focusedArea);
+							export += (exportType == ExportType.PseudoCode ? " " : "") + exportBlockToString(containerElse.GetChild(i).GetComponent<BaseElement>(), focusedArea, exportType, indentLevel+1);
 					if (containerElse.GetChild(containerElse.childCount - 1).gameObject == focusedArea)
-						export += " ####";
+						export += exportType == ExportType.PseudoCode ? " ####" : indent(indentLevel + 1) + "<!--####-->\n";
 
-					export += " }";
+					export += exportType == ExportType.PseudoCode ? " }" : indent(indentLevel) + "</elseContainer>\n" + indent(indentLevel - 1) + "</ifElse>\n";
 				}
 			}
 			return export;
@@ -881,5 +900,36 @@ public static class Utility
 		}
 		else
 			return content;
+	}
+
+	/// <summary>
+	/// Called when trying to save
+	/// </summary>
+	public static bool CheckSaveNameValidity(string nameCandidate)
+	{
+		bool isValid = nameCandidate != "";
+
+		if (isValid)
+		{
+			char[] chars = Path.GetInvalidFileNameChars();
+
+			foreach (char c in chars)
+				if (nameCandidate.IndexOf(c) != -1)
+				{
+					isValid = false;
+					break;
+				}
+		}
+		return isValid;
+	}
+
+	public static string extractFileName(string uri)
+    {
+		if (uri.Contains(new Uri(Application.persistentDataPath + "/").AbsoluteUri))
+			return uri.Replace(new Uri(Application.persistentDataPath + "/").AbsoluteUri, "");
+		else if(uri.Contains(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri))
+			return uri.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "");
+		else 
+			return uri;
 	}
 }

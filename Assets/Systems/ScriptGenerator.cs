@@ -15,6 +15,7 @@ public class ScriptGenerator : FSystem {
 	private Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)), new AnyOfTags("Drone")); // On récupére les agents pouvant être édités
 	private Family f_draggableElement = FamilyManager.getFamily(new AnyOfComponents(typeof(ElementToDrag)));
 	private Family f_decodeXMLScript = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptToLoad)));
+	private Family f_ScriptEditorCanvas = FamilyManager.getFamily(new AnyOfTags("ScriptEditorCanvas"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	private HashSet<string> scriptNameUsed = new HashSet<string>();
 	private GameData gameData;
@@ -31,6 +32,11 @@ public class ScriptGenerator : FSystem {
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
+
+		f_ScriptEditorCanvas.addEntryCallback(delegate (GameObject go)
+		{
+			GameObjectManager.addComponent<RefreshSizeOfEditableContainer>(go);
+		});
 	}
 
     protected override void onProcess(int familiesUpdateCount)
