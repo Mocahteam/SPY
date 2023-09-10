@@ -31,11 +31,6 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "resetScriptContainer", scriptContainer);
 	}
 
-	public void removeContainer()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "removeContainer", null);
-	}
-
 	public void newNameContainer(System.String newName)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "newNameContainer", newName);

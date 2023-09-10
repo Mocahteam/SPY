@@ -20,9 +20,14 @@ public class ParamCompetenceSystem : FSystem
 	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
 	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
 	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private Family f_askToRefreshCompetencies = FamilyManager.getFamily(new AllOfComponents(typeof(AskToRefreshCompetencies)));
+	private Family f_askToTestLevel = FamilyManager.getFamily(new AllOfComponents(typeof(AskToTestLevel)));
+	private Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
 	private UnityAction localCallback;
 	private DataLevelBehaviour overridedBriefing;
 	private int previousReferentialSelected = -1;
+	private GameObject selectedScenarioGO;
+	private bool competenciesLoadedAndReady;
 
 	// Variables
 	public GameObject panelInfoComp; // Panneau d'information des compétences
@@ -35,20 +40,26 @@ public class ParamCompetenceSystem : FSystem
 	public GameObject contentInfoCompatibleLevel; // Le panneau contenant les info d'un niveau (miniView, dialogues, competences, ...)
 	public GameObject deletableElement; // Un niveau que l'on peut supprimer
 	public GameObject contentScenario; // Le panneau contenant les niveaux sélectionnés pour le scénario
-	public Button testLevel;
-	public Button downloadLevel;
+	public Button testLevelBt;
+	public Button downloadLevelBt;
 	public Button addToScenario;
 	public GameObject savingPanel;
 	public GameObject editBriefingPanel;
 	public GameObject briefingItemPrefab;
 	public TMP_InputField scenarioAbstract;
 	public TMP_InputField scenarioName;
+	public GameObject scenarioContent;
+	public GameObject loadingScenarioContent;
+	public GameObject mainCanvas;
 
 	[DllImport("__Internal")]
-	private static extern void Save(string content); // call javascript
+	private static extern void Save(string content, string defaultName); // call javascript
 
 	[DllImport("__Internal")]
 	private static extern bool IsMobileBrowser(); // call javascript
+
+	[DllImport("__Internal")]
+	private static extern void DownloadLevel(string uri); // call javascript
 
 	[Serializable]
 	public class RawComp
@@ -91,11 +102,27 @@ public class ParamCompetenceSystem : FSystem
 		string referentialsPath = new Uri(Application.streamingAssetsPath + "/Competencies/competenciesReferential.json").AbsoluteUri;
 		MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath));
 		if (Application.platform != RuntimePlatform.WebGLPlayer)
-			GameObjectManager.setGameObjectState(downloadLevel.gameObject, false);
+			GameObjectManager.setGameObjectState(downloadLevelBt.gameObject, false);
+
+		f_askToRefreshCompetencies.addEntryCallback(delegate (GameObject go) {
+			foreach (AskToRefreshCompetencies refresh in go.GetComponents<AskToRefreshCompetencies>())
+				GameObjectManager.removeComponent(refresh);
+			refreshCompetencies();
+		});
+
+		f_askToTestLevel.addEntryCallback(delegate (GameObject go)
+		{
+			foreach (AskToTestLevel test in go.GetComponents<AskToTestLevel>())
+				GameObjectManager.removeComponent(test);
+			testLevelPath(go.GetComponent<AskToTestLevel>().url);
+		});
+
+		selectedScenarioGO = null;
 	}
 
 	private IEnumerator GetCompetenciesWebRequest(string referentialsPath)
     {
+		competenciesLoadedAndReady = false;
 		UnityWebRequest www = UnityWebRequest.Get(referentialsPath);
 		yield return www.SendWebRequest();
 
@@ -107,6 +134,8 @@ public class ParamCompetenceSystem : FSystem
 		}
 		else
 		{
+			while (f_localizationLoaded.Count == 0) // waiting localization loaded
+				yield return null;
 			createReferentials(www.downloadHandler.text);
 		}
 	}
@@ -210,7 +239,6 @@ public class ParamCompetenceSystem : FSystem
 			competency.GetComponentInChildren<TMP_Text>().text = Utility.extractLocale(comp.id);
 			GameObjectManager.bind(competency);
 		}
-
 		MainLoop.instance.StartCoroutine(buildCompetenciesHierarchy());
 	}
 
@@ -238,9 +266,10 @@ public class ParamCompetenceSystem : FSystem
 			yield return null;
 		}
 		LayoutRebuilder.ForceRebuildLayoutImmediate(ContentCompMenu.transform as RectTransform);
+		competenciesLoadedAndReady = true;
 	}
 
-	// Used in ButtonShowLevels in ParamCompPanel
+	// Used in ButtonShowLevels in ParamCompPanel and in CreateScenario button (main menu)
 	public void showCompatibleLevels(bool filter)
 	{
 		if (Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser())
@@ -250,8 +279,9 @@ public class ParamCompetenceSystem : FSystem
 		}
 		// default, select all levels
 		List<XmlNode> selectedLevels = new List<XmlNode>();
-		foreach (XmlNode level in gameData.levels.Values)
-			selectedLevels.Add(level);
+		foreach (KeyValuePair<string, XmlNode> level in gameData.levels)
+			if (level.Key != Utility.testFromScenarioEditor && level.Key != Utility.testFromLevelEditor && level.Key != Utility.testFromUrl) // we don't add new line for tested levels
+				selectedLevels.Add(level.Value);
 		if (filter)
 		{
 			// now, filtering level that not check constraints
@@ -291,8 +321,8 @@ public class ParamCompetenceSystem : FSystem
 				GameObjectManager.unbind(child.gameObject);
 				GameObject.Destroy(child.gameObject);
 			}
-			testLevel.interactable = false;
-			downloadLevel.interactable = false;
+			testLevelBt.interactable = false;
+			downloadLevelBt.interactable = false;
 			addToScenario.interactable = false;
 			// Instanciate one button for each level
 			List<GameObject> sortedLevels = new List<GameObject>();
@@ -321,15 +351,96 @@ public class ParamCompetenceSystem : FSystem
 			}
 			// Add buttons to UI
 			foreach (GameObject level in sortedLevels)
-            {
+			{
 				level.transform.SetParent(contentListOfCompatibleLevel.transform, false);
 				GameObjectManager.bind(level);
 			}
 		}
+		if (gameData.selectedScenario == Utility.testFromScenarioEditor)
+        {
+			loadScenario("editingScenario");
+			DataLevel dl = gameData.scenarios[gameData.selectedScenario].levels[0];
+			MainLoop.instance.StartCoroutine(delayShowLevelInfo(dl));
+			gameData.selectedScenario = "";
+		}
+	}
+
+	private IEnumerator delayShowLevelInfo(DataLevel dl)
+    {
+		while (!competenciesLoadedAndReady)
+			yield return null;
+		showLevelInfo(Utility.extractFileName(dl.src), dl);
+
+	}
+
+	// See ButtonLoadScenario
+	public void displayLoadingPanel()
+	{
+		selectedScenarioGO = null;
+		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("LoadingPanel").gameObject, true);
+		// remove all old scenario
+		foreach (Transform child in loadingScenarioContent.transform)
+		{
+			GameObjectManager.unbind(child.gameObject);
+			GameObject.Destroy(child.gameObject);
+		}
+
+		//create scenario buttons
+		foreach (string key in gameData.scenarios.Keys)
+		{
+			if (key != Utility.testFromScenarioEditor && key != Utility.testFromLevelEditor && key != Utility.testFromUrl) // we don't add new line for tested levels
+			{
+				GameObject scenarioItem = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/ScenarioAvailable") as GameObject, loadingScenarioContent.transform);
+				scenarioItem.GetComponent<TextMeshProUGUI>().text = key;
+				GameObjectManager.bind(scenarioItem);
+			}
+		}
+	}
+
+	// see LoadButton in LoadingPanel in TitleScreen scene
+	public void loadScenario()
+	{
+		if (selectedScenarioGO != null)
+			loadScenario(selectedScenarioGO.GetComponentInChildren<TMP_Text>().text);
+	}
+
+	private void loadScenario(string scenarioKey)
+    {
+		if (gameData.scenarios.ContainsKey(scenarioKey))
+		{
+			//remove all old scenario
+			foreach (Transform child in scenarioContent.transform)
+			{
+				GameObjectManager.unbind(child.gameObject);
+				GameObject.Destroy(child.gameObject);
+			}
+
+			scenarioName.text = gameData.scenarios[scenarioKey].name;
+			scenarioAbstract.text = gameData.scenarios[scenarioKey].description;
+
+			foreach (DataLevel levelPath in gameData.scenarios[scenarioKey].levels)
+			{
+				GameObject newLevel = GameObject.Instantiate(deletableElement, scenarioContent.transform);
+				newLevel.GetComponentInChildren<TMP_Text>().text = Utility.extractFileName(levelPath.src);
+				LayoutRebuilder.ForceRebuildLayoutImmediate(newLevel.transform as RectTransform);
+				newLevel.GetComponent<DataLevelBehaviour>().data = levelPath.clone();
+				GameObjectManager.bind(newLevel);
+			}
+			LayoutRebuilder.ForceRebuildLayoutImmediate(scenarioContent.transform as RectTransform);
+		}
+	}
+
+	public void onScenarioSelected(GameObject go)
+	{
+		selectedScenarioGO = go;
 	}
 
 	public void showLevelInfo(string path, DataLevelBehaviour overridedData = null)
 	{
+		showLevelInfo(path, overridedData == null ? null : overridedData.data);
+	}
+
+	private void showLevelInfo(string path, DataLevel overridedData = null) { 
 		string absolutePath = new Uri(Application.persistentDataPath + "/" + path).AbsoluteUri;
 		string mainPath = Application.persistentDataPath;
 		if (!gameData.levels.ContainsKey(absolutePath))
@@ -365,7 +476,7 @@ public class ParamCompetenceSystem : FSystem
 					dlb.data.overridedDialogs = null; // to load default
 				}
 				else
-					dlb.data = overridedData.data.clone();
+					dlb.data = overridedData.clone();
 				// if no overrided dialogs, load default
 				if (dlb.data.overridedDialogs == null)
 					dlb.data.overridedDialogs = defaultDialogs;
@@ -402,8 +513,8 @@ public class ParamCompetenceSystem : FSystem
 			}
 			else
 				contentInfo.text += gameData.localization[36];
-			testLevel.interactable = true;
-			downloadLevel.interactable = true;
+			testLevelBt.interactable = true;
+			downloadLevelBt.interactable = true;
 			addToScenario.interactable = true;
 		}
         else
@@ -521,10 +632,10 @@ public class ParamCompetenceSystem : FSystem
 		}
 		else
 		{
-			// remove file extension
+			// add file extension
 			if (!scenarioName.text.EndsWith(".xml"))
 				scenarioName.text += ".xml";
-			if (File.Exists(Application.persistentDataPath + "/Scenario/" + scenarioName.text))
+			if (Application.platform != RuntimePlatform.WebGLPlayer && File.Exists(Application.persistentDataPath + "/Scenario/" + scenarioName.text))
 			{
 				localCallback = null;
 				localCallback += delegate { saveToFile(scenarioName); };
@@ -574,40 +685,50 @@ public class ParamCompetenceSystem : FSystem
 	private void saveToFile(TMP_InputField scenarioName) {
 		string scenarioExport = buildScenarioContent();
 
-		try
-		{
-			// Create all necessary directories if they don't exist
-			Directory.CreateDirectory(Application.persistentDataPath + "/Scenario");
-			string path = Application.persistentDataPath + "/Scenario/" + scenarioName.text;
-			// Add/Replace scenario content in memory
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml(scenarioExport);
-			TitleScreenSystem.instance.updateScenarioContent(path, doc);
-			// Write on disk
-			File.WriteAllText(path, scenarioExport);
+		// generate XML structure from string
+		XmlDocument doc = new XmlDocument();
+		doc.LoadXml(scenarioExport);
+		Utility.removeComments(doc);
 
-			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[14], Application.persistentDataPath, "Scenario", scenarioName.text), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
-		}
-		catch (Exception e)
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[15], e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			Save(buildScenarioContent(), scenarioName.text);
+			// Add/Replace scenario content in memory
+			string fakeUri = Application.streamingAssetsPath + "/Scenario/LocalFiles/" + scenarioName.text;
+			TitleScreenSystem.instance.updateScenarioContent(new Uri(fakeUri).AbsoluteUri, doc);
+		}
+		else
+		{
+			try
+			{
+				// Create all necessary directories if they don't exist
+				Directory.CreateDirectory(Application.persistentDataPath + "/Scenario");
+				string path = Application.persistentDataPath + "/Scenario/" + scenarioName.text;
+				// Write on disk
+				File.WriteAllText(path, scenarioExport);
+				// Add/Replace scenario content in memory
+				TitleScreenSystem.instance.updateScenarioContent(path, doc);
+
+				localCallback = null;
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[14], Application.persistentDataPath, "Scenario", scenarioName.text), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			}
+			catch (Exception e)
+			{
+				localCallback = null;
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[15], e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			}
 		}
 		// Be sure saving windows is disabled
 		GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, false);
 	}
 
 	// See ButtonSaveScenario
-	public void displaySavingPanel()
+	public void displaySavingPanel(TMP_InputField scenarName)
 	{
-		if (Application.platform == RuntimePlatform.WebGLPlayer)
-			Save(buildScenarioContent());
-		else
-		{
-			GameObjectManager.setGameObjectState(savingPanel, true);
-			EventSystem.current.SetSelectedGameObject(savingPanel.transform.Find("Panel").Find("Buttons").Find("CancelButton").gameObject);
-		}
+		GameObjectManager.setGameObjectState(savingPanel, true);
+		// init savingPanel to the name of scenario
+		savingPanel.GetComponentInChildren<TMP_InputField>(true).text = scenarName.text;
+		EventSystem.current.SetSelectedGameObject(savingPanel.transform.Find("Panel").Find("Buttons").Find("CancelButton").gameObject);
 	}
 
 	public void showBriefingOverride(DataLevelBehaviour dataLevel)
@@ -723,5 +844,38 @@ public class ParamCompetenceSystem : FSystem
     {
 		GameObject newItem = GameObject.Instantiate(briefingItemPrefab, parent.transform, false);
 		GameObjectManager.bind(newItem);
+	}
+
+	//Used on scenario editing window (see button ButtonTestLevel)
+	public void testLevel(DataLevelBehaviour dlb)
+	{
+		// We save the scenario currently edited
+		// We can't use GameObjectManager because the update has to be done immediately due to scene loading in testLevel function
+		TitleScreenSystem.instance.LoadLevelOrScenario("editingScenario", buildScenarioContent());
+		testLevel(dlb.data, Utility.testFromScenarioEditor);
+	}
+
+	private void testLevel(DataLevel dl, string context)
+    {
+		gameData.selectedScenario = context;
+		WebGlScenario test = new WebGlScenario();
+		test.levels = new List<DataLevel>();
+		test.levels.Add(dl);
+		gameData.scenarios[context] = test;
+		gameData.levelToLoad = 0;
+		GameObjectManager.loadScene("MainScene");
+	}
+
+	private void testLevelPath(string levelToLoad)
+	{
+		DataLevel dl = new DataLevel();
+		dl.src = new Uri(Application.streamingAssetsPath + "/" + levelToLoad).AbsoluteUri;
+		dl.name = Path.GetFileNameWithoutExtension(dl.src);
+		testLevel(dl, Utility.testFromUrl);
+	}
+
+	public void downloadLevel(DataLevelBehaviour dlb)
+	{
+		DownloadLevel(dlb.data.src);
 	}
 }

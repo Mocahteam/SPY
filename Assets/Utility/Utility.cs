@@ -14,6 +14,10 @@ using UnityEngine.UI;
 public static class Utility
 {
 
+	public static string testFromScenarioEditor = "testFromScenarioEditor";
+	public static string testFromLevelEditor = "testFromLevelEditor";
+	public static string testFromUrl = "testFromUrl";
+
 	[Serializable]
 	public class RawParams
 	{

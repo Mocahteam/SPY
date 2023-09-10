@@ -8,8 +8,6 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject compLevelButton;
 	public UnityEngine.GameObject listOfCampaigns;
 	public UnityEngine.GameObject listOfLevels;
-	public UnityEngine.GameObject loadingScenarioContent;
-	public UnityEngine.GameObject scenarioContent;
 	public UnityEngine.GameObject playButton;
 	public UnityEngine.GameObject quitButton;
 	public UnityEngine.GameObject loadingScreen;
@@ -21,7 +19,6 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject virtualKeyboard;
 	public TMPro.TMP_Text progress;
 	public TMPro.TMP_Text logs;
-	public ItemSelector languageSelector;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -30,8 +27,6 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "compLevelButton", compLevelButton);
 		MainLoop.initAppropriateSystemField (system, "listOfCampaigns", listOfCampaigns);
 		MainLoop.initAppropriateSystemField (system, "listOfLevels", listOfLevels);
-		MainLoop.initAppropriateSystemField (system, "loadingScenarioContent", loadingScenarioContent);
-		MainLoop.initAppropriateSystemField (system, "scenarioContent", scenarioContent);
 		MainLoop.initAppropriateSystemField (system, "playButton", playButton);
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
 		MainLoop.initAppropriateSystemField (system, "loadingScreen", loadingScreen);
@@ -43,7 +38,6 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "virtualKeyboard", virtualKeyboard);
 		MainLoop.initAppropriateSystemField (system, "progress", progress);
 		MainLoop.initAppropriateSystemField (system, "logs", logs);
-		MainLoop.initAppropriateSystemField (system, "languageSelector", languageSelector);
 	}
 
 	public void initGBLXAPI()
@@ -71,11 +65,6 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "forceLaunch", null);
 	}
 
-	public void updateScenarioContent()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "updateScenarioContent", null);
-	}
-
 	public void importLevelOrScenario(System.String content)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "importLevelOrScenario", content);
@@ -91,19 +80,9 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "delayRefreshCompetencies", content);
 	}
 
-	public void launchLevel()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "launchLevel", null);
-	}
-
 	public void launchLevelEditor()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "launchLevelEditor", null);
-	}
-
-	public void testLevel(DataLevelBehaviour dlb)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "testLevel", dlb);
 	}
 
 	public void askToLoadLevel(System.String levelToLoad)
@@ -119,26 +98,6 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public void quitGame()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "quitGame", null);
-	}
-
-	public void displayLoadingPanel()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "displayLoadingPanel", null);
-	}
-
-	public void onScenarioSelected(UnityEngine.GameObject go)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "onScenarioSelected", go);
-	}
-
-	public void loadScenario()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "loadScenario", null);
-	}
-
-	public void downloadLevel(DataLevelBehaviour dlb)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "downloadLevel", dlb);
 	}
 
 }

@@ -23,6 +23,9 @@ public class SyncLocalization : FSystem {
     [DllImport("__Internal")]
     private static extern string GetBrowserLanguage(); // call javascript
 
+    [DllImport("__Internal")]
+    private static extern string UpdateHTMLLanguage(string newLang); // call javascript
+
     public static SyncLocalization instance;
 
     public SyncLocalization()
@@ -52,6 +55,7 @@ public class SyncLocalization : FSystem {
                 currentItemSelected = 1;
         }
         syncLocale();
+        GameObjectManager.addComponent<LocalizationLoaded>(MainLoop.instance.gameObject);
     }
 
     public void syncLocale()
@@ -63,6 +67,8 @@ public class SyncLocalization : FSystem {
         }
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[currentItemSelected];
         PlayerPrefs.SetInt("localization", currentItemSelected);
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+            UpdateHTMLLanguage(currentItemSelected == 0 ? "fr" : "en");
     }
 
     /// <summary>

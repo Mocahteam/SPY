@@ -21,6 +21,7 @@ using System.Linq;
 public class TitleScreenSystem : FSystem {
 	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
 	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
+	private Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
 
 	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
@@ -31,8 +32,6 @@ public class TitleScreenSystem : FSystem {
 	public GameObject compLevelButton;
 	public GameObject listOfCampaigns;
 	public GameObject listOfLevels;
-	public GameObject loadingScenarioContent;
-	public GameObject scenarioContent;
 	public GameObject playButton;
 	public GameObject quitButton;
 	public GameObject loadingScreen;
@@ -44,9 +43,7 @@ public class TitleScreenSystem : FSystem {
 	public GameObject virtualKeyboard;
 	public TMP_Text progress;
 	public TMP_Text logs;
-	public ItemSelector languageSelector;
 
-	private GameObject selectedScenarioGO;
 	private UnityAction localCallback;
 
 	private GameObject lastSelected;
@@ -56,14 +53,8 @@ public class TitleScreenSystem : FSystem {
 	private int webGL_fileToLoad = 0;
 	private bool webGL_askToEnableSendSystem = false;
 
-	private const string testFromScenarioEditor = "testFromScenarioEditor";
-	public const string testFromLevelEditor = "testFromLevelEditor";
-
 	[DllImport("__Internal")]
 	private static extern void ShowHtmlButtons(); // call javascript
-
-	[DllImport("__Internal")]
-	private static extern void DownloadLevel(string uri); // call javascript
 
 	[Serializable]
 	public class WebGlScenarioList
@@ -111,16 +102,16 @@ public class TitleScreenSystem : FSystem {
 		else // means we come back from a playing session, streaming assets are already loaded
 		{
 			Transform spyMenu = playButton.transform.parent.parent;
-			if (gameData.selectedScenario == testFromScenarioEditor) // reload scenario editor
+			if (gameData.selectedScenario == Utility.testFromScenarioEditor) // reload scenario editor
             {
                 MainLoop.instance.StartCoroutine(delayOpeningScenarioEditor());
 				EventSystem.current.SetSelectedGameObject(spyMenu.Find("MenuLevels").Find("Retour").gameObject);
 			}
-			else if (gameData.selectedScenario == testFromLevelEditor) // reload level editor
+			else if (gameData.selectedScenario == Utility.testFromLevelEditor) // reload level editor
             {
 				launchLevelEditor();
 			}
-            else if (gameData.selectedScenario != "")
+            else if (gameData.selectedScenario != "" && gameData.selectedScenario != Utility.testFromUrl)
             {
 				// reload last opened scenario
 				playButton.GetComponent<Button>().onClick.Invoke();
@@ -137,8 +128,6 @@ public class TitleScreenSystem : FSystem {
 			ShowHtmlButtons();
 			GameObjectManager.setGameObjectState(quitButton, false);
 		}
-
-		selectedScenarioGO = null;
 	}
 
 	private IEnumerator delayOpeningScenarioEditor()
@@ -394,12 +383,12 @@ public class TitleScreenSystem : FSystem {
 
 	private IEnumerator WaitLoadingData()
     {
-		while (webGL_fileLoaded < webGL_fileToLoad)
+		while (webGL_fileLoaded < webGL_fileToLoad && f_localizationLoaded.Count == 0)
 			yield return null;
 
 		// and, if require, we can load requested level by URL
 		if (loadLevelWithURL != "")
-			testLevelPath(loadLevelWithURL);
+			GameObjectManager.addComponent<AskToTestLevel>(MainLoop.instance.gameObject, new { url = loadLevelWithURL });
 		// Disable Loading screen
 		GameObjectManager.setGameObjectState(loadingScreen, false);
 	}
@@ -523,7 +512,7 @@ public class TitleScreenSystem : FSystem {
 		webGL_fileLoaded = webGL_fileToLoad;
 	}
 
-	private void LoadLevelOrScenario(string uri, string xmlContent)
+	public void LoadLevelOrScenario(string uri, string xmlContent)
     {
 		XmlDocument doc = new XmlDocument();
 		doc.LoadXml(xmlContent);
@@ -616,7 +605,7 @@ public class TitleScreenSystem : FSystem {
 		//create scenarios' button
 		List<string> sortedScenarios = new List<string>();
 		foreach (string key in gameData.scenarios.Keys)
-			if (key != testFromScenarioEditor && key != testFromLevelEditor) // we don't create a button for tested level
+			if (key != Utility.testFromScenarioEditor && key != Utility.testFromLevelEditor && key !=  Utility.testFromUrl) // we don't create a button for tested level
 				sortedScenarios.Add(key);
 		sortedScenarios.Sort();
 		foreach (string key in sortedScenarios)
@@ -641,6 +630,7 @@ public class TitleScreenSystem : FSystem {
 		TMP_Text campaignDescription = content.GetChild(1).GetComponent<TMP_Text>();
 		campaignDescription.text = Utility.extractLocale(gameData.scenarios[campaignKey].description)+"\n\n";
 
+		content.gameObject.AddComponent<AskToRefreshCompetencies>();
 		delayRefreshCompetencies(content);
 
 		Button bt_showLevels = detailsCampaign.transform.GetComponentInChildren<Button>();
@@ -734,25 +724,6 @@ public class TitleScreenSystem : FSystem {
 		GameObjectManager.loadScene("EditorScene");
 	}
 
-	//Used on scenario editing window (see button ButtonTestLevel)
-	public void testLevel(DataLevelBehaviour dlb)
-	{
-		gameData.selectedScenario = testFromScenarioEditor;
-		WebGlScenario test = new WebGlScenario();
-		test.levels = new List<DataLevel>();
-		test.levels.Add(dlb.data);
-		gameData.scenarios[testFromScenarioEditor] = test;
-		gameData.levelToLoad = 0;
-		GameObjectManager.loadScene("MainScene");
-	}
-
-	private void testLevelPath(string levelToLoad)
-	{
-		DataLevelBehaviour dlb = new DataLevelBehaviour();
-		dlb.data.src = new Uri(Application.streamingAssetsPath + "/" + levelToLoad).AbsoluteUri;
-		testLevel(dlb);
-	}
-
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/index.html) via le Wrapper du Système
 	public void askToLoadLevel(string levelToLoad)
     {
@@ -771,67 +742,5 @@ public class TitleScreenSystem : FSystem {
 	// See Quitter button in editor
 	public void quitGame(){
 		Application.Quit();
-	}
-
-	// See ButtonLoadScenario
-	public void displayLoadingPanel()
-	{
-		selectedScenarioGO = null;
-		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("LoadingPanel").gameObject, true);
-		// remove all old scenario
-		foreach (Transform child in loadingScenarioContent.transform)
-		{
-			GameObjectManager.unbind(child.gameObject);
-			GameObject.Destroy(child.gameObject);
-		}
-
-		//create level directory buttons
-		foreach (string key in gameData.scenarios.Keys)
-		{
-			if (key != testFromScenarioEditor && key != testFromLevelEditor) // we don't add new line for tested levels
-			{
-				GameObject scenarioItem = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/ScenarioAvailable") as GameObject, loadingScenarioContent.transform);
-				scenarioItem.GetComponent<TextMeshProUGUI>().text = key;
-				GameObjectManager.bind(scenarioItem);
-			}
-		}
-	}
-
-	public void onScenarioSelected(GameObject go)
-    {
-		selectedScenarioGO = go;
-    }
-
-	// see LoadButton in LoadingPanel in TitleScreen scene
-	public void loadScenario()
-	{
-		if (selectedScenarioGO != null && gameData.scenarios.ContainsKey(selectedScenarioGO.GetComponentInChildren<TMP_Text>().text))
-		{
-			//remove all old scenario
-			foreach (Transform child in scenarioContent.transform)
-            {
-				GameObjectManager.unbind(child.gameObject);
-				GameObject.Destroy(child.gameObject);
-            }
-
-			scenarioName.text = gameData.scenarios[selectedScenarioGO.GetComponentInChildren<TMP_Text>().text].name;
-			scenarioAbstract.text = gameData.scenarios[selectedScenarioGO.GetComponentInChildren<TMP_Text>().text].description;
-
-			foreach (DataLevel levelPath in gameData.scenarios[selectedScenarioGO.GetComponentInChildren<TMP_Text>().text].levels)
-			{
-				GameObject newLevel = GameObject.Instantiate(deletableElement, scenarioContent.transform);
-				newLevel.GetComponentInChildren<TMP_Text>().text = Utility.extractFileName(levelPath.src);
-				LayoutRebuilder.ForceRebuildLayoutImmediate(newLevel.transform as RectTransform);
-				newLevel.GetComponent<DataLevelBehaviour>().data = levelPath.clone();
-				GameObjectManager.bind(newLevel);
-			}
-			LayoutRebuilder.ForceRebuildLayoutImmediate(scenarioContent.transform as RectTransform);
-		}
-    }
-
-	public void downloadLevel(DataLevelBehaviour dlb)
-    {
-		Debug.Log(dlb.data.src);
-		DownloadLevel(dlb.data.src);
 	}
 }

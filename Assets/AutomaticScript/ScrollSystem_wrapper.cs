@@ -28,9 +28,4 @@ public class ScrollSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "setHorizontalSpeed", newSpeed);
 	}
 
-	public void onScroll()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "onScroll", null);
-	}
-
 }

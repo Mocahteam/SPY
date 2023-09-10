@@ -40,4 +40,13 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
     {
         EventSystem.current.SetSelectedGameObject(go);
     }
+    public void onScenarioSelected()
+    {
+        ParamCompetenceSystem.instance.onScenarioSelected(gameObject);
+    }
+
+    public void loadScenario()
+    {
+        gameObject.transform.parent.parent.parent.parent.Find("Buttons").Find("LoadButton").GetComponent<Button>().onClick.Invoke();
+    }
 }

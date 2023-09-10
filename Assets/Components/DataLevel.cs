@@ -37,8 +37,8 @@ public class Dialog
 [Serializable]
 public class DataLevel
 {
-	public string src;
-	public string name;
+	public string src; // contains full uri including persistentDataPath or streamingAssetsPath OR special tokens to come back to editors (scenario and level)
+	public string name; // The name of the level without extension
 	public List<Dialog> overridedDialogs = null;
 
 	public DataLevel clone()

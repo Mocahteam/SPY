@@ -33,7 +33,7 @@ public class SaveFileSystem : FSystem
 	private UnityAction localCallback;
 
 	[DllImport("__Internal")]
-	private static extern void Save(string content); // call javascript
+	private static extern void Save(string content, string defaultName); // call javascript
 
 	public SaveFileSystem()
 	{
@@ -52,7 +52,7 @@ public class SaveFileSystem : FSystem
 	protected override void onProcess(int familiesUpdateCount) {
 		if((Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.S)) ||
 		   Input.GetKey(KeyCode.LeftCommand) && Input.GetKeyDown(KeyCode.S))
-			saveXmlFile();
+			displaySavingPanel();
 	}
 
 	public void testLevel()
@@ -61,15 +61,15 @@ public class SaveFileSystem : FSystem
 		XmlDocument doc = new XmlDocument();
 		doc.LoadXml(exportXML);
 		Utility.removeComments(doc);
-		gameData.levels[TitleScreenSystem.testFromLevelEditor] = doc.GetElementsByTagName("level")[0];
-		gameData.selectedScenario = TitleScreenSystem.testFromLevelEditor;
+		gameData.levels[Utility.testFromLevelEditor] = doc.GetElementsByTagName("level")[0];
+		gameData.selectedScenario = Utility.testFromLevelEditor;
 		WebGlScenario test = new WebGlScenario();
 		test.levels = new List<DataLevel>();
 		DataLevel dl = new DataLevel();
-		dl.src = TitleScreenSystem.testFromLevelEditor;
-		dl.name = TitleScreenSystem.testFromLevelEditor;
+		dl.src = Utility.testFromLevelEditor;
+		dl.name = Utility.testFromLevelEditor;
 		test.levels.Add(dl);
-		gameData.scenarios[TitleScreenSystem.testFromLevelEditor] = test;
+		gameData.scenarios[Utility.testFromLevelEditor] = test;
 		gameData.levelToLoad = 0;
 		GameObjectManager.loadScene("MainScene");
 	}
@@ -77,15 +77,10 @@ public class SaveFileSystem : FSystem
 	// See Button Save
 	public void displaySavingPanel()
 	{
-		if (Application.platform == RuntimePlatform.WebGLPlayer)
-			Save(buildLevelContent());
-		else
-		{
-			if (levelData.levelName != null || levelData.levelName != "")
-				saveName.text = Path.GetFileNameWithoutExtension(levelData.levelName);
-			GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
-			EventSystem.current.SetSelectedGameObject(saveName.transform.parent.Find("Buttons").Find("CancelButton").gameObject);
-		}
+		if (levelData.levelName != null || levelData.levelName != "")
+			saveName.text = Path.GetFileNameWithoutExtension(levelData.levelName);
+		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
+		EventSystem.current.SetSelectedGameObject(saveName.transform.parent.Find("Buttons").Find("CancelButton").gameObject);
 	}
 
 	// see ValidateMessageButton (only called in standalone context, not used for WebGL)
@@ -104,10 +99,11 @@ public class SaveFileSystem : FSystem
 		}
 		else
 		{
-			// remove file extension
+			// add file extension
 			if (!saveName.text.EndsWith(".xml"))
 				saveName.text += ".xml";
-			if (File.Exists(Application.persistentDataPath + "/Levels/" + saveName.text))
+
+			if (Application.platform != RuntimePlatform.WebGLPlayer && File.Exists(Application.persistentDataPath + "/Levels/" + saveName.text))
 			{
 				localCallback = null;
 				localCallback += delegate { saveToFile(); };
@@ -124,27 +120,40 @@ public class SaveFileSystem : FSystem
 	{
 		string levelExport = buildLevelContent();
 
-		try
-		{
-			// Create all necessary directories if they don't exist
-			Directory.CreateDirectory(Application.persistentDataPath + "/Levels");
-			string path = Application.persistentDataPath + "/Levels/" + saveName.text;
-			// Add/Replace level content in memory
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml(levelExport);
-			gameData.levels[new Uri(path).AbsoluteUri] = doc.GetElementsByTagName("level")[0];
-			// Write on disk
-			File.WriteAllText(path, levelExport);
-			levelData.levelName = saveName.text;
-			levelData.filePath = new Uri(path).AbsoluteUri;
+		// generate XML structure from string
+		XmlDocument doc = new XmlDocument();
+		doc.LoadXml(levelExport);
+		Utility.removeComments(doc);
 
-			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[14], Application.persistentDataPath, "Levels", saveName.text), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
-		}
-		catch (Exception e)
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[15], e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			Save(levelExport, saveName.text);
+			// Add/Replace level content in memory
+			string fakeUri = Application.streamingAssetsPath + "/Levels/LocalFiles/" + saveName.text;
+			gameData.levels[new Uri(fakeUri).AbsoluteUri] = doc.GetElementsByTagName("level")[0];
+		}
+		else
+		{
+			try
+			{
+				// Create all necessary directories if they don't exist
+				Directory.CreateDirectory(Application.persistentDataPath + "/Levels");
+				string path = Application.persistentDataPath + "/Levels/" + saveName.text;
+				// Write on disk
+				File.WriteAllText(path, levelExport);
+				levelData.levelName = saveName.text;
+				levelData.filePath = new Uri(path).AbsoluteUri;
+				// Add/Replace level content in memory
+				gameData.levels[new Uri(path).AbsoluteUri] = doc.GetElementsByTagName("level")[0];
+
+				localCallback = null;
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[14], Application.persistentDataPath, "Levels", saveName.text), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			}
+			catch (Exception e)
+			{
+				localCallback = null;
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[15], e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			}
 		}
 		// Be sure saving windows is disabled
 		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, false);
@@ -216,7 +225,7 @@ public class SaveFileSystem : FSystem
 		foreach (GameObject blockLimit in f_editorblocks)
 		{
 			EditorBlockData ebd = blockLimit.GetComponent<EditorBlockData>();
-			levelExport += "\t\t<blockLimits blockType=\"" + ebd.blockName + "\" limit=\"" + ebd.GetComponentInChildren<TMP_InputField>(true).text + "\" />\n";
+			levelExport += "\t\t<blockLimit blockType=\"" + ebd.blockName + "\" limit=\"" + ebd.GetComponentInChildren<TMP_InputField>(true).text + "\" />\n";
 		}
 		levelExport += "\t</blockLimits>\n\n";
 

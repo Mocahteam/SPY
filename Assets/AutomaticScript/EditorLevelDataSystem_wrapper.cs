@@ -31,16 +31,6 @@ public class EditorLevelDataSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "resetMetaData", null);
 	}
 
-	public void hideToggleChanged()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "hideToggleChanged", null);
-	}
-
-	public void limitToggleChanged()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "limitToggleChanged", null);
-	}
-
 	public void onDragDropToggled(System.Boolean newState)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "onDragDropToggled", newState);

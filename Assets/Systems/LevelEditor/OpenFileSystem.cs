@@ -34,10 +34,10 @@ public class OpenFileSystem : FSystem {
 		f_newLoading.addEntryCallback(levelLoaded);
 
 		// reload edited level
-		if (gameData.selectedScenario == TitleScreenSystem.testFromLevelEditor)
+		if (gameData.selectedScenario == Utility.testFromLevelEditor)
         {
 			gameData.selectedScenario = "";
-			GameObjectManager.addComponent<NewLevelToLoad>(gameData.gameObject, new { levelKey = TitleScreenSystem.testFromLevelEditor });
+			GameObjectManager.addComponent<NewLevelToLoad>(gameData.gameObject, new { levelKey = Utility.testFromLevelEditor });
 		}
 	}
 
@@ -54,7 +54,7 @@ public class OpenFileSystem : FSystem {
 		//create levels buttons
 		List<string> buttonsName = new List<string>();
 		foreach (string key in gameData.levels.Keys)
-			if (key != TitleScreenSystem.testFromLevelEditor) // // we don't create a button for tested level
+			if (key != Utility.testFromLevelEditor) // // we don't create a button for tested level
 				buttonsName.Add(Utility.extractFileName(key));
 		buttonsName.Sort();
 		foreach (string key in buttonsName)

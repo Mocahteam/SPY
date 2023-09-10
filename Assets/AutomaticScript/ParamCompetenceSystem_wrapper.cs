@@ -13,14 +13,17 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject contentInfoCompatibleLevel;
 	public UnityEngine.GameObject deletableElement;
 	public UnityEngine.GameObject contentScenario;
-	public UnityEngine.UI.Button testLevel;
-	public UnityEngine.UI.Button downloadLevel;
+	public UnityEngine.UI.Button testLevelBt;
+	public UnityEngine.UI.Button downloadLevelBt;
 	public UnityEngine.UI.Button addToScenario;
 	public UnityEngine.GameObject savingPanel;
 	public UnityEngine.GameObject editBriefingPanel;
 	public UnityEngine.GameObject briefingItemPrefab;
 	public TMPro.TMP_InputField scenarioAbstract;
 	public TMPro.TMP_InputField scenarioName;
+	public UnityEngine.GameObject scenarioContent;
+	public UnityEngine.GameObject loadingScenarioContent;
+	public UnityEngine.GameObject mainCanvas;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -34,14 +37,17 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "contentInfoCompatibleLevel", contentInfoCompatibleLevel);
 		MainLoop.initAppropriateSystemField (system, "deletableElement", deletableElement);
 		MainLoop.initAppropriateSystemField (system, "contentScenario", contentScenario);
-		MainLoop.initAppropriateSystemField (system, "testLevel", testLevel);
-		MainLoop.initAppropriateSystemField (system, "downloadLevel", downloadLevel);
+		MainLoop.initAppropriateSystemField (system, "testLevelBt", testLevelBt);
+		MainLoop.initAppropriateSystemField (system, "downloadLevelBt", downloadLevelBt);
 		MainLoop.initAppropriateSystemField (system, "addToScenario", addToScenario);
 		MainLoop.initAppropriateSystemField (system, "savingPanel", savingPanel);
 		MainLoop.initAppropriateSystemField (system, "editBriefingPanel", editBriefingPanel);
 		MainLoop.initAppropriateSystemField (system, "briefingItemPrefab", briefingItemPrefab);
 		MainLoop.initAppropriateSystemField (system, "scenarioAbstract", scenarioAbstract);
 		MainLoop.initAppropriateSystemField (system, "scenarioName", scenarioName);
+		MainLoop.initAppropriateSystemField (system, "scenarioContent", scenarioContent);
+		MainLoop.initAppropriateSystemField (system, "loadingScenarioContent", loadingScenarioContent);
+		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
 	}
 
 	public void refreshCompetencies()
@@ -59,9 +65,19 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "showCompatibleLevels", filter);
 	}
 
-	public void showLevelInfo()
+	public void displayLoadingPanel()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "showLevelInfo", null);
+		MainLoop.callAppropriateSystemMethod (system, "displayLoadingPanel", null);
+	}
+
+	public void loadScenario()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "loadScenario", null);
+	}
+
+	public void onScenarioSelected(UnityEngine.GameObject go)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "onScenarioSelected", go);
 	}
 
 	public void addCurrentLevelToScenario()
@@ -79,11 +95,6 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "removeItemFromParent", go);
 	}
 
-	public void moveItemInParent()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "moveItemInParent", null);
-	}
-
 	public void refreshUI(UnityEngine.RectTransform competency)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "refreshUI", competency);
@@ -94,9 +105,9 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "saveScenario", scenarioName);
 	}
 
-	public void displaySavingPanel()
+	public void displaySavingPanel(TMPro.TMP_InputField scenarName)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "displaySavingPanel", null);
+		MainLoop.callAppropriateSystemMethod (system, "displaySavingPanel", scenarName);
 	}
 
 	public void showBriefingOverride(DataLevelBehaviour dataLevel)
@@ -112,6 +123,16 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public void addNewBriefing(UnityEngine.GameObject parent)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "addNewBriefing", parent);
+	}
+
+	public void testLevel(DataLevelBehaviour dlb)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "testLevel", dlb);
+	}
+
+	public void downloadLevel(DataLevelBehaviour dlb)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "downloadLevel", dlb);
 	}
 
 }

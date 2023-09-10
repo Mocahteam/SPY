@@ -11,15 +11,15 @@
 	<div id="unity-container" class="unity-desktop">
 	  <div id="unity-header">
 		<img src="TemplateData/Logo_SU.png" alt="Logo SU" height="40px" style="float: left"><img src="TemplateData/LogoLIP6.png" alt="Logo LIP6" height="40px" style="float: right">
-		<p style="font-family: sans-serif; text-align: center; font-weight: bold;">About the project: <a href="https://github.com/Mocahteam/SPY" target="_blank">https://github.com/Mocahteam/SPY</a></p>
-		<p style="font-family: sans-serif; text-align: center; font-weight: bold;">Other projects: <a href="https://webia.lip6.fr/~muratetm/projects.php?LANG=en" target="_blank">https://webia.lip6.fr/~muratetm/projects.php?LANG=en</a></p>
-		<p style="font-family: sans-serif; text-align: center; font-weight: bold;">Open traces: <a href="https://spy.lip6.fr/openTraces.html">https://spy.lip6.fr/openTraces.html</a></p>
+		<p id="AboutProject" style="font-family: sans-serif; text-align: center; font-weight: bold;">About the project: <a href="https://github.com/Mocahteam/SPY" target="_blank">https://github.com/Mocahteam/SPY</a></p>
+		<p id="OtherProjects" style="font-family: sans-serif; text-align: center; font-weight: bold;">Other projects: <a href="https://webia.lip6.fr/~muratetm/projects.php?LANG=en" target="_blank">https://webia.lip6.fr/~muratetm/projects.php?LANG=en</a></p>
+		<p id="OpenTraces" style="font-family: sans-serif; text-align: center; font-weight: bold;">Open traces: <a href="https://spy.lip6.fr/openTraces.html">https://spy.lip6.fr/openTraces.html</a></p>
 	  </div>
 	  <div id="unity-header2">
 		<label id="proxyLoadFiles" style="visibility:hidden;" for="files-selector" class="loadButton">Importer des scénarios et des niveaux</label>
 		<input id="files-selector" style="visibility:hidden;" type="file" accept=".xml" multiple>
 		<div id="unity-fullscreen-button"></div>
-		<div id="unity-build-title">{{{ PRODUCT_NAME }}} : Agrandir/Réduire =></div>
+		<div id="unity-build-title">{{{ PRODUCT_NAME }}}</div>
 	  </div>
 	  <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}}></canvas>
 	  <div id="unity-loading-bar">
@@ -79,6 +79,15 @@
 			canvas.style.width = "{{{ WIDTH }}}px";
 			canvas.style.height = "{{{ HEIGHT }}}px";
 		}
+		
+		var lang = ""
+		if ((navigator.language && navigator.language.includes("fr")) || (navigator.userLanguage && navigator.userLanguage.includes("fr")))
+			lang = "fr";
+		else
+			lang = "en";
+			
+		document.updateLang = updateLang;
+		document.updateLang(lang);
 
 #if BACKGROUND_FILENAME
 		canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
@@ -125,14 +134,14 @@
 					unityInstance.SendMessage('Main_Loop', 'enableSendStatement');
 				
 			}).catch((message) => {
-				var msg = "Une erreur s'est produite lors du chargement du jeu";
+				var msg = lang == "fr" ? "Une erreur s'est produite lors du chargement du jeu" : "Error occurs on loading";
 				var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 				if (isSafari)
-					msg += "\nEssayer d'utiliser le navigateur Chrome ou Firefox";
+					msg += lang == "fr" ? "\nEssayer d'utiliser le navigateur Chrome ou Firefox" : "\nTry to use Chrome or Fiferox";
 				else if (isMobile)
-					msg += "\nVotre dispositif mobile ne contient peut être pas assez de mémoire pour charger le jeu, essayer de recharger la page depuis un ordinateur avec le navigateur Chrome ou Firefox de préférence.";
+					msg += lang == "fr" ? "\nVotre dispositif mobile ne contient peut être pas assez de mémoire pour charger le jeu, essayer de recharger la page depuis un ordinateur avec le navigateur Chrome ou Firefox de préférence." : "\nYour mobile device seems to not contains enough memory to load the game, try to reload the page on a computer with Chrome or Firefox.";
 				else
-					msg += "\nEssayez de rafraîchir la page...";
+					msg += lang == "fr" ? "\nEssayez de rafraîchir la page..." : "\nTry to reload the page...";
 				alert(msg);
 				console.log(message);
 			});
@@ -191,6 +200,15 @@
 				canvas.style.height = (window.innerHeight-rect.top)+"px";
 			}
         }
+		
+		function updateLang(newLang){
+			lang = newLang;
+			document.getElementById("AboutProject").innerHTML = lang == "fr" ? "A propos du projet&nbsp;: <a href='https://github.com/Mocahteam/SPY' target='_blank'>https://github.com/Mocahteam/SPY</a>" : "About the project: <a href='https://github.com/Mocahteam/SPY' target='_blank'>https://github.com/Mocahteam/SPY</a>";
+			document.getElementById("OtherProjects").innerHTML = lang == "fr" ? "Autres projets&nbsp;: <a href='https://webia.lip6.fr/~muratetm/projects.php' target='_blank'>https://webia.lip6.fr/~muratetm/projects.php</a>" : "Other projects: <a href='https://webia.lip6.fr/~muratetm/projects.php?LANG=en' target='_blank'>https://webia.lip6.fr/~muratetm/projects.php?LANG=en</a>"
+			document.getElementById("OpenTraces").innerHTML = lang == "fr" ? "Voir les traces&nbsp;: <a href='https://spy.lip6.fr/openTraces.html'>https://spy.lip6.fr/openTraces.html</a>" : "See traces: <a href='https://spy.lip6.fr/openTraces.html'>https://spy.lip6.fr/openTraces.html</a>";
+			document.getElementById("proxyLoadFiles").innerHTML = lang == "fr" ? "Importer des scénarios et des niveaux" : "Import scenarios and levels";
+			document.getElementById("unity-mobile-warning").innerHTML = lang == "fr" ? "Certains dispositifs mobiles peuvent manquer de mémoire pour charger le jeu. Tentative de chargement : Veuillez patienter, chargement en cours...." : "Some mobile devices could have low memory to load the game. Try to load: please wait, loading...";
+		}
 		
 		document.body.appendChild(script);
 	</script>
