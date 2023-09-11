@@ -22,7 +22,7 @@ namespace DIG.GBLXAPI
 	{
 		public static bool debugMode = false;
 
-		public static bool IsInit { get; private set; }
+		public static bool IsInit { get; set; }
 		public static List<GBLConfig> Configurations { get; private set; }
 
 		public static DurationSlotTracker Timers { get; private set; }

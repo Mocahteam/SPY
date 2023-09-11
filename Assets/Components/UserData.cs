@@ -1,3 +1,4 @@
+using DIG.GBLXAPI;
 using FYFY;
 using System;
 using System.Collections;
@@ -33,7 +34,10 @@ public class UserData : MonoBehaviour {
 			{
 				GameObject xAPI = GameObject.Find("GBLXAPI");
 				if (xAPI != null)
+				{
 					GameObject.Destroy(xAPI);
+					GBLXAPI.IsInit = false;
+				}
 				GameData gd = GameObject.Find("GameData").GetComponent<GameData>();
 				gd.selectedScenario = "";
 				gd.actionsHistory = null;
