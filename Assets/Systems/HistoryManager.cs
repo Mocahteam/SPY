@@ -151,7 +151,8 @@ public class HistoryManager : FSystem
 
 		// Disable add container button
 		buttonAddEditableContainer.GetComponent<Button>().interactable = false;
-		buttonAddEditableContainer.GetComponent<TooltipContent>().text = "Ajout impossible après avoir\ncommencé à résoudre le niveau";
+		
+		buttonAddEditableContainer.GetComponent<TooltipContent>().text = gameData.localization[52];
 
 		//Disable remove container buttons and naming input field
 		foreach (GameObject trash in f_removeButton)
@@ -159,7 +160,7 @@ public class HistoryManager : FSystem
 			trash.GetComponent<Button>().interactable = false;
 			TMP_InputField name_input = trash.transform.parent.Find("ContainerName").GetComponent<TMP_InputField>();
 			name_input.interactable = false;
-			name_input.GetComponent<TooltipContent>().text = "Ce programme sera envoyé à " + name_input.text + ".<br><i>Vous ne pouvez pas le changer</i>.";
+			name_input.GetComponent<TooltipContent>().text = Utility.getFormatedText(gameData.localization[53], name_input.text);
 		}
 	}
 
@@ -170,6 +171,7 @@ public class HistoryManager : FSystem
 		if (gameData != null && gameData.actionsHistory != null)
 		{
 			// Wait that AddSpecificContainer was created
+			yield return null;
 			yield return null;
 			yield return null;
 

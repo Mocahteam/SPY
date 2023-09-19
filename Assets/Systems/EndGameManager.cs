@@ -371,6 +371,8 @@ public class EndGameManager : FSystem {
 		yield return null;
 		yield return null;
 		if (f_requireEndPanel.Count <= 0 && playButtonAmount.activeSelf && playButtonAmount.GetComponentInChildren<TMP_Text>().text == "0")
+		{
 			GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoMoreAttempt });
+		}
 	}
 }
