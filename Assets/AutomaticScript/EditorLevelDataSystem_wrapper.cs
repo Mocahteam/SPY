@@ -3,8 +3,6 @@ using FYFY;
 
 public class EditorLevelDataSystem_wrapper : BaseWrapper
 {
-	public LevelData levelData;
-	public UnityEngine.GameObject scrollViewContent;
 	public UnityEngine.GameObject executionLimitContainer;
 	public UnityEngine.UI.Toggle dragAndDropToggle;
 	public UnityEngine.UI.Toggle fogToggle;
@@ -12,11 +10,12 @@ public class EditorLevelDataSystem_wrapper : BaseWrapper
 	public TMPro.TMP_InputField score2Input;
 	public TMPro.TMP_InputField score3Input;
 	public UnityEngine.Transform editableContainers;
+	public UnityEngine.Color hideColor;
+	public UnityEngine.Color limitedColor;
+	public UnityEngine.Color unlimitedColor;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
-		MainLoop.initAppropriateSystemField (system, "levelData", levelData);
-		MainLoop.initAppropriateSystemField (system, "scrollViewContent", scrollViewContent);
 		MainLoop.initAppropriateSystemField (system, "executionLimitContainer", executionLimitContainer);
 		MainLoop.initAppropriateSystemField (system, "dragAndDropToggle", dragAndDropToggle);
 		MainLoop.initAppropriateSystemField (system, "fogToggle", fogToggle);
@@ -24,16 +23,14 @@ public class EditorLevelDataSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "score2Input", score2Input);
 		MainLoop.initAppropriateSystemField (system, "score3Input", score3Input);
 		MainLoop.initAppropriateSystemField (system, "editableContainers", editableContainers);
+		MainLoop.initAppropriateSystemField (system, "hideColor", hideColor);
+		MainLoop.initAppropriateSystemField (system, "limitedColor", limitedColor);
+		MainLoop.initAppropriateSystemField (system, "unlimitedColor", unlimitedColor);
 	}
 
 	public void resetMetaData()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "resetMetaData", null);
-	}
-
-	public void onDragDropToggled(System.Boolean newState)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "onDragDropToggled", newState);
 	}
 
 	public void preventMinusSign(TMPro.TMP_InputField input)

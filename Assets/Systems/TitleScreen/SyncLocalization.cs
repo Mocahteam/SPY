@@ -55,6 +55,9 @@ public class SyncLocalization : FSystem {
                 currentItemSelected = 1;
         }
         syncLocale();
+        // wait again if locale change
+        yield return LocalizationSettings.InitializationOperation;
+
         GameObjectManager.addComponent<LocalizationLoaded>(MainLoop.instance.gameObject);
     }
 

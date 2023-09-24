@@ -71,6 +71,7 @@ public class OpenFileSystem : FSystem {
 		selectedLevelGO = go;
 	}
 
+	// See New GO in MenuCanvas
 	public void resetFileData()
     {
 		levelData.levelName = "";

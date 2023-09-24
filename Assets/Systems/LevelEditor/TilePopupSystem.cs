@@ -23,10 +23,12 @@ public class TilePopupSystem : FSystem
 	public GameObject furniturePopup;
 
 	public PaintableGrid paintableGrid;
-	public LevelData levelData;
+
+	public GameObject selection;
 
 	private const string FurniturePrefix = "Prefabs/Modern Furniture/Prefabs/";
 	private const string PathXmlPrefix = "Modern Furniture/Prefabs/";
+	private FloorObject selectedObject;
 
 	private List<string> furnitureNameToPath = new List<string>();
 
@@ -40,7 +42,7 @@ public class TilePopupSystem : FSystem
 	{
 		hideAllPopups();
 		initFurniturePopup();
-		paintableGrid.selectedObject = null;
+		selectedObject = null;
 	}
 
 	private void initFurniturePopup()
@@ -65,26 +67,26 @@ public class TilePopupSystem : FSystem
 		Vector2Int pos = UtilityEditor.mousePosToGridPos(paintableGrid.GetComponent<Tilemap>());
 		Tuple<int, int> posTuple = new Tuple<int, int>(pos.y, pos.x);
 
-		if (Input.GetMouseButtonDown(1) && paintableGrid.selectedObject != null && paintableGrid.selectedObject.line == pos.y && paintableGrid.selectedObject.col == pos.x)
+		if (Input.GetMouseButtonDown(1) && selectedObject != null && selectedObject.line == pos.y && selectedObject.col == pos.x)
 		{
-			paintableGrid.selectedObject = null;
+			selectedObject = null;
 		}
 
 		if (Input.GetMouseButtonDown(0) && paintableGrid.floorObjects.ContainsKey(posTuple) && paintableGrid.floorObjects[posTuple].selectable)
 		{
-			paintableGrid.selectedObject = paintableGrid.floorObjects[posTuple];
+			selectedObject = paintableGrid.floorObjects[posTuple];
 		}
 
-		if (f_activePopups.Count > 0 && (Input.GetKeyDown(KeyCode.Escape) || paintableGrid.selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && Input.GetMouseButtonDown(0) && f_focusedPopups.Count == 0)))
+		if (f_activePopups.Count > 0 && (Input.GetKeyDown(KeyCode.Escape) || selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && Input.GetMouseButtonDown(0) && f_focusedPopups.Count == 0)))
 		{
 			hideAllPopups();
-			paintableGrid.selectedObject = null; // be sure
+			selectedObject = null; // be sure
 		}
 
-		if (Input.GetMouseButtonDown(0) && paintableGrid.selectedObject != null && f_focusedPopups.Count == 0)
+		if (Input.GetMouseButtonDown(0) && selectedObject != null && f_focusedPopups.Count == 0)
 		{
 			hideAllPopups();
-			switch (paintableGrid.selectedObject)
+			switch (selectedObject)
 			{
 				case Door d:
 					// enable popups
@@ -127,7 +129,7 @@ public class TilePopupSystem : FSystem
 					int i = 0;
 					foreach (string value in furnitureNameToPath)
 					{
-						if (value == ((DecorationObject)paintableGrid.selectedObject).path)
+						if (value == ((DecorationObject)selectedObject).path)
 							break;
 						i++;
 					}
@@ -135,6 +137,14 @@ public class TilePopupSystem : FSystem
 					break;
 			}
 		}
+
+		if (selectedObject != null)
+		{
+			GameObjectManager.setGameObjectState(selection, true);
+			selection.transform.localPosition = new Vector3(-UtilityEditor.gridMaxSize/2 + selectedObject.col + 0.5f, UtilityEditor.gridMaxSize / 2 - selectedObject.line + 0.5f);
+		}
+		else
+			GameObjectManager.setGameObjectState(selection, false);
 	}
 
 	private void hideAllPopups()
@@ -143,13 +153,14 @@ public class TilePopupSystem : FSystem
 			GameObjectManager.setGameObjectState(popup, false);
 	}
 
+	// See UP, Right, Down and Left GameObjects
 	public void rotateObject(int newOrientation)
 	{
-		var newpos = coordsToGridCoords(paintableGrid.selectedObject.col, paintableGrid.selectedObject.line);
+		var newpos = coordsToGridCoords(selectedObject.col, selectedObject.line);
 		var quat = Quaternion.Euler(0, 0, orientationToInt((Direction.Dir)newOrientation));
 
 		paintableGrid.GetComponent<Tilemap>().SetTransformMatrix(newpos, Matrix4x4.Rotate(quat));
-		paintableGrid.selectedObject.orientation = (Direction.Dir)newOrientation;
+		selectedObject.orientation = (Direction.Dir)newOrientation;
 	}
 
 	private Vector3Int coordsToGridCoords(int col, int line)
@@ -170,63 +181,63 @@ public class TilePopupSystem : FSystem
 		};
 	}
 
-	// see InputLinePopup GameObject
+	// see InputLinePopup GameObject childs
 	public void popUpInputLine(string newData)
 	{
-		if (paintableGrid.selectedObject != null)
-			((Robot)paintableGrid.selectedObject).inputLine = newData;
+		if (selectedObject != null)
+			((Robot)selectedObject).inputLine = newData;
 	}
 
-	// see rangePopup GameObject
+	// see rangePopup GameObject childs
 	public void popupRangeInputField(string newData)
 	{
-		if (paintableGrid.selectedObject != null)
-			((EnemyRobot)paintableGrid.selectedObject).range = int.TryParse(newData, out int x) ? x : 0;
+		if (selectedObject != null)
+			((EnemyRobot)selectedObject).range = int.TryParse(newData, out int x) ? x : 0;
 	}
 
-	// see rangePopup GameObject
+	// see rangePopup GameObject childs
 	public void popupRangeToggle(bool newData)
 	{
-		if (paintableGrid.selectedObject != null)
-			((EnemyRobot)paintableGrid.selectedObject).selfRange = !newData;
+		if (selectedObject != null)
+			((EnemyRobot)selectedObject).selfRange = !newData;
 	}
 
-	// see rangePopup GameObject
+	// see rangePopup GameObject childs
 	public void popupRangeDropDown(int newData)
 	{
-		if (paintableGrid.selectedObject != null)
-			((EnemyRobot)paintableGrid.selectedObject).typeRange = (DetectRange.Type)newData;
+		if (selectedObject != null)
+			((EnemyRobot)selectedObject).typeRange = (DetectRange.Type)newData;
 	}
 
-	// see consoleSlotsPopup GameObject
+	// see consoleSlotsPopup GameObject childs
 	public void popupConsoleSlots(string newData)
 	{
-		if (paintableGrid.selectedObject != null)
+		if (selectedObject != null)
 		{
 			string trimmed = String.Concat(newData.Where(c => !Char.IsWhiteSpace(c)));
 			int[] ints = Array.ConvertAll(trimmed.Split(','), s => int.TryParse(s, out int x) ? x : -1);
-			((Console)paintableGrid.selectedObject).slots = trimmed.Split(',');
+			((Console)selectedObject).slots = trimmed.Split(',');
 		}
 	}
 
-	// see consoleSlotsPopup GameObject
+	// see consoleSlotsPopup GameObject childs
 	public void popupConsoleToggle(bool newData)
 	{
-		if (paintableGrid.selectedObject != null)
-			((Console)paintableGrid.selectedObject).state = newData;
+		if (selectedObject != null)
+			((Console)selectedObject).state = newData;
 	}
 
-	// see doorSlotPopup GameObject
+	// see doorSlotPopup GameObject childs
 	public void popupDoorSlot(string newData)
 	{
-		if (paintableGrid.selectedObject != null)
-			((Door)paintableGrid.selectedObject).slot = newData;
+		if (selectedObject != null)
+			((Door)selectedObject).slot = newData;
 	}
 
-	// see furniturePopup GameObject
+	// see furniturePopup GameObject childs
 	public void popupFurnitureDropDown(int newData)
 	{
-		if (paintableGrid.selectedObject != null)
-			((DecorationObject)paintableGrid.selectedObject).path = furnitureNameToPath[newData];
+		if (selectedObject != null)
+			((DecorationObject)selectedObject).path = furnitureNameToPath[newData];
 	}
 }

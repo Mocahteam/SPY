@@ -55,6 +55,7 @@ public class SaveFileSystem : FSystem
 			displaySavingPanel();
 	}
 
+	// See TestLevel GO (Button)
 	public void testLevel()
     {
 		string exportXML = buildLevelContent();
@@ -83,7 +84,7 @@ public class SaveFileSystem : FSystem
 		EventSystem.current.SetSelectedGameObject(saveName.transform.parent.Find("Buttons").Find("CancelButton").gameObject);
 	}
 
-	// see ValidateMessageButton (only called in standalone context, not used for WebGL)
+	// see ValideMessageButton (only called in standalone context, not used for WebGL)
 	public void saveXmlFile()
 	{
 		if (!Utility.CheckSaveNameValidity(saveName.text))

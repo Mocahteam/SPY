@@ -29,13 +29,11 @@ public class EditorGridSystem : FSystem
 	public Tile coinTile;
 	public Texture2D placingCursor;
 	public string defaultDecoration;
-	public GameObject mainCanvas;
-	public GameObject dialogViewPortContent;
-	public GameObject listEntryPrefab;
 	public PaintableGrid paintableGrid;
 	
 	private Vector2Int _gridSize;
-	public LevelData levelData;
+
+	private Cell activeBrush = Cell.Ground;
 
 	private GameData gameData;
 
@@ -76,7 +74,7 @@ public class EditorGridSystem : FSystem
 		Vector2Int pos = UtilityEditor.mousePosToGridPos(paintableGrid.GetComponent<Tilemap>());
 		Tuple<int, int> posTuple = new Tuple<int, int>(pos.y, pos.x);
 
-		if (pos.x < 0 || pos.x >= _gridSize.x || pos.y < 0 || pos.y >= _gridSize.y || !canBePlaced(paintableGrid.activeBrush, pos.y, pos.x))
+		if (pos.x < 0 || pos.x >= _gridSize.x || pos.y < 0 || pos.y >= _gridSize.y || !canBePlaced(activeBrush, pos.y, pos.x))
 		{
 			Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 			return;
@@ -88,7 +86,7 @@ public class EditorGridSystem : FSystem
 			return;
 		}
 		
-		if (paintableGrid.activeBrush == Cell.Select)
+		if (activeBrush == Cell.Select)
 		{
 			Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 			return;
@@ -97,14 +95,13 @@ public class EditorGridSystem : FSystem
 		if (placingCursor != null)
 			Cursor.SetCursor(placingCursor, new Vector2(placingCursor.width / 2.0f, placingCursor.height / 2.0f), CursorMode.Auto);
 
-		if (f_UIfocused.Count == 0 && Input.GetMouseButton(0) && paintableGrid.activeBrush != Cell.Select)
-			setTile(pos.y, pos.x, paintableGrid.activeBrush);
+		if (f_UIfocused.Count == 0 && Input.GetMouseButton(0) && activeBrush != Cell.Select)
+			setTile(pos.y, pos.x, activeBrush);
 	}
 
 	public void resetGrid()
 	{
 		paintableGrid.floorObjects = new Dictionary<Tuple<int, int>, FloorObject>();
-		paintableGrid.gridActive = true;
 		_gridSize = new Vector2Int(UtilityEditor.gridMaxSize, UtilityEditor.gridMaxSize);
 		paintableGrid.grid = new Cell[UtilityEditor.gridMaxSize, UtilityEditor.gridMaxSize];
 		for (var l = 0; l < UtilityEditor.gridMaxSize; ++l)
@@ -118,7 +115,7 @@ public class EditorGridSystem : FSystem
 
 	public void setBrush(GameObject go)
 	{
-		paintableGrid.activeBrush = go.GetComponent<CellBrush>().brush;
+		activeBrush = go.GetComponent<CellBrush>().brush;
 		foreach (var fBrush in f_brushes)
 			fBrush.GetComponent<Button>().interactable = true;
 
@@ -274,11 +271,6 @@ public class EditorGridSystem : FSystem
 		return new Tuple<int, int>(
 			int.Parse(element.Attributes.GetNamedItem("posY")?.Value ?? throw new InvalidOperationException()),
 			int.Parse(element.Attributes.GetNamedItem("posX")?.Value ?? throw new InvalidOperationException()));
-	}
-
-	private Vector2Int vector3ToGridPos(Vector3Int vec)
-	{
-		return new Vector2Int(vec.x + _gridSize.x / 2, _gridSize.y / 2 + vec.y * -1);
 	}
 
 	public void setTile(int line, int col, Cell cell, Direction.Dir rotation = Direction.Dir.North)

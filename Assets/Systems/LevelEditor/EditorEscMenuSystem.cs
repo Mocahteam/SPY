@@ -12,10 +12,9 @@ public class EditorEscMenu : FSystem
 
 	public GameObject buttonMenu;
 	public GameObject menuCanvas;
-	public LevelData levelData;
-	public PaintableGrid paintableGrid;
 
 	public static EditorEscMenu instance;
+	
 	private UnityAction localCallback;
 
 	[DllImport("__Internal")]
@@ -60,7 +59,6 @@ public class EditorEscMenu : FSystem
 	public void toggleMenu()
 	{
 		var newState = !menuCanvas.activeSelf;
-		paintableGrid.gridActive = !newState;
 		menuCanvas.SetActive(newState);
 
 		// Si le menu est désactivé, mettre le focus sur le bouton du menu
@@ -71,6 +69,7 @@ public class EditorEscMenu : FSystem
 			EventSystem.current.SetSelectedGameObject(menuCanvas.GetComponentInChildren<Button>().gameObject);
 	}
 
+	// See Quit button in editor scene
 	public void closeEditor()
 	{
 		GameObjectManager.loadScene("TitleScreen");

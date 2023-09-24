@@ -164,7 +164,7 @@ public class CameraSystem : FSystem {
 		// Orbit rotation
 		else if (Input.GetMouseButton(1))
 		{
-			rotateCamera(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+			rotateCamera(Input.GetAxis("Mouse X"), !mainCamera.orthographic ? Input.GetAxis("Mouse Y"): 0);
 		}
 		else
 		{

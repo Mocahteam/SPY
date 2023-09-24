@@ -16,11 +16,7 @@ public class EditorGridSystem_wrapper : BaseWrapper
 	public UnityEngine.Tilemaps.Tile coinTile;
 	public UnityEngine.Texture2D placingCursor;
 	public System.String defaultDecoration;
-	public UnityEngine.GameObject mainCanvas;
-	public UnityEngine.GameObject dialogViewPortContent;
-	public UnityEngine.GameObject listEntryPrefab;
 	public PaintableGrid paintableGrid;
-	public LevelData levelData;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -37,11 +33,7 @@ public class EditorGridSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "coinTile", coinTile);
 		MainLoop.initAppropriateSystemField (system, "placingCursor", placingCursor);
 		MainLoop.initAppropriateSystemField (system, "defaultDecoration", defaultDecoration);
-		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
-		MainLoop.initAppropriateSystemField (system, "dialogViewPortContent", dialogViewPortContent);
-		MainLoop.initAppropriateSystemField (system, "listEntryPrefab", listEntryPrefab);
 		MainLoop.initAppropriateSystemField (system, "paintableGrid", paintableGrid);
-		MainLoop.initAppropriateSystemField (system, "levelData", levelData);
 	}
 
 	public void resetGrid()

@@ -12,8 +12,6 @@ public class EditorLevelDataSystem : FSystem {
 
 	public static EditorLevelDataSystem instance;
 	
-	public LevelData levelData;
-	public GameObject scrollViewContent;
 	public GameObject executionLimitContainer;
 	public Toggle dragAndDropToggle;
 	public Toggle fogToggle;
@@ -21,6 +19,10 @@ public class EditorLevelDataSystem : FSystem {
 	public TMP_InputField score2Input;
 	public TMP_InputField score3Input;
 	public Transform editableContainers;
+
+	public Color hideColor;
+	public Color limitedColor;
+	public Color unlimitedColor;
 
 	private GameData gameData;
 
@@ -209,16 +211,16 @@ public class EditorLevelDataSystem : FSystem {
 		if (newState)
 		{
 			inputField.text = "0";
-			source.GetComponent<Image>().color = source.GetComponent<EditorBlockData>().hideColor;
+			source.GetComponent<Image>().color = hideColor;
 		}
 		else
 		{
 			inputField.text = "1";
-			source.GetComponent<Image>().color = source.GetComponent<EditorBlockData>().limitedColor;
+			source.GetComponent<Image>().color = limitedColor;
 		}
 	}
 
-	// See editBlockPrefab
+	// See editBlockPrefab => HideToggle
 	public void limitToggleChanged(GameObject source, bool newState)
 	{
 		TMP_InputField inputField = source.GetComponentInChildren<TMP_InputField>();
@@ -226,40 +228,29 @@ public class EditorLevelDataSystem : FSystem {
 		if (newState)
 		{
 			inputField.text = "-1";
-			source.GetComponent<Image>().color = source.GetComponent<EditorBlockData>().unlimitedColor;
+			source.GetComponent<Image>().color = unlimitedColor;
 		}
 		else
 		{
 			inputField.text = "1";
-			source.GetComponent<Image>().color = source.GetComponent<EditorBlockData>().limitedColor;
+			source.GetComponent<Image>().color = limitedColor;
 		}
 	}
 
-	// See DragDropDisabled panel
-	public void onDragDropToggled(bool newState){
-		// if drag&drop is disabled => hide all blocks
-		if (!newState)
-        {
-			foreach (GameObject go in f_editorblocks)
-			{
-				go.transform.Find("HideToggle").GetComponent<Toggle>().isOn = true;
-			}
-		}
-	}
-	
-	// See executionLimit panel
+	// see childs of executionLimit GO
 	public void preventMinusSign(TMP_InputField input)
 	{
 		if (input.text.StartsWith("-"))
 			input.text = input.text.Trim('-');
 	}
 
-	// see executionLimit panel
+	// see childs of executionLimit GO
 	public void executionLimitChanged(bool newState)
 	{
 		executionLimitContainer.GetComponentInChildren<TMP_InputField>(true).interactable = newState;
 	}
 
+	// see childs of score2Stars GO
 	public void scoreTwoStarsExit(string newData)
 	{
 		if (string.IsNullOrEmpty(newData))

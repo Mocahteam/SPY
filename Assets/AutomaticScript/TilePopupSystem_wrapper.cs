@@ -10,7 +10,7 @@ public class TilePopupSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject doorSlotPopup;
 	public UnityEngine.GameObject furniturePopup;
 	public PaintableGrid paintableGrid;
-	public LevelData levelData;
+	public UnityEngine.GameObject selection;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -21,7 +21,7 @@ public class TilePopupSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "doorSlotPopup", doorSlotPopup);
 		MainLoop.initAppropriateSystemField (system, "furniturePopup", furniturePopup);
 		MainLoop.initAppropriateSystemField (system, "paintableGrid", paintableGrid);
-		MainLoop.initAppropriateSystemField (system, "levelData", levelData);
+		MainLoop.initAppropriateSystemField (system, "selection", selection);
 	}
 
 	public void rotateObject(System.Int32 newOrientation)

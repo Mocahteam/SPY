@@ -24,11 +24,6 @@ public class EditorCameraSystem : FSystem {
 		instance = this;
     }
 
-	protected override void onStart()
-	{
-
-	}
-
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		// move camera front/back depending on Vertical axis
