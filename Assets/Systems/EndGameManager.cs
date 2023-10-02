@@ -58,7 +58,8 @@ public class EndGameManager : FSystem {
 		// wait 2 frames before checking if a new currentAction was produced
 		yield return null; // this frame the currentAction is removed
 		yield return null; // this frame a probably new current action is created
-						   // Now, families are informed if new current action was produced, we can check if no currentAction exists on players and if all players are on the end of the level
+		
+		// Now, families are informed if new current action was produced, we can check if no currentAction exists on players and if all players are on the end of the level
 		if (!playerHasCurrentAction())
 		{
 			int nbEnd = 0;

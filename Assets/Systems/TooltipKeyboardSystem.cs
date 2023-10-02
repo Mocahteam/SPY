@@ -1,12 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using FYFY;
-using TMPro;
-using System.Runtime.InteropServices;
 using System.Collections;
 
 /// <summary>
-/// Manage virtual keyboard
+/// Manage tooltips for virtual keyboard
 /// </summary>
 public class TooltipKeyboardSystem : FSystem {
     private Family f_tooltips = FamilyManager.getFamily(new AllOfComponents(typeof(TooltipContent)));

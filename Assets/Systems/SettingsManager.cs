@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using FYFY;
-using System.Collections;
 using TMPro;
-using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine.UI;
 
 /// <summary>
-/// This system check if the end of the level is reached and display end panel accordingly
+/// This system manage the settings window
 /// </summary>
 public class SettingsManager : FSystem {
 

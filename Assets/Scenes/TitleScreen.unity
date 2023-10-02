@@ -27272,7 +27272,6 @@ GameObject:
   - component: {fileID: 1645587986}
   - component: {fileID: 1645587985}
   - component: {fileID: 1645587989}
-  - component: {fileID: 1645587990}
   - component: {fileID: 1645587991}
   - component: {fileID: 1645587992}
   - component: {fileID: 1645587993}
@@ -27348,10 +27347,6 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: ParamCompetenceSystem, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: ParamCompetenceSystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: ScrollSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-    _typeFullName: ScrollSystem
     _pause: 0
   - _typeAssemblyQualifiedName: PopupManager, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
@@ -27438,23 +27433,6 @@ MonoBehaviour:
   scenarioContent: {fileID: 183447226}
   loadingScenarioContent: {fileID: 575649630}
   mainCanvas: {fileID: 350375277}
---- !u!114 &1645587990
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1645587984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c61ec87aa61ae34da92acff0730a64e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scrollRect: {fileID: 0}
-  autoScrollUp: {fileID: 0}
-  autoScrollDown: {fileID: 0}
-  autoScrollLeft: {fileID: 0}
-  autoScrollRight: {fileID: 0}
 --- !u!114 &1645587991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29146,7 +29124,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72.35
+  m_fontSize: 65.6
   m_fontSizeBase: 150
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -37473,8 +37451,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 760, y: 0}
-  m_SizeDelta: {x: 299.1, y: 346.82004}
+  m_AnchoredPosition: {x: 679.75, y: 0}
+  m_SizeDelta: {x: 267, y: 324.32004}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &5113375935287104984
 MonoBehaviour:
@@ -38797,7 +38775,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -346.82004}
+  m_SizeDelta: {x: 0, y: -324.32004}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &7058834408420196232
 MonoBehaviour:
@@ -39003,7 +38981,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 8, y: 0}
-  m_SizeDelta: {x: 444.90002, y: 346.82004}
+  m_SizeDelta: {x: 396.75, y: 324.32004}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &7058834408750092096
 MonoBehaviour:
