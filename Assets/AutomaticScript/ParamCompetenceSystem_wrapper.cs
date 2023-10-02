@@ -60,6 +60,11 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "selectCompetencies", referentialId);
 	}
 
+	public void traceLoadindScenarioEditor()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "traceLoadindScenarioEditor", null);
+	}
+
 	public void showCompatibleLevels(System.Boolean filter)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "showCompatibleLevels", filter);

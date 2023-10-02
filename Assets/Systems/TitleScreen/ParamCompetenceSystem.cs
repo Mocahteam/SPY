@@ -269,6 +269,15 @@ public class ParamCompetenceSystem : FSystem
 		competenciesLoadedAndReady = true;
 	}
 
+	public void traceLoadindScenarioEditor()
+	{
+		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+		{
+			verb = "opened",
+			objectType = "scenarioEditor"
+		});
+	}
+
 	// Used in ButtonShowLevels in ParamCompPanel and in CreateScenario button (main menu)
 	public void showCompatibleLevels(bool filter)
 	{
@@ -282,6 +291,7 @@ public class ParamCompetenceSystem : FSystem
 		foreach (KeyValuePair<string, XmlNode> level in gameData.levels)
 			if (level.Key != Utility.testFromScenarioEditor && level.Key != Utility.testFromLevelEditor && level.Key != Utility.testFromUrl) // we don't add new line for tested levels
 				selectedLevels.Add(level.Value);
+		string competenciesSelected = "";
 		if (filter)
 		{
 			// now, filtering level that not check constraints
@@ -299,12 +309,27 @@ public class ParamCompetenceSystem : FSystem
 						if (!Utility.isCompetencyMatchWithLevel(competency, selectedLevels[l].OwnerDocument))
 							selectedLevels.RemoveAt(l);
 					}
+					if (competenciesSelected != "")
+						competenciesSelected += "; ";
+					competenciesSelected += competency.name;
 				}
 			}
 			if (nbCompSelected == 0)
 				selectedLevels.Clear();
 		}
-		
+
+		TMP_Dropdown selectComp = f_compSelector.First().GetComponent<TMP_Dropdown>();
+
+		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+		{
+			verb = "filtered",
+			objectType = "competencies",
+			activityExtensions = new Dictionary<string, string>() {
+					{ "context", selectComp.options[selectComp.value].text },
+					{ "content", competenciesSelected }
+				}
+		});
+
 		if (selectedLevels.Count == 0)
 		{
 			localCallback = null;

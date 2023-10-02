@@ -46,6 +46,12 @@ public class EditorEscMenu : FSystem
 			}
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlButtons();
+
+			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+			{
+				verb = "opened",
+				objectType = "levelEditor"
+			});
 		}
 	}
 

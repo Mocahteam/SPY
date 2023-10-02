@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// Ce systéme permet la gestion du drag and drop des différents éléments de construction de la séquence d'action.
@@ -91,14 +92,17 @@ public class DragDropSystem : FSystem
 			string scriptsContent = "";
 			foreach (Transform viewportScriptContainer in editableContainers)
 				scriptsContent += exportEditableScriptToString(viewportScriptContainer.Find("ScriptContainer"), null);
-			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
-			{
-				verb = "executed",
-				objectType = "program",
-				activityExtensions = new Dictionary<string, string>() {
-				{ "content", scriptsContent }
-			}
-			});
+
+			// générer une trace seulement sur la scene principale
+			if (SceneManager.GetActiveScene().name == "MainScene")
+				GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+				{
+					verb = "executed",
+					objectType = "program",
+					activityExtensions = new Dictionary<string, string>() {
+					{ "content", scriptsContent }
+				}
+				});
 		});
 		f_editMode.addEntryCallback(delegate {
 			if (f_newEnd.Count == 0)
@@ -409,15 +413,18 @@ public class DragDropSystem : FSystem
 		GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
 		refreshHierarchyContainers(parent.gameObject);
-		GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
-		{
-			verb = "deleted",
-			objectType = "block",
-			activityExtensions = new Dictionary<string, string>() {
-					{ "content", content },
-					{ "context", context }
-				}
-		});
+
+		// générer une trace seulement sur la scene principale
+		if (SceneManager.GetActiveScene().name == "MainScene")
+			GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
+			{
+				verb = "deleted",
+				objectType = "block",
+				activityExtensions = new Dictionary<string, string>() {
+						{ "content", content },
+						{ "context", context }
+					}
+			});
 	}
 
 
@@ -513,15 +520,17 @@ public class DragDropSystem : FSystem
 		// Lance le son de dépôt du block d'action
 		audioSource.Play();
 
-		GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
-		{
-			verb = "inserted",
-			objectType = "block",
-			activityExtensions = new Dictionary<string, string>() {
-				{ "content", content },
-				{ "context", context }
-			}
-		});
+		// générer une trace seulement sur la scene principale
+		if (SceneManager.GetActiveScene().name == "MainScene")
+			GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
+			{
+				verb = "inserted",
+				objectType = "block",
+				activityExtensions = new Dictionary<string, string>() {
+					{ "content", content },
+					{ "context", context }
+				}
+			});
 
 		return true;
 	}
@@ -570,7 +579,8 @@ public class DragDropSystem : FSystem
 			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
 			NeedToDelete ntd = elementToDelete.GetComponent<NeedToDelete>();
-			if (ntd == null || !ntd.silent)
+			// générer une trace seulement sur la scene principale
+			if ((ntd == null || !ntd.silent) && SceneManager.GetActiveScene().name == "MainScene")
 			{
 				GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
 				{
@@ -749,7 +759,8 @@ public class DragDropSystem : FSystem
 		// compute context
 		string context = exportEditableScriptToString(forBlock.GetComponentInParent<UIRootContainer>().transform, forBlock);
 
-		if (res != oldValue)
+		// générer une trace seulement sur la scene principale
+		if (res != oldValue && SceneManager.GetActiveScene().name == "MainScene")
 		{
 			GameObjectManager.addComponent<ActionPerformedForLRS>(forBlock, new
 			{

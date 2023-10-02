@@ -149,14 +149,16 @@ public class EditableContainerSystem : FSystem
 	public void addContainer()
 	{
 		string newName = addSpecificContainer();
-		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
-		{
-			verb = "created",
-			objectType = "script",
-			activityExtensions = new Dictionary<string, string>() {
-			{ "value", newName }
-		}
-		});
+		// générer une trace seulement sur la scene principale
+		if (SceneManager.GetActiveScene().name == "MainScene")
+			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+			{
+				verb = "created",
+				objectType = "script",
+				activityExtensions = new Dictionary<string, string>() {
+				{ "value", newName }
+			}
+			});
 	}
 
 	// Ajouter un container à la scéne retourne son nom définitif
@@ -296,14 +298,16 @@ public class EditableContainerSystem : FSystem
 	// See ResetButton in ViewportScriptContainer prefab in editor
 	public void resetScriptContainer(GameObject scriptContainer)
 	{
-		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
-		{
-			verb = "cleaned",
-			objectType = "script",
-			activityExtensions = new Dictionary<string, string>() {
-			{ "value", scriptContainer.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text }
-		}
-		});
+		// générer une trace seulement sur la scene principale
+		if (SceneManager.GetActiveScene().name == "MainScene")
+			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+			{
+				verb = "cleaned",
+				objectType = "script",
+				activityExtensions = new Dictionary<string, string>() {
+				{ "value", scriptContainer.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text }
+			}
+			});
 
 		deleteContent(scriptContainer);
 	}
@@ -314,7 +318,8 @@ public class EditableContainerSystem : FSystem
 	{
 		GameObject scriptContainerPointer = container.transform.GetChild(0).gameObject;
 
-		if (!silent)
+		// générer une trace seulement sur la scene principale
+		if (!silent && SceneManager.GetActiveScene().name == "MainScene")
 		{
 			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
 			{
@@ -373,15 +378,18 @@ public class EditableContainerSystem : FSystem
 				// On change pour son nouveau nom
 				containerSelected.scriptName = newName;
 				containerSelected.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text = newName;
-				GameObjectManager.addComponent<ActionPerformedForLRS>(containerSelected.gameObject, new
-				{
-					verb = "renamed",
-					objectType = "script",
-					activityExtensions = new Dictionary<string, string>() {
-					{ "oldValue", oldName },
-					{ "value", newName }
-				}
-				});
+
+				// générer une trace seulement sur la scene principale
+				if (SceneManager.GetActiveScene().name == "MainScene")
+					GameObjectManager.addComponent<ActionPerformedForLRS>(containerSelected.gameObject, new
+					{
+						verb = "renamed",
+						objectType = "script",
+						activityExtensions = new Dictionary<string, string>() {
+						{ "oldValue", oldName },
+						{ "value", newName }
+					}
+					});
 			}
 			else
 			{ // Sinon on annule le changement

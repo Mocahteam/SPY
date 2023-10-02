@@ -25476,6 +25476,7 @@ GameObject:
   - component: {fileID: 2049420951}
   - component: {fileID: 2049420954}
   - component: {fileID: 2049420948}
+  - component: {fileID: 2049420958}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -25560,6 +25561,10 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: PopupManager, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     _typeFullName: PopupManager
+    _pause: 0
+  - _typeAssemblyQualifiedName: SendStatements, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: SendStatements
     _pause: 0
   _lateUpdateSystemDescriptions: []
   _forceUpdateInspector: 0
@@ -25811,6 +25816,18 @@ MonoBehaviour:
   mainCamera: {fileID: 1774892197}
   cameraZoomMin: 100
   cameraZoomMax: 2000
+--- !u!114 &2049420958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049420941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a01cbfe3b9516db4ca61fe2a246495f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2049723832
 GameObject:
   m_ObjectHideFlags: 0
