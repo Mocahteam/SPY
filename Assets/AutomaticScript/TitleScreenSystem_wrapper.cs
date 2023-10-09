@@ -40,11 +40,6 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "logs", logs);
 	}
 
-	public void initGBLXAPI()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "initGBLXAPI", null);
-	}
-
 	public void closeSettingsAndSelectNextFocusedButton(UnityEngine.GameObject settingsWindows)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "closeSettingsAndSelectNextFocusedButton", settingsWindows);

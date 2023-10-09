@@ -267,6 +267,7 @@ public class ParamCompetenceSystem : FSystem
 		}
 		LayoutRebuilder.ForceRebuildLayoutImmediate(ContentCompMenu.transform as RectTransform);
 		competenciesLoadedAndReady = true;
+		refreshLevelInfo();
 	}
 
 	public void traceLoadindScenarioEditor()
@@ -281,6 +282,13 @@ public class ParamCompetenceSystem : FSystem
 	// Used in ButtonShowLevels in ParamCompPanel and in CreateScenario button (main menu)
 	public void showCompatibleLevels(bool filter)
 	{
+		MainLoop.instance.StartCoroutine(delayshowCompatibleLevels(filter));
+	}
+
+	private IEnumerator delayshowCompatibleLevels(bool filter)
+    {
+		while (!competenciesLoadedAndReady)
+			yield return null;
 		if (Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser())
 		{
 			localCallback = null;
@@ -382,20 +390,12 @@ public class ParamCompetenceSystem : FSystem
 			}
 		}
 		if (gameData.selectedScenario == Utility.testFromScenarioEditor)
-        {
+		{
 			loadScenario("editingScenario");
 			DataLevel dl = gameData.scenarios[gameData.selectedScenario].levels[0];
-			MainLoop.instance.StartCoroutine(delayShowLevelInfo(dl));
+			showLevelInfo(Utility.extractFileName(dl.src), dl);
 			gameData.selectedScenario = "";
 		}
-	}
-
-	private IEnumerator delayShowLevelInfo(DataLevel dl)
-    {
-		while (!competenciesLoadedAndReady)
-			yield return null;
-		showLevelInfo(Utility.extractFileName(dl.src), dl);
-
 	}
 
 	// See ButtonLoadScenario
@@ -459,6 +459,16 @@ public class ParamCompetenceSystem : FSystem
 	{
 		selectedScenarioGO = go;
 	}
+
+	private void refreshLevelInfo()
+    {
+		string path = contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text;
+		if (path != "")
+		{
+			DataLevel dataLevel = contentInfoCompatibleLevel.GetComponent<DataLevelBehaviour>().data;
+			showLevelInfo(path, dataLevel);
+		}
+    }
 
 	public void showLevelInfo(string path, DataLevelBehaviour overridedData = null)
 	{
@@ -676,7 +686,7 @@ public class ParamCompetenceSystem : FSystem
 	private string buildScenarioContent()
     {
 		string scenarioExport = "<?xml version=\"1.0\"?>\n";
-		scenarioExport += "<scenario name=\""+ scenarioName.text + "\" desc=\""+ scenarioAbstract.text + "\">\n";
+		scenarioExport += "<scenario name=\""+ scenarioName.text.Replace('\"', '\'') + "\" desc=\""+ scenarioAbstract.text.Replace('\"', '\'') + "\">\n";
 		foreach (Transform child in contentScenario.transform)
 		{
 			DataLevel dataLevel = child.GetComponent<DataLevelBehaviour>().data;
@@ -831,7 +841,7 @@ public class ParamCompetenceSystem : FSystem
 				if (input.gameObject.name == "MissionPathContent")
 					path = input.text;
 				if (input.gameObject.name == "NameContent")
-					overridedBriefing.data.name = input.text;
+					overridedBriefing.data.name = input.text.Replace('\"', '\'');
 			}
 
 			// save briefing items
@@ -844,9 +854,9 @@ public class ParamCompetenceSystem : FSystem
 				foreach (TMP_InputField input in child.GetComponentsInChildren<TMP_InputField>(true))
 				{
 					if (input.name == "Text_input" && input.text != "")
-						dialog.text = input.text;
+						dialog.text = input.text.Replace('\"', '\'');
 					else if (input.name == "ImgPath_input" && input.text != "")
-						dialog.img = input.text;
+						dialog.img = input.text.Replace('\"', '\'');
 					else if (input.name == "ImgSize_input" && input.text != "")
 						dialog.imgHeight = float.Parse(input.text);
 					else if (input.name == "CamX_input" && input.text != "")
@@ -854,9 +864,9 @@ public class ParamCompetenceSystem : FSystem
 					else if (input.name == "CamY_input" && input.text != "")
 						dialog.camY = int.Parse(input.text);
 					else if (input.name == "SoundPath_input" && input.text != "")
-						dialog.sound = input.text;
+						dialog.sound = input.text.Replace('\"', '\'');
 					else if (input.name == "VideoPath_input" && input.text != "")
-						dialog.video = input.text;
+						dialog.video = input.text.Replace('\"', '\'');
 				}
 				dialog.enableInteraction = child.GetComponentInChildren<Toggle>().isOn;
 				overridedBriefing.data.overridedDialogs.Add(dialog);

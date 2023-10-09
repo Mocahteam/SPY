@@ -85,9 +85,12 @@ public class TitleScreenSystem : FSystem {
 			gameData.sendStatementEnabled = true;
 		GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
 
+		// Enable Loading screen
+		GameObjectManager.setGameObjectState(loadingScreen, true);
+
 		EventSystem.current.SetSelectedGameObject(playButton);
 
-		if (!GameObject.Find("GBLXAPI"))	
+		if (!GameObject.Find("GBLXAPI"))
 			initGBLXAPI();
 		else
 			foreach (GameObject sID in f_sessionId)
@@ -97,7 +100,7 @@ public class TitleScreenSystem : FSystem {
         {
 			gameData.levels = new Dictionary<string, XmlNode>();
 			gameData.scenarios = new Dictionary<string, WebGlScenario>();
-			MainLoop.instance.StartCoroutine(GetScenariosAndLevels());
+			GetScenariosAndLevels();
 		}
 		else // means we come back from a playing session, streaming assets are already loaded
 		{
@@ -105,7 +108,6 @@ public class TitleScreenSystem : FSystem {
 			if (gameData.selectedScenario == Utility.testFromScenarioEditor) // reload scenario editor
             {
                 MainLoop.instance.StartCoroutine(delayOpeningScenarioEditor());
-				EventSystem.current.SetSelectedGameObject(spyMenu.Find("MenuLevels").Find("Retour").gameObject);
 			}
 			else if (gameData.selectedScenario == Utility.testFromLevelEditor) // reload level editor
             {
@@ -128,6 +130,9 @@ public class TitleScreenSystem : FSystem {
 			ShowHtmlButtons();
 			GameObjectManager.setGameObjectState(quitButton, false);
 		}
+
+		// wait level loading
+		MainLoop.instance.StartCoroutine(WaitLoadingData());
 	}
 
 	private IEnumerator delayOpeningScenarioEditor()
@@ -136,13 +141,14 @@ public class TitleScreenSystem : FSystem {
 		compLevelButton.GetComponent<Button>().onClick.Invoke();
 	}
 
-	public void initGBLXAPI()
+	private void initGBLXAPI()
 	{
 		if (!GBLXAPI.IsInit)
 			GBLXAPI.Init(GBL_Interface.lrsAddresses);
 
 		GBLXAPI.debugMode = false;
 
+		webGL_fileToLoad++;
 		MainLoop.instance.StartCoroutine(FindAvailableSessionId());
 	}
 
@@ -224,6 +230,9 @@ public class TitleScreenSystem : FSystem {
 		webGL_fileLoaded = 0;
 		string formatedString = idSession.text.ToUpper();
 		formatedString = String.Concat(formatedString.Where(c => !Char.IsWhiteSpace(c)));
+		
+		GameObjectManager.setGameObjectState(loadingScreen, true);
+
 		MainLoop.instance.StartCoroutine(GetProgressionWebRequest(formatedString));
 		MainLoop.instance.StartCoroutine(WaitLoadingData());
 	}
@@ -236,7 +245,6 @@ public class TitleScreenSystem : FSystem {
 
 		// Make a request to check if this sessionId is already used
 		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession=" + formatedString);
-		GameObjectManager.setGameObjectState(loadingScreen, true);
 		logs.text = "";
 		progress.text = "0%";
 		yield return www.SendWebRequest();
@@ -257,6 +265,7 @@ public class TitleScreenSystem : FSystem {
 			// If content is "", means this sessionId is available (no progression data associated to this sessionId)
 			if (www.downloadHandler.text == "")
 			{
+				webGL_fileLoaded++;
 				GBL_Interface.playerName = formatedString;
 				GBL_Interface.userUUID = formatedString;
 				foreach (GameObject go in f_sessionId)
@@ -271,8 +280,6 @@ public class TitleScreenSystem : FSystem {
 					// select ok button
 					EventSystem.current.SetSelectedGameObject(sessionIdPanel.transform.Find("ShowSessionId").Find("Buttons").Find("OkButton").gameObject);
 				}
-				// Disable Loading screen
-				GameObjectManager.setGameObjectState(loadingScreen, false);
 			}
 			else {
 				// means this sessionId is already used, try to find another
@@ -284,7 +291,6 @@ public class TitleScreenSystem : FSystem {
 	private IEnumerator GetProgressionWebRequest(string idSession)
     {
 		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession=" + idSession);
-		GameObjectManager.setGameObjectState(loadingScreen, true);
 		logs.text = "";
 		progress.text = "0%";
 		yield return www.SendWebRequest();
@@ -300,65 +306,65 @@ public class TitleScreenSystem : FSystem {
 			}
 			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
 		}
-		else if (www.downloadHandler.text == "")
-		{
-			webGL_fileLoaded++;
-			localCallback = null;
-			localCallback += delegate {
-				GameObjectManager.setGameObjectState(sessionIdPanel, true);
-				GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("ShowSessionId").gameObject, false);
-				GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("SetSessionId").gameObject, true);
-			};
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[16], idSession), OkButton = gameData.localization[5], CancelButton = gameData.localization[0], call = localCallback });
-		}
 		else
 		{
 			webGL_fileLoaded++;
-			string[] stringSeparators = new string[] { "#SEP#" };
-			string[] tokens = www.downloadHandler.text.Split(stringSeparators, StringSplitOptions.None);
-			Debug.Log(www.downloadHandler.text);
-			if (tokens.Length != 4)
+			if (www.downloadHandler.text == "")
 			{
-				Debug.LogWarning(www.error);
 				localCallback = null;
-				localCallback += delegate {
+				localCallback += delegate
+				{
 					GameObjectManager.setGameObjectState(sessionIdPanel, true);
 					GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("ShowSessionId").gameObject, false);
 					GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("SetSessionId").gameObject, true);
 				};
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = gameData.localization[17], OkButton = gameData.localization[5], CancelButton = gameData.localization[0], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[16], idSession), OkButton = gameData.localization[5], CancelButton = gameData.localization[0], call = localCallback });
 			}
 			else
 			{
-				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[18], idSession), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
-				userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[0]);
-				if (userData.progression == null)
-					userData.progression = new Dictionary<string, int>();
-				userData.highScore = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[1]);
-				if (userData.highScore == null)
-					userData.highScore = new Dictionary<string, int>();
-				userData.schoolClass = tokens[2];
-				userData.isTeacher = tokens[3] == "1";
-				Transform setClass = sessionIdPanel.transform.Find("SetClass");
-				setClass.GetComponentInChildren<TMP_InputField>(true).text = userData.schoolClass;
-				setClass.GetComponentInChildren<Toggle>().isOn = userData.isTeacher;
-				GBL_Interface.playerName = idSession;
-				GBL_Interface.userUUID = idSession;
+				string[] stringSeparators = new string[] { "#SEP#" };
+				string[] tokens = www.downloadHandler.text.Split(stringSeparators, StringSplitOptions.None);
+				Debug.Log(www.downloadHandler.text);
+				if (tokens.Length != 4)
+				{
+					Debug.LogWarning(www.error);
+					localCallback = null;
+					localCallback += delegate
+					{
+						GameObjectManager.setGameObjectState(sessionIdPanel, true);
+						GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("ShowSessionId").gameObject, false);
+						GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("SetSessionId").gameObject, true);
+					};
+					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = gameData.localization[17], OkButton = gameData.localization[5], CancelButton = gameData.localization[0], call = localCallback });
+				}
+				else
+				{
+					localCallback = null;
+					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[18], idSession), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+					userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[0]);
+					if (userData.progression == null)
+						userData.progression = new Dictionary<string, int>();
+					userData.highScore = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[1]);
+					if (userData.highScore == null)
+						userData.highScore = new Dictionary<string, int>();
+					userData.schoolClass = tokens[2];
+					userData.isTeacher = tokens[3] == "1";
+					Transform setClass = sessionIdPanel.transform.Find("SetClass");
+					setClass.GetComponentInChildren<TMP_InputField>(true).text = userData.schoolClass;
+					setClass.GetComponentInChildren<Toggle>().isOn = userData.isTeacher;
+					GBL_Interface.playerName = idSession;
+					GBL_Interface.userUUID = idSession;
+				}
+				foreach (GameObject go in f_sessionId)
+					go.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
 			}
-			foreach (GameObject go in f_sessionId)
-				go.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
 		}
 	}
 
-	private IEnumerator GetScenariosAndLevels()
+	private void GetScenariosAndLevels()
 	{
-		// Enable Loading screen
-		GameObjectManager.setGameObjectState(loadingScreen, true);
 		logs.text = "";
 		progress.text = "0%";
-		webGL_fileLoaded = 0;
-		webGL_fileToLoad = 0;
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
 			// Load scenario and levels from server
@@ -374,16 +380,13 @@ public class TitleScreenSystem : FSystem {
 			// explore persistent data path
 			MainLoop.instance.StartCoroutine(exploreLevelsAndScenarios(Application.persistentDataPath));
 		}
-
-		yield return new WaitForSeconds(0.5f);
-
-		// wait level loading
-		MainLoop.instance.StartCoroutine(WaitLoadingData());
 	}
 
 	private IEnumerator WaitLoadingData()
-    {
-		while (webGL_fileLoaded < webGL_fileToLoad && f_localizationLoaded.Count == 0)
+	{
+		yield return new WaitForSeconds(1f);
+
+		while (webGL_fileLoaded < webGL_fileToLoad || f_localizationLoaded.Count == 0)
 			yield return null;
 
 		// and, if require, we can load requested level by URL
@@ -507,8 +510,11 @@ public class TitleScreenSystem : FSystem {
 		}
 	}
 
+	// See ForceLaunch button
 	public void forceLaunch()
     {
+
+		Debug.Log(webGL_fileLoaded + " " + webGL_fileToLoad + " " + f_localizationLoaded.Count);
 		webGL_fileLoaded = webGL_fileToLoad;
 	}
 
