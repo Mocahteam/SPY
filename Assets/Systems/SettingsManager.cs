@@ -18,7 +18,9 @@ public class SettingsManager : FSystem {
 	private static extern void ToggleFullScreen(bool isFullScreen); // call javascript
 
 	public Transform settingsPanel;
-	public CanvasScaler canvasScaler = null;
+	public CanvasScaler [] canvasScaler;
+
+	private TMP_Text currentSizeText;
 
 	public SettingsManager()
 	{
@@ -29,7 +31,13 @@ public class SettingsManager : FSystem {
 	{
 		settingsPanel.Find("Quality").GetComponentInChildren<TMP_Dropdown>().value = PlayerPrefs.GetInt("quality", 2);
 		settingsPanel.Find("InteractionMode").GetComponentInChildren<TMP_Dropdown>().value = PlayerPrefs.GetInt("interaction", Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 1 : 0);
-		settingsPanel.Find("UISize").GetComponentInChildren<TMP_Dropdown>().value = PlayerPrefs.GetInt("UISize", 0);
+		
+		// définition de la taille de l'interface
+		currentSizeText = settingsPanel.Find("UISize").Find("CurrentSize").GetComponent<TMP_Text>();
+		float currentScale = PlayerPrefs.GetFloat("UIScale", 1f);
+		currentSizeText.text = currentScale + "";
+		foreach (CanvasScaler canvas in canvasScaler)
+			canvas.scaleFactor = currentScale;
 	}
 
 	public void setQualitySetting(int value)
@@ -57,11 +65,24 @@ public class SettingsManager : FSystem {
 		PlayerPrefs.Save();
 	}
 
-	public void setUISize(int value)
+	public void increaseUISize()
+    {
+		float newScale = PlayerPrefs.GetFloat("UIScale", 1f)+0.25f;
+		foreach (CanvasScaler canvas in canvasScaler)
+			canvas.scaleFactor = newScale;
+		PlayerPrefs.SetFloat("UIScale", newScale);
+		currentSizeText.text = newScale+"";
+		PlayerPrefs.Save();
+	}
+	public void decreaseUISize()
 	{
-		if (canvasScaler != null)
-			canvasScaler.uiScaleMode = value == 1 ? CanvasScaler.ScaleMode.ConstantPhysicalSize : CanvasScaler.ScaleMode.ConstantPixelSize;
-		PlayerPrefs.SetInt("UISize", value);
+		float currentScale = PlayerPrefs.GetFloat("UIScale", 1f);
+		if (currentScale >= 0.5f) 
+			currentScale -= 0.25f;
+		foreach (CanvasScaler canvas in canvasScaler)
+				canvas.scaleFactor = currentScale;
+		PlayerPrefs.SetFloat("UIScale", currentScale);
+		currentSizeText.text = currentScale + "";
 		PlayerPrefs.Save();
 	}
 

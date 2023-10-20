@@ -86,6 +86,7 @@ public class TilePopupSystem : FSystem
 		if (Input.GetMouseButtonDown(0) && selectedObject != null && f_focusedPopups.Count == 0)
 		{
 			hideAllPopups();
+			GameObjectManager.setGameObjectState(orientationPopup.transform.parent.parent.parent.gameObject, true);
 			switch (selectedObject)
 			{
 				case Door d:
@@ -151,6 +152,8 @@ public class TilePopupSystem : FSystem
 	{
 		foreach (GameObject popup in f_popups)
 			GameObjectManager.setGameObjectState(popup, false);
+		if (f_popups.Count > 0)
+			GameObjectManager.setGameObjectState(f_popups.First().transform.parent.parent.parent.gameObject, false);
 	}
 
 	// See UP, Right, Down and Left GameObjects

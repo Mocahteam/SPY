@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using FYFY;
 using FYFY_plugins.PointerManager;
+using UnityEngine.EventSystems;
+using TMPro;
 
 /// <summary>
 /// This system manages main camera in editor (movement, zoom)
 /// </summary>
-public class EditorCameraSystem : FSystem {
+public class EditorCameraSystem : FSystem
+{
 
 	// Contains current UI focused
 	private Family f_UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver)));
@@ -24,23 +27,28 @@ public class EditorCameraSystem : FSystem {
 		instance = this;
     }
 
+	private bool inputFieldNotSelected()
+    {
+		return EventSystem.current == null || EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null;
+	}
+
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		// move camera front/back depending on Vertical axis
-		if ((Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.S)) && f_UIfocused.Count == 0)
+		if ((Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.S)) && inputFieldNotSelected())
 		{
 			moveFrontBack(Input.GetKey(KeyCode.Z) ? 1 : -1);
 		}
 		// move camera left/right de pending on Horizontal axis
-		if ((Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.D)) && f_UIfocused.Count == 0)
+		if ((Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.D)) && inputFieldNotSelected())
 		{
 			moveLeftRight(Input.GetKey(KeyCode.Q) ? -1 : 1);
 		}
 
 		// Zoom in/out with keyboard
-		if (Input.GetKey(KeyCode.R) && f_UIfocused.Count == 0)
+		if (Input.GetKey(KeyCode.R) && inputFieldNotSelected())
 			zoomIn(0.1f);
-		else if (Input.GetKey(KeyCode.F) && f_UIfocused.Count == 0)
+		else if (Input.GetKey(KeyCode.F) && inputFieldNotSelected())
 			zoomOut(0.1f);
 
 		// Move camera with wheel click

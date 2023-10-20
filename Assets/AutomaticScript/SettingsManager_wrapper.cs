@@ -4,7 +4,7 @@ using FYFY;
 public class SettingsManager_wrapper : BaseWrapper
 {
 	public UnityEngine.Transform settingsPanel;
-	public UnityEngine.UI.CanvasScaler canvasScaler;
+	public UnityEngine.UI.CanvasScaler[] canvasScaler;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -22,9 +22,14 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "setInteraction", value);
 	}
 
-	public void setUISize(System.Int32 value)
+	public void increaseUISize()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setUISize", value);
+		MainLoop.callAppropriateSystemMethod (system, "increaseUISize", null);
+	}
+
+	public void decreaseUISize()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "decreaseUISize", null);
 	}
 
 }

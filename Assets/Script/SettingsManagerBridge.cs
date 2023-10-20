@@ -13,8 +13,13 @@ public class SettingsManagerBridge : MonoBehaviour
 		SettingsManager.instance.setInteraction(value);
 	}
 
-	public void setUISize(int value)
+	public void increaseUISize()
 	{
-		SettingsManager.instance.setUISize(value);
+		SettingsManager.instance.increaseUISize();
+	}
+
+	public void decreaseUISize()
+	{
+		SettingsManager.instance.decreaseUISize();
 	}
 }

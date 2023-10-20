@@ -104,7 +104,7 @@ public class TitleScreenSystem : FSystem {
 		}
 		else // means we come back from a playing session, streaming assets are already loaded
 		{
-			Transform spyMenu = playButton.transform.parent.parent;
+			Transform spyMenu = mainCanvas.transform.Find("SPYMenu");
 			if (gameData.selectedScenario == Utility.testFromScenarioEditor) // reload scenario editor
             {
                 MainLoop.instance.StartCoroutine(delayOpeningScenarioEditor());
@@ -635,6 +635,12 @@ public class TitleScreenSystem : FSystem {
 
 		TMP_Text campaignDescription = content.GetChild(1).GetComponent<TMP_Text>();
 		campaignDescription.text = Utility.extractLocale(gameData.scenarios[campaignKey].description)+"\n\n";
+
+		// hack ajouté pour l'expérimentation de Genève, supprimer ces 4 lignes après que l'expé ait eu lieu
+		if (campaignKey == "Expe Genève")
+			GameObjectManager.setGameObjectState(content.GetChild(4).gameObject, false);
+		else
+			GameObjectManager.setGameObjectState(content.GetChild(4).gameObject, true);
 
 		content.gameObject.AddComponent<AskToRefreshCompetencies>();
 		delayRefreshCompetencies(content);
