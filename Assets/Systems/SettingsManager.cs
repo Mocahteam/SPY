@@ -34,7 +34,7 @@ public class SettingsManager : FSystem {
 		
 		// définition de la taille de l'interface
 		currentSizeText = settingsPanel.Find("UISize").Find("CurrentSize").GetComponent<TMP_Text>();
-		float currentScale = PlayerPrefs.GetFloat("UIScale", 1f);
+		float currentScale = PlayerPrefs.GetFloat("UIScale", Screen.currentResolution.width / 960f); // 960 est la taille par défaut du canvas en WebGL
 		currentSizeText.text = currentScale + "";
 		foreach (CanvasScaler canvas in canvasScaler)
 			canvas.scaleFactor = currentScale;

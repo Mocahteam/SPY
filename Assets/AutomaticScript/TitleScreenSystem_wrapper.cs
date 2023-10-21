@@ -5,6 +5,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject prefabGameData;
 	public UnityEngine.GameObject mainCanvas;
+	public UnityEngine.GameObject mainMenu;
 	public UnityEngine.GameObject compLevelButton;
 	public UnityEngine.GameObject listOfCampaigns;
 	public UnityEngine.GameObject listOfLevels;
@@ -24,6 +25,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "prefabGameData", prefabGameData);
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
+		MainLoop.initAppropriateSystemField (system, "mainMenu", mainMenu);
 		MainLoop.initAppropriateSystemField (system, "compLevelButton", compLevelButton);
 		MainLoop.initAppropriateSystemField (system, "listOfCampaigns", listOfCampaigns);
 		MainLoop.initAppropriateSystemField (system, "listOfLevels", listOfLevels);

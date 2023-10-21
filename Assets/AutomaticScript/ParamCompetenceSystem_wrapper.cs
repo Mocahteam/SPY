@@ -72,6 +72,11 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "showCompatibleLevels", null);
 	}
 
+	public void resetFilters()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "resetFilters", null);
+	}
+
 	public void filterCompatibleLevels(System.Boolean nameFiltering)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "filterCompatibleLevels", nameFiltering);

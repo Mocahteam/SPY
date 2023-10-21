@@ -29,6 +29,7 @@ public class TitleScreenSystem : FSystem {
 	private UserData userData;
 	public GameObject prefabGameData;
 	public GameObject mainCanvas;
+	public GameObject mainMenu;
 	public GameObject compLevelButton;
 	public GameObject listOfCampaigns;
 	public GameObject listOfLevels;
@@ -131,6 +132,8 @@ public class TitleScreenSystem : FSystem {
 			GameObjectManager.setGameObjectState(quitButton, false);
 		}
 
+		// Disable MainMenu while loading
+		GameObjectManager.setGameObjectState(mainMenu, false);
 		// wait level loading
 		MainLoop.instance.StartCoroutine(WaitLoadingData());
 	}
@@ -394,6 +397,8 @@ public class TitleScreenSystem : FSystem {
 			GameObjectManager.addComponent<AskToTestLevel>(MainLoop.instance.gameObject, new { url = loadLevelWithURL });
 		// Disable Loading screen
 		GameObjectManager.setGameObjectState(loadingScreen, false);
+		// Enable MainMenu
+		GameObjectManager.setGameObjectState(mainMenu, true);
 	}
 
 	private IEnumerator GetScenarioWebRequest()

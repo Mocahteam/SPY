@@ -197,6 +197,12 @@ public class ParamCompetenceSystem : FSystem
 
 	private void createCompetencies(int referentialId)
 	{
+		// save previous competencies selected
+		List<string> competenciesEnabled = new List<string>();
+		foreach (GameObject comp in f_competencies)
+			if (comp.GetComponentInChildren<Toggle>().isOn)
+				competenciesEnabled.Add(comp.GetComponent<Competency>().id);
+
 		// set all competency selectors with the same value
 		foreach (GameObject selector in f_compSelector)
 			selector.GetComponent<TMP_Dropdown>().value = referentialId;
@@ -233,6 +239,8 @@ public class ParamCompetenceSystem : FSystem
 				// disable checkbox
 				competency.GetComponentInChildren<Toggle>().interactable = false;
 			comp.rule = rawComp.rule;
+			// restaurer la sélection
+			competency.GetComponentInChildren<Toggle>().isOn = competenciesEnabled.Contains(comp.id);
 
 			// On l'attache au content
 			competency.transform.SetParent(ContentCompMenu.transform, false);
@@ -297,6 +305,17 @@ public class ParamCompetenceSystem : FSystem
 		while (!competenciesLoadedAndReady)
 			yield return null;
 
+		filterCompatibleLevels(false);
+	}
+
+	// see ShowAllLevels GameObject
+	public void resetFilters()
+    {
+		// unselect all competencies
+		foreach (GameObject comp in f_competencies)
+			comp.GetComponentInChildren<Toggle>().isOn = false;
+		// reset name filtering
+		levelFilterByName.text = "";
 		filterCompatibleLevels(false);
 	}
 
