@@ -51,6 +51,7 @@ public class ParamCompetenceSystem : FSystem
 	public GameObject scenarioContent;
 	public GameObject loadingScenarioContent;
 	public GameObject mainCanvas;
+	public TMP_InputField levelFilterByName;
 
 	[DllImport("__Internal")]
 	private static extern void Save(string content, string defaultName); // call javascript
@@ -279,64 +280,70 @@ public class ParamCompetenceSystem : FSystem
 		});
 	}
 
-	// Used in ButtonShowLevels in ParamCompPanel and in CreateScenario button (main menu)
-	public void showCompatibleLevels(bool filter)
+	// Used in CreateScenario button (main menu)
+	public void showCompatibleLevels()
 	{
-		MainLoop.instance.StartCoroutine(delayshowCompatibleLevels(filter));
-	}
+		MainLoop.instance.StartCoroutine(delayshowCompatibleLevels());
 
-	private IEnumerator delayshowCompatibleLevels(bool filter)
-    {
-		while (!competenciesLoadedAndReady)
-			yield return null;
 		if (Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser())
 		{
 			localCallback = null;
 			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = gameData.localization[9], OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
 		}
+	}
+
+	private IEnumerator delayshowCompatibleLevels()
+	{
+		while (!competenciesLoadedAndReady)
+			yield return null;
+
+		filterCompatibleLevels(false);
+	}
+
+	// see ButtonShowLevels in ParamCompPanel and Filter GameObject (to filter level by name)
+	public void filterCompatibleLevels(bool nameFiltering) { 
 		// default, select all levels
 		List<XmlNode> selectedLevels = new List<XmlNode>();
 		foreach (KeyValuePair<string, XmlNode> level in gameData.levels)
 			if (level.Key != Utility.testFromScenarioEditor && level.Key != Utility.testFromLevelEditor && level.Key != Utility.testFromUrl) // we don't add new line for tested levels
 				selectedLevels.Add(level.Value);
+
+		// now, identify selected competencies
 		string competenciesSelected = "";
-		if (filter)
+		int nbCompSelected = 0;
+		foreach (GameObject comp in f_competencies)
 		{
-			// now, filtering level that not check constraints
-			int nbCompSelected = 0;
-			foreach (GameObject comp in f_competencies)
+			// process only selected competencies
+			if (comp.GetComponentInChildren<Toggle>().isOn)
 			{
-				// process only selected competencies
-				if (comp.GetComponentInChildren<Toggle>().isOn)
+				nbCompSelected++;
+				Competency competency = comp.GetComponent<Competency>();
+				// parse all levels
+				for (int l = selectedLevels.Count - 1; l >= 0; l--)
 				{
-					nbCompSelected++;
-					Competency competency = comp.GetComponent<Competency>();
-					// parse all levels
-					for (int l = selectedLevels.Count - 1; l >= 0; l--)
-					{
-						if (!Utility.isCompetencyMatchWithLevel(competency, selectedLevels[l].OwnerDocument))
-							selectedLevels.RemoveAt(l);
-					}
-					if (competenciesSelected != "")
-						competenciesSelected += "; ";
-					competenciesSelected += competency.name;
+					if (!Utility.isCompetencyMatchWithLevel(competency, selectedLevels[l].OwnerDocument))
+						selectedLevels.RemoveAt(l);
 				}
+				if (competenciesSelected != "")
+					competenciesSelected += "; ";
+				competenciesSelected += competency.name;
 			}
-			if (nbCompSelected == 0)
-				selectedLevels.Clear();
 		}
 
 		TMP_Dropdown selectComp = f_compSelector.First().GetComponent<TMP_Dropdown>();
 
-		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+		if (!nameFiltering)
 		{
-			verb = "filtered",
-			objectType = "competencies",
-			activityExtensions = new Dictionary<string, string>() {
-					{ "context", selectComp.options[selectComp.value].text },
-					{ "content", competenciesSelected }
-				}
-		});
+			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+			{
+				verb = "filtered",
+				objectType = "competencies",
+				activityExtensions = new Dictionary<string, string>() {
+						{ "context", selectComp.options[selectComp.value].text },
+						{ "content", competenciesSelected }
+					}
+			});
+		}
 
 		if (selectedLevels.Count == 0)
 		{
@@ -345,13 +352,17 @@ public class ParamCompetenceSystem : FSystem
 		}
 		else
 		{
+			// get name filter
+			string namefilter = levelFilterByName.text;
 			// hide competencies panel
 			GameObjectManager.setGameObjectState(competenciesPanel, false);
 			GameObjectManager.setGameObjectState(compatibleLevelsPanel, true);
 			// remove all old buttons
-			foreach (Transform child in contentListOfCompatibleLevel.transform)
+			for (int i = contentListOfCompatibleLevel.transform.childCount - 1; i >=0; i--)
 			{
+				Transform child = contentListOfCompatibleLevel.transform.GetChild(i);
 				GameObjectManager.unbind(child.gameObject);
+				child.SetParent(null);
 				GameObject.Destroy(child.gameObject);
 			}
 			testLevelBt.interactable = false;
@@ -365,20 +376,23 @@ public class ParamCompetenceSystem : FSystem
 					if (gameData.levels[levelName] == level)
 					{
 						string currentName = Utility.extractFileName(levelName);
-						GameObject compatibleLevel = GameObject.Instantiate(levelCompatiblePrefab);
-						compatibleLevel.GetComponentInChildren<TMP_Text>().text = currentName;
-						int i = 0;
-						while (i < sortedLevels.Count)
+						if (currentName.Contains(namefilter))
 						{
-							if (String.Compare(currentName, sortedLevels[i].GetComponentInChildren<TMP_Text>().text) == -1)
+							GameObject compatibleLevel = GameObject.Instantiate(levelCompatiblePrefab);
+							compatibleLevel.GetComponentInChildren<TMP_Text>().text = currentName;
+							int i = 0;
+							while (i < sortedLevels.Count)
 							{
-								sortedLevels.Insert(i, compatibleLevel);
-								break;
+								if (String.Compare(currentName, sortedLevels[i].GetComponentInChildren<TMP_Text>().text) == -1)
+								{
+									sortedLevels.Insert(i, compatibleLevel);
+									break;
+								}
+								i++;
 							}
-							i++;
+							if (i == sortedLevels.Count)
+								sortedLevels.Add(compatibleLevel);
 						}
-						if (i == sortedLevels.Count)
-							sortedLevels.Add(compatibleLevel);
 						break;
 					}
 			}
@@ -391,7 +405,7 @@ public class ParamCompetenceSystem : FSystem
 		}
 		if (gameData.selectedScenario == Utility.testFromScenarioEditor)
 		{
-			loadScenario("editingScenario");
+			loadScenario(Utility.editingScenario);
 			DataLevel dl = gameData.scenarios[gameData.selectedScenario].levels[0];
 			showLevelInfo(Utility.extractFileName(dl.src), dl);
 			gameData.selectedScenario = "";
@@ -399,7 +413,7 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	// See ButtonLoadScenario
-	public void displayLoadingPanel()
+	public void displayLoadingPanel(string filter)
 	{
 		selectedScenarioGO = null;
 		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("LoadingPanel").gameObject, true);
@@ -410,15 +424,19 @@ public class ParamCompetenceSystem : FSystem
 			GameObject.Destroy(child.gameObject);
 		}
 
-		//create scenario buttons
+		//create scenario buttons and filter field in loading panel
+		List<string> sortedScenarios = new List<string>();
 		foreach (string key in gameData.scenarios.Keys)
 		{
-			if (key != Utility.testFromScenarioEditor && key != Utility.testFromLevelEditor && key != Utility.testFromUrl) // we don't add new line for tested levels
-			{
-				GameObject scenarioItem = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/ScenarioAvailable") as GameObject, loadingScenarioContent.transform);
-				scenarioItem.GetComponent<TextMeshProUGUI>().text = key;
-				GameObjectManager.bind(scenarioItem);
-			}
+			if (key != Utility.testFromScenarioEditor && key != Utility.testFromLevelEditor && key != Utility.testFromUrl && key != Utility.editingScenario && key.Contains(filter)) // we don't add new line for tested levels
+				sortedScenarios.Add(key);
+		}
+		sortedScenarios.Sort();
+		foreach (string key in sortedScenarios)
+		{
+			GameObject scenarioItem = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/ScenarioAvailable") as GameObject, loadingScenarioContent.transform);
+			scenarioItem.GetComponent<TextMeshProUGUI>().text = key;
+			GameObjectManager.bind(scenarioItem);
 		}
 	}
 
@@ -886,7 +904,7 @@ public class ParamCompetenceSystem : FSystem
 	{
 		// We save the scenario currently edited
 		// We can't use GameObjectManager because the update has to be done immediately due to scene loading in testLevel function
-		TitleScreenSystem.instance.LoadLevelOrScenario("editingScenario", buildScenarioContent());
+		TitleScreenSystem.instance.LoadLevelOrScenario(Utility.editingScenario, buildScenarioContent());
 		testLevel(dlb.data, Utility.testFromScenarioEditor);
 	}
 

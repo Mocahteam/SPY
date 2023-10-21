@@ -17,6 +17,7 @@ public static class Utility
 	public static string testFromScenarioEditor = "testFromScenarioEditor";
 	public static string testFromLevelEditor = "testFromLevelEditor";
 	public static string testFromUrl = "testFromUrl";
+	public static string editingScenario = "editingScenario";
 
 	[Serializable]
 	public class RawParams

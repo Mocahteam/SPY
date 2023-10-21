@@ -24,6 +24,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject scenarioContent;
 	public UnityEngine.GameObject loadingScenarioContent;
 	public UnityEngine.GameObject mainCanvas;
+	public TMPro.TMP_InputField levelFilterByName;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -48,6 +49,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "scenarioContent", scenarioContent);
 		MainLoop.initAppropriateSystemField (system, "loadingScenarioContent", loadingScenarioContent);
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
+		MainLoop.initAppropriateSystemField (system, "levelFilterByName", levelFilterByName);
 	}
 
 	public void refreshCompetencies()
@@ -65,14 +67,19 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "traceLoadindScenarioEditor", null);
 	}
 
-	public void showCompatibleLevels(System.Boolean filter)
+	public void showCompatibleLevels()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "showCompatibleLevels", filter);
+		MainLoop.callAppropriateSystemMethod (system, "showCompatibleLevels", null);
 	}
 
-	public void displayLoadingPanel()
+	public void filterCompatibleLevels(System.Boolean nameFiltering)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "displayLoadingPanel", null);
+		MainLoop.callAppropriateSystemMethod (system, "filterCompatibleLevels", nameFiltering);
+	}
+
+	public void displayLoadingPanel(System.String filter)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "displayLoadingPanel", filter);
 	}
 
 	public void loadScenario()

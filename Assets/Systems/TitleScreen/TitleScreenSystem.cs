@@ -611,7 +611,7 @@ public class TitleScreenSystem : FSystem {
 		//create scenarios' button
 		List<string> sortedScenarios = new List<string>();
 		foreach (string key in gameData.scenarios.Keys)
-			if (key != Utility.testFromScenarioEditor && key != Utility.testFromLevelEditor && key !=  Utility.testFromUrl) // we don't create a button for tested level
+			if (key != Utility.testFromScenarioEditor && key != Utility.testFromLevelEditor && key !=  Utility.testFromUrl && key != Utility.editingScenario) // we don't create a button for tested level
 				sortedScenarios.Add(key);
 		sortedScenarios.Sort();
 		foreach (string key in sortedScenarios)

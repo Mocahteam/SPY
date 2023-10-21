@@ -29,7 +29,7 @@ public class OpenFileSystem : FSystem {
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
 
-		refreshListOfLevels();
+		refreshListOfLevels("");
 
 		f_newLoading.addEntryCallback(levelLoaded);
 
@@ -41,20 +41,22 @@ public class OpenFileSystem : FSystem {
 		}
 	}
 
-	public void refreshListOfLevels()
+	// see Open menu and filter field in loading panel
+	public void refreshListOfLevels(string filter)
 	{
 		// remove all old buttons
-		foreach(Transform button in loadingLevelContent.transform)
+		for(int i = loadingLevelContent.transform.childCount - 1; i >= 0; i--)
         {
-			GameObjectManager.unbind(button.gameObject);
-			button.SetParent(null);
-			GameObject.Destroy(button.gameObject);
-        }
+			Transform child = loadingLevelContent.transform.GetChild(i);
+			GameObjectManager.unbind(child.gameObject);
+			child.SetParent(null);
+			GameObject.Destroy(child.gameObject);
+		}
 
 		//create levels buttons
 		List<string> buttonsName = new List<string>();
 		foreach (string key in gameData.levels.Keys)
-			if (key != Utility.testFromLevelEditor) // // we don't create a button for tested level
+			if (key != Utility.testFromLevelEditor && Utility.extractFileName(key).Contains(filter)) // // we don't create a button for tested level
 				buttonsName.Add(Utility.extractFileName(key));
 		buttonsName.Sort();
 		foreach (string key in buttonsName)
