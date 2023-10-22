@@ -15,6 +15,7 @@ public class CurrentActionManager : FSystem
 	private Family f_newStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(LibraryItemRef), typeof(CurrentAction)));
 	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
+	private Family f_conditionNotifs = FamilyManager.getFamily(new AnyOfTags("ConditionNotif"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
 	private Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
@@ -152,6 +153,8 @@ public class CurrentActionManager : FSystem
 			else if (action.GetComponent<ForControl>())
 			{
 				ForControl forCont = action.GetComponent<ForControl>();
+				// pulse counter
+				forCont.StartCoroutine(Utility.pulseItem(forCont.transform.GetChild(1).GetChild(1).gameObject));
 				// check if this ForControl include a child and nb iteration != 0 and end loop not reached
 				if (forCont.firstChild != null && forCont.nbFor != 0 && forCont.currentFor < forCont.nbFor)
 				{
@@ -183,15 +186,14 @@ public class CurrentActionManager : FSystem
 	}
 
 	// Return true if "condition" is valid and false otherwise
-	private bool ifValid(List<string> condition, GameObject agent)
+	private bool ifValid(List<ConditionItem> condition, GameObject agent)
 	{
-
 		string cond = "";
 		for (int i = 0; i < condition.Count; i++)
 		{
-			if (condition[i] == "(" || condition[i] == ")" || condition[i] == "OR" || condition[i] == "AND" || condition[i] == "NOT")
+			if (condition[i].key == "(" || condition[i].key == ")" || condition[i].key == "OR" || condition[i].key == "AND" || condition[i].key == "NOT")
 			{
-				cond = cond + condition[i] + " ";
+				cond = cond + condition[i].key + " ";
 			}
 			else
 			{
@@ -214,9 +216,9 @@ public class CurrentActionManager : FSystem
 	}
 
 	// return true if the captor is true, and false otherwise
-	private bool checkCaptor(string ele, GameObject agent)
+	private bool checkCaptor(ConditionItem ele, GameObject agent)
 	{
-
+		string key = ele.key;
 		bool ifok = false;
 		// get absolute target position depending on player orientation and relative direction to observe
 		// On commence par identifier quelle case doit être regardée pour voir si la condition est respectée
@@ -224,21 +226,21 @@ public class CurrentActionManager : FSystem
 		switch (agent.GetComponent<Direction>().direction)
 		{
 			case Direction.Dir.North:
-				vec = ele == "WallLeft" || ele == "PathLeft" ? new Vector2(-1, 0) : (ele == "WallRight" || ele == "PathRight" ? new Vector2(1, 0) : new Vector2(0, -1));
+				vec = key == "WallLeft" || key == "PathLeft" ? new Vector2(-1, 0) : (key == "WallRight" || key == "PathRight" ? new Vector2(1, 0) : new Vector2(0, -1));
 				break;
 			case Direction.Dir.South:
-				vec = ele == "WallLeft" || ele == "PathLeft" ? new Vector2(1, 0) : (ele == "WallRight" || ele == "PathRight" ? new Vector2(-1, 0) : new Vector2(0, 1));
+				vec = key == "WallLeft" || key == "PathLeft" ? new Vector2(1, 0) : (key == "WallRight" || key == "PathRight" ? new Vector2(-1, 0) : new Vector2(0, 1));
 				break;
 			case Direction.Dir.East:
-				vec = ele == "WallLeft" || ele == "PathLeft" ? new Vector2(0, -1) : (ele == "WallRight" || ele == "PathRight" ? new Vector2(0, 1) : new Vector2(1, 0));
+				vec = key == "WallLeft" || key == "PathLeft" ? new Vector2(0, -1) : (key == "WallRight" || key == "PathRight" ? new Vector2(0, 1) : new Vector2(1, 0));
 				break;
 			case Direction.Dir.West:
-				vec = ele == "WallLeft" || ele == "PathLeft" ? new Vector2(0, 1) : (ele == "WallRight" || ele == "PathRight" ? new Vector2(0, -1) : new Vector2(-1, 0));
+				vec = key == "WallLeft" || key == "PathLeft" ? new Vector2(0, 1) : (key == "WallRight" || key == "PathRight" ? new Vector2(0, -1) : new Vector2(-1, 0));
 				break;
 		}
 
 		// check target position
-		switch (ele)
+		switch (key)
 		{
 			case "WallFront":
 			case "WallLeft":
@@ -328,12 +330,21 @@ public class CurrentActionManager : FSystem
 				}
 				break;
 		}
+		// notification de l'évaluation 
+		GameObject notif = ele.target.transform.Find(ifok ? "true" : "false").gameObject;
+		GameObjectManager.setGameObjectState(notif, true);
+		MainLoop.instance.StartCoroutine(Utility.pulseItem(notif));
 		return ifok;
 
 	}
 
 	// one step consists in removing the current actions this frame and adding new CurrentAction components next frame
-	private void onNewStep(){
+	private void onNewStep()
+	{
+		// hide all conditions notifications
+		foreach (GameObject notif in f_conditionNotifs)
+			GameObjectManager.setGameObjectState(notif, false);
+
 		GameObject nextAction;
 		foreach(GameObject currentActionGO in f_currentActions){
 			CurrentAction currentAction = currentActionGO.GetComponent<CurrentAction>();
@@ -384,6 +395,8 @@ public class CurrentActionManager : FSystem
 		// check if it is a ForAction
 		else if(currentAction.GetComponent<ForControl>()){
 			ForControl forAct = currentAction.GetComponent<ForControl>();
+			// pulse counter
+			forAct.StartCoroutine(Utility.pulseItem(forAct.transform.GetChild(1).GetChild(1).gameObject));
 			// ForAction reach the number of iterations
 			if (forAct.currentFor >= forAct.nbFor){
 				// reset nb iteration to 0

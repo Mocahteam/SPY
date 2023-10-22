@@ -240,7 +240,7 @@ public static class Utility
 			else if (forAct is WhileControl)
 			{
 				// On traduit la condition en string
-				((WhileControl)forAct).condition = new List<string>();
+				((WhileControl)forAct).condition = new List<ConditionItem>();
 				conditionToStrings(forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ((WhileControl)forAct).condition);
 
 			}
@@ -271,7 +271,7 @@ public static class Utility
 		foreach (IfControl ifAct in copyGO.GetComponentsInChildren<IfControl>(true))
 		{
 			// On traduit la condition en string
-			ifAct.condition = new List<string>();
+			ifAct.condition = new List<ConditionItem> ();
 			conditionToStrings(ifAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ifAct.condition);
 
 			GameObject thenContainer = ifAct.transform.Find("Container").gameObject;
@@ -372,7 +372,7 @@ public static class Utility
 	}
 
 	// Transforme une sequence de condition en une chaine de caractére
-	private static void conditionToStrings(GameObject condition, List<string> chaine)
+	private static void conditionToStrings(GameObject condition, List<ConditionItem> chaine)
 	{
 		// Check if condition is a BaseCondition
 		if (condition.GetComponent<BaseCondition>())
@@ -380,7 +380,7 @@ public static class Utility
 			// On regarde si la condition reçue est un élément ou bien un opérator
 			// Si c'est un élément, on le traduit en string et on le renvoie 
 			if (condition.GetComponent<BaseCaptor>())
-				chaine.Add("" + condition.GetComponent<BaseCaptor>().captorType);
+				chaine.Add(new ConditionItem("" + condition.GetComponent<BaseCaptor>().captorType, condition));
 			else
 			{
 				BaseOperator bo;
@@ -393,7 +393,7 @@ public static class Utility
 						// On vérifie qu'il y a bien un élément présent, son container doit contenir 3 enfants (icone, une BaseCondition et le ReplacementSlot)
 						if (conditionContainer.childCount == 3)
 						{
-							chaine.Add("NOT");
+							chaine.Add(new ConditionItem("NOT", bo.gameObject));
 							conditionToStrings(conditionContainer.GetComponentInChildren<BaseCondition>(true).gameObject, chaine);
 						}
 						else
@@ -406,11 +406,11 @@ public static class Utility
 						// Si les côtés de l'opérateur sont remplis, alors il compte 5 childs (2 ReplacementSlots, 2 BaseCondition et 1 icone), sinon cela veux dire que il manque des conditions
 						if (conditionContainer.childCount == 5)
 						{
-							chaine.Add("(");
+							chaine.Add(new ConditionItem("(", null));
 							conditionToStrings(conditionContainer.GetChild(0).gameObject, chaine);
-							chaine.Add("AND");
+							chaine.Add(new ConditionItem("AND", bo.gameObject));
 							conditionToStrings(conditionContainer.GetChild(3).gameObject, chaine);
-							chaine.Add(")");
+							chaine.Add(new ConditionItem(")", null));
 						}
 						else
 						{
@@ -422,11 +422,11 @@ public static class Utility
 						// Si les côtés de l'opérateur sont remplis, alors il compte 5 childs, sinon cela veux dire que il manque des conditions
 						if (conditionContainer.childCount == 5)
 						{
-							chaine.Add("(");
+							chaine.Add(new ConditionItem("(", null));
 							conditionToStrings(conditionContainer.GetChild(0).gameObject, chaine);
-							chaine.Add("OR");
+							chaine.Add(new ConditionItem("OR", bo.gameObject));
 							conditionToStrings(conditionContainer.GetChild(3).gameObject, chaine);
-							chaine.Add(")");
+							chaine.Add(new ConditionItem(")", null));
 						}
 						else
 						{
@@ -698,12 +698,13 @@ public static class Utility
 		newItem.transform.localScale = new Vector3(1, 1, 1);
 		float initScaleX = newItem.transform.localScale.x;
 		newItem.transform.localScale = new Vector3(newItem.transform.localScale.x + 0.3f, newItem.transform.localScale.y, newItem.transform.localScale.z);
-		while (newItem.transform.localScale.x > initScaleX)
+		while (newItem != null  && newItem.transform.localScale.x > initScaleX) // newItem peut être nul si le GameObject est supprimé avant la fin de la coroutine
 		{
 			newItem.transform.localScale = new Vector3(newItem.transform.localScale.x - 0.01f, newItem.transform.localScale.y, newItem.transform.localScale.z);
 			yield return null;
 		}
-		newItem.transform.localScale = new Vector3(1, 1, 1);
+		if (newItem != null) // newItem peut être nul si le GameObject est supprimé avant la fin de la coroutine
+			newItem.transform.localScale = new Vector3(1, 1, 1);
 	}
 
 	public static bool isCompetencyMatchWithLevel(Competency competency, XmlDocument level)
