@@ -30,11 +30,12 @@
 			</button>
 			<div class="collapse navbar-collapse m-2 justify-content-end" id="collapsibleNavbar">
 				<div class="nav-item"><a id="menu_#hero" class="nav-link scrollto active px-3 justify-content-end" href="game.html?lang=en">Play</a></div>
-				<div class="nav-item"><a id="menu_#about" class="nav-link scrollto px-3 justify-content-end" href="#about">About</a></div>
+				<div class="nav-item"><a id="menu_#inBrief" class="nav-link scrollto px-3 justify-content-end" href="#inBrief">In brief</a></div>
 				<div class="nav-item"><a id="menu_#carousel" class="nav-link scrollto px-3 justify-content-end" href="#carousel">Gallery</a></div>
 				<div class="nav-item"><a id="menu_#peda" class="nav-link scrollto px-3 justify-content-end" href="#peda">Teachers</a></div>
 				<div class="nav-item"><a id="menu_#share" class="nav-link scrollto px-3 justify-content-end" href="#share">Share</a></div>
 				<div class="nav-item"><a id="menu_#publication" class="nav-link scrollto px-3 justify-content-end" href="#publication">Publications</a></div>
+				<div class="nav-item"><a id="menu_#about" class="nav-link scrollto px-3 justify-content-end" href="#about">About</a></div>
 				<div class="nav-item"><a id="menu_#contact" class="nav-link scrollto px-3 justify-content-end" href="#contact">Contact</a></div>
 				<div class="nav-item"><a class="nav-link scrollto px-3 justify-content-end" href="index_fr.html">Français</a></div>
 			</div>
@@ -50,8 +51,8 @@
 	</div>
 	</section>
 
-	<!-- ======= About Section ======= -->
-    <section id="about" class="about">
+	<!-- ======= In brief Section ======= -->
+    <section id="inBrief" class="about">
       <div class="container">
 		<div class="row">
 			<div class="col-md-4">
@@ -149,9 +150,17 @@
       </div>
     </section>
 	
+	<!-- ======= About Section ======= -->
+    <section id="about" class="cta">
+      <div class="container">
+		  <h1>About</h1>
+          <p>SPY is a serious game designed by <a href="https://www.lip6.fr/recherche/team.php?acronyme=MOCAH&LANG=en" target="_blank">Mocah</a> research team from <a href="https://www.lip6.fr/?LANG=en" target="_blank">Lip6</a> laboratory (<a href="https://www.sorbonne-universite.fr/en" target="_blank">Sorbonne Université</a>)</p>
+      </div>
+    </section>
+	
 	
 	<!-- ======= Contact Section ======= -->
-    <section id="contact" class="cta">
+    <section id="contact" class="about">
       <div class="container">
 		<div class="text-center">
 			<h1>Contact</h1>
@@ -159,6 +168,14 @@
 		</div>
       </div>
     </section>
+	
+	<footer class="footer fixed-bottom bg-dark ">
+		<div class="container">
+			<img src="TemplateData/LogoLIP6_white.png" height="40">
+			~
+			<img src="TemplateData/Logo_SU_white.png" height="40">
+		</div>
+	</footer>
 	
 	<script>
 		const params = new URLSearchParams(window.location.search);

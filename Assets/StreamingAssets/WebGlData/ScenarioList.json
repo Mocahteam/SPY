@@ -168,58 +168,6 @@
 				{"src": "Levels/BlocklyMaze/Niveau09.xml", "name": "[fr]Niveau09[/fr][en]Level09[/en]"},
 				{"src": "Levels/BlocklyMaze/Niveau10.xml", "name": "[fr]Niveau10[/fr][en]Level10[/en]"}
 			]
-		},
-		{
-			"key": "Expe Genève",
-			"name": "Expe Genève",
-			"description": "Expérimentation Genève est un scénario de démonstration à réaliser en préparation du séminaire recherche.",
-			"levels": [
-				{
-					"src": "Levels/Infiltration/Niveau09.xml",
-					"name": "Mission 1",
-					"overridedDialogs": [
-						{"text": "Utilisez les blocs disponibles dans l'inventaire pour les glisser dans la zone de programme du robot. Utilisez le bouton 'Exécuter' pour lancer l'exécution de votre programme.", "img": "https://spy.lip6.fr/StreamingAssets/Levels/Infiltration/Images/FirstActionAndPlay.png", "imgHeight": 200, "enableInteraction": false},
-						{"text": "Le terminal situé ici permet d'ouvrir la porte, utilisez l'action 'Activer' sur la case du terminal pour ouvrir la porte.", "img": "https://spy.lip6.fr/StreamingAssets/Levels/Tutoriel/Images/ActivateIcon.png", "imgHeight": 45, "camX": 1, "camY": 2, "enableInteraction": false},
-						{"text": "A vous de jouer...", "camX": 3, "camY": 4, "enableInteraction": true}
-					]
-				},
-				{
-					"src": "Levels/Repetiteur/Niveau02.xml", 
-					"name": "Mission 2", 
-					"overridedDialogs": [
-						{"text": "Voici un programme pré-complété, mais il est peut être mal configuré...", "enableInteraction": false}
-					]
-				},
-				{
-					"src": "Levels/Repetiteur/Niveau05.xml",
-					"name": "Mission 3"
-				},
-				{
-					"src": "Levels/Repetiteur/Niveau06.xml",
-					"name": "Mission 4",
-					"overridedDialogs": [
-						{"text": "Sélectionnez un garde pour voir/cacher son programme. Ceci devrait vous donner de précieuses informations pour comprendre son comportement.", "enableInteraction": false},
-						{"text": "Vous disposez maintenant de la nouvelle action 'Attendre'. Elle permet d'ordonner au robot de faire une pose avant de passer à l'action suivante.", "img": "WaitIcon.png", "imgHeight": 45, "enableInteraction": false}
-					]
-				},
-				{
-					"src": "Levels/Infiltration/Niveau14.xml",
-					"name": "Mission 5",
-					"overridedDialogs": [
-						{"text": "Que se passe-t-il ici ?", "enableInteraction": false},
-						{"text": "Visiblement un système de sécurité bloque la vue de notre drone d'observation... Il va faloir avancer à l'aveugle.", "enableInteraction": false},
-						{"text": "Vous disposez maintenant d'un bloc 'Si' qui vous permet d'exécuter des actions si un capteur est valide. Il devrait vous être utile.", "img": "ifWall.png", "imgHeight": 200, "enableInteraction": false},
-						{"text": "Le robot doit avancer de 11 cases et tourner à droite à chaque fois qu'il rencontrera un mur sur son passage.", "enableInteraction": false}
-					]
-				},
-				{
-					"src": "Levels/Infiltration/Niveau20.xml", 
-					"name": "Mission 6", 
-					"overridedDialogs": [
-						{"text": "Dans cette mission vous devrez programmer deux robots avec un seul programme... à vous de jouer !", "camX": 1, "camY": 7, "enableInteraction": false},
-					]
-				}
-			]
 		}
 	]
 }

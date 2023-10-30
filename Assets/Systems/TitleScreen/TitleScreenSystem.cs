@@ -397,8 +397,9 @@ public class TitleScreenSystem : FSystem {
 			GameObjectManager.addComponent<AskToTestLevel>(MainLoop.instance.gameObject, new { url = loadLevelWithURL });
 		// Disable Loading screen
 		GameObjectManager.setGameObjectState(loadingScreen, false);
-		// Enable MainMenu
-		GameObjectManager.setGameObjectState(mainMenu, true);
+		// Enable MainMenu if we not come back from playing a scenario level
+		if (gameData.selectedScenario == "" || gameData.selectedScenario == Utility.testFromUrl)
+			GameObjectManager.setGameObjectState(mainMenu, true);
 	}
 
 	private IEnumerator GetScenarioWebRequest()
@@ -640,12 +641,6 @@ public class TitleScreenSystem : FSystem {
 
 		TMP_Text campaignDescription = content.GetChild(1).GetComponent<TMP_Text>();
 		campaignDescription.text = Utility.extractLocale(gameData.scenarios[campaignKey].description)+"\n\n";
-
-		// hack ajouté pour l'expérimentation de Genève, supprimer ces 4 lignes après que l'expé ait eu lieu
-		if (campaignKey == "Expe Genève")
-			GameObjectManager.setGameObjectState(content.GetChild(4).gameObject, false);
-		else
-			GameObjectManager.setGameObjectState(content.GetChild(4).gameObject, true);
 
 		content.gameObject.AddComponent<AskToRefreshCompetencies>();
 		delayRefreshCompetencies(content);
