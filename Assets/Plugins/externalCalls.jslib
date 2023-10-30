@@ -42,10 +42,19 @@ mergeInto(LibraryManager.library, {
 
 	GetBrowserLanguage: function(){
 		var ret = ""
-		if ((navigator.language && navigator.language.includes("fr")) || (navigator.userLanguage && navigator.userLanguage.includes("fr")))
-			ret = "fr";
-		else
-			ret = "en";
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("lang") != null){
+			if (params.get("lang") == "fr")
+				ret = "fr";
+			else if (params.get("lang") == "en")
+				ret = "en";
+		}
+		if (ret == ""){
+			if ((navigator.language && navigator.language.includes("fr")) || (navigator.userLanguage && navigator.userLanguage.includes("fr")))
+				ret = "fr";
+			else
+				ret = "en";
+		}
 		//Get size of the string
 		var bufferSize = lengthBytesUTF8(ret) + 1;
 		//Allocate memory space

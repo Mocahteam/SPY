@@ -3,6 +3,7 @@ using FYFY;
 using TMPro;
 using System.Runtime.InteropServices;
 using UnityEngine.UI;
+using System;
 
 /// <summary>
 /// This system manage the settings window
@@ -34,10 +35,14 @@ public class SettingsManager : FSystem {
 		
 		// définition de la taille de l'interface
 		currentSizeText = settingsPanel.Find("UISize").Find("CurrentSize").GetComponent<TMP_Text>();
-		float currentScale = PlayerPrefs.GetFloat("UIScale", Screen.currentResolution.width / 960f); // 960 est la taille par défaut du canvas en WebGL
+		
+		float currentScale = PlayerPrefs.GetFloat("UIScale", (float)Math.Max(1, Math.Round((double)Screen.currentResolution.width / 1280, 2))); // do not reduce scale under 1 and multiply scale for definition higher than 1280
+		
 		currentSizeText.text = currentScale + "";
 		foreach (CanvasScaler canvas in canvasScaler)
 			canvas.scaleFactor = currentScale;
+		PlayerPrefs.SetFloat("UIScale", currentScale);
+		PlayerPrefs.Save();
 	}
 
 	public void setQualitySetting(int value)

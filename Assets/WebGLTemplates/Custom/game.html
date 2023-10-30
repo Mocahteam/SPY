@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en-us">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>SPY</title>
+		<link rel="shortcut icon" href="TemplateData/favicon.ico">
+		<link rel="stylesheet" href="TemplateData/styleGame.css">
+	</head>
+	<body onresize="resizeCanvas()">
+	<div id="unity-container">
+	  <div id="unity-header">
+		<label id="proxyLoadFiles" style="visibility:hidden;" for="files-selector" class="loadButton">Importer des scénarios et des niveaux</label>
+		<input id="files-selector" style="visibility:hidden;" type="file" accept=".xml" multiple>
+		<div id="unity-fullscreen-button"></div>
+		<div id="unity-build-title">Agrandir&nbsp;:</div>
+	  </div>
+	  <canvas id="unity-canvas"></canvas>
+	  <div id="unity-loading-bar">
+		<div id="unity-logo"></div>
+		<div id="unity-progress-bar-empty">
+		  <div id="unity-progress-bar-full"></div>
+		</div>
+	  </div>
+	  <div id="unity-mobile-warning">
+		Certains dispositifs mobiles peuvent manquer de mémoire pour charger le jeu. Tentative de chargement : Veuillez patienter, chargement en cours....
+	  </div>
+	</div>
+	<script>
+		var buildUrl = "Build";
+		var loaderUrl = buildUrl + "/WebGL.loader.js";
+		var config = {
+			dataUrl: buildUrl + "/WebGL.data.unityweb",
+			frameworkUrl: buildUrl + "/WebGL.framework.js.unityweb",
+			codeUrl: buildUrl + "/WebGL.wasm.unityweb",
+			streamingAssetsUrl: "StreamingAssets",
+			companyName: "DefaultCompany",
+			productName: "Spy",
+			productVersion: "0.1",
+		};
+
+		var container = document.querySelector("#unity-container");
+		var canvas = document.querySelector("#unity-canvas");
+		var loadingBar = document.querySelector("#unity-loading-bar");
+		var progressBarFull = document.querySelector("#unity-progress-bar-full");
+		var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+		var mobileWarning = document.querySelector("#unity-mobile-warning");
+
+		// By default Unity keeps WebGL canvas render target size matched with
+		// the DOM size of the canvas element (scaled by window.devicePixelRatio)
+		// Set this to false if you want to decouple this synchronization from
+		// happening inside the engine, and you would instead like to size up
+		// the canvas DOM size and WebGL render target sizes yourself.
+		// config.matchWebGLToCanvasSize = false;
+		
+		var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+		if (isMobile) {
+			// Avoid draining fillrate performance on mobile devices,
+			// and default/override low DPI mode on mobile browsers.
+			// config.devicePixelRatio = 1;
+			mobileWarning.style.display = "block";
+		}
+		
+		var lang = "";
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("lang") != null){
+			if (params.get("lang") == "fr")
+				lang = "fr";
+			else if (params.get("lang") == "en")
+				lang = "en";
+		}
+		if (lang == ""){
+			if ((navigator.language && navigator.language.includes("fr")) || (navigator.userLanguage && navigator.userLanguage.includes("fr")))
+				lang = "fr";
+			else
+				lang = "en";
+		}
+			
+		document.updateLang = updateLang;
+		document.updateLang(lang);
+
+		loadingBar.style.display = "block";
+		
+		var rect = canvas.getBoundingClientRect();
+		canvas.style.height = (window.innerHeight-rect.top-4)+"px";
+					
+		var script = document.createElement("script");
+		script.src = loaderUrl;
+		script.onload = () => {
+			createUnityInstance(canvas, config, (progress) => {
+				progressBarFull.style.width = 100 * progress + "%";
+			}).then((unityInstance) => {
+				loadingBar.style.display = "none";
+				mobileWarning.style.display = "none";
+
+				fullscreenButton.addEventListener("click", () => {
+					unityInstance.SetFullscreen(1);
+				});
+				
+				const fileSelector = document.getElementById('files-selector');
+				fileSelector.addEventListener('change', (event) => {
+					const fileList = event.target.files;
+					for (let file of fileList){
+						var reader = new FileReader();
+						reader.onload = function(event){
+							const data = {name: file.name, content: event.target.result};
+							// see TitleScreenSystem
+							unityInstance.SendMessage('Main_Loop', 'importLevelOrScenario', JSON.stringify(data));
+						};
+						reader.readAsText(file);
+					}
+					fileSelector.value = "";
+				});
+			
+				// parse url parameters
+				const queryString = window.location.search;
+				const urlParams = new URLSearchParams(queryString);
+				const levelToLoad = urlParams.get('level');
+				if (levelToLoad != null)
+					// see TitleScreenSystem
+					unityInstance.SendMessage('Main_Loop', 'askToLoadLevel', levelToLoad);
+				const silent = urlParams.get('silent');
+				if (silent == null)
+					// see TitleScreenSystem
+					unityInstance.SendMessage('Main_Loop', 'enableSendStatement');
+				
+			}).catch((message) => {
+				var msg = lang == "fr" ? "Une erreur s'est produite lors du chargement du jeu" : "Error occurs on loading";
+				var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+				if (isSafari)
+					msg += lang == "fr" ? "\nEssayer d'utiliser le navigateur Chrome ou Firefox" : "\nTry to use Chrome or Fiferox";
+				else if (isMobile)
+					msg += lang == "fr" ? "\nVotre dispositif mobile ne contient peut être pas assez de mémoire pour charger le jeu, essayer de recharger la page depuis un ordinateur avec le navigateur Chrome ou Firefox de préférence." : "\nYour mobile device seems to not contains enough memory to load the game, try to reload the page on a computer with Chrome or Firefox.";
+				else
+					msg += lang == "fr" ? "\nEssayez de rafraîchir la page..." : "\nTry to reload the page...";
+				alert(msg);
+				console.log(message);
+			});
+			
+		};
+		
+		fullscreenButton.addEventListener("click", () => {
+			if (!container.classList.contains("fullscreenTag")){
+				container.className = "fullscreenTag";
+				canvas.style.width = "";
+				var rect = canvas.getBoundingClientRect();
+				canvas.style.height = (window.innerHeight-rect.top-4)+"px";
+			}
+			else{
+				var rect = canvas.getBoundingClientRect();
+				canvas.style.height = (window.innerHeight-rect.top-4)+"px";
+			}
+		});
+		
+		if (document.addEventListener)
+		{
+			document.addEventListener('fullscreenchange', exitHandler, false);
+			document.addEventListener('mozfullscreenchange', exitHandler, false);
+			document.addEventListener('MSFullscreenChange', exitHandler, false);
+			document.addEventListener('webkitfullscreenchange', exitHandler, false);
+		}
+
+		function exitHandler()
+		{
+			if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement)
+			{
+				var rect = canvas.getBoundingClientRect();
+				canvas.style.height = (window.innerHeight-rect.top-4)+"px";
+			}
+		}
+		
+        function resizeCanvas(){
+			var rect = canvas.getBoundingClientRect();
+			canvas.style.height = (window.innerHeight-rect.top-4)+"px";
+        }
+		
+		function updateLang(newLang){
+			lang = newLang;
+			document.getElementById("proxyLoadFiles").innerHTML = lang == "fr" ? "Importer des scénarios et des niveaux" : "Import scenarios and levels";
+			document.getElementById("unity-mobile-warning").innerHTML = lang == "fr" ? "Certains dispositifs mobiles peuvent manquer de mémoire pour charger le jeu. Tentative de chargement : Veuillez patienter, chargement en cours...." : "Some mobile devices could have low memory to load the game. Try to load: please wait, loading...";
+			document.getElementById("unity-build-title").innerHTML = lang == "fr" ? "Agrandir&nbsp;:" : "Enlarge:";
+		}
+		
+		document.body.appendChild(script);
+	</script>
+	</body>
+</html>
