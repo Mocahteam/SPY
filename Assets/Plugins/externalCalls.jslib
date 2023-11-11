@@ -63,6 +63,11 @@ mergeInto(LibraryManager.library, {
 		stringToUTF8(ret, buffer, bufferSize);
 		return buffer;
 	},
+	
+	ClearPlayerPrefs: function(){
+		const params = new URLSearchParams(window.location.search);
+		return params.get("clear") != null;
+	},
 
 	UpdateHTMLLanguage: function(newLang){
 		var lang = Pointer_stringify(newLang);

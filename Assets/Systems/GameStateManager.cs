@@ -20,6 +20,7 @@ public class GameStateManager : FSystem {
     private SaveContent save;
 
     private string currentContent;
+    private GameData gameData;
 
     public GameObject playButtonAmount;
 
@@ -33,6 +34,9 @@ public class GameStateManager : FSystem {
 	}
     protected override void onStart()
     {
+        GameObject go = GameObject.Find("GameData");
+        if (go != null)
+            gameData = go.GetComponent<GameData>();
         save = new SaveContent();
         f_playingMode.addEntryCallback(delegate { SaveState(); });
     }
@@ -41,6 +45,8 @@ public class GameStateManager : FSystem {
     private void SaveState()
 	{
         //reset save
+
+        save.rawSave.totalCoin = gameData.totalCoin;
         save.rawSave.coinsState.Clear();
         foreach (GameObject coin in f_coins)
             save.rawSave.coinsState.Add(coin.activeSelf);
@@ -76,10 +82,14 @@ public class GameStateManager : FSystem {
     public void LoadState()
     {
         save.rawSave = JsonUtility.FromJson<SaveContent.RawSave>(currentContent);
+
+        gameData.totalCoin = save.rawSave.totalCoin;
         for (int i = 0; i < f_coins.Count && i < save.rawSave.coinsState.Count ; i++)
         {
-            GameObjectManager.setGameObjectState(f_coins.getAt(i), save.rawSave.coinsState[i]);
-            f_coins.getAt(i).GetComponent<Renderer>().enabled = save.rawSave.coinsState[i];
+            GameObject coin_go = f_coins.getAt(i);
+            GameObjectManager.setGameObjectState(coin_go, save.rawSave.coinsState[i]);
+            coin_go.GetComponent<Renderer>().enabled = save.rawSave.coinsState[i];
+            coin_go.GetComponent<Collider>().enabled = save.rawSave.coinsState[i];
         }
         for (int i = 0; i < f_directions.Count && i < save.rawSave.directions.Count ; i++)
             f_directions.getAt(i).GetComponent<Direction>().direction = save.rawSave.directions[i];

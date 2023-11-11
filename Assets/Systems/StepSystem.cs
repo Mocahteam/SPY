@@ -183,6 +183,7 @@ public class StepSystem : FSystem {
     // See StopButton in editor
     public void cancelTotalStep(){ //click on stop button
         gameData.totalStep -= nbStep;
+        gameData.totalExecute--;
         nbStep = 0;
     }
 

@@ -14,6 +14,8 @@ using DIG.GBLXAPI;
 using Newtonsoft.Json;
 using UnityEngine.EventSystems;
 using System.Linq;
+using UnityEngine.Localization.Settings;
+using UnityEngine.Localization;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -35,6 +37,7 @@ public class TitleScreenSystem : FSystem {
 	public GameObject listOfLevels;
 	public GameObject playButton;
 	public GameObject quitButton;
+	public GameObject levelEditorButton;
 	public GameObject loadingScreen;
 	public GameObject sessionIdPanel;
 	public GameObject deletableElement;
@@ -700,24 +703,26 @@ public class TitleScreenSystem : FSystem {
 		for (int i = 0; i < gameData.scenarios[campaignKey].levels.Count; i++)
 		{
 			DataLevel levelData = gameData.scenarios[campaignKey].levels[i];
-			GameObject button = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/LevelButton") as GameObject, listOfLevels.transform);
-			button.transform.Find("Button").GetChild(0).GetComponent<TextMeshProUGUI>().text = Utility.extractLocale(levelData.name);
+			GameObject button_go = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/LevelButton") as GameObject, listOfLevels.transform);
+			button_go.transform.Find("Button").GetChild(0).GetComponent<TextMeshProUGUI>().text = Utility.extractLocale(levelData.name);
 			int id = i;
-			button.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate { launchLevel(campaignKey, id); });
-			GameObjectManager.bind(button);
-			//locked levels
+			button_go.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate { launchLevel(campaignKey, id); });
+			GameObjectManager.bind(button_go);
+
+			Button button = button_go.GetComponentInChildren<Button>();
+			// lock/unlock levels
 			if ((userData.progression != null && userData.progression.ContainsKey(campaignKey) && userData.progression[campaignKey] >= i) || (userData.progression == null && PlayerPrefs.GetInt(campaignKey, 0) >= i) || i == 0) //by default first level of directory is the only unlocked level of directory
-				button.GetComponentInChildren<Button>().interactable = true;
-			//unlocked levels
+				button.interactable = true;
 			else
-				button.GetComponentInChildren<Button>().interactable = false;
+				button.interactable = false;
+
 			//scores
 			string highScoreKey = Utility.extractFileName(levelData.src);
 			int scoredStars = (userData.highScore != null ? (userData.highScore.ContainsKey(highScoreKey) ? userData.highScore[highScoreKey] : 0) : PlayerPrefs.GetInt(highScoreKey + gameData.scoreKey, 0)); //0 star by default
-			Transform scoreCanvas = button.transform.Find("ScoreCanvas");
+			Transform scoreCanvas = button_go.transform.Find("ScoreCanvas");
 			for (int nbStar = 0; nbStar < 4; nbStar++)
 			{
-				if (nbStar == scoredStars)
+				if (nbStar == scoredStars && button.interactable) // n'activer les étoiles que pour les niveaux actifs
 					GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, true);
 				else
 					GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, false);

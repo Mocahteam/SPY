@@ -16,7 +16,7 @@ public class SettingsManager : FSystem {
 	private static extern bool IsMobileBrowser(); // call javascript
 
 	[DllImport("__Internal")]
-	private static extern void ToggleFullScreen(bool isFullScreen); // call javascript
+	private static extern bool ClearPlayerPrefs(); // call javascript
 
 	public Transform settingsPanel;
 	public CanvasScaler [] canvasScaler;
@@ -30,14 +30,17 @@ public class SettingsManager : FSystem {
 
 	protected override void onStart()
 	{
+		if (Application.platform == RuntimePlatform.WebGLPlayer && ClearPlayerPrefs())
+			PlayerPrefs.DeleteAll();
+
 		settingsPanel.Find("Quality").GetComponentInChildren<TMP_Dropdown>().value = PlayerPrefs.GetInt("quality", 2);
 		settingsPanel.Find("InteractionMode").GetComponentInChildren<TMP_Dropdown>().value = PlayerPrefs.GetInt("interaction", Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 1 : 0);
 		
 		// définition de la taille de l'interface
 		currentSizeText = settingsPanel.Find("UISize").Find("CurrentSize").GetComponent<TMP_Text>();
 		
-		float currentScale = PlayerPrefs.GetFloat("UIScale", (float)Math.Max(1, Math.Round((double)Screen.currentResolution.width / 1280, 2))); // do not reduce scale under 1 and multiply scale for definition higher than 1280
-		
+		float currentScale = PlayerPrefs.GetFloat("UIScale", (float)Math.Max(1, Math.Round((double)Screen.currentResolution.width / 2048, 2))); // do not reduce scale under 1 and multiply scale for definition higher than 2048
+
 		currentSizeText.text = currentScale + "";
 		foreach (CanvasScaler canvas in canvasScaler)
 			canvas.scaleFactor = currentScale;

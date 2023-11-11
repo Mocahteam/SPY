@@ -88,7 +88,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 6.742551e+22, z: 1.7077775e+19, w: 0}
+  m_BoundingSphereOverride: {x: 6.43e-43, y: -123.87921, z: 6.43e-43, w: -2.1078186}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -128,7 +128,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8004794425240735006}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 8.36, y: 3.8, z: 16.39}
+  m_LocalPosition: {x: 8.36, y: 3, z: 16.39}
   m_LocalScale: {x: 1, y: 0.1, z: 1}
   m_Children:
   - {fileID: 4038801482263337752}
@@ -212,8 +212,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   x: 0
-  z: 0
-  animate: 0
+  y: 0
+  targetX: 0
+  targetY: 0
 --- !u!198 &1626675993019719406
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -5118,7 +5119,7 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -5245,7 +5246,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: NaN, z: NaN, w: NaN}
+  m_BoundingSphereOverride: {x: 0, y: 7.2059745e+31, z: 2.1744768e+23, w: 8e-44}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

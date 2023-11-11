@@ -58,6 +58,10 @@ public class SyncLocalization : FSystem {
         // wait again if locale change
         yield return LocalizationSettings.InitializationOperation;
 
+        // Uggly! Force to refresh localization (something wrong on MainMenu in WebGl context...)
+        nextItem();
+        prevItem();
+
         GameObjectManager.addComponent<LocalizationLoaded>(MainLoop.instance.gameObject);
     }
 

@@ -23,7 +23,7 @@
 		</div>
 	  </div>
 	  <div id="unity-mobile-warning">
-		Certains dispositifs mobiles peuvent manquer de mémoire pour charger le jeu. Tentative de chargement : Veuillez patienter, chargement en cours....
+		Certains dispositifs mobiles peuvent manquer de mémoire pour charger le jeu. Tentative de chargement : Veuillez patienter, chargement en cours....<br><br>Conseil&nbsp;: Tenez votre appareil en mode paysage.
 	  </div>
 	</div>
 	<script>
@@ -177,7 +177,7 @@
 		function updateLang(newLang){
 			lang = newLang;
 			document.getElementById("proxyLoadFiles").innerHTML = lang == "fr" ? "Importer des scénarios et des niveaux" : "Import scenarios and levels";
-			document.getElementById("unity-mobile-warning").innerHTML = lang == "fr" ? "Certains dispositifs mobiles peuvent manquer de mémoire pour charger le jeu. Tentative de chargement : Veuillez patienter, chargement en cours...." : "Some mobile devices could have low memory to load the game. Try to load: please wait, loading...";
+			document.getElementById("unity-mobile-warning").innerHTML = lang == "fr" ? "Certains dispositifs mobiles peuvent manquer de mémoire pour charger le jeu. Tentative de chargement : Veuillez patienter, chargement en cours...<br><br>Conseil&nbsp;: Tenez votre appareil en mode paysage." : "Some mobile devices could have low memory to load the game. Try to load: please wait, loading...<br><br>Advice: Hold your device in landscape mode.";
 			document.getElementById("unity-build-title").innerHTML = lang == "fr" ? "Agrandir&nbsp;:" : "Enlarge:";
 		}
 		
