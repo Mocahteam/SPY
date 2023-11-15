@@ -11,6 +11,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject listOfLevels;
 	public UnityEngine.GameObject playButton;
 	public UnityEngine.GameObject quitButton;
+	public UnityEngine.GameObject levelEditorButton;
 	public UnityEngine.GameObject loadingScreen;
 	public UnityEngine.GameObject sessionIdPanel;
 	public UnityEngine.GameObject deletableElement;
@@ -31,6 +32,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "listOfLevels", listOfLevels);
 		MainLoop.initAppropriateSystemField (system, "playButton", playButton);
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
+		MainLoop.initAppropriateSystemField (system, "levelEditorButton", levelEditorButton);
 		MainLoop.initAppropriateSystemField (system, "loadingScreen", loadingScreen);
 		MainLoop.initAppropriateSystemField (system, "sessionIdPanel", sessionIdPanel);
 		MainLoop.initAppropriateSystemField (system, "deletableElement", deletableElement);

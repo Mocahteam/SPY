@@ -102,7 +102,7 @@ public class SendStatements : FSystem {
         progression = progression == "null" ? "{}" : progression;
         highScore = highScore == "null" ? "{}" : highScore;
         Debug.Log(idSession + "_"+ schoolClass + "_"+progression + "_" + highScore);
-        UnityWebRequest www = UnityWebRequest.Post("https://spy.lip6.fr/ServerREST_LIP6/", "{\"idSession\":\"" + idSession + "\",\"class\":\"" + schoolClass + "\",\"isTeacher\":\""+(isTeacher ? 1 : 0)+"\",\"progression\":" + progression + ",\"highScore\":" + highScore + "}");
+        UnityWebRequest www = UnityWebRequest.PostWwwForm("https://spy.lip6.fr/ServerREST_LIP6/", "{\"idSession\":\"" + idSession + "\",\"class\":\"" + schoolClass + "\",\"isTeacher\":\""+(isTeacher ? 1 : 0)+"\",\"progression\":" + progression + ",\"highScore\":" + highScore + "}");
 
         yield return www.SendWebRequest();
 
