@@ -109,6 +109,7 @@ public class HistoryManager : FSystem
 			GameObject agentSelected = null;
 			int minNbOfInaction = int.MaxValue;
 			foreach (GameObject agent in f_agent)
+				// several agent could be linked to the same script, in this case we add the minimal number of wait
 				if (associatedAgent.ToLower() == agent.GetComponent<AgentEdit>().associatedScriptName.ToLower())
 				{
 					ScriptRef sr = agent.GetComponent<ScriptRef>();
@@ -121,12 +122,16 @@ public class HistoryManager : FSystem
 				}
 			if (agentSelected != null)
             {
-				if (minNbOfInaction == 1)
+				// We add wait blocs if only one is required or if this level do not provide unlimited for loop blocs
+				if (minNbOfInaction == 1 || gameData.actionBlockLimit["ForLoop"] != -1)
 				{
-					GameObject newWait = Utility.createEditableBlockFromLibrary(libraryWait, canvas);
-					newWait.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
-					newWait.transform.SetAsLastSibling();
-					gameData.totalActionBlocUsed++;
+					for (int i = 0; i < minNbOfInaction; i++)
+					{
+						GameObject newWait = Utility.createEditableBlockFromLibrary(libraryWait, canvas);
+						newWait.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
+						newWait.transform.SetAsLastSibling();
+						gameData.totalActionBlocUsed++;
+					}
 				}
 				else if (minNbOfInaction > 1)
 				{
