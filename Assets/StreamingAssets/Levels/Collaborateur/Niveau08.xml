@@ -10,6 +10,9 @@
 	<line><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
 	<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
   </map>
+  <dialogs>
+	<dialog text="[fr]Chaque robot a son programme, mais est-ce la bonne stratégie pour que chacun rejoigne la sortie la plus proche ?[/fr][en]Each robot has its own program, but is it the right strategy for everyone to reach the nearest exit?[/en]" />
+  </dialogs>
   <blockLimits>
     <blockLimit blockType="Forward" limit="-1" />
     <blockLimit blockType="TurnLeft" limit="-1" />
@@ -32,8 +35,6 @@
     <blockLimit blockType="Terminal" limit="0" />
     <blockLimit blockType="Exit" limit="0" />
   </blockLimits>
-  <coin posY="3" posX="6" />
-  <coin posY="5" posX="6" />
   <console state="1" posY="5" posX="3" direction="0">
     <slot slotId="0" />
   </console>
@@ -44,5 +45,5 @@
   <door posY="5" posX="2" slotId="1" direction="3" />
   <player inputLine="Bob" posY="6" posX="1" direction="0" />
   <player inputLine="Karl" posY="1" posX="4" direction="1" />
-  <score twoStars="13143" threeStars="14143"/>
+  <score twoStars="3143" threeStars="4143"/>
 </level>
