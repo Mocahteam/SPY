@@ -372,7 +372,7 @@ public class ParamCompetenceSystem : FSystem
 		else
 		{
 			// get name filter
-			string namefilter = levelFilterByName.text;
+			string namefilter = levelFilterByName.text.ToLower();
 			// hide competencies panel
 			GameObjectManager.setGameObjectState(competenciesPanel, false);
 			GameObjectManager.setGameObjectState(compatibleLevelsPanel, true);
@@ -395,7 +395,7 @@ public class ParamCompetenceSystem : FSystem
 					if (gameData.levels[levelName] == level)
 					{
 						string currentName = Utility.extractFileName(levelName);
-						if (currentName.Contains(namefilter))
+						if (currentName.ToLower().Contains(namefilter))
 						{
 							GameObject compatibleLevel = GameObject.Instantiate(levelCompatiblePrefab);
 							compatibleLevel.GetComponentInChildren<TMP_Text>().text = currentName;
