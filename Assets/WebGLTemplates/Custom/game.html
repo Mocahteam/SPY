@@ -6,7 +6,8 @@
 		<title>SPY</title>
 		<link rel="shortcut icon" href="TemplateData/favicon.ico">
 		<link rel="stylesheet" href="TemplateData/styleGame.css">
-		<link rel="manifest" href="manifest.webmanifest">
+		<!-- Pour activer le PWA -->
+		<!--<link rel="manifest" href="manifest.webmanifest">-->
 	</head>
 	<body onresize="resizeCanvas()">
 	<div id="unity-container">
@@ -26,11 +27,12 @@
 	  <div id="unity-mobile-warning"></div>
 	</div>
 	<script>
-		window.addEventListener("load", function () {
+		// Pour activer le PWA => installation comme une appli
+		/*window.addEventListener("load", function () {
 			if ("serviceWorker" in navigator) {
 				navigator.serviceWorker.register("ServiceWorker.js");
 			}
-		});
+		});*/
 
 		var container = document.querySelector("#unity-container");
 		var canvas = document.querySelector("#unity-canvas");
@@ -70,10 +72,24 @@
 		var gl2 = c.getContext("webgl2");                                    
 		if ((gl && gl.getExtension('WEBGL_compressed_texture_astc')) || (gl2 &&   
 			  gl2.getExtension('WEBGL_compressed_texture_astc'))) {             
-			dataFile = "/WebGL_Mobile(ASTC).data.unityweb";                                       
+			dataFile = "/WebGL_Mobile(ASTC).data.unityweb";
 		}
 		
-		console.log(dataFile);
+		// log whiwh webgl version is used
+		if (!gl2) {
+		  if (typeof WebGL2RenderingContext !== 'undefined') {
+			console.log('your browser appears to support WebGL2 but it might be disabled. Try updating your OS and/or video card drivers');
+		  } else {
+			if (!gl)
+				console.log('your browser has no WebGL1 or WebGL2 support at all'); 
+			else
+				console.log('your browser has no WebGL2 support but has WebGL1'); 
+		  }
+		} else {
+		  console.log('webgl2 works!');
+		}
+		
+		console.log(dataFile+ "loading");
 		
 		var buildUrl = "Build";
 		var loaderUrl = buildUrl + "/WebGL_Desktop(DXT).loader.js";
