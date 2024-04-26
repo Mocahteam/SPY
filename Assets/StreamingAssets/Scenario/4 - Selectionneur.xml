@@ -1,43 +1,43 @@
 <?xml version="1.0"?>
 <scenario name="[fr]4 - Selectionneur[/fr][en]4 - Questionner[/en]" desc="[fr]Dans ce scénario tu vas rendre ton robot intelligent pour qu'il choisisse les actions à faire en fonction de son environnement.[/fr][en]In this scenario, you will make your robot intelligent, so that it chooses the actions to take according to its environment.[/en]">
-	<level src = "Levels/BlocklyMaze/Niveau06.xml" name = "[fr]Niveau01[/fr][en]Level01[/en]" >
+	<level src = "Levels/BlocklyMaze/Niveau06.xml" name = "Mission01" >
 		<dialogs>
 			<dialog text ="[fr]Un bloc 'Si' va exécuter ce qu'il contient seulement si la condition est vraie. Essaye de tourner à gauche s'il y a un chemin vers la gauche.[/fr][en]An 'If' block will execute what it contains only if the condition is true. Try turning left if there's a path to the left.[/en]" img="[fr]ifPathLeft.png[/fr][en]ifPathLeft_en.png[/en]" imgHeight="200" enableInteraction="0" />
 		</dialogs>
 	</level>
-	<level src = "Levels/Infiltration/Niveau14.xml" name = "[fr]Niveau02[/fr][en]Level02[/en]" >
+	<level src = "Levels/Infiltration/Niveau14.xml" name = "Mission02" >
 		<dialogs>
 			<dialog text ="[fr]Tiens la visibilité est réduite ici...[/fr][en]Look at the reduced visibility here...[/en]" enableInteraction="0" />
 			<dialog text ="[fr]Le bloc 'Si' devrait à nouveau t'être utile...[/fr][en]The 'If' block should come in handy again...[/en]" img="[fr]ifWall.png[/fr][en]ifWall_en.png[/en]" imgHeight="200" enableInteraction="0" />
 			<dialog text ="[fr]Une indication... le robot doit avancer de 11 cases et tourner à droite à chaque fois qu'il rencontrera un mur sur son passage.[/fr][en]A hint... the robot must move 11 squares forward and turn right every time it encounters a wall in its path.[/en]" enableInteraction="1" />
 		</dialogs>
 	</level>
-	<level src = "Levels/Infiltration/Niveau15.xml" name = "[fr]Niveau03[/fr][en]Level03[/en]" >
+	<level src = "Levels/Infiltration/Niveau15.xml" name = "Mission03" >
 		<dialogs>
 			<dialog text ="[fr]Contrairement à la boucle 'Répéter' pour laquelle tu dois indiquer le nombre de répétitions, la boucle 'Tant que' répète les actions tant que la condition est vraie. Tu peux donc utiliser les capteurs dans une boucle 'Tant que'[/fr][en]Unlike the 'Repeat' loop, for which you have to specify the number of repetitions, the 'While' loop repeats actions as long as the condition is true. So you can use sensors in a 'While' loop.[/en]" img="[fr]whileWall.png[/fr][en]whileWall_en.png[/en]" imgHeight="200" enableInteraction="0" />
 			<dialog text ="[fr]Tu disposes aussi d'un nouveau capteur qui te permet de tester si le robot se trouve sur la case du téléporteur.[/fr][en]You also have a new sensor to test whether the robot is on the teleporter square.[/en]" img="https://spy.lip6.fr/StreamingAssets/Levels/BlocklyMaze/Images/exit.png" imgHeight="50" enableInteraction="0" />
 			<dialog text ="[fr]Tu disposes aussi du bloc 'Non' qui permet de savoir si une condition est fausse.[/fr][en]You also have the 'No' block, which lets you know if a condition is false.[/en]" img="https://spy.lip6.fr/StreamingAssets/Levels/BlocklyMaze/Images/notOperator.png" imgHeight="75" enableInteraction="0" />
 		</dialogs>
 	</level>
-	<level src = "Levels/BlocklyMaze/Niveau07.xml" name = "[fr]Niveau04[/fr][en]Level04[/en]" >
+	<level src = "Levels/BlocklyMaze/Niveau07.xml" name = "Mission04" >
 		<dialogs>
 			<dialog text ="[fr]Tu disposes maintenant de 3 capteurs qui indiquent vrai si un passage se trouve devant le robot, à gauche ou à droite.[/fr][en]You now have 3 sensors that indicate whether a path lies in front of the robot, to the left or to the right.[/en]" img="pathCaptors.png" imgHeight="45" enableInteraction="0" />
 		</dialogs>
 	</level>
-	<level src = "Levels/BlocklyMaze/Niveau08.xml" name = "[fr]Niveau05[/fr][en]Level05[/en]" >
+	<level src = "Levels/BlocklyMaze/Niveau08.xml" name = "Mission05" >
 		<dialogs>
 			<dialog text ="[fr]Observe l'algorigramme ci-dessous, il devrait t'aider à trouver la solution.[/fr][en]Look at the flow chart below, it should help you find the solution.[/en]" img="[fr]https://spy.lip6.fr/StreamingAssets/Levels/Selectionneur/Images/algorigrammeBM8.png[/fr][en]https://spy.lip6.fr/StreamingAssets/Levels/Selectionneur/Images/algorigrammeBM8_en.png[/en]" imgHeight="400" enableInteraction="1" />
 		</dialogs>
 	</level>
-	<level src = "Levels/Infiltration/Niveau16.xml" name = "[fr]Niveau06[/fr][en]Level06[/en]" >
+	<level src = "Levels/Infiltration/Niveau16.xml" name = "Mission06" >
 		<dialogs>
-			<dialog text ="[fr]Tu dispose pour ce niveau d'un nouveau bloc, le bloc 'Ou'. A toi de deviner comment l'utiliser mais observe bien la forme des blocs que tu peux glisser dedans...[/fr][en]This level features a new block, the 'Or' block. It's up to you to guess how to use it, but keep an eye on the shape of the blocks you can slide into it...[/en]" enableInteraction="0" />
+			<dialog text ="[fr]Tu dispose pour cette mission d'un nouveau bloc, le bloc 'Ou'. A toi de deviner comment l'utiliser mais observe bien la forme des blocs que tu peux glisser dedans...[/fr][en]This mission features a new block, the 'Or' block. It's up to you to guess how to use it, but keep an eye on the shape of the blocks you can slide into it...[/en]" enableInteraction="0" />
 		</dialogs>
 	</level>
-	<level src = "Levels/Infiltration/Niveau20.xml" name = "[fr]Niveau07[/fr][en]Level07[/en]" >
+	<level src = "Levels/Infiltration/Niveau20.xml" name = "Mission07" >
 		<dialogs>
 			<dialog text ="[fr]Tu ne peux utiliser ici qu'une seule ligne de communication pour contrôler les deux robots. A toi de trouver un programme générique pour permettre aux deux robots d'atteindre leur sortie.[/fr][en]You can only use one communication line to control the two robots. It's up to you to find a generic program to enable both robots to reach their exit.[/en]" enableInteraction="0" />
 		</dialogs>
 	</level>
-	<level src = "Levels/Selectionneur/Niveau01.xml" name = "[fr]Niveau08[/fr][en]Level08[/en]" />
+	<level src = "Levels/Selectionneur/Niveau01.xml" name = "Mission08" />
 </scenario>
