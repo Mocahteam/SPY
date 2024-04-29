@@ -20,7 +20,7 @@ public static class Utility
 	public static string editingScenario = "editingScenario";
 
 	[Serializable]
-	public class RawParams
+	public class RawConstraint
 	{
 		public string attribute;
 		public string constraint;
@@ -30,11 +30,11 @@ public static class Utility
 	}
 
 	[Serializable]
-	public class RawConstraint
+	public class RawFilter
 	{
 		public string label;
 		public string tag;
-		public RawParams[] parameters;
+		public RawConstraint[] constraints;
 	}
 	// Add an item on a drop area
 	// return true if the item was added and false otherwise
@@ -709,57 +709,57 @@ public static class Utility
 
 	public static bool isCompetencyMatchWithLevel(Competency competency, XmlDocument level)
 	{
-		// check all constraints of the competency
-		Dictionary<string, List<XmlNode>> constraintsState = new Dictionary<string, List<XmlNode>>();
-		foreach (RawConstraint constraint in competency.constraints)
+		// check all filters of the competency
+		Dictionary<string, List<XmlNode>> filtersState = new Dictionary<string, List<XmlNode>>();
+		foreach (RawFilter filter in competency.filters)
 		{
 
-			if (constraintsState.ContainsKey(constraint.label))
+			if (filtersState.ContainsKey(filter.label))
 			{
-				// if a constraint with this label is defined and no XmlNode identified, useless to check this new one
-				if (constraintsState[constraint.label].Count == 0)
+				// if a filter with this label is defined and no XmlNode identified, useless to check this new one
+				if (filtersState[filter.label].Count == 0)
 					continue;
 			}
 			else
 			{
-				// init this constraint with all XmlNode of required tag
+				// init this filter with all XmlNode of required tag
 				List<XmlNode> tagList = new List<XmlNode>();
-				foreach (XmlNode tag in level.GetElementsByTagName(constraint.tag))
+				foreach (XmlNode tag in level.GetElementsByTagName(filter.tag))
 					tagList.Add(tag);
-				constraintsState.Add(constraint.label, tagList);
+				filtersState.Add(filter.label, tagList);
 			}
 
-			// check if this constraint is true
-			List<XmlNode> tags = constraintsState[constraint.label];
-			foreach (RawParams parameter in constraint.parameters)
+			// check if this filter is true
+			List<XmlNode> tags = filtersState[filter.label];
+			foreach (RawConstraint constraint in filter.constraints)
 			{
 				int levelAttrValue;
-				switch (parameter.constraint)
+				switch (constraint.constraint)
 				{
 					// Check if the value of an attribute of the tag is equal to a given value
 					case "=":
 						for (int t = tags.Count - 1; t >= 0; t--)
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null || tags[t].Attributes.GetNamedItem(parameter.attribute).Value != parameter.value)
+							if (tags[t].Attributes.GetNamedItem(constraint.attribute) == null || tags[t].Attributes.GetNamedItem(constraint.attribute).Value != constraint.value)
 								tags.RemoveAt(t);
 						break;
 					// Check if the value of an attribute of the tag is not equal to a given value
 					case "<>":
 						for (int t = tags.Count - 1; t >= 0; t--)
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null || tags[t].Attributes.GetNamedItem(parameter.attribute).Value == parameter.value)
+							if (tags[t].Attributes.GetNamedItem(constraint.attribute) == null || tags[t].Attributes.GetNamedItem(constraint.attribute).Value == constraint.value)
 								tags.RemoveAt(t);
 						break;
 					// Check if the value of an attribute of the tag is greater than a given value (for limit attribute consider -1 as infinite value)
 					case ">":
 						for (int t = tags.Count - 1; t >= 0; t--)
 						{
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
+							if (tags[t].Attributes.GetNamedItem(constraint.attribute) == null)
 								tags.RemoveAt(t);
 							else
 							{
 								try
 								{
-									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(parameter.attribute).Value);
-									if (levelAttrValue <= int.Parse(parameter.value) && (parameter.attribute != "limit" || levelAttrValue != -1)) // because -1 means infinity for block limit
+									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(constraint.attribute).Value);
+									if (levelAttrValue <= int.Parse(constraint.value) && (constraint.attribute != "limit" || levelAttrValue != -1)) // because -1 means infinity for block limit
 										tags.RemoveAt(t);
 								}
 								catch
@@ -773,14 +773,14 @@ public static class Utility
 					case "<":
 						for (int t = tags.Count - 1; t >= 0; t--)
 						{
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
+							if (tags[t].Attributes.GetNamedItem(constraint.attribute) == null)
 								tags.RemoveAt(t);
 							else
 							{
 								try
 								{
-									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(parameter.attribute).Value);
-									if (levelAttrValue >= int.Parse(parameter.value) || (parameter.attribute == "limit" && levelAttrValue == -1)) // because -1 means infinity for block limit
+									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(constraint.attribute).Value);
+									if (levelAttrValue >= int.Parse(constraint.value) || (constraint.attribute == "limit" && levelAttrValue == -1)) // because -1 means infinity for block limit
 										tags.RemoveAt(t);
 								}
 								catch
@@ -794,14 +794,14 @@ public static class Utility
 					case ">=":
 						for (int t = tags.Count - 1; t >= 0; t--)
 						{
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
+							if (tags[t].Attributes.GetNamedItem(constraint.attribute) == null)
 								tags.RemoveAt(t);
 							else
 							{
 								try
 								{
-									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(parameter.attribute).Value);
-									if (levelAttrValue < int.Parse(parameter.value) && (parameter.attribute != "limit" || levelAttrValue != -1)) // because -1 means infinity for block limit
+									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(constraint.attribute).Value);
+									if (levelAttrValue < int.Parse(constraint.value) && (constraint.attribute != "limit" || levelAttrValue != -1)) // because -1 means infinity for block limit
 										tags.RemoveAt(t);
 								}
 								catch
@@ -815,14 +815,14 @@ public static class Utility
 					case "<=":
 						for (int t = tags.Count - 1; t >= 0; t--)
 						{
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
+							if (tags[t].Attributes.GetNamedItem(constraint.attribute) == null)
 								tags.RemoveAt(t);
 							else
 							{
 								try
 								{
-									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(parameter.attribute).Value);
-									if (levelAttrValue > int.Parse(parameter.value) || (parameter.attribute == "limit" && levelAttrValue == -1)) // because -1 means infinity for block limit
+									levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(constraint.attribute).Value);
+									if (levelAttrValue > int.Parse(constraint.value) || (constraint.attribute == "limit" && levelAttrValue == -1)) // because -1 means infinity for block limit
 										tags.RemoveAt(t);
 								}
 								catch
@@ -833,10 +833,10 @@ public static class Utility
 						}
 						break;
 					// Check if the attribute of the tag is included inside a given value
-					case "include":
+					case "isIncludedIn":
 						for (int t = tags.Count - 1; t >= 0; t--)
 						{
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null || !parameter.value.Contains(tags[t].Attributes.GetNamedItem(parameter.attribute).Value))
+							if (tags[t].Attributes.GetNamedItem(constraint.attribute) == null || !constraint.value.Contains(tags[t].Attributes.GetNamedItem(constraint.attribute).Value))
 								tags.RemoveAt(t);
 						}
 						break;
@@ -844,14 +844,14 @@ public static class Utility
 					case "sameValue":
 						for (int t = tags.Count - 1; t >= 0; t--)
 						{
-							if (tags[t].Attributes.GetNamedItem(parameter.attribute) == null)
+							if (tags[t].Attributes.GetNamedItem(constraint.attribute) == null)
 								tags.RemoveAt(t);
 							else
 							{
 								bool found = false;
-								foreach (XmlNode node in tags[t].OwnerDocument.GetElementsByTagName(parameter.tag2))
+								foreach (XmlNode node in tags[t].OwnerDocument.GetElementsByTagName(constraint.tag2))
 								{
-									if (node != tags[t] && node.Attributes.GetNamedItem(parameter.attribute2) != null && node.Attributes.GetNamedItem(parameter.attribute2).Value == tags[t].Attributes.GetNamedItem(parameter.attribute).Value)
+									if (node != tags[t] && node.Attributes.GetNamedItem(constraint.attribute2) != null && node.Attributes.GetNamedItem(constraint.attribute2).Value == tags[t].Attributes.GetNamedItem(constraint.attribute).Value)
 									{
 										found = true;
 										break;
@@ -873,11 +873,11 @@ public static class Utility
 				}
 			}
 		}
-		// check the rule (combination of constraints)
+		// check the rule (combination of filters)
 		string rule = competency.rule;
-		foreach (string key in constraintsState.Keys)
+		foreach (string key in filtersState.Keys)
 		{
-			rule = rule.Replace(key, "" + constraintsState[key].Count);
+			rule = rule.Replace(key, "" + filtersState[key].Count);
 		}
 		DataTable dt = new DataTable();
 		if (rule != "")

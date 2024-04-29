@@ -69,7 +69,7 @@ public class ParamCompetenceSystem : FSystem
 		public string parentKey;
 		public string name;
 		public string description;
-		public Utility.RawConstraint[] constraints;
+		public Utility.RawFilter[] filters;
 		public string rule;
 	}
 
@@ -234,8 +234,8 @@ public class ParamCompetenceSystem : FSystem
 			comp.parentKey = rawComp.parentKey;
 			comp.id = rawComp.name;
 			comp.description = Utility.extractLocale(rawComp.description);
-			comp.constraints = rawComp.constraints;
-			if (comp.constraints.Length == 0)
+			comp.filters = rawComp.filters;
+			if (comp.filters.Length == 0)
 				// disable checkbox
 				competency.GetComponentInChildren<Toggle>().interactable = false;
 			comp.rule = rawComp.rule;

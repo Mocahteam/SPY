@@ -8,11 +8,11 @@
 					"parentKey": "",
 					"name": "[fr]F1 Résoudre un problème en plusieurs étapes[/fr][en]F1 Solving a problem in several steps[/en]",
 					"description": "[fr]Cette fonctionnalité du jeu permet au joueur de décomposer la résolution du problème en sous étapes. Le joueur peut alors exécuter quelques blocs, analyser la situation après le déplacement et poursuivre sa résolution.[/fr][en]This game feature allows the player to break down the problem-solving process into sub-steps. The player can then execute a few blocks, analyze the situation after the move and continue to solve the problem.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "ExecutionLimit",
 							"tag": "executionLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "amount",
 									"constraint": "<=",
@@ -28,16 +28,16 @@
 					"parentKey": "",
 					"name": "[fr]F2 Traduire en langage informatique une consigne exprimée en langage naturel[/fr][en]F2 Translate a natural language instruction into computer language[/en]",
 					"description": "[fr]Active un filtre qui empêche le joueur de voir toute la scène et donc d'avoir une vision globale du problème. La consigne indique en langage naturel comment résoudre le problème et le joueur doit la traduire en langage formel compréhensible par le robot (utilisation des blocs de programmation du jeu).[/fr][en]Activates a filter that prevents the player from seeing the whole scene, and therefore from having an overall view of the problem. The instructions indicate in natural language how to solve the problem, and the player must translate them into a formal language that the robot can understand (using the game's programming blocks).[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "Fog",
 							"tag": "fog",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "HideExits",
 							"tag": "hideExits",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "Fog >= 1 or HideExits >= 1"
@@ -47,11 +47,11 @@
 					"parentKey": "",
 					"name": "[fr]F3 Ouvrir/Fermer une porte[/fr][en]F3 Open/Close a door[/en]",
 					"description": "[fr]Être capable de changer l'état d'un objet, ouvrir/fermer une porte.[/fr][en]Be able to change the state of an object, open/close a door.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DoorWithSlotConnected",
 							"tag": "door",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "slotId",
 									"constraint": "sameValue",
@@ -63,7 +63,7 @@
 						{
 							"label": "activateInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -79,7 +79,7 @@
 						{
 							"label": "activateInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -96,11 +96,11 @@
 					"parentKey": "",
 					"name": "[fr]F4 Nommer une sequence d'action[/fr][en]F4 Name an action sequence[/en]",
 					"description": "[fr]Être capable de nommer le canal de communication à utiliser pour cibler le robot à commander.[/fr][en]Be able to name the communication channel to be used to target the robot to be controlled.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "ScriptEditable",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "editMode",
 									"constraint": "=",
@@ -116,16 +116,16 @@
 					"parentKey": "",
 					"name": "[fr]F5 Identifier la bonne solution[/fr][en]F5 Identify the right solution[/en]",
 					"description": "[fr]Étant donné plusieurs solutions données, être capable d'identifier une solution permettant de résoudre le problème.[/fr][en]Given several solutions, be able to identify a solution that solves the problem.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ScriptEditable",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "editMode",
 									"constraint": "=",
@@ -136,15 +136,15 @@
 						{
 							"label": "AllScript",
 							"tag": "script",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "CorrectScript",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "0|1"
 								}
 							]
@@ -157,21 +157,21 @@
 					"parentKey": "",
 					"name": "[fr]F6 Corriger une solution erronée[/fr][en]F6 Correct a erroneous solution[/en]",
 					"description": "[fr]Étant donné une solution erronée, être capable d'identifier le problème et de le corriger.[/fr][en]Given an erroneous solution, be able to identify the problem and correct it.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "AllScript",
 							"tag": "script",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "BuggedScript",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -187,11 +187,11 @@
 					"parentKey": "",
 					"name": "[fr]F7 Prédire le résultat d'une séquence d'actions[/fr][en]F7 Predict the outcome of a sequence of actions[/en]",
 					"description": "[fr]Être capable d'anticiper les actions d'un ennemi afin d'adapter sa solution en conséquence.[/fr][en]Be able to anticipate an enemy's actions and adapt your solution accordingly.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "ScriptWithContent",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "outputLine",
 									"constraint": "sameValue",
@@ -211,11 +211,11 @@
 					"parentKey": "",
 					"name": "[fr]F8 Généraliser une solution[/fr][en]F8 Generalize a solution[/en]",
 					"description": "[fr]Etre capable de trouver une solution permettant de résoudre deux problèmes différents. Autrement dit, une ligne de communication pour plusieurs robots.[/fr][en]To be able to find a solution that solves two different problems. In other words, one line of communication for several robots.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "RobotsInSameLine",
 							"tag": "player",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "inputLine",
 									"constraint": "sameValue",
@@ -232,7 +232,7 @@
 					"parentKey": "",
 					"name": "[fr]Gestions des blocs[/fr][en]Block management[/en]",
 					"description": "",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -240,7 +240,7 @@
 					"parentKey": "SPY_Blocs",
 					"name": "[fr]Limitation de blocs[/fr][en]Block limitation[/en]",
 					"description": "",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -248,11 +248,11 @@
 					"parentKey": "SPY_Limitations",
 					"name": "[fr]F9 Blocs illimités[/fr][en]F9 Unlimited blocks[/en]",
 					"description": "[fr]Ne donner au joueur que des blocs en quantité illimitée. Etre capable de déterminer quand utiliser des blocs.[/fr][en]Only give the player unlimited blocks. Be able to determine when to use blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "limitedBlocks",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "limit",
 									"constraint": ">",
@@ -268,7 +268,7 @@
 						{
 							"label": "infiniteBlocks",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "limit",
 									"constraint": "=",
@@ -284,11 +284,11 @@
 					"parentKey": "SPY_Limitations",
 					"name": "[fr]F10 Blocs limités[/fr][en]F10 Limited blocks[/en]",
 					"description": "[fr]Ne donner au joueur que des blocs en quantité limitée. Etre capable de combiner des actions dans un ordre valide.[/fr][en]Give the player only a limited number of blocks. Be able to combine actions in a valid order.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "unlimitedBlocks",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "limit",
 									"constraint": "=",
@@ -304,7 +304,7 @@
 					"parentKey": "SPY_Blocs",
 					"name": "[fr]Liste des blocs d'action[/fr][en]List of action blocks[/en]",
 					"description": "",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -312,11 +312,11 @@
 					"parentKey": "SPY_Actions",
 					"name": "[fr]F11 Bloc action \"Avancer\"[/fr][en]F11 \"Move forward\" action block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Avancer\".[/fr][en]Give the player the option of using \"Move forward\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "moveInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -332,7 +332,7 @@
 						{
 							"label": "moveInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -348,11 +348,11 @@
 					"parentKey": "SPY_Actions",
 					"name": "[fr]F12 Bloc action \"Pivoter à gauche\"[/fr][en]F12 \"Rotate left\" action block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Pivoter à gauche\".[/fr][en]Give the player the option of using \"Rotate left\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "leftInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -368,7 +368,7 @@
 						{
 							"label": "leftInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -384,11 +384,11 @@
 					"parentKey": "SPY_Actions",
 					"name": "[fr]F13 Bloc action \"Pivoter à droite\"[/fr][en]F13 \"Rotate right\" action block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Pivoter à droite\".[/fr][en]Give the player the option of using \"Rotate right\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "rightInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -404,7 +404,7 @@
 						{
 							"label": "rightInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -420,11 +420,11 @@
 					"parentKey": "SPY_Actions",
 					"name": "[fr]F14 Bloc action \"Attendre\"[/fr][en]F14 \"Wait\" action block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Attendre\".[/fr][en]Give the player the option of using \"Wait\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "waitInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -440,7 +440,7 @@
 						{
 							"label": "waitInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -456,11 +456,11 @@
 					"parentKey": "SPY_Actions",
 					"name": "[fr]F15 Bloc action \"Activer\"[/fr][en]F15 \"Activate\" action block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Activer\".[/fr][en]Give the player the option of using \"Activate\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "activateInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -476,7 +476,7 @@
 						{
 							"label": "activateInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -492,11 +492,11 @@
 					"parentKey": "SPY_Actions",
 					"name": "[fr]F16 Bloc action \"Se retourner\"[/fr][en]F16 \"Look back\" action block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Se retourner\".[/fr][en]Give the player the option of using \"Look back\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "turnBackInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -512,7 +512,7 @@
 						{
 							"label": "turnBackInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -528,7 +528,7 @@
 					"parentKey": "SPY_Blocs",
 					"name": "[fr]Liste des blocs de contrôle[/fr][en]List of control blocks[/en]",
 					"description": "",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -536,11 +536,11 @@
 					"parentKey": "SPY_Controls",
 					"name": "[fr]F17 Bloc de contrôle \"Si\"[/fr][en]F17 \"If\" control block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Si\".[/fr][en]Give the player the option of using \"If\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "ifThenInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -556,7 +556,7 @@
 						{
 							"label": "ifThenInScript",
 							"tag": "if",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "ifThenInLib >= 1 or ifThenInScript >= 1"
@@ -566,11 +566,11 @@
 					"parentKey": "SPY_Controls",
 					"name": "[fr]F18 Bloc de contrôle \"Si/Sinon\"[/fr][en]F18 \"If/Else\" control block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Si/Sinon\".[/fr][en]Give the player the option of using \"If/Else\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "ifElseInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -586,7 +586,7 @@
 						{
 							"label": "ifElseInScript",
 							"tag": "ifElse",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "ifElseInLib >= 1 or ifElseInScript >= 1"
@@ -596,11 +596,11 @@
 					"parentKey": "SPY_Controls",
 					"name": "[fr]F19 Bloc de contrôle \"Répéter plusieurs fois\"[/fr][en]F19 \"Repeat several times\" control block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Répéter plusieurs fois\".[/fr][en]Give the player the option of using \"Repeat several times\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "forLoopInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -616,7 +616,7 @@
 						{
 							"label": "forLoopInScript",
 							"tag": "for",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "forLoopInLib >= 1 or forLoopInScript >= 1"
@@ -626,11 +626,11 @@
 					"parentKey": "SPY_Controls",
 					"name": "[fr]F20 Bloc de contrôle \"Tant que\"[/fr][en]F20 \"While\" control block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Tant que\".[/fr][en]Give the player the option of using \"While\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "whileInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -646,7 +646,7 @@
 						{
 							"label": "whileInScript",
 							"tag": "while",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "whileInLib >= 1 or whileInScript >= 1"
@@ -656,11 +656,11 @@
 					"parentKey": "SPY_Controls",
 					"name": "[fr]F21 Bloc de contrôle \"Répéter sans fin\"[/fr][en]F21 \"Endless repetition\" control block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Répéter sans fin\".[/fr][en]Give the player the option of using \"Endless repetition\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "foreverInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -676,7 +676,7 @@
 						{
 							"label": "foreverInScript",
 							"tag": "forever",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "foreverInLib >= 1 or foreverInScript >= 1"
@@ -686,7 +686,7 @@
 					"parentKey": "SPY_Blocs",
 					"name": "[fr]Liste des opérateurs de contrôle[/fr][en]List of operator blocks[/en]",
 					"description": "",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -694,11 +694,11 @@
 					"parentKey": "SPY_Operators",
 					"name": "[fr]F22 Opérateur de contrôle \"Et\"[/fr][en]F22 \"And\" operator[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Et\".[/fr][en]Give the player the option of using \"And\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "andInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -714,7 +714,7 @@
 						{
 							"label": "andInScript",
 							"tag": "and",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "andInLib >= 1 or andInScript >= 1"
@@ -724,11 +724,11 @@
 					"parentKey": "SPY_Operators",
 					"name": "[fr]F23 Opérateur de contrôle \"Ou\"[/fr][en]F23 \"Or\" operator[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"0u\".[/fr][en]Give the player the option of using \"Or\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "orInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -744,7 +744,7 @@
 						{
 							"label": "orInScript",
 							"tag": "or",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "orInLib >= 1 or orInScript >= 1"
@@ -754,11 +754,11 @@
 					"parentKey": "SPY_Operators",
 					"name": "[fr]F24 Opérateur de contrôle \"Non\"[/fr][en]F24 \"Not\" operator[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Non\".[/fr][en]Give the player the option of using \"Not\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "notInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -774,7 +774,7 @@
 						{
 							"label": "notInScript",
 							"tag": "not",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "notInLib >= 1 or notInScript >= 1"
@@ -784,7 +784,7 @@
 					"parentKey": "SPY_Blocs",
 					"name": "[fr]Liste des capteurs[/fr][en]List of sensor blocks[/en]",
 					"description": "",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -792,11 +792,11 @@
 					"parentKey": "SPY_Captors",
 					"name": "[fr]F25 Capteur \"Mur détecté en face\"[/fr][en]F25 \"Wall detected in front\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Mur détecté en face\".[/fr][en]Give the player the option of using \"Wall detected in front\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "wallFrontInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -812,7 +812,7 @@
 						{
 							"label": "wallFrontInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -828,11 +828,11 @@
 					"parentKey": "SPY_Captors",
 					"name": "[fr]F26 Capteur \"Mur détecté à gauche\"[/fr][en]F26 \"Wall detected on the left\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Mur détecté à gauche\".[/fr][en]Give the player the option of using \"Wall detected on the left\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "wallLeftInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -848,7 +848,7 @@
 						{
 							"label": "wallLeftInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -864,11 +864,11 @@
 					"parentKey": "SPY_Captors",
 					"name": "[fr]F27 Capteur \"Mur détecté à droite\"[/fr][en]F27 \"Wall detected on the right\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Mur détecté à droite\".[/fr][en]Give the player the option of using \"Wall detected on the right\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "wallRightInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -884,7 +884,7 @@
 						{
 							"label": "wallRightInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -900,11 +900,11 @@
 					"parentKey": "SPY_Captors",
 					"name": "[fr]F28 Capteur \"Passage détecté en face\"[/fr][en]F28 \"Path in front\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Passage détecté en face\".[/fr][en]Give the player the option of using \"Path in front\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "pathFrontInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -920,7 +920,7 @@
 						{
 							"label": "pathFrontInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -936,11 +936,11 @@
 					"parentKey": "SPY_Captors",
 					"name": "[fr]F29 Capteur \"Passage détecté à gauche\"[/fr][en]F29 \"Path ont the left\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Passage détecté à gauche\".[/fr][en]Give the player the option of using \"Path ont the left\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "pathLeftInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -956,7 +956,7 @@
 						{
 							"label": "pathLeftInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -972,11 +972,11 @@
 					"parentKey": "SPY_Captors",
 					"name": "[fr]F30 Capteur \"Passage détecté à droite\"[/fr][en]F30 \"Path ont the right\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Passage détecté à droite\".[/fr][en]Give the player the option of using \"Path ont the right\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "pathRightInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -992,7 +992,7 @@
 						{
 							"label": "pathRightInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -1008,11 +1008,11 @@
 					"parentKey": "SPY_Captors",
 					"name": "[fr]F31 Capteur \"Ennemi détecté en face\"[/fr][en]F31 \"Enemy detected in front\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Ennemi détecté en face\".[/fr][en]Give the player the option of using \"Enemy detected in front\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "enemyInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -1028,7 +1028,7 @@
 						{
 							"label": "enemyInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -1044,11 +1044,11 @@
 					"parentKey": "SPY_Captors",
 					"name": "[fr]F32 Capteur \"Zone surveillée en face\"[/fr][en]F32 \"Guarded area in front\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Zone surveillée en face\".[/fr][en]Give the player the option of using \"Guarded area in front\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "redAreaInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -1064,7 +1064,7 @@
 						{
 							"label": "redAreaInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -1080,11 +1080,11 @@
 					"parentKey": "SPY_Captors",
 					"name": "[fr]F33 Capteur \"Porte détectée en face\"[/fr][en]F33 \"Door detected in front\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Porte détectée en face\".[/fr][en]Give the player the option of using \"Door detected in front\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "fieldGateInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -1100,7 +1100,7 @@
 						{
 							"label": "fieldGateInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -1116,11 +1116,11 @@
 					"parentKey": "SPY_Captors",
 					"name": "[fr]F34 Capteur \"Terminal détecté sur ma position\"[/fr][en]F34 \"Terminal detected on my position\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Terminal détecté sur ma position\".[/fr][en]Give the player the option of using \"Terminal detected on my position\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "terminalInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -1136,7 +1136,7 @@
 						{
 							"label": "terminalInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -1152,11 +1152,11 @@
 					"parentKey": "SPY_Captors",
 					"name": "[fr]F35 Capteur \"Sortie détectée sur ma position\"[/fr][en]F35 \"Exit detected on my position\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Sortie détectée sur ma position\".[/fr][en]Give the player the option of using \"Exit detected on my position\" blocks.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "exitInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -1172,7 +1172,7 @@
 						{
 							"label": "exitInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -1193,7 +1193,7 @@
 					"parentKey": "",
 					"name": "[fr]C1 Définir des abstractions / généraliser[/fr][en]C1 Abstracting away / generalizing[/en]",
 					"description": "[fr]Le PIAF est un référentiel de compétences de la Pensée Informatique et Algorithmique dans l'enseignement Fondamental (PIAF). Il est décomposé en 6 compétences maîtresses.[/fr][en]The PIAF is a repository of competencies for computational and algorithmic thinking in fundamental education. It is broken down into 6 core competencies.[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -1201,11 +1201,11 @@
 					"parentKey": "C1",
 					"name": "[fr]C1.1 Nommer des objets et séquence d'actions[/fr][en]C1.1 Name objects and sequence of actions[/en]",
 					"description": "[fr]Être capable de donner des noms à des objets, des actions et des séquences d'actions.[/fr][en]Being able to give names to objects, actions and sequences of actions.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "ScriptEditable",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "editMode",
 									"constraint": "=",
@@ -1221,14 +1221,14 @@
 					"parentKey": "C1",
 					"name": "[fr]C1.2 Différencier objet et action, et actions atomiques et non-atomiques[/fr][en]C1.2 Differentiate object and action, and atomic actions and non-atomic actions[/en]",
 					"description": "[fr]Être capable de dire si quelque chose (image, expression, phrase) fait référence à un objet, à une action, ou bien à une séquence d'actions.[/fr][en]Being able to tell whether something (picture, sentence) refers to an object, an action, or else a sequence of actions.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "ActionInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
 								},
 								{
@@ -1241,10 +1241,10 @@
 						{
 							"label": "ActionInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
 								}
 							]
@@ -1252,7 +1252,7 @@
 						{
 							"label": "TurnLeftInLib_x1",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -1268,7 +1268,7 @@
 						{
 							"label": "TurnRightInLib_x1",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -1284,7 +1284,7 @@
 						{
 							"label": "TurnLeftInLib_x2",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -1300,7 +1300,7 @@
 						{
 							"label": "TurnRightInLib_x2",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -1316,7 +1316,7 @@
 						{
 							"label": "TurnLeftInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -1327,7 +1327,7 @@
 						{
 							"label": "TurnRightInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -1338,7 +1338,7 @@
 						{
 							"label": "TurnBackInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -1354,7 +1354,7 @@
 						{
 							"label": "TurnBackInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -1365,10 +1365,10 @@
 						{
 							"label": "CaptorInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
@@ -1381,10 +1381,10 @@
 						{
 							"label": "CaptorInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
@@ -1397,7 +1397,7 @@
 					"parentKey": "C1",
 					"name": "[fr]C1.3 Identifier les paramètres d'entrée d'une séquence d'actions[/fr][en]C1.3 Identify the input parameters of a sequence of actions[/en]",
 					"description": "[fr]Être capable de dire ce qui est requis (objet ou séquence d'actions) pour effectuer une séquence d'actions.[/fr][en]Being able to tell what is required (objects or sequences of actions) in order to perform a sequence of actions.[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -1405,7 +1405,7 @@
 					"parentKey": "C1",
 					"name": "[fr]C1.4 Décrire le résultat d'une séquence d'actions[/fr][en]C1.4 Describe the outcome of a sequence of actions[/en]",
 					"description": "[fr]Après avoir exécuté une séquence d'actions (qu'il s'agisse d'une séquence informelle, d'un algorithme, ou d'un programme), être capable de décrire cette séquence. L'apprenant doit décrire la situation finale (quels objets ont éventuellement été modifiés / créés / supprimés, ou quelle solution à un problème a été trouvée).[/fr][en]After executing a sequence of actions (informal, algorithm, program), being able to tell what happened. The learner should describe the final situation (which objects have been modified / created / suppressed, or what solution to a problem has been found).[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -1413,11 +1413,11 @@
 					"parentKey": "C1",
 					"name": "[fr]C1.5 Prédire le résultat d'une séquence d'actions[/fr][en]C1.5 Predict the outcome of a sequence of actions[/en]",
 					"description": "[fr]Être capable de dire, à partir d'une séquence d'actions, ce qui se passera si elle est exécutée. Contrairement à la compétence 1.4, cette compétence consiste à fournir une prédiction sans exécuter réellement la séquence d'actions.[/fr][en]Being able to tell, from a sequence of actions, what will happen if it is executed. In contrast to competency 1.4, this competency is about providing a prediction without actually executing the sequence of actions.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "EnemyWithScriptAndRange",
 							"tag": "enemy",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "inputLine",
 									"constraint": "sameValue",
@@ -1434,7 +1434,7 @@
 						{
 							"label": "EnemyWithScriptAndSelf",
 							"tag": "enemy",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "inputLine",
 									"constraint": "sameValue",
@@ -1451,7 +1451,7 @@
 						{
 							"label": "ScriptWithContent",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "outputLine",
 									"constraint": "sameValue",
@@ -1471,14 +1471,14 @@
 					"parentKey": "C1",
 					"name": "[fr]C1.6 Utiliser des objets dont la valeur peut changer[/fr][en]C1.6 Using objects whose value can change[/en]",
 					"description": "[fr]Être capable de manipuler des valeurs qui peuvent varier en fonction du contexte, en utilisant des abstractions nommées (appelées également des identificateurs ou encore identifiants).[/fr][en]Being able to handle values which may vary depending on the context, and refer to them using named abstractions (also known as identifiers).[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "CaptorInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
@@ -1491,10 +1491,10 @@
 						{
 							"label": "CaptorInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
@@ -1502,10 +1502,10 @@
 						{
 							"label": "ControlInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "While|IfThen|IfElse"
 								},
 								{
@@ -1518,22 +1518,22 @@
 						{
 							"label": "IfInScript",
 							"tag": "if",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "IfElseInScript",
 							"tag": "ifElse",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "WhileInScript",
 							"tag": "while",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ActivateInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -1549,7 +1549,7 @@
 						{
 							"label": "ActivateInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -1560,7 +1560,7 @@
 						{
 							"label": "DoorWithSlotConnected",
 							"tag": "door",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "slotId",
 									"constraint": "sameValue",
@@ -1578,16 +1578,16 @@
 					"parentKey": "C1",
 					"name": "[fr]C1.7 Reconnaître, parmi des objets et séquences d’actions connus, lesquels peuvent être utilisés pour atteindre un nouvel objectif[/fr][en]C1.7 Recognize existing objects and (sequences of) actions that can be used to reach a similar goal[/en]",
 					"description": "[fr]Étant donné un nouveau problème (c'est-à-dire que la solution est a priori inconnue), être capable de réaliser qu'il est similaire à un problème connu dont il est possible de réutiliser tout ou partie de la solution pour résoudre ce nouveau problème.[/fr][en]Given a new problem (that is, a problem whose solution is not yet known), being able to realise that it is similar to an already known problem, and that an already known solution to this problem can be partly or fully reused to solve the new problem.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ScriptEditable",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "editMode",
 									"constraint": "=",
@@ -1598,12 +1598,12 @@
 						{
 							"label": "AllScript",
 							"tag": "script",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "CorrectScript",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -1622,7 +1622,7 @@
 					"parentKey": "",
 					"name": "[fr]C2 Composer / Décomposer une séquence d'actions[/fr][en]C2 Compose / decompose a sequence of actions[/en]",
 					"description": "[fr]Le PIAF est un référentiel de compétences de la Pensée Informatique et Algorithmique dans l'enseignement Fondamental (PIAF). Il est décomposé en 6 compétences maîtresses.[/fr][en]The PIAF is a repository of competencies for computational and algorithmic thinking in fundamental education. It is broken down into 6 core competencies.[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -1630,14 +1630,14 @@
 					"parentKey": "C2",
 					"name": "[fr]C2.1 Ordonner une séquence d'actions pour atteindre un objectif[/fr][en]C2.1 Order a sequence of actions to reach a goal[/en]",
 					"description": "[fr]Étant donné une liste non ordonnée d'actions et un but, être capable de combiner ces actions dans un ordre valide pour construire une séquence qui permet d'atteindre ce but.[/fr][en]Given an unordered list of actions and a goal, being able to combine these actions in a valid order to build a sequence that achieves the goal.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "AvailableActionInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
 								},
 								{
@@ -1650,7 +1650,7 @@
 						{
 							"label": "UnlimitedActionInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "limit",
 									"constraint": "=",
@@ -1661,7 +1661,7 @@
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "UnlimitedActionInLib = 0 and DragDropDisabled = 0 and AvailableActionInLib >= 1"
@@ -1671,21 +1671,21 @@
 					"parentKey": "C2",
 					"name": "[fr]C2.2 Compléter une séquence d'actions pour atteindre un objectif simple[/fr][en]C2.2 Complete a sequence of actions to reach a simple goal[/en]",
 					"description": "[fr]Étant donné une séquence d'actions limitée et un objectif simple (c'est-à-dire ne s'appuyant pas sur des concepts avancés comme les conditions et les boucles), être capable d'ajouter les actions manquantes à la séquence pour atteindre l'objectif.[/fr][en]Given a limited sequence of actions and a simple goal (not relying on concepts such as conditions and loops), being able to complete the sequence of actions (by adding missing actions) to reach the goal.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "AllScript",
 							"tag": "script",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "BuggedScript",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -1699,10 +1699,10 @@
 						{
 							"label": "AvailableActionInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
 								},
 								{
@@ -1715,10 +1715,10 @@
 						{
 							"label": "ControlInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "ForLoop|Forever|While|IfThen|IfElse"
 								},
 								{
@@ -1731,27 +1731,27 @@
 						{
 							"label": "IfInScript",
 							"tag": "if",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "IfElseInScript",
 							"tag": "ifElse",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForInScript",
 							"tag": "for",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "WhileInScript",
 							"tag": "while",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForeverInScript",
 							"tag": "forever",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "DragDropDisabled = 0 and BuggedScript = AllScript and BuggedScript >= 1 and AvailableActionInLib >=1 and ControlInLib = 0 and IfInScript = 0 and IfElseInScript = 0 and ForInScript = 0 and WhileInScript = 0 and ForeverInScript = 0"
@@ -1761,14 +1761,14 @@
 					"parentKey": "C2",
 					"name": "[fr]C2.3 Créer une séquence d'actions pour atteindre un objectif simple[/fr][en]C2.3 Create a sequence of actions to reach a simple goal[/en]",
 					"description": "[fr]Étant donné un objectif simple (c'est-à-dire ne s'appuyant pas sur des concepts avancés comme les conditions et les boucles), être capable d'identifier toutes les actions nécessaires et les mettre dans le bon ordre.[/fr][en]Given a simple goal (not relying on concepts such as conditions and loops), being able to identify all the necessary actions and put them in the right order.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "AvailableActionInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
 								},
 								{
@@ -1781,10 +1781,10 @@
 						{
 							"label": "ActionInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
 								}
 							]
@@ -1792,15 +1792,15 @@
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ControlInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "ForLoop|Forever|While|IfThen|IfElse"
 								},
 								{
@@ -1813,27 +1813,27 @@
 						{
 							"label": "IfInScript",
 							"tag": "if",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "IfElseInScript",
 							"tag": "ifElse",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForInScript",
 							"tag": "for",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "WhileInScript",
 							"tag": "while",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForeverInScript",
 							"tag": "forever",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "DragDropDisabled = 0 and (AvailableActionInLib >= 1 or ActionInScript >= 1) and ControlInLib = 0 and IfInScript = 0 and IfElseInScript = 0 and ForInScript = 0 and WhileInScript = 0 and ForeverInScript = 0"
@@ -1843,14 +1843,14 @@
 					"parentKey": "C2",
 					"name": "[fr]C2.4 Créer une séquence d'actions pour atteindre un objectif complexe[/fr][en]C2.4 Create a sequence of actions to reach a complex goal[/en]",
 					"description": "[fr]Étant donné un objectif complexe (c'est-à-dire un objectif exigeant des conditions simples ou complexes ou des boucles), être capable de définir une séquence d'actions permettant de réaliser cet objectif (i.e., identifier et combiner correctement les actions nécessaires).[/fr][en]Being able to identify and combine actions to reach a complex goal (goal requiring simple or complex conditions, loops, etc.).[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "AvailableActionInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
 								},
 								{
@@ -1863,10 +1863,10 @@
 						{
 							"label": "ActionInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
 								}
 							]
@@ -1874,15 +1874,15 @@
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ControlInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "ForLoop|Forever|While|IfThen|IfElse"
 								},
 								{
@@ -1895,27 +1895,27 @@
 						{
 							"label": "IfInScript",
 							"tag": "if",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "IfElseInScript",
 							"tag": "ifElse",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForInScript",
 							"tag": "for",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "WhileInScript",
 							"tag": "while",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForeverInScript",
 							"tag": "forever",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "DragDropDisabled = 0 and (AvailableActionInLib >= 1 or ActionInScript >= 1) and (ControlInLib >= 1 or IfInScript >= 1 or IfElseInScript >= 1 or ForInScript >= 1 or WhileInScript >= 1 or ForeverInScript >= 1)"
@@ -1925,7 +1925,7 @@
 					"parentKey": "C2",
 					"name": "[fr]C2.5 Combiner des séquences d'actions pour atteindre un objectif[/fr][en]C2.5 Combine sequences of actions to reach a goal[/en]",
 					"description": "[fr]Étant donné des séquences d'actions permettant de réaliser certains objectifs, être capable de dire si celles-ci sont pertinentes pour un nouvel objectif, et si oui de les combiner (ordonner) pour réaliser celui-ci.[/fr][en]Given already known sequences of actions achieving known goals, being able (i) to tell, in a given context (new goal to achieve), relevant from irrelevant sequences, and (ii) to connect them together in a valid order (that is, which allows to reach the new goal).[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -1933,11 +1933,11 @@
 					"parentKey": "C2",
 					"name": "[fr]C2.6 Décomposer des objectifs en sous-objectifs plus simples[/fr][en]C2.6 Decompose goals into simpler subgoals[/en]",
 					"description": "[fr]Être capable de diviser un objectif complexe en plusieurs sous-objectifs qui peuvent être atteints plus facilement. Ceux-ci peuvent alors être réalisés par différentes personnes.[/fr][en]Given a complex goal, being able to split it into several subgoals, which can be achieved more easily. The subgoals can then be tackled by different people.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "ExecutionLimit",
 							"tag": "executionLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "amount",
 									"constraint": "=",
@@ -1953,7 +1953,7 @@
 					"parentKey": "",
 					"name": "[fr]C3 Contrôler une séquence d'actions[/fr][en]C3 Control a sequence of actions[/en]",
 					"description": "[fr]Le PIAF est un référentiel de compétences de la Pensée Informatique et Algorithmique dans l'enseignement Fondamental (PIAF). Il est décomposé en 6 compétences maîtresses.[/fr][en]The PIAF is a repository of competencies for computational and algorithmic thinking in fundamental education. It is broken down into 6 core competencies.[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -1961,16 +1961,16 @@
 					"parentKey": "C3",
 					"name": "[fr]C3.1 Répéter une séquence d'actions un nombre donné de fois[/fr][en]C3.1 Repeat a sequence of actions a given number of times[/en]",
 					"description": "[fr]Être capable d'utiliser de manière appropriée les répétitions d'actions (ou de séquences d'actions) un certain nombre de fois, afin d'atteindre un objectif.[/fr][en]Being able to appropriately use repetitions of (sequences of) actions a given number of times in order to reach a goal.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -1986,7 +1986,7 @@
 						{
 							"label": "ForInScript",
 							"tag": "for",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "DragDropDisabled = 0 and (ForInLib >= 1 or ForInScript >= 1)"
@@ -1996,16 +1996,16 @@
 					"parentKey": "C3",
 					"name": "[fr]C3.2 Répéter une séquence d'actions jusqu'à ce qu'un objectif soit atteint[/fr][en]C3.2 Repeat a sequence of actions until a goal has been reached[/en]",
 					"description": "[fr]Être capable de contrôler les répétitions d'actions (ou de séquences d'actions) jusqu'à ce qu'une condition soit remplie, afin d'atteindre un objectif.[/fr][en]Being able to control repetitions of (sequences of) actions until a condition is met, in order to reach a goal.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "WhileInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "=",
@@ -2021,15 +2021,15 @@
 						{
 							"label": "WhileInScript",
 							"tag": "while",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "CaptorInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
@@ -2042,10 +2042,10 @@
 						{
 							"label": "CaptorInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
@@ -2053,10 +2053,10 @@
 						{
 							"label": "OperatorInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "AndOperator|OrOperator|NotOperator"
 								},
 								{
@@ -2069,17 +2069,17 @@
 						{
 							"label": "AndInScript",
 							"tag": "and",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "OrInScript",
 							"tag": "or",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "NotInScript",
 							"tag": "not",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "DragDropDisabled = 0 and (WhileInLib >= 1 or WhileInScript >= 1) and (CaptorInLib >= 1 or CaptorInScript >= 1) and OperatorInLib = 0 and AndInScript = 0 and OrInScript = 0 and NotInScript = 0"
@@ -2089,19 +2089,19 @@
 					"parentKey": "C3",
 					"name": "[fr]C3.3 Intégrer une condition simple dans une séquence d'actions[/fr][en]C3.3 Integrate a simple condition into a sequence of actions[/en]",
 					"description": "[fr]Être capable d'utiliser des conditions simples (reposant sur un critère) pour permettre (ou interdire) certaines séquences d'actions.[/fr][en]Being able to use simple conditions (a simple condition can be expressed using a single criterion) to allow (or disallow) some (sequences of) actions.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "IfOrIfElseInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "IfThen|IfElse"
 								},
 								{
@@ -2114,20 +2114,20 @@
 						{
 							"label": "IfInScript",
 							"tag": "if",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "IfElseInScript",
 							"tag": "ifElse",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "CaptorInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
@@ -2140,10 +2140,10 @@
 						{
 							"label": "CaptorInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
@@ -2151,10 +2151,10 @@
 						{
 							"label": "OperatorInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "AndOperator|OrOperator|NotOperator"
 								},
 								{
@@ -2167,17 +2167,17 @@
 						{
 							"label": "AndInScript",
 							"tag": "and",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "OrInScript",
 							"tag": "or",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "NotInScript",
 							"tag": "not",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "DragDropDisabled = 0 and (IfOrIfElseInLib >= 1 or IfInScript >= 1 or IfElseInScript >= 1) and (CaptorInLib >= 1 or CaptorInScript >= 1) and OperatorInLib = 0 and AndInScript = 0 and OrInScript = 0 and NotInScript = 0"
@@ -2187,19 +2187,19 @@
 					"parentKey": "C3",
 					"name": "[fr]C3.4 Intégrer une condition complexe dans une séquence d'actions[/fr][en]C3.4 Integrate a complex condition into a a sequence of actions[/en]",
 					"description": "[fr]Être capable d'utiliser des conditions complexes (c'est-à-dire reposant sur plusieurs critères, qui sont combinés au moyen des opérateurs logiques \"et\", \"ou\", \"ne pas\") pour permettre (ou interdire) certaines séquences d'actions.[/fr][en]Being able to combine conditions by means of logical operators (and, or, not) to allow (or disallow) some (sequences of) actions.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ControlInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "IfThen|IfElse|While"
 								},
 								{
@@ -2212,25 +2212,25 @@
 						{
 							"label": "IfInScript",
 							"tag": "if",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "IfElseInScript",
 							"tag": "ifElse",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "WhileInScript",
 							"tag": "while",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "CaptorInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
@@ -2243,10 +2243,10 @@
 						{
 							"label": "CaptorInScript",
 							"tag": "action",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
@@ -2254,10 +2254,10 @@
 						{
 							"label": "OperatorInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "AndOperator|OrOperator|NotOperator"
 								},
 								{
@@ -2270,17 +2270,17 @@
 						{
 							"label": "AndInScript",
 							"tag": "and",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "OrInScript",
 							"tag": "or",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "NotInScript",
 							"tag": "not",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "DragDropDisabled = 0 and (ControlInLib >= 1 or IfInScript >= 1 or IfElseInScript >= 1 or WhileInScript >= 1) and (CaptorInLib >= 1 or CaptorInScript >= 1) and (OperatorInLib >= 1 or AndInScript >= 1 or OrInScript >= 1 or NotInScript >= 1)"
@@ -2290,7 +2290,7 @@
 					"parentKey": "",
 					"name": "[fr]C4 Évaluer des objets ou des séquences d'actions[/fr][en]C4 Evaluate objects or sequences of actions[/en]",
 					"description": "[fr]Le PIAF est un référentiel de compétences de la Pensée Informatique et Algorithmique dans l'enseignement Fondamental (PIAF). Il est décomposé en 6 compétences maîtresses.[/fr][en]The PIAF is a repository of competencies for computational and algorithmic thinking in fundamental education. It is broken down into 6 core competencies.[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -2298,7 +2298,7 @@
 					"parentKey": "C4",
 					"name": "[fr]C4.1 Comparer deux objets selon un critère donné[/fr][en]C4.1 Compare two objects according to a given criterion[/en]",
 					"description": "[fr]Étant donné deux objets et un critère de comparaison, être capable de comparer ces objets par rapport au critère.[/fr][en]Given two objects, and a comparison criterion, being able to compare these objects with respect to the criterion.[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -2306,21 +2306,21 @@
 					"parentKey": "C4",
 					"name": "[fr]C4.2 Comparer deux séquences d'actions selon un critère donné[/fr][en]C4.2 Compare two sequences of actions according to a given criterion[/en]",
 					"description": "[fr]Être capable de comparer des séquences d'actions selon divers critères : en termes de lisibilité, de nombre de lignes, de temps d'exécution ou autre.[/fr][en]Being able to compare two sequences of actions with respect to several criteria: readability, number of lines, execution time, or other criteria.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "AllScript",
 							"tag": "script",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ScriptEditable",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "editMode",
 									"constraint": "=",
@@ -2331,7 +2331,7 @@
 						{
 							"label": "NonOptimalScript",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -2342,7 +2342,7 @@
 						{
 							"label": "CorrectScript",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -2358,21 +2358,21 @@
 					"parentKey": "C4",
 					"name": "[fr]C4.3 Améliorer une séquence d'actions par rapport à un critère donné[/fr][en]C4.3 Improve a sequence of actions according to a given criterion[/en]",
 					"description": "[fr]Être capable de réfléchir à la possibilité d'améliorer une séquence d'actions par rapport à un critère et modifier cette séquence d'actions en conséquence.[/fr][en]Being able to think about the possibility to improve a sequence of actions with respect to a criterion and modify it accordingly.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "AllScript",
 							"tag": "script",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "NonOptimalScript",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -2388,7 +2388,7 @@
 					"parentKey": "",
 					"name": "[fr]C5 Manipuler des représentations formelles[/fr][en]C5 Handling formal representations[/en]",
 					"description": "[fr]Le PIAF est un référentiel de compétences de la Pensée Informatique et Algorithmique dans l'enseignement Fondamental (PIAF). Il est décomposé en 6 compétences maîtresses.[/fr][en]The PIAF is a repository of competencies for computational and algorithmic thinking in fundamental education. It is broken down into 6 core competencies.[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -2396,19 +2396,19 @@
 					"parentKey": "C5",
 					"name": "[fr]C5.1 Représenter des objets ou séquences d'actions au moyen d'une représentation formelle[/fr][en]C5.1 Represent objects or sequences of actions through one formal representation[/en]",
 					"description": "[fr]Être capable de représenter un objet ou une action en utilisant un mode de représentation défini avec précision (non ambigu).[/fr][en]Being able to represent an object or an action by using a precisely defined (i.e. non-ambiguous) representation mode.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "AvailableActionInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
 								},
 								{
@@ -2426,16 +2426,16 @@
 					"parentKey": "C5",
 					"name": "[fr]C5.2 Traduire des objets ou séquences d'actions entre représentations formelles[/fr][en]C5.2 Translate objects or sequences of actions between formal representations[/en]",
 					"description": "[fr]Être capable d'utiliser un autre langage / code formel pour représenter des objets ou séquences d'actions formellement définis.[/fr][en]Being able to use another formal language / code to represent a formally described object or sequence of actions.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "Fog",
 							"tag": "fog",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "HideExits",
 							"tag": "hideExits",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "Fog >= 1 or HideExits >= 1"
@@ -2445,7 +2445,7 @@
 					"parentKey": "",
 					"name": "[fr]C6 Construire une séquence d'actions de manière itérative[/fr][en]C6 Build a sequence of actions iteratively[/en]",
 					"description": "[fr]Le PIAF est un référentiel de compétences de la Pensée Informatique et Algorithmique dans l'enseignement Fondamental (PIAF). Il est décomposé en 6 compétences maîtresses.[/fr][en]The PIAF is a repository of competencies for computational and algorithmic thinking in fundamental education. It is broken down into 6 core competencies.[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -2453,11 +2453,11 @@
 					"parentKey": "C6",
 					"name": "[fr]C6.1 Vérifier si une séquence d'actions atteint un objectif donné[/fr][en]C6.1 Verify if a sequence of actions reaches a given goal[/en]",
 					"description": "[fr]Être capable de vérifier si une séquence d'actions donnée produit ou non le résultat escompté.[/fr][en]Being able to verify whether a given sequence of actions produces the expected outcome or not.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "containsRobot",
 							"tag": "player",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "containsRobot >= 1"
@@ -2467,7 +2467,7 @@
 					"parentKey": "C6",
 					"name": "[fr]C6.2 Repérer des erreurs dans une séquence d'actions[/fr][en]C6.2 Notice errors in a sequence of actions[/en]",
 					"description": "[fr]En cas de séquence d'actions erronée, être capable de localiser la ou les erreurs.[/fr][en]In case of having a faulty sequence of actions, being capable of identifying the error(s)[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -2475,21 +2475,21 @@
 					"parentKey": "C6",
 					"name": "[fr]C6.3 Corriger une séquence d'actions pour atteindre un objectif donné[/fr][en]C6.3 Fix a sequence of actions for reaching a given goal[/en]",
 					"description": "[fr]A partir d'une séquence d'actions donnée, qui ne permet pas d'atteindre un but donné, être capable de modifier cette séquence d'actions pour atteindre le but.[/fr][en]From a given sequence of actions which fails to reach a given goal, being able to modify it so that it does.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "AllScript",
 							"tag": "script",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "BuggedScript",
 							"tag": "script",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
@@ -2505,16 +2505,16 @@
 					"parentKey": "C6",
 					"name": "[fr]C6.4 Étendre ou modifier une séquence d'actions pour atteindre un nouvel objectif[/fr][en]C6.4 Extend or modify a sequence of actions to reach a new goal[/en]",
 					"description": "[fr]A partir d'une séquence d'actions donnée dont le résultat est connu (la séquence est complète par rapport à un objectif précédent), pouvoir la réutiliser et l'adapter pour atteindre un autre (nouvel) objectif.[/fr][en]From a given sequence of actions whose outcome is known (the sequence is complete with respect to a previous goal), being able to reuse and update it to reach another (new) goal.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "RobotsInSameLine",
 							"tag": "player",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "inputLine",
 									"constraint": "sameValue",
@@ -2526,10 +2526,10 @@
 						{
 							"label": "ActionInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
 								},
 								{
@@ -2552,7 +2552,7 @@
 					"parentKey": "",
 					"name": "[fr]DOMAINE 3 : Création de contenus[/fr][en]DOMAIN 3: Content creation[/en]",
 					"description": "[fr]Le CRCN (Cadre de Référence des Compétences Numériques) est inspiré du cadre européen DigComp 2.1 (Digital Competence Framework for Citizens, 2017). Il est entré en vigueur à la rentrée scolaire 2019. Il est valable de l'école primaire à l'université.<br><br>Un bilan de la maîtrise des compétences numériques des élèves est réalisé en classe de cours moyen deuxième année (CM2) et en classe de sixième pour le cycle 3.<br><br>Il fixe 16 compétences numériques attendues dans 5 domaines d’activité et huit niveaux de maîtrise de ces compétences (article D. 121-1 du code de l’éducation).<br><br>SPY permet de travailler la compétence 3.4 \"Programmer\" du domaine 3 \"Création de contenus\".[/fr][en]The CRCN (Cadre de Référence des Compétences Numériques) is inspired by the European framework DigComp 2.1 (Digital Competence Framework for Citizens, 2017). It entered into force at the start of the 2019 school year. It is valid from primary school to university.<br><br>An assessment of students' mastery of digital skills is carried out in grade 5. It sets 16 digital skills expected in 5 areas of activity and eight levels of mastery of these skills (article D. 121-1 of the french education code). SPY allows you to work on skill 3.4 \"Programming\" of domain 3 \"Content creation\".[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -2560,7 +2560,7 @@
 					"parentKey": "D3",
 					"name": "[fr]Compétence 3.4 Programmer[/fr][en]Skill 3.4 \"Programming\"[/en]",
 					"description": "[fr]<size=120%>De quoi s’agit-il ? (Décret n°2019-919 du 30 août 2019)</size><br>Écrire des programmes et des algorithmes pour répondre à un besoin (automatiser une tâche répétitive, accomplir des tâches complexes ou chronophages, résoudre un problème logique...) et pour développer un contenu riche (jeu, site web...) avec des environnements de développement informatique simples, des logiciels de planification de tâches...<br><br><size=120%>Références au socle commun de connaissances, de compétences et de culture</size><br><margin=1em>* Savoir que des langages informatiques sont utilisés pour programmer des outils numériques et réaliser des traitements automatiques de données. (Domaine 1– Comprendre, s'exprimer en utilisant les langages mathématiques, scientifiques et informatiques)<br>* Connaître les principes de base de l'algorithmique et de la conception des programmes informatiques. (Domaine 1– Comprendre, s'exprimer en utilisant les langages mathématiques, scientifiques et informatiques)<br>* Mettre en œuvre les principes de base de l'algorithmique pour créer des applications simples. (Domaine 1– Comprendre, s'exprimer en utilisant les langages mathématiques, scientifiques et informatiques)</margin><br><br><size=120%>Thématiques et mots-clés associés (Pix)</size><br>Algorithme et programme ; représentation et codage de l'information ; langages de programmation ; complexité ; pensée algorithmique et informatique ; collecte et exploitation de données massives ; intelligence artificielle et robots.[/fr][en]<size=120%>What is it about ? (French Decree n°2019-919 of August 30, 2019)</size><br>Write programs and algorithms to meet a need (automate a repetitive task, accomplish complex or time-consuming tasks, solve a logical problem...) and to develop rich content (game, website...) with environments software for simple computer development, task planning software, etc.<br><br><size=120%>References to the common core of knowledge, skills and culture</size><br><margin=1em>* Know that computer languages are used to program digital tools and perform automatic data processing. (Area 1– Understanding, expressing oneself using mathematical, scientific and computer languages)<br>* Implement the basic principles of algorithms to create simple applications. (Area 1– Understanding, expressing oneself using mathematical, scientific and computer languages)</margin><br><br><size=120%>Themes and associated keywords (Pix)</size><br>Algorithm and program; information representation and coding; Programming languages ​​; complexity; algorithmic and computational thinking; collection and exploitation of massive data; artificial intelligence and robots.[/en]",
-					"constraints": [],
+					"filters": [],
 					"rule": ""
 				},
 				{
@@ -2568,14 +2568,14 @@
 					"parentKey": "C3.4",
 					"name": "[fr]Niveau 1[/fr][en]Level 1[/en]",
 					"description": "[fr]Lire et construire un algorithme qui comprend des instructions simples.<br><br>Application à SPY : Niveaux qui contiennent que des blocs d'action en quantité limitée (pas de blocs de contrôle).[/fr][en]Read and build an algorithm that includes simple instructions.<br><br>Application to SPY: Levels that contain only limited action blocks (no control blocks).[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "AvailableControlInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "IfThen|IfElse|ForLoop|Wait|While|Forever"
 								},
 								{
@@ -2588,7 +2588,7 @@
 						{
 							"label": "UnlimitedBlockInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "limit",
 									"constraint": "=",
@@ -2599,27 +2599,27 @@
 						{
 							"label": "IfInScript",
 							"tag": "if",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "IfElseInScript",
 							"tag": "ifElse",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForInScript",
 							"tag": "for",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "WhileInScript",
 							"tag": "while",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForeverInScript",
 							"tag": "forever",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "AvailableControlInLib = 0 and UnlimitedBlockInLib = 0 and IfInScript = 0 and IfElseInScript = 0 and ForInScript = 0 and WhileInScript = 0 and ForeverInScript = 0"
@@ -2629,14 +2629,14 @@
 					"parentKey": "C3.4",
 					"name": "[fr]Niveau 2[/fr][en]Level 2[/en]",
 					"description": "[fr]Réaliser un programme simple.<br><br>Application à SPY : Niveaux qui contiennent que des blocs d'action en quantité illimitée (pas de blocs de contrôle).[/fr][en]Make a simple program.<br><br>Application to SPY: Levels that only contain unlimited action blocks (no control blocks).[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "AvailableControlInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "IfThen|IfElse|ForLoop|Wait|While|Forever"
 								},
 								{
@@ -2649,7 +2649,7 @@
 						{
 							"label": "UnlimitedBlockInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "limit",
 									"constraint": "=",
@@ -2660,27 +2660,27 @@
 						{
 							"label": "IfInScript",
 							"tag": "if",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "IfElseInScript",
 							"tag": "ifElse",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForInScript",
 							"tag": "for",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "WhileInScript",
 							"tag": "while",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForeverInScript",
 							"tag": "forever",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "AvailableControlInLib = 0 and UnlimitedBlockInLib >= 1 and IfInScript = 0 and IfElseInScript = 0 and ForInScript = 0 and WhileInScript = 0 and ForeverInScript = 0"
@@ -2690,14 +2690,14 @@
 					"parentKey": "C3.4",
 					"name": "[fr]Niveau 3[/fr][en]Level 3[/en]",
 					"description": "[fr]* Développer un programme pour répondre à un problème à partir d'instructions simples d'un langage de programmation<br>* Modifier un algorithme simple en faisant évoluer ses éléments de programmation<br>* Mettre au point et exécuter un programme simple commandant un système réel ou un système numérique<br><br>Application à SPY : Niveaux qui contiennent des blocs d'action et des structures de contôle à l'exception des structures de contrôle conditionnelles.[/fr][en]* Develop a program to solve a problem from simple instructions in a programming language<br>* Modify a simple algorithm by changing its programming elements<br>* Develop and execute a simple program controlling a real system or a digital system.<br><br>Application to SPY: Levels that contain action blocks and control structures except conditional control structures.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "AvailableLoopControlInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "ForLoop|Forever"
 								},
 								{
@@ -2710,10 +2710,10 @@
 						{
 							"label": "AvailableConditionalControlInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "IfThen|IfElse|While"
 								},
 								{
@@ -2726,27 +2726,27 @@
 						{
 							"label": "IfInScript",
 							"tag": "if",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "IfElseInScript",
 							"tag": "ifElse",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "WhileInScript",
 							"tag": "while",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForInScript",
 							"tag": "for",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "ForeverInScript",
 							"tag": "forever",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "AvailableConditionalControlInLib = 0 and IfInScript = 0 and IfElseInScript = 0 and WhileInScript = 0 and (AvailableLoopControlInLib >= 1 or ForInScript >= 1 or ForeverInScript >= 1)"
@@ -2756,14 +2756,14 @@
 					"parentKey": "C3.4",
 					"name": "[fr]Niveau 4[/fr][en]Level 4[/en]",
 					"description": "[fr]* Inscrire l'écriture et le développement des programmes dans un travail collaboratif et constructif<br>* Modifier le comportement d'un objet régi par un programme simple<br><br>Application à SPY : Niveaux qui contiennent des blocs d'action et des structures de contrôle conditionnelles (sans les operateurs logiques).[/fr][en]* Include the writing and development of programs in collaborative and constructive work<br>* Change the behavior of an object governed by a simple program<br><br>Application to SPY: Levels that contain action blocks and conditional control structures (without logical operators).[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "AvailableConditionalInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "While|IfThen|IfElse"
 								},
 								{
@@ -2776,10 +2776,10 @@
 						{
 							"label": "AvailableOperatorInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "AndOperator|OrOperator|NotOperator"
 								},
 								{
@@ -2792,32 +2792,32 @@
 						{
 							"label": "IfInScript",
 							"tag": "if",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "IfElseInScript",
 							"tag": "ifElse",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "WhileInScript",
 							"tag": "while",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "NotInScript",
 							"tag": "not",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "AndInScript",
 							"tag": "and",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "OrInScript",
 							"tag": "or",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "AvailableOperatorInLib = 0 and NotInScript = 0 and AndInScript = 0 and OrInScript = 0 and (AvailableConditionalInLib >= 1 or IfInScript >= 1 or IfElseInScript >= 1 or WhileInScript >= 1)"
@@ -2827,14 +2827,14 @@
 					"parentKey": "C3.4",
 					"name": "[fr]Niveau 5[/fr][en]Level 5[/en]",
 					"description": "[fr]* Créer un programme animant un objet graphique ou réel<br>* Écrire et développer des programmes pour répondre à des problèmes et modéliser des phénomènes physiques, économiques et sociaux<br><br>Application à SPY : Niveaux qui contiennent des blocs d'action et des structures de contrôle incluant des operateurs logiques.[/fr][en]* Create a program animating a graphic or real object<br>* Write and develop programs to answer problems and model physical, economic and social phenomena<br><br>Application to SPY: Levels that contain action blocks and control structures including logical operators.[/en]",
-					"constraints": [
+					"filters": [
 						{
 							"label": "AvailableConditionalInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "While|IfThen|IfElse"
 								},
 								{
@@ -2847,10 +2847,10 @@
 						{
 							"label": "AvailableOperatorInLib",
 							"tag": "blockLimit",
-							"parameters": [
+							"constraints": [
 								{
 									"attribute": "blockType",
-									"constraint": "include",
+									"constraint": "isIncludedIn",
 									"value": "AndOperator|OrOperator|NotOperator"
 								},
 								{
@@ -2863,32 +2863,32 @@
 						{
 							"label": "IfInScript",
 							"tag": "if",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "IfElseInScript",
 							"tag": "ifElse",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "WhileInScript",
 							"tag": "while",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "NotInScript",
 							"tag": "not",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "AndInScript",
 							"tag": "and",
-							"parameters": []
+							"constraints": []
 						},
 						{
 							"label": "OrInScript",
 							"tag": "or",
-							"parameters": []
+							"constraints": []
 						}
 					],
 					"rule": "(AvailableOperatorInLib >= 1 or NotInScript >= 1 or AndInScript >= 1 or OrInScript >= 1) and (AvailableConditionalInLib >= 1 or IfInScript >= 1 or IfElseInScript >= 1 or WhileInScript >= 1)"
