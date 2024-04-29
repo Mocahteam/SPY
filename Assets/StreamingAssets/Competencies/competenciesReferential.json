@@ -1415,41 +1415,7 @@
 					"description": "[fr]Être capable de dire, à partir d'une séquence d'actions, ce qui se passera si elle est exécutée. Contrairement à la compétence 1.4, cette compétence consiste à fournir une prédiction sans exécuter réellement la séquence d'actions.[/fr][en]Being able to tell, from a sequence of actions, what will happen if it is executed. In contrast to competency 1.4, this competency is about providing a prediction without actually executing the sequence of actions.[/en]",
 					"filters": [
 						{
-							"label": "EnemyWithScriptAndRange",
-							"tag": "enemy",
-							"constraints": [
-								{
-									"attribute": "inputLine",
-									"constraint": "sameValue",
-									"tag2": "script",
-									"attribute2": "outputLine"
-								},
-								{
-									"attribute": "range",
-									"constraint": ">=",
-									"value": "1"
-								}
-							]
-						},
-						{
-							"label": "EnemyWithScriptAndSelf",
-							"tag": "enemy",
-							"constraints": [
-								{
-									"attribute": "inputLine",
-									"constraint": "sameValue",
-									"tag2": "script",
-									"attribute2": "outputLine"
-								},
-								{
-									"attribute": "selfRange",
-									"constraint": "=",
-									"value": "True"
-								}
-							]
-						},
-						{
-							"label": "ScriptWithContent",
+							"label": "ScriptToEnemyWithContent",
 							"tag": "script",
 							"constraints": [
 								{
@@ -1464,7 +1430,7 @@
 							]
 						}
 					],
-					"rule": "(EnemyWithScriptAndRange = ScriptWithContent or EnemyWithScriptAndSelf = ScriptWithContent) and ScriptWithContent > 0"
+					"rule": "ScriptToEnemyWithContent > 0"
 				},
 				{
 					"key": "C1.6",
