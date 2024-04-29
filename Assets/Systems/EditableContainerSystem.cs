@@ -219,6 +219,13 @@ public class EditableContainerSystem : FSystem
 					containerName.GetComponent<TooltipContent>().text = "Ce programme sera envoyé à " + name + ".<br><i>Vous ne pouvez pas le changer</i>.";
 					containerName.GetComponent<TMP_InputField>().interactable = false;
 				}
+				// si le drag&drop n'est pas activé on bloque la balayette et la suppression du script
+				if (!gameData.dragDropEnabled)
+				{
+					Transform header = cloneContainer.transform.Find("ScriptContainer").Find("Header");
+					header.Find("RemoveButton").GetComponent<Button>().interactable = false;
+					header.Find("ResetButton").GetComponent<Button>().interactable = false;
+				}
 			}
             else
             {

@@ -37,10 +37,10 @@
 		<blockLimit blockType="Exit" limit="0" />
 	</blockLimits>
     <coin posY="6" posX="6" />
-	<player inputLine="Karl" posY="3" posX="3" direction="0" />
-	<script outputLine="Karl" editMode="0" />
-	<enemy inputLine="[fr]Guarde[/fr][en]Guard[/en]" posY="2" posX="6" direction="3" range="3" selfRange="True" typeRange="0" />
-	<script outputLine="[fr]Guarde[/fr][en]Guard[/en]" editMode="0" >
+	<robot inputLine="Erty" posY="3" posX="3" direction="0" />
+	<script outputLine="Erty" editMode="0" />
+	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posY="2" posX="6" direction="3" range="3" selfRange="True" typeRange="0" />
+	<script outputLine="[fr]Garde[/fr][en]Guard[/en]" editMode="0" >
 		<for nbFor="6">
 			<action type="Forward"/>
 			<action type="Wait"/>

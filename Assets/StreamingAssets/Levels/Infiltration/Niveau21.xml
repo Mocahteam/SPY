@@ -6,9 +6,9 @@
     <line><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /></line>
   </map>
   <dialogs>
-	<dialog text="[fr]Félicitation ! Tu as réussi à récupérer les documents volés et à ramener Bob et Karl en toutes pièces.[/fr][en]Congratulations! You've managed to recover the stolen documents and bring Bob and Karl in one piece.[/en]"/>
+	<dialog text="[fr]Félicitation ! Tu as réussi à récupérer les documents volés et à ramener Erty et Plok en toutes pièces.[/fr][en]Congratulations! You've managed to recover the stolen documents and bring Erty and Plok in one piece.[/en]"/>
 	<dialog text="[fr]Cette mission est un réel succès.[/fr][en]The mission was a real success.[/en]"/>
-	<dialog text="[fr]Bob et Karl peuvent bien se serrer la main :)[/fr][en]Bob and Karl can shake hands :)[/en]"/>
+	<dialog text="[fr]Erty et Plok peuvent bien se serrer la main :)[/fr][en]Erty and Plok can shake hands :)[/en]"/>
   </dialogs>
   <dragdropDisabled />
   <executionLimit amount="1" />
@@ -34,13 +34,13 @@
     <blockLimit blockType="Terminal" limit="0" />
     <blockLimit blockType="Exit" limit="0" />
   </blockLimits>
-  <player inputLine="Karl" posY="1" posX="1" direction="2" />
-  <script outputLine="Karl" editMode="0">
+  <robot inputLine="Plok" posY="1" posX="1" direction="2" />
+  <script outputLine="Plok" editMode="0">
     <action type="Activate"/>
     <action type="Activate"/>
   </script>
-  <player inputLine="Bob" posY="1" posX="2" direction="3" />
-  <script outputLine="Bob" editMode="0">
+  <robot inputLine="Erty" posY="1" posX="2" direction="3" />
+  <script outputLine="Erty" editMode="0">
     <action type="Activate"/>
     <action type="Activate"/>
   </script>

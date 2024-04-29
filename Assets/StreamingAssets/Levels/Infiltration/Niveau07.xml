@@ -10,7 +10,7 @@
     <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
   </map>
   <dialogs>
-	<dialog text="[fr]Plusieurs chemins sont possibles dans ce couloir. Nos ingénieurs ont conçu deux programmes. A toi de décider celui que tu souhaites envoyer à Bob...[/fr][en]Several paths are possible in this corridor. Our engineers have designed two programs. It's up to you to decide which one you want to send to Bob...[/en]" />
+	<dialog text="[fr]Plusieurs chemins sont possibles dans ce couloir. Nos ingénieurs ont conçu deux programmes. A toi de décider celui que tu souhaites envoyer à Erty...[/fr][en]Several paths are possible in this corridor. Our engineers have designed two programs. It's up to you to decide which one you want to send to Erty...[/en]" />
 	<dialog text="[fr]Rappelle toi, pour envoyer un programme à un robot il faut bien préciser son nom dans la zone de programme.[/fr][en]Remember, to send a program to a robot, you need to specify its name in the editing area.[/en]" />
   </dialogs>
   <dragdropDisabled />
@@ -37,8 +37,8 @@
     <blockLimit blockType="Terminal" limit="0" />
     <blockLimit blockType="Exit" limit="0" />
   </blockLimits>
-  <player inputLine="Bob" posY="5" posX="4" direction="0" />
-  <script outputLine="[fr]Essai1[/fr][en]Try1[/en]" editMode="2" type="0">
+  <robot inputLine="Erty" posY="5" posX="4" direction="0" />
+  <script outputLine="Script1" editMode="2" type="0">
     <action type="Forward"/>
 	<action type="TurnLeft"/>
     <action type="Forward"/>
@@ -51,7 +51,7 @@
 	<action type="TurnRight"/>
     <action type="Forward"/>
   </script>
-  <script outputLine="[fr]Essai2[/fr][en]Try2[/en]" editMode="2" type="1">
+  <script outputLine="Script2" editMode="2" type="1">
     <action type="Forward"/>
     <action type="Forward"/>
     <action type="Forward"/>

@@ -134,17 +134,19 @@ public class LevelGenerator : FSystem {
 					createDoor(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value),
 					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), int.Parse(child.Attributes.GetNamedItem("slotId").Value));
 					break;
-				case "player":
-				case "enemy":
+				case "robot":
+				case "guard":
+				case "player": // backward compatibility
+				case "enemy": // backward compatibility
 					string nameAgentByUser = "";
 					XmlNode agentName = child.Attributes.GetNamedItem("inputLine"); 
 					if (agentName == null)
-						agentName = child.Attributes.GetNamedItem("associatedScriptName"); // for retrocompatibility
+						agentName = child.Attributes.GetNamedItem("associatedScriptName"); // for backward compatibility
 					if (agentName != null && agentName.Value != "")
 						nameAgentByUser = agentName.Value;
 					GameObject agent = createEntity(Utility.extractLocale(nameAgentByUser), int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value),
 					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), child.Name);
-					if (child.Name == "enemy")
+					if (child.Name == "enemy" || child.Name == "guard")
 					{
 						agent.GetComponent<DetectRange>().range = int.Parse(child.Attributes.GetNamedItem("range").Value);
 						agent.GetComponent<DetectRange>().selfRange = bool.Parse(child.Attributes.GetNamedItem("selfRange").Value);
@@ -256,10 +258,12 @@ public class LevelGenerator : FSystem {
 	private GameObject createEntity(string nameAgent, int gridX, int gridY, Direction.Dir direction, string type){
 		GameObject entity = null;
 		switch(type){
-			case "player": // Robot
+			case "robot":
+			case "player": // backward compatibility
 				entity = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Robot Kyle") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,1.5f,gridX*3), Quaternion.Euler(0,0,0), LevelGO.transform);
 				break;
-			case "enemy": // Enemy
+			case "guard":
+			case "enemy": // backward compatibility
 				entity = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,3.8f,gridX*3), Quaternion.Euler(0,0,0), LevelGO.transform);
 				break;
 		}
@@ -282,7 +286,7 @@ public class LevelGenerator : FSystem {
 		executablePanel.GetComponentInChildren<LinkedWith>(true).target = entity;
 
 		// On va charger l'image et le nom de l'agent selon l'agent (robot, ennemi etc...)
-		if (type == "player")
+		if (type == "robot" || type == "player")
 		{
 			nbAgentCreate++;
 			// On nomme l'agent
@@ -297,7 +301,7 @@ public class LevelGenerator : FSystem {
 			// Affichage du nom de l'agent
 			executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = entity.GetComponent<AgentEdit>().associatedScriptName;
 		}
-		else if (type == "enemy")
+		else if (type == "guard" || type == "enemy")
 		{
 			nbDroneCreate++;
 			// Chargement de l'icône de l'agent sur la localisation
@@ -310,7 +314,7 @@ public class LevelGenerator : FSystem {
 		}
 
 		AgentColor ac = MainLoop.instance.GetComponent<AgentColor>();
-		scriptref.executablePanel.transform.Find("Scroll View").GetComponent<Image>().color = (type == "player" ? ac.playerBackground : ac.droneBackground);
+		scriptref.executablePanel.transform.Find("Scroll View").GetComponent<Image>().color = ((type == "robot" || type == "player") ? ac.playerBackground : ac.droneBackground);
 
 		executablePanel.SetActive(false);
 		GameObjectManager.bind(executablePanel);
