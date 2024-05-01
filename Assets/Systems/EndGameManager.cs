@@ -101,11 +101,13 @@ public class EndGameManager : FSystem {
 	{
 		// display end panel (we need immediate enabling)
 		endPanel.transform.parent.gameObject.SetActive(true);
+		GameObjectManager.setGameObjectState(endPanel.transform.Find("Score").gameObject, false);
+		GameObjectManager.setGameObjectState(endPanel.transform.Find("Feedback").gameObject, false);
 		// Get the first end that occurs
 		if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Detected)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
-			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[42];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = gameData.localization[42];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -131,7 +133,7 @@ public class EndGameManager : FSystem {
 			int _score = (10000 / (gameData.totalActionBlocUsed + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, true);
 			Debug.Log("Score: " + _score);
-			setScoreStars(_score, endPanel.transform.Find("ScoreCanvas"));
+			setScoreStars(_score);
 
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = false;
@@ -157,12 +159,12 @@ public class EndGameManager : FSystem {
 			if (gameData.levelToLoad >= gameData.scenarios[gameData.selectedScenario].levels.Count - 1)
 			{
 				GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-				endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[43];
+				endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = gameData.localization[43];
 				MainLoop.instance.StartCoroutine(delayNewButtonFocused(buttons.Find("MainMenu").gameObject));
 			}
 			else
 			{
-				endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[44];
+				endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = gameData.localization[44];
 				MainLoop.instance.StartCoroutine(delayNewButtonFocused(buttons.Find("NextLevel").gameObject));
 			}
 			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
@@ -179,7 +181,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.BadCondition)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
-			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[45];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = gameData.localization[45];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -201,7 +203,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoMoreAttempt)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
-			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[46];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = gameData.localization[46];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);
@@ -225,7 +227,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoAction)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
-			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[47];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = gameData.localization[47];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -247,7 +249,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.InfiniteLoop)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
-			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[48];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = gameData.localization[48];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -269,7 +271,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Error)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
-			endPanel.GetComponentInChildren<TextMeshProUGUI>().text = gameData.localization[49];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = gameData.localization[49];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);
@@ -307,7 +309,7 @@ public class EndGameManager : FSystem {
 	}
 
 	// Gére le nombre d'étoile à afficher selon le score obtenue
-	private void setScoreStars(int score, Transform scoreCanvas)
+	private void setScoreStars(int score)
 	{
 		// Détermine le nombre d'étoile à afficher
 		int scoredStars = 0;
@@ -328,6 +330,8 @@ public class EndGameManager : FSystem {
 			}
 		}
 
+		Transform scoreCanvas = endPanel.transform.Find("ScoreCanvas");
+
 		// Affiche le nombre d'étoile désiré
 		for (int nbStar = 0; nbStar < 4; nbStar++)
 		{
@@ -336,6 +340,15 @@ public class EndGameManager : FSystem {
 			else
 				GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, false);
 		}
+
+		// Affichage du score
+		GameObject score_go = endPanel.transform.Find("Score").gameObject;
+		GameObjectManager.setGameObjectState(score_go, true);
+		score_go.GetComponent<TMP_Text>().text = score + " / " + gameData.levelToLoadScore[0];
+
+		// Si moins de 3 étoiles affichage du feedback
+		if (scoredStars < 3)
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("Feedback").gameObject, true);
 
 		//save score only if better score
 		UserData ud = gameData.GetComponent<UserData>();

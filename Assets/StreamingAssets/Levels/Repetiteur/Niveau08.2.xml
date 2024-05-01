@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<level>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value=" 0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value=" 0" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+		<line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "2" /><cell value= "0" /><cell value= "1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+	<dialogs>
+		<dialog text="[fr]Cette pièce est bien gardée, peut être que la porte pourrait permettre de faire boguer les sentinelles ?[/fr][en]This room is well guarded, perhaps the door could be used to bug the guards?[/en]" />
+	</dialogs>
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="-1" />
+		<blockLimit blockType="TurnLeft" limit="-1" />
+		<blockLimit blockType="TurnRight" limit="-1" />
+		<blockLimit blockType="Wait" limit="-1" />
+		<blockLimit blockType="Activate" limit="-1" />
+		<blockLimit blockType="TurnBack" limit="-1" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="-1" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+	<console state="0" posY="7" posX="4" direction="2">
+		<slot slotId="0" />
+	</console>
+	<door posY="3" posX="3" slotId="0" direction="0" />
+	<coin posY="1" posX="4" />
+	<robot inputLine="Erty" posY="7" posX="3" direction="2" />
+	<script outputLine="Erty" editMode="0" />
+	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posY="2" posX="3" direction="2" range="2" selfRange="True" typeRange="0" />
+	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posY="5" posX="6" direction="3" range="2" selfRange="True" typeRange="0" />
+	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posY="2" posX="6" direction="1" range="2" selfRange="True" typeRange="0" />
+	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posY="5" posX="3" direction="0" range="2" selfRange="True" typeRange="0" />
+	<script outputLine="[fr]Garde[/fr][en]Guard[/en]">
+		<forever>
+			<action type="Forward"/>
+			<action type="Forward"/>
+			<action type="Forward"/>
+			<action type="TurnRight"/>
+		</forever>
+	</script>
+	<score twoStars="7704" threeStars="8704"/>
+</level>
