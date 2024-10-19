@@ -689,6 +689,8 @@ public static class Utility
 				dialog.video = dialogXML.Attributes.GetNamedItem("video").Value;
 			if (dialogXML.Attributes.GetNamedItem("enableInteraction") != null)
 				dialog.enableInteraction = int.Parse(dialogXML.Attributes.GetNamedItem("enableInteraction").Value) == 1;
+			if (dialogXML.Attributes.GetNamedItem("briefingType") != null)
+				dialog.briefingType = int.Parse(dialogXML.Attributes.GetNamedItem("briefingType").Value);
 			target.Add(dialog);
 		}
 	}

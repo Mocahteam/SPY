@@ -475,7 +475,7 @@ public class TitleScreenSystem : FSystem {
 		foreach (string fileName in files)
 		{
 			yield return null;
-			MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(fileName));
+			MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest("file://"+fileName));
 		}
 
 		// explore subdirectories

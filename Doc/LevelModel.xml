@@ -38,6 +38,10 @@
 				enableInteraction (optional):
 					0 -> Locked (default): the player can't interact with game while this dialog is shown
 					1 -> Unlocked: the player can interact with game while this dialog is shown
+				briefingType (optionnal):
+					0 -> Briefing (default): this dialog will be displayed at the beginning of the game
+					1 -> Debriefing (win): this dialog will be displayed at the end of the game if the player won
+					2 -> Debriefing (defeat): this dialog will be displayed at the end of the game if the player lost
 		-->
 		<dialog text="[en]Exemple of briefing text.[/en][fr]Example de texte de briefing.[/fr]"/>
 	</dialogs>

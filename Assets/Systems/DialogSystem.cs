@@ -11,20 +11,25 @@ using UnityEngine.Video;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// Manage dialogs at the begining of the level
+/// Manage dialogs at the begining and end of the level
 /// </summary>
 public class DialogSystem : FSystem
 {
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+	private Family f_ends = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 
 	public GameObject LevelGO;
 	private GameData gameData;
 	public GameObject dialogPanel;
 	public GameObject showDialogsMenu;
 	public GameObject showDialogsBottom;
-	private int nDialog = 0;
-	private List<Dialog> overridedDialogs;
+	private int nBriefingDialog = 0; // the briefing currently view
+	private int nDebriefingWinDialog = 0; // the debriefing (win) currently view
+	private int nDebriefingDefeatDialog = 0; // the debriefing (defeat) currently view
+	private List<Dialog> overridedBriefingDialogs = new List<Dialog>();
+	private List<Dialog> overridedDebriefingWinDialogs = new List<Dialog>();
+	private List<Dialog> overridedDebriefingDefeatDialogs = new List<Dialog>();
 
 	protected override void onStart()
 	{
@@ -32,13 +37,23 @@ public class DialogSystem : FSystem
 		if (go != null)
 		{
 			gameData = go.GetComponent<GameData>();
-			overridedDialogs = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].overridedDialogs;
 			// Always disable bottom button, it will be enabled at the end of the dialogs (see Ok button)
 			GameObjectManager.setGameObjectState(showDialogsBottom, false);
-			if (overridedDialogs.Count == 0)
-				showDialogsMenu.GetComponent<Button>().interactable = false;
-            else
-				showDialogsMenu.GetComponent<Button>().interactable = true;
+			// Count number of briefing and debriefing dialogs
+			List<Dialog> tmpList = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].overridedDialogs;
+			if (tmpList != null) {
+				foreach (Dialog d in tmpList)
+				{
+					if (d.briefingType == 1)
+						overridedDebriefingWinDialogs.Add(d);
+					else if (d.briefingType == 2)
+						overridedDebriefingDefeatDialogs.Add(d);
+					else
+						overridedBriefingDialogs.Add(d);
+				}
+			}
+			// Set interactable depending on briefing dialogs count
+			showDialogsMenu.GetComponent<Button>().interactable = overridedBriefingDialogs.Count != 0;
 		}
 
 		f_playingMode.addEntryCallback(delegate {
@@ -46,8 +61,17 @@ public class DialogSystem : FSystem
 		});
 
 		f_editingMode.addEntryCallback(delegate {
-			if (overridedDialogs.Count > 0)
+			if (overridedBriefingDialogs.Count > 0)
 				GameObjectManager.setGameObjectState(showDialogsBottom, true);
+		});
+
+		f_ends.addEntryCallback(delegate
+		{
+			if (dialogPanel.activeInHierarchy)
+				closeDialogPanel();
+			// Afficher la fenêtre de fin s'il y a au moins un dialogue de fin de configuré
+			if (overridedDebriefingWinDialogs.Count > 0)
+				showDialogPanel();
 		});
 
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
@@ -57,7 +81,10 @@ public class DialogSystem : FSystem
 	protected override void onProcess(int familiesUpdateCount)
 	{
 		//Activate DialogPanel if there is a message
-		if (gameData != null && overridedDialogs != null && nDialog < overridedDialogs.Count && !dialogPanel.transform.parent.gameObject.activeSelf)
+		if (gameData != null && !dialogPanel.transform.parent.gameObject.activeSelf && (
+				(f_ends.Count == 0 && overridedBriefingDialogs != null && nBriefingDialog < overridedBriefingDialogs.Count) ||
+				(f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && overridedDebriefingWinDialogs != null && nDebriefingWinDialog < overridedDebriefingWinDialogs.Count) ||
+				(f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && overridedDebriefingDefeatDialogs != null && nDebriefingDefeatDialog < overridedDebriefingDefeatDialogs.Count)))
 			showDialogPanel();
 	}
 
@@ -66,7 +93,9 @@ public class DialogSystem : FSystem
 	public void showDialogPanel()
 	{
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
-		nDialog = 0;
+		nBriefingDialog = f_ends.Count == 0 ? 0 : nBriefingDialog;
+		nDebriefingWinDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? 0 : nDebriefingWinDialog;
+		nDebriefingDefeatDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? 0 : nDebriefingDefeatDialog;
 
 		string content = configureDialog(0);
 		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
@@ -83,7 +112,10 @@ public class DialogSystem : FSystem
 	// Permet d'afficher la suite du dialogue
 	public void nextDialog()
 	{
-		nDialog++; // On incrémente le nombre de dialogue
+		// On se positionne sur le prochain dialogue
+		nBriefingDialog += f_ends.Count == 0 ? 1 : 0;
+		nDebriefingWinDialog += f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? 1 : 0;
+		nDebriefingDefeatDialog += f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? 1 : 0;
 
 		string content = configureDialog(1);
 
@@ -102,7 +134,10 @@ public class DialogSystem : FSystem
 	// Permet d'afficher le message précédent
 	public void prevDialog()
 	{
-		nDialog--; // On décrémente le nombre de dialogue
+		// On se positionne sur le prochain dialogue
+		nBriefingDialog -= f_ends.Count == 0 ? 1 : 0;
+		nDebriefingWinDialog -= f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? 1 : 0;
+		nDebriefingDefeatDialog -= f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? 1 : 0;
 
 		string content = configureDialog(-1);
 
@@ -120,12 +155,14 @@ public class DialogSystem : FSystem
 	private string configureDialog(int way)
     {
 		string dialogReturn = "";
+		// get Dialog
+		Dialog dialog = f_ends.Count == 0 ? overridedBriefingDialogs[nBriefingDialog] : (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs[nDebriefingWinDialog] : overridedDebriefingDefeatDialogs[nDebriefingDefeatDialog]);
 		// set text
 		GameObject textGO = dialogPanel.transform.Find("Text").gameObject;
-		if (overridedDialogs[nDialog].text != null)
+		if (dialog.text != null)
 		{
 			GameObjectManager.setGameObjectState(textGO, true);
-			string localeDependent = Utility.extractLocale(overridedDialogs[nDialog].text);
+			string localeDependent = Utility.extractLocale(dialog.text);
 			textGO.GetComponent<TextMeshProUGUI>().text = localeDependent;
 			LayoutRebuilder.ForceRebuildLayoutImmediate(textGO.transform as RectTransform);
 			dialogReturn = localeDependent;
@@ -134,9 +171,9 @@ public class DialogSystem : FSystem
 			GameObjectManager.setGameObjectState(textGO, false);
 		// set image
 		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
-		if (overridedDialogs[nDialog].img != null)
+		if (dialog.img != null)
 		{
-			string localeDependent = Utility.extractLocale(overridedDialogs[nDialog].img);
+			string localeDependent = Utility.extractLocale(dialog.img);
 			if (localeDependent.ToLower().StartsWith("http"))
 				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), localeDependent));
 			else
@@ -149,20 +186,21 @@ public class DialogSystem : FSystem
 				else
 					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) + "/Images/" + localeDependent));
 			}
+			dialogReturn += (dialogReturn != "" ? "\n" : "") + localeDependent;
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO, false);
 		// set camera pos
-		if (overridedDialogs[nDialog].camX != -1 && overridedDialogs[nDialog].camY != -1)
+		if (dialog.camX != -1 && dialog.camY != -1)
         {
-			GameObjectManager.addComponent<FocusCamOn>(MainLoop.instance.gameObject, new { camX = overridedDialogs[nDialog].camX, camY = overridedDialogs[nDialog].camY });
+			GameObjectManager.addComponent<FocusCamOn>(MainLoop.instance.gameObject, new { camX = dialog.camX, camY = dialog.camY });
 		}
 		// set sound
 		AudioSource audio = dialogPanel.GetComponent<AudioSource>();
 		audio.Stop();
-		if (overridedDialogs[nDialog].sound != null)
+		if (dialog.sound != null)
 		{
-			string localeDependent = Utility.extractLocale(overridedDialogs[nDialog].sound);
+			string localeDependent = Utility.extractLocale(dialog.sound);
 			if (localeDependent.ToLower().StartsWith("http"))
 				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, localeDependent));
 			else if (localeDependent != "")
@@ -175,12 +213,13 @@ public class DialogSystem : FSystem
 				else
 					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) + "/Sounds/" + localeDependent));
 			}
+			dialogReturn += (dialogReturn != "" ? "\n" : "") + localeDependent;
 		}
 		// set video
 		VideoPlayer videoPlayer = dialogPanel.GetComponentInChildren<VideoPlayer>(true);
-		if (overridedDialogs[nDialog].video != null)
+		if (dialog.video != null)
 		{
-			string localeDependent = Utility.extractLocale(overridedDialogs[nDialog].video);
+			string localeDependent = Utility.extractLocale(dialog.video);
 			if (localeDependent != "")
 			{
 				GameObjectManager.setGameObjectState(videoPlayer.gameObject, true);
@@ -191,11 +230,17 @@ public class DialogSystem : FSystem
 			}
 			else
 				GameObjectManager.setGameObjectState(videoPlayer.gameObject, false);
+			dialogReturn += (dialogReturn != "" ? "\n" : "") + localeDependent;
 		}
 		else
 			GameObjectManager.setGameObjectState(videoPlayer.gameObject, false);
+		// tag DEBRIEFING if it is the case
+		if (f_ends.Count > 0)
+			dialogReturn += (dialogReturn != "" ? "\nDEBRIEFING" : "DEBRIEFING");
+
+
 		// set background
-		dialogPanel.transform.parent.GetComponent<Image>().enabled = !overridedDialogs[nDialog].enableInteraction;
+		dialogPanel.transform.parent.GetComponent<Image>().enabled = !dialog.enableInteraction;
 
 		// Be sure all buttons are disabled
 		setActiveOKButton(false);
@@ -204,17 +249,17 @@ public class DialogSystem : FSystem
 
 		// if way is > 0 means we pass to next dialog => process previous dialog first in order to put selected go on ok/next button
 		if (way > 0)
-			if (nDialog > 0)
+			if ((f_ends.Count == 0 && nBriefingDialog > 0) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && nDebriefingWinDialog > 0) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && nDebriefingDefeatDialog > 0))
 				setActivePrevButton(true);
 
-		if (nDialog + 1 < overridedDialogs.Count)
+		if ((f_ends.Count == 0 && nBriefingDialog + 1 < overridedBriefingDialogs.Count) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && nDebriefingWinDialog + 1 < overridedDebriefingWinDialogs.Count) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && nDebriefingDefeatDialog + 1 < overridedDebriefingDefeatDialogs.Count))
 			setActiveNextButton(true);
-		if (nDialog + 1 >= overridedDialogs.Count)
+		if ((f_ends.Count == 0 && nBriefingDialog + 1 >= overridedBriefingDialogs.Count) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && nDebriefingWinDialog + 1 >= overridedDebriefingWinDialogs.Count) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && nDebriefingDefeatDialog + 1 >= overridedDebriefingDefeatDialogs.Count))
 			setActiveOKButton(true);
 
 		// if way is < 0 means we pass to previous dialog => process previous dialog in second to put selected go on previous button
 		if (way < 0)
-			if (nDialog > 0)
+			if ((f_ends.Count == 0 && nBriefingDialog > 0) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && nDebriefingWinDialog > 0) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && nDebriefingDefeatDialog > 0))
 				setActivePrevButton(true);
 
 		return dialogReturn;
@@ -271,7 +316,9 @@ public class DialogSystem : FSystem
 	public void closeDialogPanel()
 	{
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
-		nDialog = overridedDialogs.Count;
+		nBriefingDialog = f_ends.Count == 0 ? overridedBriefingDialogs.Count : 0;
+		nDebriefingWinDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs.Count : 0;
+		nDebriefingDefeatDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? overridedDebriefingDefeatDialogs.Count : 0;
 
 		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
@@ -323,8 +370,10 @@ public class DialogSystem : FSystem
 		yield return new WaitForSeconds(0.1f); // take time to update UI
 		RectTransform rectParent = (RectTransform)img.transform.parent;
 		float maxHeight = Screen.height - (rectParent.sizeDelta.y + 20); // compute available space add 20 to include top and bottom margin
-		if (overridedDialogs[nDialog].imgHeight != -1)
-			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, Math.Min(overridedDialogs[nDialog].imgHeight, maxHeight));
+		// get Dialog
+		Dialog dialog = f_ends.Count == 0 ? overridedBriefingDialogs[nBriefingDialog] : (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs[nDebriefingWinDialog] : overridedDebriefingDefeatDialogs[nDebriefingDefeatDialog]);
+		if (dialog.imgHeight != -1)
+			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, Math.Min(dialog.imgHeight, maxHeight));
 		else
 			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, Math.Min(img.GetComponent<LayoutElement>().preferredHeight, maxHeight));
 		GameObjectManager.setGameObjectState(img.gameObject, true); // now we can show image

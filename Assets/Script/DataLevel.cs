@@ -12,6 +12,7 @@ public class Dialog
 	public string sound = null;
 	public string video = null;
 	public bool enableInteraction = false;
+	public int briefingType = 0;
 
 	public Dialog clone()
     {
@@ -24,12 +25,13 @@ public class Dialog
 		copy.sound = sound;
 		copy.video = video;
 		copy.enableInteraction = enableInteraction;
+		copy.briefingType = briefingType;
 		return copy;
     }
 
 	public bool isEqualTo(Dialog dialog)
     {
-		return dialog.text == text && dialog.img == img && dialog.imgHeight == imgHeight && dialog.camX == camX && dialog.camY == camY && dialog.sound == sound && dialog.video == video && dialog.enableInteraction == enableInteraction;
+		return dialog.text == text && dialog.img == img && dialog.imgHeight == imgHeight && dialog.camX == camX && dialog.camY == camY && dialog.sound == sound && dialog.video == video && dialog.enableInteraction == enableInteraction && dialog.briefingType == briefingType;
 
 	}
 }

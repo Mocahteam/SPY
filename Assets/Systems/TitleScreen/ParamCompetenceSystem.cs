@@ -729,21 +729,22 @@ public class ParamCompetenceSystem : FSystem
 			DataLevel dataLevel = child.GetComponent<DataLevelBehaviour>().data;
 			if (dataLevel.name == null || dataLevel.name == "")
 				dataLevel.name = Path.GetFileNameWithoutExtension(dataLevel.src);
-			scenarioExport += "\t<level src = \"" + child.GetComponentInChildren<TMP_Text>().text + "\" name = \"" + dataLevel.name + "\"";
+			scenarioExport += "\t<level src=\"" + child.GetComponentInChildren<TMP_Text>().text + "\" name=\"" + dataLevel.name + "\"";
 			if (dataLevel.overridedDialogs != null && dataLevel.overridedDialogs.Count > 0)
 			{
 				scenarioExport += " >\n\t\t<dialogs>\n";
 				foreach (Dialog dialog in dataLevel.overridedDialogs)
 				{
 					scenarioExport += "\t\t\t<dialog ";
-					scenarioExport += dialog.text != null && dialog.text != "" ? "text =\"" + dialog.text + "\" " : "";
+					scenarioExport += dialog.text != null && dialog.text != "" ? "text=\"" + dialog.text + "\" " : "";
 					scenarioExport += dialog.img != null && dialog.img != "" ? "img=\"" + dialog.img + "\" " : "";
 					scenarioExport += dialog.imgHeight != -1 ? "imgHeight=\"" + dialog.imgHeight + "\" " : "";
 					scenarioExport += dialog.camX != -1 ? "camX=\"" + dialog.camX + "\" " : "";
 					scenarioExport += dialog.camY != -1 ? "camY=\"" + dialog.camY + "\" " : "";
 					scenarioExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + dialog.sound + "\" " : "";
 					scenarioExport += dialog.video != null && dialog.video != "" ? "video=\"" + dialog.video + "\" " : "";
-					scenarioExport += "enableInteraction =\"" + (dialog.enableInteraction ? "1" : "0") + "\" />\n";
+					scenarioExport += "enableInteraction=\"" + (dialog.enableInteraction ? "1" : "0") + "\" ";
+					scenarioExport += "briefingType=\"" + dialog.briefingType + "\" />\n";
 				}
 				scenarioExport += "\t\t</dialogs>\n\t</level>\n";
 			}
@@ -864,6 +865,7 @@ public class ParamCompetenceSystem : FSystem
 						input.text = "";
 				}
 				newItem.GetComponentInChildren<Toggle>().isOn = dialog.enableInteraction;
+				newItem.GetComponentInChildren<TMP_Dropdown>().value = dialog.briefingType;
 			}
 		}
     }
@@ -906,6 +908,7 @@ public class ParamCompetenceSystem : FSystem
 						dialog.video = input.text.Replace('\"', '\'');
 				}
 				dialog.enableInteraction = child.GetComponentInChildren<Toggle>().isOn;
+				dialog.briefingType = child.GetComponentInChildren<TMP_Dropdown>().value;
 				overridedBriefing.data.overridedDialogs.Add(dialog);
 			}
 			showLevelInfo(Utility.extractFileName(path), overridedBriefing);
