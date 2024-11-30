@@ -65,6 +65,10 @@ public class BlocLimitationManager : FSystem
 				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName(go.GetComponent<BasicAction>().actionType.ToString());
 			else if (go.GetComponent<BaseCaptor>())
 				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName(go.GetComponent<BaseCaptor>().captorType.ToString());
+			else if (go.GetComponent<BasicVariable>())
+            {
+				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName(go.GetComponent<BasicVariable>().variableType.ToString());
+			}
 			else if (go.GetComponent<BaseOperator>())
 				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName(go.GetComponent<BaseOperator>().operatorType.ToString());
 			else if (go.GetComponent<WhileControl>())
@@ -116,9 +120,15 @@ public class BlocLimitationManager : FSystem
 	// Remove one item from library
 	private void useAction(GameObject go){
 		LibraryItemRef lir = go.GetComponent<LibraryItemRef>();
+		Debug.Log("LIR =" + lir.linkedTo.name);
 		string actionKey = lir.linkedTo.name;
 		if(actionKey != null && gameData.actionBlockLimit.ContainsKey(actionKey))
 		{
+			/*
+			foreach(string s in gameData.actionBlockLimit.Keys)
+            {
+				Debug.Log("K =" + s + " value = " + gameData.actionBlockLimit[s]);
+            }*/
 			if (gameData.actionBlockLimit[actionKey] > 0)
 				gameData.actionBlockLimit[actionKey] -= 1;
 			updateBlocLimit(lir.linkedTo);		

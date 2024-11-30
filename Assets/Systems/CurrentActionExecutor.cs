@@ -107,6 +107,8 @@ public class CurrentActionExecutor : FSystem {
 				foreach ( GameObject actGo in f_activableConsole){
 					if(actGo.GetComponent<Position>().x == agentPos.x && actGo.GetComponent<Position>().y == agentPos.y){
 						actGo.GetComponent<AudioSource>().Play();
+						
+						//Ajouter ici le check porte avec variable + vérif de la condition
 						// toggle activable GameObject
 						if (actGo.GetComponent<TurnedOn>())
 							GameObjectManager.removeComponent<TurnedOn>(actGo);
