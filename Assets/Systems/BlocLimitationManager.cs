@@ -120,7 +120,7 @@ public class BlocLimitationManager : FSystem
 	// Remove one item from library
 	private void useAction(GameObject go){
 		LibraryItemRef lir = go.GetComponent<LibraryItemRef>();
-		Debug.Log("LIR =" + lir.linkedTo.name);
+		//Debug.Log("LIR =" + lir.linkedTo.name);
 		string actionKey = lir.linkedTo.name;
 		if(actionKey != null && gameData.actionBlockLimit.ContainsKey(actionKey))
 		{
