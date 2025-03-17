@@ -17,7 +17,6 @@ public class ScriptGenerator : FSystem {
 	private Family f_decodeXMLScript = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptToLoad)));
 	private Family f_ScriptEditorCanvas = FamilyManager.getFamily(new AnyOfTags("ScriptEditorCanvas"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
-	private HashSet<string> scriptNameUsed = new HashSet<string>();
 	private GameData gameData;
 
 	public GameObject mainCanvas;
@@ -57,44 +56,36 @@ public class ScriptGenerator : FSystem {
 	{
 		if (scriptNode != null)
 		{
-			// Look for another script with the same name. If one already exists, we don't create one more.
-			if (!scriptNameUsed.Contains(name))
+			// Rechercher un drone associé à ce script
+			bool droneFound = false;
+			foreach (GameObject drone in f_drone)
 			{
-				// Rechercher un drone associé à ce script
-				bool droneFound = false;
-				foreach (GameObject drone in f_drone)
-				{
-					ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
-					if (scriptRef.executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text == name)
-					{
-						List<GameObject> script = new List<GameObject>();
-						foreach (XmlNode actionNode in scriptNode.ChildNodes)
-							script.Add(readXMLInstruction(actionNode));
-						GameObject tmpContainer = GameObject.Instantiate(scriptRef.executableScript);
-						foreach (GameObject go in script)
-							go.transform.SetParent(tmpContainer.transform, false); //add actions to container
-						Utility.fillExecutablePanel(tmpContainer, scriptRef.executableScript, drone.tag);
-						// bind all child
-						foreach (Transform child in scriptRef.executableScript.transform)
-							GameObjectManager.bind(child.gameObject);
-						// On fait apparaitre le panneau du robot
-						scriptRef.executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
-						GameObjectManager.setGameObjectState(scriptRef.executablePanel, true);
-						GameObject.Destroy(tmpContainer);
-						droneFound = true;
-					}
-				}
-				if (!droneFound)
+				ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
+				if (scriptRef.executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text == name)
 				{
 					List<GameObject> script = new List<GameObject>();
 					foreach (XmlNode actionNode in scriptNode.ChildNodes)
 						script.Add(readXMLInstruction(actionNode));
-					GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = name, editState = editMode, typeState = type, script = script });
+					GameObject tmpContainer = GameObject.Instantiate(scriptRef.executableScript);
+					foreach (GameObject go in script)
+						go.transform.SetParent(tmpContainer.transform, false); //add actions to container
+					Utility.fillExecutablePanel(tmpContainer, scriptRef.executableScript, drone.tag);
+					// bind all child
+					foreach (Transform child in scriptRef.executableScript.transform)
+						GameObjectManager.bind(child.gameObject);
+					// On fait apparaitre le panneau du robot
+					scriptRef.executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
+					GameObjectManager.setGameObjectState(scriptRef.executablePanel, true);
+					GameObject.Destroy(tmpContainer);
+					droneFound = true;
 				}
 			}
-			else
+			if (!droneFound)
 			{
-				Debug.LogWarning("Script \"" + name + "\" not created because another one already exists. Only one script with the same name is possible.");
+				List<GameObject> script = new List<GameObject>();
+				foreach (XmlNode actionNode in scriptNode.ChildNodes)
+					script.Add(readXMLInstruction(actionNode));
+				GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = name, editState = editMode, typeState = type, script = script });
 			}
 		}
 	}

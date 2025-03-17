@@ -112,9 +112,67 @@
 					"rule": "ScriptEditable > 0"
 				},
 				{
+					"key": "SPY_SeveralProgrammingArea",
+					"parentKey": "",
+					"name": "[fr]F5 Repérer l'association entre un programme et un robot[/fr][en]F5 Identify the association between a program and a robot[/en]",
+					"description": "[fr]En cas de présence de plusieurs robots ayant chacun sa ligne de programmation, être capable de repérer quelle ligne de programmation est associée à quel robot.[/fr][en]If several robots each have their own programming line, be able to identify which programming line is associated with which robot.[/en]",
+					"filters": [
+						{
+							"label": "SeveralProgrammingArea",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "sameValue",
+									"tag2": "robot",
+									"attribute2": "inputLine"
+								}
+							]
+						}
+					],
+					"rule": "SeveralProgrammingArea >= 2"
+				},
+				{
+					"key": "SPY_CreateProgrammingArea",
+					"parentKey": "",
+					"name": "[fr]F6 Créer une zone de programmation[/fr][en]F6 Create programming area[/en]",
+					"description": "[fr]Etre capable de repérer qu'il manque une zone de programmation pour programmer chaque robot.[/fr][en]Be able to identify that a programming area is missing for programming each robot.[/en]",
+					"filters": [
+						{
+							"label": "ControledRobot",
+							"tag": "robot",
+							"constraints": [
+								{
+									"attribute": "inputLine",
+									"constraint": "sameValue",
+									"tag2": "script",
+									"attribute2": "outputLine"
+								}
+							]
+						},
+						{
+							"label": "NumRobot",
+							"tag": "robot",
+							"constraints": []
+						},
+						{
+							"label": "ScriptEditable",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "editMode",
+									"constraint": "=",
+									"value": "2"
+								}
+							]
+						}
+					],
+					"rule": "(ControledRobot + ScriptEditable) < NumRobot"
+				},
+				{
 					"key": "SPY_SelectRightScript",
 					"parentKey": "",
-					"name": "[fr]F5 Identifier la bonne solution[/fr][en]F5 Identify the right solution[/en]",
+					"name": "[fr]F7 Identifier la bonne solution[/fr][en]F7 Identify the right solution[/en]",
 					"description": "[fr]Étant donné plusieurs solutions données, être capable d'identifier une solution permettant de résoudre le problème.[/fr][en]Given several solutions, be able to identify a solution that solves the problem.[/en]",
 					"filters": [
 						{
@@ -155,7 +213,7 @@
 				{
 					"key": "SPY_CorrectBuggedScript",
 					"parentKey": "",
-					"name": "[fr]F6 Corriger une solution erronée[/fr][en]F6 Correct a erroneous solution[/en]",
+					"name": "[fr]F8 Corriger une solution erronée[/fr][en]F8 Correct a erroneous solution[/en]",
 					"description": "[fr]Étant donné une solution erronée, être capable d'identifier le problème et de le corriger.[/fr][en]Given an erroneous solution, be able to identify the problem and correct it.[/en]",
 					"filters": [
 						{
@@ -183,10 +241,10 @@
 					"rule": "BuggedScript >= 1 and DragDropDisabled = 0 and BuggedScript = AllScript"
 				},
 				{
-					"key": "SPY_EnemyInGame",
+					"key": "SPY_GuardInGame",
 					"parentKey": "",
-					"name": "[fr]F7 Prédire le résultat d'une séquence d'actions[/fr][en]F7 Predict the outcome of a sequence of actions[/en]",
-					"description": "[fr]Être capable d'anticiper les actions d'un ennemi afin d'adapter sa solution en conséquence.[/fr][en]Be able to anticipate an enemy's actions and adapt your solution accordingly.[/en]",
+					"name": "[fr]F9 Prédire le résultat d'une séquence d'actions[/fr][en]F9 Predict the outcome of a sequence of actions[/en]",
+					"description": "[fr]Être capable d'anticiper les actions d'un guarde afin d'adapter sa solution en conséquence.[/fr][en]Be able to anticipate a guard's actions and adapt your solution accordingly.[/en]",
 					"filters": [
 						{
 							"label": "ScriptWithContent",
@@ -195,7 +253,7 @@
 								{
 									"attribute": "outputLine",
 									"constraint": "sameValue",
-									"tag2": "enemy",
+									"tag2": "guard",
 									"attribute2": "inputLine"
 								},
 								{
@@ -209,17 +267,17 @@
 				{
 					"key": "SPY_RobotsInSameLine",
 					"parentKey": "",
-					"name": "[fr]F8 Généraliser une solution[/fr][en]F8 Generalize a solution[/en]",
+					"name": "[fr]F10 Généraliser une solution[/fr][en]F10 Generalize a solution[/en]",
 					"description": "[fr]Etre capable de trouver une solution permettant de résoudre deux problèmes différents. Autrement dit, une ligne de communication pour plusieurs robots.[/fr][en]To be able to find a solution that solves two different problems. In other words, one line of communication for several robots.[/en]",
 					"filters": [
 						{
 							"label": "RobotsInSameLine",
-							"tag": "player",
+							"tag": "robot",
 							"constraints": [
 								{
 									"attribute": "inputLine",
 									"constraint": "sameValue",
-									"tag2": "player",
+									"tag2": "robot",
 									"attribute2": "inputLine"
 								}
 							]
@@ -246,7 +304,7 @@
 				{
 					"key": "SPY_Unlimited",
 					"parentKey": "SPY_Limitations",
-					"name": "[fr]F9 Blocs illimités[/fr][en]F9 Unlimited blocks[/en]",
+					"name": "[fr]F11 Blocs illimités[/fr][en]F11 Unlimited blocks[/en]",
 					"description": "[fr]Ne donner au joueur que des blocs en quantité illimitée. Etre capable de déterminer quand utiliser des blocs.[/fr][en]Only give the player unlimited blocks. Be able to determine when to use blocks.[/en]",
 					"filters": [
 						{
@@ -282,7 +340,7 @@
 				{
 					"key": "SPY_Limited",
 					"parentKey": "SPY_Limitations",
-					"name": "[fr]F10 Blocs limités[/fr][en]F10 Limited blocks[/en]",
+					"name": "[fr]F12 Blocs limités[/fr][en]F12 Limited blocks[/en]",
 					"description": "[fr]Ne donner au joueur que des blocs en quantité limitée. Etre capable de combiner des actions dans un ordre valide.[/fr][en]Give the player only a limited number of blocks. Be able to combine actions in a valid order.[/en]",
 					"filters": [
 						{
@@ -310,7 +368,7 @@
 				{
 					"key": "SPY_Action_MoveForward",
 					"parentKey": "SPY_Actions",
-					"name": "[fr]F11 Bloc action \"Avancer\"[/fr][en]F11 \"Move forward\" action block[/en]",
+					"name": "[fr]F13 Bloc action \"Avancer\"[/fr][en]F13 \"Move forward\" action block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Avancer\".[/fr][en]Give the player the option of using \"Move forward\" blocks.[/en]",
 					"filters": [
 						{
@@ -346,7 +404,7 @@
 				{
 					"key": "SPY_Action_TurnLeft",
 					"parentKey": "SPY_Actions",
-					"name": "[fr]F12 Bloc action \"Pivoter à gauche\"[/fr][en]F12 \"Rotate left\" action block[/en]",
+					"name": "[fr]F14 Bloc action \"Pivoter à gauche\"[/fr][en]F14 \"Rotate left\" action block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Pivoter à gauche\".[/fr][en]Give the player the option of using \"Rotate left\" blocks.[/en]",
 					"filters": [
 						{
@@ -382,7 +440,7 @@
 				{
 					"key": "SPY_Action_TurnRight",
 					"parentKey": "SPY_Actions",
-					"name": "[fr]F13 Bloc action \"Pivoter à droite\"[/fr][en]F13 \"Rotate right\" action block[/en]",
+					"name": "[fr]F15 Bloc action \"Pivoter à droite\"[/fr][en]F15 \"Rotate right\" action block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Pivoter à droite\".[/fr][en]Give the player the option of using \"Rotate right\" blocks.[/en]",
 					"filters": [
 						{
@@ -418,7 +476,7 @@
 				{
 					"key": "SPY_Action_Wait",
 					"parentKey": "SPY_Actions",
-					"name": "[fr]F14 Bloc action \"Attendre\"[/fr][en]F14 \"Wait\" action block[/en]",
+					"name": "[fr]F16 Bloc action \"Attendre\"[/fr][en]F16 \"Wait\" action block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Attendre\".[/fr][en]Give the player the option of using \"Wait\" blocks.[/en]",
 					"filters": [
 						{
@@ -454,7 +512,7 @@
 				{
 					"key": "SPY_Action_Activate",
 					"parentKey": "SPY_Actions",
-					"name": "[fr]F15 Bloc action \"Activer\"[/fr][en]F15 \"Activate\" action block[/en]",
+					"name": "[fr]F17 Bloc action \"Activer\"[/fr][en]F17 \"Activate\" action block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Activer\".[/fr][en]Give the player the option of using \"Activate\" blocks.[/en]",
 					"filters": [
 						{
@@ -490,7 +548,7 @@
 				{
 					"key": "SPY_Action_TurnBack",
 					"parentKey": "SPY_Actions",
-					"name": "[fr]F16 Bloc action \"Se retourner\"[/fr][en]F16 \"Look back\" action block[/en]",
+					"name": "[fr]F18 Bloc action \"Se retourner\"[/fr][en]F18 \"Look back\" action block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Se retourner\".[/fr][en]Give the player the option of using \"Look back\" blocks.[/en]",
 					"filters": [
 						{
@@ -534,7 +592,7 @@
 				{
 					"key": "SPY_Control_IfThen",
 					"parentKey": "SPY_Controls",
-					"name": "[fr]F17 Bloc de contrôle \"Si\"[/fr][en]F17 \"If\" control block[/en]",
+					"name": "[fr]F19 Bloc de contrôle \"Si\"[/fr][en]F19 \"If\" control block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Si\".[/fr][en]Give the player the option of using \"If\" blocks.[/en]",
 					"filters": [
 						{
@@ -564,7 +622,7 @@
 				{
 					"key": "SPY_Control_IfElse",
 					"parentKey": "SPY_Controls",
-					"name": "[fr]F18 Bloc de contrôle \"Si/Sinon\"[/fr][en]F18 \"If/Else\" control block[/en]",
+					"name": "[fr]F20 Bloc de contrôle \"Si/Sinon\"[/fr][en]F20 \"If/Else\" control block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Si/Sinon\".[/fr][en]Give the player the option of using \"If/Else\" blocks.[/en]",
 					"filters": [
 						{
@@ -594,7 +652,7 @@
 				{
 					"key": "SPY_Control_ForLoop",
 					"parentKey": "SPY_Controls",
-					"name": "[fr]F19 Bloc de contrôle \"Répéter plusieurs fois\"[/fr][en]F19 \"Repeat several times\" control block[/en]",
+					"name": "[fr]F21 Bloc de contrôle \"Répéter plusieurs fois\"[/fr][en]F21 \"Repeat several times\" control block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Répéter plusieurs fois\".[/fr][en]Give the player the option of using \"Repeat several times\" blocks.[/en]",
 					"filters": [
 						{
@@ -624,7 +682,7 @@
 				{
 					"key": "SPY_Control_While",
 					"parentKey": "SPY_Controls",
-					"name": "[fr]F20 Bloc de contrôle \"Tant que\"[/fr][en]F20 \"While\" control block[/en]",
+					"name": "[fr]F22 Bloc de contrôle \"Tant que\"[/fr][en]F22 \"While\" control block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Tant que\".[/fr][en]Give the player the option of using \"While\" blocks.[/en]",
 					"filters": [
 						{
@@ -654,7 +712,7 @@
 				{
 					"key": "SPY_Control_Forever",
 					"parentKey": "SPY_Controls",
-					"name": "[fr]F21 Bloc de contrôle \"Répéter sans fin\"[/fr][en]F21 \"Endless repetition\" control block[/en]",
+					"name": "[fr]F23 Bloc de contrôle \"Répéter sans fin\"[/fr][en]F23 \"Endless repetition\" control block[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Répéter sans fin\".[/fr][en]Give the player the option of using \"Endless repetition\" blocks.[/en]",
 					"filters": [
 						{
@@ -692,7 +750,7 @@
 				{
 					"key": "SPY_Operator_And",
 					"parentKey": "SPY_Operators",
-					"name": "[fr]F22 Opérateur de contrôle \"Et\"[/fr][en]F22 \"And\" operator[/en]",
+					"name": "[fr]F24 Opérateur de contrôle \"Et\"[/fr][en]F24 \"And\" operator[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Et\".[/fr][en]Give the player the option of using \"And\" blocks.[/en]",
 					"filters": [
 						{
@@ -722,7 +780,7 @@
 				{
 					"key": "SPY_Operator_Or",
 					"parentKey": "SPY_Operators",
-					"name": "[fr]F23 Opérateur de contrôle \"Ou\"[/fr][en]F23 \"Or\" operator[/en]",
+					"name": "[fr]F25 Opérateur de contrôle \"Ou\"[/fr][en]F25 \"Or\" operator[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"0u\".[/fr][en]Give the player the option of using \"Or\" blocks.[/en]",
 					"filters": [
 						{
@@ -752,7 +810,7 @@
 				{
 					"key": "SPY_Operator_Not",
 					"parentKey": "SPY_Operators",
-					"name": "[fr]F24 Opérateur de contrôle \"Non\"[/fr][en]F24 \"Not\" operator[/en]",
+					"name": "[fr]F26 Opérateur de contrôle \"Non\"[/fr][en]F26 \"Not\" operator[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des blocs \"Non\".[/fr][en]Give the player the option of using \"Not\" blocks.[/en]",
 					"filters": [
 						{
@@ -790,7 +848,7 @@
 				{
 					"key": "SPY_Captor_WallFront",
 					"parentKey": "SPY_Captors",
-					"name": "[fr]F25 Capteur \"Mur détecté en face\"[/fr][en]F25 \"Wall detected in front\" sensor[/en]",
+					"name": "[fr]F27 Capteur \"Mur détecté en face\"[/fr][en]F27 \"Wall detected in front\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Mur détecté en face\".[/fr][en]Give the player the option of using \"Wall detected in front\" blocks.[/en]",
 					"filters": [
 						{
@@ -826,7 +884,7 @@
 				{
 					"key": "SPY_Captor_WallLeft",
 					"parentKey": "SPY_Captors",
-					"name": "[fr]F26 Capteur \"Mur détecté à gauche\"[/fr][en]F26 \"Wall detected on the left\" sensor[/en]",
+					"name": "[fr]F28 Capteur \"Mur détecté à gauche\"[/fr][en]F28 \"Wall detected on the left\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Mur détecté à gauche\".[/fr][en]Give the player the option of using \"Wall detected on the left\" blocks.[/en]",
 					"filters": [
 						{
@@ -862,7 +920,7 @@
 				{
 					"key": "SPY_Captor_WallRight",
 					"parentKey": "SPY_Captors",
-					"name": "[fr]F27 Capteur \"Mur détecté à droite\"[/fr][en]F27 \"Wall detected on the right\" sensor[/en]",
+					"name": "[fr]F29 Capteur \"Mur détecté à droite\"[/fr][en]F29 \"Wall detected on the right\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Mur détecté à droite\".[/fr][en]Give the player the option of using \"Wall detected on the right\" blocks.[/en]",
 					"filters": [
 						{
@@ -898,7 +956,7 @@
 				{
 					"key": "SPY_Captor_PathFront",
 					"parentKey": "SPY_Captors",
-					"name": "[fr]F28 Capteur \"Passage détecté en face\"[/fr][en]F28 \"Path in front\" sensor[/en]",
+					"name": "[fr]F30 Capteur \"Passage détecté en face\"[/fr][en]F30 \"Path in front\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Passage détecté en face\".[/fr][en]Give the player the option of using \"Path in front\" blocks.[/en]",
 					"filters": [
 						{
@@ -934,7 +992,7 @@
 				{
 					"key": "SPY_Captor_PathLeft",
 					"parentKey": "SPY_Captors",
-					"name": "[fr]F29 Capteur \"Passage détecté à gauche\"[/fr][en]F29 \"Path ont the left\" sensor[/en]",
+					"name": "[fr]F31 Capteur \"Passage détecté à gauche\"[/fr][en]F31 \"Path ont the left\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Passage détecté à gauche\".[/fr][en]Give the player the option of using \"Path ont the left\" blocks.[/en]",
 					"filters": [
 						{
@@ -970,7 +1028,7 @@
 				{
 					"key": "SPY_Captor_PathRight",
 					"parentKey": "SPY_Captors",
-					"name": "[fr]F30 Capteur \"Passage détecté à droite\"[/fr][en]F30 \"Path ont the right\" sensor[/en]",
+					"name": "[fr]F32 Capteur \"Passage détecté à droite\"[/fr][en]F32 \"Path ont the right\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Passage détecté à droite\".[/fr][en]Give the player the option of using \"Path ont the right\" blocks.[/en]",
 					"filters": [
 						{
@@ -1006,7 +1064,7 @@
 				{
 					"key": "SPY_Captor_Enemy",
 					"parentKey": "SPY_Captors",
-					"name": "[fr]F31 Capteur \"Ennemi détecté en face\"[/fr][en]F31 \"Enemy detected in front\" sensor[/en]",
+					"name": "[fr]F33 Capteur \"Ennemi détecté en face\"[/fr][en]F33 \"Enemy detected in front\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Ennemi détecté en face\".[/fr][en]Give the player the option of using \"Enemy detected in front\" blocks.[/en]",
 					"filters": [
 						{
@@ -1042,7 +1100,7 @@
 				{
 					"key": "SPY_Captor_RedArea",
 					"parentKey": "SPY_Captors",
-					"name": "[fr]F32 Capteur \"Zone surveillée en face\"[/fr][en]F32 \"Guarded area in front\" sensor[/en]",
+					"name": "[fr]F34 Capteur \"Zone surveillée en face\"[/fr][en]F34 \"Guarded area in front\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Zone surveillée en face\".[/fr][en]Give the player the option of using \"Guarded area in front\" blocks.[/en]",
 					"filters": [
 						{
@@ -1078,7 +1136,7 @@
 				{
 					"key": "SPY_Captor_FieldGate",
 					"parentKey": "SPY_Captors",
-					"name": "[fr]F33 Capteur \"Porte détectée en face\"[/fr][en]F33 \"Door detected in front\" sensor[/en]",
+					"name": "[fr]F35 Capteur \"Porte détectée en face\"[/fr][en]F35 \"Door detected in front\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Porte détectée en face\".[/fr][en]Give the player the option of using \"Door detected in front\" blocks.[/en]",
 					"filters": [
 						{
@@ -1114,7 +1172,7 @@
 				{
 					"key": "SPY_Captor_Terminal",
 					"parentKey": "SPY_Captors",
-					"name": "[fr]F34 Capteur \"Terminal détecté sur ma position\"[/fr][en]F34 \"Terminal detected on my position\" sensor[/en]",
+					"name": "[fr]F36 Capteur \"Terminal détecté sur ma position\"[/fr][en]F36 \"Terminal detected on my position\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Terminal détecté sur ma position\".[/fr][en]Give the player the option of using \"Terminal detected on my position\" blocks.[/en]",
 					"filters": [
 						{
@@ -1150,7 +1208,7 @@
 				{
 					"key": "SPY_Captor_Exit",
 					"parentKey": "SPY_Captors",
-					"name": "[fr]F35 Capteur \"Sortie détectée sur ma position\"[/fr][en]F35 \"Exit detected on my position\" sensor[/en]",
+					"name": "[fr]F37 Capteur \"Sortie détectée sur ma position\"[/fr][en]F37 \"Exit detected on my position\" sensor[/en]",
 					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Sortie détectée sur ma position\".[/fr][en]Give the player the option of using \"Exit detected on my position\" blocks.[/en]",
 					"filters": [
 						{
@@ -1212,9 +1270,38 @@
 									"value": "2"
 								}
 							]
+						},
+						{
+							"label": "SeveralProgrammingArea",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "sameValue",
+									"tag2": "robot",
+									"attribute2": "inputLine"
+								}
+							]
+						},
+						{
+							"label": "ControledRobot",
+							"tag": "robot",
+							"constraints": [
+								{
+									"attribute": "inputLine",
+									"constraint": "sameValue",
+									"tag2": "script",
+									"attribute2": "outputLine"
+								}
+							]
+						},
+						{
+							"label": "NumRobot",
+							"tag": "robot",
+							"constraints": []
 						}
 					],
-					"rule": "ScriptEditable > 0"
+					"rule": "ScriptEditable > 0 or SeveralProgrammingArea >= 2 or (ControledRobot + ScriptEditable) < NumRobot"
 				},
 				{
 					"key": "C1.2",
@@ -1421,7 +1508,7 @@
 								{
 									"attribute": "outputLine",
 									"constraint": "sameValue",
-									"tag2": "enemy",
+									"tag2": "guard",
 									"attribute2": "inputLine"
 								},
 								{
@@ -2422,7 +2509,7 @@
 					"filters": [
 						{
 							"label": "containsRobot",
-							"tag": "player",
+							"tag": "robot",
 							"constraints": []
 						}
 					],
@@ -2479,12 +2566,12 @@
 						},
 						{
 							"label": "RobotsInSameLine",
-							"tag": "player",
+							"tag": "robot",
 							"constraints": [
 								{
 									"attribute": "inputLine",
 									"constraint": "sameValue",
-									"tag2": "player",
+									"tag2": "robot",
 									"attribute2": "inputLine"
 								}
 							]
