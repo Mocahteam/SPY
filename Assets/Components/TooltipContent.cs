@@ -2,12 +2,10 @@
 using UnityEngine;
 using FYFY;
 
-public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
     public string text;
     private Tooltip tooltip = null;
-
-    private bool isOver = false;
 
     private void Start()
     {
@@ -21,30 +19,38 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             tooltip = tooltipGO.GetComponent<Tooltip>();
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    private void formatContent()
     {
         string formatedContent = text;
         if (text.Contains("#agentName"))
             formatedContent = text.Replace("#agentName", GetComponent<AgentEdit>().associatedScriptName);
         tooltip.ShowTooltip(formatedContent);
-        isOver = true;
     }
-
-    public void OnPointerExit(PointerEventData eventData)
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        formatContent();
+    }
+    public void OnSelect(BaseEventData eventData)
+    {
+        formatContent();
+    }
+    
+    private void hideTooltip()
     {
         if (tooltip != null)
-        {
             tooltip.HideTooltip();
-            isOver = false;
-        }
+    }
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        hideTooltip();
+    }
+    public void OnDeselect(BaseEventData eventData)
+    {
+        hideTooltip();
     }
 
     public void OnDisable()
     {
-        if (isOver)
-        {
-            tooltip.HideTooltip();
-            isOver = false;
-        }
+        hideTooltip();
     }
 }
