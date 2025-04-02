@@ -57,7 +57,7 @@ namespace DIG.GBLXAPI.Internal
         {
             if (_statementQueue == null || _statementQueue.Count < batchTreshold)
                 return;
-            flushQueuedStatements(true);
+            flushQueuedStatements(false);
         }
 
         private void OnDestroy()
@@ -70,13 +70,13 @@ namespace DIG.GBLXAPI.Internal
 		private void OnApplicationFocus(bool hasFocus)
 		{
 			if (!hasFocus)
-				flushQueuedStatements(true);
+				flushQueuedStatements(false);
 		}
 
 		private void OnApplicationPause(bool pauseStatus)
 		{
 			if (pauseStatus)
-				flushQueuedStatements(true);
+				flushQueuedStatements(false);
 		}
 
 
