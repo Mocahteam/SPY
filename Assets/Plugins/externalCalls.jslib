@@ -2,8 +2,8 @@ mergeInto(LibraryManager.library, {
 
     Save: function (text, defaultName) {
 		var element = document.createElement('a');
-		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(Pointer_stringify(text)));
-		element.setAttribute('download', Pointer_stringify(defaultName));
+		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(UTF8ToString(text)));
+		element.setAttribute('download', UTF8ToString(defaultName));
 
 		element.style.display = 'none';
 		document.body.appendChild(element);
@@ -29,7 +29,7 @@ mergeInto(LibraryManager.library, {
 	
     DownloadLevel: function (uri) {
 		var element = document.createElement('a');
-		element.setAttribute('href', Pointer_stringify(uri));
+		element.setAttribute('href', UTF8ToString(uri));
 		element.setAttribute('target', "_blank");
 
 		element.style.display = 'none';
@@ -70,7 +70,12 @@ mergeInto(LibraryManager.library, {
 	},
 
 	UpdateHTMLLanguage: function(newLang){
-		var lang = Pointer_stringify(newLang);
+		var lang = UTF8ToString(newLang);
 		document.updateLang(lang);
+	},
+
+	CallTTS: function(txt){
+		var content = UTF8ToString(txt);
+		document.getElementById('TextToSpeechSpan').innerHTML = content;
 	}
 });

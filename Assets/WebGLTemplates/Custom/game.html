@@ -5,6 +5,9 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>SPY</title>
 		<link rel="shortcut icon" href="TemplateData/favicon.ico">
+	
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
 		<link rel="stylesheet" href="TemplateData/styleGame.css">
 		<!-- Pour activer le PWA -->
 		<!--<link rel="manifest" href="manifest.webmanifest">-->
@@ -13,7 +16,13 @@
 	<div id="unity-container">
 	  <div id="unity-header">
 		<label id="proxyLoadFiles" style="visibility:hidden;" for="files-selector" class="loadButton">Importer des scénarios et des niveaux</label>
-		<input id="files-selector" style="visibility:hidden;" type="file" accept=".xml" multiple>
+		<input id="files-selector" style="visibility:hidden; width: 0px;" type="file" accept=".xml" multiple>
+		<span class="form-check form-switch form-check-inline">
+			<input class="form-check-input" type="checkbox" id="switchTTS" onclick="initSound(this)" disabled>
+			<label id="labelSwitchTTS" for="switchTTS" class="form-check-label" >Synthèse vocale</label>
+		</span>
+		<label for="speedTTS" id="labelSpeed" class="form-label">Vitesse</label>
+		<input type="range" class="form-range pt-3" style="width: 100px;" min="0.1" max="10" step="0.1" id="speedTTS" value="1" disabled>
 		<div id="unity-fullscreen-button"></div>
 		<div id="unity-build-title">Agrandir&nbsp;:</div>
 	  </div>
@@ -25,7 +34,11 @@
 		</div>
 	  </div>
 	  <div id="unity-mobile-warning"></div>
+	  <span id="TextToSpeechSpan" style="visibility:hidden;" ></span>
 	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
 	<script>
 		// Pour activer le PWA => installation comme une appli
 		/*window.addEventListener("load", function () {
@@ -40,6 +53,25 @@
 		var progressBarFull = document.querySelector("#unity-progress-bar-full");
 		var fullscreenButton = document.querySelector("#unity-fullscreen-button");
 		var warningBanner = document.querySelector("#unity-mobile-warning");
+
+		// détection de la langue
+		var lang = "";
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("lang") != null){
+			if (params.get("lang") == "fr")
+				lang = "fr";
+			else if (params.get("lang") == "en")
+				lang = "en";
+		}
+		if (lang == ""){
+			if ((navigator.language && navigator.language.includes("fr")) || (navigator.userLanguage && navigator.userLanguage.includes("fr")))
+				lang = "fr";
+			else
+				lang = "en";
+		}
+			
+		document.updateLang = updateLang;
+		document.updateLang(lang);
 
 		// Shows a temporary message banner/ribbon for a few seconds, or
 		// a permanent error message on top of the canvas if type=='error'.
@@ -64,7 +96,62 @@
 			}
 			updateBannerVisibility();
 		}
+
+		// TTS Config
+		window.onload=function(){
+			// Vérification de l'accès à la synthèse vocale
+			if (window != null && window.speechSynthesis != null)
+				document.getElementById('switchTTS').removeAttribute("disabled");
+			else
+				alert(lang == "fr" ? "Le module de synthèse vocale n'est pas disponible sur votre navigateur." : "The text-to-speech module is not available on your browser.");
+		};
 		
+		var alreadyNotified = false;
+		
+		// Cette fonction est nécessaire pour que la synthèse vocale fonctionne sur iPhone. Il faut qu'une première "utterance" soit jouée directement sur le click de l'utilisateur. Donc on joue une "utterance" vide avant de récupérer la liste de mots du serveur et lancer ensuite la synthèse de chaque mot récupéré
+		function initSound(cb_TTS){
+			if (cb_TTS.checked == true){
+				// notification pour iPhone and co pour recommander de brancher des écouteurs, sinon on n'entend rien...
+				var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+				if (isIOS && !alreadyNotified) {
+					alert(lang == "fr" ? "Utilisez des écouteurs pour écouter la synthèse vocale..." : "Use headphones to listen to text-to-speech...");
+					alreadyNotified = true;
+				}
+				let utterance = new SpeechSynthesisUtterance(" ");
+				utterance.lang = lang == "fr" ? "fr-FR" : "en-US";
+				window.speechSynthesis.speak(utterance);
+
+				document.getElementById('speedTTS').removeAttribute("disabled");
+			} else {
+				document.getElementById('speedTTS').disabled = true;
+			}
+		}
+
+        // Configuration du MutationObserver
+        const targetNode = document.getElementById('TextToSpeechSpan');
+        const configObserver = { childList: true, subtree: true, characterData: true };
+
+        const callback = function(mutationsList, observer) {
+			if (document.getElementById('switchTTS').checked == true){
+				for (const mutation of mutationsList) {
+					if (mutation.target.id === 'TextToSpeechSpan') {
+						// Annuler toute synthèse vocale en cours
+						if (window.speechSynthesis.speaking) {
+							window.speechSynthesis.cancel();
+						}
+						let utterance = new SpeechSynthesisUtterance(targetNode.innerHTML);
+						utterance.lang = lang == "fr" ? "fr-FR" : "en-US";
+						utterance.rate = document.getElementById('speedTTS').value; // vitesse de lecture 
+						window.speechSynthesis.speak(utterance);
+					}
+				}
+			}
+        };
+
+        const observer = new MutationObserver(callback);
+        observer.observe(targetNode, configObserver);
+		// End TTS section
+
 		// choose the data file based on whether there's support for the ASTC texture compression format
 		var dataFile = "/WebGL_Desktop(DXT).data.unityweb";                                  
 		var c = document.createElement("canvas");                                 
@@ -91,7 +178,7 @@
 		
 		console.log(dataFile+ "loading");
 		
-		var buildVersion = "V1.3"
+		var buildVersion = "V1.4"
 		var buildUrl = buildVersion + "/Build";
 		var loaderUrl = buildUrl + "/WebGL_Desktop(DXT).loader.js";
 		var config = {
@@ -104,24 +191,6 @@
 			productVersion: "0.1",
 			showBanner: unityShowBanner,
 		};
-		
-		var lang = "";
-		const params = new URLSearchParams(window.location.search);
-		if (params.get("lang") != null){
-			if (params.get("lang") == "fr")
-				lang = "fr";
-			else if (params.get("lang") == "en")
-				lang = "en";
-		}
-		if (lang == ""){
-			if ((navigator.language && navigator.language.includes("fr")) || (navigator.userLanguage && navigator.userLanguage.includes("fr")))
-				lang = "fr";
-			else
-				lang = "en";
-		}
-			
-		document.updateLang = updateLang;
-		document.updateLang(lang);
 
 		// By default Unity keeps WebGL canvas render target size matched with
 		// the DOM size of the canvas element (scaled by window.devicePixelRatio)
@@ -195,7 +264,6 @@
 				alert(msg);
 				console.log(message);
 			});
-			
 		};
 		
 		fullscreenButton.addEventListener("click", () => {
@@ -237,9 +305,12 @@
 			lang = newLang;
 			document.getElementById("proxyLoadFiles").innerHTML = lang == "fr" ? "Importer des scénarios et des niveaux" : "Import scenarios and levels";
 			document.getElementById("unity-build-title").innerHTML = lang == "fr" ? "Agrandir&nbsp;:" : "Enlarge:";
+			document.getElementById("labelSwitchTTS").innerHTML = lang == "fr" ? "Synthèse vocale" : "Text-to-speech";labelSpeed
+			document.getElementById("labelSpeed").innerHTML = lang == "fr" ? "Vitesse" : "Speed";
 		}
 		
 		document.body.appendChild(script);
 	</script>
+	
 	</body>
 </html>
