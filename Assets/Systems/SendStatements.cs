@@ -93,7 +93,7 @@ public class SendStatements : FSystem {
             foreach (SendUserData sp in go.GetComponents<SendUserData>())
                 GameObjectManager.removeComponent(sp);
             if (statementQueue != null)
-                statementQueue.flushQueuedStatements(true);
+                statementQueue.flushQueuedStatements(false);
         }
     }
 
