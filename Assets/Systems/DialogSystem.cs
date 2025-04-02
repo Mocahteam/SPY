@@ -284,10 +284,18 @@ public class DialogSystem : FSystem
 	// Active ou non le bouton Ok du panel dialogue
 	public void setActiveOKButton(bool active)
 	{
-		GameObject okButtons = dialogPanel.transform.Find("Buttons").Find("OKButton").gameObject;
-		GameObjectManager.setGameObjectState(okButtons, active);
+		GameObject okButton = dialogPanel.transform.Find("Buttons").Find("OKButton").gameObject;
+		GameObjectManager.setGameObjectState(okButton, active);
 		if (active)
-			EventSystem.current.SetSelectedGameObject(okButtons);
+		{
+			EventSystem.current.SetSelectedGameObject(okButton);
+			// Définir le bouton ok comme le voisin de droite du bouton précédent
+			GameObject prevButton = dialogPanel.transform.Find("Buttons").Find("PrevButton").gameObject;
+			Navigation nav = prevButton.GetComponent<Button>().navigation;
+			nav.selectOnRight = okButton.GetComponent<Button>();
+			prevButton.GetComponent<Button>().navigation = nav;
+		}
+
 	}
 
 
@@ -297,7 +305,14 @@ public class DialogSystem : FSystem
 		GameObject nextButton = dialogPanel.transform.Find("Buttons").Find("NextButton").gameObject;
 		GameObjectManager.setGameObjectState(nextButton, active);
 		if (active)
+		{
 			EventSystem.current.SetSelectedGameObject(nextButton);
+			// Définir le bouton suivant comme le voisin de droite du bouton précédent
+			GameObject prevButton = dialogPanel.transform.Find("Buttons").Find("PrevButton").gameObject;
+			Navigation nav = prevButton.GetComponent<Button>().navigation;
+			nav.selectOnRight = nextButton.GetComponent<Button>();
+			prevButton.GetComponent<Button>().navigation = nav;
+		}
 	}
 
 
