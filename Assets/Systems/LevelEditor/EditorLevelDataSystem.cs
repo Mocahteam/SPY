@@ -36,12 +36,14 @@ public class EditorLevelDataSystem : FSystem {
 
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
+		{
 			gameData = go.GetComponent<GameData>();
 
-		// all blocks are unlimited inside level editor
-		gameData.actionBlockLimit = new Dictionary<string, int>();
-		foreach(GameObject block in f_editorblocks)
-			gameData.actionBlockLimit[block.GetComponent<EditorBlockData>().name] = -1;
+			// all blocks are unlimited inside level editor
+			gameData.actionBlockLimit = new Dictionary<string, int>();
+			foreach (GameObject block in f_editorblocks)
+				gameData.actionBlockLimit[block.GetComponent<EditorBlockData>().name] = -1;
+		}
 
 		resetMetaData();
 

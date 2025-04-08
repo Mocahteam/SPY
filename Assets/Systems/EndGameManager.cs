@@ -2,11 +2,9 @@
 using FYFY;
 using System.Collections;
 using TMPro;
-using System.IO;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using System;
 
 /// <summary>
 /// This system check if the end of the level is reached and display end panel accordingly
@@ -74,15 +72,13 @@ public class EndGameManager : FSystem {
 					GameObject player = f_player.getAt(p);
 					// check if positions are equals
 					if (player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().y == exit.GetComponent<Position>().y)
-					{
 						nbEnd++;
-						// if all players reached end position
-						if (nbEnd >= f_exit.Count)
-							// trigger end
-							GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Win });
-					}
 				}
 			}
+			// if all players reached end position or all exits are filled
+			if (nbEnd >= f_exit.Count || nbEnd >= f_player.Count)
+				// trigger end
+				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Win });
 		}
 	}
 
@@ -330,16 +326,10 @@ public class EndGameManager : FSystem {
 			}
 		}
 
-		Transform scoreCanvas = endPanel.transform.Find("ScoreCanvas");
-
 		// Affiche le nombre d'étoile désiré
-		for (int nbStar = 0; nbStar < 4; nbStar++)
-		{
-			if (nbStar == scoredStars)
-				GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, true);
-			else
-				GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, false);
-		}
+		Transform stars = endPanel.transform.Find("ScoreCanvas").Find("Stars");
+		stars.GetComponent<Image>().sprite = stars.GetComponent<SpriteList>().source[scoredStars];
+		stars.GetComponent<TooltipContent>().text = stars.GetComponent<StringList>().texts[scoredStars];
 
 		// Affichage du score
 		GameObject score_go = endPanel.transform.Find("Score").gameObject;

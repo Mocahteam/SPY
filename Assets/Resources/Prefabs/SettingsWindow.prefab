@@ -175,6 +175,7 @@ GameObject:
   - component: {fileID: 1575353408296162490}
   - component: {fileID: 1575353408296162491}
   - component: {fileID: 1575353408296162492}
+  - component: {fileID: 1448302713586454757}
   m_Layer: 5
   m_Name: Template
   m_TagString: Untagged
@@ -271,6 +272,18 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1448302713586454757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1575353408296162494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ef818c8718847049b273f949713c10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1575353408386531076
 GameObject:
   m_ObjectHideFlags: 0
@@ -939,9 +952,9 @@ GameObject:
   - component: {fileID: 1575353408748262539}
   - component: {fileID: 1575353408748262540}
   - component: {fileID: 2144866680488106173}
-  - component: {fileID: 1273523499655270606}
+  - component: {fileID: 5163273066610767366}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: InteractionLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1117,7 +1130,7 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: m_text
---- !u!114 &1273523499655270606
+--- !u!114 &5163273066610767366
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1284,7 +1297,7 @@ GameObject:
   - component: {fileID: 1575353408769519168}
   - component: {fileID: 5684341638373186772}
   m_Layer: 5
-  m_Name: Dropdown
+  m_Name: QualityDropdown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1365,10 +1378,10 @@ MonoBehaviour:
   m_Navigation:
     m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 4488636196300972817}
-    m_SelectOnDown: {fileID: 1273523499655270606}
-    m_SelectOnLeft: {fileID: 4488636196300972817}
-    m_SelectOnRight: {fileID: 1273523499655270606}
+    m_SelectOnUp: {fileID: 231521123937220469}
+    m_SelectOnDown: {fileID: 5163273066610767366}
+    m_SelectOnLeft: {fileID: 231521123937220469}
+    m_SelectOnRight: {fileID: 5163273066610767366}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 0, g: 1, b: 1, a: 1}
@@ -1851,9 +1864,9 @@ GameObject:
   - component: {fileID: 1575353409194698070}
   - component: {fileID: 1575353409194698071}
   - component: {fileID: 1575353409194698069}
-  - component: {fileID: 4488636196300972817}
+  - component: {fileID: 231521123937220469}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: QualityLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1989,7 +2002,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 2
---- !u!114 &4488636196300972817
+--- !u!114 &231521123937220469
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2004,9 +2017,9 @@ MonoBehaviour:
   m_Navigation:
     m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 3455333509050040964}
+    m_SelectOnUp: {fileID: 856543828905576196}
     m_SelectOnDown: {fileID: 1575353408769519168}
-    m_SelectOnLeft: {fileID: 3455333509050040964}
+    m_SelectOnLeft: {fileID: 856543828905576196}
     m_SelectOnRight: {fileID: 1575353408769519168}
   m_Transition: 1
   m_Colors:
@@ -2153,7 +2166,7 @@ GameObject:
   - component: {fileID: 1575353409330853332}
   - component: {fileID: 1575353409330853333}
   - component: {fileID: 2959936991018540084}
-  - component: {fileID: 3455333509050040964}
+  - component: {fileID: 856543828905576196}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -2317,7 +2330,7 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: m_text
---- !u!114 &3455333509050040964
+--- !u!114 &856543828905576196
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2333,9 +2346,9 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 1575353409449973780}
-    m_SelectOnDown: {fileID: 4488636196300972817}
+    m_SelectOnDown: {fileID: 231521123937220469}
     m_SelectOnLeft: {fileID: 1575353409449973780}
-    m_SelectOnRight: {fileID: 4488636196300972817}
+    m_SelectOnRight: {fileID: 231521123937220469}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -2577,9 +2590,9 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 2913485935757054887}
-    m_SelectOnDown: {fileID: 4488636196300972817}
+    m_SelectOnDown: {fileID: 856543828905576196}
     m_SelectOnLeft: {fileID: 2913485935757054887}
-    m_SelectOnRight: {fileID: 4488636196300972817}
+    m_SelectOnRight: {fileID: 856543828905576196}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 0, g: 1, b: 1, a: 1}
@@ -3060,9 +3073,9 @@ GameObject:
   - component: {fileID: 1575353409745038666}
   - component: {fileID: 1575353409745038667}
   - component: {fileID: 5857678254159721221}
-  - component: {fileID: 5182397658943973691}
+  - component: {fileID: 1369759509726252364}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: UISizeLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3238,7 +3251,7 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: m_text
---- !u!114 &5182397658943973691
+--- !u!114 &1369759509726252364
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3419,7 +3432,7 @@ GameObject:
   - component: {fileID: 1575353410002489258}
   - component: {fileID: 7432861653340214487}
   m_Layer: 5
-  m_Name: Dropdown
+  m_Name: InteractionDropdown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3500,10 +3513,10 @@ MonoBehaviour:
   m_Navigation:
     m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 1273523499655270606}
-    m_SelectOnDown: {fileID: 5182397658943973691}
-    m_SelectOnLeft: {fileID: 1273523499655270606}
-    m_SelectOnRight: {fileID: 5182397658943973691}
+    m_SelectOnUp: {fileID: 5163273066610767366}
+    m_SelectOnDown: {fileID: 1369759509726252364}
+    m_SelectOnLeft: {fileID: 5163273066610767366}
+    m_SelectOnRight: {fileID: 1369759509726252364}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 0, g: 1, b: 1, a: 1}
@@ -3607,6 +3620,7 @@ GameObject:
   - component: {fileID: 1575353410021479321}
   - component: {fileID: 1575353410021479322}
   - component: {fileID: 1575353410021479320}
+  - component: {fileID: 9218038204367092648}
   m_Layer: 5
   m_Name: SettingsWindow
   m_TagString: Untagged
@@ -3684,6 +3698,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99327feb9ebcda748b7d836bd1e1ada6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!225 &9218038204367092648
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1575353410021479324}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 1
 --- !u!1 &1575353410076740645
 GameObject:
   m_ObjectHideFlags: 0
@@ -3696,6 +3722,7 @@ GameObject:
   - component: {fileID: 1575353410076740641}
   - component: {fileID: 1575353410076740642}
   - component: {fileID: 1575353410076740643}
+  - component: {fileID: 6573905268345982305}
   m_Layer: 5
   m_Name: Template
   m_TagString: Untagged
@@ -3792,6 +3819,18 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6573905268345982305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1575353410076740645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ef818c8718847049b273f949713c10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1575353410105951516
 GameObject:
   m_ObjectHideFlags: 0
@@ -4067,7 +4106,7 @@ GameObject:
   - component: {fileID: 890159976820002779}
   - component: {fileID: 8697167750832176419}
   - component: {fileID: 4291383276285280359}
-  - component: {fileID: 5198055253603504620}
+  - component: {fileID: 7198839110630496739}
   m_Layer: 5
   m_Name: CurrentSize
   m_TagString: Untagged
@@ -4191,7 +4230,7 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &5198055253603504620
+--- !u!114 &7198839110630496739
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4325,9 +4364,9 @@ MonoBehaviour:
   m_Navigation:
     m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 5198055253603504620}
+    m_SelectOnUp: {fileID: 7198839110630496739}
     m_SelectOnDown: {fileID: 1575353409449973780}
-    m_SelectOnLeft: {fileID: 5198055253603504620}
+    m_SelectOnLeft: {fileID: 7198839110630496739}
     m_SelectOnRight: {fileID: 1575353409449973780}
   m_Transition: 1
   m_Colors:
@@ -4515,10 +4554,10 @@ MonoBehaviour:
   m_Navigation:
     m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 5182397658943973691}
-    m_SelectOnDown: {fileID: 5198055253603504620}
-    m_SelectOnLeft: {fileID: 5182397658943973691}
-    m_SelectOnRight: {fileID: 5198055253603504620}
+    m_SelectOnUp: {fileID: 1369759509726252364}
+    m_SelectOnDown: {fileID: 7198839110630496739}
+    m_SelectOnLeft: {fileID: 1369759509726252364}
+    m_SelectOnRight: {fileID: 7198839110630496739}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 0, g: 1, b: 1, a: 1}

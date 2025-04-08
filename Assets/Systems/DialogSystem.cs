@@ -241,6 +241,7 @@ public class DialogSystem : FSystem
 
 		// set background
 		dialogPanel.transform.parent.GetComponent<Image>().enabled = !dialog.enableInteraction;
+		dialogPanel.transform.parent.parent.GetComponentInParent<CanvasGroup>().interactable = dialog.enableInteraction;
 
 		// Be sure all buttons are disabled
 		setActiveOKButton(false);

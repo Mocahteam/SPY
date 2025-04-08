@@ -63,56 +63,58 @@ public class EditableContainerSystem : FSystem
 
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
+		{
 			gameData = go.GetComponent<GameData>();
 
-		if (!isEditorContext)
-		{
-			MainLoop.instance.StartCoroutine(tcheckLinkName());
-			f_gameLoaded.addEntryCallback(delegate
+			if (!isEditorContext)
 			{
-				if (!gameData.dragDropEnabled)
+				MainLoop.instance.StartCoroutine(tcheckLinkName());
+				f_gameLoaded.addEntryCallback(delegate
+				{
+					if (!gameData.dragDropEnabled)
+					{
+						foreach (GameObject container in f_scriptContainer)
+						{
+							Transform header = container.transform.Find("Header");
+							header.Find("ResetButton").GetComponent<Button>().interactable = false;
+							header.Find("RemoveButton").GetComponent<Button>().interactable = false;
+							GameObjectManager.removeComponent<TooltipContent>(header.Find("ProgramText").gameObject);
+						}
+						addContainerButton.interactable = false;
+					}
+				});
+				f_newEnd.addEntryCallback(delegate
 				{
 					foreach (GameObject container in f_scriptContainer)
 					{
 						Transform header = container.transform.Find("Header");
 						header.Find("ResetButton").GetComponent<Button>().interactable = false;
 						header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-						GameObjectManager.removeComponent<TooltipContent>(header.Find("ProgramText").gameObject);
+						header.Find("ContainerName").GetComponent<TMP_InputField>().interactable = false;
 					}
 					addContainerButton.interactable = false;
-				}
-			});
-			f_newEnd.addEntryCallback(delegate
-			{
-				foreach (GameObject container in f_scriptContainer)
+				});
+				f_newEnd.addExitCallback(delegate
 				{
-					Transform header = container.transform.Find("Header");
-					header.Find("ResetButton").GetComponent<Button>().interactable = false;
-					header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-					header.Find("ContainerName").GetComponent<TMP_InputField>().interactable = false;
-				}
-				addContainerButton.interactable = false;
-			});
-			f_newEnd.addExitCallback(delegate
-			{
-				foreach (GameObject container in f_scriptContainer)
-				{
-					Transform header = container.transform.Find("Header");
-					header.Find("ResetButton").GetComponent<Button>().interactable = true;
-
-					if (container.GetComponentInChildren<UIRootContainer>().editState != UIRootContainer.EditMode.Locked && gameData.actionsHistory == null)
+					foreach (GameObject container in f_scriptContainer)
 					{
-						Transform containerName = header.Find("ContainerName");
-						containerName.GetComponent<TMP_InputField>().interactable = true;
-						containerName.GetComponent<TooltipContent>().text = "Indiquez ici le nom du robot<br>à qui envoyer le programme.";
-						if (gameData.dragDropEnabled)
-							header.Find("RemoveButton").GetComponent<Button>().interactable = true;
-					}
-				}
+						Transform header = container.transform.Find("Header");
+						header.Find("ResetButton").GetComponent<Button>().interactable = true;
 
-				if (gameData.actionsHistory == null && gameData.dragDropEnabled)
-					addContainerButton.interactable = true;
-			});
+						if (container.GetComponentInChildren<UIRootContainer>().editState != UIRootContainer.EditMode.Locked && gameData.actionsHistory == null)
+						{
+							Transform containerName = header.Find("ContainerName");
+							containerName.GetComponent<TMP_InputField>().interactable = true;
+							containerName.GetComponent<TooltipContent>().text = "Indiquez ici le nom du robot<br>à qui envoyer le programme.";
+							if (gameData.dragDropEnabled)
+								header.Find("RemoveButton").GetComponent<Button>().interactable = true;
+						}
+					}
+
+					if (gameData.actionsHistory == null && gameData.dragDropEnabled)
+						addContainerButton.interactable = true;
+				});
+			}
 		}
 
 		f_forceRemoveContainer.addEntryCallback(delegate (GameObject go)

@@ -21,8 +21,8 @@
 			<input class="form-check-input" type="checkbox" id="switchTTS" onclick="initSound(this)" disabled>
 			<label id="labelSwitchTTS" for="switchTTS" class="form-check-label" >Synthèse vocale</label>
 		</span>
-		<label for="speedTTS" id="labelSpeed" class="form-label">Vitesse</label>
-		<input type="range" class="form-range pt-3" style="width: 100px;" min="0.1" max="10" step="0.1" id="speedTTS" value="1" disabled>
+		<label for="speedTTS" id="labelSpeed" style="visibility:hidden;" class="form-label">Vitesse</label>
+		<input type="range" class="form-range pt-3" style="visibility:hidden; width: 100px;" min="0.1" max="10" step="0.1" id="speedTTS" value="1" disabled>
 		<div id="unity-fullscreen-button"></div>
 		<div id="unity-build-title">Agrandir&nbsp;:</div>
 	  </div>
@@ -120,10 +120,10 @@
 				let utterance = new SpeechSynthesisUtterance(" ");
 				utterance.lang = lang == "fr" ? "fr-FR" : "en-US";
 				window.speechSynthesis.speak(utterance);
-
-				document.getElementById('speedTTS').removeAttribute("disabled");
+				
+				document.getElementById('speedTTS').style.visibility = 'visible';
 			} else {
-				document.getElementById('speedTTS').disabled = true;
+				document.getElementById('speedTTS').style.visibility = 'hidden';
 			}
 		}
 
@@ -303,10 +303,10 @@
 		
 		function updateLang(newLang){
 			lang = newLang;
-			document.getElementById("proxyLoadFiles").innerHTML = lang == "fr" ? "Importer des scénarios et des niveaux" : "Import scenarios and levels";
+			document.getElementById("proxyLoadFiles").innerHTML = lang == "fr" ? "Importer des scénarios et des missions" : "Import scenarios and missions";
 			document.getElementById("unity-build-title").innerHTML = lang == "fr" ? "Agrandir&nbsp;:" : "Enlarge:";
 			document.getElementById("labelSwitchTTS").innerHTML = lang == "fr" ? "Synthèse vocale" : "Text-to-speech";labelSpeed
-			document.getElementById("labelSpeed").innerHTML = lang == "fr" ? "Vitesse" : "Speed";
+			document.getElementById("labelSpeed").innerHTML = lang == "fr" ? "Vitesse voix" : "Voice speed";
 		}
 		
 		document.body.appendChild(script);

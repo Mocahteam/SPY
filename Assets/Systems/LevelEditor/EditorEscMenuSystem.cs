@@ -3,8 +3,6 @@ using FYFY;
 using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.UI;
-using System.Runtime.InteropServices;
-using UnityEngine.Events;
 
 public class EditorEscMenu : FSystem
 {
@@ -14,45 +12,10 @@ public class EditorEscMenu : FSystem
 	public GameObject menuCanvas;
 
 	public static EditorEscMenu instance;
-	
-	private UnityAction localCallback;
-
-	[DllImport("__Internal")]
-	private static extern bool IsMobileBrowser(); // call javascript
-
-	[DllImport("__Internal")]
-	private static extern void HideHtmlButtons(); // call javascript
 
 	public EditorEscMenu()
 	{
 		instance = this;
-	}
-	
-	// Use to init system before the first onProcess call
-	protected override void onStart()
-	{
-		GameObject gameDataGO = GameObject.Find("GameData");
-		if (gameDataGO == null)
-			GameObjectManager.loadScene("TitleScreen");
-		else
-		{
-			GameData gameData = gameDataGO.GetComponent<GameData>();
-			GameObjectManager.setGameObjectState(menuCanvas, false);
-
-			if (Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser())
-			{
-				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = gameData.localization[9], OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
-			}
-			if (Application.platform == RuntimePlatform.WebGLPlayer)
-				HideHtmlButtons();
-
-			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
-			{
-				verb = "opened",
-				objectType = "levelEditor"
-			});
-		}
 	}
 
 	// Use to process your families.

@@ -53,6 +53,13 @@ public class DoorAndConsoleManager : FSystem {
 					updatePathColor(id, true);
 				}
 			}
+			// sync all other console using the same slots
+			foreach(GameObject console in f_console)
+            {
+				Activable activable2 = console.GetComponent<Activable>();
+				if (console != consoleGO && activable2.slotID.Contains(id) && console.GetComponent<TurnedOn>() == null)
+					GameObjectManager.addComponent<TurnedOn>(console);
+            }
 		}
 	}
 
@@ -74,6 +81,13 @@ public class DoorAndConsoleManager : FSystem {
 					slotGo.transform.parent.GetComponent<Animator>().speed = gameData.gameSpeed_current;
 					updatePathColor(id, false);
 				}
+			}
+			// sync all other console using the same slots
+			foreach (GameObject console in f_console)
+			{
+				Activable activable2 = console.GetComponent<Activable>();
+				if (console != consoleGO && activable2.slotID.Contains(id) && console.GetComponent<TurnedOn>() != null)
+					GameObjectManager.removeComponent<TurnedOn>(console);
 			}
 		}
 	}

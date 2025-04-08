@@ -114,7 +114,8 @@ public class CurrentActionExecutor : FSystem {
 							GameObjectManager.addComponent<TurnedOn>(actGo);
 					}
 				}
-				ca.agent.GetComponent<Animator>().SetTrigger("Action");
+				if (ca.agent.GetComponent<Animator>())
+					ca.agent.GetComponent<Animator>().SetTrigger("Action");
 				break;
 		}
 		ca.StopAllCoroutines();

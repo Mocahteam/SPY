@@ -20,8 +20,8 @@ public class TTSSystem : FSystem
     protected override void onStart()
     {
         foreach (GameObject selectable in f_selectableElements)
-            GameObjectManager.addComponent<PointerSensitive>(selectable);
-        f_selectableElements.addEntryCallback(onNewButton);
+            onNewSelectable(selectable);
+        f_selectableElements.addEntryCallback(onNewSelectable);
 
         f_focused.addEntryCallback(onNewFocus);
 
@@ -38,15 +38,22 @@ public class TTSSystem : FSystem
         f_scrollBars.addEntryCallback(onNewScrollbar);
     }
 
-    private void onNewButton(GameObject button)
+    private void onNewSelectable(GameObject selectable)
     {
-        GameObjectManager.addComponent<PointerSensitive>(button);
+        // On exclue le tooltip du système de TTS
+        if (!selectable.GetComponentInParent<Tooltip>())
+            GameObjectManager.addComponent<PointerSensitive>(selectable);
     }
 
     private void onNewFocus(GameObject focused)
     {
-        // On ne fait rien si notre parent est un bouton, un inputfield, un drop down ou un toggle, ça sera à eux de faire le job
-        if (!focused.transform.parent || !(focused.transform.parent.GetComponentInParent<Button>() || focused.transform.parent.GetComponentInParent<TMP_InputField>() || focused.transform.parent.GetComponentInParent<TMP_Dropdown>() || focused.transform.parent.GetComponentInParent<Toggle>()))
+        Selectable select = focused.GetComponent<Selectable>();
+        Selectable parentSelect = focused.transform.parent ? focused.transform.parent.GetComponentInParent<Selectable>(true) : null;
+        bool focusedIsText = focused.GetComponent<TMP_Text>();
+
+        // On vocalise pour : 
+        if ((focusedIsText && parentSelect == null) || // Un texte qui n'est pas l'enfant d'un objet Selectable
+            !focusedIsText) // Tout ce qui n'est pas texte
         {
             string prefix = "";
             string content = "";
@@ -60,7 +67,7 @@ public class TTSSystem : FSystem
                 if (inputfield.text != "")
                     content = inputfield.text;
                 else // sinon utiliser le premier TMP_Text disponible qui sera le placeholder
-                    content = focused.GetComponentInChildren<TMP_Text>().text;
+                    content = inputfield.GetComponentInChildren<TMP_Text>(true).text;
             }
             else if (focused.GetComponent<TMP_Dropdown>())
                 prefix = LocalizationSettings.SelectedLocale.Identifier.ToString().Contains("(fr)") ? "Liste déroulante, " : "Dropdown, ";
@@ -80,8 +87,11 @@ public class TTSSystem : FSystem
                 content = "" + scrollbar.value;
             }
 
+            if (select && !select.IsInteractable())
+                prefix += LocalizationSettings.SelectedLocale.Identifier.ToString().Contains("(fr)") ? "désactivée, " : "disabled, ";
 
-            // Cas général : boutons, TMP_Text, Toggle, DropDown
+
+            // Cas général : boutons, TMP_Text, Toggle, DropDown => on va chercher le texte dans ses enfants
             if (focused.GetComponent<TMP_InputField>() == null)
             {
                 TMP_Text text = focused.GetComponentInChildren<TMP_Text>();
@@ -111,19 +121,21 @@ public class TTSSystem : FSystem
         }
     }
 
+    // Pour vocaliser le texte sélectionné à l'intérieur d'un inputField
     private void onNewInputField(GameObject inputField_GO)
     {
         TMP_InputField inputF = inputField_GO.GetComponent<TMP_InputField>();
         inputF.onTextSelection.AddListener(delegate (string input, int end, int start)
         {
             if (Application.platform == RuntimePlatform.WebGLPlayer)
-                CallTTS(input.Substring(Mathf.Min(start, end), Mathf.Max(start, end) - Mathf.Min(start, end)) + (LocalizationSettings.SelectedLocale.Identifier.ToString().Contains("(fr)") ? " sélectionné" : " selected"));
+                CallTTS((LocalizationSettings.SelectedLocale.Identifier.ToString().Contains("(fr)") ? "Champ de saisie, " : "Input field, ") + input.Substring(Mathf.Min(start, end), Mathf.Max(start, end) - Mathf.Min(start, end)) + (LocalizationSettings.SelectedLocale.Identifier.ToString().Contains("(fr)") ? " sélectionné" : " selected"));
             else
-                Debug.Log(input.Substring(Mathf.Min(start, end), Mathf.Max(start, end) - Mathf.Min(start, end)) + (LocalizationSettings.SelectedLocale.Identifier.ToString().Contains("(fr)") ? " sélectionné" : " selected"));
+                Debug.Log((LocalizationSettings.SelectedLocale.Identifier.ToString().Contains("(fr)") ? "Champ de saisie, " : "Input field, ") + input.Substring(Mathf.Min(start, end), Mathf.Max(start, end) - Mathf.Min(start, end)) + (LocalizationSettings.SelectedLocale.Identifier.ToString().Contains("(fr)") ? " sélectionné" : " selected"));
         });
 
     }
 
+    // Pour vocaliser le changement d'état d'un Toggle
     private void onNewToggle(GameObject toggle_GO)
     {
         Toggle toggle = toggle_GO.GetComponent<Toggle>();
@@ -136,6 +148,7 @@ public class TTSSystem : FSystem
         });
     }
 
+    // Pour vocaliser le scorll d'une scrollbar
     private void onNewScrollbar(GameObject scrollbar_GO)
     {
         Scrollbar scrollbar = scrollbar_GO.GetComponent<Scrollbar>();

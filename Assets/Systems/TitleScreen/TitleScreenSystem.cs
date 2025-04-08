@@ -14,8 +14,6 @@ using DIG.GBLXAPI;
 using Newtonsoft.Json;
 using UnityEngine.EventSystems;
 using System.Linq;
-using UnityEngine.Localization.Settings;
-using UnityEngine.Localization;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -24,8 +22,6 @@ public class TitleScreenSystem : FSystem {
 	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
 	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
 	private Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
-
-	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	private GameData gameData;
 	private UserData userData;
@@ -37,7 +33,6 @@ public class TitleScreenSystem : FSystem {
 	public GameObject listOfLevels;
 	public GameObject playButton;
 	public GameObject quitButton;
-	public GameObject levelEditorButton;
 	public GameObject loadingScreen;
 	public GameObject sessionIdPanel;
 	public GameObject deletableElement;
@@ -49,8 +44,6 @@ public class TitleScreenSystem : FSystem {
 	public TMP_Text logs;
 
 	private UnityAction localCallback;
-
-	private GameObject lastSelected;
 
 	private string loadLevelWithURL = "";
 	private int webGL_fileLoaded = 0;
@@ -163,59 +156,16 @@ public class TitleScreenSystem : FSystem {
     {
 		GameObjectManager.setGameObjectState(settingsWindows, false);
 		if (sessionIdPanel.activeInHierarchy)
+		{
+			sessionIdPanel.GetComponent<CanvasGroup>().interactable = true;
 			EventSystem.current.SetSelectedGameObject(sessionIdPanel.transform.Find("ShowSessionId").Find("Settings").gameObject);
+		}
 		else
+		{
+			mainMenu.GetComponentInParent<CanvasGroup>().interactable = true;
 			EventSystem.current.SetSelectedGameObject(playButton.transform.parent.Find("Parameters").gameObject);
+		}
     }
-
-    protected override void onProcess(int familiesUpdateCount)
-	{
-
-		if (Input.GetKeyDown(KeyCode.Tab))
-		{
-			if (virtualKeyboard.activeInHierarchy)
-				EventSystem.current.SetSelectedGameObject(virtualKeyboard.transform.Find("Panel").Find("Close").gameObject);
-			else
-				EventSystem.current.SetSelectedGameObject(f_buttons.getAt(f_buttons.Count - 1));
-		}
-		// Get the currently selected UI element from the event system.
-		GameObject selected = EventSystem.current.currentSelectedGameObject;
-		// Do nothing if there are none OR if the selected game object is not a child of a scroll rect OR if the selected game object is the same as it was last frame,
-		// meaning we haven't to move.
-		if (selected != null && selected.GetComponentInParent<ScrollRect>() != null && selected != lastSelected)
-		{
-			// Get the content
-			RectTransform viewport = selected.GetComponentInParent<ScrollRect>().viewport;
-			RectTransform contentPanel = selected.GetComponentInParent<ScrollRect>().content;
-
-			float selectedInContent_Y = Mathf.Abs(contentPanel.InverseTransformPoint(selected.transform.position).y);
-
-			Vector2 targetAnchoredPosition = new Vector2(contentPanel.anchoredPosition.x, contentPanel.anchoredPosition.y);
-			// we auto focus on selected object only if it is not visible
-			if (selectedInContent_Y - contentPanel.anchoredPosition.y < 0 || (selectedInContent_Y + (selected.transform as RectTransform).rect.height) - contentPanel.anchoredPosition.y > viewport.rect.height)
-			{
-				// check if selected object is too high
-				if (selectedInContent_Y - contentPanel.anchoredPosition.y < 0)
-				{
-					targetAnchoredPosition = new Vector2(
-						targetAnchoredPosition.x,
-						selectedInContent_Y
-					);
-				}
-				// selected object is too low
-				else 
-				{
-					targetAnchoredPosition = new Vector2(
-						targetAnchoredPosition.x,
-						-viewport.rect.height + selectedInContent_Y + (selected.transform as RectTransform).rect.height
-					);
-				}
-				
-				contentPanel.anchoredPosition = targetAnchoredPosition;
-			}
-			lastSelected = selected;
-		}
-	}
 
     // See Ok button in SetClass panel in TitleScreen scene
     public void synchUserData(GameObject go)
@@ -317,6 +267,7 @@ public class TitleScreenSystem : FSystem {
 			webGL_fileLoaded++;
 			if (www.downloadHandler.text == "")
 			{
+				// Unable to retrieve progress data
 				localCallback = null;
 				localCallback += delegate
 				{
@@ -333,6 +284,7 @@ public class TitleScreenSystem : FSystem {
 				Debug.Log(www.downloadHandler.text);
 				if (tokens.Length != 4)
 				{
+					// Session corrupted, ask to enter a new session code.
 					Debug.LogWarning(www.error);
 					localCallback = null;
 					localCallback += delegate
@@ -345,8 +297,14 @@ public class TitleScreenSystem : FSystem {
 				}
 				else
 				{
+					// Session successfully loaded
 					localCallback = null;
-					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[18], idSession), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+					localCallback += delegate
+					{
+						mainMenu.GetComponentInParent<CanvasGroup>().interactable = true;
+						EventSystem.current.SetSelectedGameObject(playButton);
+					};
+					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[18], idSession), OkButton = gameData.localization[1], CancelButton = gameData.localization[0], call = localCallback });
 					userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[0]);
 					if (userData.progression == null)
 						userData.progression = new Dictionary<string, int>();
@@ -652,6 +610,7 @@ public class TitleScreenSystem : FSystem {
 		bt_showLevels.onClick.RemoveAllListeners();
 		bt_showLevels.onClick.AddListener(delegate { showLevels(campaignKey); });
 		bt_showLevels.onClick.AddListener(delegate { GameObjectManager.setGameObjectState(detailsCampaign, false); });
+		EventSystem.current.SetSelectedGameObject(bt_showLevels.gameObject);
 	}
 
 	public void delayRefreshCompetencies(Transform content)
@@ -719,14 +678,10 @@ public class TitleScreenSystem : FSystem {
 			//scores
 			string highScoreKey = Utility.extractFileName(levelData.src);
 			int scoredStars = (userData.highScore != null ? (userData.highScore.ContainsKey(highScoreKey) ? userData.highScore[highScoreKey] : 0) : PlayerPrefs.GetInt(highScoreKey + gameData.scoreKey, 0)); //0 star by default
-			Transform scoreCanvas = button_go.transform.Find("ScoreCanvas");
-			for (int nbStar = 0; nbStar < 4; nbStar++)
-			{
-				if (nbStar == scoredStars && button.interactable) // n'activer les étoiles que pour les niveaux actifs
-					GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, true);
-				else
-					GameObjectManager.setGameObjectState(scoreCanvas.GetChild(nbStar).gameObject, false);
-			}
+			Transform stars = button_go.transform.Find("ScoreCanvas").Find("Stars");
+			GameObjectManager.setGameObjectState(stars.gameObject, button.interactable);
+			stars.GetComponent<Image>().sprite = stars.GetComponent<SpriteList>().source[scoredStars];
+			stars.GetComponent<TooltipContent>().text = stars.GetComponent<StringList>().texts[scoredStars];
 		}
 	}
 

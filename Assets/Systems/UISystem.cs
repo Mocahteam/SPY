@@ -33,8 +33,6 @@ public class UISystem : FSystem {
 
 	private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
 
-	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-
 	private GameData gameData;
 
 	private float touchUp;
@@ -115,16 +113,6 @@ public class UISystem : FSystem {
         //Active/désactive le menu echap si on appuit sur echap et que le focus n'est pas sur un input field et qu'on n'est pas en train de drag un element et que le clavier virtuel n'est pas ouvert
         if (Input.GetKeyDown(KeyCode.Escape) && (EventSystem.current.currentSelectedGameObject == null || (EventSystem.current.currentSelectedGameObject != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null)) && f_dragging.Count == 0 && !virtualKeyboard.activeInHierarchy)
 			setActiveEscapeMenu();
-
-		if (Input.GetKeyDown(KeyCode.Tab))
-		{
-			if (virtualKeyboard.activeInHierarchy)
-				EventSystem.current.SetSelectedGameObject(virtualKeyboard.transform.Find("Panel").Find("Close").gameObject);
-			else if (buttonMenu.activeInHierarchy)
-				EventSystem.current.SetSelectedGameObject(buttonMenu);
-			else
-				EventSystem.current.SetSelectedGameObject(f_buttons.getAt(f_buttons.Count - 1));
-		}
 
 		// With touch device when the finger is up, pointerOver is not removed because OnPointerExit is not called
 		// then be sure to clear pointerOver and Tooltips

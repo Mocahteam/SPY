@@ -27,18 +27,13 @@ public class OpenFileSystem : FSystem {
 	{
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
+		{
 			gameData = go.GetComponent<GameData>();
 
-		refreshListOfLevels("");
+			refreshListOfLevels("");
+		}
 
 		f_newLoading.addEntryCallback(levelLoaded);
-
-		// reload edited level
-		if (gameData.selectedScenario == Utility.testFromLevelEditor)
-        {
-			gameData.selectedScenario = "";
-			GameObjectManager.addComponent<NewLevelToLoad>(gameData.gameObject, new { levelKey = Utility.testFromLevelEditor });
-		}
 	}
 
 	// see Open menu and filter field in loading panel

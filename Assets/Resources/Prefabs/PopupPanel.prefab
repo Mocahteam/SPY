@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 554859978856481088}
   - component: {fileID: 554859978856481091}
   - component: {fileID: 554859978856481102}
-  - component: {fileID: 2133988531558601084}
+  - component: {fileID: 9110725058637718431}
   m_Layer: 5
   m_Name: Message
   m_TagString: Untagged
@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
---- !u!114 &2133988531558601084
+--- !u!114 &9110725058637718431
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -163,12 +163,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 7369373644365502681}
-    m_SelectOnDown: {fileID: 554859980337544380}
-    m_SelectOnLeft: {fileID: 7369373644365502681}
-    m_SelectOnRight: {fileID: 554859980337544380}
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -190,7 +190,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 554859978856481091}
+  m_TargetGraphic: {fileID: 0}
 --- !u!1 &554859979129701360
 GameObject:
   m_ObjectHideFlags: 0
@@ -400,11 +400,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 2133988531558601084}
+    m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 7369373644365502681}
-    m_SelectOnLeft: {fileID: 2133988531558601084}
+    m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 7369373644365502681}
   m_Transition: 1
   m_Colors:
@@ -600,6 +600,7 @@ GameObject:
   - component: {fileID: 554859980666948012}
   - component: {fileID: 554859980666948010}
   - component: {fileID: 554859980666948013}
+  - component: {fileID: 2469182198244140948}
   m_Layer: 5
   m_Name: PopupPanel
   m_TagString: Untagged
@@ -665,6 +666,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &2469182198244140948
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554859980666948015}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 1
 --- !u!1 &7369373642859654549
 GameObject:
   m_ObjectHideFlags: 0
@@ -991,12 +1004,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 554859980337544380}
-    m_SelectOnDown: {fileID: 2133988531558601084}
+    m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 554859980337544380}
-    m_SelectOnRight: {fileID: 2133988531558601084}
+    m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 0, g: 1, b: 1, a: 1}

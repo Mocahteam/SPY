@@ -48,6 +48,8 @@ public class PopupManager : FSystem {
 		panelInfoUser.SetActive(true); // not use GameObjectManager here else ForceRebuildLayout doesn't work
 		LayoutRebuilder.ForceRebuildLayoutImmediate(messageForUser.transform as RectTransform);
 		LayoutRebuilder.ForceRebuildLayoutImmediate(messageForUser.transform.parent as RectTransform);
+		panelInfoUser.SetActive(false);
+		GameObjectManager.setGameObjectState(panelInfoUser, true);
 
 		if (mfu.OkButton != "")
 			EventSystem.current.SetSelectedGameObject(buttons.transform.GetChild(0).gameObject);
