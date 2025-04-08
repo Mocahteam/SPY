@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<!-- level: this tag describes the content of a level. It has to be the first tag of the file. -->
+<!-- level: this tag describes the content of a mission. It has to be the first tag of the file. -->
 <level>
-	<!-- map (mandatory): this tag describes the map of the level. It is composed by a set of lines. -->
+	<!-- map (mandatory): this tag describes the map of the mission. It is composed by a set of lines. -->
 	<map>
 		<!-- line (at least one): this tag describes a line of the map. It is composed by a set of cells. -->
 		<line>
@@ -12,7 +12,7 @@
 						0 a ground cell that enables agent movement
 						1 a wall cell that blocks agent movement
 						2 a ground cell with a spawn object
-						3 a ground cell with a teleport object (at least one required to detect the end of the level)
+						3 a ground cell with a teleport object (at least one required to detect the end of the mission)
 			-->
 			<cell value="-1" />
 			<cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
@@ -24,16 +24,16 @@
 		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
 	</map>
   
-	<!-- dialogs (optional): this tag describes the set of text to display at the beginning of the level. It is composed by a set of dialog. The dialogs will be displayed in the order they defined. -->
+	<!-- dialogs (optional): this tag describes the set of text to display at the beginning of the mission. It is composed by a set of dialog. The dialogs will be displayed in the order they defined. -->
 	<dialogs>
 		<!-- 
-			dialog (at least one): this tag describes one of the dialogs of this level. It contains five attributes:
+			dialog (at least one): this tag describes one of the dialogs of this mission. It contains five attributes:
 				text (optional): the text to display. Use [fr]...[/fr][en]...[/en] to localize content.
-				img (optional): the name of the image to load. This file has to be placed inside the "Images" directory. Both "Images" directory and this level file have to be in the same directory. A valid URL works also. This field is localizable.
+				img (optional): the name of the image to load. This file has to be placed inside the "Images" directory. Both "Images" directory and this mission file have to be in the same directory. A valid URL works also. This field is localizable.
 				imgHeight (optional): the height of the image in the dialog panel
 				camX (optional): the X position to focus camera on the map grid
 				camY (optional): the Y position to focus camera on the map grid
-				sound (optional): the name of the sound to load. This file has to be placed inside the "Sounds" directory. Both "Sounds" directory and this level file have to be in the same directory. A valid URL works also. This field is localizable.
+				sound (optional): the name of the sound to load. This file has to be placed inside the "Sounds" directory. Both "Sounds" directory and this mission file have to be in the same directory. A valid URL works also. This field is localizable.
 				video (optional): a valide URL of the video to load. This field is localizable.
 				enableInteraction (optional):
 					0 -> Locked (default): the player can't interact with game while this dialog is shown
@@ -49,7 +49,7 @@
 	<!-- dragdropDisabled (optional): this tag enables to lock Drag&Drop system and to delete/clean editor containers. Usefull to propose solution scripts to the player and to avoid they modify them. -->
 	<dragdropDisabled />
 
-	<!-- executionLimit (optional): this tag enables to limit the number of times the player can click on the play button to solve the level. -->
+	<!-- executionLimit (optional): this tag enables to limit the number of times the player can click on the play button to solve the mission. -->
 	<executionLimit amount="1" />
 
 	<!-- fog (optional): this tag enables a mask on the last robot created (see robot tag) that hides all the map except around this robot -->
@@ -176,9 +176,9 @@
 				1 -> Synch:  if the player renames the script it will automatically renames associated robot tags
 				2 -> Editable (default): if the player renames the script it will not automatically renames associated robot tags
 			type (optional):
-				0 -> Optimal: the given script is the optimal solution for the level
-				1 -> NonOptimal: the given script resolve the level but it can be optimized
-				2 -> Bugged: the given script doesn't resolve the level (bug or incomplete)
+				0 -> Optimal: the given script is the optimal solution for the mission
+				1 -> NonOptimal: the given script resolve the mission but it can be optimized
+				2 -> Bugged: the given script doesn't resolve the mission (bug or incomplete)
 				3 -> Undefined (default)
 
 			#######################
@@ -376,7 +376,7 @@
   <decoration name="Modern Furniture/Prefabs/Triangle Chair" posY="3" posX="6" direction="2" /> 
   
 	<!--
-		score (optional) enables to define minimal score to display two or three stars. If the player reach the end of the level he always wins one star. It contains two attributes:
+		score (optional) enables to define minimal score to display two or three stars. If the player reach the end of the mission he always wins one star. It contains two attributes:
 			twoStars (mandatory): if the player score is higher, he wins two stars
 			threeStars (mandatory): if the player score is higher, he wins three stars
 	-->

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- scenario: this tag describes the content of a scenraio. It has to be the first tag of the file. It is composed by a set of mission, the missions will be available in the order they defined. It contains two attributes:
+	name: the name of the scenario to display. Use [fr]...[/fr][en]...[/en] to localize content.
+	desc: the description of the scenario. Use [fr]...[/fr][en]...[/en] to localize content.--> 
+<scenario name="[en]A great scenario[/en][fr]Un super scénario[/fr]" desc="[en]Exemple of description.[/en][fr]Example de description.[/fr]">
+	<!-- level (at least one): this tag describe a mission of the scenario. It contains two attributes:
+		src: the path of the mission
+		name: the name of the mission to display. Use [fr]...[/fr][en]...[/en] to localize content. -->
+	<level src = "Levels/Tutoriel/Tutoriel.xml" name="[fr]Tutoriel[/fr][en]Tutorial[/en]"/>
+		<!-- dialogs (optional): this tag describes the set of text to display in the mission. It is composed by a set of dialog. The dialogs will be displayed in the order they defined. -->
+		<dialogs>
+			<!-- 
+				dialog (at least one): this tag describes one of the dialogs of this mission. It contains five attributes:
+					text (optional): the text to display. Use [fr]...[/fr][en]...[/en] to localize content.
+					img (optional): the name of the image to load. This file has to be placed inside the "Images" directory. Both "Images" directory and this mission file have to be in the same directory. A valid URL works also. This field is localizable.
+					imgHeight (optional): the height of the image in the dialog panel
+					camX (optional): the X position to focus camera on the map grid
+					camY (optional): the Y position to focus camera on the map grid
+					sound (optional): the name of the sound to load. This file has to be placed inside the "Sounds" directory. Both "Sounds" directory and this mission file have to be in the same directory. A valid URL works also. This field is localizable.
+					video (optional): a valide URL of the video to load. This field is localizable.
+					enableInteraction (optional):
+						0 -> Locked (default): the player can't interact with game while this dialog is shown
+						1 -> Unlocked: the player can interact with game while this dialog is shown
+					briefingType (optionnal):
+						0 -> Briefing (default): this dialog will be displayed at the beginning of the game
+						1 -> Debriefing (win): this dialog will be displayed at the end of the game if the player won
+						2 -> Debriefing (defeat): this dialog will be displayed at the end of the game if the player lost
+			-->
+			<dialog text="[en]Exemple of briefing text.[/en][fr]Example de texte de briefing.[/fr]"/>
+		</dialogs>
+	</level>
+	<!-- Exemple of a second mission -->
+	<level src = "Levels/Tutoriel/CreateScript.xml" name="Mission 1" />
+</scenario>
