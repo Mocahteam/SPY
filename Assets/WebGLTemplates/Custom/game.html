@@ -21,12 +21,29 @@
 			<input class="form-check-input" type="checkbox" id="switchTTS" onclick="initSound(this)" disabled>
 			<label id="labelSwitchTTS" for="switchTTS" class="form-check-label" >Synthèse vocale</label>
 		</span>
-		<label for="speedTTS" id="labelSpeed" style="visibility:hidden;" class="form-label">Vitesse</label>
-		<input type="range" class="form-range pt-3" style="visibility:hidden; width: 100px;" min="0.1" max="10" step="0.1" id="speedTTS" value="1" disabled>
+		
+		<span id="TTSConfig" style="visibility:hidden;" class="form-check-inline">
+			<div class="form-check-inline">
+				<div class="form-check">
+				  <input class="form-check-input" type="radio" name="radioTarget" id="TTS_all">
+				  <label class="form-check-label" for="TTS_all" id="TTS_all_label">
+					Tout
+				  </label>
+				</div>
+				<div class="form-check">
+				  <input class="form-check-input" type="radio" name="radioTarget" id="TTS_briefing" checked>
+				  <label class="form-check-label" for="TTS_briefing" id="TTS_briefing_label">
+					Consignes
+				  </label>
+				</div>
+			</div>
+			<label for="speedTTS" id="labelSpeed" class="form-label">Vitesse voix</label>
+			<input type="range" class="form-range pt-3" style="width: 100px;" min="0.1" max="10" step="0.1" id="speedTTS" value="1">
+		</span>
 		<div id="unity-fullscreen-button"></div>
 		<div id="unity-build-title">Agrandir&nbsp;:</div>
 	  </div>
-	  <canvas id="unity-canvas"></canvas>
+	  <canvas id="unity-canvas" tabindex="0" aria-label="Zone interactive du jeu" role="application"></canvas>
 	  <div id="unity-loading-bar">
 		<div id="unity-logo"></div>
 		<div id="unity-progress-bar-empty">
@@ -35,6 +52,10 @@
 	  </div>
 	  <div id="unity-mobile-warning"></div>
 	  <span id="TextToSpeechSpan" style="visibility:hidden;" ></span>
+	  <!-- Le "aria-live" en mode assertif permet d'indiquer au lecteur d'écran que cette balise peut changer en live et qu'il doit donc la vocaliser immédaitement à chaque fois qu'elle change. Le "aria-atomic" indique que le lecteur d'écran doit relire le contenu de la balise et pas uniquement ce qui a changé. Le role "status"-->
+	  <span id="ScreenReaderSpan" aria-live="assertive" aria-atomic="true" role="status" class="visually-hidden"></span>
+	  <button id="after-canvas" class="visually-hidden">Continuer la navigation</button>
+	  <p id="DescMapSpan" class="visually-hidden"></p>
 	</div>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -121,9 +142,9 @@
 				utterance.lang = lang == "fr" ? "fr-FR" : "en-US";
 				window.speechSynthesis.speak(utterance);
 				
-				document.getElementById('speedTTS').style.visibility = 'visible';
+				document.getElementById('TTSConfig').style.visibility = 'visible';
 			} else {
-				document.getElementById('speedTTS').style.visibility = 'hidden';
+				document.getElementById('TTSConfig').style.visibility = 'hidden';
 			}
 		}
 
@@ -162,7 +183,7 @@
 			dataFile = "/WebGL_Mobile(ASTC).data.unityweb";
 		}
 		
-		// log whiwh webgl version is used
+		// log which webgl version is used
 		if (!gl2) {
 		  if (typeof WebGL2RenderingContext !== 'undefined') {
 			console.log('your browser appears to support WebGL2 but it might be disabled. Try updating your OS and/or video card drivers');
@@ -178,7 +199,8 @@
 		
 		console.log(dataFile+ "loading");
 		
-		var buildVersion = "V1.4"
+		var version = "1.5"
+		var buildVersion = "V"+version
 		var buildUrl = buildVersion + "/Build";
 		var loaderUrl = buildUrl + "/WebGL_Desktop(DXT).loader.js";
 		var config = {
@@ -188,7 +210,7 @@
 			streamingAssetsUrl: buildVersion + "/StreamingAssets",
 			companyName: "SorbonneUniversity",
 			productName: "Spy",
-			productVersion: "0.1",
+			productVersion: version,
 			showBanner: unityShowBanner,
 		};
 
@@ -305,11 +327,29 @@
 			lang = newLang;
 			document.getElementById("proxyLoadFiles").innerHTML = lang == "fr" ? "Importer des scénarios et des missions" : "Import scenarios and missions";
 			document.getElementById("unity-build-title").innerHTML = lang == "fr" ? "Agrandir&nbsp;:" : "Enlarge:";
-			document.getElementById("labelSwitchTTS").innerHTML = lang == "fr" ? "Synthèse vocale" : "Text-to-speech";labelSpeed
+			document.getElementById("labelSwitchTTS").innerHTML = lang == "fr" ? "Synthèse vocale" : "Text-to-speech";
 			document.getElementById("labelSpeed").innerHTML = lang == "fr" ? "Vitesse voix" : "Voice speed";
+			document.getElementById("TTS_all_label").innerHTML = lang == "fr" ? "Tout" : "All";
+			document.getElementById("TTS_briefing_label").innerHTML = lang == "fr" ? "Consignes" : "Instructions";
+			document.getElementById("unity-canvas").ariaLabel = lang == "fr" ? "Zone interactive du jeu" : "Interactive game zone";
+			document.getElementById("after-canvas").innerHTML = lang == "fr" ? "Continuer la navigation" : "Continue navigation";
 		}
 		
 		document.body.appendChild(script);
+		
+		// Détection lorsque le canvas prend le focus
+		canvas.addEventListener("focus", () => {
+		  document.getElementById("ScreenReaderSpan").textContent = 
+			lang == "fr" ? "Vous êtes entré dans l'application interactive. Appuyez sur Shift+Échap pour en sortir. Appuyez sur Home à tout moment pour mettre le focus sur le premier élément interactif." : "You have now entered the interactive application. Press Shift+Escape to exit. Press Home at any time to focus on the first interactive element.";
+		});
+		// Détecter une touche spéciale pour quitter le canvas
+		canvas.addEventListener("keydown", (e) => {
+		  if (event.shiftKey && event.key === "Escape") {
+			event.preventDefault(); event.preventDefault(); // Tente d'empêcher l'action par défaut
+			// Rediriger le focus vers un élément HTML extérieur
+			document.getElementById("after-canvas").focus();
+		  }
+		});
 	</script>
 	
 	</body>

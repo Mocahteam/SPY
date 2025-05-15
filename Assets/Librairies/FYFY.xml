@@ -627,6 +627,9 @@
         <member name="M:FYFY.MainLoop.synchronizeWrappers">
             <summary>Synchronize systems' wrappers</summary>
         </member>
+        <member name="P:FYFY.MainLoop.familiesUpdateCount">
+            <summary>The total families update since the start of the game (Read Only). This value starts at 0 and increases by 1 on each Fyfy update phase.</summary>
+        </member>
         <member name="T:FYFY.AllOfComponents">
             <summary>
             	Matcher used to exclude all the <c>GameObjects</c> which don't have

@@ -6,7 +6,6 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Runtime.InteropServices;
-using System;
 
 /// <summary>
 /// Read XML file and load level
@@ -299,7 +298,8 @@ public class LevelGenerator : FSystem {
 			// Chargement de l'icône de l'agent sur la localisation
 			executablePanel.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
-			executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = entity.GetComponent<AgentEdit>().associatedScriptName;
+			executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_Text>().text = agentEdit.associatedScriptName;
+			executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName = agentEdit.associatedScriptName;
 		}
 		else if (type == "guard" || type == "enemy")
 		{
@@ -307,10 +307,10 @@ public class LevelGenerator : FSystem {
 			// Chargement de l'icône de l'agent sur la localisation
 			executablePanel.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
-			if(nameAgent != "")
-				executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = nameAgent;
-            else
-				executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text = "Drone "+nbDroneCreate;
+			if(nameAgent == "")
+				nameAgent = "Drone "+nbDroneCreate;
+			executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_Text>().text = nameAgent;
+			executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName = nameAgent;
 		}
 
 		AgentColor ac = MainLoop.instance.GetComponent<AgentColor>();

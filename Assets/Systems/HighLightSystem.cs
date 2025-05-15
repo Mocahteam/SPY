@@ -81,9 +81,9 @@ public class HighLightSystem : FSystem {
 
 	public void highLightItem(GameObject go){
 		// first process currentAction in agents panels (execution mode)
-		if(go.GetComponent<CurrentAction>())
+		Selectable sel = go.GetComponent<Selectable>();
+		if (go.GetComponent<CurrentAction>() || (sel && !sel.interactable))
 		{
-			Selectable sel = go.GetComponent<Selectable>();
 			ColorBlock cb = sel.colors;
 			if (sel.interactable)
 				cb.normalColor = go.GetComponent<Highlightable>().highlightedColor;
@@ -108,6 +108,7 @@ public class HighLightSystem : FSystem {
 				parent = parent.parent;
 			}
 		}
+
 		// then process world GameObjects (Walls, drone, robots...)
 		else if (go.GetComponentInChildren<Renderer>(true)){
 			go.GetComponentInChildren<Renderer>(true).material.color = go.GetComponent<Highlightable>().highlightedColor;
@@ -121,8 +122,8 @@ public class HighLightSystem : FSystem {
 	public void unHighLightItem(GameObject go){
 		// manage the case of items in executable panels
 		ScrollRect parentScroll = go.GetComponentInParent<ScrollRect>();
-		if ((go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) && parentScroll && parentScroll.transform.parent.name.Contains("ExecutablePanel")) {
-			Selectable sel = go.GetComponent<Selectable>();
+		Selectable sel = go.GetComponent<Selectable>();
+		if (((go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) && parentScroll && parentScroll.transform.parent.name.Contains("ExecutablePanel")) || (sel && !sel.interactable)) {
 			ColorBlock cb = sel.colors;
 			if (sel.interactable)
 				cb.normalColor = go.GetComponent<Highlightable>().baseColor;

@@ -77,5 +77,23 @@ mergeInto(LibraryManager.library, {
 	CallTTS: function(txt){
 		var content = UTF8ToString(txt);
 		document.getElementById('TextToSpeechSpan').innerHTML = content;
+	},
+
+	SendToScreenReader: function(txt){
+		var content = UTF8ToString(txt);
+		// force l'actualisation du contenu, même s'il est identique
+		document.getElementById('ScreenReaderSpan').innerHTML = "";
+		document.getElementById('ScreenReaderSpan').innerHTML = content;
+	},
+
+	InstructionOnly: function(){
+		var switchTTS = document.getElementById("switchTTS");
+		var tts_briefing = document.getElementById("TTS_briefing");
+		return switchTTS.checked && tts_briefing.checked;
+	},
+
+	UpdateMap: function(txt){
+		var content = UTF8ToString(txt);
+		document.getElementById('DescMapSpan').innerHTML = content;
 	}
 });

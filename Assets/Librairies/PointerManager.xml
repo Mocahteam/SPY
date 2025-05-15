@@ -14,8 +14,8 @@
         </member>
         <member name="T:FYFY_plugins.PointerManager.PointerSensitive">
             <summary>
-            	Component allowing <c>GameObject</c> to be sensitive to the pointer or keyboard selection.
-            	Add automatically a <see cref="T:FYFY_plugins.PointerManager.PointerOver"/> when the pointer points the <c>GameObject</c> or when the <c>GameObject</c> is selected by keyboard navigation.
+            	Component allowing <c>GameObject</c> to be sensitive to the pointer.
+            	Add automatically a <see cref="T:FYFY_plugins.PointerManager.PointerOver"/> when the pointer points the <c>GameObject</c>
             </summary>
         </member>
         <member name="M:FYFY_plugins.PointerManager.PointerSensitive.OnPointerEnter(UnityEngine.EventSystems.PointerEventData)">
@@ -27,18 +27,6 @@
         <member name="M:FYFY_plugins.PointerManager.PointerSensitive.OnPointerExit(UnityEngine.EventSystems.PointerEventData)">
             <summary>
             	Called when the pointer is not any longer over the GameObject.
-            	Callback automatically called by Unity.
-            </summary>
-        </member>
-        <member name="M:FYFY_plugins.PointerManager.PointerSensitive.OnSelect(UnityEngine.EventSystems.BaseEventData)">
-            <summary>
-            	Called when the GameObject is Selected.
-            	Callback automatically called by Unity.
-            </summary>
-        </member>
-        <member name="M:FYFY_plugins.PointerManager.PointerSensitive.OnDeselect(UnityEngine.EventSystems.BaseEventData)">
-            <summary>
-            	Called when the GameObject is Deselected.
             	Callback automatically called by Unity.
             </summary>
         </member>

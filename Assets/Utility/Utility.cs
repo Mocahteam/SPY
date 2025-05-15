@@ -49,8 +49,8 @@ public static class Utility
 			}
 
 			// the item is compatible with dropZone
-			Transform targetContainer = null;
-			int siblingIndex = 0;
+			Transform targetContainer;
+			int siblingIndex;
 			if (dropArea.transform.parent.GetComponent<BaseElement>()) // BasicAction
 			{
 				targetContainer = dropArea.transform.parent.parent; // target is the grandparent
@@ -448,8 +448,8 @@ public static class Utility
 	// Associe à chaque bloc le bloc qui sera executé aprés
 	public static void computeNext(GameObject container)
 	{
-		// parcourir tous les enfants jusqu'à l'avant dernier
-		for (int i = 0; i < container.transform.childCount - 1; i++)
+		// parcourir tous les enfants jusqu'à l'avant dernier (sauf pour le UIRootExecutor où on saute le premier
+		for (int i = (container.GetComponent<UIRootExecutor>() != null ? 1 : 0); i < container.transform.childCount - 1; i++)
 		{
 			Transform child = container.transform.GetChild(i);
 			child.GetComponent<BaseElement>().next = container.transform.GetChild(i + 1).gameObject;
@@ -939,5 +939,12 @@ public static class Utility
 			return uri.Replace(new Uri(Application.streamingAssetsPath + "/").AbsoluteUri, "");
 		else 
 			return uri;
+	}
+
+	public static IEnumerator delayGOSelection(GameObject go, int nbYield = 1)
+	{
+		for (int i = 0; i < nbYield; i++)
+			yield return null;
+		EventSystem.current.SetSelectedGameObject(go);
 	}
 }

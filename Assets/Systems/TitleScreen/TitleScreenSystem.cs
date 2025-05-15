@@ -82,10 +82,11 @@ public class TitleScreenSystem : FSystem {
 			gameData.sendStatementEnabled = true;
 		GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
 
+		if (gameData.sendStatementEnabled)
+			mainMenu.GetComponentInParent<CanvasGroup>().interactable = false;
+
 		// Enable Loading screen
 		GameObjectManager.setGameObjectState(loadingScreen, true);
-
-		EventSystem.current.SetSelectedGameObject(playButton);
 
 		if (!GameObject.Find("GBLXAPI"))
 			initGBLXAPI();
@@ -117,7 +118,7 @@ public class TitleScreenSystem : FSystem {
 				showLevels(gameData.selectedScenario);
 				GameObjectManager.setGameObjectState(spyMenu.Find("MenuCampaigns").gameObject, false); // be sure campaign menu is disabled
 				GameObjectManager.setGameObjectState(spyMenu.Find("MenuLevels").gameObject, true); // enable levels menu
-				EventSystem.current.SetSelectedGameObject(spyMenu.Find("MenuLevels").Find("Retour").gameObject);
+				MainLoop.instance.StartCoroutine(Utility.delayGOSelection(spyMenu.Find("MenuLevels").Find("Retour").gameObject));
 			}
 			
 		}
@@ -233,8 +234,8 @@ public class TitleScreenSystem : FSystem {
 				if (gameData.sendStatementEnabled || !Application.isEditor)
 				{
 					GameObjectManager.setGameObjectState(sessionIdPanel, true);
-					// select ok button
-					EventSystem.current.SetSelectedGameObject(sessionIdPanel.transform.Find("ShowSessionId").Find("Buttons").Find("OkButton").gameObject);
+					// On décalle la sélection du texte de la popup d'une frame pour laisser la prochaine phase de gestion des évènements passer (ce qui pourrait sélectionner automatiquement un autre GO) afin d'être sûr de mettre le focus sur le titre de la popup
+					MainLoop.instance.StartCoroutine(Utility.delayGOSelection(sessionIdPanel.transform.Find("ShowSessionId").Find("YourCode").gameObject));
 				}
 			}
 			else {
@@ -480,8 +481,6 @@ public class TitleScreenSystem : FSystem {
 	// See ForceLaunch button
 	public void forceLaunch()
     {
-
-		Debug.Log(webGL_fileLoaded + " " + webGL_fileToLoad + " " + f_localizationLoaded.Count);
 		webGL_fileLoaded = webGL_fileToLoad;
 	}
 
@@ -589,6 +588,8 @@ public class TitleScreenSystem : FSystem {
 			// add on click
 			directoryButton.GetComponent<Button>().onClick.AddListener(delegate { showScenarioDetails(key); });
 		}
+		if (listOfCampaigns.transform.childCount > 0)
+			MainLoop.instance.StartCoroutine(Utility.delayGOSelection(listOfCampaigns.transform.GetChild(0).gameObject));
 	}
 
 	private void showScenarioDetails(string campaignKey)
@@ -683,6 +684,9 @@ public class TitleScreenSystem : FSystem {
 			stars.GetComponent<Image>().sprite = stars.GetComponent<SpriteList>().source[scoredStars];
 			stars.GetComponent<TooltipContent>().text = stars.GetComponent<StringList>().texts[scoredStars];
 		}
+
+		if (listOfLevels.transform.childCount > 0)
+			MainLoop.instance.StartCoroutine(Utility.delayGOSelection(listOfLevels.transform.GetChild(0).Find("Button").gameObject));
 	}
 
 	public void launchLevel(string campaignKey, int levelToLoad) {

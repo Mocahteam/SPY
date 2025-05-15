@@ -105,7 +105,7 @@ public class EditableContainerSystem : FSystem
 						{
 							Transform containerName = header.Find("ContainerName");
 							containerName.GetComponent<TMP_InputField>().interactable = true;
-							containerName.GetComponent<TooltipContent>().text = "Indiquez ici le nom du robot<br>à qui envoyer le programme.";
+							containerName.GetComponent<TooltipContent>().text = gameData.localization[65];
 							if (gameData.dragDropEnabled)
 								header.Find("RemoveButton").GetComponent<Button>().interactable = true;
 						}
@@ -212,19 +212,20 @@ public class EditableContainerSystem : FSystem
 			{
 				// si on est dans le player on cache l'UI permettant de configurer le mode et le type
 				panel.gameObject.SetActive(false);
+				Transform header = cloneContainer.transform.Find("ScriptContainer").Find("Header");
+				Transform containerName = header.Find("ContainerName");
 				// et si on est en mode Lock, on bloque l'édition et on interdit de supprimer le script
 				if (editState == UIRootContainer.EditMode.Locked)
 				{
-					Transform header = cloneContainer.transform.Find("ScriptContainer").Find("Header");
 					header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-					Transform containerName = header.Find("ContainerName");
-					containerName.GetComponent<TooltipContent>().text = "Ce programme sera envoyé à " + name + ".<br><i>Vous ne pouvez pas le changer</i>.";
+					containerName.GetComponent<TooltipContent>().text = Utility.getFormatedText(gameData.localization[53], name);
 					containerName.GetComponent<TMP_InputField>().interactable = false;
 				}
+				else
+					containerName.GetComponent<TooltipContent>().text = gameData.localization[65];
 				// si le drag&drop n'est pas activé on bloque la balayette et la suppression du script
 				if (!gameData.dragDropEnabled)
 				{
-					Transform header = cloneContainer.transform.Find("ScriptContainer").Find("Header");
 					header.Find("RemoveButton").GetComponent<Button>().interactable = false;
 					header.Find("ResetButton").GetComponent<Button>().interactable = false;
 				}
@@ -281,12 +282,15 @@ public class EditableContainerSystem : FSystem
 		yield return null;
 		yield return null;
 		RectTransform editableContainers = (RectTransform)EditableCanvas.transform.Find("EditableContainers");
-		// Resolve bug when creating the first editable component, it is the child of the verticalLayout but not included inside!!!
+		// Resolve bug when creating editable component, it is the child of the verticalLayout but not included inside!!!
 		// We just disable and enable it and force update rect
 		if (editableContainers.childCount > 0)
 		{
-			editableContainers.GetChild(0).gameObject.SetActive(false);
-			editableContainers.GetChild(0).gameObject.SetActive(true);
+			foreach (Transform child in editableContainers)
+			{
+				child.gameObject.SetActive(false);
+				child.gameObject.SetActive(true);
+			}
 		}
 		editableContainers.ForceUpdateRectTransforms();
 		yield return null;
@@ -451,9 +455,9 @@ public class EditableContainerSystem : FSystem
 
 			// Si même nom trouvé on met l'arriére transparent
 			if (nameSame)
-				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>(true).image.color = new Color(1f, 1f, 1f, 1f);
+				agent.GetComponent<ScriptRef>().executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_Text>().color = new Color(1f, 1f, 1f, 1f);
 			else // sinon rouge 
-				agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>(true).image.color = new Color(1f, 0.4f, 0.28f, 1f);
+				agent.GetComponent<ScriptRef>().executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_Text>().color = new Color(1f, 0.4f, 0.28f, 1f);
 		}
 	}
 }

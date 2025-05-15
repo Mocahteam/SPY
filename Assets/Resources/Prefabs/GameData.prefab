@@ -70,30 +70,30 @@ MonoBehaviour:
   - "La liste des r\xE9f\xE9rentiels est mal form\xE9e : #0#"
   - "R\xE9f\xE9rentiel num\xE9ro #0# non d\xE9fini."
   - "Cette partie du logiciel n'est pas con\xE7ue pour \xEAtre utilis\xE9e sur smartphone
-    ou tablette.\\n\\nNous vous conseillons de basculer sur un ordinateur en mode
-    plein \xE9cran pour \xE9diter vos sc\xE9narios."
+    ou tablette.<br><br>Nous vous conseillons de basculer sur un ordinateur en mode
+    plein \xE9cran avant de poursuivre l'\xE9dition."
   - "Aucun niveau compatible avec votre s\xE9lection"
-  - "Erreur ! Le niveau \\\"#0#\\\" n'est pas pr\xE9sent dans la base de donn\xE9e,
-    veuillez importer le fichier manquant."
-  - "Le nom du scenario est invalide. Il ne peut \xEAtre vide et contenir les carat\xE8res
-    suivants : #0#"
-  - "Un sc\xE9nario avec le nom \\\"#0#\\\" existe d\xE9j\xE0, souhaitez-vous le
-    remplacer ?"
-  - "Le sc\xE9nario a \xE9t\xE9 enregistr\xE9 dans le fichier : #0#/Scenario/#1#"
-  - "Erreur, le sc\xE9nario n'a pas \xE9t\xE9 enregistr\xE9.\\n#0#"
-  - "Impossible de r\xE9cup\xE9rer les donn\xE9es de progression pour \\\"#0#\\\"."
+  - "Erreur ! Le niveau \"#0#\" n'est pas pr\xE9sent dans la base de donn\xE9e, veuillez
+    importer le fichier manquant."
+  - "Le nom est invalide. Il ne peut \xEAtre vide et contenir les carat\xE8res suivants
+    : #0#"
+  - "Un fichier avec le nom \"#0#\" existe d\xE9j\xE0, souhaitez-vous le remplacer
+    ?"
+  - "Fichier enregistr\xE9 : #0#/#1#/#2#"
+  - "Erreur, le fichier n'a pas \xE9t\xE9 enregistr\xE9.\\n#0#"
+  - "Impossible de r\xE9cup\xE9rer les donn\xE9es de progression pour \"#0#\"."
   - Session corrompue, veuillez entrer un nouveau code de session.
-  - "Session \\\"#0#\\\" charg\xE9e avec succ\xE8s."
+  - "Session \"#0#\" charg\xE9e avec succ\xE8s."
   - "Fichier(s) charg\xE9(s)"
-  - 'Erreur lors du chargement du fichier \"#0#\" : #1#'
-  - "Echec de v\xE9rification de la disponibilit\xE9 du code de session \\\"#0#\\\""
+  - 'Erreur lors du chargement du fichier "#0#" : #1#'
+  - "Echec de v\xE9rification de la disponibilit\xE9 du code de session \"#0#\""
   - "Nouvelle tentative de v\xE9rification de la disponibilit\xE9 du code de session
-    \\\"#0#\\\""
-  - "Echec de r\xE9cup\xE9ration des donn\xE9es de la session \\\"#0#\\\""
-  - "Nouvelle tentative de r\xE9cup\xE9ration des donn\xE9es de la session \\\"#0#\\\""
+    \"#0#\""
+  - "Echec de r\xE9cup\xE9ration des donn\xE9es de la session \"#0#\""
+  - "Nouvelle tentative de r\xE9cup\xE9ration des donn\xE9es de la session \"#0#\""
   - Echec
   - Nouvel essai
-  - "n'est pas un sc\xE9nario ou un niveau valide!"
+  - "n'est pas un sc\xE9nario ou une mission valide!"
   - "Comp\xE9tences en jeu dans ce sc\xE9nario :"
   - "Aucune comp\xE9tence identifi\xE9e dans ce sc\xE9nario"
   - Textes de briefing
@@ -108,21 +108,44 @@ MonoBehaviour:
   - SON
   - VIDEO
   - Reste #0#
-  - "Vous avez \xE9t\xE9 rep\xE9r\xE9 !"
-  - "Bravo vous avez termin\xE9 ce sc\xE9nario !"
-  - "Bravo vous avez gagn\xE9 !"
+  - "Tu as \xE9t\xE9 rep\xE9r\xE9 !"
+  - "Bravo tu as termin\xE9 ce sc\xE9nario !"
+  - "Bravo tu as gagn\xE9 !"
   - Une condition est mal remplie !
-  - "Vous n'avez pas r\xE9ussi \xE0 atteindre le t\xE9l\xE9porteur et vous n'avez
-    plus d'ex\xE9cution disponible.\\nEssayez de r\xE9soudre ce niveau en moins de
-    coup !"
+  - "Tu n'as pas r\xE9ussi \xE0 atteindre le t\xE9l\xE9porteur et tu n'as plus d'ex\xE9cution
+    disponible.<br>Essaye de r\xE9soudre cette mission en moins de coup !"
   - "Aucune action ne peut \xEAtre ex\xE9cut\xE9e !"
-  - "ATTENTION, boucle infinie d\xE9tect\xE9e...\\nRisque de surchauffe du processeur
+  - "ATTENTION, boucle infinie d\xE9tect\xE9e...<br>Risque de surchauffe du processeur
     du robot, interuption du programme d'urgence !"
-  - ERREUR de chargement du niveau, veuillez retourner au menu principal !
+  - ERREUR de chargement de la mission, veuillez retourner au menu principal !
   - NouveauScenario.xml
-  - NouveauNiveau.xml
-  - "Ajout impossible apr\xE8s avoir<br>commenc\xE9 \xE0 r\xE9soudre le niveau"
-  - "Ce programme sera envoy\xE9 \xE0 #1#.<br><i>Vous ne pouvez pas le changer</i>."
+  - NouvelleMission.xml
+  - "Ajout impossible apr\xE8s avoir<br>commenc\xE9 \xE0 r\xE9soudre la mission"
+  - "Ce programme sera envoy\xE9 \xE0 #0#.<br><i>Tu ne peux pas changer ce nom</i>."
+  - 'Bouton, '
+  - 'Champ de saisie, '
+  - "Liste d\xE9roulante, "
+  - "Case \xE0 cocher, "
+  - "coch\xE9e, "
+  - "non coch\xE9e, "
+  - "Barre de d\xE9filement, valeur : "
+  - 'Action courrante, '
+  - "d\xE9sactiv\xE9e, "
+  - ' fait '
+  - " s\xE9lectionn\xE9"
+  - "Indique ici le nom du robot<br>qui ex\xE9cutera ce programme."
+  - S
+  - M
+  - E
+  - Pi
+  - Robot
+  - Garde
+  - O
+  - Po
+  - "ferm\xE9e"
+  - ouverte
+  - T
+  - "L\xE9gende: S=Sol, M=Mur, E=Exit, Pi=Pi\xE8ce, O=Observ\xE9, Po=Porte, T=Terminal"
 --- !u!114 &2951319979171891393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,6 +233,26 @@ MonoBehaviour:
           - rid: 47
           - rid: 48
           - rid: 49
+          - rid: 872094442203906050
+          - rid: 872094442203906051
+          - rid: 872094442203906052
+          - rid: 872094442203906053
+          - rid: 872094442203906054
+          - rid: 872094442203906055
+          - rid: 872094442203906056
+          - rid: 872094442203906057
+          - rid: 872094442203906058
+          - rid: 872094442203906059
+          - rid: 872094442203906060
+          - rid: 5470077210843152453
+          - rid: 5470077210843152456
+          - rid: 5470077210843152457
+          - rid: 5470077210843152458
+          - rid: 5470077210843152459
+          - rid: 5470077210843152460
+          - rid: 5470077210843152461
+          - rid: 5470077210843152462
+          - rid: 5470077210843152463
         m_UpdateType: 1
         m_Changed:
           m_PersistentCalls:
@@ -900,3 +943,283 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: localization.Array.data[53]
+    - rid: 872094442203906050
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 228564751838601216
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[54]
+    - rid: 872094442203906051
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 228565055187443712
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[55]
+    - rid: 872094442203906052
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 228565609993199616
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[56]
+    - rid: 872094442203906053
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 228565822451474432
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[57]
+    - rid: 872094442203906054
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 228566049107468288
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[58]
+    - rid: 872094442203906055
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 228566241726685184
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[59]
+    - rid: 872094442203906056
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 228566453258018816
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[60]
+    - rid: 872094442203906057
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 228566648771305472
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[61]
+    - rid: 872094442203906058
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 228566831810732032
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[62]
+    - rid: 872094442203906059
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 228567178876805120
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[63]
+    - rid: 872094442203906060
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 228567699557703680
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[64]
+    - rid: 5470077210843152453
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 239870357866274816
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[65]
+    - rid: 5470077210843152456
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 239916253563838464
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[66]
+    - rid: 5470077210843152457
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 239916273319010304
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[67]
+    - rid: 5470077210843152458
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 239916335742836736
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[69]
+    - rid: 5470077210843152459
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 239916398321852416
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[72]
+    - rid: 5470077210843152460
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 239916408639840256
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[73]
+    - rid: 5470077210843152461
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 239916423630282752
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[74]
+    - rid: 5470077210843152462
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 239916436699734016
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[75]
+    - rid: 5470077210843152463
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 239916476423987200
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[77]

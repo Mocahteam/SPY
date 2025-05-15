@@ -150,7 +150,7 @@ public class StepSystem : FSystem {
 
     private string exportExecutableScriptToString(Transform scriptContainer)
     {
-        string scriptsContent = scriptContainer.parent.parent.parent.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text + " {";
+        string scriptsContent = scriptContainer.GetComponentInChildren<UIRootExecutor>(true).scriptName + " {";
         for (int i = 0; i < scriptContainer.childCount; i++)
             scriptsContent += " " + Utility.exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>());
         scriptsContent += " }\n";

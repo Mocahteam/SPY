@@ -92,8 +92,8 @@ public class CurrentActionManager : FSystem
 		GameObject firstAction = null;
 		// try to get the first action
 		Transform container = agent.GetComponent<ScriptRef>().executableScript.transform;
-		if (container.childCount > 0)
-			firstAction = getFirstActionOf(container.GetChild(0).gameObject, agent);
+		if (container.childCount > 1) // > 1 to jump the first child "Header"
+			firstAction = getFirstActionOf(container.GetChild(1).gameObject, agent);
 
 		if (firstAction != null)
 		{

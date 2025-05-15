@@ -263,6 +263,12 @@ public class DialogSystem : FSystem
 			if ((f_ends.Count == 0 && nBriefingDialog > 0) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && nDebriefingWinDialog > 0) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && nDebriefingDefeatDialog > 0))
 				setActivePrevButton(true);
 
+		if (dialog.text != null)
+		{
+			// On décalle la sélection du texte de briefing d'une frame pour laisser la prochaine phase de gestion des évènements passer (ce qui sélectionnerai certainement automatiquement le prochain bouton "suivant" ou "ok") afin d'être sûr de mettre le focus sur le texte de briefing
+			MainLoop.instance.StartCoroutine(Utility.delayGOSelection(textGO));
+		}
+
 		return dialogReturn;
 	}
 

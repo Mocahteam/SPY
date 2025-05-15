@@ -51,10 +51,8 @@ public class PopupManager : FSystem {
 		panelInfoUser.SetActive(false);
 		GameObjectManager.setGameObjectState(panelInfoUser, true);
 
-		if (mfu.OkButton != "")
-			EventSystem.current.SetSelectedGameObject(buttons.transform.GetChild(0).gameObject);
-		else if (mfu.CancelButton != "")
-			EventSystem.current.SetSelectedGameObject(buttons.transform.GetChild(1).gameObject);
+		// On décalle la sélection du texte de la popup d'une frame pour laisser la prochaine phase de gestion des évènements passer (ce qui pourrait sélectionner automatiquement le prochain bouton "suivant" ou "annulé") afin d'être sûr de mettre le focus sur le texte du message
+		MainLoop.instance.StartCoroutine(Utility.delayGOSelection(messageForUser.gameObject));
 
 		// in case of several messages pop in one frame
 		foreach (MessageForUser message in go.GetComponents<MessageForUser>())

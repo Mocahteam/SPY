@@ -74,28 +74,25 @@ public class CameraSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		// move camera front/back depending on Vertical axis
-		if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || UI_frontBackValue != 0) // set for qwerty
+		if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.S) || UI_frontBackValue != 0)
 		{
 			if (UI_frontBackValue == 0)
-				moveFrontBack(Input.GetKey(KeyCode.W) ? 1 : -1);
+				moveFrontBack(Input.GetKey(KeyCode.Z) ? 1 : -1);
 			else
 				moveFrontBack(UI_frontBackValue);
 		}
 		// move camera left/right de pending on Horizontal axis
-		if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || UI_leftRightValue != 0) // set for qwerty
+		if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.D) || UI_leftRightValue != 0)
 		{
 			if (UI_leftRightValue == 0)
-				moveLeftRight(Input.GetKey(KeyCode.A) ? -1 : 1);
+				moveLeftRight(Input.GetKey(KeyCode.Q) ? -1 : 1);
 			else
 				moveLeftRight(UI_leftRightValue);
 		}
 
-		// rotate camera with "Q" and "E" keys (qwerty keyboard)
-		if (Input.GetKey(KeyCode.Q))
-		{
+		// rotate camera with "A" and "E" keys
+		if (Input.GetKey(KeyCode.A))
 			rotateCamera(1, 0);
-			Debug.Log(KeyCode.Q);
-		}
 		else if (Input.GetKey(KeyCode.E))
 			rotateCamera(-1, 0);
 		else if (UI_rotateValue != 0)

@@ -61,7 +61,7 @@ public class ScriptGenerator : FSystem {
 			foreach (GameObject drone in f_drone)
 			{
 				ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
-				if (scriptRef.executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_InputField>().text == name)
+				if (scriptRef.executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName == name)
 				{
 					List<GameObject> script = new List<GameObject>();
 					foreach (XmlNode actionNode in scriptNode.ChildNodes)
@@ -70,9 +70,9 @@ public class ScriptGenerator : FSystem {
 					foreach (GameObject go in script)
 						go.transform.SetParent(tmpContainer.transform, false); //add actions to container
 					Utility.fillExecutablePanel(tmpContainer, scriptRef.executableScript, drone.tag);
-					// bind all child
-					foreach (Transform child in scriptRef.executableScript.transform)
-						GameObjectManager.bind(child.gameObject);
+					// bind all child (except the first "header")
+					for (int i = 1; i < scriptRef.executableScript.transform.childCount; i++)
+						GameObjectManager.bind(scriptRef.executableScript.transform.GetChild(i).gameObject);
 					// On fait apparaitre le panneau du robot
 					scriptRef.executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
 					GameObjectManager.setGameObjectState(scriptRef.executablePanel, true);

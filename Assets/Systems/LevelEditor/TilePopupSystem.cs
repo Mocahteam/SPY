@@ -77,7 +77,7 @@ public class TilePopupSystem : FSystem
 			selectedObject = paintableGrid.floorObjects[posTuple];
 		}
 
-		if (f_activePopups.Count > 0 && (Input.GetKeyDown(KeyCode.Escape) || selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && Input.GetMouseButtonDown(0) && f_focusedPopups.Count == 0)))
+		if (f_activePopups.Count > 0 && ((Input.GetKey(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))) || selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && Input.GetMouseButtonDown(0) && f_focusedPopups.Count == 0)))
 		{
 			hideAllPopups();
 			selectedObject = null; // be sure

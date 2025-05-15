@@ -274,7 +274,6 @@ GameObject:
   - component: {fileID: 4074579980787044415}
   - component: {fileID: 6023537846393364863}
   - component: {fileID: 2086279192914146519}
-  - component: {fileID: 3039759531481870908}
   m_Layer: 5
   m_Name: ContainerName
   m_TagString: Untagged
@@ -500,49 +499,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: "Indiquez ici le nom du robot<br>\xE0 qui envoyer le programme."
---- !u!114 &3039759531481870908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1245433763471564457}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 2983475422737465348
-  references:
-    version: 2
-    RefIds:
-    - rid: 2983475422737465348
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
-        asm: Unity.Localization}
-      data:
-        m_Target: {fileID: 2086279192914146519}
-        m_TrackedProperties:
-          items:
-          - rid: 2983475422737465349
-        m_UpdateType: 0
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 2983475422737465349
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 170578796578643968
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: text
 --- !u!1 &1573241153173284669
 GameObject:
   m_ObjectHideFlags: 0
@@ -1180,6 +1136,7 @@ GameObject:
   - component: {fileID: 2876508349029538607}
   - component: {fileID: 2876508349029538606}
   - component: {fileID: 2876508349029538605}
+  - component: {fileID: 1663782342239245395}
   m_Layer: 5
   m_Name: ScriptContainer
   m_TagString: ScriptConstructor
@@ -1314,6 +1271,43 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 9
+--- !u!114 &1663782342239245395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2876508349029538603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TrackedObjects:
+  - rid: 5470077210843152454
+  references:
+    version: 2
+    RefIds:
+    - rid: 5470077210843152454
+      type: {class: TrackedRectTransform, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+        asm: Unity.Localization}
+      data:
+        m_Target: {fileID: 2876508349029538604}
+        m_TrackedProperties:
+          items:
+          - rid: 5470077210843152455
+    - rid: 5470077210843152455
+      type: {class: FloatTrackedProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_PropertyPath: m_SizeDelta.x
+        m_VariantData:
+        - localeIdentifier:
+            m_Code: fr
+          value: 71
+        - localeIdentifier:
+            m_Code: en
+          value: 71
 --- !u!1 &2876508349418875100
 GameObject:
   m_ObjectHideFlags: 0
@@ -2266,7 +2260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: Glissez ci-dessous les blocs de votre programme
+  text: Ajoutez ci-dessous les blocs de votre programme
 --- !u!114 &6234569005329411434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2281,6 +2275,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TrackedObjects:
   - rid: 0
+  - rid: 872094375075905538
   references:
     version: 2
     RefIds:
@@ -2307,6 +2302,32 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: m_text
+    - rid: 872094375075905538
+      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+        asm: Unity.Localization}
+      data:
+        m_Target: {fileID: 8702060301378478664}
+        m_TrackedProperties:
+          items:
+          - rid: 872094375075905539
+        m_UpdateType: 0
+        m_Changed:
+          m_PersistentCalls:
+            m_Calls: []
+    - rid: 872094375075905539
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 227598891846197248
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: text
 --- !u!1 &4971193049039981488
 GameObject:
   m_ObjectHideFlags: 0
@@ -4804,7 +4825,6 @@ GameObject:
   - component: {fileID: 558578274065986923}
   - component: {fileID: 7568058385241630762}
   - component: {fileID: 6334519672863568342}
-  - component: {fileID: 8297852434857309424}
   - component: {fileID: 6069065716538415841}
   m_Layer: 5
   m_Name: SendToText
@@ -4860,7 +4880,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Envoyer le code \xE0 :"
+  m_text: "Est appel\xE9 par :"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4943,19 +4963,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
---- !u!114 &8297852434857309424
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9220079920452930829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  text: "D\xE9finit la ligne de communication<br>sur laquelle sera envoy\xE9 ce programme"
 --- !u!114 &6069065716538415841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4970,7 +4977,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TrackedObjects:
   - rid: 0
-  - rid: 2983475422737465346
   references:
     version: 2
     RefIds:
@@ -4997,32 +5003,6 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: m_text
-    - rid: 2983475422737465346
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
-        asm: Unity.Localization}
-      data:
-        m_Target: {fileID: 8297852434857309424}
-        m_TrackedProperties:
-          items:
-          - rid: 2983475422737465347
-        m_UpdateType: 0
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 2983475422737465347
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 170578662910369792
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: text
 --- !u!1001 &3459711427710681648
 PrefabInstance:
   m_ObjectHideFlags: 0
