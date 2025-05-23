@@ -109,7 +109,6 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-			MainLoop.instance.StartCoroutine(delayNewButtonFocused(buttons.Find("ReloadState").gameObject));
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -156,12 +155,10 @@ public class EndGameManager : FSystem {
 			{
 				GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
 				endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = gameData.localization[43];
-				MainLoop.instance.StartCoroutine(delayNewButtonFocused(buttons.Find("MainMenu").gameObject));
 			}
 			else
 			{
 				endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = gameData.localization[44];
-				MainLoop.instance.StartCoroutine(delayNewButtonFocused(buttons.Find("NextLevel").gameObject));
 			}
 			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
 			{
@@ -183,7 +180,6 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-			MainLoop.instance.StartCoroutine(delayNewButtonFocused(buttons.Find("ReloadState").gameObject));
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -205,7 +201,6 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-			MainLoop.instance.StartCoroutine(delayNewButtonFocused(buttons.Find("ReloadLevel").gameObject));
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -229,7 +224,6 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-			MainLoop.instance.StartCoroutine(delayNewButtonFocused(buttons.Find("ReloadState").gameObject));
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -251,7 +245,6 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-			MainLoop.instance.StartCoroutine(delayNewButtonFocused(buttons.Find("ReloadState").gameObject));
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -273,7 +266,6 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-			MainLoop.instance.StartCoroutine(delayNewButtonFocused(buttons.Find("MainMenu").gameObject));
 			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
 			endPanel.GetComponent<AudioSource>().loop = true;
 			endPanel.GetComponent<AudioSource>().Play();
@@ -286,6 +278,8 @@ public class EndGameManager : FSystem {
 				}
 			}));
 		}
+		// Force to focus on "Content" child
+		MainLoop.instance.StartCoroutine(delayNewButtonFocused(endPanel.transform.Find("Content").gameObject));
 	}
 
 	private IEnumerator delayNewButtonFocused(GameObject target)

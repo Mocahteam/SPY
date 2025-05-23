@@ -277,6 +277,9 @@ public class ParamCompetenceSystem : FSystem
 		LayoutRebuilder.ForceRebuildLayoutImmediate(ContentCompMenu.transform as RectTransform);
 		competenciesLoadedAndReady = true;
 		refreshLevelInfo();
+		
+		if (Application.platform == RuntimePlatform.WindowsEditor)
+			DebugLogLevelsCompetencies();
 	}
 
 	public void traceLoadindScenarioEditor()
@@ -952,5 +955,33 @@ public class ParamCompetenceSystem : FSystem
 	public void downloadLevel(DataLevelBehaviour dlb)
 	{
 		DownloadLevel(dlb.data.src);
+	}
+
+	private void DebugLogLevelsCompetencies()
+    {
+		// select all levels
+		List<XmlNode> selectedLevels = new List<XmlNode>();
+		foreach (KeyValuePair<string, XmlNode> level in gameData.levels)
+			if (level.Key != Utility.testFromScenarioEditor && level.Key != Utility.testFromLevelEditor && level.Key != Utility.testFromUrl) // we don't add new line for tested levels
+				selectedLevels.Add(level.Value);
+
+		// export all competency id
+		string csvExport = "";
+		for (int c = 0; c < f_competencies.Count; c++)
+			csvExport += "\t" + Utility.extractLocale(f_competencies.getAt(c).GetComponent<Competency>().id);
+		csvExport += "\n";
+		// parse all levels
+		foreach (KeyValuePair<string, XmlNode> level in gameData.levels)
+		{
+			if (level.Key != Utility.testFromScenarioEditor && level.Key != Utility.testFromLevelEditor && level.Key != Utility.testFromUrl) // we don't export competencies for tested levels
+			{
+				csvExport += Utility.extractFileName(level.Key);
+				// check all competencies
+				for (int c = 0; c < f_competencies.Count; c++)
+					csvExport += "\t"+(Utility.isCompetencyMatchWithLevel(f_competencies.getAt(c).GetComponent<Competency>(), level.Value.OwnerDocument) ? "1" : "0");
+			}
+			csvExport += "\n";
+		}
+		File.WriteAllText("exportAssociationMissions"+ f_compSelector.First().GetComponent<TMP_Dropdown>().options[f_compSelector.First().GetComponent<TMP_Dropdown>().value].text+"Ref.txt", csvExport);
 	}
 }

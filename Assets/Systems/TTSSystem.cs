@@ -351,6 +351,7 @@ public class TTSSystem : FSystem
                 stringExport += exportMap[i, j];
             stringExport += "<br>";
         }
+        stringExport += gameData.localization[78] + "<br>";
 
         UpdateMap(stringExport);
     }

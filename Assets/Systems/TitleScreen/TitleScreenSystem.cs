@@ -103,6 +103,7 @@ public class TitleScreenSystem : FSystem {
 		else // means we come back from a playing session, streaming assets are already loaded
 		{
 			Transform spyMenu = mainCanvas.transform.Find("SPYMenu");
+			mainMenu.GetComponentInParent<CanvasGroup>().interactable = true;
 			if (gameData.selectedScenario == Utility.testFromScenarioEditor) // reload scenario editor
             {
                 MainLoop.instance.StartCoroutine(delayOpeningScenarioEditor());
@@ -112,7 +113,7 @@ public class TitleScreenSystem : FSystem {
 				launchLevelEditor();
 			}
             else if (gameData.selectedScenario != "" && gameData.selectedScenario != Utility.testFromUrl)
-            {
+			{
 				// reload last opened scenario
 				playButton.GetComponent<Button>().onClick.Invoke();
 				showLevels(gameData.selectedScenario);
@@ -158,12 +159,10 @@ public class TitleScreenSystem : FSystem {
 		GameObjectManager.setGameObjectState(settingsWindows, false);
 		if (sessionIdPanel.activeInHierarchy)
 		{
-			sessionIdPanel.GetComponent<CanvasGroup>().interactable = true;
 			EventSystem.current.SetSelectedGameObject(sessionIdPanel.transform.Find("ShowSessionId").Find("Settings").gameObject);
 		}
 		else
 		{
-			mainMenu.GetComponentInParent<CanvasGroup>().interactable = true;
 			EventSystem.current.SetSelectedGameObject(playButton.transform.parent.Find("Parameters").gameObject);
 		}
     }
