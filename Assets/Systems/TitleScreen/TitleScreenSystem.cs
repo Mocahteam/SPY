@@ -160,10 +160,12 @@ public class TitleScreenSystem : FSystem {
 		if (sessionIdPanel.activeInHierarchy)
 		{
 			EventSystem.current.SetSelectedGameObject(sessionIdPanel.transform.Find("ShowSessionId").Find("Settings").gameObject);
+			sessionIdPanel.GetComponent<CanvasGroup>().interactable = true;
 		}
 		else
 		{
 			EventSystem.current.SetSelectedGameObject(playButton.transform.parent.Find("Parameters").gameObject);
+			playButton.GetComponentInParent<CanvasGroup>().interactable = true;
 		}
     }
 
