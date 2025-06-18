@@ -21,6 +21,7 @@ public class TilePopupSystem : FSystem
 	public GameObject consoleSlotsPopup;
 	public GameObject doorSlotPopup;
 	public GameObject furniturePopup;
+	public GameObject virtualKeyboard;
 
 	public PaintableGrid paintableGrid;
 
@@ -77,7 +78,7 @@ public class TilePopupSystem : FSystem
 			selectedObject = paintableGrid.floorObjects[posTuple];
 		}
 
-		if (f_activePopups.Count > 0 && ((Input.GetKey(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))) || selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && Input.GetMouseButtonDown(0) && f_focusedPopups.Count == 0)))
+		if (f_activePopups.Count > 0 && (virtualKeyboard == null || !virtualKeyboard.activeInHierarchy) && ((Input.GetKey(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))) || selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && Input.GetMouseButtonDown(0) && f_focusedPopups.Count == 0)))
 		{
 			hideAllPopups();
 			selectedObject = null; // be sure

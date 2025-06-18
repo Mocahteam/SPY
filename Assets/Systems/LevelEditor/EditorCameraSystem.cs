@@ -15,6 +15,10 @@ public class EditorCameraSystem : FSystem
 
 	public Camera mainCamera;
 
+	private float UI_frontBackValue = 0;
+	private float UI_leftRightValue = 0;
+	private float UI_zoomValue = 0;
+
 	// Distance minimale de zoom
 	public float cameraZoomMin;
 	// Distance maximale de zoom
@@ -35,14 +39,20 @@ public class EditorCameraSystem : FSystem
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		// move camera front/back depending on Vertical axis
-		if ((Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.S)) && inputFieldNotSelected())
+		if ((Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.S)) && inputFieldNotSelected() || UI_frontBackValue != 0)
 		{
-			moveFrontBack(Input.GetKey(KeyCode.Z) ? 1 : -1);
+			if (UI_frontBackValue == 0)
+				moveFrontBack(Input.GetKey(KeyCode.Z) ? 1 : -1);
+			else
+				moveFrontBack(UI_frontBackValue);
 		}
 		// move camera left/right de pending on Horizontal axis
-		if ((Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.D)) && inputFieldNotSelected())
+		if ((Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.D)) && inputFieldNotSelected() || UI_leftRightValue != 0)
 		{
-			moveLeftRight(Input.GetKey(KeyCode.Q) ? -1 : 1);
+			if (UI_leftRightValue == 0)
+				moveLeftRight(Input.GetKey(KeyCode.Q) ? -1 : 1);
+			else
+				moveLeftRight(UI_leftRightValue);
 		}
 
 		// Zoom in/out with keyboard
@@ -79,13 +89,19 @@ public class EditorCameraSystem : FSystem
 		}
 
 		// Zoom with scroll wheel only if UI element is not focused
-		else if (Input.GetAxis("Mouse ScrollWheel") < 0 && f_UIfocused.Count == 0) // Zoom out
+		else if ((Input.GetAxis("Mouse ScrollWheel") < 0 && f_UIfocused.Count == 0) || UI_zoomValue > 0) // Zoom out
 		{
-			zoomOut(1);
+			if (UI_zoomValue > 0)
+				zoomOut(UI_zoomValue);
+			else
+				zoomOut(1);
 		}
-		else if (Input.GetAxis("Mouse ScrollWheel") > 0 && f_UIfocused.Count == 0) // Zoom in
+		else if ((Input.GetAxis("Mouse ScrollWheel") > 0 && f_UIfocused.Count == 0) || UI_zoomValue < 0) // Zoom in
 		{
-			zoomIn(1);
+			if (UI_zoomValue < 0)
+				zoomIn(-UI_zoomValue);
+			else
+				zoomIn(1);
 		}
 	}
 	
@@ -115,5 +131,38 @@ public class EditorCameraSystem : FSystem
 		mainCamera.orthographicSize -= value * Time.deltaTime * Mathf.Max((mainCamera.orthographicSize-cameraZoomMin)/10, 1) * 100; // plus on s'approche plus on ralenti
 		if (mainCamera.orthographicSize < cameraZoomMin)
 			mainCamera.orthographicSize = cameraZoomMin;
+	}
+
+	public void set_UIFrontBack(float value)
+	{
+		UI_frontBackValue = value;
+	}
+
+	public void set_UILeftRight(float value)
+	{
+		UI_leftRightValue = value;
+	}
+
+	public void set_UIZoom(float value)
+	{
+		UI_zoomValue = value;
+	}
+
+	public void submitFrontBack(float value)
+	{
+		moveFrontBack(value);
+	}
+
+	public void submitLeftRight(float value)
+	{
+		moveLeftRight(value);
+	}
+
+	public void submitZoom(float value)
+	{
+		if (value > 0)
+			zoomOut(value);
+		else
+			zoomIn(-value);
 	}
 }
