@@ -42,6 +42,7 @@ public class TitleScreenSystem : FSystem {
 	public GameObject virtualKeyboard;
 	public TMP_Text progress;
 	public TMP_Text logs;
+	public TMP_Text SPYVersion;
 
 	private UnityAction localCallback;
 
@@ -70,6 +71,8 @@ public class TitleScreenSystem : FSystem {
 
 	protected override void onStart()
 	{
+		SPYVersion.text = "V" + Application.version;
+
 		GameObject go = GameObject.Find("GameData");
 		if (go == null)
 		{

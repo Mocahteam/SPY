@@ -30,6 +30,8 @@ public class EditorGridSystem : FSystem
 	public Texture2D placingCursor;
 	public string defaultDecoration;
 	public PaintableGrid paintableGrid;
+	public Tooltip tooltip;
+	public GameObject brushSelect;
 	
 	private Vector2Int _gridSize;
 
@@ -51,15 +53,20 @@ public class EditorGridSystem : FSystem
 
 		resetGrid();
 		// Sélectionne par défaut la brush Select
-		foreach (var brush in f_brushes)
-		{
-			if (brush.GetComponent<CellBrush>().brush == Cell.Select)
-			{
-				setBrush(brush);
-				break;
-			}
-		}
+		setBrush(brushSelect);
+
 		f_newLoading.addEntryCallback(loadLevel);
+	}
+
+	private string IntToLetters(int number)
+	{
+		string result = "";
+		while (number >= 0)
+		{
+			result = (char)('A' + number % 26) + result;
+			number = number / 26 - 1;
+		}
+		return result;
 	}
 
 	// Use to process your families.
@@ -73,6 +80,17 @@ public class EditorGridSystem : FSystem
 
 		Vector2Int pos = UtilityEditor.mousePosToGridPos(paintableGrid.GetComponent<Tilemap>());
 		Tuple<int, int> posTuple = new Tuple<int, int>(pos.y, pos.x);
+
+		if (pos.x < 0 || pos.x >= _gridSize.x || pos.y < 0 || pos.y >= _gridSize.y)
+			tooltip.HideTooltip();
+		else
+			tooltip.ShowTooltip(IntToLetters(pos.y)+" "+(pos.x+1));
+
+		if (Input.GetMouseButton(0) && !canBePlaced(activeBrush, pos.y, pos.x))
+		{
+			setBrush(brushSelect);
+			return;
+		}
 
 		if (pos.x < 0 || pos.x >= _gridSize.x || pos.y < 0 || pos.y >= _gridSize.y || !canBePlaced(activeBrush, pos.y, pos.x))
 		{
@@ -304,6 +322,7 @@ public class EditorGridSystem : FSystem
 			}
 			else
 			{
+				// on sur la carte mais pas 
 				return;
 			}
 		}
@@ -368,8 +387,13 @@ public class EditorGridSystem : FSystem
 
 	private bool canBePlaced(Cell cell, int l, int c)
 	{
-		var curCell = paintableGrid.grid[l, c];
-		return (int) cell < 10000 || curCell == Cell.Ground || curCell == Cell.Spawn;
+		if (l >= 0 && l < _gridSize.x && c >= 0 && c < _gridSize.y)
+		{
+			var curCell = paintableGrid.grid[l, c];
+			return (int)cell < 10000 || curCell == Cell.Ground || curCell == Cell.Spawn;
+		}
+		else
+			return false;
 	}
 }
 

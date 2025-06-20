@@ -173,14 +173,18 @@
         observer.observe(targetNode, configObserver);
 		// End TTS section
 
+		var version = "{{{ PRODUCT_VERSION }}}";
+
 		// choose the data file based on whether there's support for the ASTC texture compression format
-		var dataFile = "/WebGL_Desktop(DXT).data.unityweb";                                  
+		// default use DXT
+		var dataFile = "/WebGL_Desktop(DXT)"+version+".data.unityweb";
+		// check if ASTC is supported                                  
 		var c = document.createElement("canvas");                                 
 		var gl = c.getContext("webgl");                                      
 		var gl2 = c.getContext("webgl2");                                    
 		if ((gl && gl.getExtension('WEBGL_compressed_texture_astc')) || (gl2 &&   
 			  gl2.getExtension('WEBGL_compressed_texture_astc'))) {             
-			dataFile = "/WebGL_Mobile(ASTC).data.unityweb";
+			dataFile = "/WebGL_Mobile(ASTC)"+version+".data.unityweb";
 		}
 		
 		// log which webgl version is used
@@ -199,17 +203,15 @@
 		
 		console.log(dataFile+ "loading");
 		
-		var version = "1.5"
-		var buildVersion = "V"+version
-		var buildUrl = buildVersion + "/Build";
-		var loaderUrl = buildUrl + "/WebGL_Desktop(DXT).loader.js";
+		var buildUrl = version + "/Build";
+		var loaderUrl = buildUrl + "/WebGL_Desktop(DXT)"+version+".loader.js";
 		var config = {
 			dataUrl: buildUrl + dataFile,
-			frameworkUrl: buildUrl + "/WebGL_Desktop(DXT).framework.js.unityweb",
-			codeUrl: buildUrl + "/WebGL_Desktop(DXT).wasm.unityweb",
-			streamingAssetsUrl: buildVersion + "/StreamingAssets",
-			companyName: "SorbonneUniversity",
-			productName: "Spy",
+			frameworkUrl: buildUrl + "/WebGL_Desktop(DXT)"+version+".framework.js.unityweb",
+			codeUrl: buildUrl + "/WebGL_Desktop(DXT)"+version+".wasm.unityweb",
+			streamingAssetsUrl: version + "/StreamingAssets",
+			companyName: "{{{ COMPANY_NAME }}}",
+			productName: "{{{ PRODUCT_NAME }}}",
 			productVersion: version,
 			showBanner: unityShowBanner,
 		};

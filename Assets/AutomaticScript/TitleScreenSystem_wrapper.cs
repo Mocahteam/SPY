@@ -20,6 +20,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject virtualKeyboard;
 	public TMPro.TMP_Text progress;
 	public TMPro.TMP_Text logs;
+	public TMPro.TMP_Text SPYVersion;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -40,6 +41,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "virtualKeyboard", virtualKeyboard);
 		MainLoop.initAppropriateSystemField (system, "progress", progress);
 		MainLoop.initAppropriateSystemField (system, "logs", logs);
+		MainLoop.initAppropriateSystemField (system, "SPYVersion", SPYVersion);
 	}
 
 	public void closeSettingsAndSelectNextFocusedButton(UnityEngine.GameObject settingsWindows)

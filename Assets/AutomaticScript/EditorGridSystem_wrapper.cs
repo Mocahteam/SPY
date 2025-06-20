@@ -17,6 +17,8 @@ public class EditorGridSystem_wrapper : BaseWrapper
 	public UnityEngine.Texture2D placingCursor;
 	public System.String defaultDecoration;
 	public PaintableGrid paintableGrid;
+	public Tooltip tooltip;
+	public UnityEngine.GameObject brushSelect;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -34,6 +36,8 @@ public class EditorGridSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "placingCursor", placingCursor);
 		MainLoop.initAppropriateSystemField (system, "defaultDecoration", defaultDecoration);
 		MainLoop.initAppropriateSystemField (system, "paintableGrid", paintableGrid);
+		MainLoop.initAppropriateSystemField (system, "tooltip", tooltip);
+		MainLoop.initAppropriateSystemField (system, "brushSelect", brushSelect);
 	}
 
 	public void resetGrid()

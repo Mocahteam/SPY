@@ -120,6 +120,7 @@ public class DragDropSystem : FSystem
 
 	protected override void onProcess(int familiesUpdateCount)
 	{
+		// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
 		if (Input.GetKeyDown(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && f_dragging.Count > 0)
 		{
 			setDropZoneState(false);
@@ -129,6 +130,7 @@ public class DragDropSystem : FSystem
 				replacementSlot.GetComponent<Outline>().enabled = false;
 		}
 
+		// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
 		if (Input.GetKeyDown(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && insertRef != null)
         {
 			insertRef = null;

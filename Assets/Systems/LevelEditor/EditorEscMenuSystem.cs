@@ -21,6 +21,7 @@ public class EditorEscMenu : FSystem
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		//Active/désactive le menu echap si on appuit sur echap et que le focus n'est pas sur un input field et qu'il n'y a pas de popup ouverte
+		// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
 		if (Input.GetKeyDown(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && (EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null) && f_activePopups.Count == 0)
 			toggleMenu();
 	}

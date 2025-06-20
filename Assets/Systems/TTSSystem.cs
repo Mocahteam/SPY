@@ -108,13 +108,22 @@ public class TTSSystem : FSystem
     {
         Selectable select = focused.GetComponent<Selectable>();
 
-        string prefix = "";
+        string suffix = "";
         string content = "";
+        
+        // Cas général : Boutton, TMP_Text, Toggle, DropDown => on va chercher le texte dans ses enfants
+        if (focused.GetComponent<TMP_InputField>() == null && focused.GetComponent<LibraryItemRef>() == null)
+        {
+            TMP_Text text = focused.GetComponentInChildren<TMP_Text>();
+            if (text != null)
+                content = text.text;
+        }
+
         if (focused.GetComponent<Button>())
-            prefix = gameData.localization[54]; // "Boutton, " : "Button, ";
+            suffix = ", "+gameData.localization[54]; // "Boutton" : "Button";
         else if (focused.GetComponent<TMP_InputField>())
         {
-            prefix = gameData.localization[55]; // "Champ de saisie, " : "Input field, ";
+            suffix = ", "+gameData.localization[55]; // "Champ de saisie" : "Input field";
             TMP_InputField inputfield = focused.GetComponent<TMP_InputField>();
             // S'il y a quelque chose dans le inputfield, utiliser cette valeur
             if (inputfield.text != "")
@@ -123,38 +132,30 @@ public class TTSSystem : FSystem
                 content = inputfield.GetComponentInChildren<TMP_Text>(true).text;
         }
         else if (focused.GetComponent<TMP_Dropdown>())
-            prefix = gameData.localization[56]; // "Liste déroulante, " : "Dropdown, ";
+            suffix = ", "+gameData.localization[56]; // "Liste déroulante" : "Dropdown";
         else if (focused.GetComponent<Toggle>())
         {
-            prefix = gameData.localization[57]; // "Case à cocher, " : "Toggle, ";
+            suffix = ", " + gameData.localization[57]; // "Case à cocher" : "Toggle";
             Toggle toggle = focused.GetComponent<Toggle>();
             if (toggle.isOn)
-                content = gameData.localization[58]; // "cochée, " : "checked, ";
+                suffix += ", "+gameData.localization[58]; // "cochée" : "checked";
             else
-                content = gameData.localization[59]; // "non cochée, " : "unchecked, ";
+                suffix += ", "+gameData.localization[59]; // "non cochée" : "unchecked";
         }
         else if (focused.GetComponent<Scrollbar>())
         {
-            prefix = gameData.localization[60]; // "Barre de défilement, valeur : " : "Scrollbar, value: ";
             Scrollbar scrollbar = focused.GetComponent<Scrollbar>();
-            content = "" + scrollbar.value;
+            content = gameData.localization[60] + scrollbar.value; // "Barre de défilement, valeur : " : "Scrollbar, value: ";
         }
         else if (focused.GetComponent<CurrentAction>())
         {
-            prefix = gameData.localization[61]; // "Action courrante, " : "Current action, ";
+            suffix = ", " + gameData.localization[61]; // "Action courrante" : "Current action";
         }
 
         if (select && !select.IsInteractable() && focused.GetComponent<CurrentAction>() != null)
-            prefix += gameData.localization[62]; // "désactivée, " : "disabled, ";
+            suffix += ", " + gameData.localization[62]; // "désactivée" : "disabled";
 
 
-        // Cas général : Boutton, TMP_Text, Toggle, DropDown => on va chercher le texte dans ses enfants
-        if (focused.GetComponent<TMP_InputField>() == null && focused.GetComponent<LibraryItemRef>() == null)
-        {
-            TMP_Text text = focused.GetComponentInChildren<TMP_Text>();
-            if (text != null)
-                content += text.text;
-        }
 
         // Try to get tooltip to complete description
         TooltipContent tooltip = focused.GetComponentInChildren<TooltipContent>();
@@ -174,11 +175,11 @@ public class TTSSystem : FSystem
         if (Application.platform == RuntimePlatform.WebGLPlayer)
         {
             if (!InstructionOnly() || focused.transform.parent.gameObject.name == "DialogPanel")
-                CallTTS(prefix + content);
-            SendToScreenReader(prefix + content);
+                CallTTS(content + suffix);
+            SendToScreenReader(content + suffix);
         }
         else
-            Debug.Log(prefix + content);
+            Debug.Log(content + suffix);
 
         previousMousePosition = Input.mousePosition;
         previousFocusedGO = focused;
@@ -189,7 +190,7 @@ public class TTSSystem : FSystem
         string actions = "";
         foreach (GameObject currentAction in f_currentAction)
         {
-            actions += currentAction.GetComponent<CurrentAction>().agent.GetComponent<ScriptRef>().executableScript.GetComponent<UIRootExecutor>().scriptName + gameData.localization[63] + currentAction.GetComponentInChildren<TooltipContent>().text+". ";
+            actions += currentAction.GetComponent<CurrentAction>().agent.GetComponent<ScriptRef>().executableScript.GetComponent<UIRootExecutor>().scriptName + " " + gameData.localization[63] + " " + currentAction.GetComponentInChildren<TooltipContent>().text+". ";
         }
 
         if (Application.platform == RuntimePlatform.WebGLPlayer)
@@ -209,7 +210,7 @@ public class TTSSystem : FSystem
         TMP_InputField inputF = inputField_GO.GetComponent<TMP_InputField>();
         inputF.onTextSelection.AddListener(delegate (string input, int end, int start)
         {
-            string output = gameData.localization[55] + input.Substring(Mathf.Min(start, end), Mathf.Max(start, end) - Mathf.Min(start, end)) + gameData.localization[64];
+            string output = input.Substring(Mathf.Min(start, end), Mathf.Max(start, end) - Mathf.Min(start, end)) +", "+ gameData.localization[55] + " " + gameData.localization[64];
             if (Application.platform == RuntimePlatform.WebGLPlayer)
             {
                 

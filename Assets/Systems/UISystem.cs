@@ -120,8 +120,9 @@ public class UISystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount)
 	{
-        //Active/désactive le menu echap si on appuit sur echap et que le focus n'est pas sur un input field et qu'on n'est pas en train de drag un element et que le clavier virtuel n'est pas ouvert
-        if (Input.GetKeyDown(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && (EventSystem.current.currentSelectedGameObject == null || (EventSystem.current.currentSelectedGameObject != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null)) && f_dragging.Count == 0 && f_dropZoneEnabled.Count == 0 && !replacementSlotEnabled() && !virtualKeyboard.activeInHierarchy)
+		//Active/désactive le menu echap si on appuit sur echap et que le focus n'est pas sur un input field et qu'on n'est pas en train de drag un element et que le clavier virtuel n'est pas ouvert
+		// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
+		if (Input.GetKeyDown(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && (EventSystem.current.currentSelectedGameObject == null || (EventSystem.current.currentSelectedGameObject != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null)) && f_dragging.Count == 0 && f_dropZoneEnabled.Count == 0 && !replacementSlotEnabled() && !virtualKeyboard.activeInHierarchy)
 			setActiveEscapeMenu();
 
 		// With touch device when the finger is up, pointerOver is not removed because OnPointerExit is not called
