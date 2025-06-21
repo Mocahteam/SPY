@@ -3171,7 +3171,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Navigation.m_SelectOnUp
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 310113564}
     - target: {fileID: 8885153914220435018, guid: 255eb573d84a4684eb07e9d7db1ae744,
         type: 3}
       propertyPath: m_Navigation.m_SelectOnDown
@@ -3217,6 +3217,11 @@ PrefabInstance:
       propertyPath: m_Navigation.m_Mode
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 8885153914522333774, guid: 255eb573d84a4684eb07e9d7db1ae744,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 310113564}
     - target: {fileID: 8885153914522333774, guid: 255eb573d84a4684eb07e9d7db1ae744,
         type: 3}
       propertyPath: m_Navigation.m_SelectOnDown
@@ -5282,6 +5287,7 @@ GameObject:
   - component: {fileID: 310113561}
   - component: {fileID: 310113563}
   - component: {fileID: 310113562}
+  - component: {fileID: 310113564}
   m_Layer: 5
   m_Name: SPYVersion
   m_TagString: Untagged
@@ -5405,6 +5411,47 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 310113560}
   m_CullTransparentMesh: 0
+--- !u!114 &310113564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310113560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a98125502f715b4b83cfb77b434e436, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 4
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 712029163}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0, g: 0.7176471, b: 1, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 310113562}
 --- !u!1001 &312898951
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14072,7 +14119,7 @@ MonoBehaviour:
   m_Navigation:
     m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
+    m_SelectOnUp: {fileID: 310113564}
     m_SelectOnDown: {fileID: 1589537339}
     m_SelectOnLeft: {fileID: 765489889}
     m_SelectOnRight: {fileID: 903413794}
@@ -33612,8 +33659,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1806554586}
   m_HandleRect: {fileID: 1806554585}
   m_Direction: 2
-  m_Value: 0.9999998
-  m_Size: 0.5416363
+  m_Value: 1
+  m_Size: 0.47700834
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -33762,7 +33809,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 102.15
+  m_fontSize: 101.9
   m_fontSizeBase: 150
   m_fontWeight: 400
   m_enableAutoSizing: 1
