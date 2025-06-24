@@ -84,7 +84,7 @@ public class EditorGridSystem : FSystem
 		if (pos.x < 0 || pos.x >= _gridSize.x || pos.y < 0 || pos.y >= _gridSize.y)
 			tooltip.HideTooltip();
 		else
-			tooltip.ShowTooltip(IntToLetters(pos.y)+" "+(pos.x+1));
+			tooltip.ShowTooltip(IntToLetters(pos.x)+" "+(pos.y+1));
 
 		if (Input.GetMouseButton(0) && !canBePlaced(activeBrush, pos.y, pos.x))
 		{

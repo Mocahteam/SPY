@@ -22,8 +22,6 @@ public class UISystem : FSystem {
 	private Family f_removeButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton")); // Les petites poubelles de chaque panneau d'édition
 	private Family f_pointerOver = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Tous les objets pointés
 	private Family f_tooltipContent = FamilyManager.getFamily(new AllOfComponents(typeof(TooltipContent))); // Tous les tooltips
-	private Family f_dropZoneEnabled = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Les drops zones visibles
-	private Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(Outline), typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family f_updateStartButton = FamilyManager.getFamily(new AllOfComponents(typeof(NeedRefreshPlayButton)));
@@ -32,8 +30,6 @@ public class UISystem : FSystem {
 	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 	private Family f_enabledinventoryBlocks = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-
-	private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
 
 	private GameData gameData;
 
@@ -51,7 +47,6 @@ public class UISystem : FSystem {
 	public GameObject menuEchap;
 	public GameObject canvas;
 	public GameObject libraryPanel;
-	public GameObject virtualKeyboard;
 
 	public static UISystem instance;
 
@@ -109,22 +104,9 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, !state);
 	}
 
-	private bool replacementSlotEnabled()
-    {
-		foreach (GameObject replacementSlot in f_replacementSlot)
-			if (replacementSlot.GetComponent<Outline>().enabled)
-				return true;
-		return false;
-    }
-
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount)
 	{
-		//Active/désactive le menu echap si on appuit sur echap et que le focus n'est pas sur un input field et qu'on n'est pas en train de drag un element et que le clavier virtuel n'est pas ouvert
-		// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
-		if (Input.GetKeyDown(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && (EventSystem.current.currentSelectedGameObject == null || (EventSystem.current.currentSelectedGameObject != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null)) && f_dragging.Count == 0 && f_dropZoneEnabled.Count == 0 && !replacementSlotEnabled() && !virtualKeyboard.activeInHierarchy)
-			setActiveEscapeMenu();
-
 		// With touch device when the finger is up, pointerOver is not removed because OnPointerExit is not called
 		// then be sure to clear pointerOver and Tooltips
 		if (Input.touchCount > 0)

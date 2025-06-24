@@ -31,35 +31,14 @@ public class EditorCameraSystem : FSystem
 		instance = this;
     }
 
-	private bool inputFieldNotSelected()
-    {
-		return EventSystem.current == null || EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null;
-	}
-
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		// move camera front/back depending on Vertical axis
-		if ((Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.S)) && inputFieldNotSelected() || UI_frontBackValue != 0)
-		{
-			if (UI_frontBackValue == 0)
-				moveFrontBack(Input.GetKey(KeyCode.Z) ? 1 : -1);
-			else
-				moveFrontBack(UI_frontBackValue);
-		}
+		if (UI_frontBackValue != 0)
+			moveFrontBack(UI_frontBackValue);
 		// move camera left/right de pending on Horizontal axis
-		if ((Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.D)) && inputFieldNotSelected() || UI_leftRightValue != 0)
-		{
-			if (UI_leftRightValue == 0)
-				moveLeftRight(Input.GetKey(KeyCode.Q) ? -1 : 1);
-			else
-				moveLeftRight(UI_leftRightValue);
-		}
-
-		// Zoom in/out with keyboard
-		if (Input.GetKey(KeyCode.R) && inputFieldNotSelected())
-			zoomIn(0.1f);
-		else if (Input.GetKey(KeyCode.F) && inputFieldNotSelected())
-			zoomOut(0.1f);
+		if (UI_leftRightValue != 0)
+			moveLeftRight(UI_leftRightValue);
 
 		// Move camera with wheel click
 		if (Input.GetMouseButton(2) && f_UIfocused.Count == 0)

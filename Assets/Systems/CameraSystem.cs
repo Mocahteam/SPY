@@ -74,43 +74,16 @@ public class CameraSystem : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		// move camera front/back depending on Vertical axis
-		if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.S) || UI_frontBackValue != 0)
-		{
-			if (UI_frontBackValue == 0)
-				moveFrontBack(Input.GetKey(KeyCode.Z) ? 1 : -1);
-			else
-				moveFrontBack(UI_frontBackValue);
-		}
+		if (UI_frontBackValue != 0)
+			moveFrontBack(UI_frontBackValue);
+
 		// move camera left/right de pending on Horizontal axis
-		if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.D) || UI_leftRightValue != 0)
-		{
-			if (UI_leftRightValue == 0)
-				moveLeftRight(Input.GetKey(KeyCode.Q) ? -1 : 1);
-			else
-				moveLeftRight(UI_leftRightValue);
-		}
+		if (UI_leftRightValue != 0)
+			moveLeftRight(UI_leftRightValue);
 
-		// rotate camera with "A" and "E" keys
-		if (Input.GetKey(KeyCode.A))
-			rotateCamera(1, 0);
-		else if (Input.GetKey(KeyCode.E))
-			rotateCamera(-1, 0);
-		else if (UI_rotateValue != 0)
+		// rotate camera
+		if (UI_rotateValue != 0)
 			rotateCamera(UI_rotateValue, 0);
-
-		// manage orthographic/perspective
-		if (Input.GetKeyDown(KeyCode.V))
-			ToggleOrthographicPerspective();
-
-		// autofocus on nearest agent
-		if (Input.GetKeyDown(KeyCode.C))
-			focusOnNearestAgent(null);
-
-		// Zoom in/out with keyboard
-		if (Input.GetKey(KeyCode.R))
-			zoomIn(0.1f);
-		else if (Input.GetKey(KeyCode.F))
-			zoomOut(0.1f);
 
 		// Move camera with wheel click
 		if (Input.GetMouseButton(2))

@@ -420,18 +420,6 @@ MonoBehaviour:
   m_OnSelect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 570210727992613973}
-        m_TargetAssemblyTypeName: CameraSystemBridge, Assembly-CSharp
-        m_MethodName: PauseCameraSystem
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
       - m_Target: {fileID: 8833105022985857975}
         m_TargetAssemblyTypeName: EditableContainerSystemBridge, Assembly-CSharp
         m_MethodName: selectContainer
@@ -446,19 +434,7 @@ MonoBehaviour:
         m_CallState: 2
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 570210727992613973}
-        m_TargetAssemblyTypeName: CameraSystemBridge, Assembly-CSharp
-        m_MethodName: PauseCameraSystem
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -1323,7 +1299,6 @@ GameObject:
   - component: {fileID: 8833105022985857975}
   - component: {fileID: 1337491156243584124}
   - component: {fileID: 4474756834210246689}
-  - component: {fileID: 570210727992613973}
   - component: {fileID: 3694439265857886957}
   - component: {fileID: 3015765974637039016}
   m_Layer: 5
@@ -1523,18 +1498,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &570210727992613973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2876508349418875100}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e41c5cf59d687e468669710d3c809d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3694439265857886957
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -79,7 +79,7 @@ public class TilePopupSystem : FSystem
 		}
 
 		// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
-		if (f_activePopups.Count > 0 && (virtualKeyboard == null || !virtualKeyboard.activeInHierarchy) && ((Input.GetKey(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))) || selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && Input.GetMouseButtonDown(0) && f_focusedPopups.Count == 0)))
+		if (f_activePopups.Count > 0 && (virtualKeyboard == null || !virtualKeyboard.activeInHierarchy) && ((Input.GetKeyDown(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))) || selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && Input.GetMouseButtonDown(0) && f_focusedPopups.Count == 0)))
 		{
 			hideAllPopups();
 			selectedObject = null; // be sure

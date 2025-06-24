@@ -2,15 +2,6 @@ using UnityEngine;
 
 public class CameraSystemBridge : MonoBehaviour
 {
-    // Active ou desactive le systéme
-    public void PauseCameraSystem(bool value)
-    {
-        if (CameraSystem.instance != null) // is null in level editor
-            CameraSystem.instance.Pause = value;
-		if (EditorCameraSystem.instance != null) // is null in level player
-			EditorCameraSystem.instance.Pause = value;
-	}
-
     public void locateAgent(LinkedWith agent)
     {
 		if (CameraSystem.instance != null) // is null in level editor
