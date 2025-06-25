@@ -677,6 +677,8 @@ public static class Utility
 				dialog.text = dialogXML.Attributes.GetNamedItem("text").Value;
 			if (dialogXML.Attributes.GetNamedItem("img") != null)
 				dialog.img = dialogXML.Attributes.GetNamedItem("img").Value;
+			if (dialogXML.Attributes.GetNamedItem("imgDesc") != null)
+				dialog.imgDesc = dialogXML.Attributes.GetNamedItem("imgDesc").Value;
 			if (dialogXML.Attributes.GetNamedItem("imgHeight") != null)
 				dialog.imgHeight = float.Parse(dialogXML.Attributes.GetNamedItem("imgHeight").Value);
 			if (dialogXML.Attributes.GetNamedItem("camX") != null)

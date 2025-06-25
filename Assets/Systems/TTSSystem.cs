@@ -151,6 +151,18 @@ public class TTSSystem : FSystem
         {
             suffix = ", " + gameData.localization[61]; // "Action courrante" : "Current action";
         }
+        else if (focused.GetComponent<Image>())
+        {
+            // cas du texte de remplacement pour les images du briefing
+            Transform replacementText = focused.transform.Find("ImgDesc");
+            if (replacementText != null)
+            {
+                content = gameData.localization[38]; // "Image" : "Image"
+                TMP_Text text = replacementText.GetComponent<TMP_Text>();
+                if (text != null && text.text != "")
+                    content += ", " + gameData.localization[79] + ", " + text.text; // "texte de remplacement" : "replacement text"
+            }
+        }
 
         if (select && !select.IsInteractable() && focused.GetComponent<CurrentAction>() != null)
             suffix += ", " + gameData.localization[62]; // "désactivée" : "disabled";
@@ -349,7 +361,7 @@ public class TTSSystem : FSystem
         string stringExport = gameData.localization[77]+"<br>";
         for (int j = 0; j < exportMap.GetLength(1); j++)  {
             for (int i = 0; i < exportMap.GetLength(0); i++)
-                stringExport += exportMap[i, j];
+                stringExport += exportMap[i, j]+" ";
             stringExport += "<br>";
         }
         stringExport += gameData.localization[78] + "<br>";

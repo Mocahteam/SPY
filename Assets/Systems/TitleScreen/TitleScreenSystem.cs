@@ -95,7 +95,7 @@ public class TitleScreenSystem : FSystem {
 			initGBLXAPI();
 		else
 			foreach (GameObject sID in f_sessionId)
-				sID.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
+				sID.GetComponent<TMP_Text>().text = string.Join(" ", GBL_Interface.playerName.ToCharArray());
 
 		if (gameData.levels == null) // we have to load streaming assets
         {
@@ -230,7 +230,7 @@ public class TitleScreenSystem : FSystem {
 				GBL_Interface.playerName = formatedString;
 				GBL_Interface.userUUID = formatedString;
 				foreach (GameObject go in f_sessionId)
-					go.GetComponent<TMP_Text>().text = formatedString;
+					go.GetComponent<TMP_Text>().text = string.Join(" ", formatedString.ToCharArray());
 
 				userData.progression = null;
 				userData.highScore = null;
@@ -325,7 +325,7 @@ public class TitleScreenSystem : FSystem {
 					GBL_Interface.userUUID = idSession;
 				}
 				foreach (GameObject go in f_sessionId)
-					go.GetComponent<TMP_Text>().text = GBL_Interface.playerName;
+					go.GetComponent<TMP_Text>().text = string.Join(" ", GBL_Interface.playerName.ToCharArray());
 			}
 		}
 	}

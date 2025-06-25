@@ -190,6 +190,13 @@ public class DialogSystem : FSystem
 		}
 		else
 			GameObjectManager.setGameObjectState(imageGO, false);
+		// set imgDesc
+		if (dialog.imgDesc != null)
+		{
+			GameObject imgDescGO = dialogPanel.transform.Find("Image").Find("ImgDesc").gameObject;
+			string imgDesc = Utility.extractLocale(dialog.imgDesc);
+			imgDescGO.GetComponent<TMP_Text>().text = imgDesc;
+		}
 		// set camera pos
 		if (dialog.camX != -1 && dialog.camY != -1)
         {

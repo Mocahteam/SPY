@@ -741,6 +741,7 @@ public class ParamCompetenceSystem : FSystem
 					scenarioExport += "\t\t\t<dialog ";
 					scenarioExport += dialog.text != null && dialog.text != "" ? "text=\"" + dialog.text + "\" " : "";
 					scenarioExport += dialog.img != null && dialog.img != "" ? "img=\"" + dialog.img + "\" " : "";
+					scenarioExport += dialog.imgDesc != null && dialog.imgDesc != "" ? "imgDesc=\"" + dialog.imgDesc + "\" " : "";
 					scenarioExport += dialog.imgHeight != -1 ? "imgHeight=\"" + dialog.imgHeight + "\" " : "";
 					scenarioExport += dialog.camX != -1 ? "camX=\"" + dialog.camX + "\" " : "";
 					scenarioExport += dialog.camY != -1 ? "camY=\"" + dialog.camY + "\" " : "";
@@ -854,6 +855,8 @@ public class ParamCompetenceSystem : FSystem
 						input.text = dialog.text;
 					else if (input.name == "ImgPath_input" && dialog.img != null)
 						input.text = dialog.img;
+					else if (input.name == "ImgDesc_input" && dialog.imgDesc != null)
+						input.text = dialog.imgDesc;
 					else if (input.name == "ImgSize_input" && dialog.imgHeight != -1)
 						input.text = "" + dialog.imgHeight;
 					else if (input.name == "CamX_input" && dialog.camX != -1)
@@ -899,6 +902,8 @@ public class ParamCompetenceSystem : FSystem
 						dialog.text = input.text.Replace('\"', '\'');
 					else if (input.name == "ImgPath_input" && input.text != "")
 						dialog.img = input.text.Replace('\"', '\'');
+					else if (input.name == "ImgDesc_input" && input.text != "")
+						dialog.imgDesc = input.text.Replace('\"', '\'');
 					else if (input.name == "ImgSize_input" && input.text != "")
 						dialog.imgHeight = float.Parse(input.text);
 					else if (input.name == "CamX_input" && input.text != "")

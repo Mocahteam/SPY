@@ -30,6 +30,7 @@
 			dialog (at least one): this tag describes one of the dialogs of this mission. It contains five attributes:
 				text (optional): the text to display. Use [fr]...[/fr][en]...[/en] to localize content.
 				img (optional): the name of the image to load. This file has to be placed inside the "Images" directory. Both "Images" directory and this mission file have to be in the same directory. A valid URL works also. This field is localizable.
+				imgDesc (optional): a replacement text for the image, useful for accessibility. This field is localizable.
 				imgHeight (optional): the height of the image in the dialog panel
 				camX (optional): the X position to focus camera on the map grid
 				camY (optional): the Y position to focus camera on the map grid

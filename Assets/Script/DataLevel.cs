@@ -6,6 +6,7 @@ public class Dialog
 {
 	public string text = null;
 	public string img = null;
+	public string imgDesc = null;
 	public float imgHeight = -1;
 	public int camX = -1;
 	public int camY = -1;
@@ -19,6 +20,7 @@ public class Dialog
 		Dialog copy = new Dialog();
 		copy.text = text;
 		copy.img = img;
+		copy.imgDesc = imgDesc;
 		copy.imgHeight = imgHeight;
 		copy.camX = camX;
 		copy.camY = camY;
@@ -31,7 +33,7 @@ public class Dialog
 
 	public bool isEqualTo(Dialog dialog)
     {
-		return dialog.text == text && dialog.img == img && dialog.imgHeight == imgHeight && dialog.camX == camX && dialog.camY == camY && dialog.sound == sound && dialog.video == video && dialog.enableInteraction == enableInteraction && dialog.briefingType == briefingType;
+		return dialog.text == text && dialog.img == img && dialog.imgDesc == imgDesc && dialog.imgHeight == imgHeight && dialog.camX == camX && dialog.camY == camY && dialog.sound == sound && dialog.video == video && dialog.enableInteraction == enableInteraction && dialog.briefingType == briefingType;
 
 	}
 }
