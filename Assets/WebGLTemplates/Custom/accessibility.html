@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <title>SPY</title>    
+	<meta content="Learning programming, Computational Thinking, SPY, Scratch, Python, Learn to program" name="description">
+	<meta content="Learning programming, Computational Thinking, SPY, Scratch, Python, learn to program" name="keywords">
+	
+	<!-- Favicons -->
+	<link href="TemplateData/favicon.ico" rel="shortcut icon">
+	<link href="TemplateData/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Bootstrap core CSS -->
+	<!--Production version-->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	<!--local version-->
+	<!--<link href="./libs/bootstrap-5.1.3-dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">-->
+	
+	<!-- Template Main CSS File -->
+	<link href="TemplateData/styleMain.css" rel="stylesheet">
+  </head>
+  <body>
+	<nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="index.html" aria-label="Back to home page"><img src="TemplateData/LogoSPY.png" style="height: 40px;" alt="SPY Logo"></img></a>
+			<button id="collapseButton" class="navbar-toggler m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse m-2 justify-content-end" id="collapsibleNavbar">
+				<div class="nav-item"><a id="menu_#synthesis" class="nav-link scrollto px-3 justify-content-end" href="#synthesis">Summary</a></div>
+				<div class="nav-item"><a id="menu_#hotkeys" class="nav-link scrollto px-3 justify-content-end" href="#hotkeys">Keyboard Shortcuts</a></div>
+				<div class="nav-item"><a id="menu_#speech" class="nav-link scrollto px-3 justify-content-end" href="#speech">Speech Synthesis</a></div>
+				<div class="nav-item"><a id="menu_#DragDropOptions" class="nav-link scrollto px-3 justify-content-end" href="#DragDropOptions">Programming</a></div>
+				<div class="nav-item"><a id="menu_#screenReader" class="nav-link scrollto px-3 justify-content-end" href="#screenReader">Screen Readers</a></div>
+				<div class="nav-item"><a id="menu_#contact" class="nav-link scrollto px-3 justify-content-end" href="#contact">Contact</a></div>
+				<div class="nav-item"><a class="nav-link scrollto px-3 justify-content-end" href="index_fr.html">Français</a></div>
+			</div>
+		</div>
+	</nav>
+  
+	<!-- ======= Hero Section ======= -->
+	<section id="hero" class="d-flex align-items-center justify-content-center">
+	<div class="container position-relative">
+		<h1>SPY Accessibility</h1>
+		<h2>Presentation of SPY's accessibility features.</h2>
+	</div>
+	</section>
+	
+	<!-- ======= Synthesis Section ======= -->
+    <section id="synthesis" class="about">
+      <div class="container">
+          <h1 class="text-center">Summary of Implemented Features</h1>
+          <p>What if programming initiation was accessible to everyone? We are working to make the SPY game as accessible as possible. There is still a lot to be done, but we are working on it...</p>
+		  <p>Here is the list of accessibility features currently integrated into SPY that promote its accessibility:</p>
+		  <ul>
+			<li>User interfaces are stationary</li>
+			<li>Drag-and-drop action for adding blocks to programs is optional - two other methods for adding blocks are available (see <a href="#DragDropOptions">Programming</a> section)</li>
+			<li>All key game actions are accessible via keyboard</li>
+			<li>Key actions accessible with keyboard shortcuts (see <a href="#hotkeys">Keyboard Shortcuts Details</a>)</li>
+			<li>Program execution speed is controllable with step-by-step execution mode</li>
+			<li>The game is compatible with virtual keyboards</li>
+			<li>User interface size is adjustable</li>
+			<li>The font is sans-serif</li>
+			<li>Color contrast between text and backgrounds is ensured with a contrast ratio between 6.05:1 and 12.77:1</li>
+			<li>Ability to re-read instructions at any time</li>
+			<li>Speech synthesis module to read instructions and interfaces (see <a href="#speechsynthesis">Speech Synthesis Details</a>)</li>
+			<li>No essential information relies solely on color or sound</li>
+			<li>Possible switch from 3D view to 2D view</li>
+			<li>Compatible with screen readers (tested with NVDA - see <a href="#screenReader">Screen Reader Details</a>)</li>
+			<li>Map export in text format (see <a href="#screenReader">Screen Reader Details</a>)</li>
+			<li>Automatic saving of player progress</li>
+		  </ul>
+      </div>
+    </section>
+	
+	<!-- ======= Hotkeys Section ======= -->
+    <section id="hotkeys" class="cta">
+      <div class="container">
+		<h1>Keyboard Shortcuts</h1>
+		<div class="row">
+			<div class="col-md-6">
+				<h2>General:</h2>
+				<ul>
+					<li><b>Escape</b>: Select main menu / Cancel current action</li>
+					<li><b>Ctrl+Escape</b>: Exit game canvas to return to HTML page</li>
+					<li><b>Home</b>: Select the highest priority interactive element</li>
+					<li><b>Arrow keys</b>: Navigate game interfaces / Move blocks</li>
+				</ul>
+			</div>
+			<div class="col-md-6">
+				<h2>Camera Control:</h2>
+				<ul>
+					<li><b>v</b>: Switch from 3D view to 2D view</li>
+					<li><b>z</b>: Move camera forward</li>
+					<li><b>s</b>: Move camera backward</li>
+					<li><b>q</b>: Move camera left</li>
+					<li><b>d</b>: Move camera right</li>
+					<li><b>c</b>: Center camera on next robot in scene</li>
+					<li><b>a</b>: Rotate camera left</li>
+					<li><b>e</b>: Rotate camera right</li>
+					<li><b>r</b>: Zoom in</li>
+					<li><b>f</b>: Zoom out</li>
+				</ul>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<h2>Execution Control:</h2>
+				<ul>
+					<li><b>Space</b>: Start/Pause program execution</li>
+					<li><b>Ctrl + Space</b>: Execute next program instruction</li>
+					<li><b>Alt + Space</b>: Accelerate program execution</li>
+					<li><b>Shift + Space</b>: Stop program execution</li>
+				</ul>
+			</div>
+			<div class="col-md-6">
+				<h2>Other:</h2>
+				<ul>
+					<li><b>Enter</b>: Grab/Release a programming block</li>
+					<li><b>Delete</b>: Delete a programming block</li>
+					<li><b>Backspace</b>: Delete a programming block</li>
+					<li><b>i</b>: Insert a programming block</li>
+					<li><b>h</b>: Display instructions</li>
+				</ul>
+			</div>
+		</div>
+      </div>
+    </section>
+
+	<!-- ======= Speech Section ======= -->
+    <section id="speech" class="about">
+      <div class="container">
+		<h1>Speech Synthesis</h1>
+		<p>SPY uses the web browser's speech synthesis to vocalize its content. To use the browser's speech synthesis, you must <b>activate it using the "Text-to-speech" button</b> located above the game canvas (remember to exit full-screen mode to access this button).</p>
+		<p>Once speech synthesis is activated, you can indicate whether you want <b>the entire interface</b> of the game to be vocalized or <b>only the instructions</b>. You can also control the <b>speech rate</b> of the speech synthesis.</p>
+		<p>Once speech synthesis is activated, navigate the game interface using keyboard navigation or mouse to have texts automatically read. If you have checked the "Instructions" box (default), only the introductory texts at the beginning of missions will be read. If you have checked the "Everything" box, any interface element (Menus, buttons, dropdown lists, etc.) will be read by speech synthesis.</p>
+		<p>For users using a screen reader with their own speech synthesis, it is not necessary to activate this option (see <a href="#screenReader">Screen Reader Details</a> section).</p>
+    </section>
+	
+	<!-- ======= DragDrop options Section ======= -->
+    <section id="DragDropOptions" class="cta">
+      <div class="container">
+		  	<h1>Programming Methods</h1>
+          	<p>To solve the game's various missions, players manipulate a block-based programming language. SPY offers three methods to manipulate these blocks and enter programs:</p>
+		 	
+			<h2>Mouse Drag-and-Drop</h2>
+			<p>This interaction mode allows players to use the mouse pointer (or finger for touch devices) to drag blocks from the inventory into programming areas. It is also possible with this method to modify the order of blocks within a programming area to modify the program.</p> 
+			<p>Once a first block is added to a programming area, you can use double-click (or double-tap) on inventory blocks to automatically add this block after the last added block.</p>
+			<p>To delete a block, the player can drag a block from a programming area outside of it. An alternative to this method is to right-click on the block to delete.</p>
+
+			<h2>Keyboard Drag-and-Drop</h2>
+			<p>Like the "mouse" mode, this option allows players to move through the interface using the keyboard arrow keys to position themselves on the block to move. Once positioned on a programming block, press the "Enter" key to grab the block. Use the keyboard arrow keys to move the block in the interface then press "Enter" again to release the block. If the block is released in a valid programming area it will be added to the program, otherwise it will be deleted.</p>
+
+			<h2>Keyboard Insertion</h2>
+			<p>Unlike the two previous modes, here the player must first position themselves in a programming area at the location where they want to insert a new block. They then press the "i" key on the keyboard to "insert" a new block. Automatically the focus is positioned on the first available block in the inventory, the player can then browse through the available blocks and validate their choice with the "Enter" key. The selected block will automatically be added to the program at the location where the "i" key was pressed.</p>
+			<p>This method also allows modifying the order of blocks in a program. The player must position themselves where they want to move a block, press "i", position themselves on the block to move in the program and press "Enter". The selected block will automatically be moved to the location where the "i" key was pressed.</p>
+			<p>Note that if the "i" key is pressed on a block already integrated into a programming area, the new inserted block will be added just before the selected block.</p>
+      </div>
+    </section>
+	
+	<!-- ======= ScreenReader Section ======= -->
+    <section id="screenReader" class="about">
+      <div class="container">
+          <h1>Screen Reader</h1>
+		  <h2>Identifying the Game Area in the Web Page</h2>
+		  <p>To access the game canvas, navigate through the page until you reach the "Application" or "Interactive Game Zone" object. Press "Enter" to enter the game. Once in the game, you can at any time press: "Shift + Enter" to exit the game canvas and return to the web page context; Press the "Home" key to automatically select the highest priority interactive element.</p>
+		  <p>A bit technical: When a game object gets focus, its textual description is automatically sent to the "ScreenReaderSpan" HTML tag with the "status" role. This tag is defined with the aria-live="assertive" and aria-atomic=true properties so that the screen reader can be immediately informed of changes to its content and make them accessible to the player via speech synthesis or a braille display (tested with a Brailliant Bi 40X and NVDA).</p>
+		  <h2>Scene Description</h2>
+		  <p>The game's objective is to move a robot in a maze, so it is necessary to be able to access a description of the game scene and follow its evolution during simulation. A textual description of the scene is permanently synchronized with the "DescMapSpan" HTML tag. To view the scene state at time t, exit the game canvas with "Shift + Enter", the focus should automatically be positioned on the "Continue navigation" element in the web page. The textual description of the map is just below. To return to the game, go back up until you find the "Interactive Game Zone" and press "Enter".</p>
+      </div>
+    </section>
+		
+	<!-- ======= Contact Section ======= -->
+    <section id="contact" class="cta">
+      <div class="container">
+		<div class="text-center">
+			<h1>Contact</h1>
+			<p id="contactName"></p>
+		</div>
+      </div>
+    </section>
+	
+	<footer class="footer fixed-bottom bg-dark ">
+		<div class="container">
+			<img src="TemplateData/LogoLIP6_white.png" height="40">
+			~
+			<img src="TemplateData/Logo_SU_white.png" height="40">
+		</div>
+	</footer>
+	
+	<script>
+		var contact = document.getElementById("contactName");
+		contact.innerHTML = "mathieu.muratet<span style=\"display: none;\">cache</span> (at) lip6.fr";
+	</script>
+
+	<!--Production version-->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script> <!-- For tooltips -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+	
+	<!--Local version-->
+	<!--<script src="./libs/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js" type="text/javascript"></script>-->
+  </body>
+</html>

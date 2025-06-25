@@ -40,6 +40,7 @@
 			<label for="speedTTS" id="labelSpeed" class="form-label">Vitesse voix</label>
 			<input type="range" class="form-range pt-3" style="width: 100px;" min="0.1" max="10" step="0.1" id="speedTTS" value="1">
 		</span>
+		<span><a id="accessLink" href="accessibility_fr.html" target="_blank">Accessibilité du jeu</a></span>
 		<div id="unity-fullscreen-button"></div>
 		<div id="unity-build-title">Agrandir&nbsp;:</div>
 	  </div>
@@ -52,7 +53,7 @@
 	  </div>
 	  <div id="unity-mobile-warning"></div>
 	  <span id="TextToSpeechSpan" style="visibility:hidden;" ></span>
-	  <!-- Le "aria-live" en mode assertif permet d'indiquer au lecteur d'écran que cette balise peut changer en live et qu'il doit donc la vocaliser immédaitement à chaque fois qu'elle change. Le "aria-atomic" indique que le lecteur d'écran doit relire le contenu de la balise et pas uniquement ce qui a changé. Le role "status"-->
+	  <!-- Le "aria-live" en mode assertif permet d'indiquer au lecteur d'écran que cette balise peut changer en live et qu'il doit donc la vocaliser immédaitement à chaque fois qu'elle change. Le "aria-atomic" indique que le lecteur d'écran doit relire le contenu de la balise et pas uniquement ce qui a changé. Le role "status" indique que cet élément contient des informations de statut qui sont importantes pour l'utilisateur -->
 	  <span id="ScreenReaderSpan" aria-live="assertive" aria-atomic="true" role="status" class="visually-hidden"></span>
 	  <button id="after-canvas" class="visually-hidden">Continuer la navigation</button>
 	  <p id="DescMapSpan" class="visually-hidden"></p>
@@ -335,6 +336,8 @@
 			document.getElementById("TTS_briefing_label").innerHTML = lang == "fr" ? "Consignes" : "Instructions";
 			document.getElementById("unity-canvas").ariaLabel = lang == "fr" ? "Zone interactive du jeu" : "Interactive game zone";
 			document.getElementById("after-canvas").innerHTML = lang == "fr" ? "Continuer la navigation" : "Continue navigation";
+			document.getElementById("accessLink").innerHTML = lang == "fr" ? "Accessibilité du jeu" : "Game accessibility";
+			document.getElementById("accessLink").href = lang == "fr" ? "accessibility_fr.html" : "accessibility.html";
 		}
 		
 		document.body.appendChild(script);
