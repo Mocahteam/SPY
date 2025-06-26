@@ -71,8 +71,6 @@ public class HotkeySystem : FSystem
 				buttonNextStep.onClick.Invoke();
 			else if (buttonStop != null && buttonStop.gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.Space) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
 				buttonStop.onClick.Invoke();
-			else if (buttonSpeed != null && buttonSpeed.gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.Space) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)))
-				buttonSpeed.onClick.Invoke();
 			else if (buttonPause != null && buttonPause.gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.Space))
 				buttonPause.onClick.Invoke();
 			else if (buttonContinue != null && buttonContinue.gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.Space))

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
     <title>SPY</title>    
-	<meta content="Learning programming, Computational Thinking, SPY, Scratch, Python, Learn to program" name="description">
-	<meta content="Learning programming, Computational Thinking, SPY, Scratch, Python, learn to program" name="keywords">
+	<meta content="Learning programming, Computational Thinking, SPY, Scratch, Python" name="description">
+	<meta content="Learning programming, Computational Thinking, SPY, Scratch, Python" name="keywords">
 	
 	<!-- Favicons -->
 	<link href="TemplateData/favicon.ico" rel="shortcut icon">
@@ -35,7 +35,7 @@
 				<div class="nav-item"><a id="menu_#DragDropOptions" class="nav-link scrollto px-3 justify-content-end" href="#DragDropOptions">Programming</a></div>
 				<div class="nav-item"><a id="menu_#screenReader" class="nav-link scrollto px-3 justify-content-end" href="#screenReader">Screen Readers</a></div>
 				<div class="nav-item"><a id="menu_#contact" class="nav-link scrollto px-3 justify-content-end" href="#contact">Contact</a></div>
-				<div class="nav-item"><a class="nav-link scrollto px-3 justify-content-end" href="index_fr.html">Français</a></div>
+				<div class="nav-item"><a class="nav-link scrollto px-3 justify-content-end" href="accessibility_fr.html">Français</a></div>
 			</div>
 		</div>
 	</nav>
@@ -52,24 +52,24 @@
     <section id="synthesis" class="about">
       <div class="container">
           <h1 class="text-center">Summary of Implemented Features</h1>
-          <p>What if programming initiation was accessible to everyone? We are working to make the SPY game as accessible as possible. There is still a lot to be done, but we are working on it...</p>
+          <p>What if programming initiation was accessible to everyone? Our ambition is to make the SPY game as accessible as possible. There is still a lot to be done, but we are working on it...</p>
 		  <p>Here is the list of accessibility features currently integrated into SPY that promote its accessibility:</p>
 		  <ul>
-			<li>User interfaces are stationary</li>
-			<li>Drag-and-drop action for adding blocks to programs is optional - two other methods for adding blocks are available (see <a href="#DragDropOptions">Programming</a> section)</li>
-			<li>All key game actions are accessible via keyboard</li>
-			<li>Key actions accessible with keyboard shortcuts (see <a href="#hotkeys">Keyboard Shortcuts Details</a>)</li>
-			<li>Program execution speed is controllable with step-by-step execution mode</li>
-			<li>The game is compatible with virtual keyboards</li>
-			<li>User interface size is adjustable</li>
-			<li>The font is sans-serif</li>
-			<li>Color contrast between text and backgrounds is ensured with a contrast ratio between 6.05:1 and 12.77:1</li>
-			<li>Ability to re-read instructions at any time</li>
 			<li>Speech synthesis module to read instructions and interfaces (see <a href="#speechsynthesis">Speech Synthesis Details</a>)</li>
-			<li>No essential information relies solely on color or sound</li>
-			<li>Possible switch from 3D view to 2D view</li>
+			<li>Color contrast between text and backgrounds is ensured with a contrast ratio between 6.05:1 and 12.77:1</li>
+			<li>Drag-and-drop action for adding blocks to programs is optional - two other methods for adding blocks are available (see <a href="#DragDropOptions">Programming</a> section)</li>
+			<li>Keyboard navigation</li>
+			<li>Key actions accessible with keyboard shortcuts (see <a href="#hotkeys">Keyboard Shortcuts Details</a>)</li>
 			<li>Compatible with screen readers (tested with NVDA - see <a href="#screenReader">Screen Reader Details</a>)</li>
 			<li>Map export in text format (see <a href="#screenReader">Screen Reader Details</a>)</li>
+			<li>Program execution speed is controllable with step-by-step execution mode</li>
+			<li>User interface size is adjustable</li>
+			<li>The font is sans-serif</li>
+			<li>User interfaces are stationary</li>
+			<li>The game is compatible with virtual keyboards</li>
+			<li>Ability to re-read instructions at any time</li>
+			<li>No essential information relies solely on color or sound</li>
+			<li>Possible switch from 3D view to 2D view</li>
 			<li>Automatic saving of player progress</li>
 		  </ul>
       </div>
@@ -84,7 +84,7 @@
 				<h2>General:</h2>
 				<ul>
 					<li><b>Escape</b>: Select main menu / Cancel current action</li>
-					<li><b>Ctrl+Escape</b>: Exit game canvas to return to HTML page</li>
+					<li><b>Shift + Escape</b>: Exit game canvas to return to HTML page</li>
 					<li><b>Home</b>: Select the highest priority interactive element</li>
 					<li><b>Arrow keys</b>: Navigate game interfaces / Move blocks</li>
 				</ul>
@@ -111,7 +111,6 @@
 				<ul>
 					<li><b>Space</b>: Start/Pause program execution</li>
 					<li><b>Ctrl + Space</b>: Execute next program instruction</li>
-					<li><b>Alt + Space</b>: Accelerate program execution</li>
 					<li><b>Shift + Space</b>: Stop program execution</li>
 				</ul>
 			</div>
@@ -147,11 +146,11 @@
 		 	
 			<h2>Mouse Drag-and-Drop</h2>
 			<p>This interaction mode allows players to use the mouse pointer (or finger for touch devices) to drag blocks from the inventory into programming areas. It is also possible with this method to modify the order of blocks within a programming area to modify the program.</p> 
-			<p>Once a first block is added to a programming area, you can use double-click (or double-tap) on inventory blocks to automatically add this block after the last added block.</p>
+			<p>Once a first block is added to a programming area, you can use double-click (or double-tap) on inventory block to automatically add this block after the last added block.</p>
 			<p>To delete a block, the player can drag a block from a programming area outside of it. An alternative to this method is to right-click on the block to delete.</p>
 
 			<h2>Keyboard Drag-and-Drop</h2>
-			<p>Like the "mouse" mode, this option allows players to move through the interface using the keyboard arrow keys to position themselves on the block to move. Once positioned on a programming block, press the "Enter" key to grab the block. Use the keyboard arrow keys to move the block in the interface then press "Enter" again to release the block. If the block is released in a valid programming area it will be added to the program, otherwise it will be deleted.</p>
+			<p>This option allows players to move through the interface using the keyboard arrow keys to position themselves on the block to move. Once positioned on a programming block (whether in inventory or already placed in a program zone), press the "Enter" key to grab the block. Use the keyboard arrow keys to move the block in the interface then press "Enter" again to release the block. If the block is released in a valid programming area it will be added to the program, otherwise it will be deleted.</p>
 
 			<h2>Keyboard Insertion</h2>
 			<p>Unlike the two previous modes, here the player must first position themselves in a programming area at the location where they want to insert a new block. They then press the "i" key on the keyboard to "insert" a new block. Automatically the focus is positioned on the first available block in the inventory, the player can then browse through the available blocks and validate their choice with the "Enter" key. The selected block will automatically be added to the program at the location where the "i" key was pressed.</p>

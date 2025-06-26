@@ -14,15 +14,15 @@
 	</head>
 	<body onresize="resizeCanvas()">
 	<div id="unity-container">
-	  <div id="unity-header">
+	  <div id="unity-header" class="d-flex justify-content-between align-items-center">
 		<label id="proxyLoadFiles" style="visibility:hidden;" for="files-selector" class="loadButton">Importer des scénarios et des niveaux</label>
 		<input id="files-selector" style="visibility:hidden; width: 0px;" type="file" accept=".xml" multiple>
-		<span class="form-check form-switch form-check-inline">
+		<div class="form-check form-switch form-check-inline">
 			<input class="form-check-input" type="checkbox" id="switchTTS" onclick="initSound(this)" disabled>
 			<label id="labelSwitchTTS" for="switchTTS" class="form-check-label" >Synthèse vocale</label>
-		</span>
+		</div>
 		
-		<span id="TTSConfig" style="visibility:hidden;" class="form-check-inline">
+		<div id="TTSConfig" style="visibility:hidden;" class="form-check-inline">
 			<div class="form-check-inline">
 				<div class="form-check">
 				  <input class="form-check-input" type="radio" name="radioTarget" id="TTS_all">
@@ -39,10 +39,12 @@
 			</div>
 			<label for="speedTTS" id="labelSpeed" class="form-label">Vitesse voix</label>
 			<input type="range" class="form-range pt-3" style="width: 100px;" min="0.1" max="10" step="0.1" id="speedTTS" value="1">
-		</span>
-		<span><a id="accessLink" href="accessibility_fr.html" target="_blank">Accessibilité du jeu</a></span>
-		<div id="unity-fullscreen-button"></div>
-		<div id="unity-build-title">Agrandir&nbsp;:</div>
+		</div>
+		<a id="accessLink" href="accessibility_fr.html" target="_blank">Accessibilité du jeu</a>
+		<div class="d-flex justify-content-between align-items-center">
+			<div id="unity-build-title">Agrandir&nbsp;:</div>
+			<div id="unity-fullscreen-button"></div>
+		</div>
 	  </div>
 	  <canvas id="unity-canvas" tabindex="0" aria-label="Zone interactive du jeu" role="application"></canvas>
 	  <div id="unity-loading-bar">
