@@ -189,7 +189,7 @@ public class TitleScreenSystem : FSystem {
     {
 		webGL_fileToLoad = 1;
 		webGL_fileLoaded = 0;
-		string formatedString = idSession.text.ToUpper();
+		string formatedString = idSession.text.ToUpper().Replace(" ", "");
 		formatedString = String.Concat(formatedString.Where(c => !Char.IsWhiteSpace(c)));
 		
 		GameObjectManager.setGameObjectState(loadingScreen, true);

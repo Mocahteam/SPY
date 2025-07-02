@@ -1,6 +1,7 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TMPro;
@@ -210,10 +211,18 @@ public class TTSSystem : FSystem
             if (!InstructionOnly())
                 CallTTS(actions);
             SendToScreenReader(actions);
-            updateMap(null);
+            MainLoop.instance.StartCoroutine(delayUpdateMap());
         }
         else
             Debug.Log(actions);
+    }
+
+    private IEnumerator delayUpdateMap()
+    {
+        // On attend deux frames pour laisser le temps à l'action d'être exécutée et à la carte d'être à jour
+        yield return null;
+        yield return null;
+        updateMap(null);
     }
 
     // Pour vocaliser le texte sélectionné à l'intérieur d'un inputField

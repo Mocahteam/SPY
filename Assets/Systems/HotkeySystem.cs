@@ -36,7 +36,9 @@ public class HotkeySystem : FSystem
 
 	private bool cancelNextEscape;
 
-    protected override void onStart()
+	public Button buttonCopyCode;
+
+	protected override void onStart()
     {
 		cancelNextEscape = false;
         foreach (GameObject go in f_InputFields)
@@ -129,6 +131,10 @@ public class HotkeySystem : FSystem
 			// Briefing
 			if (showBriefing != null && showBriefing.gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.H))
 				showBriefing.onClick.Invoke();
+
+			// Copy code
+			if (buttonCopyCode != null && buttonCopyCode.gameObject.activeInHierarchy && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.RightCommand)) && Input.GetKeyDown(KeyCode.C))
+				buttonCopyCode.onClick.Invoke();
 		}
 	}
 	private bool inputFieldNotSelected()

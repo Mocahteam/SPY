@@ -2,7 +2,6 @@
 <html lang="en-us">
 	<head>
 		<meta charset="utf-8">
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>SPY</title>
 		<link rel="shortcut icon" href="TemplateData/favicon.ico">
 	
@@ -17,28 +16,29 @@
 	  <div id="unity-header" class="d-flex justify-content-between align-items-center">
 		<label id="proxyLoadFiles" style="visibility:hidden;" for="files-selector" class="loadButton">Importer des scénarios et des niveaux</label>
 		<input id="files-selector" style="visibility:hidden; width: 0px;" type="file" accept=".xml" multiple>
+		<div>
 		<div class="form-check form-switch form-check-inline">
 			<input class="form-check-input" type="checkbox" id="switchTTS" onclick="initSound(this)" disabled>
 			<label id="labelSwitchTTS" for="switchTTS" class="form-check-label" >Synthèse vocale</label>
 		</div>
-		
-		<div id="TTSConfig" style="visibility:hidden;" class="form-check-inline">
-			<div class="form-check-inline">
-				<div class="form-check">
-				  <input class="form-check-input" type="radio" name="radioTarget" id="TTS_all">
-				  <label class="form-check-label" for="TTS_all" id="TTS_all_label">
-					Tout
-				  </label>
+			<div id="TTSConfig" style="visibility:hidden;" class="form-check-inline">
+				<div class="form-check-inline">
+					<div class="form-check">
+					  <input class="form-check-input" type="radio" name="radioTarget" id="TTS_all">
+					  <label class="form-check-label" for="TTS_all" id="TTS_all_label">
+						Tout
+					  </label>
+					</div>
+					<div class="form-check">
+					  <input class="form-check-input" type="radio" name="radioTarget" id="TTS_briefing" checked>
+					  <label class="form-check-label" for="TTS_briefing" id="TTS_briefing_label">
+						Consignes
+					  </label>
+					</div>
 				</div>
-				<div class="form-check">
-				  <input class="form-check-input" type="radio" name="radioTarget" id="TTS_briefing" checked>
-				  <label class="form-check-label" for="TTS_briefing" id="TTS_briefing_label">
-					Consignes
-				  </label>
-				</div>
+				<label for="speedTTS" id="labelSpeed" class="form-label">Vitesse voix</label>
+				<input type="range" class="form-range pt-3" style="width: 100px;" min="0.1" max="10" step="0.1" id="speedTTS" value="1">
 			</div>
-			<label for="speedTTS" id="labelSpeed" class="form-label">Vitesse voix</label>
-			<input type="range" class="form-range pt-3" style="width: 100px;" min="0.1" max="10" step="0.1" id="speedTTS" value="1">
 		</div>
 		<a id="accessLink" href="accessibility_fr.html" target="_blank">Accessibilité du jeu</a>
 		<div class="d-flex justify-content-between align-items-center">
@@ -93,8 +93,11 @@
 			else
 				lang = "en";
 		}
-			
+		
+		// Ajout au document de fonctions pour pouvoir les appeler dans le plugin Unity
 		document.updateLang = updateLang;
+		document.tryToCopy = tryToCopy;
+		
 		document.updateLang(lang);
 
 		// Shows a temporary message banner/ribbon for a few seconds, or
@@ -340,6 +343,52 @@
 			document.getElementById("after-canvas").innerHTML = lang == "fr" ? "Continuer la navigation" : "Continue navigation";
 			document.getElementById("accessLink").innerHTML = lang == "fr" ? "Accessibilité du jeu" : "Game accessibility";
 			document.getElementById("accessLink").href = lang == "fr" ? "accessibility_fr.html" : "accessibility.html";
+		}
+		
+		// Fonction de fallback pour les navigateurs qui ne supportent pas l'API moderne
+		function fallbackCopyTextToClipboard(text) {
+			const textArea = document.createElement("textarea");
+			textArea.value = text;
+			textArea.style.position = "fixed";
+			textArea.style.left = "-999999px";
+			textArea.style.top = "-999999px";
+			document.body.appendChild(textArea);
+			textArea.focus();
+			textArea.select();
+			
+			errorMsg = (lang == "fr" ? "Erreur de copie, essayez à nouveau avec le code suivant : " : "Copy fail, try again with following code: ")+text;
+			
+			try {
+				const successful = document.execCommand('copy');
+				if (successful) {
+					console.log("le presse-papier est correctement paramétré : " + text);
+				} else {
+					alert(errorMsg);
+				}
+			} catch (err) {
+				alert(errorMsg);
+			} finally {
+				document.body.removeChild(textArea);
+			}
+		}
+
+		// Fonction principale
+		async function tryToCopy(text) {
+			// Vérifier si l'API Clipboard moderne est disponible
+			if (navigator.clipboard && navigator.clipboard.writeText) {
+				try {
+					await navigator.clipboard.writeText(text);
+					console.log("le presse-papier est correctement paramétré : " + text);
+				} catch (err) {
+					console.log("Clipboard API échouée, utilisation du fallback : " + err);
+					// Si l'API moderne échoue, utiliser le fallback
+					fallbackCopyTextToClipboard(text);
+				}
+			} else {
+				// L'API moderne n'est pas disponible, utiliser directement le fallback
+				console.log("Clipboard API non disponible, utilisation du fallback");
+				fallbackCopyTextToClipboard(text);
+			}
 		}
 		
 		document.body.appendChild(script);

@@ -95,5 +95,10 @@ mergeInto(LibraryManager.library, {
 	UpdateMap: function(txt){
 		var content = UTF8ToString(txt);
 		document.getElementById('DescMapSpan').innerHTML = content;
+	},
+	
+	TryToCopy: function(txt){
+		var content = UTF8ToString(txt);
+		document.tryToCopy(content);
 	}
 });
