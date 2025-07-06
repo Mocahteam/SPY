@@ -212,11 +212,11 @@ public class TitleScreenSystem : FSystem {
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			logs.text = "<color=\"red\">" + Utility.getFormatedText(gameData.localization[21], formatedString) + "</color>\n" + logs.text;
+			logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[0], formatedString) + "</color>\n" + logs.text;
 			yield return new WaitForSeconds(0.5f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
 			{
-				logs.text = "<color=\"orange\">" + Utility.getFormatedText(gameData.localization[22], formatedString) + "</color>\n" + logs.text;
+				logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[1], formatedString) + "</color>\n" + logs.text;
 				MainLoop.instance.StartCoroutine(FindAvailableSessionId());
 			}
 			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
@@ -255,14 +255,14 @@ public class TitleScreenSystem : FSystem {
 		logs.text = "";
 		progress.text = "0%";
 		yield return www.SendWebRequest();
-
+		Localization loc = gameData.GetComponent<Localization>();
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			logs.text = "<color=\"red\">" + Utility.getFormatedText(gameData.localization[23], idSession) + "</color>\n" + logs.text;
+			logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession) + "</color>\n" + logs.text;
 			yield return new WaitForSeconds(0.5f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
 			{
-				logs.text = "<color=\"orange\">" + Utility.getFormatedText(gameData.localization[24], idSession) + "</color>\n" + logs.text;
+				logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[3], idSession) + "</color>\n" + logs.text;
 				MainLoop.instance.StartCoroutine(GetProgressionWebRequest(idSession));
 			}
 			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
@@ -280,7 +280,7 @@ public class TitleScreenSystem : FSystem {
 					GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("ShowSessionId").gameObject, false);
 					GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("SetSessionId").gameObject, true);
 				};
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[16], idSession), OkButton = gameData.localization[5], CancelButton = gameData.localization[0], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[16], idSession), OkButton = loc.localization[5], CancelButton = loc.localization[0], call = localCallback });
 			}
 			else
 			{
@@ -298,7 +298,7 @@ public class TitleScreenSystem : FSystem {
 						GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("ShowSessionId").gameObject, false);
 						GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("SetSessionId").gameObject, true);
 					};
-					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = gameData.localization[17], OkButton = gameData.localization[5], CancelButton = gameData.localization[0], call = localCallback });
+					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[17], OkButton = loc.localization[5], CancelButton = loc.localization[0], call = localCallback });
 				}
 				else
 				{
@@ -309,7 +309,7 @@ public class TitleScreenSystem : FSystem {
 						mainMenu.GetComponentInParent<CanvasGroup>().interactable = true;
 						EventSystem.current.SetSelectedGameObject(playButton);
 					};
-					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[18], idSession), OkButton = gameData.localization[1], CancelButton = gameData.localization[0], call = localCallback });
+					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[18], idSession), OkButton = loc.localization[1], CancelButton = loc.localization[0], call = localCallback });
 					userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[0]);
 					if (userData.progression == null)
 						userData.progression = new Dictionary<string, int>();
@@ -376,11 +376,11 @@ public class TitleScreenSystem : FSystem {
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			logs.text = "<color=\"red\">("+gameData.localization[25]+") " + uri + "</color>\n" + logs.text;
+			logs.text = "<color=\"red\">("+logs.GetComponent<Localization>().localization[4]+") " + uri + "</color>\n" + logs.text;
 			yield return new WaitForSeconds(0.5f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
 			{
-				logs.text = "<color=\"orange\">(" + gameData.localization[26] + ") " + uri + "</color>\n" + logs.text;
+				logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
 				MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
 			}
 			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
@@ -409,11 +409,11 @@ public class TitleScreenSystem : FSystem {
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			logs.text = "<color=\"red\">(" + gameData.localization[25] + ") " + uri + "</color>\n" + logs.text;
+			logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
 			yield return new WaitForSeconds(0.5f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
 			{
-				logs.text = "<color=\"orange\">(" + gameData.localization[26] + ") " + uri + "</color>\n" + logs.text;
+				logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
 				MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
 			}
 			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
@@ -456,11 +456,11 @@ public class TitleScreenSystem : FSystem {
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			logs.text = "<color=\"red\">(" + gameData.localization[25] + ") " + uri + "</color>\n"+ logs.text;
+			logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n"+ logs.text;
 			yield return new WaitForSeconds(0.5f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
 			{
-				logs.text = "<color=\"orange\">(" + gameData.localization[26] + ") " + uri + "</color>\n" + logs.text;
+				logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
 				MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(uri));
 			}
 			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
@@ -469,7 +469,7 @@ public class TitleScreenSystem : FSystem {
 		{
 			webGL_fileLoaded++;
 			progress.text = Mathf.Floor(((float)webGL_fileLoaded / webGL_fileToLoad) * 100) + "%";
-			logs.text = "<color=\"green\">(" + gameData.localization[1] + ") " + uri + "</color>\n"+ logs.text;
+			logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n"+ logs.text;
 			string xmlContent = www.downloadHandler.text;
 			try
 			{
@@ -477,7 +477,7 @@ public class TitleScreenSystem : FSystem {
 			}
 			catch (Exception e)
 			{
-				logs.text = "<color=\"red\">(" + gameData.localization[25] + ") " + uri+" => "+e.Message+ "</color>\n" + logs.text;
+				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri+" => "+e.Message+ "</color>\n" + logs.text;
 			}
 		}
 	}
@@ -500,7 +500,7 @@ public class TitleScreenSystem : FSystem {
 		else if (doc.GetElementsByTagName("scenario").Count == 1)
 			updateScenarioContent(uri, doc);
 		else
-			throw new Exception("\"" + uri + "\"" + gameData.localization[27]);
+			throw new Exception("\"" + uri + "\"" + gameData.GetComponent<Localization>().localization[21]);
 	}
 
 	public void updateScenarioContent(string uri, XmlDocument doc)
@@ -554,17 +554,18 @@ public class TitleScreenSystem : FSystem {
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/index.html) via le Wrapper du Système
 	public void importLevelOrScenario(string content)
 	{
+		Localization loc = gameData.GetComponent<Localization>();
 		JavaScriptData jsd = JsonUtility.FromJson<JavaScriptData>(content);
 		try
 		{
 			string fakeUri = Application.streamingAssetsPath + "/Levels/LocalFiles/" + jsd.name; 
 			LoadLevelOrScenario(fakeUri, jsd.content);
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = gameData.localization[19], OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[19], OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
 		}
 		catch (Exception e) {
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[20], jsd.name, e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[20], jsd.name, e.Message), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
 		}
 	}
 
@@ -630,7 +631,7 @@ public class TitleScreenSystem : FSystem {
 		if (gameData.scenarios.ContainsKey(content.GetChild(0).GetComponent<TMP_Text>().text))
 		{
 			// Display competencies
-			compDetails.text = "<b>"+gameData.localization[28]+"</b>\n";
+			compDetails.text = "<b>"+ compDetails.GetComponent<Localization>().localization[0]+"</b>\n";
 			string txt = "";
 			foreach (GameObject comp in f_competencies)
 			{
@@ -644,7 +645,7 @@ public class TitleScreenSystem : FSystem {
 			if (txt != "")
 				compDetails.text += txt;
 			else
-				compDetails.text += "\t"+ gameData.localization[29] + "\n";
+				compDetails.text += "\t"+ compDetails.GetComponent<Localization>().localization[1] + "\n";
 			LayoutRebuilder.ForceRebuildLayoutImmediate(content as RectTransform);
 			// auto move to the top od the panel
 			(content as RectTransform).anchoredPosition = new Vector2(0, 0);

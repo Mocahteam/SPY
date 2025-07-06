@@ -91,11 +91,6 @@ mergeInto(LibraryManager.library, {
 		var tts_briefing = document.getElementById("TTS_briefing");
 		return switchTTS.checked && tts_briefing.checked;
 	},
-
-	UpdateMap: function(txt){
-		var content = UTF8ToString(txt);
-		document.getElementById('DescMapSpan').innerHTML = content;
-	},
 	
 	TryToCopy: function(txt){
 		var content = UTF8ToString(txt);

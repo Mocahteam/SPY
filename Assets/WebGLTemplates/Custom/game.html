@@ -46,7 +46,7 @@
 			<div id="unity-fullscreen-button"></div>
 		</div>
 	  </div>
-	  <canvas id="unity-canvas" tabindex="0" aria-label="Zone interactive du jeu" role="application"></canvas>
+	  <canvas id="unity-canvas" tabindex="0" aria-label="Zone interactive du jeu, appuyez sur Entrée pour entrer dans le jeu." role="application"></canvas>
 	  <div id="unity-loading-bar">
 		<div id="unity-logo"></div>
 		<div id="unity-progress-bar-empty">
@@ -58,7 +58,6 @@
 	  <!-- Le "aria-live" en mode assertif permet d'indiquer au lecteur d'écran que cette balise peut changer en live et qu'il doit donc la vocaliser immédaitement à chaque fois qu'elle change. Le "aria-atomic" indique que le lecteur d'écran doit relire le contenu de la balise et pas uniquement ce qui a changé. Le role "status" indique que cet élément contient des informations de statut qui sont importantes pour l'utilisateur -->
 	  <span id="ScreenReaderSpan" aria-live="assertive" aria-atomic="true" role="status" class="visually-hidden"></span>
 	  <button id="after-canvas" class="visually-hidden">Continuer la navigation</button>
-	  <p id="DescMapSpan" class="visually-hidden"></p>
 	</div>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -339,7 +338,7 @@
 			document.getElementById("labelSpeed").innerHTML = lang == "fr" ? "Vitesse voix" : "Voice speed";
 			document.getElementById("TTS_all_label").innerHTML = lang == "fr" ? "Tout" : "All";
 			document.getElementById("TTS_briefing_label").innerHTML = lang == "fr" ? "Consignes" : "Instructions";
-			document.getElementById("unity-canvas").ariaLabel = lang == "fr" ? "Zone interactive du jeu" : "Interactive game zone";
+			document.getElementById("unity-canvas").ariaLabel = lang == "fr" ? "Zone interactive du jeu, appuyez sur Entrée pour entrer dans le jeu." : "Interactive game zone, press Enter to enter the game";
 			document.getElementById("after-canvas").innerHTML = lang == "fr" ? "Continuer la navigation" : "Continue navigation";
 			document.getElementById("accessLink").innerHTML = lang == "fr" ? "Accessibilité du jeu" : "Game accessibility";
 			document.getElementById("accessLink").href = lang == "fr" ? "accessibility_fr.html" : "accessibility.html";

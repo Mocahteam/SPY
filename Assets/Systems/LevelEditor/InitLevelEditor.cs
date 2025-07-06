@@ -48,7 +48,8 @@ public class InitLevelEditor : FSystem
 			if (Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser())
 			{
 				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = gameData.localization[9], OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+				Localization loc = gameData.GetComponent<Localization>();
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[9], OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
 			}
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlButtons();

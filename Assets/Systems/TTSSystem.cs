@@ -1,8 +1,5 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
@@ -18,20 +15,6 @@ public class TTSSystem : FSystem
     private Family f_toggles = FamilyManager.getFamily(new AllOfComponents(typeof(Toggle)));
     private Family f_scrollBars = FamilyManager.getFamily(new AllOfComponents(typeof(Scrollbar)));
 
-    private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
-    private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
-
-    private Family f_walls = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
-    private Family f_grounds = FamilyManager.getFamily(new AnyOfTags("Ground"));
-    private Family f_doors = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
-    private Family f_consoles = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)));
-    private Family f_coins = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Coin"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-    private Family f_players = FamilyManager.getFamily(new AnyOfTags("Player"));
-    private Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
-    private Family f_redDetector = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
-    private Family f_exit = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
-    private Dictionary<int, Dictionary<int, string>> staticMap;
-
 
     [DllImport("__Internal")]
     private static extern string CallTTS(string txt); // call javascript => send txt to html to be read by TTS navigator
@@ -39,9 +22,6 @@ public class TTSSystem : FSystem
 
     [DllImport("__Internal")]
     private static extern string SendToScreenReader(string txt); // call javascript => send txt to html to be accessible by screen readers
-
-    [DllImport("__Internal")]
-    private static extern string UpdateMap(string txt); // call javascript => send txt to html to made map accessible by text
 
     [DllImport("__Internal")]
     private static extern bool InstructionOnly(); // call javascript => return true if "Instruction" is checked in html
@@ -77,9 +57,6 @@ public class TTSSystem : FSystem
         foreach (GameObject scrollbar in f_scrollBars)
             onNewScrollbar(scrollbar);
         f_scrollBars.addEntryCallback(onNewScrollbar);
-
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
-            f_gameLoaded.addEntryCallback(buildStaticMap);
     }
 
     protected override void onProcess(int familiesUpdateCount)
@@ -89,6 +66,12 @@ public class TTSSystem : FSystem
             previousSelectedGO = eventSystem.currentSelectedGameObject;
             defTTS(previousSelectedGO);
         }
+    }
+
+    private void ifFocused_SendToScreenReader(string content)
+    {
+        if (Application.isFocused)
+            SendToScreenReader(content);
     }
 
     private void onNewSelectable(GameObject selectable)
@@ -111,7 +94,7 @@ public class TTSSystem : FSystem
 
         string suffix = "";
         string content = "";
-        
+        Localization loc = gameData.GetComponent<Localization>();
         // Cas général : Boutton, TMP_Text, Toggle, DropDown => on va chercher le texte dans ses enfants
         if (focused.GetComponent<TMP_InputField>() == null && focused.GetComponent<LibraryItemRef>() == null)
         {
@@ -121,10 +104,10 @@ public class TTSSystem : FSystem
         }
 
         if (focused.GetComponent<Button>())
-            suffix = ", "+gameData.localization[54]; // "Boutton" : "Button";
+            suffix = ", "+ loc.localization[22]; // "Boutton" : "Button";
         else if (focused.GetComponent<TMP_InputField>())
         {
-            suffix = ", "+gameData.localization[55]; // "Champ de saisie" : "Input field";
+            suffix = ", "+ loc.localization[23]; // "Champ de saisie" : "Input field";
             TMP_InputField inputfield = focused.GetComponent<TMP_InputField>();
             // S'il y a quelque chose dans le inputfield, utiliser cette valeur
             if (inputfield.text != "")
@@ -133,24 +116,24 @@ public class TTSSystem : FSystem
                 content = inputfield.GetComponentInChildren<TMP_Text>(true).text;
         }
         else if (focused.GetComponent<TMP_Dropdown>())
-            suffix = ", "+gameData.localization[56]; // "Liste déroulante" : "Dropdown";
+            suffix = ", "+ loc.localization[24]; // "Liste déroulante" : "Dropdown";
         else if (focused.GetComponent<Toggle>())
         {
-            suffix = ", " + gameData.localization[57]; // "Case à cocher" : "Toggle";
+            suffix = ", " + loc.localization[25]; // "Case à cocher" : "Toggle";
             Toggle toggle = focused.GetComponent<Toggle>();
             if (toggle.isOn)
-                suffix += ", "+gameData.localization[58]; // "cochée" : "checked";
+                suffix += ", "+ loc.localization[26]; // "cochée" : "checked";
             else
-                suffix += ", "+gameData.localization[59]; // "non cochée" : "unchecked";
+                suffix += ", "+ loc.localization[27]; // "non cochée" : "unchecked";
         }
         else if (focused.GetComponent<Scrollbar>())
         {
             Scrollbar scrollbar = focused.GetComponent<Scrollbar>();
-            content = gameData.localization[60] + scrollbar.value; // "Barre de défilement, valeur : " : "Scrollbar, value: ";
+            content = loc.localization[28] + scrollbar.value; // "Barre de défilement, valeur : " : "Scrollbar, value: ";
         }
         else if (focused.GetComponent<CurrentAction>())
         {
-            suffix = ", " + gameData.localization[61]; // "Action courrante" : "Current action";
+            suffix = ", " + loc.localization[29]; // "Action courrante" : "Current action";
         }
         else if (focused.GetComponent<Image>())
         {
@@ -158,15 +141,15 @@ public class TTSSystem : FSystem
             Transform replacementText = focused.transform.Find("ImgDesc");
             if (replacementText != null)
             {
-                content = gameData.localization[38]; // "Image" : "Image"
+                content = loc.localization[33]; // "Image" : "Image"
                 TMP_Text text = replacementText.GetComponent<TMP_Text>();
                 if (text != null && text.text != "")
-                    content += ", " + gameData.localization[79] + ", " + text.text; // "texte de remplacement" : "replacement text"
+                    content += ", " + loc.localization[34] + ", " + text.text; // "texte de remplacement" : "replacement text"
             }
         }
 
         if (select && !select.IsInteractable() && focused.GetComponent<CurrentAction>() != null)
-            suffix += ", " + gameData.localization[62]; // "désactivée" : "disabled";
+            suffix += ", " + loc.localization[30]; // "désactivée" : "disabled";
 
 
 
@@ -189,7 +172,7 @@ public class TTSSystem : FSystem
         {
             if (!InstructionOnly() || focused.transform.parent.gameObject.name == "DialogPanel")
                 CallTTS(content + suffix);
-            SendToScreenReader(content + suffix);
+            ifFocused_SendToScreenReader(content + suffix);
         }
         else
             Debug.Log(content + suffix);
@@ -201,28 +184,20 @@ public class TTSSystem : FSystem
     private void onNewCurrentAction(GameObject unused)
     {
         string actions = "";
+        Localization loc = gameData.GetComponent<Localization>();
         foreach (GameObject currentAction in f_currentAction)
         {
-            actions += currentAction.GetComponent<CurrentAction>().agent.GetComponent<ScriptRef>().executableScript.GetComponent<UIRootExecutor>().scriptName + " " + gameData.localization[63] + " " + currentAction.GetComponentInChildren<TooltipContent>().text+". ";
+            actions += currentAction.GetComponent<CurrentAction>().agent.GetComponent<ScriptRef>().executableScript.GetComponent<UIRootExecutor>().scriptName + " " + loc.localization[29] + " " + currentAction.GetComponentInChildren<TooltipContent>().text+". ";
         }
 
         if (Application.platform == RuntimePlatform.WebGLPlayer)
         {
             if (!InstructionOnly())
                 CallTTS(actions);
-            SendToScreenReader(actions);
-            MainLoop.instance.StartCoroutine(delayUpdateMap());
+            ifFocused_SendToScreenReader(actions);
         }
         else
             Debug.Log(actions);
-    }
-
-    private IEnumerator delayUpdateMap()
-    {
-        // On attend deux frames pour laisser le temps à l'action d'être exécutée et à la carte d'être à jour
-        yield return null;
-        yield return null;
-        updateMap(null);
     }
 
     // Pour vocaliser le texte sélectionné à l'intérieur d'un inputField
@@ -231,13 +206,14 @@ public class TTSSystem : FSystem
         TMP_InputField inputF = inputField_GO.GetComponent<TMP_InputField>();
         inputF.onTextSelection.AddListener(delegate (string input, int end, int start)
         {
-            string output = input.Substring(Mathf.Min(start, end), Mathf.Max(start, end) - Mathf.Min(start, end)) +", "+ gameData.localization[55] + " " + gameData.localization[64];
+            Localization loc = gameData.GetComponent<Localization>();
+            string output = input.Substring(Mathf.Min(start, end), Mathf.Max(start, end) - Mathf.Min(start, end)) +", "+ loc.localization[23] + " " + loc.localization[32];
             if (Application.platform == RuntimePlatform.WebGLPlayer)
             {
                 
                 if (!InstructionOnly())
                     CallTTS(output);
-                SendToScreenReader(output);
+                ifFocused_SendToScreenReader(output);
             }
             else
                 Debug.Log(output);
@@ -251,12 +227,12 @@ public class TTSSystem : FSystem
         Toggle toggle = toggle_GO.GetComponent<Toggle>();
         toggle.onValueChanged.AddListener(delegate (bool state)
         {
-            string output = toggle.isOn ? gameData.localization[58] : gameData.localization[59]; // "cochée" ou "non cochée"
+            string output = toggle.isOn ? gameData.GetComponent<Localization>().localization[26] : gameData.GetComponent<Localization>().localization[27]; // "cochée" ou "non cochée"
             if (Application.platform == RuntimePlatform.WebGLPlayer)
             {
                 if (!InstructionOnly())
                     CallTTS(output);
-                SendToScreenReader(output);
+                ifFocused_SendToScreenReader(output);
             }
             else
                 Debug.Log(output);
@@ -276,105 +252,11 @@ public class TTSSystem : FSystem
                 {
                     if (!InstructionOnly())
                         CallTTS(scrollbar.value + "");
-                    SendToScreenReader(scrollbar.value + "");
+                    ifFocused_SendToScreenReader(scrollbar.value + "");
                 }
                 else
                     Debug.Log(scrollbar.value);
             }
         });
-    }
-
-
-    private void buildStaticMap(GameObject unused)
-    {
-        staticMap = new Dictionary<int, Dictionary<int, string>>();
-        foreach (GameObject ground in f_grounds)
-        {
-            int x = (int)(ground.transform.localPosition.z / 3); // C'est bien le z du transform dans le x de la map du jeu
-            int y = (int)(ground.transform.localPosition.x / 3); // et le x du transform dans le y de la map du jeu
-            if (!staticMap.ContainsKey(x))
-                staticMap[x] = new Dictionary<int, string>();
-            staticMap[x][y] = gameData.localization[66];
-        }
-        foreach (GameObject wall in f_walls)
-        {
-            Position pos = wall.GetComponent<Position>();
-            if (!staticMap.ContainsKey(pos.x))
-                staticMap[pos.x] = new Dictionary<int, string>();
-            staticMap[pos.x][pos.y] = gameData.localization[67];
-        }
-        foreach (GameObject teleport in f_exit)
-        {
-            Position pos = teleport.GetComponent<Position>();
-            // On ignore les "Spawn" pas utile pour la description de la carte, juste de la déco
-            staticMap[pos.x][pos.y] = teleport.tag == "Exit" ? gameData.localization[68] : staticMap[pos.x][pos.y];
-        }
-
-        f_editingMode.addEntryCallback(updateMap);
-        updateMap(null);
-    }
-
-    private void updateMap(GameObject unused)
-    {
-        // Calcul du nombre maximal de y
-        int yMax = 0;
-        foreach (int key in staticMap.Keys)
-            yMax = staticMap[key].Count > yMax ? staticMap[key].Count : yMax;
-        // Construction d'une martice de la bonne taille
-        string [,] exportMap = new string[staticMap.Count, yMax];
-        // Recopie de la partie statique dans la map d'export
-        foreach (KeyValuePair<int, Dictionary<int, string>> xKvp in staticMap)
-            foreach (KeyValuePair<int, string> yKvp in xKvp.Value)
-                exportMap[xKvp.Key, yKvp.Key] = yKvp.Value;
-
-        foreach (GameObject coin in f_coins)
-        {
-            Position pos = coin.GetComponent<Position>();
-            exportMap[pos.x, pos.y] += "/"+ gameData.localization[69];
-        }
-
-        foreach (GameObject player in f_players)
-        {
-            Position pos = player.GetComponent<Position>();
-            exportMap[pos.x, pos.y] += "/"+ gameData.localization[70] + ": " + player.GetComponent<AgentEdit>().associatedScriptName + " (" + player.GetComponent<Direction>().direction + ")";
-        }
-
-        foreach (GameObject drone in f_drone)
-        {
-            Position pos = drone.GetComponent<Position>();
-            // récupération du nom du drone
-            ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
-            string droneName = scriptRef.executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_Text>().text;
-            exportMap[pos.x, pos.y] += "/"+ gameData.localization[71] + ": " + droneName + " (" + drone.GetComponent<Direction>().direction + ")";
-        }
-
-        foreach (GameObject redArea in f_redDetector)
-        {
-            Position pos = redArea.GetComponent<Position>();
-            exportMap[pos.x, pos.y] += "/"+ gameData.localization[72];
-        }
-
-        foreach (GameObject door in f_doors)
-        {
-            Position pos = door.GetComponent<Position>();
-            exportMap[pos.x, pos.y] += "/"+ gameData.localization[73] + door.GetComponent<ActivationSlot>().slotID+" "+(door.activeInHierarchy ? "("+ gameData.localization[74] + ")" : "("+ gameData.localization[75] + ")");
-        }
-
-        foreach (GameObject console in f_consoles)
-        {
-            Position pos = console.GetComponent<Position>();
-            exportMap[pos.x, pos.y] += "/"+ gameData.localization[76] + " (" + String.Join(",", console.GetComponent<Activable>().slotID) + ")";
-        }
-
-        // Convert map to string
-        string stringExport = gameData.localization[77]+"<br>";
-        for (int j = 0; j < exportMap.GetLength(1); j++)  {
-            for (int i = 0; i < exportMap.GetLength(0); i++)
-                stringExport += exportMap[i, j]+" ";
-            stringExport += "<br>";
-        }
-        stringExport += gameData.localization[78] + "<br>";
-
-        UpdateMap(stringExport);
     }
 }

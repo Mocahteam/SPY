@@ -4114,6 +4114,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8507923394507219352}
   - component: {fileID: 8507923394507219353}
+  - component: {fileID: 6893585099499308693}
+  - component: {fileID: 7564084815675672504}
   m_Layer: 5
   m_Name: LeftPanel
   m_TagString: Untagged
@@ -4168,6 +4170,94 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &6893585099499308693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8507923394507219351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24db4179fe1021644900acddb2e9eb48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localization:
+  - Reste #0#
+  - "Ajout impossible apr\xE8s avoir<br>commenc\xE9 \xE0 r\xE9soudre la mission"
+--- !u!114 &7564084815675672504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8507923394507219351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TrackedObjects:
+  - rid: 8163430786238513265
+  references:
+    version: 2
+    RefIds:
+    - rid: 8163430786238513265
+      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+        asm: Unity.Localization}
+      data:
+        m_Target: {fileID: 6893585099499308693}
+        m_TrackedProperties:
+          items:
+          - rid: 8163430786238513266
+          - rid: 8163430786238513267
+          - rid: 8163430786238513268
+        m_UpdateType: 1
+        m_Changed:
+          m_PersistentCalls:
+            m_Calls: []
+    - rid: 8163430786238513266
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 258366326417121280
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[0]
+    - rid: 8163430786238513267
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 258366508881928192
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[1]
+    - rid: 8163430786238513268
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 258367388507168768
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[2]
 --- !u!1 &8507923394558845783
 GameObject:
   m_ObjectHideFlags: 0
@@ -9193,7 +9283,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 8507923394634422046}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9997983
+  m_Size: 0.9999683
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -18332,6 +18422,7 @@ GameObject:
   - component: {fileID: 8507923395785239317}
   - component: {fileID: 8507923395785239316}
   - component: {fileID: 8507923395785239318}
+  - component: {fileID: 5316262099389103102}
   m_Layer: 5
   m_Name: EditableContainers
   m_TagString: Untagged
@@ -18346,7 +18437,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8507923395785239312}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -18355,7 +18446,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.108897746}
+  m_AnchoredPosition: {x: 0, y: 0.000020560808}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8507923395785239315
@@ -18448,6 +18539,37 @@ MonoBehaviour:
   m_Script: {fileID: -53623643, guid: e160884b7e39b8e479dc90c5b7dcec1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5316262099389103102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8507923395785239312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TrackedObjects:
+  - rid: 8163430786238513252
+  references:
+    version: 2
+    RefIds:
+    - rid: 8163430786238513252
+      type: {class: TrackedRectTransform, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+        asm: Unity.Localization}
+      data:
+        m_Target: {fileID: 8507923395785239313}
+        m_TrackedProperties:
+          items:
+          - rid: 8163430786238513253
+    - rid: 8163430786238513253
+      type: {class: FloatTrackedProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_PropertyPath: m_AnchoredPosition.y
+        m_VariantData: []
 --- !u!1 &8507923395788805749
 GameObject:
   m_ObjectHideFlags: 0
@@ -21474,8 +21596,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8507923396146766960}
   m_HandleRect: {fileID: 8507923396146766959}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: 1
+  m_Size: 0.94219965
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

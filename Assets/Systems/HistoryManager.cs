@@ -156,8 +156,8 @@ public class HistoryManager : FSystem
 
 		// Disable add container button
 		buttonAddEditableContainer.GetComponent<Button>().interactable = false;
-		
-		buttonAddEditableContainer.GetComponent<TooltipContent>().text = gameData.localization[52];
+
+		buttonAddEditableContainer.GetComponent<TooltipContent>().text = buttonAddEditableContainer.GetComponentInParent<Localization>(true).localization[1];
 
 		//Disable remove container buttons and naming input field
 		foreach (GameObject trash in f_removeButton)
@@ -165,7 +165,7 @@ public class HistoryManager : FSystem
 			trash.GetComponent<Button>().interactable = false;
 			TMP_InputField name_input = trash.transform.parent.Find("ContainerName").GetComponent<TMP_InputField>();
 			name_input.interactable = false;
-			name_input.GetComponent<TooltipContent>().text = Utility.getFormatedText(gameData.localization[53], name_input.text);
+			name_input.GetComponent<TooltipContent>().text = Utility.getFormatedText(name_input.GetComponentInParent<Localization>(true).localization[1], name_input.text);
 		}
 	}
 

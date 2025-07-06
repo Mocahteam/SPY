@@ -87,6 +87,7 @@ public class SaveFileSystem : FSystem
 	// see ValideMessageButton (only called in standalone context, not used for WebGL)
 	public void saveXmlFile()
 	{
+		Localization loc = gameData.GetComponent<Localization>();
 		if (!Utility.CheckSaveNameValidity(saveName.text))
 		{
 			localCallback = null;
@@ -94,7 +95,7 @@ public class SaveFileSystem : FSystem
 			foreach (char someChar in Path.GetInvalidFileNameChars())
 				if (Char.IsPunctuation(someChar) || Char.IsSymbol(someChar))
 					invalidChars += someChar + " ";
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[12], invalidChars), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[12], invalidChars), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
 			// Be sure saving windows is enabled
 			GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
 		}
@@ -108,7 +109,7 @@ public class SaveFileSystem : FSystem
 			{
 				localCallback = null;
 				localCallback += delegate { saveToFile(); };
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[13], saveName.text), OkButton = gameData.localization[3], CancelButton = gameData.localization[4], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[13], saveName.text), OkButton = loc.localization[3], CancelButton = loc.localization[4], call = localCallback });
 				// Be sure saving windows is enabled
 				GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
 			}
@@ -135,6 +136,7 @@ public class SaveFileSystem : FSystem
 		}
 		else
 		{
+			Localization loc = gameData.GetComponent<Localization>();
 			try
 			{
 				// Create all necessary directories if they don't exist
@@ -148,12 +150,12 @@ public class SaveFileSystem : FSystem
 				gameData.levels[new Uri(path).AbsoluteUri] = doc.GetElementsByTagName("level")[0];
 
 				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[14], Application.persistentDataPath, "Levels", saveName.text), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[14], Application.persistentDataPath, "Levels", saveName.text), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
 			}
 			catch (Exception e)
 			{
 				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(gameData.localization[15], e.Message), OkButton = gameData.localization[0], CancelButton = gameData.localization[1], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[15], e.Message), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
 			}
 		}
 		// Be sure saving windows is disabled
