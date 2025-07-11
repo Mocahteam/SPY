@@ -197,7 +197,8 @@ public class LevelGenerator : FSystem {
 			}
 		}
 		eraseMap();
-		generateMap(doc.GetElementsByTagName("hideExits").Count > 0);
+		gameData.hideExit = doc.GetElementsByTagName("hideExits").Count > 0;
+		generateMap(gameData.hideExit);
 		MainLoop.instance.StartCoroutine(delayGameLoaded());
 	}
 
@@ -219,6 +220,7 @@ public class LevelGenerator : FSystem {
 		yield return null;
 		if (lastAgentCreated != null)
 		{
+			gameData.fogEnabled = true;
 			Transform fog = lastAgentCreated.transform.Find("Fog");
 			if (fog != null)
 				GameObjectManager.setGameObjectState(fog.gameObject, true);

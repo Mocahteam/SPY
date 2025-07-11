@@ -35,12 +35,16 @@ public class MapDesc : FSystem
     private Transform lineModel;
     private int lastFyfyUpdate;
 
-    Localization gameDataLoc;
+    private Localization gameDataLoc;
+    private GameData gameData;
     protected override void onStart()
     {
         GameObject go = GameObject.Find("GameData");
         if (go != null)
+        {
             gameDataLoc = go.GetComponent<Localization>();
+            gameData = go.GetComponent<GameData>();
+        }
 
         f_currentAction.addEntryCallback(onNewCurrentAction);
 
@@ -85,11 +89,14 @@ public class MapDesc : FSystem
                 staticMap[pos.x] = new Dictionary<int, string>();
             staticMap[pos.x][pos.y] = gameDataLoc.localization[36];
         }
-        foreach (GameObject teleport in f_exit)
+        if (!gameData.hideExit && !gameData.fogEnabled)
         {
-            Position pos = teleport.GetComponent<Position>();
-            // On ignore les "Spawn" pas utile pour la description de la carte, juste de la déco
-            staticMap[pos.x][pos.y] = teleport.tag == "Exit" ? gameDataLoc.localization[37] : staticMap[pos.x][pos.y];
+            foreach (GameObject teleport in f_exit)
+            {
+                Position pos = teleport.GetComponent<Position>();
+                // On ignore les "Spawn" pas utile pour la description de la carte, juste de la déco
+                staticMap[pos.x][pos.y] = teleport.tag == "Exit" ? gameDataLoc.localization[37] : staticMap[pos.x][pos.y];
+            }
         }
 
         f_editingMode.addEntryCallback(updateMap);

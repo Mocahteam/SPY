@@ -4185,6 +4185,8 @@ MonoBehaviour:
   localization:
   - Reste #0#
   - "Ajout impossible apr\xE8s avoir<br>commenc\xE9 \xE0 r\xE9soudre la mission"
+  - "Indique ici le nom du robot<br>qui ex\xE9cutera ce programme."
+  - "Ce programme sera envoy\xE9 \xE0 #0#.<br><i>Tu ne peux pas changer ce nom</i>."
 --- !u!114 &7564084815675672504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4211,7 +4213,8 @@ MonoBehaviour:
           items:
           - rid: 8163430786238513266
           - rid: 8163430786238513267
-          - rid: 8163430786238513268
+          - rid: 8163430992943513602
+          - rid: 8163430992943513603
         m_UpdateType: 1
         m_Changed:
           m_PersistentCalls:
@@ -4244,7 +4247,7 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: localization.Array.data[1]
-    - rid: 8163430786238513268
+    - rid: 8163430992943513602
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
       data:
@@ -4252,12 +4255,26 @@ MonoBehaviour:
           m_TableReference:
             m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
           m_TableEntryReference:
-            m_KeyId: 258367388507168768
+            m_KeyId: 260863719914070016
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: localization.Array.data[2]
+    - rid: 8163430992943513603
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 260863778193924096
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: localization.Array.data[3]
 --- !u!1 &8507923394558845783
 GameObject:
   m_ObjectHideFlags: 0
@@ -9283,7 +9300,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 8507923394634422046}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9999683
+  m_Size: 0.99991477
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

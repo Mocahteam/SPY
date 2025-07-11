@@ -1301,8 +1301,6 @@ GameObject:
   - component: {fileID: 4474756834210246689}
   - component: {fileID: 3694439265857886957}
   - component: {fileID: 3015765974637039016}
-  - component: {fileID: 1455366966774645644}
-  - component: {fileID: 843044156120880956}
   m_Layer: 5
   m_Name: ViewportScriptContainer
   m_TagString: Untagged
@@ -1540,79 +1538,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 1
   m_VerticalFit: 0
---- !u!114 &1455366966774645644
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2876508349418875100}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24db4179fe1021644900acddb2e9eb48, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  localization:
-  - "Indique ici le nom du robot<br>qui ex\xE9cutera ce programme."
-  - " Ce programme sera envoy\xE9 \xE0 #0#.<br><i>Tu ne peux pas changer ce nom</i>."
---- !u!114 &843044156120880956
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2876508349418875100}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 8163430786238513269
-  references:
-    version: 2
-    RefIds:
-    - rid: 8163430786238513269
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
-        asm: Unity.Localization}
-      data:
-        m_Target: {fileID: 1455366966774645644}
-        m_TrackedProperties:
-          items:
-          - rid: 8163430786238513270
-          - rid: 8163430786238513308
-        m_UpdateType: 1
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 8163430786238513270
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 258368434080047104
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[0]
-    - rid: 8163430786238513308
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 258419146814119936
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[1]
 --- !u!1 &2965400102155516574
 GameObject:
   m_ObjectHideFlags: 0

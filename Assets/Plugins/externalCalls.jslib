@@ -81,9 +81,7 @@ mergeInto(LibraryManager.library, {
 
 	SendToScreenReader: function(txt){
 		var content = UTF8ToString(txt);
-		// force l'actualisation du contenu, même s'il est identique
-		document.getElementById('ScreenReaderSpan').innerHTML = "";
-		document.getElementById('ScreenReaderSpan').innerHTML = content;
+		document.sendToScreenReader(content);
 	},
 
 	InstructionOnly: function(){

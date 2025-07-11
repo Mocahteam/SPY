@@ -46,7 +46,7 @@
 			<div id="unity-fullscreen-button"></div>
 		</div>
 	  </div>
-	  <canvas id="unity-canvas" tabindex="0" aria-label="Zone interactive du jeu, appuyez sur Entrée pour entrer dans le jeu." role="application"></canvas>
+	  <canvas id="unity-canvas" tabindex="0" aria-label="Zone interactive du jeu, appuyez sur Entrée pour entrer dans le jeu." aria-labelledby="ScreenReaderSpan" role="application"></canvas>
 	  <div id="unity-loading-bar">
 		<div id="unity-logo"></div>
 		<div id="unity-progress-bar-empty">
@@ -55,8 +55,8 @@
 	  </div>
 	  <div id="unity-mobile-warning"></div>
 	  <span id="TextToSpeechSpan" style="visibility:hidden;" ></span>
-	  <!-- Le "aria-live" en mode assertif permet d'indiquer au lecteur d'écran que cette balise peut changer en live et qu'il doit donc la vocaliser immédaitement à chaque fois qu'elle change. Le "aria-atomic" indique que le lecteur d'écran doit relire le contenu de la balise et pas uniquement ce qui a changé. Le role "status" indique que cet élément contient des informations de statut qui sont importantes pour l'utilisateur -->
-	  <span id="ScreenReaderSpan" aria-live="assertive" aria-atomic="true" role="status" class="visually-hidden"></span>
+	  <!-- Le "aria-live" permet d'indiquer au lecteur d'écran que cette balise peut changer en live et qu'il doit donc la vocaliser à chaque fois qu'elle change. Le "aria-atomic" indique que le lecteur d'écran doit relire le contenu de la balise et pas uniquement ce qui a changé. Le role "status" indique que cet élément contient des informations de statut qui sont importantes pour l'utilisateur -->
+	  <span id="ScreenReaderSpan" aria-live="polite" aria-atomic="true" role="status" class="visually-hidden"></span>
 	  <button id="after-canvas" class="visually-hidden">Continuer la navigation</button>
 	</div>
 
@@ -96,6 +96,7 @@
 		// Ajout au document de fonctions pour pouvoir les appeler dans le plugin Unity
 		document.updateLang = updateLang;
 		document.tryToCopy = tryToCopy;
+		document.sendToScreenReader = sendToScreenReader;
 		
 		document.updateLang(lang);
 
@@ -337,8 +338,10 @@
 			document.getElementById("labelSwitchTTS").innerHTML = lang == "fr" ? "Synthèse vocale" : "Text-to-speech";
 			document.getElementById("labelSpeed").innerHTML = lang == "fr" ? "Vitesse voix" : "Voice speed";
 			document.getElementById("TTS_all_label").innerHTML = lang == "fr" ? "Tout" : "All";
+			// ne changer le aria-label du canvas que si le canveas n'a pas le focus
+			if (document.activeElement !== canvas)
+				canvas.ariaLabel = lang == "fr" ? "Zone interactive du jeu, appuyez sur Entrée pour entrer dans le jeu." : "Interactive game zone, press Enter to enter the game";
 			document.getElementById("TTS_briefing_label").innerHTML = lang == "fr" ? "Consignes" : "Instructions";
-			document.getElementById("unity-canvas").ariaLabel = lang == "fr" ? "Zone interactive du jeu, appuyez sur Entrée pour entrer dans le jeu." : "Interactive game zone, press Enter to enter the game";
 			document.getElementById("after-canvas").innerHTML = lang == "fr" ? "Continuer la navigation" : "Continue navigation";
 			document.getElementById("accessLink").innerHTML = lang == "fr" ? "Accessibilité du jeu" : "Game accessibility";
 			document.getElementById("accessLink").href = lang == "fr" ? "accessibility_fr.html" : "accessibility.html";
@@ -371,6 +374,16 @@
 			}
 		}
 
+		function sendToScreenReader(text){
+			if (document.activeElement === canvas){
+				// force l'actualisation du contenu, même s'il est identique
+				document.getElementById('ScreenReaderSpan').innerHTML = "";
+				document.getElementById('ScreenReaderSpan').innerHTML = text;
+				// tromper le lecteur d'écran en modifiant l'aria-label du canvas
+				canvas.ariaLabel = text;
+			}
+		}
+
 		// Fonction principale
 		async function tryToCopy(text) {
 			// Vérifier si l'API Clipboard moderne est disponible
@@ -394,8 +407,13 @@
 		
 		// Détection lorsque le canvas prend le focus
 		canvas.addEventListener("focus", () => {
-		  document.getElementById("ScreenReaderSpan").textContent = 
-			lang == "fr" ? "Vous êtes entré dans l'application interactive. Appuyez sur Shift+Échap pour en sortir. Appuyez sur Home à tout moment pour mettre le focus sur le premier élément interactif." : "You have now entered the interactive application. Press Shift+Escape to exit. Press Home at any time to focus on the first interactive element.";
+			sendToScreenReader(lang == "fr" ? "Vous êtes entré dans l'application interactive. Appuyez sur Shift+Échap pour en sortir. Appuyez sur Home à tout moment pour mettre le focus sur le premier élément interactif." : "You have now entered the interactive application. Press Shift+Escape to exit. Press Home at any time to focus on the first interactive element.");
+		});
+		// Détection lorsque le canvas perd le focus
+		canvas.addEventListener("blur", () => {
+			document.getElementById("ScreenReaderSpan").innerHTML = "";
+			// remettre la description du canvas à sa valeur par défaut
+			updateLang(lang);
 		});
 		// Détecter une touche spéciale pour quitter le canvas
 		canvas.addEventListener("keydown", (e) => {

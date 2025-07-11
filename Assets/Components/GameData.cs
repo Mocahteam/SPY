@@ -20,4 +20,6 @@ public class GameData : MonoBehaviour {
 	public float gameSpeed_current = 1f;
 	public bool dragDropEnabled = true;
 	public bool sendStatementEnabled = true;
+	public bool hideExit = false;
+	public bool fogEnabled = false;
 }

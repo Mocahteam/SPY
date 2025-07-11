@@ -61,7 +61,7 @@
 			<li>Keyboard navigation</li>
 			<li>Key actions accessible with keyboard shortcuts (see <a href="#hotkeys">Keyboard Shortcuts Details</a>)</li>
 			<li>Compatible with screen readers (tested with NVDA - see <a href="#screenReader">Screen Reader Details</a>)</li>
-			<li>Map export in text format (see <a href="#screenReader">Screen Reader Details</a>)</li>
+			<li>Map export in text format</li>
 			<li>Program execution speed is controllable with step-by-step execution mode</li>
 			<li>User interface size is adjustable</li>
 			<li>The font is sans-serif</li>
@@ -166,10 +166,10 @@
       <div class="container">
           <h1>Screen Reader</h1>
 		  <h2>Identifying the Game Area in the Web Page</h2>
-		  <p>To access the game canvas, navigate through the page until you reach the "Application" or "Interactive Game Zone" object. Press "Enter" to enter the game. Once in the game, you can at any time press: "Shift + Enter" to exit the game canvas and return to the web page context; Press the "Home" key to automatically select the highest priority interactive element.</p>
-		  <p>A bit technical: When a game object gets focus, its textual description is automatically sent to the "ScreenReaderSpan" HTML tag with the "status" role. This tag is defined with the aria-live="assertive" and aria-atomic=true properties so that the screen reader can be immediately informed of changes to its content and make them accessible to the player via speech synthesis or a braille display (tested with a Brailliant Bi 40X and NVDA).</p>
+		  <p>To access the game canvas, navigate through the page until you reach the "Application" or "Interactive Game Zone" object. Press "Enter" to enter the game. Once in the game, you can at any time: Press the "Home" key to automatically select the highest priority interactive element; press "Shift + Enter" to exit the game canvas and return to the web page context.</p>
+		  <p>A bit technical: When a game object gets focus, its textual description is automatically sent to the "ScreenReaderSpan" HTML tag with the "status" role. This tag is defined with the aria-live="polite" and aria-atomic=true properties so that the screen reader can be immediately informed of changes to its content and make them accessible to the player via speech synthesis or a braille display (tested with a Brailliant Bi 40X and NVDA on Chrome and Firefox).</p>
 		  <h2>Scene Description</h2>
-		  <p>The game's objective is to move a robot in a maze, so it is necessary to be able to access a description of the game scene and follow its evolution during simulation. A textual description of the scene is permanently synchronized with the "DescMapSpan" HTML tag. To view the scene state at time t, exit the game canvas with "Shift + Enter", the focus should automatically be positioned on the "Continue navigation" element in the web page. The textual description of the map is just below. To return to the game, go back up until you find the "Interactive Game Zone" and press "Enter".</p>
+		  <p>The game's objective is to move a robot in a maze, so it is necessary to be able to access a description of the game scene and follow its evolution during simulation. A textual description of the scene is permanently synchronized with the game state. To consult this description select "Menu" and "View text map" or use the "m" shortcut.</p>
       </div>
     </section>
 		

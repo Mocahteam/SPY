@@ -165,7 +165,7 @@ public class HistoryManager : FSystem
 			trash.GetComponent<Button>().interactable = false;
 			TMP_InputField name_input = trash.transform.parent.Find("ContainerName").GetComponent<TMP_InputField>();
 			name_input.interactable = false;
-			name_input.GetComponent<TooltipContent>().text = Utility.getFormatedText(name_input.GetComponentInParent<Localization>(true).localization[1], name_input.text);
+			name_input.GetComponent<TooltipContent>().text = Utility.getFormatedText(name_input.GetComponentInParent<Localization>(true).localization[3], name_input.text);
 		}
 	}
 

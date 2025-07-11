@@ -70,8 +70,7 @@ public class TTSSystem : FSystem
 
     private void ifFocused_SendToScreenReader(string content)
     {
-        if (Application.isFocused)
-            SendToScreenReader(content);
+        SendToScreenReader(content);
     }
 
     private void onNewSelectable(GameObject selectable)
@@ -155,7 +154,7 @@ public class TTSSystem : FSystem
 
         // Try to get tooltip to complete description
         TooltipContent tooltip = focused.GetComponentInChildren<TooltipContent>();
-        if (tooltip != null)
+        if (tooltip != null && tooltip.text != "")
         {
             if (tooltip.text.Contains("#agentName"))
                 content += (content != "" ? ", " : "") + tooltip.text.Replace("#agentName", tooltip.GetComponent<AgentEdit>().associatedScriptName);

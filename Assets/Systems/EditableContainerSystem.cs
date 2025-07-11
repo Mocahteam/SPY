@@ -105,7 +105,7 @@ public class EditableContainerSystem : FSystem
 						{
 							Transform containerName = header.Find("ContainerName");
 							containerName.GetComponent<TMP_InputField>().interactable = true;
-							containerName.GetComponent<TooltipContent>().text = containerName.GetComponentInParent<Localization>(true).localization[0];
+							containerName.GetComponent<TooltipContent>().text = containerName.GetComponentInParent<Localization>(true).localization[2];
 							if (gameData.dragDropEnabled)
 								header.Find("RemoveButton").GetComponent<Button>().interactable = true;
 						}
@@ -218,11 +218,11 @@ public class EditableContainerSystem : FSystem
 				if (editState == UIRootContainer.EditMode.Locked)
 				{
 					header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-					containerName.GetComponent<TooltipContent>().text = Utility.getFormatedText(containerName.GetComponentInParent<Localization>(true).localization[1], name);
+					containerName.GetComponent<TooltipContent>().text = Utility.getFormatedText(containerName.GetComponentInParent<Localization>(true).localization[3], name);
 					containerName.GetComponent<TMP_InputField>().interactable = false;
 				}
 				else
-					containerName.GetComponent<TooltipContent>().text = containerName.GetComponentInParent<Localization>(true).localization[0]; 
+					containerName.GetComponent<TooltipContent>().text = containerName.GetComponentInParent<Localization>(true).localization[2];
 				// si le drag&drop n'est pas activé on bloque la balayette et la suppression du script
 				if (!gameData.dragDropEnabled)
 				{
