@@ -207,10 +207,9 @@
 		  console.log('webgl2 works!');
 		}
 		
-		console.log(dataFile+ "loading");
-		
 		var buildUrl = version + "/Build";
 		var loaderUrl = buildUrl + "/WebGL_Desktop(DXT)"+version+".loader.js";
+		console.log("Loading: "+buildUrl+dataFile);
 		var config = {
 			dataUrl: buildUrl + dataFile,
 			frameworkUrl: buildUrl + "/WebGL_Desktop(DXT)"+version+".framework.js.unityweb",

@@ -22,4 +22,9 @@ public class SettingsManagerBridge : MonoBehaviour
 	{
 		SettingsManager.instance.decreaseUISize();
 	}
+
+	public void setWallTransparency(bool state)
+    {
+		SettingsManager.instance.setWallTransparency(state);
+    }
 }

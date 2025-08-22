@@ -45,6 +45,9 @@ public class SettingsManager : FSystem {
 		foreach (CanvasScaler canvas in canvasScaler)
 			canvas.scaleFactor = currentScale;
 		PlayerPrefs.SetFloat("UIScale", currentScale);
+
+		settingsPanel.Find("ToggleWallTransparency").GetComponent<Toggle>().isOn = (PlayerPrefs.GetInt("wallTransparency", 1) == 1);
+
 		PlayerPrefs.Save();
 	}
 
@@ -94,4 +97,11 @@ public class SettingsManager : FSystem {
 		PlayerPrefs.Save();
 	}
 
+	public void setWallTransparency(bool state)
+    {
+		if (ObstableTransparencySystem.instance != null)
+			ObstableTransparencySystem.instance.Pause = !state;
+		PlayerPrefs.SetInt("wallTransparency", state ? 1 : 0);
+		PlayerPrefs.Save();
+	}
 }

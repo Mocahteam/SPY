@@ -568,11 +568,11 @@ public class ParamCompetenceSystem : FSystem
 				for (int i = 0; i < dlb.data.overridedDialogs.Count; i++)
 				{
 					Dialog item = dlb.data.overridedDialogs[i];
-					txt += "\n---"+ contentLoc.localization[37] + (i + 1) + "---\n";
+					txt += "\n---"+ contentLoc.localization[7] + (i + 1) + "---\n";
 					if (item.text != null)
 						txt += Utility.extractLocale(item.text) + "\n";
 					if (Utility.extractLocale(item.img) != "" || Utility.extractLocale(item.sound) != "" || Utility.extractLocale(item.video) != "")
-						txt += "\n" + (Utility.extractLocale(item.img) != "" ? "<<"+ contentLoc.localization[38] + ">>" : "") + (Utility.extractLocale(item.sound) != "" ? "<<" + contentLoc.localization[39] + ">>" : "") + (Utility.extractLocale(item.video) != "" ? "<<" + contentLoc.localization[40] + ">>" : "") + "\n";
+						txt += "\n" + (Utility.extractLocale(item.img) != "" ? "<<"+ contentLoc.localization[8] + ">>" : "") + (Utility.extractLocale(item.sound) != "" ? "<<" + contentLoc.localization[9] + ">>" : "") + (Utility.extractLocale(item.video) != "" ? "<<" + contentLoc.localization[10] + ">>" : "") + "\n";
 				}
 				if (txt != "")
 					contentInfo.text += txt;

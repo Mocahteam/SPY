@@ -32,4 +32,9 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "decreaseUISize", null);
 	}
 
+	public void setWallTransparency(System.Boolean state)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setWallTransparency", state);
+	}
+
 }
