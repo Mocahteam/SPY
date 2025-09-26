@@ -9,4 +9,10 @@ public class AutoBind : MonoBehaviour
         if (!GameObjectManager.isBound(this.gameObject))
             GameObjectManager.bind(this.gameObject);
     }
+
+    private void OnDestroy()
+    {
+        if(GameObjectManager.isBound(this.gameObject))
+            GameObjectManager.unbind(this.gameObject);
+    }
 }

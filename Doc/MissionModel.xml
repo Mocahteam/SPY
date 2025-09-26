@@ -101,10 +101,7 @@
 	<coin posY="1" posX="6" />
   
 	<!-- 
-		console (optional): this tag enables to display a console on the map grid. A console controls door opening/closing (see door tag). Consoles are linked with doors by slots. It contains three attributes and is composed by a set of slots:
-			state (mandatory): is the console on or off:
-				0 -> off, means doors opened
-				1 -> on, means doors closed
+		console (optional): this tag enables to display a console on the map grid. A console controls door opening/closing (see door tag). Consoles are linked with doors by slots. It contains two attributes and is composed by a set of slots:
 			posX (mandatory): the X position of the console on the map grid
 			posY (mandatory): the Y position of the console on the map grid
 			direction (mandatory): the orientation of the console:
@@ -113,7 +110,7 @@
 				2 -> East
 				3 -> West
 	-->
-	<console state="1" posY="3" posX="1" direction="3">
+	<console posY="3" posX="1" direction="3">
 		<!--
 			slot (optional): this tag defines a slot id controlled by the console. It contains one attribute:
 				slotId (mandatory): the id of the slot controlled by the console
@@ -122,7 +119,7 @@
 	</console>
   
 	<!-- 
-		door (optional): this tag enables to display a door on the map grid. A door is controlled by console (see console tag). Doors are linked with consoles by slots. It contains four attributes:
+		door (optional): this tag enables to display a door on the map grid. A door is controlled by console (see console tag). Doors are linked with consoles by slots. It contains five attributes:
 			posX (mandatory): the X position of the door on the map grid
 			posY (mandatory): the Y position of the door on the map grid
 			slotId (mandatory):  the id of the slot that controls the door
@@ -131,8 +128,11 @@
 				1 -> South
 				2 -> East
 				3 -> West
+			state (mandatory): is the door open or not:
+				0 -> closed
+				1 -> opened
 	-->
-	<door posY="2" posX="1" slotId="0" direction="0" />
+	<door posY="2" posX="1" slotId="0" direction="0" state="0" />
   
 	<!--
 		robot (at least one): this tag enables to display a robot on the map grid. A robot is programmable by the player. It contains four attributes:
@@ -144,8 +144,12 @@
 				1 -> South
 				2 -> East
 				3 -> West
+			skin (optional): the skin number to load:
+				0 -> Kyle
+				1 -> R-102
+				2 -> Destiny
 	-->
-	<robot inputLine="Azerty" posY="5" posX="2" direction="0" />
+	<robot inputLine="Azerty" posY="5" posX="2" direction="0" skin="0"/>
   
 	<!-- 
 		guard (optional): this tag enables to display a drone on the map grid. It contains seven attributes:

@@ -30,15 +30,15 @@
     <blockLimit blockType="Terminal" limit="0" />
     <blockLimit blockType="Exit" limit="0" />
   </blockLimits>
-  <console state="1" posY="4" posX="2" direction="0">
+  <console posY="4" posX="2" direction="0">
     <slot slotId="0" />
   </console>
-  <console state="1" posY="2" posX="1" direction="0">
+  <console posY="2" posX="1" direction="0">
     <slot slotId="1" />
   </console>
   <coin posY="1" posX="3" />
-  <door posY="3" posX="1" slotId="0" direction="0" />
-  <door posY="2" posX="2" slotId="1" direction="3" />
+  <door posY="3" posX="1" slotId="0" direction="0" state="0" />
+  <door posY="2" posX="2" slotId="1" direction="3" state="0" />
   <robot inputLine="Erty" posY="4" posX="3" direction="3" />
   <script outputLine="Erty" editMode="0" />
   <score twoStars="8153" threeStars="9153"/>

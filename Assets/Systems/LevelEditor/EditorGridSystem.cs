@@ -21,7 +21,9 @@ public class EditorGridSystem : FSystem
 	public Tile wallTile;
 	public Tile spawnTile;
 	public Tile teleportTile;
-	public Tile playerTile;
+	public Tile kyleTile;
+	public Tile r102Tile;
+	public Tile destinyTile;
 	public Tile enemyTile;
 	public Tile decoTile;
 	public Tile doorTile;
@@ -206,9 +208,6 @@ public class EditorGridSystem : FSystem
 							slotsID.Add(slot.Attributes.GetNamedItem("slotId").Value);
 						}
 						((Console)paintableGrid.floorObjects[position]).slots = slotsID.ToArray();
-
-						int state = int.Parse(child.Attributes.GetNamedItem("state").Value);
-						((Console)paintableGrid.floorObjects[position]).state = state == 1;
 					}
 					catch
 					{
@@ -222,19 +221,27 @@ public class EditorGridSystem : FSystem
 						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
 						setTile(position.Item1, position.Item2, Cell.Door, orientation);
 						string slotId = child.Attributes.GetNamedItem("slotId").Value;
-						((Door)paintableGrid.floorObjects[position]).slot = slotId;
+						int state = int.Parse(child.Attributes.GetNamedItem("state").Value);
+						Door door = ((Door)paintableGrid.floorObjects[position]);
+						door.slot = slotId;
+						door.state = state == 1;
 					}
 					catch
 					{
 						Debug.Log("Warning: Skipped door from file " + levelKey + ". Wrong data!");
 					}
 					break;
-				case "player":
+				case "robot":
+				case "player": // backward compatibility
 					try
 					{
 						position = getPositionFromXElement(child);
 						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
-						setTile(position.Item1, position.Item2, Cell.Player, orientation);
+						int skin = 0;
+						XmlNode xmlSkin = child.Attributes.GetNamedItem("skin");
+						if (xmlSkin != null)
+							skin = int.Parse(xmlSkin.Value);
+						setTile(position.Item1, position.Item2, UtilityEditor.IntToSkin(skin), orientation);
 						inputLine = child.Attributes.GetNamedItem("inputLine").Value;
 						((PlayerRobot)paintableGrid.floorObjects[position]).inputLine = inputLine;
 					}
@@ -243,7 +250,8 @@ public class EditorGridSystem : FSystem
 						Debug.Log("Warning: Skipped player from file " + levelKey + ". Wrong data!");
 					}
 					break;
-				case "enemy":
+				case "guard":
+				case "enemy": // backward compatibility
 					try
 					{
 						position = getPositionFromXElement(child);
@@ -311,8 +319,10 @@ public class EditorGridSystem : FSystem
 				paintableGrid.floorObjects[tuplePos] =
 					cell switch
 					{
-						Cell.Player => new PlayerRobot("Bob", rotation, line, col),
-						Cell.Enemy => new EnemyRobot("Eve", rotation, line, col),
+						Cell.Kyle => new PlayerRobot(Cell.Kyle, "Plok", rotation, line, col),
+						Cell.R102 => new PlayerRobot(Cell.R102, "R102", rotation, line, col),
+						Cell.Destiny => new PlayerRobot(Cell.Destiny, "Destiny", rotation, line, col),
+						Cell.Enemy => new EnemyRobot("Guard", rotation, line, col),
 						Cell.Decoration => new DecorationObject(defaultDecoration, rotation, line, col),
 						Cell.Door => new Door(rotation, line, col),
 						Cell.Console => new Console(rotation, line, col),
@@ -345,7 +355,7 @@ public class EditorGridSystem : FSystem
 			null);
 	}
 	
-	private void rotateObject(Direction.Dir newOrientation, int line, int col)
+	public void rotateObject(Direction.Dir newOrientation, int line, int col)
 	{
 		var newpos = new Vector3Int(col - _gridSize.x / 2,
 			_gridSize.y / 2 - line, -1);
@@ -375,7 +385,9 @@ public class EditorGridSystem : FSystem
 			Cell.Wall => wallTile,
 			Cell.Spawn => spawnTile,
 			Cell.Teleport => teleportTile,
-			Cell.Player => playerTile,
+			Cell.Kyle => kyleTile,
+			Cell.R102 => r102Tile,
+			Cell.Destiny => destinyTile,
 			Cell.Enemy => enemyTile,
 			Cell.Decoration => decoTile,
 			Cell.Door => doorTile,
@@ -405,12 +417,14 @@ public enum Cell
 	Wall = 1, 
 	Spawn = 2, 
 	Teleport = 3,
-	Player = 10000,
 	Enemy = 10001,
 	Decoration = 10002,
 	Door = 10003,
 	Console = 10004,
-	Coin = 10005
+	Coin = 10005,
+	Kyle = 10006,
+	R102 = 10007,
+	Destiny = 10008
 }
 
 public class FloorObject
@@ -446,22 +460,22 @@ public class DecorationObject : FloorObject
 public class Console : FloorObject
 {
 	public string[] slots;
-	public bool state;
 
 	public Console(Direction.Dir orientation, int line, int col) : base(Cell.Console, orientation, line, col)
 	{
 		this.slots = new string[0];
-		this.state = true;
 	}
 }
 
 public class Door : FloorObject
 {
 	public string slot;
+	public bool state;
 
 	public Door(Direction.Dir orientation, int line, int col) : base(Cell.Door, orientation, line, col)
 	{
 		this.slot = "0";
+		this.state = false;
 	}
 }
 
@@ -470,7 +484,7 @@ public class Robot : FloorObject
 	public string inputLine;
 
 	protected Robot(Cell cellType, string associatedScriptName, Direction.Dir orientation, int line, int col
-		, bool orientable = true, UIRootContainer.SolutionType scriptType = UIRootContainer.SolutionType.Undefined, UIRootContainer.EditMode editMode = UIRootContainer.EditMode.Editable) : base(cellType, orientation, line, col, orientable)
+		, bool orientable = true) : base(cellType, orientation, line, col, orientable)
 	{
 		this.inputLine = associatedScriptName;
 	}
@@ -478,9 +492,9 @@ public class Robot : FloorObject
 
 public class PlayerRobot : Robot
 {
-	public PlayerRobot(string associatedScriptName, Direction.Dir orientation, int line, int col,
-		bool orientable = true, UIRootContainer.SolutionType scriptType = UIRootContainer.SolutionType.Undefined, UIRootContainer.EditMode editMode = UIRootContainer.EditMode.Editable) : 
-		base(Cell.Player, associatedScriptName, orientation, line, col, orientable, scriptType, editMode)
+	public PlayerRobot(Cell cellType, string associatedScriptName, Direction.Dir orientation, int line, int col,
+		bool orientable = true) : 
+		base(cellType, associatedScriptName, orientation, line, col, orientable)
 	{
 	}
 }
@@ -492,9 +506,8 @@ public class EnemyRobot : Robot
 	public int range;
 
 	public EnemyRobot(string associatedScriptName, Direction.Dir orientation, int line, int col,
-		UIRootContainer.SolutionType scriptType = UIRootContainer.SolutionType.Undefined, UIRootContainer.EditMode editMode = UIRootContainer.EditMode.Editable,
-		bool selfRange = false, DetectRange.Type typeRange = DetectRange.Type.Line, bool orientable = true, bool selectable = true, int range = 3)
-		: base(Cell.Enemy, associatedScriptName,orientation, line, col, orientable, scriptType, editMode)
+		bool selfRange = false, DetectRange.Type typeRange = DetectRange.Type.Line, bool orientable = true, int range = 3)
+		: base(Cell.Enemy, associatedScriptName,orientation, line, col, orientable)
 	{
 		this.typeRange = typeRange;
 		this.selfRange = selfRange;

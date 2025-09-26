@@ -13,6 +13,7 @@ public class SaveFileSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject editableContainer;
 	public LevelData levelData;
 	public PaintableGrid paintableGrid;
+	public UnityEngine.CanvasGroup[] UIgroup;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -26,6 +27,7 @@ public class SaveFileSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "editableContainer", editableContainer);
 		MainLoop.initAppropriateSystemField (system, "levelData", levelData);
 		MainLoop.initAppropriateSystemField (system, "paintableGrid", paintableGrid);
+		MainLoop.initAppropriateSystemField (system, "UIgroup", UIgroup);
 	}
 
 	public void testLevel()

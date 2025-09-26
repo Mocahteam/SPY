@@ -22,4 +22,6 @@ public class GameData : MonoBehaviour {
 	public bool sendStatementEnabled = true;
 	public bool hideExit = false;
 	public bool fogEnabled = false;
+	public RawListReferential rawReferentials;
+	public int lastReferentialSelected;
 }

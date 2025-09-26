@@ -59,7 +59,7 @@ public class EditableContainerSystem : FSystem
 	protected override void onStart()
 	{
 
-		isEditorContext = SceneManager.GetActiveScene().name == "EditorScene";
+		isEditorContext = SceneManager.GetActiveScene().name == "MissionEditor";
 
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)

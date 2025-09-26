@@ -9,6 +9,7 @@ public class TilePopupSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject consoleSlotsPopup;
 	public UnityEngine.GameObject doorSlotPopup;
 	public UnityEngine.GameObject furniturePopup;
+	public UnityEngine.GameObject skinPopup;
 	public UnityEngine.GameObject virtualKeyboard;
 	public PaintableGrid paintableGrid;
 	public UnityEngine.GameObject selection;
@@ -21,6 +22,7 @@ public class TilePopupSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "consoleSlotsPopup", consoleSlotsPopup);
 		MainLoop.initAppropriateSystemField (system, "doorSlotPopup", doorSlotPopup);
 		MainLoop.initAppropriateSystemField (system, "furniturePopup", furniturePopup);
+		MainLoop.initAppropriateSystemField (system, "skinPopup", skinPopup);
 		MainLoop.initAppropriateSystemField (system, "virtualKeyboard", virtualKeyboard);
 		MainLoop.initAppropriateSystemField (system, "paintableGrid", paintableGrid);
 		MainLoop.initAppropriateSystemField (system, "selection", selection);
@@ -56,19 +58,24 @@ public class TilePopupSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "popupConsoleSlots", newData);
 	}
 
-	public void popupConsoleToggle(System.Boolean newData)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "popupConsoleToggle", newData);
-	}
-
 	public void popupDoorSlot(System.String newData)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "popupDoorSlot", newData);
 	}
 
+	public void popupDoorToggle(System.Boolean newData)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "popupDoorToggle", newData);
+	}
+
 	public void popupFurnitureDropDown(System.Int32 newData)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "popupFurnitureDropDown", newData);
+	}
+
+	public void popupSkinDropDown(System.Int32 newData)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "popupSkinDropDown", newData);
 	}
 
 }

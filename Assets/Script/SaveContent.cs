@@ -7,7 +7,6 @@ using System.Collections.Generic;
 /// </summary>
 [Serializable]
 public class SaveContent {
-    // Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
 
     [Serializable]
     public class RawPosition {
@@ -21,14 +20,12 @@ public class SaveContent {
     }
 
     [Serializable]
-    public class RawActivable
+    public class RawActivationSlot
     {
-        public List<int> slotID;
         public bool state;
-        public RawActivable(Activable act)
+        public RawActivationSlot(ActivationSlot act)
         {
-            slotID = new List<int>(act.slotID);
-            state = act.GetComponent<TurnedOn>();
+            state = act.state;
         }
     }
 
@@ -60,7 +57,7 @@ public class SaveContent {
         public List<bool> coinsState = new List<bool>();
         public List<Direction.Dir> directions = new List<Direction.Dir>();
         public List<RawPosition> positions = new List<RawPosition>();
-        public List<RawActivable> activables = new List<RawActivable>();
+        public List<RawActivationSlot> doors = new List<RawActivationSlot>();
         public List<RawCurrentAction> currentDroneActions = new List<RawCurrentAction>();
         public List<RawLoop> currentLoopParams = new List<RawLoop>();
         public int totalCoin = 0;

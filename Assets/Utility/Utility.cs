@@ -19,23 +19,6 @@ public static class Utility
 	public static string testFromUrl = "testFromUrl";
 	public static string editingScenario = "editingScenario";
 
-	[Serializable]
-	public class RawConstraint
-	{
-		public string attribute;
-		public string constraint;
-		public string value;
-		public string tag2;
-		public string attribute2;
-	}
-
-	[Serializable]
-	public class RawFilter
-	{
-		public string label;
-		public string tag;
-		public RawConstraint[] constraints;
-	}
 	// Add an item on a drop area
 	// return true if the item was added and false otherwise
 	public static bool addItemOnDropArea(GameObject item, GameObject dropArea)

@@ -33,6 +33,7 @@ public class SettingsManager : FSystem {
 		if (Application.platform == RuntimePlatform.WebGLPlayer && ClearPlayerPrefs())
 			PlayerPrefs.DeleteAll();
 
+		Debug.Log(settingsPanel);
 		settingsPanel.Find("Quality").GetComponentInChildren<TMP_Dropdown>().value = PlayerPrefs.GetInt("quality", 2);
 		settingsPanel.Find("InteractionMode").GetComponentInChildren<TMP_Dropdown>().value = PlayerPrefs.GetInt("interaction", Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 1 : 0);
 		

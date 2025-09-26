@@ -21,6 +21,7 @@ public class TilePopupSystem : FSystem
 	public GameObject consoleSlotsPopup;
 	public GameObject doorSlotPopup;
 	public GameObject furniturePopup;
+	public GameObject skinPopup;
 	public GameObject virtualKeyboard;
 
 	public PaintableGrid paintableGrid;
@@ -97,6 +98,7 @@ public class TilePopupSystem : FSystem
 					GameObjectManager.setGameObjectState(doorSlotPopup, true);
 					// load data
 					doorSlotPopup.GetComponentInChildren<TMP_InputField>().text = d.slot;
+					doorSlotPopup.GetComponentInChildren<Toggle>().isOn = d.state;
 					break;
 				case Console c:
 					// enable popups
@@ -104,14 +106,15 @@ public class TilePopupSystem : FSystem
 					GameObjectManager.setGameObjectState(consoleSlotsPopup, true);
 					// load data
 					consoleSlotsPopup.GetComponentInChildren<TMP_InputField>().text = string.Join(", ", c.slots);
-					consoleSlotsPopup.GetComponentInChildren<Toggle>().isOn = c.state;
 					break;
 				case PlayerRobot pr:
 					// enable popups
 					GameObjectManager.setGameObjectState(orientationPopup, true);
 					GameObjectManager.setGameObjectState(inputLinePopup, true);
+					GameObjectManager.setGameObjectState(skinPopup, true);
 					// load data
 					inputLinePopup.GetComponentInChildren<TMP_InputField>().text = pr.inputLine;
+					skinPopup.GetComponentInChildren<TMP_Dropdown>().value = UtilityEditor.SkinToInt(pr.type);
 					break;
 				case EnemyRobot er:
 					// enable popups
@@ -161,29 +164,12 @@ public class TilePopupSystem : FSystem
 	// See UP, Right, Down and Left GameObjects
 	public void rotateObject(int newOrientation)
 	{
-		var newpos = coordsToGridCoords(selectedObject.col, selectedObject.line);
-		var quat = Quaternion.Euler(0, 0, orientationToInt((Direction.Dir)newOrientation));
-
-		paintableGrid.GetComponent<Tilemap>().SetTransformMatrix(newpos, Matrix4x4.Rotate(quat));
-		selectedObject.orientation = (Direction.Dir)newOrientation;
-	}
-
-	private Vector3Int coordsToGridCoords(int col, int line)
-	{
-		return new Vector3Int(col - UtilityEditor.gridMaxSize / 2,
-			UtilityEditor.gridMaxSize / 2 - line, -1);
-	}
-
-	private int orientationToInt(Direction.Dir orientation)
-	{
-		return orientation switch
+		if (selectedObject != null)
 		{
-			Direction.Dir.North => 0,
-			Direction.Dir.East => 270,
-			Direction.Dir.South => 180,
-			Direction.Dir.West => 90,
-			_ => throw new ArgumentOutOfRangeException(nameof(orientation), orientation, "Impossible orientation")
-		};
+			selectedObject.orientation = (Direction.Dir)newOrientation;
+			Tuple<int, int> posTuple = new Tuple<int, int>(selectedObject.line, selectedObject.col);
+			EditorGridSystem.instance.rotateObject((Direction.Dir)newOrientation, selectedObject.line, selectedObject.col);
+		}
 	}
 
 	// see InputLinePopup GameObject childs
@@ -225,13 +211,6 @@ public class TilePopupSystem : FSystem
 		}
 	}
 
-	// see consoleSlotsPopup GameObject childs
-	public void popupConsoleToggle(bool newData)
-	{
-		if (selectedObject != null)
-			((Console)selectedObject).state = newData;
-	}
-
 	// see doorSlotPopup GameObject childs
 	public void popupDoorSlot(string newData)
 	{
@@ -239,10 +218,36 @@ public class TilePopupSystem : FSystem
 			((Door)selectedObject).slot = newData;
 	}
 
+	// see doorSlotsPopup GameObject childs
+	public void popupDoorToggle(bool newData)
+	{
+		if (selectedObject != null)
+			((Door)selectedObject).state = newData;
+	}
+
 	// see furniturePopup GameObject childs
 	public void popupFurnitureDropDown(int newData)
 	{
 		if (selectedObject != null)
 			((DecorationObject)selectedObject).path = furnitureNameToPath[newData];
+	}
+
+	// see skinPopup GameObject childs
+	public void popupSkinDropDown(int newData)
+	{
+		if (selectedObject != null)
+		{
+			PlayerRobot player = ((PlayerRobot)selectedObject);
+			// sauvegarde de l'input line
+			string inputLine = player.inputLine;
+			// on réinitialise le type à Void
+			player.type = Cell.Void;
+			EditorGridSystem.instance.setTile(player.line, player.col, UtilityEditor.IntToSkin(newData), player.orientation);
+			// association de la nouvelle tile créée à l'objet sélectionné
+			Tuple<int, int> posTuple = new Tuple<int, int>(player.line, player.col);
+			selectedObject = paintableGrid.floorObjects[posTuple];
+			// restauration de l'inputLine
+			((PlayerRobot)selectedObject).inputLine = inputLine;
+		}
 	}
 }

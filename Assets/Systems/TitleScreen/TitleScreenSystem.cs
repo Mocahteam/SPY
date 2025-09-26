@@ -22,6 +22,7 @@ public class TitleScreenSystem : FSystem {
 	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
 	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
 	private Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
+	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
 
 	private GameData gameData;
 	private UserData userData;
@@ -35,11 +36,7 @@ public class TitleScreenSystem : FSystem {
 	public GameObject quitButton;
 	public GameObject loadingScreen;
 	public GameObject sessionIdPanel;
-	public GameObject deletableElement;
-	public TMP_InputField scenarioName;
-	public TMP_InputField scenarioAbstract;
 	public GameObject detailsCampaign;
-	public GameObject virtualKeyboard;
 	public TMP_Text progress;
 	public TMP_Text logs;
 	public TMP_Text SPYVersion;
@@ -109,7 +106,7 @@ public class TitleScreenSystem : FSystem {
 			mainMenu.GetComponentInParent<CanvasGroup>().interactable = true;
 			if (gameData.selectedScenario == Utility.testFromScenarioEditor) // reload scenario editor
             {
-                MainLoop.instance.StartCoroutine(delayOpeningScenarioEditor());
+				launchScenarioEditor();
 			}
 			else if (gameData.selectedScenario == Utility.testFromLevelEditor) // reload level editor
             {
@@ -137,12 +134,6 @@ public class TitleScreenSystem : FSystem {
 		GameObjectManager.setGameObjectState(mainMenu, false);
 		// wait level loading
 		MainLoop.instance.StartCoroutine(WaitLoadingData());
-	}
-
-	private IEnumerator delayOpeningScenarioEditor()
-    {
-		yield return new WaitForEndOfFrame();
-		compLevelButton.GetComponent<Button>().onClick.Invoke();
 	}
 
 	private void initGBLXAPI()
@@ -609,8 +600,7 @@ public class TitleScreenSystem : FSystem {
 		TMP_Text campaignDescription = content.GetChild(1).GetComponent<TMP_Text>();
 		campaignDescription.text = Utility.extractLocale(gameData.scenarios[campaignKey].description)+"\n\n";
 
-		content.gameObject.AddComponent<AskToRefreshCompetencies>();
-		delayRefreshCompetencies(content);
+		refreshCompetencies(content);
 
 		Button bt_showLevels = detailsCampaign.transform.GetComponentInChildren<Button>();
 		bt_showLevels.onClick.RemoveAllListeners();
@@ -619,28 +609,29 @@ public class TitleScreenSystem : FSystem {
 		EventSystem.current.SetSelectedGameObject(bt_showLevels.gameObject);
 	}
 
-	public void delayRefreshCompetencies(Transform content)
+	// See competency selector (DropdownReferential GameObject)
+	public void refreshCompetencies(Transform content)
     {
-		MainLoop.instance.StartCoroutine(refreshCompetencies(content));
-    }
-
-	public IEnumerator refreshCompetencies(Transform content)
-    {
-		yield return new WaitForSeconds(0.1f);
 		TMP_Text compDetails = content.GetChild(4).GetComponent<TMP_Text>();
 		if (gameData.scenarios.ContainsKey(content.GetChild(0).GetComponent<TMP_Text>().text))
 		{
+			// Get current referentiel selected
+			TMP_Dropdown compSelector = f_compSelector.First().GetComponent<TMP_Dropdown>();
+			string referentialName = compSelector.options[compSelector.value].text;
 			// Display competencies
 			compDetails.text = "<b>"+ compDetails.GetComponent<Localization>().localization[0]+"</b>\n";
 			string txt = "";
 			foreach (GameObject comp in f_competencies)
 			{
-				foreach (DataLevel levelKey in gameData.scenarios[content.GetChild(0).GetComponent<TMP_Text>().text].levels)
-					if (gameData.levels.ContainsKey(levelKey.src) && Utility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.src].OwnerDocument))
-					{
-						txt += "\t" + Utility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
-						break;
-					}
+				if (comp.GetComponent<Competency>().referential == referentialName)
+				{
+					foreach (DataLevel levelKey in gameData.scenarios[content.GetChild(0).GetComponent<TMP_Text>().text].levels)
+						if (gameData.levels.ContainsKey(levelKey.src) && Utility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.src].OwnerDocument))
+						{
+							txt += "\t" + Utility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
+							break;
+						}
+				}
 			}
 			if (txt != "")
 				compDetails.text += txt;
@@ -702,7 +693,12 @@ public class TitleScreenSystem : FSystem {
 
 	public void launchLevelEditor()
     {
-		GameObjectManager.loadScene("EditorScene");
+		GameObjectManager.loadScene("MissionEditor");
+	}
+
+	public void launchScenarioEditor()
+	{
+		GameObjectManager.loadScene("ScenarioEditor");
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/index.html) via le Wrapper du Système

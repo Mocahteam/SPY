@@ -30,19 +30,19 @@
     <blockLimit blockType="Terminal" limit="0" />
     <blockLimit blockType="Exit" limit="0" />
   </blockLimits>
-  <console state="1" posY="3" posX="1" direction="0">
+  <console posY="3" posX="1" direction="0">
     <slot slotId="0" />
   </console>
-  <console state="1" posY="3" posX="3" direction="0">
+  <console posY="3" posX="3" direction="0">
     <slot slotId="1" />
   </console>
-  <console state="1" posY="4" posX="2" direction="1">
+  <console posY="4" posX="2" direction="1">
     <slot slotId="2" />
   </console>
   <coin posY="1" posX="2" />
-  <door posY="4" posX="2" slotId="0" direction="0" />
-  <door posY="4" posX="2" slotId="1" direction="0" />
-  <door posY="2" posX="2" slotId="2" direction="0" />
+  <door posY="4" posX="2" slotId="0" direction="0" state="0" />
+  <door posY="4" posX="2" slotId="1" direction="0" state="0" />
+  <door posY="2" posX="2" slotId="2" direction="0" state="0" />
   <robot inputLine="Erty" posY="3" posX="2" direction="0" />
   <script outputLine="Erty" editMode="0" />
   <score twoStars="7882" threeStars="8882"/>

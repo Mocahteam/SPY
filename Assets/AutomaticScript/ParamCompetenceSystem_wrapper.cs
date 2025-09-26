@@ -4,14 +4,14 @@ using FYFY;
 public class ParamCompetenceSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject panelInfoComp;
-	public UnityEngine.GameObject prefabComp;
+	public UnityEngine.GameObject CompetencyToggle;
 	public UnityEngine.GameObject ContentCompMenu;
 	public UnityEngine.GameObject compatibleLevelsPanel;
 	public UnityEngine.GameObject competenciesPanel;
 	public UnityEngine.GameObject levelCompatiblePrefab;
 	public UnityEngine.GameObject contentListOfCompatibleLevel;
 	public UnityEngine.GameObject contentInfoCompatibleLevel;
-	public UnityEngine.GameObject deletableElement;
+	public UnityEngine.GameObject hookedMission;
 	public UnityEngine.GameObject contentScenario;
 	public UnityEngine.UI.Button testLevelBt;
 	public UnityEngine.UI.Button downloadLevelBt;
@@ -29,14 +29,14 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "panelInfoComp", panelInfoComp);
-		MainLoop.initAppropriateSystemField (system, "prefabComp", prefabComp);
+		MainLoop.initAppropriateSystemField (system, "CompetencyToggle", CompetencyToggle);
 		MainLoop.initAppropriateSystemField (system, "ContentCompMenu", ContentCompMenu);
 		MainLoop.initAppropriateSystemField (system, "compatibleLevelsPanel", compatibleLevelsPanel);
 		MainLoop.initAppropriateSystemField (system, "competenciesPanel", competenciesPanel);
 		MainLoop.initAppropriateSystemField (system, "levelCompatiblePrefab", levelCompatiblePrefab);
 		MainLoop.initAppropriateSystemField (system, "contentListOfCompatibleLevel", contentListOfCompatibleLevel);
 		MainLoop.initAppropriateSystemField (system, "contentInfoCompatibleLevel", contentInfoCompatibleLevel);
-		MainLoop.initAppropriateSystemField (system, "deletableElement", deletableElement);
+		MainLoop.initAppropriateSystemField (system, "hookedMission", hookedMission);
 		MainLoop.initAppropriateSystemField (system, "contentScenario", contentScenario);
 		MainLoop.initAppropriateSystemField (system, "testLevelBt", testLevelBt);
 		MainLoop.initAppropriateSystemField (system, "downloadLevelBt", downloadLevelBt);
@@ -52,24 +52,14 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "levelFilterByName", levelFilterByName);
 	}
 
-	public void refreshCompetencies()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "refreshCompetencies", null);
-	}
-
 	public void selectCompetencies(System.Int32 referentialId)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "selectCompetencies", referentialId);
 	}
 
-	public void traceLoadindScenarioEditor()
+	public void createCompetencies()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "traceLoadindScenarioEditor", null);
-	}
-
-	public void showCompatibleLevels()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "showCompatibleLevels", null);
+		MainLoop.callAppropriateSystemMethod (system, "createCompetencies", null);
 	}
 
 	public void resetFilters()
@@ -125,11 +115,6 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public void displaySavingPanel(TMPro.TMP_InputField scenarName)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "displaySavingPanel", scenarName);
-	}
-
-	public void showBriefingOverride(DataLevelBehaviour dataLevel)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "showBriefingOverride", dataLevel);
 	}
 
 	public void saveBriefingOverride()

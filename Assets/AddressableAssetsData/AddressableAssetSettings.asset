@@ -13,21 +13,39 @@ MonoBehaviour:
   m_Name: AddressableAssetSettings
   m_EditorClassIdentifier: 
   m_DefaultGroup: 63aec7946b1184147be1a3891a7174ca
+  m_currentHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
-  m_BundleLocalCatalog: 0
   m_CatalogRequestsTimeout: 0
   m_DisableCatalogUpdateOnStart: 0
+  m_InternalIdNamingMode: 0
+  m_InternalBundleIdMode: 1
+  m_AssetLoadMode: 0
+  m_BundledAssetProviderType:
+    m_AssemblyName: Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_ClassName: UnityEngine.ResourceManagement.ResourceProviders.BundledAssetProvider
+  m_AssetBundleProviderType:
+    m_AssemblyName: Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_ClassName: UnityEngine.ResourceManagement.ResourceProviders.AssetBundleProvider
   m_IgnoreUnsupportedFilesInBuild: 0
   m_UniqueBundleIds: 0
+  m_EnableJsonCatalog: 0
   m_NonRecursiveBuilding: 0
   m_CCDEnabled: 0
   m_maxConcurrentWebRequests: 3
+  m_UseUWRForLocalBundles: 0
+  m_BundleTimeout: 0
+  m_BundleRetryCount: 0
+  m_BundleRedirectLimit: -1
+  m_SharedBundleSettings: 0
+  m_SharedBundleSettingsCustomGroupIndex: 0
   m_ContiguousBundles: 0
   m_StripUnityVersionFromBundleBuild: 0
   m_DisableVisibleSubAssetRepresentations: 0
-  m_ShaderBundleNaming: 0
-  m_ShaderBundleCustomNaming: 
+  m_BuiltInBundleNaming: 0
+  mBuiltInBundleCustomNaming: 
   m_MonoScriptBundleNaming: 0
   m_CheckForContentUpdateRestrictionsOption: 0
   m_MonoScriptBundleCustomNaming: 
@@ -41,19 +59,17 @@ MonoBehaviour:
   m_BuildAddressablesWithPlayerBuild: 0
   m_overridePlayerVersion: 
   m_GroupAssets:
+  - {fileID: 11400000, guid: a707832d55f683f49851ad334b3beb63, type: 2}
+  - {fileID: 11400000, guid: ed848fe2ef3cf6d4da377d97707149aa, type: 2}
+  - {fileID: 11400000, guid: 7430e737a81217d428ab958a2ed900a5, type: 2}
   - {fileID: 11400000, guid: 7363a5e5a1c48af4f973e16c5c78a50f, type: 2}
+  - {fileID: 11400000, guid: d49a74d3225c429458413ae5f0396b74, type: 2}
+  - {fileID: 11400000, guid: 23c489b498ddb1041a6fbff6e828cc11, type: 2}
   - {fileID: 11400000, guid: e390ed78987cc624d8302658253e10e4, type: 2}
   - {fileID: 11400000, guid: f3c07e4685650de4b8cb4226a5594de6, type: 2}
   - {fileID: 11400000, guid: 2a36bec48155fd149b6bbf45b713e1e7, type: 2}
-  - {fileID: 11400000, guid: d49a74d3225c429458413ae5f0396b74, type: 2}
   - {fileID: 11400000, guid: 38cb9bb89efeead4da8eecb4edddeca6, type: 2}
-  - {fileID: 11400000, guid: 7430e737a81217d428ab958a2ed900a5, type: 2}
-  - {fileID: 11400000, guid: 23c489b498ddb1041a6fbff6e828cc11, type: 2}
-  - {fileID: 11400000, guid: a707832d55f683f49851ad334b3beb63, type: 2}
-  - {fileID: 11400000, guid: ed848fe2ef3cf6d4da377d97707149aa, type: 2}
   m_BuildSettings:
-    m_CompileScriptsInVirtualMode: 0
-    m_CleanupStreamingAssetsAfterBuilds: 1
     m_LogResourceManagerExceptions: 1
     m_BundleBuildPath: Temp/com.unity.addressables/AssetBundles
   m_ProfileSettings:
@@ -62,17 +78,20 @@ MonoBehaviour:
       m_Id: b9ad774630c3eaa4ea7027cb5f149339
       m_ProfileName: Default
       m_Values:
+      - m_Id: 02690ebe6696def4e89fd14155138497
+        m_Value: 'ServerData/[BuildTarget]'
       - m_Id: 2bca1c99818154c45ad5ccbda260de78
         m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
       - m_Id: 44d8142fd66230b408a0f8f022ba7bbe
         m_Value: '[UnityEngine.AddressableAssets.Addressables.BuildPath]/[BuildTarget]'
       - m_Id: a68a0412380752b4aac5ceeff4281c74
         m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
-      - m_Id: 02690ebe6696def4e89fd14155138497
-        m_Value: ServerData/[BuildTarget]
       - m_Id: f1e896787bb46d443b100f8ee49d011f
-        m_Value: http://[PrivateIpAddress]:[HostingServicePort]
+        m_Value: 'http://[PrivateIpAddress]:[HostingServicePort]'
     m_ProfileEntryNames:
+    - m_Id: 02690ebe6696def4e89fd14155138497
+      m_Name: Remote.BuildPath
+      m_InlineUsage: 0
     - m_Id: 2bca1c99818154c45ad5ccbda260de78
       m_Name: BuildTarget
       m_InlineUsage: 0
@@ -81,9 +100,6 @@ MonoBehaviour:
       m_InlineUsage: 0
     - m_Id: a68a0412380752b4aac5ceeff4281c74
       m_Name: Local.LoadPath
-      m_InlineUsage: 0
-    - m_Id: 02690ebe6696def4e89fd14155138497
-      m_Name: Remote.BuildPath
       m_InlineUsage: 0
     - m_Id: f1e896787bb46d443b100f8ee49d011f
       m_Name: Remote.LoadPath
@@ -110,9 +126,3 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 942e62a007cd31749867b3a436730b47, type: 2}
   - {fileID: 11400000, guid: 86dee0caa729f17489ec2e356c721670, type: 2}
   m_ActiveProfileId: b9ad774630c3eaa4ea7027cb5f149339
-  m_HostingServicesManager:
-    m_HostingServiceInfos: []
-    m_Settings: {fileID: 11400000}
-    m_NextInstanceId: 0
-    m_RegisteredServiceTypeRefs: []
-    m_PingTimeoutInMilliseconds: 5000

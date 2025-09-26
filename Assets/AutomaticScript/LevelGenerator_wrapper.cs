@@ -9,6 +9,9 @@ public class LevelGenerator_wrapper : BaseWrapper
 	public UnityEngine.GameObject library;
 	public TMPro.TMP_Text levelName;
 	public UnityEngine.GameObject buttonExecute;
+	public UnityEngine.Material[] groundMaterials;
+	public UnityEngine.Material[] wallMaterials;
+	public UnityEngine.GameObject[] skinPrefabs;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -18,6 +21,9 @@ public class LevelGenerator_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "library", library);
 		MainLoop.initAppropriateSystemField (system, "levelName", levelName);
 		MainLoop.initAppropriateSystemField (system, "buttonExecute", buttonExecute);
+		MainLoop.initAppropriateSystemField (system, "groundMaterials", groundMaterials);
+		MainLoop.initAppropriateSystemField (system, "wallMaterials", wallMaterials);
+		MainLoop.initAppropriateSystemField (system, "skinPrefabs", skinPrefabs);
 	}
 
 }

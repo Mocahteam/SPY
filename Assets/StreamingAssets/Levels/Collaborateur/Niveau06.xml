@@ -38,16 +38,16 @@
   </blockLimits>
   
   <robot inputLine="Erty" posY="2" posX="1" direction="2" />
-  <console state="1" posY="2" posX="2" direction="0">
+  <console posY="2" posX="2" direction="0">
     <slot slotId="0" />
   </console>
-  <door posY="4" posX="4" slotId="0" direction="0" />
+  <door posY="4" posX="4" slotId="0" direction="0" state="0" />
   
   <robot inputLine="Plok" posY="5" posX="7" direction="3" />
-  <console state="1" posY="5" posX="7" direction="0">
+  <console posY="5" posX="7" direction="0">
     <slot slotId="1" />
   </console>
-  <door posY="3" posX="3" slotId="1" direction="3" />
+  <door posY="3" posX="3" slotId="1" direction="3" state="0" />
   <script outputLine="Script1" editMode="2" type="0">
     <action type="Activate"/>
     <action type="Forward"/>

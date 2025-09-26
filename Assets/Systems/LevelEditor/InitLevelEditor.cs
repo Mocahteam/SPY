@@ -16,7 +16,12 @@ public class InitLevelEditor : FSystem
 	public GameObject paramContent;
 	public GameObject initFocused;
 
+	public GameObject menuEscape;
+	public GameObject closePanelButton;
+	public CanvasGroup[] canvasGroups;
+
 	private UnityAction localCallback;
+	private GameData gameData;
 
 	[DllImport("__Internal")]
 	private static extern bool IsMobileBrowser(); // call javascript
@@ -32,7 +37,7 @@ public class InitLevelEditor : FSystem
 			GameObjectManager.loadScene("TitleScreen");
 		else
 		{
-			GameData gameData = gameDataGO.GetComponent<GameData>();
+			gameData = gameDataGO.GetComponent<GameData>();
 			
 			// config default UI
 			GameObjectManager.setGameObjectState(menuCanvas, false);
@@ -69,4 +74,34 @@ public class InitLevelEditor : FSystem
 		}
 	}
 
+	public void reloadEditor()
+	{
+		gameData.selectedScenario = "";
+		GameObjectManager.loadScene("MissionEditor");
+	}
+
+	public void returnToLobby()
+	{
+		GameObjectManager.loadScene("TitleScreen");
+	}
+
+	public void toggleMainMenu()
+	{
+		// si le menu n'est pas affiché, on l'affiche
+		if (!menuCanvas.activeInHierarchy)
+		{
+			menuCanvas.SetActive(true);
+			EventSystem.current.SetSelectedGameObject(closePanelButton);
+			foreach (CanvasGroup g in canvasGroups)
+				g.interactable = false;
+		}
+		// sinon faire l'inverse
+		else
+		{
+			menuCanvas.SetActive(false);
+			EventSystem.current.SetSelectedGameObject(menuEscape);
+			foreach (CanvasGroup g in canvasGroups)
+				g.interactable = true;
+		}
+	}
 }
