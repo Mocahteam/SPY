@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -64,6 +66,12 @@ public class DragDropSystem : FSystem
 	public float catchTime;
 	public RectTransform editableContainers;
 
+	private InputAction navigateAction;
+	private InputAction cancel;
+	private InputAction exitWebGL;
+	private InputAction submit;
+	private InputAction delete;
+	private InputAction insert;
 	private EventSystem eventSystem;
 
 	// L'instance
@@ -81,6 +89,12 @@ public class DragDropSystem : FSystem
 			gameData = go.GetComponent<GameData>();
 
 		eventSystem = EventSystem.current;
+		navigateAction = InputSystem.actions.FindAction("Navigate");
+		exitWebGL = InputSystem.actions.FindAction("ExitWebGL");
+		cancel = InputSystem.actions.FindAction("Cancel");
+		submit = InputSystem.actions.FindAction("Submit");
+		delete = InputSystem.actions.FindAction("Delete");
+		insert = InputSystem.actions.FindAction("Insert");
 
 		f_elementToDelete.addEntryCallback(deleteElement);
 		f_defaultDropZone.addEntryCallback(selectNewDefaultDropZone);
@@ -121,7 +135,7 @@ public class DragDropSystem : FSystem
 	protected override void onProcess(int familiesUpdateCount)
 	{
 		// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
-		if (Input.GetKeyDown(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && f_dragging.Count > 0)
+		if (cancel.WasPressedThisFrame() && !exitWebGL.WasPressedThisFrame() && f_dragging.Count > 0)
 		{
 			setDropZoneState(false);
 			undoDrop();
@@ -131,7 +145,7 @@ public class DragDropSystem : FSystem
 		}
 
 		// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
-		if (Input.GetKeyDown(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && insertRef != null)
+		if (cancel.WasPressedThisFrame() && !exitWebGL.WasPressedThisFrame() && insertRef != null)
         {
 			insertRef = null;
 			setDropZoneState(false);
@@ -142,7 +156,7 @@ public class DragDropSystem : FSystem
 
 		if (f_editMode.Count > 0 && gameData.dragDropEnabled)
 		{
-			if (Input.GetKeyDown(KeyCode.Return))
+			if (submit.WasPressedThisFrame())
 			{
 				if (insertRef == null)
 				{
@@ -160,20 +174,25 @@ public class DragDropSystem : FSystem
 						MainLoop.instance.StartCoroutine(delayEndDrag());
 				}
 			}
-
-			if (Input.GetKey(KeyCode.LeftArrow) && itemDragged != null)
+			// Récupérer la valeur Vector2 de Navigate
+			Vector2 navigateValue = navigateAction.ReadValue<Vector2>();
+			// left
+			if (navigateValue.x < 0 && itemDragged != null)
 				moveItemDragged(-Time.deltaTime * 100, 0);
-			if (Input.GetKey(KeyCode.RightArrow) && itemDragged != null)
+			// right
+			if (navigateValue.x > 0 && itemDragged != null)
 				moveItemDragged(Time.deltaTime * 100, 0);
-			if (Input.GetKey(KeyCode.UpArrow) && itemDragged != null)
+			// up
+			if (navigateValue.y > 0 && itemDragged != null)
 				moveItemDragged(0, Time.deltaTime * 100);
-			if (Input.GetKey(KeyCode.DownArrow) && itemDragged != null)
+			// down
+			if (navigateValue.y < 0 && itemDragged != null)
 				moveItemDragged(0, -Time.deltaTime * 100);
 
-			if ((Input.GetKeyDown(KeyCode.Delete) || Input.GetKeyDown(KeyCode.Backspace)) && eventSystem.currentSelectedGameObject.GetComponent<LibraryItemRef>() && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() && itemDragged == null && insertRef == null)
+			if (delete.WasPressedThisFrame() && eventSystem.currentSelectedGameObject.GetComponent<LibraryItemRef>() && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() && itemDragged == null && insertRef == null)
 				deleteElement(eventSystem.currentSelectedGameObject);
 
-			if ((Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Insert)) && eventSystem.currentSelectedGameObject != null && (eventSystem.currentSelectedGameObject.GetComponent<LibraryItemRef>() || eventSystem.currentSelectedGameObject.GetComponent<ReplacementSlot>()) && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() && itemDragged == null)
+			if (insert.WasPressedThisFrame() && eventSystem.currentSelectedGameObject != null && (eventSystem.currentSelectedGameObject.GetComponent<LibraryItemRef>() || eventSystem.currentSelectedGameObject.GetComponent<ReplacementSlot>()) && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() && itemDragged == null)
 			{
 				insertRef = eventSystem.currentSelectedGameObject.GetComponent<ReplacementSlot>() ? eventSystem.currentSelectedGameObject : eventSystem.currentSelectedGameObject.GetComponentInChildren<DropZone>(true).gameObject;
 				if (insertRef.GetComponent<ReplacementSlot>())
@@ -287,7 +306,7 @@ public class DragDropSystem : FSystem
 		for (int i = 0; i < scriptContainer.childCount; i++)
 		{
 			if (scriptContainer.GetChild(i).GetComponent<Highlightable>())
-				scriptsContent += " " + Utility.exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>(), focusedArea);
+				scriptsContent += " " + UtilityGame.exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>(), focusedArea);
 		}
 		if (scriptContainer.GetChild(scriptContainer.childCount - 1).gameObject == focusedArea)
 			scriptsContent += " ####";
@@ -351,7 +370,7 @@ public class DragDropSystem : FSystem
 		// On active les dropzones
 		setDropZoneState(true);
 		// On crée le bloc action associé à l'élément
-		itemDragged = Utility.createEditableBlockFromLibrary(model, mainCanvas);
+		itemDragged = UtilityGame.createEditableBlockFromLibrary(model, mainCanvas);
 		// On l'ajoute aux familles de FYFY
 		GameObjectManager.bind(itemDragged);
 		GameObjectManager.addComponent<Dragging>(itemDragged);
@@ -374,7 +393,7 @@ public class DragDropSystem : FSystem
 		GameObjectManager.addComponent<Dragging>(itemDragged);
 		Transform parent = itemDragged.transform.parent;
 
-		string content = Utility.exportBlockToString(itemDragged.GetComponent<Highlightable>());
+		string content = UtilityGame.exportBlockToString(itemDragged.GetComponent<Highlightable>());
 
 		GameObject removedFromArea;
 		Transform nextBrother = itemDragged.transform.parent.GetChild(itemDragged.transform.GetSiblingIndex() + 1);
@@ -387,7 +406,7 @@ public class DragDropSystem : FSystem
 		setDropZoneState(true);
 
 		// Update empty zone if required
-		Utility.manageEmptyZone(itemDragged);
+		UtilityGame.manageEmptyZone(itemDragged);
 
 		// On l'associe (temporairement) au Canvas Main
 		itemDragged.transform.SetParent(mainCanvas.transform, true); // We need to perform it immediatelly to write change in statement
@@ -431,7 +450,8 @@ public class DragDropSystem : FSystem
 	public void dragElement()
 	{
 		if(!Pause && gameData.dragDropEnabled && itemDragged != null) {
-			itemDragged.transform.position = Input.mousePosition;
+			Vector2Control pointerPos = Pointer.current.position;
+			itemDragged.transform.position = new Vector3(pointerPos.x.value, pointerPos.y.value);
 		}
 	}
 
@@ -482,7 +502,7 @@ public class DragDropSystem : FSystem
 								(repSlot.slotType == ReplacementSlot.SlotType.BaseCondition && itemDragged.GetComponent<BaseElement>()))))
 				{
 					// tracer le fait que le joueur fait une erreur de compréhension de la grammaire du langage
-					string content = Utility.exportBlockToString(itemDragged.GetComponent<Highlightable>());
+					string content = UtilityGame.exportBlockToString(itemDragged.GetComponent<Highlightable>());
 					string context = exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
 					undoDrop();
 					GameObjectManager.addComponent<ActionPerformedForLRS>(dropArea, new
@@ -504,7 +524,7 @@ public class DragDropSystem : FSystem
 					// We restore all UI elements inside the EventSystem
 					foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
 						child.GetComponent<Image>().raycastTarget = true;
-					MainLoop.instance.StartCoroutine(Utility.pulseItem(itemDragged));
+					MainLoop.instance.StartCoroutine(UtilityGame.pulseItem(itemDragged));
 					eventSystem.SetSelectedGameObject(itemDragged);
 				}
 				else
@@ -523,10 +543,10 @@ public class DragDropSystem : FSystem
 	// Add the dragged item on the drop area
 	private bool addDraggedItemOnDropZone (GameObject dropArea)
     {
-		string content = Utility.exportBlockToString(itemDragged.GetComponent<Highlightable>());
+		string content = UtilityGame.exportBlockToString(itemDragged.GetComponent<Highlightable>());
 		string context = exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
 
-		if (!Utility.addItemOnDropArea(itemDragged, dropArea))
+		if (!UtilityGame.addItemOnDropArea(itemDragged, dropArea))
 		{
 			undoDrop();
 			return false;
@@ -580,7 +600,7 @@ public class DragDropSystem : FSystem
 		// On vérifie qu'il y a bien un objet pointé pour la suppression
 		if (!Pause && gameData.dragDropEnabled && elementToDelete != null)
 		{
-			string content = Utility.exportBlockToString(elementToDelete.GetComponent<Highlightable>());
+			string content = UtilityGame.exportBlockToString(elementToDelete.GetComponent<Highlightable>());
 
 			GameObject removedFromArea;
 			Transform nextBrother = elementToDelete.transform.parent.GetChild(elementToDelete.transform.GetSiblingIndex() + 1);
@@ -590,7 +610,7 @@ public class DragDropSystem : FSystem
 				removedFromArea = nextBrother.GetComponentInChildren<ReplacementSlot>(true).gameObject;
 
 			// Réactivation d'une EmptyZone si nécessaire
-			Utility.manageEmptyZone(elementToDelete);
+			UtilityGame.manageEmptyZone(elementToDelete);
 
 			// refresh all the hierarchy of parent containers
 			refreshHierarchyContainers(elementToDelete);
@@ -666,7 +686,7 @@ public class DragDropSystem : FSystem
 			if (lastDropZoneUsed != null)
 			{
 				// On crée le bloc action
-				itemDragged = Utility.createEditableBlockFromLibrary(element.selectedObject, mainCanvas);
+				itemDragged = UtilityGame.createEditableBlockFromLibrary(element.selectedObject, mainCanvas);
 				// On l'ajoute aux familles de FYFY
 				GameObjectManager.bind(itemDragged);
 				// On l'envoie sur la dernière dropzone utilisée
@@ -677,7 +697,7 @@ public class DragDropSystem : FSystem
 				if (viewLastDropZone != null)
 					MainLoop.instance.StopCoroutine(viewLastDropZone);
 				MainLoop.instance.StartCoroutine(focusOnLastDropZoneUsed());
-				MainLoop.instance.StartCoroutine(Utility.pulseItem(itemDragged));
+				MainLoop.instance.StartCoroutine(UtilityGame.pulseItem(itemDragged));
 
 				// Rafraichissement de l'UI
 				GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);

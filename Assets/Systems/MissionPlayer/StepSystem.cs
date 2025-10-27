@@ -152,7 +152,7 @@ public class StepSystem : FSystem {
     {
         string scriptsContent = scriptContainer.GetComponentInChildren<UIRootExecutor>(true).scriptName + " {";
         for (int i = 0; i < scriptContainer.childCount; i++)
-            scriptsContent += " " + Utility.exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>());
+            scriptsContent += " " + UtilityGame.exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>());
         scriptsContent += " }\n";
         return scriptsContent;
     }

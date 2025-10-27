@@ -3,6 +3,8 @@ using FYFY;
 using FYFY_plugins.PointerManager;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 /// <summary>
 /// This system manages main camera (movement, rotation, focus on/follow agent...)
@@ -30,6 +32,9 @@ public class CameraSystem : FSystem {
 	private float last_action_time = Time.time;
 	private float logging_padding = 1f;
 
+	private InputAction middleClick;
+	private InputAction rightClick;
+
 	// Déplacement aux touches du clavier
 	public float cameraMovingSpeed;
 	// Rotation au clic droit
@@ -52,6 +57,9 @@ public class CameraSystem : FSystem {
 
 	protected override void onStart()
 	{
+		middleClick = InputSystem.actions.FindAction("MiddleClick");
+		rightClick = InputSystem.actions.FindAction("RightClick");
+
 		mainCamera = Camera.main;
 		if (PlayerPrefs.GetInt("orthographicView", 0) == 1)
 			ToggleOrthographicPerspective();
@@ -86,13 +94,15 @@ public class CameraSystem : FSystem {
 			rotateCamera(UI_rotateValue, 0);
 
 		// Move camera with wheel click
-		if (Input.GetMouseButton(2))
+		if (middleClick.WasPressedThisFrame())
 		{
 			Cursor.lockState = CursorLockMode.Locked;
 			Cursor.visible = false;
 
-			float mouseY = Input.GetAxisRaw("Mouse Y");
-			float mouseX = Input.GetAxisRaw("Mouse X");
+			Vector2Control pointerPos = Pointer.current.position;
+
+			float mouseX = pointerPos.x.value;
+			float mouseY = pointerPos.y.value;
 
 			float dist = Mathf.Abs(Mathf.Abs(mouseX) - Mathf.Abs(mouseY));
 			if (Mathf.Abs(mouseY) > Mathf.Abs(mouseX))
@@ -119,14 +129,14 @@ public class CameraSystem : FSystem {
 		}
 
 		// Zoom with scroll wheel only if UI element is not focused
-		else if ((Input.GetAxis("Mouse ScrollWheel") < 0 && f_UIfocused.Count == 0) || UI_zoomValue > 0) // Zoom out
+		else if ((Mouse.current.scroll.y.value < 0 && f_UIfocused.Count == 0) || UI_zoomValue > 0) // Zoom out
 		{
 			if (UI_zoomValue > 0)
 				zoomOut(UI_zoomValue);
 			else
 				zoomOut(1);
 		}
-		else if ((Input.GetAxis("Mouse ScrollWheel") > 0 && f_UIfocused.Count == 0) || UI_zoomValue < 0) // Zoom in
+		else if ((Mouse.current.scroll.y.value > 0 && f_UIfocused.Count == 0) || UI_zoomValue < 0) // Zoom in
 		{
 			if (UI_zoomValue < 0)
 				zoomIn(-UI_zoomValue);
@@ -135,9 +145,10 @@ public class CameraSystem : FSystem {
 		}
 
 		// Orbit rotation
-		else if (Input.GetMouseButton(1))
+		else if (rightClick.WasPressedThisFrame())
 		{
-			rotateCamera(Input.GetAxis("Mouse X"), !mainCamera.orthographic ? Input.GetAxis("Mouse Y"): 0);
+			Vector2Control pointerPos = Pointer.current.position;
+			rotateCamera(pointerPos.x.value, !mainCamera.orthographic ? pointerPos.y.value : 0);
 		}
 		else
 		{
@@ -203,13 +214,19 @@ public class CameraSystem : FSystem {
 
 	public void ToggleOrthographicPerspective()
     {
-		mainCamera.orthographic = !mainCamera.orthographic;
+		setOrthographicView(!mainCamera.orthographic);
+
+		camera_logging("ToggleOrthographicPerspective", mainCamera.orthographic.ToString());
+	}
+
+	public void setOrthographicView(bool state)
+	{
+		mainCamera.orthographic = state;
 		mainCamera.transform.parent.rotation = new Quaternion(0, 0, 0, 0);
 		if (mainCamera.orthographic)
 			mainCamera.transform.parent.Rotate(Vector3.back, -27); // -27 is a magic constant to put camera in direction of ground
 		PlayerPrefs.SetInt("orthographicView", mainCamera.orthographic ? 1 : 0);
-
-		camera_logging("ToggleOrthographicPerspective", mainCamera.orthographic.ToString());
+		PlayerPrefs.Save();
 	}
 
 	public void set_UIFrontBack(float value)

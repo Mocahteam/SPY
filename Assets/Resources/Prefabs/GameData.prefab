@@ -62,6 +62,9 @@ MonoBehaviour:
   sendStatementEnabled: 0
   hideExit: 0
   fogEnabled: 0
+  rawReferentials:
+    referentials: []
+  lastReferentialSelected: -1
 --- !u!114 &3395053661886626507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,7 +84,7 @@ MonoBehaviour:
   - Oui
   - Non
   - "R\xE9essayer"
-  - "Erreur lors de l'acc\xE8s au document #0# : #1#"
+  - U
   - "La liste des r\xE9f\xE9rentiels est mal form\xE9e : #0#"
   - "R\xE9f\xE9rentiel num\xE9ro #0# non d\xE9fini."
   - "Cette partie du logiciel n'est pas con\xE7ue pour \xEAtre utilis\xE9e sur smartphone
@@ -174,7 +177,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[40]
+        m_PropertyPath: 'localization.Array.data[40]'
     - rid: 8163430786238513165
       type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
         asm: Unity.Localization}
@@ -245,7 +248,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[2]
+        m_PropertyPath: 'localization.Array.data[2]'
     - rid: 8163430786238513167
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -259,7 +262,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[3]
+        m_PropertyPath: 'localization.Array.data[3]'
     - rid: 8163430786238513168
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -273,7 +276,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[4]
+        m_PropertyPath: 'localization.Array.data[4]'
     - rid: 8163430786238513169
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -287,7 +290,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[5]
+        m_PropertyPath: 'localization.Array.data[5]'
     - rid: 8163430786238513170
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -301,7 +304,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[6]
+        m_PropertyPath: 'localization.Array.data[6]'
     - rid: 8163430786238513171
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -315,7 +318,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[7]
+        m_PropertyPath: 'localization.Array.data[7]'
     - rid: 8163430786238513172
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -329,7 +332,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[8]
+        m_PropertyPath: 'localization.Array.data[8]'
     - rid: 8163430786238513173
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -343,7 +346,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[9]
+        m_PropertyPath: 'localization.Array.data[9]'
     - rid: 8163430786238513174
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -357,7 +360,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[10]
+        m_PropertyPath: 'localization.Array.data[10]'
     - rid: 8163430786238513175
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -371,7 +374,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[11]
+        m_PropertyPath: 'localization.Array.data[11]'
     - rid: 8163430786238513176
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -385,7 +388,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[12]
+        m_PropertyPath: 'localization.Array.data[12]'
     - rid: 8163430786238513177
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -399,7 +402,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[13]
+        m_PropertyPath: 'localization.Array.data[13]'
     - rid: 8163430786238513178
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -413,7 +416,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[14]
+        m_PropertyPath: 'localization.Array.data[14]'
     - rid: 8163430786238513179
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -427,7 +430,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[15]
+        m_PropertyPath: 'localization.Array.data[15]'
     - rid: 8163430786238513180
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -441,7 +444,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[16]
+        m_PropertyPath: 'localization.Array.data[16]'
     - rid: 8163430786238513181
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -455,7 +458,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[17]
+        m_PropertyPath: 'localization.Array.data[17]'
     - rid: 8163430786238513182
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -469,7 +472,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[18]
+        m_PropertyPath: 'localization.Array.data[18]'
     - rid: 8163430786238513183
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -483,7 +486,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[19]
+        m_PropertyPath: 'localization.Array.data[19]'
     - rid: 8163430786238513184
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -497,7 +500,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[20]
+        m_PropertyPath: 'localization.Array.data[20]'
     - rid: 8163430786238513185
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -511,7 +514,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[21]
+        m_PropertyPath: 'localization.Array.data[21]'
     - rid: 8163430786238513186
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -525,7 +528,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[22]
+        m_PropertyPath: 'localization.Array.data[22]'
     - rid: 8163430786238513187
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -539,7 +542,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[23]
+        m_PropertyPath: 'localization.Array.data[23]'
     - rid: 8163430786238513188
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -553,7 +556,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[24]
+        m_PropertyPath: 'localization.Array.data[24]'
     - rid: 8163430786238513189
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -567,7 +570,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[25]
+        m_PropertyPath: 'localization.Array.data[25]'
     - rid: 8163430786238513190
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -581,7 +584,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[26]
+        m_PropertyPath: 'localization.Array.data[26]'
     - rid: 8163430786238513191
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -595,7 +598,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[27]
+        m_PropertyPath: 'localization.Array.data[27]'
     - rid: 8163430786238513192
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -609,7 +612,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[28]
+        m_PropertyPath: 'localization.Array.data[28]'
     - rid: 8163430786238513193
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -623,7 +626,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[29]
+        m_PropertyPath: 'localization.Array.data[29]'
     - rid: 8163430786238513194
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -637,7 +640,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[30]
+        m_PropertyPath: 'localization.Array.data[30]'
     - rid: 8163430786238513195
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -651,7 +654,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[31]
+        m_PropertyPath: 'localization.Array.data[31]'
     - rid: 8163430786238513196
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -665,7 +668,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[32]
+        m_PropertyPath: 'localization.Array.data[32]'
     - rid: 8163430786238513197
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -679,7 +682,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[33]
+        m_PropertyPath: 'localization.Array.data[33]'
     - rid: 8163430786238513198
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -693,7 +696,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[34]
+        m_PropertyPath: 'localization.Array.data[34]'
     - rid: 8163430786238513199
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -707,7 +710,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[35]
+        m_PropertyPath: 'localization.Array.data[35]'
     - rid: 8163430786238513200
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -721,7 +724,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[36]
+        m_PropertyPath: 'localization.Array.data[36]'
     - rid: 8163430786238513201
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -735,7 +738,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[39]
+        m_PropertyPath: 'localization.Array.data[39]'
     - rid: 8163430786238513202
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -749,7 +752,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[41]
+        m_PropertyPath: 'localization.Array.data[41]'
     - rid: 8163430786238513203
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -763,7 +766,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[42]
+        m_PropertyPath: 'localization.Array.data[42]'
     - rid: 8163430786238513204
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -777,7 +780,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[43]
+        m_PropertyPath: 'localization.Array.data[43]'
     - rid: 8163430786238513205
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -791,7 +794,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[44]
+        m_PropertyPath: 'localization.Array.data[44]'
     - rid: 8163430786238513206
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -805,7 +808,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[45]
+        m_PropertyPath: 'localization.Array.data[45]'
     - rid: 8163430786238513207
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -819,7 +822,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[46]
+        m_PropertyPath: 'localization.Array.data[46]'
     - rid: 8163430786238513208
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -833,7 +836,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[47]
+        m_PropertyPath: 'localization.Array.data[47]'
     - rid: 8163430786238513301
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -847,7 +850,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[37]
+        m_PropertyPath: 'localization.Array.data[37]'
     - rid: 8163430786238513303
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -861,4 +864,4 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        m_PropertyPath: localization.Array.data[38]
+        m_PropertyPath: 'localization.Array.data[38]'

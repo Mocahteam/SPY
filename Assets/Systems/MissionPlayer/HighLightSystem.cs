@@ -2,6 +2,7 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Manage highlightable GameObjects (word object as robots, drones, ground and UI object as current action executed or library items
@@ -18,6 +19,8 @@ public class HighLightSystem : FSystem {
 
 	public GameObject dialogPanel;
 
+	private InputAction click;
+
 	protected override void onStart()
     {
 		f_highlightable.addEntryCallback(initBaseColor);
@@ -32,6 +35,8 @@ public class HighLightSystem : FSystem {
 		f_unfocusedSyncColors.addEntryCallback(delegate (GameObject go) {
 			propagateColor(go, false);
 		});
+
+		click = InputSystem.actions.FindAction("Click");
 	}
 
 	private void propagateColor(GameObject go, bool useHighlightColor)
@@ -48,7 +53,7 @@ public class HighLightSystem : FSystem {
 	protected override void onProcess(int familiesUpdateCount) {
 		GameObject highLightedItem = f_highlighted.First();
 		//If click on highlighted item and item has a script, then show its script in the 2nd script window
-		if(highLightedItem && Input.GetMouseButtonUp(0) && highLightedItem.GetComponent<ScriptRef>() && dialogPanel.activeInHierarchy == false)
+		if(highLightedItem && click.WasPressedThisFrame() && highLightedItem.GetComponent<ScriptRef>() && dialogPanel.activeInHierarchy == false)
 		{
 			GameObject go = highLightedItem.GetComponent<ScriptRef>().executablePanel;
 			GameObjectManager.setGameObjectState(go,!go.activeInHierarchy);

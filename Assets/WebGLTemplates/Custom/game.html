@@ -274,11 +274,11 @@
 				const urlParams = new URLSearchParams(queryString);
 				const levelToLoad = urlParams.get('level');
 				if (levelToLoad != null)
-					// see TitleScreenSystem
+					// see ConnexionManager
 					unityInstance.SendMessage('Main_Loop', 'askToLoadLevel', levelToLoad);
 				const silent = urlParams.get('silent');
 				if (silent == null)
-					// see TitleScreenSystem
+					// see ConnexionManager
 					unityInstance.SendMessage('Main_Loop', 'enableSendStatement');
 				
 			}).catch((message) => {

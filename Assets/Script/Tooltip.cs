@@ -1,58 +1,57 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 public class Tooltip : MonoBehaviour
 {
     private TMP_Text tooltipText;
-    private RectTransform backgroundRectTransform;
-    private Image backgroundImg;
+    private RectTransform rectTransform;
+    private bool state;
 
     private void Awake()
     {
-        backgroundRectTransform = GetComponent<RectTransform>();
-        backgroundImg = GetComponent<Image>();
-        tooltipText = transform.GetChild(0).GetComponent<TMP_Text>();
-        backgroundImg.enabled = false;
-        tooltipText.enabled = false;
-    }
-
-    public bool IsShown()
-    {
-        return backgroundImg.enabled && tooltipText.enabled;
+        rectTransform = GetComponent<RectTransform>();
+        tooltipText = GetComponentInChildren<TMP_Text>();
+        state = false;
+        
     }
 
     public void ShowTooltip(string tooltipString)
     {
-        backgroundImg.enabled = true;
-        tooltipText.enabled = true;
-
+        state = true;
         tooltipText.text = tooltipString;
-        Vector2 backgroundSize = new Vector2(tooltipText.preferredWidth+8, tooltipText.preferredHeight+8);
-        backgroundRectTransform.sizeDelta = backgroundSize;
     }
 
     public void HideTooltip()
     {
-        backgroundImg.enabled = false;
-        tooltipText.enabled = false;
+        state = false;
     }
 
     private void Update()
     {
-        Vector3 mousePos = Input.mousePosition;
+        if (state)
+        {
+            Vector2Control pointerPos = Pointer.current.position;
 
-        // recaller la position du tooltip pour qu'il soit dirigé vers le centre de l'écran
-        if (mousePos.x > Screen.width / 2)
-            mousePos.x -= (10 + (backgroundRectTransform.sizeDelta.x*backgroundRectTransform.parent.localScale.x) / 2);
+            Vector2 tooltipPos = new Vector2(pointerPos.x.value, pointerPos.y.value);
+
+            // recaller la position du tooltip pour qu'il soit dirigé vers le centre de l'écran
+            if (tooltipPos.x > Screen.width / 2)
+                tooltipPos.x -= (20 + rectTransform.sizeDelta.x / 2);
+            else
+                tooltipPos.x += (20 + rectTransform.sizeDelta.x / 2);
+
+            if (tooltipPos.y > Screen.height / 2)
+                tooltipPos.y -= (20 + rectTransform.sizeDelta.y / 2);
+            else
+                tooltipPos.y += (20 + rectTransform.sizeDelta.y / 2);
+
+            transform.position = tooltipPos;
+        }
         else
-            mousePos.x += (10 + (backgroundRectTransform.sizeDelta.x * backgroundRectTransform.parent.localScale.x) / 2);
-
-        if (mousePos.y > Screen.height / 2)
-            mousePos.y -= (10 + (backgroundRectTransform.sizeDelta.y * backgroundRectTransform.parent.localScale.y) / 2);
-        else
-            mousePos.y += (10 + (backgroundRectTransform.sizeDelta.y * backgroundRectTransform.parent.localScale.y) / 2);
-
-        transform.position = mousePos;
+            // maintenir le tooltip hors de l'écran
+            transform.position = new Vector3(0, -100);
     }
 }

@@ -7,6 +7,7 @@ using FYFY_plugins.PointerManager;
 using System;
 using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Manage InGame UI (Play/Pause/Stop, reset, go back to main menu...)
@@ -104,23 +105,34 @@ public class UISystem : FSystem {
 		GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, !state);
 	}
 
+	private bool isTouch()
+    {
+		foreach (var touch in Touchscreen.current.touches)
+			if (touch.isInProgress)
+				return true;
+		return false;
+	}
+
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount)
 	{
-		// With touch device when the finger is up, pointerOver is not removed because OnPointerExit is not called
-		// then be sure to clear pointerOver and Tooltips
-		if (Input.touchCount > 0)
-			touchUp = 0;
-		else
-			touchUp += Time.deltaTime;
-		if (PlayerPrefs.GetInt("interaction") == 1 // 0 means mouse/keyboard; 1 means touch-sensitive
-			&& touchUp > 0.25f)
+		if (Touchscreen.current != null)
 		{
-			foreach (GameObject pointed in f_pointerOver)
-				pointed.GetComponent<PointerSensitive>().OnPointerExit(null);
-			foreach (GameObject tooltip in f_tooltipContent)
-				tooltip.GetComponent<TooltipContent>().OnPointerExit(null);
-			touchUp = 0;
+			// With touch device when the finger is up, pointerOver is not removed because OnPointerExit is not called
+			// then be sure to clear pointerOver and Tooltips
+			if (isTouch())
+				touchUp = 0;
+			else
+				touchUp += Time.deltaTime;
+			if (PlayerPrefs.GetInt("interaction") == 1 // 0 means mouse/keyboard; 1 means touch-sensitive
+				&& touchUp > 0.25f)
+			{
+				foreach (GameObject pointed in f_pointerOver)
+					pointed.GetComponent<PointerSensitive>().OnPointerExit(null);
+				foreach (GameObject tooltip in f_tooltipContent)
+					tooltip.GetComponent<TooltipContent>().OnPointerExit(null);
+				touchUp = 0;
+			}
 		}
 	}
 
@@ -327,7 +339,7 @@ public class UISystem : FSystem {
 			if (editableContainer != null)
 			{
 				// we fill the executable container with actions of the editable container
-				Utility.fillExecutablePanel(editableContainer, executableContainer, robot.tag);
+				UtilityGame.fillExecutablePanel(editableContainer, executableContainer, robot.tag);
 				// bind all child (except the first "header")
 				for (int i = 1; i < executableContainer.transform.childCount; i++)
 					GameObjectManager.bind(executableContainer.transform.GetChild(i).gameObject);

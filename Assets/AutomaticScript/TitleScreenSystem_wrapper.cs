@@ -3,57 +3,23 @@ using FYFY;
 
 public class TitleScreenSystem_wrapper : BaseWrapper
 {
-	public UnityEngine.GameObject prefabGameData;
 	public UnityEngine.GameObject mainCanvas;
 	public UnityEngine.GameObject mainMenu;
-	public UnityEngine.GameObject compLevelButton;
 	public UnityEngine.GameObject listOfCampaigns;
 	public UnityEngine.GameObject listOfLevels;
 	public UnityEngine.GameObject playButton;
 	public UnityEngine.GameObject quitButton;
-	public UnityEngine.GameObject loadingScreen;
-	public UnityEngine.GameObject sessionIdPanel;
 	public UnityEngine.GameObject detailsCampaign;
-	public TMPro.TMP_Text progress;
-	public TMPro.TMP_Text logs;
-	public TMPro.TMP_Text SPYVersion;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
-		MainLoop.initAppropriateSystemField (system, "prefabGameData", prefabGameData);
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
 		MainLoop.initAppropriateSystemField (system, "mainMenu", mainMenu);
-		MainLoop.initAppropriateSystemField (system, "compLevelButton", compLevelButton);
 		MainLoop.initAppropriateSystemField (system, "listOfCampaigns", listOfCampaigns);
 		MainLoop.initAppropriateSystemField (system, "listOfLevels", listOfLevels);
 		MainLoop.initAppropriateSystemField (system, "playButton", playButton);
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
-		MainLoop.initAppropriateSystemField (system, "loadingScreen", loadingScreen);
-		MainLoop.initAppropriateSystemField (system, "sessionIdPanel", sessionIdPanel);
 		MainLoop.initAppropriateSystemField (system, "detailsCampaign", detailsCampaign);
-		MainLoop.initAppropriateSystemField (system, "progress", progress);
-		MainLoop.initAppropriateSystemField (system, "logs", logs);
-		MainLoop.initAppropriateSystemField (system, "SPYVersion", SPYVersion);
-	}
-
-	public void closeSettingsAndSelectNextFocusedButton(UnityEngine.GameObject settingsWindows)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "closeSettingsAndSelectNextFocusedButton", settingsWindows);
-	}
-
-	public void synchUserData(UnityEngine.GameObject go)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "synchUserData", go);
-	}
-
-	public void GetProgression(TMPro.TMP_InputField idSession)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "GetProgression", idSession);
-	}
-
-	public void forceLaunch()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "forceLaunch", null);
 	}
 
 	public void importLevelOrScenario(System.String content)
@@ -79,16 +45,6 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public void launchScenarioEditor()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "launchScenarioEditor", null);
-	}
-
-	public void askToLoadLevel(System.String levelToLoad)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "askToLoadLevel", levelToLoad);
-	}
-
-	public void enableSendStatement()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "enableSendStatement", null);
 	}
 
 	public void quitGame()

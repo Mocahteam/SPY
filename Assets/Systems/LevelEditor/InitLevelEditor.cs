@@ -34,7 +34,7 @@ public class InitLevelEditor : FSystem
 	{
 		GameObject gameDataGO = GameObject.Find("GameData");
 		if (gameDataGO == null)
-			GameObjectManager.loadScene("TitleScreen");
+			GameObjectManager.loadScene("ConnexionScene");
 		else
 		{
 			gameData = gameDataGO.GetComponent<GameData>();
@@ -66,10 +66,10 @@ public class InitLevelEditor : FSystem
 			});
 
 			// reload edited level
-			if (gameData.selectedScenario == Utility.testFromLevelEditor)
+			if (gameData.selectedScenario == UtilityLobby.testFromLevelEditor)
 			{
 				gameData.selectedScenario = "";
-				GameObjectManager.addComponent<NewLevelToLoad>(gameData.gameObject, new { levelKey = Utility.testFromLevelEditor });
+				GameObjectManager.addComponent<NewLevelToLoad>(gameData.gameObject, new { levelKey = UtilityLobby.testFromLevelEditor });
 			}
 		}
 	}

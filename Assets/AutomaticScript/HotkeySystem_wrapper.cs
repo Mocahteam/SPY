@@ -10,6 +10,7 @@ public class HotkeySystem_wrapper : BaseWrapper
 	public UnityEngine.UI.Button buttonContinue;
 	public UnityEngine.UI.Button buttonSpeed;
 	public UnityEngine.UI.Button buttonStop;
+	public UnityEngine.UI.Button cameraSwitchView;
 	public UnityEngine.EventSystems.EventTrigger cameraRotateLeft;
 	public UnityEngine.EventSystems.EventTrigger cameraRotateRight;
 	public UnityEngine.EventSystems.EventTrigger cameraTop;
@@ -17,7 +18,6 @@ public class HotkeySystem_wrapper : BaseWrapper
 	public UnityEngine.EventSystems.EventTrigger cameraLeft;
 	public UnityEngine.EventSystems.EventTrigger cameraRight;
 	public UnityEngine.EventSystems.EventTrigger cameraFocusOn;
-	public UnityEngine.UI.Button cameraSwitchView;
 	public UnityEngine.EventSystems.EventTrigger cameraZoomIn;
 	public UnityEngine.EventSystems.EventTrigger cameraZoomOut;
 	public UnityEngine.GameObject virtualKeyboard;
@@ -34,6 +34,7 @@ public class HotkeySystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "buttonContinue", buttonContinue);
 		MainLoop.initAppropriateSystemField (system, "buttonSpeed", buttonSpeed);
 		MainLoop.initAppropriateSystemField (system, "buttonStop", buttonStop);
+		MainLoop.initAppropriateSystemField (system, "cameraSwitchView", cameraSwitchView);
 		MainLoop.initAppropriateSystemField (system, "cameraRotateLeft", cameraRotateLeft);
 		MainLoop.initAppropriateSystemField (system, "cameraRotateRight", cameraRotateRight);
 		MainLoop.initAppropriateSystemField (system, "cameraTop", cameraTop);
@@ -41,7 +42,6 @@ public class HotkeySystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "cameraLeft", cameraLeft);
 		MainLoop.initAppropriateSystemField (system, "cameraRight", cameraRight);
 		MainLoop.initAppropriateSystemField (system, "cameraFocusOn", cameraFocusOn);
-		MainLoop.initAppropriateSystemField (system, "cameraSwitchView", cameraSwitchView);
 		MainLoop.initAppropriateSystemField (system, "cameraZoomIn", cameraZoomIn);
 		MainLoop.initAppropriateSystemField (system, "cameraZoomOut", cameraZoomOut);
 		MainLoop.initAppropriateSystemField (system, "virtualKeyboard", virtualKeyboard);

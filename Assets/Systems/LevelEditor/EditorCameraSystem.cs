@@ -3,6 +3,8 @@ using FYFY;
 using FYFY_plugins.PointerManager;
 using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 /// <summary>
 /// This system manages main camera in editor (movement, zoom)
@@ -19,6 +21,8 @@ public class EditorCameraSystem : FSystem
 	private float UI_leftRightValue = 0;
 	private float UI_zoomValue = 0;
 
+	private InputAction middleClick;
+
 	// Distance minimale de zoom
 	public float cameraZoomMin;
 	// Distance maximale de zoom
@@ -31,6 +35,11 @@ public class EditorCameraSystem : FSystem
 		instance = this;
     }
 
+	protected override void onStart()
+	{
+		middleClick = InputSystem.actions.FindAction("MiddleClick");
+	}
+
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		// move camera front/back depending on Vertical axis
@@ -41,10 +50,12 @@ public class EditorCameraSystem : FSystem
 			moveLeftRight(UI_leftRightValue);
 
 		// Move camera with wheel click
-		if (Input.GetMouseButton(2) && f_UIfocused.Count == 0)
+		if (middleClick.WasPressedThisFrame() && f_UIfocused.Count == 0)
 		{
-			float mouseY = Input.GetAxisRaw("Mouse Y");
-			float mouseX = Input.GetAxisRaw("Mouse X");
+			Vector2Control pointerPos = Pointer.current.position;
+
+			float mouseX = pointerPos.x.value;
+			float mouseY = pointerPos.y.value;
 
 			float dist = Mathf.Abs(Mathf.Abs(mouseX) - Mathf.Abs(mouseY));
 			if (Mathf.Abs(mouseY) > Mathf.Abs(mouseX)){
@@ -68,14 +79,14 @@ public class EditorCameraSystem : FSystem
 		}
 
 		// Zoom with scroll wheel only if UI element is not focused
-		else if ((Input.GetAxis("Mouse ScrollWheel") < 0 && f_UIfocused.Count == 0) || UI_zoomValue > 0) // Zoom out
+		else if ((Mouse.current.scroll.y.value < 0 && f_UIfocused.Count == 0) || UI_zoomValue > 0) // Zoom out
 		{
 			if (UI_zoomValue > 0)
 				zoomOut(UI_zoomValue);
 			else
 				zoomOut(1);
 		}
-		else if ((Input.GetAxis("Mouse ScrollWheel") > 0 && f_UIfocused.Count == 0) || UI_zoomValue < 0) // Zoom in
+		else if ((Mouse.current.scroll.y.value > 0 && f_UIfocused.Count == 0) || UI_zoomValue < 0) // Zoom in
 		{
 			if (UI_zoomValue < 0)
 				zoomIn(-UI_zoomValue);

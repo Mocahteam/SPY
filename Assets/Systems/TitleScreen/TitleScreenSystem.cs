@@ -2,18 +2,11 @@
 using FYFY;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using System.IO;
 using TMPro;
-using System.Xml;
-using System.Collections;
-using UnityEngine.Networking;
 using System;
 using UnityEngine.Events;
 using System.Runtime.InteropServices;
-using DIG.GBLXAPI;
-using Newtonsoft.Json;
 using UnityEngine.EventSystems;
-using System.Linq;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -21,42 +14,22 @@ using System.Linq;
 public class TitleScreenSystem : FSystem {
 	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
 	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
-	private Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
 	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
 
 	private GameData gameData;
 	private UserData userData;
-	public GameObject prefabGameData;
 	public GameObject mainCanvas;
 	public GameObject mainMenu;
-	public GameObject compLevelButton;
 	public GameObject listOfCampaigns;
 	public GameObject listOfLevels;
 	public GameObject playButton;
 	public GameObject quitButton;
-	public GameObject loadingScreen;
-	public GameObject sessionIdPanel;
 	public GameObject detailsCampaign;
-	public TMP_Text progress;
-	public TMP_Text logs;
-	public TMP_Text SPYVersion;
 
 	private UnityAction localCallback;
 
-	private string loadLevelWithURL = "";
-	private int webGL_fileLoaded = 0;
-	private int webGL_fileToLoad = 0;
-	private bool webGL_askToEnableSendSystem = false;
-
 	[DllImport("__Internal")]
 	private static extern void ShowHtmlButtons(); // call javascript
-
-	[Serializable]
-	public class WebGlScenarioList
-    {
-		public List<WebGlScenario> scenarios;
-    }
-
 
 	// L'instance
 	public static TitleScreenSystem instance;
@@ -68,51 +41,29 @@ public class TitleScreenSystem : FSystem {
 
 	protected override void onStart()
 	{
-		SPYVersion.text = "V" + Application.version;
-
-		GameObject go = GameObject.Find("GameData");
-		if (go == null)
-		{
-			go = UnityEngine.Object.Instantiate(prefabGameData);
-			go.name = "GameData";
-		}
-		gameData = go.GetComponent<GameData>();
-		userData = go.GetComponent<UserData>();
-		if (webGL_askToEnableSendSystem)
-			gameData.sendStatementEnabled = true;
-		GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
-
-		if (gameData.sendStatementEnabled)
-			mainMenu.GetComponentInParent<CanvasGroup>().interactable = false;
-
-		// Enable Loading screen
-		GameObjectManager.setGameObjectState(loadingScreen, true);
-
-		if (!GameObject.Find("GBLXAPI"))
-			initGBLXAPI();
+		GameObject gameDataGO = GameObject.Find("GameData");
+		if (gameDataGO == null)
+			GameObjectManager.loadScene("ConnexionScene");
 		else
+		{
+			gameData = gameDataGO.GetComponent<GameData>();
+			userData = gameDataGO.GetComponent<UserData>();
+
 			foreach (GameObject sID in f_sessionId)
 				sID.GetComponent<TMP_Text>().text = string.Join(" ", GBL_Interface.playerName.ToCharArray());
 
-		if (gameData.levels == null) // we have to load streaming assets
-        {
-			gameData.levels = new Dictionary<string, XmlNode>();
-			gameData.scenarios = new Dictionary<string, WebGlScenario>();
-			GetScenariosAndLevels();
-		}
-		else // means we come back from a playing session, streaming assets are already loaded
-		{
+			
 			Transform spyMenu = mainCanvas.transform.Find("SPYMenu");
 			mainMenu.GetComponentInParent<CanvasGroup>().interactable = true;
-			if (gameData.selectedScenario == Utility.testFromScenarioEditor) // reload scenario editor
-            {
+			if (gameData.selectedScenario == UtilityLobby.testFromScenarioEditor) // reload scenario editor
+			{
 				launchScenarioEditor();
 			}
-			else if (gameData.selectedScenario == Utility.testFromLevelEditor) // reload level editor
-            {
+			else if (gameData.selectedScenario == UtilityLobby.testFromLevelEditor) // reload level editor
+			{
 				launchLevelEditor();
 			}
-            else if (gameData.selectedScenario != "" && gameData.selectedScenario != Utility.testFromUrl)
+			else if (gameData.selectedScenario != "" && gameData.selectedScenario != UtilityLobby.testFromUrl)
 			{
 				// reload last opened scenario
 				playButton.GetComponent<Button>().onClick.Invoke();
@@ -121,419 +72,13 @@ public class TitleScreenSystem : FSystem {
 				GameObjectManager.setGameObjectState(spyMenu.Find("MenuLevels").gameObject, true); // enable levels menu
 				MainLoop.instance.StartCoroutine(Utility.delayGOSelection(spyMenu.Find("MenuLevels").Find("Retour").gameObject));
 			}
-			
-		}
 
-		if (Application.platform == RuntimePlatform.WebGLPlayer)
-		{
-			ShowHtmlButtons();
-			GameObjectManager.setGameObjectState(quitButton, false);
-		}
-
-		// Disable MainMenu while loading
-		GameObjectManager.setGameObjectState(mainMenu, false);
-		// wait level loading
-		MainLoop.instance.StartCoroutine(WaitLoadingData());
-	}
-
-	private void initGBLXAPI()
-	{
-		if (!GBLXAPI.IsInit)
-			GBLXAPI.Init(GBL_Interface.lrsAddresses);
-
-		GBLXAPI.debugMode = false;
-
-		webGL_fileToLoad++;
-		MainLoop.instance.StartCoroutine(FindAvailableSessionId());
-	}
-
-	// see CloseSettings button in SettingsWindow in TitleScreen scene
-	public void closeSettingsAndSelectNextFocusedButton(GameObject settingsWindows)
-    {
-		GameObjectManager.setGameObjectState(settingsWindows, false);
-		if (sessionIdPanel.activeInHierarchy)
-		{
-			EventSystem.current.SetSelectedGameObject(sessionIdPanel.transform.Find("ShowSessionId").Find("Settings").gameObject);
-			sessionIdPanel.GetComponent<CanvasGroup>().interactable = true;
-		}
-		else
-		{
-			EventSystem.current.SetSelectedGameObject(playButton.transform.parent.Find("Parameters").gameObject);
-			playButton.GetComponentInParent<CanvasGroup>().interactable = true;
-		}
-    }
-
-    // See Ok button in SetClass panel in TitleScreen scene
-    public void synchUserData(GameObject go)
-    {
-		if (userData.progression == null)
-			userData.progression = new Dictionary<string, int>();
-		if (userData.highScore == null)
-			userData.highScore = new Dictionary<string, int>();
-		userData.schoolClass = go.GetComponentInChildren<TMP_InputField>().text;
-		userData.isTeacher = go.GetComponentInChildren<Toggle>().isOn;
-		GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
-	}
-
-	// See Ok button in SetSessionId panel in TitleScreen scene
-	public void GetProgression(TMP_InputField idSession)
-    {
-		webGL_fileToLoad = 1;
-		webGL_fileLoaded = 0;
-		string formatedString = idSession.text.ToUpper().Replace(" ", "");
-		formatedString = String.Concat(formatedString.Where(c => !Char.IsWhiteSpace(c)));
-		
-		GameObjectManager.setGameObjectState(loadingScreen, true);
-
-		MainLoop.instance.StartCoroutine(GetProgressionWebRequest(formatedString));
-		MainLoop.instance.StartCoroutine(WaitLoadingData());
-	}
-
-	private IEnumerator FindAvailableSessionId()
-    {
-		string sessionID = Environment.MachineName + "-" + DateTime.Now.ToString("yyyy.MM.dd.hh.mm.ss"); //Generate player name unique to each playing session (computer name + date)
-
-		string formatedString = String.Format("{0:X}", sessionID.GetHashCode());
-
-		// Make a request to check if this sessionId is already used
-		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession=" + formatedString);
-		logs.text = "";
-		progress.text = "0%";
-		yield return www.SendWebRequest();
-
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[0], formatedString) + "</color>\n" + logs.text;
-			yield return new WaitForSeconds(0.5f);
-			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
 			{
-				logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[1], formatedString) + "</color>\n" + logs.text;
-				MainLoop.instance.StartCoroutine(FindAvailableSessionId());
-			}
-			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
-        }
-        else
-		{
-			// If content is "", means this sessionId is available (no progression data associated to this sessionId)
-			if (www.downloadHandler.text == "")
-			{
-				webGL_fileLoaded++;
-				GBL_Interface.playerName = formatedString;
-				GBL_Interface.userUUID = formatedString;
-				foreach (GameObject go in f_sessionId)
-					go.GetComponent<TMP_Text>().text = string.Join(" ", formatedString.ToCharArray());
-
-				userData.progression = null;
-				userData.highScore = null;
-
-				if (gameData.sendStatementEnabled || !Application.isEditor)
-				{
-					GameObjectManager.setGameObjectState(sessionIdPanel, true);
-					// On décalle la sélection du texte de la popup d'une frame pour laisser la prochaine phase de gestion des évènements passer (ce qui pourrait sélectionner automatiquement un autre GO) afin d'être sûr de mettre le focus sur le titre de la popup
-					MainLoop.instance.StartCoroutine(Utility.delayGOSelection(sessionIdPanel.transform.Find("ShowSessionId").Find("YourCode").gameObject));
-				}
-			}
-			else {
-				// means this sessionId is already used, try to find another
-				MainLoop.instance.StartCoroutine(FindAvailableSessionId());
+				ShowHtmlButtons();
+				GameObjectManager.setGameObjectState(quitButton, false);
 			}
 		}
-	}
-
-	private IEnumerator GetProgressionWebRequest(string idSession)
-    {
-		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession=" + idSession);
-		logs.text = "";
-		progress.text = "0%";
-		yield return www.SendWebRequest();
-		Localization loc = gameData.GetComponent<Localization>();
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession) + "</color>\n" + logs.text;
-			yield return new WaitForSeconds(0.5f);
-			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
-			{
-				logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[3], idSession) + "</color>\n" + logs.text;
-				MainLoop.instance.StartCoroutine(GetProgressionWebRequest(idSession));
-			}
-			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
-		}
-		else
-		{
-			webGL_fileLoaded++;
-			if (www.downloadHandler.text == "")
-			{
-				// Unable to retrieve progress data
-				localCallback = null;
-				localCallback += delegate
-				{
-					GameObjectManager.setGameObjectState(sessionIdPanel, true);
-					GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("ShowSessionId").gameObject, false);
-					GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("SetSessionId").gameObject, true);
-				};
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[16], idSession), OkButton = loc.localization[5], CancelButton = loc.localization[0], call = localCallback });
-			}
-			else
-			{
-				string[] stringSeparators = new string[] { "#SEP#" };
-				string[] tokens = www.downloadHandler.text.Split(stringSeparators, StringSplitOptions.None);
-				Debug.Log(www.downloadHandler.text);
-				if (tokens.Length != 4)
-				{
-					// Session corrupted, ask to enter a new session code.
-					Debug.LogWarning(www.error);
-					localCallback = null;
-					localCallback += delegate
-					{
-						GameObjectManager.setGameObjectState(sessionIdPanel, true);
-						GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("ShowSessionId").gameObject, false);
-						GameObjectManager.setGameObjectState(sessionIdPanel.transform.Find("SetSessionId").gameObject, true);
-					};
-					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[17], OkButton = loc.localization[5], CancelButton = loc.localization[0], call = localCallback });
-				}
-				else
-				{
-					// Session successfully loaded
-					localCallback = null;
-					localCallback += delegate
-					{
-						mainMenu.GetComponentInParent<CanvasGroup>().interactable = true;
-						EventSystem.current.SetSelectedGameObject(playButton);
-					};
-					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[18], idSession), OkButton = loc.localization[1], CancelButton = loc.localization[0], call = localCallback });
-					userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[0]);
-					if (userData.progression == null)
-						userData.progression = new Dictionary<string, int>();
-					userData.highScore = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[1]);
-					if (userData.highScore == null)
-						userData.highScore = new Dictionary<string, int>();
-					userData.schoolClass = tokens[2];
-					userData.isTeacher = tokens[3] == "1";
-					Transform setClass = sessionIdPanel.transform.Find("SetClass");
-					setClass.GetComponentInChildren<TMP_InputField>(true).text = userData.schoolClass;
-					setClass.GetComponentInChildren<Toggle>().isOn = userData.isTeacher;
-					GBL_Interface.playerName = idSession;
-					GBL_Interface.userUUID = idSession;
-				}
-				foreach (GameObject go in f_sessionId)
-					go.GetComponent<TMP_Text>().text = string.Join(" ", GBL_Interface.playerName.ToCharArray());
-			}
-		}
-	}
-
-	private void GetScenariosAndLevels()
-	{
-		logs.text = "";
-		progress.text = "0%";
-		if (Application.platform == RuntimePlatform.WebGLPlayer)
-		{
-			// Load scenario and levels from server
-			webGL_fileToLoad += 2;
-			MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
-			MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
-		}
-		else
-		{
-			// Load scenario and levels from disk
-			// explore streaming asstets path
-			MainLoop.instance.StartCoroutine(exploreLevelsAndScenarios(Application.streamingAssetsPath));
-			// explore persistent data path
-			MainLoop.instance.StartCoroutine(exploreLevelsAndScenarios(Application.persistentDataPath));
-		}
-	}
-
-	private IEnumerator WaitLoadingData()
-	{
-		yield return new WaitForSeconds(1f);
-
-		while (webGL_fileLoaded < webGL_fileToLoad || f_localizationLoaded.Count == 0)
-			yield return null;
-
-		// and, if require, we can load requested level by URL
-		if (loadLevelWithURL != "")
-			GameObjectManager.addComponent<AskToTestLevel>(MainLoop.instance.gameObject, new { url = loadLevelWithURL });
-		// Disable Loading screen
-		GameObjectManager.setGameObjectState(loadingScreen, false);
-		// Enable MainMenu if we not come back from playing a scenario level
-		if (gameData.selectedScenario == "" || gameData.selectedScenario == Utility.testFromUrl)
-			GameObjectManager.setGameObjectState(mainMenu, true);
-	}
-
-	private IEnumerator GetScenarioWebRequest()
-	{
-		string uri = new Uri(Application.streamingAssetsPath + "/WebGlData/ScenarioList.json").AbsoluteUri;
-		UnityWebRequest www = UnityWebRequest.Get(uri);
-		yield return www.SendWebRequest();
-
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			logs.text = "<color=\"red\">("+logs.GetComponent<Localization>().localization[4]+") " + uri + "</color>\n" + logs.text;
-			yield return new WaitForSeconds(0.5f);
-			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
-			{
-				logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
-				MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
-			}
-			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
-		}
-		else
-		{
-			webGL_fileLoaded++;
-			string scenarioJson = www.downloadHandler.text;
-			WebGlScenarioList scenarioListRaw = JsonConvert.DeserializeObject<WebGlScenarioList>(scenarioJson);
-			foreach (WebGlScenario scenarioRaw in scenarioListRaw.scenarios)
-			{
-				gameData.scenarios[scenarioRaw.key] = scenarioRaw;
-				foreach (DataLevel levelPath in scenarioRaw.levels)
-				{
-					levelPath.src = new Uri(Application.streamingAssetsPath + "/" + levelPath.src).AbsoluteUri;
-				}
-			}
-		}
-	}
-
-	private IEnumerator GetLevelsWebRequest()
-	{
-		string uri = new Uri(Application.streamingAssetsPath + "/WebGlData/LevelsList.json").AbsoluteUri;
-		UnityWebRequest www = UnityWebRequest.Get(uri);
-		yield return www.SendWebRequest();
-
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
-			yield return new WaitForSeconds(0.5f);
-			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
-			{
-				logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
-				MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
-			}
-			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
-		}
-		else
-		{
-			webGL_fileLoaded++;
-			string levelsJson = www.downloadHandler.text;
-			WebGlScenario levelsListRaw = JsonUtility.FromJson<WebGlScenario>(levelsJson);
-			webGL_fileToLoad += levelsListRaw.levels.Count;
-			// try to load all levels
-			foreach (DataLevel levelRaw in levelsListRaw.levels)
-				MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(new Uri(Application.streamingAssetsPath + "/" + levelRaw.src).AbsoluteUri));
-		}
-	}
-
-	private IEnumerator exploreLevelsAndScenarios(string path)
-	{
-		// try to load all child files
-		string[] files = Directory.GetFiles(path,"*.xml");
-		webGL_fileToLoad += files.Length;
-		foreach (string fileName in files)
-		{
-			yield return null;
-			MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest("file://"+fileName));
-		}
-
-		// explore subdirectories
-		foreach (string directory in Directory.GetDirectories(path))
-		{
-			yield return null;
-			MainLoop.instance.StartCoroutine(exploreLevelsAndScenarios(directory));
-		}
-	}
-
-	private IEnumerator GetLevelOrScenario_WebRequest(string uri)
-	{
-		UnityWebRequest www = UnityWebRequest.Get(uri);
-		yield return www.SendWebRequest();
-
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n"+ logs.text;
-			yield return new WaitForSeconds(0.5f);
-			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
-			{
-				logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
-				MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(uri));
-			}
-			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
-		}
-		else
-		{
-			webGL_fileLoaded++;
-			progress.text = Mathf.Floor(((float)webGL_fileLoaded / webGL_fileToLoad) * 100) + "%";
-			logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n"+ logs.text;
-			string xmlContent = www.downloadHandler.text;
-			try
-			{
-				LoadLevelOrScenario(uri, xmlContent);
-			}
-			catch (Exception e)
-			{
-				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri+" => "+e.Message+ "</color>\n" + logs.text;
-			}
-		}
-	}
-
-	// See ForceLaunch button
-	public void forceLaunch()
-    {
-		webGL_fileLoaded = webGL_fileToLoad;
-	}
-
-	public void LoadLevelOrScenario(string uri, string xmlContent)
-    {
-		XmlDocument doc = new XmlDocument();
-		doc.LoadXml(xmlContent);
-		Utility.removeComments(doc);
-		// a valid level must have only one tag "level" and no tag "scenario"
-		if (doc.GetElementsByTagName("level").Count == 1 && doc.GetElementsByTagName("scenario").Count == 0)
-			gameData.levels[new Uri(uri).AbsoluteUri] = doc.GetElementsByTagName("level")[0];
-		// a valid scenario must have only one tag "scenario"
-		else if (doc.GetElementsByTagName("scenario").Count == 1)
-			updateScenarioContent(uri, doc);
-		else
-			throw new Exception("\"" + uri + "\"" + gameData.GetComponent<Localization>().localization[21]);
-	}
-
-	public void updateScenarioContent(string uri, XmlDocument doc)
-	{
-		WebGlScenario scenario = new WebGlScenario();
-		scenario.key = Path.GetFileNameWithoutExtension(uri);
-		XmlNode xmlScenario = doc.GetElementsByTagName("scenario")[0];
-		if (xmlScenario.Attributes.GetNamedItem("name") != null)
-			scenario.name = xmlScenario.Attributes.GetNamedItem("name").Value;
-		else
-			scenario.name = scenario.key;
-		if (xmlScenario.Attributes.GetNamedItem("desc") != null)
-			scenario.description = xmlScenario.Attributes.GetNamedItem("desc").Value;
-		else
-			scenario.description = "";
-		scenario.levels = new List<DataLevel>();
-		foreach (XmlNode child in doc.GetElementsByTagName("scenario")[0])
-			if (child.Name.Equals("level"))
-			{
-				DataLevel dl = new DataLevel();
-				// get src
-				dl.src = new Uri(Application.streamingAssetsPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsoluteUri;
-
-				// get name
-				if (child.Attributes.GetNamedItem("name") != null)
-					dl.name = child.Attributes.GetNamedItem("name").Value;
-				else
-					// if not def, use file name
-					dl.name = Path.GetFileNameWithoutExtension(dl.src);
-
-				// load overrided dialogs
-				foreach (XmlNode subChild in child.ChildNodes)
-					if (subChild.Name.Equals("dialogs"))
-					{
-						dl.overridedDialogs = new List<Dialog>();
-						Utility.readXMLDialogs(subChild, dl.overridedDialogs);
-						break;
-					}
-
-				scenario.levels.Add(dl);
-			}
-		gameData.scenarios[scenario.key] = scenario;
 	}
 
 	private class JavaScriptData
@@ -542,7 +87,7 @@ public class TitleScreenSystem : FSystem {
 		public string content;
 	}
 
-	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/index.html) via le Wrapper du Système
+	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
 	public void importLevelOrScenario(string content)
 	{
 		Localization loc = gameData.GetComponent<Localization>();
@@ -550,7 +95,7 @@ public class TitleScreenSystem : FSystem {
 		try
 		{
 			string fakeUri = Application.streamingAssetsPath + "/Levels/LocalFiles/" + jsd.name; 
-			LoadLevelOrScenario(fakeUri, jsd.content);
+			UtilityLobby.LoadLevelOrScenario(gameData, fakeUri, jsd.content);
 			localCallback = null;
 			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[19], OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
 		}
@@ -573,7 +118,7 @@ public class TitleScreenSystem : FSystem {
 		//create scenarios' button
 		List<string> sortedScenarios = new List<string>();
 		foreach (string key in gameData.scenarios.Keys)
-			if (key != Utility.testFromScenarioEditor && key != Utility.testFromLevelEditor && key !=  Utility.testFromUrl && key != Utility.editingScenario) // we don't create a button for tested level
+			if (key != UtilityLobby.testFromScenarioEditor && key != UtilityLobby.testFromLevelEditor && key !=  UtilityLobby.testFromUrl && key != UtilityLobby.editingScenario) // we don't create a button for tested level
 				sortedScenarios.Add(key);
 		sortedScenarios.Sort();
 		foreach (string key in sortedScenarios)
@@ -626,7 +171,7 @@ public class TitleScreenSystem : FSystem {
 				if (comp.GetComponent<Competency>().referential == referentialName)
 				{
 					foreach (DataLevel levelKey in gameData.scenarios[content.GetChild(0).GetComponent<TMP_Text>().text].levels)
-						if (gameData.levels.ContainsKey(levelKey.src) && Utility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.src].OwnerDocument))
+						if (gameData.levels.ContainsKey(levelKey.src) && UtilityLobby.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.src].OwnerDocument))
 						{
 							txt += "\t" + Utility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
 							break;
@@ -699,21 +244,6 @@ public class TitleScreenSystem : FSystem {
 	public void launchScenarioEditor()
 	{
 		GameObjectManager.loadScene("ScenarioEditor");
-	}
-
-	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/index.html) via le Wrapper du Système
-	public void askToLoadLevel(string levelToLoad)
-    {
-		loadLevelWithURL = levelToLoad;
-	}
-
-	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/index.html) via le Wrapper du Système
-	public void enableSendStatement()
-	{
-		if (gameData == null)
-			webGL_askToEnableSendSystem = true;
-		else
-			gameData.sendStatementEnabled = true;
 	}
 
 	// See Quitter button in editor

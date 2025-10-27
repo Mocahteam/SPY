@@ -48,7 +48,7 @@ public class LevelGenerator : FSystem {
 	{
 		GameObject gameDataGO = GameObject.Find("GameData");
 		if (gameDataGO == null)
-			GameObjectManager.loadScene("TitleScreen");
+			GameObjectManager.loadScene("ConnexionScene");
 		else
 		{
 			gameData = gameDataGO.GetComponent<GameData>();

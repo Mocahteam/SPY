@@ -75,6 +75,7 @@ public class ScrollSystem : FSystem
         horizontalSpeed = newSpeed;
     }
 
+    // Fait remonter l'évènement de scroll sur le parent
     public void onScroll(GameObject target, BaseEventData ev)
     {
         ExecuteEvents.ExecuteHierarchy(target.transform.parent.gameObject, ev, ExecuteEvents.scrollHandler);

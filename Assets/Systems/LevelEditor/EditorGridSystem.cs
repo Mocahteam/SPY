@@ -6,6 +6,7 @@ using FYFY;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using FYFY_plugins.PointerManager;
+using UnityEngine.InputSystem;
 
 public class EditorGridSystem : FSystem
 {
@@ -41,6 +42,9 @@ public class EditorGridSystem : FSystem
 
 	private GameData gameData;
 
+	private InputAction click;
+	private InputAction rightClick;
+
 	public EditorGridSystem()
 	{
 		instance = this;
@@ -52,6 +56,9 @@ public class EditorGridSystem : FSystem
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
+
+		click = InputSystem.actions.FindAction("Click");
+		rightClick = InputSystem.actions.FindAction("RightClick");
 
 		resetGrid();
 		// Sélectionne par défaut la brush Select
@@ -88,7 +95,7 @@ public class EditorGridSystem : FSystem
 		else
 			tooltip.ShowTooltip(IntToLetters(pos.x)+" "+(pos.y+1));
 
-		if (Input.GetMouseButton(0) && !canBePlaced(activeBrush, pos.y, pos.x))
+		if (click.WasPressedThisFrame() && !canBePlaced(activeBrush, pos.y, pos.x))
 		{
 			setBrush(brushSelect);
 			return;
@@ -100,7 +107,7 @@ public class EditorGridSystem : FSystem
 			return;
 		}
 
-		if (Input.GetMouseButtonDown(1) && paintableGrid.floorObjects.ContainsKey(posTuple))
+		if (rightClick.WasPressedThisFrame() && paintableGrid.floorObjects.ContainsKey(posTuple))
 		{
 			resetTile(pos.y, pos.x);
 			return;
@@ -115,7 +122,7 @@ public class EditorGridSystem : FSystem
 		if (placingCursor != null)
 			Cursor.SetCursor(placingCursor, new Vector2(placingCursor.width / 2.0f, placingCursor.height / 2.0f), CursorMode.Auto);
 
-		if (f_UIfocused.Count == 0 && Input.GetMouseButton(0) && activeBrush != Cell.Select)
+		if (f_UIfocused.Count == 0 && click.WasPressedThisFrame() && activeBrush != Cell.Select)
 			setTile(pos.y, pos.x, activeBrush);
 	}
 

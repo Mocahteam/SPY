@@ -1,16 +1,12 @@
 using FYFY;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Networking;
 
 // Peuple les listes déroulantes pour sélectionner les référentiels + charge chaque compétence en GameObject
 public class CompetenciesLoader : FSystem
 {
-	private Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
 	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
 
 	// L'instance
@@ -19,7 +15,6 @@ public class CompetenciesLoader : FSystem
 	public GameObject prefabComp; // si null => ne pas transformer chaque compétence en gameObject
 
 	private GameData gameData;
-	private UnityAction localCallback;
 
 	public CompetenciesLoader()
 	{
@@ -32,50 +27,8 @@ public class CompetenciesLoader : FSystem
 		if (go != null)
 		{
 			gameData = go.GetComponent<GameData>();
-			if (gameData.rawReferentials.referentials.Count == 0)
-			{
-				// load competencies (required for level analysis)
-				string referentialsPath = new Uri(Application.streamingAssetsPath + "/Competencies/competenciesReferential.json").AbsoluteUri;
-				MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath));
-			}
-			else
-			{
-				createReferentials();
-				createCompetencies();
-			}
-		}
-	}
-
-	private IEnumerator GetCompetenciesWebRequest(string referentialsPath)
-	{
-		UnityWebRequest www = UnityWebRequest.Get(referentialsPath);
-		yield return www.SendWebRequest();
-
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			Localization loc = gameData.GetComponent<Localization>();
-			localCallback = null;
-			localCallback += delegate { MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath)); };
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[6], referentialsPath, www.error), OkButton = loc.localization[5], CancelButton = loc.localization[2], call = localCallback });
-		}
-		else
-		{
-			while (f_localizationLoaded.Count == 0) // waiting localization loaded
-				yield return null;
-
-			try
-			{
-				gameData.lastReferentialSelected = 0;
-				gameData.rawReferentials = JsonUtility.FromJson<RawListReferential>(www.downloadHandler.text);
-				createReferentials();
-				createCompetencies();
-			}
-			catch (Exception e)
-			{
-				Localization loc = gameData.GetComponent<Localization>();
-				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[7], e.Message), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
-			}
+			createReferentials();
+			createCompetencies();
 		}
 	}
 

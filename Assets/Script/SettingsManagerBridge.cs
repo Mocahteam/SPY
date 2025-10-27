@@ -3,6 +3,16 @@ using UnityEngine;
 // Used in ForBloc
 public class SettingsManagerBridge : MonoBehaviour
 {
+	public void resetParameters()
+    {
+		SettingsManager.instance.resetParameters();
+	}
+
+	public void saveParameters()
+    {
+		SettingsManager.instance.saveParameters();
+	}
+
 	public void setQualitySetting(int value)
     {
         SettingsManager.instance.setQualitySetting(value);
@@ -23,8 +33,18 @@ public class SettingsManagerBridge : MonoBehaviour
 		SettingsManager.instance.decreaseUISize();
 	}
 
-	public void setWallTransparency(bool state)
+	public void setWallTransparency(int value)
     {
-		SettingsManager.instance.setWallTransparency(state);
+		SettingsManager.instance.setWallTransparency(value);
     }
+
+	public void setGameView(int value)
+    {
+		SettingsManager.instance.setGameView(value);
+    }
+
+	public void hookListener(string key)
+    {
+		SettingsManager.instance.hookListener(key); 
+	}
 }

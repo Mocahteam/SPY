@@ -3,22 +3,20 @@ using FYFY;
 using UnityEngine.Localization.Settings;
 using System.Collections;
 using System.Runtime.InteropServices;
+using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// This system is in charge to load the correct localization
 /// </summary>
 public class SyncLocalization : FSystem {
 
-    private Family f_selector = FamilyManager.getFamily(new AllOfComponents(typeof(ItemSelector)));
+    private Family f_langOptions = FamilyManager.getFamily(new AllOfComponents(typeof(LangOption), typeof(Button)));
 
     /// <summary>
-    /// The current item selected
+    /// The current language selected
     /// </summary>
-    private int currentItemSelected;
-    /// <summary>
-    /// The list of selectable items
-    /// </summary>
-    public string[] items;
+    private int currentLangSelected;
 
     [DllImport("__Internal")]
     private static extern string GetBrowserLanguage(); // call javascript
@@ -43,60 +41,46 @@ public class SyncLocalization : FSystem {
         // wait for the Localization initialization operation to complete.
         yield return LocalizationSettings.InitializationOperation;
         // Now, we can switch to appropriate language
-        currentItemSelected = 0;
+        currentLangSelected = 0;
         if (PlayerPrefs.HasKey("localization"))
-            currentItemSelected = PlayerPrefs.GetInt("localization");
+            currentLangSelected = PlayerPrefs.GetInt("localization");
         else if (Application.platform == RuntimePlatform.WebGLPlayer)
         {
             string locale = GetBrowserLanguage();
             if (locale == "fr")
-                currentItemSelected = 0;
+                currentLangSelected = 0;
             else
-                currentItemSelected = 1;
+                currentLangSelected = 1;
         }
         syncLocale();
-        // wait again if locale change
-        yield return LocalizationSettings.InitializationOperation;
-
-        // Uggly! Force to refresh localization (something wrong on MainMenu in WebGl context...)
-        nextItem();
-        prevItem();
+        PlayerPrefs.SetInt("localization", currentLangSelected);
+        PlayerPrefs.Save();
 
         GameObjectManager.addComponent<LocalizationLoaded>(MainLoop.instance.gameObject);
     }
 
     public void syncLocale()
     {
-        foreach (GameObject select in f_selector)
+        foreach (GameObject option in f_langOptions)
         {
-            ItemSelector itemSel = select.GetComponent<ItemSelector>();
-            itemSel.itemUI.text = items[currentItemSelected];
+            ColorBlock colors = option.GetComponent<Button>().colors;
+            LangOption langOpt = option.GetComponent<LangOption>();
+            if ((int)langOpt.lang == currentLangSelected)
+                colors.normalColor = langOpt.on;
+            else
+                colors.normalColor = langOpt.off;
+            option.GetComponent<Button>().colors = colors;
         }
-        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[currentItemSelected];
-        PlayerPrefs.SetInt("localization", currentItemSelected);
+        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[currentLangSelected];
         if (Application.platform == RuntimePlatform.WebGLPlayer)
-            UpdateHTMLLanguage(currentItemSelected == 0 ? "fr" : "en");
+            UpdateHTMLLanguage(currentLangSelected == 0 ? "fr" : "en");
     }
 
-    /// <summary>
-    /// Select the next item in the list (come back at the beginning of the list if the end is reached)
-    /// </summary>
-    public void nextItem()
+    public void changeLang(LangOption.LangType lang)
     {
-        currentItemSelected++;
-        if (currentItemSelected >= items.Length)
-            currentItemSelected = 0;
+        currentLangSelected = (int)lang;
         syncLocale();
-    }
-
-    /// <summary>
-    /// Select the previous item in the list (return the last item if we try to access item before the first item)
-    /// </summary>
-    public void prevItem()
-    {
-        currentItemSelected--;
-        if (currentItemSelected < 0)
-            currentItemSelected = items.Length - 1;
-        syncLocale();
+        PlayerPrefs.SetInt("localization", currentLangSelected);
+        PlayerPrefs.Save();
     }
 }

@@ -43,7 +43,7 @@ public class UserData : MonoBehaviour {
 				gd.actionsHistory = null;
 				yield return null;
 				yield return null;
-				GameObjectManager.loadScene("TitleScreen");
+				GameObjectManager.loadScene("ConnexionScene");
 			}
 		}
 	}

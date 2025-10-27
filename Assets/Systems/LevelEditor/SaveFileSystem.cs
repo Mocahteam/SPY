@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using UnityEngine.EventSystems;
 using System.Xml;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 public class SaveFileSystem : FSystem
 {
@@ -34,6 +35,8 @@ public class SaveFileSystem : FSystem
 	private GameData gameData;
 	private UnityAction localCallback;
 
+	private InputAction save;
+
 	[DllImport("__Internal")]
 	private static extern void Save(string content, string defaultName); // call javascript
 
@@ -48,12 +51,13 @@ public class SaveFileSystem : FSystem
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
+
+		save = InputSystem.actions.FindAction("Save");
 	}
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-		if((Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.S)) ||
-		   Input.GetKey(KeyCode.LeftCommand) && Input.GetKeyDown(KeyCode.S))
+		if(save.WasPressedThisFrame())
 			displaySavingPanel();
 	}
 
@@ -64,15 +68,15 @@ public class SaveFileSystem : FSystem
 		XmlDocument doc = new XmlDocument();
 		doc.LoadXml(exportXML);
 		Utility.removeComments(doc);
-		gameData.levels[Utility.testFromLevelEditor] = doc.GetElementsByTagName("level")[0];
-		gameData.selectedScenario = Utility.testFromLevelEditor;
+		gameData.levels[UtilityLobby.testFromLevelEditor] = doc.GetElementsByTagName("level")[0];
+		gameData.selectedScenario = UtilityLobby.testFromLevelEditor;
 		WebGlScenario test = new WebGlScenario();
 		test.levels = new List<DataLevel>();
 		DataLevel dl = new DataLevel();
-		dl.src = Utility.testFromLevelEditor;
-		dl.name = Utility.testFromLevelEditor;
+		dl.src = UtilityLobby.testFromLevelEditor;
+		dl.name = UtilityLobby.testFromLevelEditor;
 		test.levels.Add(dl);
-		gameData.scenarios[Utility.testFromLevelEditor] = test;
+		gameData.scenarios[UtilityLobby.testFromLevelEditor] = test;
 		gameData.levelToLoad = 0;
 		GameObjectManager.loadScene("MainScene");
 	}
@@ -90,7 +94,7 @@ public class SaveFileSystem : FSystem
 	public void saveXmlFile()
 	{
 		Localization loc = gameData.GetComponent<Localization>();
-		if (!Utility.CheckSaveNameValidity(saveName.text))
+		if (!UtilityEditor.CheckSaveNameValidity(saveName.text))
 		{
 			localCallback = null;
 			string invalidChars = "";
@@ -288,7 +292,7 @@ public class SaveFileSystem : FSystem
 			{
 				Highlightable h = editorViewportScriptContainer.GetChild(j).GetComponent<Highlightable>();
 				if (h != null)
-					levelExport += Utility.exportBlockToString(h, null, Utility.ExportType.XML, 2);
+					levelExport += UtilityGame.exportBlockToString(h, null, UtilityGame.ExportType.XML, 2);
 			}
 			levelExport += "\t</script>\n\n";
 		}

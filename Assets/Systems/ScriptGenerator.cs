@@ -69,7 +69,7 @@ public class ScriptGenerator : FSystem {
 					GameObject tmpContainer = GameObject.Instantiate(scriptRef.executableScript);
 					foreach (GameObject go in script)
 						go.transform.SetParent(tmpContainer.transform, false); //add actions to container
-					Utility.fillExecutablePanel(tmpContainer, scriptRef.executableScript, drone.tag);
+					UtilityGame.fillExecutablePanel(tmpContainer, scriptRef.executableScript, drone.tag);
 					// bind all child (except the first "header")
 					for (int i = 1; i < scriptRef.executableScript.transform.childCount; i++)
 						GameObjectManager.bind(scriptRef.executableScript.transform.GetChild(i).gameObject);
@@ -103,7 +103,7 @@ public class ScriptGenerator : FSystem {
 		// The first child of a control container is an emptySolt
 		GameObject emptySlot = gameContainer.GetChild(0).gameObject;
 		foreach (XmlNode eleNode in xmlContainer.ChildNodes)
-			Utility.addItemOnDropArea(readXMLInstruction(eleNode), emptySlot);
+			UtilityGame.addItemOnDropArea(readXMLInstruction(eleNode), emptySlot);
 	}
 
 	// Transforme le noeud d'action XML en gameObject élément/opérator
@@ -114,7 +114,7 @@ public class ScriptGenerator : FSystem {
 		switch (conditionNode.Name)
 		{
 			case "and":
-				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("AndOperator"), mainCanvas);
+				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("AndOperator"), mainCanvas);
 				slots = obj.GetComponentsInChildren<ReplacementSlot>(true);
 				if (conditionNode.HasChildNodes)
 				{
@@ -132,7 +132,7 @@ public class ScriptGenerator : FSystem {
 							// Parse xml condition
 							GameObject child = readXMLCondition(andNode.FirstChild);
 							// Add child to empty zone
-							Utility.addItemOnDropArea(child, emptyZone);
+							UtilityGame.addItemOnDropArea(child, emptyZone);
 						}
 						emptyZone = null;
 					}
@@ -140,7 +140,7 @@ public class ScriptGenerator : FSystem {
 				break;
 
 			case "or":
-				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("OrOperator"), mainCanvas);
+				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("OrOperator"), mainCanvas);
 				slots = obj.GetComponentsInChildren<ReplacementSlot>(true);
 				if (conditionNode.HasChildNodes)
 				{
@@ -158,7 +158,7 @@ public class ScriptGenerator : FSystem {
 							// Parse xml condition
 							GameObject child = readXMLCondition(orNode.FirstChild);
 							// Add child to empty zone
-							Utility.addItemOnDropArea(child, emptyZone);
+							UtilityGame.addItemOnDropArea(child, emptyZone);
 						}
 						emptyZone = null;
 					}
@@ -166,17 +166,17 @@ public class ScriptGenerator : FSystem {
 				break;
 
 			case "not":
-				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("NotOperator"), mainCanvas);
+				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("NotOperator"), mainCanvas);
 				if (conditionNode.HasChildNodes)
 				{
 					GameObject emptyZone = obj.transform.Find("Container").GetChild(1).gameObject;
 					GameObject child = readXMLCondition(conditionNode.FirstChild);
 					// Add child to empty zone
-					Utility.addItemOnDropArea(child, emptyZone);
+					UtilityGame.addItemOnDropArea(child, emptyZone);
 				}
 				break;
 			case "captor":
-				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName(conditionNode.Attributes.GetNamedItem("type").Value), mainCanvas);
+				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(conditionNode.Attributes.GetNamedItem("type").Value), mainCanvas);
 				break;
 		}
 
@@ -208,7 +208,7 @@ public class ScriptGenerator : FSystem {
 		switch (actionNode.Name)
 		{
 			case "if":
-				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("IfThen"), mainCanvas);
+				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("IfThen"), mainCanvas);
 
 				conditionContainer = obj.transform.Find("ConditionContainer");
 				firstContainerBloc = obj.transform.Find("Container");
@@ -226,7 +226,7 @@ public class ScriptGenerator : FSystem {
 							// Parse xml condition
 							GameObject child = readXMLCondition(containerNode.FirstChild);
 							// Add child to empty zone
-							Utility.addItemOnDropArea(child, emptyZone);
+							UtilityGame.addItemOnDropArea(child, emptyZone);
 						}
 					}
 					else if (containerNode.Name == "container")
@@ -238,7 +238,7 @@ public class ScriptGenerator : FSystem {
 				break;
 
 			case "ifElse":
-				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("IfElse"), mainCanvas);
+				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("IfElse"), mainCanvas);
 				conditionContainer = obj.transform.Find("ConditionContainer");
 				firstContainerBloc = obj.transform.Find("Container");
 				secondContainerBloc = obj.transform.Find("ElseContainer");
@@ -256,7 +256,7 @@ public class ScriptGenerator : FSystem {
 							// Parse xml condition
 							GameObject child = readXMLCondition(containerNode.FirstChild);
 							// Add child to empty zone
-							Utility.addItemOnDropArea(child, emptyZone);
+							UtilityGame.addItemOnDropArea(child, emptyZone);
 						}
 					}
 					else if (containerNode.Name == "thenContainer")
@@ -273,7 +273,7 @@ public class ScriptGenerator : FSystem {
 				break;
 
 			case "for":
-				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("ForLoop"), mainCanvas);
+				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("ForLoop"), mainCanvas);
 				firstContainerBloc = obj.transform.Find("Container");
 				BaseElement action = obj.GetComponent<ForControl>();
 
@@ -285,7 +285,7 @@ public class ScriptGenerator : FSystem {
 				break;
 
 			case "while":
-				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("While"), mainCanvas);
+				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("While"), mainCanvas);
 				firstContainerBloc = obj.transform.Find("Container");
 				conditionContainer = obj.transform.Find("ConditionContainer");
 
@@ -302,7 +302,7 @@ public class ScriptGenerator : FSystem {
 							// Parse xml condition
 							GameObject child = readXMLCondition(containerNode.FirstChild);
 							// Add child to empty zone
-							Utility.addItemOnDropArea(child, emptyZone);
+							UtilityGame.addItemOnDropArea(child, emptyZone);
 						}
 					}
 					else if (containerNode.Name == "container")
@@ -314,14 +314,14 @@ public class ScriptGenerator : FSystem {
 				break;
 
 			case "forever":
-				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName("Forever"), mainCanvas);
+				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("Forever"), mainCanvas);
 				firstContainerBloc = obj.transform.Find("Container");
 
 				if (actionNode.HasChildNodes)
 					processXMLInstruction(firstContainerBloc, actionNode);
 				break;
 			case "action":
-				obj = Utility.createEditableBlockFromLibrary(getLibraryItemByName(actionNode.Attributes.GetNamedItem("type").Value), mainCanvas);
+				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(actionNode.Attributes.GetNamedItem("type").Value), mainCanvas);
 				break;
 		}
 

@@ -207,7 +207,7 @@ public class ParamCompetenceSystem : FSystem
 		// default, select all levels
 		List<XmlNode> selectedLevels = new List<XmlNode>();
 		foreach (KeyValuePair<string, XmlNode> level in gameData.levels)
-			if (level.Key != Utility.testFromScenarioEditor && level.Key != Utility.testFromLevelEditor && level.Key != Utility.testFromUrl) // we don't add new line for tested levels
+			if (level.Key != UtilityLobby.testFromScenarioEditor && level.Key != UtilityLobby.testFromLevelEditor && level.Key != UtilityLobby.testFromUrl) // we don't add new line for tested levels
 				selectedLevels.Add(level.Value);
 
 		// now, identify selected competencies
@@ -223,7 +223,7 @@ public class ParamCompetenceSystem : FSystem
 				// parse all levels
 				for (int l = selectedLevels.Count - 1; l >= 0; l--)
 				{
-					if (!Utility.isCompetencyMatchWithLevel(competency, selectedLevels[l].OwnerDocument))
+					if (!UtilityLobby.isCompetencyMatchWithLevel(competency, selectedLevels[l].OwnerDocument))
 						selectedLevels.RemoveAt(l);
 				}
 				if (competenciesSelected != "")
@@ -306,9 +306,9 @@ public class ParamCompetenceSystem : FSystem
 				GameObjectManager.bind(level);
 			}
 		}
-		if (gameData.selectedScenario == Utility.testFromScenarioEditor)
+		if (gameData.selectedScenario == UtilityLobby.testFromScenarioEditor)
 		{
-			loadScenario(Utility.editingScenario);
+			loadScenario(UtilityLobby.editingScenario);
 			DataLevel dl = gameData.scenarios[gameData.selectedScenario].levels[0];
 			showLevelInfo(Utility.extractFileName(dl.src), dl);
 			gameData.selectedScenario = "";
@@ -331,7 +331,7 @@ public class ParamCompetenceSystem : FSystem
 		List<string> sortedScenarios = new List<string>();
 		foreach (string key in gameData.scenarios.Keys)
 		{
-			if (key != Utility.testFromScenarioEditor && key != Utility.testFromLevelEditor && key != Utility.testFromUrl && key != Utility.editingScenario && key.Contains(filter)) // we don't add new line for tested levels
+			if (key != UtilityLobby.testFromScenarioEditor && key != UtilityLobby.testFromLevelEditor && key != UtilityLobby.testFromUrl && key != UtilityLobby.editingScenario && key.Contains(filter)) // we don't add new line for tested levels
 				sortedScenarios.Add(key);
 		}
 		sortedScenarios.Sort();
@@ -459,7 +459,7 @@ public class ParamCompetenceSystem : FSystem
 				txt = "";
 				foreach (GameObject comp in f_UI_competencies)
 				{
-					if (Utility.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), levelSelected.OwnerDocument))
+					if (UtilityLobby.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), levelSelected.OwnerDocument))
 						txt += "\t" + comp.GetComponent<Competency>().GetComponentInChildren<TMP_Text>().text + "\n";
 				}
 				if (txt != "")
@@ -578,7 +578,7 @@ public class ParamCompetenceSystem : FSystem
 	public void saveScenario(TMP_InputField scenarioName)
 	{
 		Localization loc = gameData.GetComponent<Localization>();
-		if (!Utility.CheckSaveNameValidity(scenarioName.text))
+		if (!UtilityEditor.CheckSaveNameValidity(scenarioName.text))
 		{
 			localCallback = null;
 			string invalidChars = "";
@@ -656,7 +656,7 @@ public class ParamCompetenceSystem : FSystem
 			Save(buildScenarioContent(), scenarioName.text);
 			// Add/Replace scenario content in memory
 			string fakeUri = Application.streamingAssetsPath + "/Scenario/LocalFiles/" + scenarioName.text;
-			TitleScreenSystem.instance.updateScenarioContent(new Uri(fakeUri).AbsoluteUri, doc);
+			UtilityLobby.updateScenarioContent(gameData, new Uri(fakeUri).AbsoluteUri, doc);
 		}
 		else
 		{
@@ -669,7 +669,7 @@ public class ParamCompetenceSystem : FSystem
 				// Write on disk
 				File.WriteAllText(path, scenarioExport);
 				// Add/Replace scenario content in memory
-				TitleScreenSystem.instance.updateScenarioContent(path, doc);
+				UtilityLobby.updateScenarioContent(gameData, path, doc);
 
 				localCallback = null;
 				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[14], Application.persistentDataPath, "Scenario", scenarioName.text), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
@@ -828,8 +828,8 @@ public class ParamCompetenceSystem : FSystem
 	{
 		// We save the scenario currently edited
 		// We can't use GameObjectManager because the update has to be done immediately due to scene loading in testLevel function
-		TitleScreenSystem.instance.LoadLevelOrScenario(Utility.editingScenario, buildScenarioContent());
-		testLevel(dlb.data, Utility.testFromScenarioEditor);
+		UtilityLobby.LoadLevelOrScenario(gameData, UtilityLobby.editingScenario, buildScenarioContent());
+		testLevel(dlb.data, UtilityLobby.testFromScenarioEditor);
 	}
 
 	private void testLevel(DataLevel dl, string context)
@@ -848,7 +848,7 @@ public class ParamCompetenceSystem : FSystem
 		DataLevel dl = new DataLevel();
 		dl.src = new Uri(Application.streamingAssetsPath + "/" + levelToLoad).AbsoluteUri;
 		dl.name = Path.GetFileNameWithoutExtension(dl.src);
-		testLevel(dl, Utility.testFromUrl);
+		testLevel(dl, UtilityLobby.testFromUrl);
 	}
 
 	public void downloadLevel(DataLevelBehaviour dlb)
@@ -861,7 +861,7 @@ public class ParamCompetenceSystem : FSystem
 		// select all levels
 		List<XmlNode> selectedLevels = new List<XmlNode>();
 		foreach (KeyValuePair<string, XmlNode> level in gameData.levels)
-			if (level.Key != Utility.testFromScenarioEditor && level.Key != Utility.testFromLevelEditor && level.Key != Utility.testFromUrl) // we don't add new line for tested levels
+			if (level.Key != UtilityLobby.testFromScenarioEditor && level.Key != UtilityLobby.testFromLevelEditor && level.Key != UtilityLobby.testFromUrl) // we don't add new line for tested levels
 				selectedLevels.Add(level.Value);
 
 		// export all competency id
@@ -872,12 +872,12 @@ public class ParamCompetenceSystem : FSystem
 		// parse all levels
 		foreach (KeyValuePair<string, XmlNode> level in gameData.levels)
 		{
-			if (level.Key != Utility.testFromScenarioEditor && level.Key != Utility.testFromLevelEditor && level.Key != Utility.testFromUrl) // we don't export competencies for tested levels
+			if (level.Key != UtilityLobby.testFromScenarioEditor && level.Key != UtilityLobby.testFromLevelEditor && level.Key != UtilityLobby.testFromUrl) // we don't export competencies for tested levels
 			{
 				csvExport += Utility.extractFileName(level.Key);
 				// check all competencies
 				for (int c = 0; c < f_UI_competencies.Count; c++)
-					csvExport += "\t"+(Utility.isCompetencyMatchWithLevel(f_UI_competencies.getAt(c).GetComponent<Competency>(), level.Value.OwnerDocument) ? "1" : "0");
+					csvExport += "\t"+(UtilityLobby.isCompetencyMatchWithLevel(f_UI_competencies.getAt(c).GetComponent<Competency>(), level.Value.OwnerDocument) ? "1" : "0");
 			}
 			csvExport += "\n";
 		}

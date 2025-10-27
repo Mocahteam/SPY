@@ -4,6 +4,8 @@ using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.UI;
 
 public class TTSSystem : FSystem
@@ -29,7 +31,7 @@ public class TTSSystem : FSystem
     private GameData gameData;
     private GameObject previousSelectedGO;
     private GameObject previousFocusedGO;
-    private Vector3 previousMousePosition;
+    private Vector2 previousMousePosition;
 
     public EventSystem eventSystem;
 
@@ -82,8 +84,9 @@ public class TTSSystem : FSystem
 
     private void onNewFocus(GameObject focused)
     {
-        // Ne définir le TTS que si la position de la souris à changé
-        if (previousMousePosition != Input.mousePosition)
+        // Ne définir le TTS que si la position de la souris a changé
+        Vector2Control pointerPos = Pointer.current.position;
+        if (previousMousePosition != new Vector2(pointerPos.x.value, pointerPos.y.value))
             defTTS(focused);
     }
 
@@ -176,7 +179,8 @@ public class TTSSystem : FSystem
         else
             Debug.Log(content + suffix);
 
-        previousMousePosition = Input.mousePosition;
+        Vector2Control pointerPos = Pointer.current.position;
+        previousMousePosition = new Vector2(pointerPos.x.value, pointerPos.y.value);
         previousFocusedGO = focused;
     }
 

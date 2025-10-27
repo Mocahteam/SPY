@@ -7,6 +7,7 @@ using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using FYFY_plugins.PointerManager;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class TilePopupSystem : FSystem
 {
@@ -32,6 +33,11 @@ public class TilePopupSystem : FSystem
 	private const string PathXmlPrefix = "Modern Furniture/Prefabs/";
 	private FloorObject selectedObject;
 
+	private InputAction click;
+	private InputAction rightClick;
+	private InputAction cancel;
+	private InputAction exitWebGL;
+
 	private List<string> furnitureNameToPath = new List<string>();
 
 	public TilePopupSystem()
@@ -45,6 +51,11 @@ public class TilePopupSystem : FSystem
 		hideAllPopups();
 		initFurniturePopup();
 		selectedObject = null;
+
+		click = InputSystem.actions.FindAction("Click");
+		rightClick = InputSystem.actions.FindAction("RightClick");
+		cancel = InputSystem.actions.FindAction("Cancel");
+		exitWebGL = InputSystem.actions.FindAction("ExitWebGL");
 	}
 
 	private void initFurniturePopup()
@@ -69,24 +80,24 @@ public class TilePopupSystem : FSystem
 		Vector2Int pos = UtilityEditor.mousePosToGridPos(paintableGrid.GetComponent<Tilemap>());
 		Tuple<int, int> posTuple = new Tuple<int, int>(pos.y, pos.x);
 
-		if (Input.GetMouseButtonDown(1) && selectedObject != null && selectedObject.line == pos.y && selectedObject.col == pos.x)
+		if (rightClick.WasPressedThisFrame() && selectedObject != null && selectedObject.line == pos.y && selectedObject.col == pos.x)
 		{
 			selectedObject = null;
 		}
 
-		if (Input.GetMouseButtonDown(0) && paintableGrid.floorObjects.ContainsKey(posTuple) && paintableGrid.floorObjects[posTuple].selectable)
+		if (click.WasPressedThisFrame() && paintableGrid.floorObjects.ContainsKey(posTuple) && paintableGrid.floorObjects[posTuple].selectable)
 		{
 			selectedObject = paintableGrid.floorObjects[posTuple];
 		}
 
 		// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
-		if (f_activePopups.Count > 0 && (virtualKeyboard == null || !virtualKeyboard.activeInHierarchy) && ((Input.GetKeyDown(KeyCode.Escape) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))) || selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && Input.GetMouseButtonDown(0) && f_focusedPopups.Count == 0)))
+		if (f_activePopups.Count > 0 && (virtualKeyboard == null || !virtualKeyboard.activeInHierarchy) && ((cancel.WasPressedThisFrame() && !exitWebGL.WasPressedThisFrame()) || selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && click.WasPressedThisFrame() && f_focusedPopups.Count == 0)))
 		{
 			hideAllPopups();
 			selectedObject = null; // be sure
 		}
 
-		if (Input.GetMouseButtonDown(0) && selectedObject != null && f_focusedPopups.Count == 0)
+		if (click.WasPressedThisFrame() && selectedObject != null && f_focusedPopups.Count == 0)
 		{
 			hideAllPopups();
 			GameObjectManager.setGameObjectState(orientationPopup.transform.parent.parent.parent.gameObject, true);

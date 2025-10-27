@@ -92,7 +92,7 @@ public class HistoryManager : FSystem
 				Transform child = viewportForEditableContainer.GetChild(0).GetChild(i);
 				if (child.GetComponent<BaseElement>())
 				{
-					Utility.manageEmptyZone(child.gameObject);
+					UtilityGame.manageEmptyZone(child.gameObject);
 					GameObjectManager.unbind(child.gameObject);
 					child.SetParent(null); // because destroying is not immediate
 					GameObject.Destroy(child.gameObject);
@@ -127,7 +127,7 @@ public class HistoryManager : FSystem
 				{
 					for (int i = 0; i < minNbOfInaction; i++)
 					{
-						GameObject newWait = Utility.createEditableBlockFromLibrary(libraryWait, canvas);
+						GameObject newWait = UtilityGame.createEditableBlockFromLibrary(libraryWait, canvas);
 						newWait.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
 						newWait.transform.SetAsLastSibling();
 						gameData.totalActionBlocUsed++;
@@ -136,14 +136,14 @@ public class HistoryManager : FSystem
 				else if (minNbOfInaction > 1)
 				{
 					// Create for control
-					ForControl forCont = Utility.createEditableBlockFromLibrary(libraryFor, canvas).GetComponent<ForControl>();
+					ForControl forCont = UtilityGame.createEditableBlockFromLibrary(libraryFor, canvas).GetComponent<ForControl>();
 					forCont.currentFor = 0;
 					forCont.nbFor = minNbOfInaction;
 					forCont.transform.GetComponentInChildren<TMP_InputField>(true).text = forCont.nbFor.ToString();
 					forCont.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
 					// Create Wait action
 					Transform forContainer = forCont.transform.Find("Container");
-					GameObject newWait = Utility.createEditableBlockFromLibrary(libraryWait, canvas);
+					GameObject newWait = UtilityGame.createEditableBlockFromLibrary(libraryWait, canvas);
 					newWait.transform.SetParent(forContainer, false);
 					newWait.transform.SetAsFirstSibling();
 					// Set drop/empty zone

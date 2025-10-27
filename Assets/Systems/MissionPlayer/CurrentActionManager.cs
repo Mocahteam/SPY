@@ -155,7 +155,7 @@ public class CurrentActionManager : FSystem
 				ForControl forCont = action.GetComponent<ForControl>();
 				// pulse counter
 				if (forCont.gameObject.activeInHierarchy)
-					forCont.StartCoroutine(Utility.pulseItem(forCont.transform.GetChild(1).GetChild(1).gameObject));
+					forCont.StartCoroutine(UtilityGame.pulseItem(forCont.transform.GetChild(1).GetChild(1).gameObject));
 				// check if this ForControl include a child and nb iteration != 0 and end loop not reached
 				if (forCont.firstChild != null && forCont.nbFor != 0 && forCont.currentFor < forCont.nbFor)
 				{
@@ -334,7 +334,7 @@ public class CurrentActionManager : FSystem
 		// notification de l'évaluation 
 		GameObject notif = ele.target.transform.Find(ifok ? "true" : "false").gameObject;
 		GameObjectManager.setGameObjectState(notif, true);
-		MainLoop.instance.StartCoroutine(Utility.pulseItem(notif));
+		MainLoop.instance.StartCoroutine(UtilityGame.pulseItem(notif));
 		return ifok;
 
 	}
@@ -397,7 +397,7 @@ public class CurrentActionManager : FSystem
 		else if(currentAction.GetComponent<ForControl>()){
 			ForControl forAct = currentAction.GetComponent<ForControl>();
 			// pulse counter
-			forAct.StartCoroutine(Utility.pulseItem(forAct.transform.GetChild(1).GetChild(1).gameObject));
+			forAct.StartCoroutine(UtilityGame.pulseItem(forAct.transform.GetChild(1).GetChild(1).gameObject));
 			// ForAction reach the number of iterations
 			if (forAct.currentFor >= forAct.nbFor){
 				// reset nb iteration to 0
