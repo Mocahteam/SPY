@@ -10055,6 +10055,36 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 560793717}
     m_Modifications:
+    - target: {fileID: 4822730813640479677, guid: 44a902a8db4c35b4481db0d54b1edb95,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4822730813640479677, guid: 44a902a8db4c35b4481db0d54b1edb95,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4822730813640479677, guid: 44a902a8db4c35b4481db0d54b1edb95,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4822730813640479677, guid: 44a902a8db4c35b4481db0d54b1edb95,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4822730813640479677, guid: 44a902a8db4c35b4481db0d54b1edb95,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4822730813640479677, guid: 44a902a8db4c35b4481db0d54b1edb95,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6605428312051163131, guid: 44a902a8db4c35b4481db0d54b1edb95,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -11648,6 +11678,12 @@ MonoBehaviour:
   defaultNormalColor_Button: {r: 1, g: 1, b: 1, a: 0}
   defaultNormalColor_ButtonIcon: {r: 0, g: 0, b: 0, a: 1}
   defaultHighlightedColor: {r: 1, g: 0.69803923, b: 0.21960784, a: 1}
+  defaultPressedColor: {r: 0.7607843, g: 0.36862746, b: 0, a: 1}
+  defaultSelectedColor: {r: 0.9137255, g: 0.49803922, b: 0.007843138, a: 1}
+  defaultDisabledColor: {r: 0.73333335, g: 0.73333335, b: 0.73333335, a: 0.5019608}
+  defaultColor_Panel: {r: 1, g: 1, b: 1, a: 1}
+  defaultColor_PanelTexture: {r: 0, g: 0, b: 0, a: 0.02745098}
+  defaultColor_Border: {r: 0.3019608, g: 0.3019608, b: 0.3019608, a: 1}
 --- !u!114 &1645587994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11697,7 +11733,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e528e861361583a4daea89269d70eee8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textSelectedColor: {r: 0.92941177, g: 0.46666667, b: 0.12156863, a: 1}
   autoFocusProrityOnTab:
   - {fileID: 1213388586}
   - {fileID: 0}

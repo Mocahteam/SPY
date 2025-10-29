@@ -14,7 +14,6 @@ public class UINavigationManager : FSystem
 
 	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
-	public Color textSelectedColor = new Color(0, 183, 255, 255);
 	public List<GameObject> autoFocusProrityOnTab;
 	private GameObject lastSelected;
 	public EventSystem eventSystem;
@@ -171,12 +170,6 @@ public class UINavigationManager : FSystem
 	private void onNewUnselectableText(GameObject text)
     {
 		if (text.transform.parent && !text.transform.parent.GetComponentInParent<ElementToDrag>(true) && !text.transform.parent.GetComponentInParent<Tooltip>(true) && !text.transform.parent.GetComponentInParent<Selectable>(true))
-		{
-			Selectable select = text.AddComponent<Selectable>();
-			ColorBlock cb = select.colors;
-			cb.selectedColor = textSelectedColor;
-			select.colors = cb;
-			GameObjectManager.refresh(text);
-		}
+			GameObjectManager.addComponent<Selectable>(text);
 	}
 }

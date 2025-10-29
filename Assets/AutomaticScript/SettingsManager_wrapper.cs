@@ -16,6 +16,12 @@ public class SettingsManager_wrapper : BaseWrapper
 	public UnityEngine.Color defaultNormalColor_Button;
 	public UnityEngine.Color defaultNormalColor_ButtonIcon;
 	public UnityEngine.Color defaultHighlightedColor;
+	public UnityEngine.Color defaultPressedColor;
+	public UnityEngine.Color defaultSelectedColor;
+	public UnityEngine.Color defaultDisabledColor;
+	public UnityEngine.Color defaultColor_Panel;
+	public UnityEngine.Color defaultColor_PanelTexture;
+	public UnityEngine.Color defaultColor_Border;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -32,6 +38,12 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "defaultNormalColor_Button", defaultNormalColor_Button);
 		MainLoop.initAppropriateSystemField (system, "defaultNormalColor_ButtonIcon", defaultNormalColor_ButtonIcon);
 		MainLoop.initAppropriateSystemField (system, "defaultHighlightedColor", defaultHighlightedColor);
+		MainLoop.initAppropriateSystemField (system, "defaultPressedColor", defaultPressedColor);
+		MainLoop.initAppropriateSystemField (system, "defaultSelectedColor", defaultSelectedColor);
+		MainLoop.initAppropriateSystemField (system, "defaultDisabledColor", defaultDisabledColor);
+		MainLoop.initAppropriateSystemField (system, "defaultColor_Panel", defaultColor_Panel);
+		MainLoop.initAppropriateSystemField (system, "defaultColor_PanelTexture", defaultColor_PanelTexture);
+		MainLoop.initAppropriateSystemField (system, "defaultColor_Border", defaultColor_Border);
 	}
 
 	public void saveParameters()
