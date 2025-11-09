@@ -45,6 +45,16 @@ public class SettingsManagerBridge : MonoBehaviour
 
 	public void hookListener(string key)
     {
-		SettingsManager.instance.hookListener(key); 
+		SettingsManager.instance.hookListener(key);
+	}
+
+	public void setBorderTickness(int value)
+	{
+		SettingsManager.instance.setBorderTickness(value);
+	}
+
+	public void syncFonts(int value)
+	{
+		SettingsManager.instance.syncFonts(value);
 	}
 }
