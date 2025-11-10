@@ -57,7 +57,8 @@ public class SettingsManager : FSystem
 	public Color defaultNormalColor_Dropdown = Color.white;
 	public Color defaultNormalColor_Inputfield = Color.white;
 	public Color defaultSelectedColor_Inputfield = new Color(200f / 255f, 200f / 255f, 200f / 255f, 1f); // grey light
-	public Color defaultSelectionColor_Inputfield = new Color(168 / 255f, 206f / 255f, 1f, 192f / 255f); // blue light transparent
+	public Color defaultSelectionColor_Inputfield = new Color(168f / 255f, 206f / 255f, 1f, 192f / 255f); // blue light transparent
+	public Color defaultCaretColor_Inputfield = new Color(50f / 255f, 50f / 255f, 50f / 255f, 1f); // frey dark
 	public Color defaultNormalColor_Button = new Color(1f, 1f, 1f, 0f); // transparent
 	public Color defaultHighlightedColor = new Color(1f, 178f/255f, 56f/255f, 1f); // orange light
 	public Color defaultPressedColor = new Color(194f / 255f, 94f / 255f, 0f, 1f); // brown
@@ -87,6 +88,7 @@ public class SettingsManager : FSystem
 	private Color currentNormalColor_Inputfield;
 	private Color currentSelectedColor_Inputfield;
 	private Color currentSelectionColor_Inputfield;
+	private Color currentCaretColor_Inputfield;
 	private Color currentNormalColor_Button;
 	private Color currentHighlightedColor;
 	private Color currentPressedColor;
@@ -202,6 +204,7 @@ public class SettingsManager : FSystem
 		syncPlayerPrefColor("InputfieldColorNormal", defaultNormalColor_Inputfield, out currentNormalColor_Inputfield, "SectionColor/ColorInputfieldNormal");
 		syncPlayerPrefColor("InputfieldColorSelected", defaultSelectedColor_Inputfield, out currentSelectedColor_Inputfield, "SectionColor/ColorInputfieldSelected");
 		syncPlayerPrefColor("InputfieldColorSelection", defaultSelectionColor_Inputfield, out currentSelectionColor_Inputfield, "SectionColor/ColorInputfieldSelection");
+		syncPlayerPrefColor("InputfieldColorCaret", defaultCaretColor_Inputfield, out currentCaretColor_Inputfield, "SectionColor/ColorInputfieldCaret");
 		// Synchronisation de la couleur des bouttons
 		syncPlayerPrefColor("ButtonColorNormal", defaultNormalColor_Button, out currentNormalColor_Button, "SectionColor/ColorButtonNormal");
 		// Synchronisation de la couleur des highlighted
@@ -254,6 +257,7 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetString("InputfieldColorNormal", ColorUtility.ToHtmlStringRGBA(currentNormalColor_Inputfield));
 		PlayerPrefs.SetString("InputfieldColorSelected", ColorUtility.ToHtmlStringRGBA(currentSelectedColor_Inputfield));
 		PlayerPrefs.SetString("InputfieldColorSelection", ColorUtility.ToHtmlStringRGBA(currentSelectionColor_Inputfield));
+		PlayerPrefs.SetString("InputfieldColorCaret", ColorUtility.ToHtmlStringRGBA(currentCaretColor_Inputfield));
 		PlayerPrefs.SetString("ButtonColorNormal", ColorUtility.ToHtmlStringRGBA(currentNormalColor_Button));
 		PlayerPrefs.SetString("HighlightedColor", ColorUtility.ToHtmlStringRGBA(currentHighlightedColor));
 		PlayerPrefs.SetString("PressedColor", ColorUtility.ToHtmlStringRGBA(currentPressedColor));
@@ -289,6 +293,7 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetString("InputfieldColorNormal", ColorUtility.ToHtmlStringRGBA(defaultNormalColor_Inputfield));
 		PlayerPrefs.SetString("InputfieldColorSelected", ColorUtility.ToHtmlStringRGBA(defaultSelectedColor_Inputfield));
 		PlayerPrefs.SetString("InputfieldColorSelection", ColorUtility.ToHtmlStringRGBA(defaultSelectionColor_Inputfield));
+		PlayerPrefs.SetString("InputfieldColorCaret", ColorUtility.ToHtmlStringRGBA(defaultCaretColor_Inputfield));
 		PlayerPrefs.SetString("ButtonColorNormal", ColorUtility.ToHtmlStringRGBA(defaultNormalColor_Button));
 		PlayerPrefs.SetString("HighlightedColor", ColorUtility.ToHtmlStringRGBA(defaultHighlightedColor));
 		PlayerPrefs.SetString("PressedColor", ColorUtility.ToHtmlStringRGBA(defaultPressedColor));
@@ -357,6 +362,12 @@ public class SettingsManager : FSystem
 			case "InputfieldColorSelection":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					currentSelectionColor_Inputfield = c;
+					syncColor(f_inputfield, syncColor_Inputfield);
+				});
+				break;
+			case "InputfieldColorCaret":
+				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
+					currentCaretColor_Inputfield = c;
 					syncColor(f_inputfield, syncColor_Inputfield);
 				});
 				break;
@@ -640,6 +651,7 @@ public class SettingsManager : FSystem
 		input.colors = currentColor;
 		input.placeholder.color = currentPlaceholderColor;
 		input.selectionColor = currentSelectionColor_Inputfield;
+		input.caretColor = currentCaretColor_Inputfield;
 	}
 
 	private void syncNormalColor(GameObject go, Color? color)

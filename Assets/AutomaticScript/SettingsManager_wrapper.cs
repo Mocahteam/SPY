@@ -21,6 +21,7 @@ public class SettingsManager_wrapper : BaseWrapper
 	public UnityEngine.Color defaultNormalColor_Inputfield;
 	public UnityEngine.Color defaultSelectedColor_Inputfield;
 	public UnityEngine.Color defaultSelectionColor_Inputfield;
+	public UnityEngine.Color defaultCaretColor_Inputfield;
 	public UnityEngine.Color defaultNormalColor_Button;
 	public UnityEngine.Color defaultHighlightedColor;
 	public UnityEngine.Color defaultPressedColor;
@@ -57,6 +58,7 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "defaultNormalColor_Inputfield", defaultNormalColor_Inputfield);
 		MainLoop.initAppropriateSystemField (system, "defaultSelectedColor_Inputfield", defaultSelectedColor_Inputfield);
 		MainLoop.initAppropriateSystemField (system, "defaultSelectionColor_Inputfield", defaultSelectionColor_Inputfield);
+		MainLoop.initAppropriateSystemField (system, "defaultCaretColor_Inputfield", defaultCaretColor_Inputfield);
 		MainLoop.initAppropriateSystemField (system, "defaultNormalColor_Button", defaultNormalColor_Button);
 		MainLoop.initAppropriateSystemField (system, "defaultHighlightedColor", defaultHighlightedColor);
 		MainLoop.initAppropriateSystemField (system, "defaultPressedColor", defaultPressedColor);
