@@ -19,6 +19,7 @@ public class SettingsManager : FSystem
 	private Family f_fixedFonts = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("UI_OverrideFont"));
 	private Family f_dropdown = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_Dropdown)));
 	private Family f_inputfield = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
+	private Family f_inputfieldCaret = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_SelectionCaret)));
 	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("DefaultButton"));
 	private Family f_buttonsIcon = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new NoneOfProperties(PropertyMatcher.PROPERTY.HAS_CHILD)); // des boutons comme pour ouvrir les paramètres ou augmenter/réduire la taille de l'UI
 	private Family f_highlightable = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(TMP_Dropdown), typeof(Toggle), typeof(Scrollbar)));
@@ -51,6 +52,8 @@ public class SettingsManager : FSystem
 	public int defaultWallTransparency = 1;
 	public int defaultGameView = 0;
 	public int defaultFont = 6;
+	public int defaultCaretWidth = 0;
+	public int defaultCaretHeight = 0;
 	public Color defaultNormalColor_Text = Color.black; // black
 	public Color defaultSelectedColor_Text = new Color(131f / 255f, 71f / 255f, 2f / 255f, 1f); // brown dark
 	public Color defaultPlaceholderColor = new Color(50f / 255f, 50f / 255f, 50f / 255f, 128f / 255f); // grey dark transparent
@@ -81,6 +84,8 @@ public class SettingsManager : FSystem
 	private int currentWallTransparency;
 	private int currentGameView;
 	private int currentFont;
+	private int currentCaretWidth;
+	private int currentCaretHeight;
 	private Color currentNormalColor_Text;
 	private Color currentSelectedColor_Text;
 	private Color currentPlaceholderColor;
@@ -122,7 +127,8 @@ public class SettingsManager : FSystem
 		f_modifiableFonts.addEntryCallback(syncFont);
 		f_fixedFonts.addEntryCallback(fixFont);
 		f_dropdown.addEntryCallback(delegate (GameObject go) { syncColor_Dropdown(go); });
-		f_inputfield.addEntryCallback(delegate (GameObject go) { syncColor_Inputfield(go); });
+		f_inputfield.addEntryCallback(delegate (GameObject go) { sync_Inputfield(go); });
+		f_inputfieldCaret.addEntryCallback(sync_CaretHeight);
 		f_buttons.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, currentNormalColor_Button); });
 		f_buttonsIcon.addEntryCallback(delegate (GameObject go) {syncNormalColor(go, currentColor_Icon); });
 		f_highlightable.addEntryCallback(delegate (GameObject go) { syncHighlightedColor(go); });
@@ -147,6 +153,8 @@ public class SettingsManager : FSystem
 		loadPlayerPrefs();
 		saveParameters();
 		syncColors();
+		foreach (GameObject caretGO in f_inputfieldCaret)
+			sync_CaretHeight(caretGO);
 	}
 
 	private void syncColors()
@@ -154,7 +162,7 @@ public class SettingsManager : FSystem
 		syncColor(f_allTexts, syncColor_Text);
 		SyncLocalization.instance.syncLocale();
 		syncColor(f_dropdown, syncColor_Dropdown);
-		syncColor(f_inputfield, syncColor_Inputfield);
+		syncColor(f_inputfield, sync_Inputfield);
 		syncColor(f_buttons, syncNormalColor, currentNormalColor_Button);
 		syncColor(f_buttonsIcon, syncNormalColor, currentColor_Icon);
 		syncColor(f_highlightable, syncHighlightedColor);
@@ -193,6 +201,11 @@ public class SettingsManager : FSystem
 
 		currentFont = PlayerPrefs.GetInt("font", defaultFont);
 		settingsContent.Find("SectionText/FontDropdown").GetComponentInChildren<TMP_Dropdown>().value = currentFont;
+
+		currentCaretWidth = PlayerPrefs.GetInt("caretWidth", defaultCaretWidth);
+		settingsContent.Find("SectionText/CaretWidth").GetComponentInChildren<TMP_Dropdown>().value = currentCaretWidth;
+		currentCaretHeight = PlayerPrefs.GetInt("caretHeight", defaultCaretHeight);
+		settingsContent.Find("SectionText/CaretHeight").GetComponentInChildren<TMP_Dropdown>().value = currentCaretHeight;
 
 		// Synchronisation de la couleur des textes
 		syncPlayerPrefColor("TextColorNormal", defaultNormalColor_Text, out currentNormalColor_Text, "SectionText/ColorTextNormal");
@@ -250,6 +263,8 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetInt("wallTransparency", currentWallTransparency);
 		PlayerPrefs.SetInt("orthographicView", currentGameView);
 		PlayerPrefs.SetInt("font", currentFont);
+		PlayerPrefs.SetInt("caretWidth", currentCaretWidth);
+		PlayerPrefs.SetInt("caretHeight", currentCaretHeight);
 		PlayerPrefs.SetString("TextColorNormal", ColorUtility.ToHtmlStringRGBA(currentNormalColor_Text));
 		PlayerPrefs.SetString("TextColorSelected", ColorUtility.ToHtmlStringRGBA(currentSelectedColor_Text));
 		PlayerPrefs.SetString("PlaceholderColor", ColorUtility.ToHtmlStringRGBA(currentPlaceholderColor));
@@ -286,6 +301,8 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetInt("wallTransparency", defaultWallTransparency);
 		PlayerPrefs.SetInt("orthographicView", defaultGameView);
 		PlayerPrefs.SetInt("font", defaultFont);
+		PlayerPrefs.SetInt("caretWidth", defaultCaretWidth);
+		PlayerPrefs.SetInt("caretHeight", defaultCaretHeight);
 		PlayerPrefs.SetString("TextColorNormal", ColorUtility.ToHtmlStringRGBA(defaultNormalColor_Text));
 		PlayerPrefs.SetString("TextColorSelected", ColorUtility.ToHtmlStringRGBA(defaultSelectedColor_Text));
 		PlayerPrefs.SetString("PlaceholderColor", ColorUtility.ToHtmlStringRGBA(defaultPlaceholderColor));
@@ -338,7 +355,7 @@ public class SettingsManager : FSystem
 			case "PlaceholderColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					currentPlaceholderColor = c;
-					syncColor(f_inputfield, syncColor_Inputfield);
+					syncColor(f_inputfield, sync_Inputfield);
 				});
 				break;
 			case "DropdownColorNormal":
@@ -350,25 +367,25 @@ public class SettingsManager : FSystem
 			case "InputfieldColorNormal":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					currentNormalColor_Inputfield = c;
-					syncColor(f_inputfield, syncColor_Inputfield);
+					syncColor(f_inputfield, sync_Inputfield);
 				});
 				break;
 			case "InputfieldColorSelected":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					currentSelectedColor_Inputfield = c;
-					syncColor(f_inputfield, syncColor_Inputfield);
+					syncColor(f_inputfield, sync_Inputfield);
 				});
 				break;
 			case "InputfieldColorSelection":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					currentSelectionColor_Inputfield = c;
-					syncColor(f_inputfield, syncColor_Inputfield);
+					syncColor(f_inputfield, sync_Inputfield);
 				});
 				break;
 			case "InputfieldColorCaret":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					currentCaretColor_Inputfield = c;
-					syncColor(f_inputfield, syncColor_Inputfield);
+					syncColor(f_inputfield, sync_Inputfield);
 				});
 				break;
 			case "ButtonColorNormal":
@@ -572,7 +589,20 @@ public class SettingsManager : FSystem
 				option.font = fonts[8];
 				break;
 		}
+	}
 
+	public void setCaretWidth(int value)
+    {
+		currentCaretWidth = value;
+		foreach (GameObject inputGO in f_inputfield)
+			sync_Inputfield(inputGO);
+	}
+
+	public void setCaretHeight(int value)
+	{
+		currentCaretHeight = value;
+		foreach (GameObject caretGO in f_inputfieldCaret)
+			sync_CaretHeight(caretGO);
 	}
 
 	private void syncColor_Text(GameObject text, Color? unused = null)
@@ -642,7 +672,7 @@ public class SettingsManager : FSystem
 		syncGraphicColor(item.graphic.gameObject, currentColor_Icon);
 	}
 
-	private void syncColor_Inputfield(GameObject go, Color? unused = null)
+	private void sync_Inputfield(GameObject go, Color? unused = null)
 	{
 		TMP_InputField input = go.GetComponent<TMP_InputField>();
 		ColorBlock currentColor = input.colors;
@@ -652,6 +682,12 @@ public class SettingsManager : FSystem
 		input.placeholder.color = currentPlaceholderColor;
 		input.selectionColor = currentSelectionColor_Inputfield;
 		input.caretColor = currentCaretColor_Inputfield;
+		input.caretWidth = (currentCaretWidth+1)*2;
+	}
+
+	private void sync_CaretHeight(GameObject go)
+	{
+		go.transform.localScale = new Vector3(1f, currentCaretHeight + 1, 1f);
 	}
 
 	private void syncNormalColor(GameObject go, Color? color)

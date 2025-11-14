@@ -57,4 +57,14 @@ public class SettingsManagerBridge : MonoBehaviour
 	{
 		SettingsManager.instance.syncFonts(value);
 	}
+
+	public void setCaretWidth(int value)
+	{
+		SettingsManager.instance.setCaretWidth(value);
+	}
+
+	public void setCaretHeight(int value)
+	{
+		SettingsManager.instance.setCaretHeight(value);
+	}
 }

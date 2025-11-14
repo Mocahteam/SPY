@@ -14,6 +14,8 @@ public class SettingsManager_wrapper : BaseWrapper
 	public System.Int32 defaultWallTransparency;
 	public System.Int32 defaultGameView;
 	public System.Int32 defaultFont;
+	public System.Int32 defaultCaretWidth;
+	public System.Int32 defaultCaretHeight;
 	public UnityEngine.Color defaultNormalColor_Text;
 	public UnityEngine.Color defaultSelectedColor_Text;
 	public UnityEngine.Color defaultPlaceholderColor;
@@ -51,6 +53,8 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "defaultWallTransparency", defaultWallTransparency);
 		MainLoop.initAppropriateSystemField (system, "defaultGameView", defaultGameView);
 		MainLoop.initAppropriateSystemField (system, "defaultFont", defaultFont);
+		MainLoop.initAppropriateSystemField (system, "defaultCaretWidth", defaultCaretWidth);
+		MainLoop.initAppropriateSystemField (system, "defaultCaretHeight", defaultCaretHeight);
 		MainLoop.initAppropriateSystemField (system, "defaultNormalColor_Text", defaultNormalColor_Text);
 		MainLoop.initAppropriateSystemField (system, "defaultSelectedColor_Text", defaultSelectedColor_Text);
 		MainLoop.initAppropriateSystemField (system, "defaultPlaceholderColor", defaultPlaceholderColor);
@@ -124,6 +128,16 @@ public class SettingsManager_wrapper : BaseWrapper
 	public void syncFonts(System.Int32 value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "syncFonts", value);
+	}
+
+	public void setCaretWidth(System.Int32 value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setCaretWidth", value);
+	}
+
+	public void setCaretHeight(System.Int32 value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setCaretHeight", value);
 	}
 
 	public void setBorderTickness(System.Int32 value)
