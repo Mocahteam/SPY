@@ -107,11 +107,6 @@ public class SendStatements : FSystem {
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
-        {
             Debug.LogWarning(www.error);
-            yield return new WaitForSeconds(0.5f);
-            // try again
-            MainLoop.instance.StartCoroutine(PostUserData(idSession, schoolClass, isTeacher, progression, highScore));
-        }
     }
 }

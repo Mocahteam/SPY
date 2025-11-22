@@ -67,4 +67,24 @@ public class SettingsManagerBridge : MonoBehaviour
 	{
 		SettingsManager.instance.setCaretHeight(value);
 	}
+
+	public void setCharSpacing(int value)
+	{
+		SettingsManager.instance.setCharSpacing(value);
+	}
+
+	public void setWordSpacing(int value)
+	{
+		SettingsManager.instance.setWordSpacing(value);
+	}
+
+	public void setLineSpacing(int value)
+	{
+		SettingsManager.instance.setLineSpacing(value);
+	}
+
+	public void setParagraphSpacing(int value)
+	{
+		SettingsManager.instance.setParagraphSpacing(value);
+	}
 }

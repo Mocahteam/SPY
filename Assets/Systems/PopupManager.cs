@@ -11,10 +11,10 @@ using System.Collections;
 public class PopupManager : FSystem {
 
 	public GameObject panelInfoUser; // Panneau pour informer le joueur (erreurs de chargement, absence de niveaux etc...)
-	public TMP_Text messageForUser; // Zone de texte pour les messages d'erreur adressés à l'utilisateur
+	private TMP_Text messageForUser; // Zone de texte pour les messages d'erreur adressés à l'utilisateur
 
 	private Family f_newMessageForUser = FamilyManager.getFamily(new AllOfComponents(typeof(MessageForUser)));
-	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private Family f_canvasGroup = FamilyManager.getFamily(new AllOfComponents(typeof(Canvas), typeof(CanvasGroup)));
 
 
 	// L'instance
@@ -28,47 +28,40 @@ public class PopupManager : FSystem {
 	protected override void onStart()
 	{
 		f_newMessageForUser.addEntryCallback(displayMessageUser);
+		messageForUser = panelInfoUser.transform.Find("Panel/Message").GetComponent<TMP_Text>();
 	}
 
 	// Affiche le panel message avec le bon message
 	private void displayMessageUser(GameObject go)
 	{
+		foreach (GameObject canvas in f_canvasGroup)
+			canvas.GetComponent<CanvasGroup>().interactable = false;
+
 		MessageForUser mfu = go.GetComponent<MessageForUser>();
 		messageForUser.text = mfu.message;
 		GameObject buttons = panelInfoUser.transform.Find("Panel").Find("Buttons").gameObject;
 
 		GameObjectManager.setGameObjectState(buttons.transform.GetChild(0).gameObject, mfu.OkButton != "");
 		buttons.transform.GetChild(0).GetComponentInChildren<TMP_Text>(true).text = mfu.OkButton;
-		buttons.transform.GetChild(0).GetComponent<Button>().onClick.RemoveAllListeners();
-		buttons.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(mfu.call);
+		if (mfu.call != null)
+		{
+			buttons.transform.GetChild(0).GetComponent<Button>().onClick.RemoveAllListeners();
+			buttons.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(mfu.call);
+		}
 
 		GameObjectManager.setGameObjectState(buttons.transform.GetChild(1).gameObject, mfu.CancelButton != "");
 		buttons.transform.GetChild(1).GetComponentInChildren<TMP_Text>(true).text = mfu.CancelButton;
-		
-		panelInfoUser.SetActive(true); // not use GameObjectManager here else ForceRebuildLayout doesn't work
-		LayoutRebuilder.ForceRebuildLayoutImmediate(messageForUser.transform as RectTransform);
-		LayoutRebuilder.ForceRebuildLayoutImmediate(messageForUser.transform.parent as RectTransform);
-		panelInfoUser.SetActive(false);
-		GameObjectManager.setGameObjectState(panelInfoUser, true);
 
-		// On décalle la sélection du texte de la popup d'une frame pour laisser la prochaine phase de gestion des évènements passer (ce qui pourrait sélectionner automatiquement le prochain bouton "suivant" ou "annulé") afin d'être sûr de mettre le focus sur le texte du message
-		MainLoop.instance.StartCoroutine(Utility.delayGOSelection(messageForUser.gameObject));
+		GameObjectManager.setGameObjectState(panelInfoUser, true);
 
 		// in case of several messages pop in one frame
 		foreach (MessageForUser message in go.GetComponents<MessageForUser>())
 			GameObjectManager.removeComponent(message);
 	}
 
-	// See ok and cancel buttons in PopupPanel (TitleScreen)
-	public void focusLastButton()
-    {
-		MainLoop.instance.StartCoroutine(delayFocusLastButton());
-    }
-
-	private IEnumerator delayFocusLastButton()
-    {
-		yield return new WaitForSeconds(.25f);
-		if (f_buttons.Count > 0 && (EventSystem.current.currentSelectedGameObject == null || !EventSystem.current.currentSelectedGameObject.activeInHierarchy))
-			EventSystem.current.SetSelectedGameObject(f_buttons.getAt(f_buttons.Count - 1));
+	public void turnOnCanvas()
+	{
+		foreach (GameObject canvas in f_canvasGroup)
+			canvas.GetComponent<CanvasGroup>().interactable = true;
 	}
 }

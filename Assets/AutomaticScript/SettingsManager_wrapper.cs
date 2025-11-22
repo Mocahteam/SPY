@@ -16,6 +16,10 @@ public class SettingsManager_wrapper : BaseWrapper
 	public System.Int32 defaultFont;
 	public System.Int32 defaultCaretWidth;
 	public System.Int32 defaultCaretHeight;
+	public System.Int32 defaultCharSpacing;
+	public System.Int32 defaultWordSpacing;
+	public System.Int32 defaultLineSpacing;
+	public System.Int32 defaultParagraphSpacing;
 	public UnityEngine.Color defaultNormalColor_Text;
 	public UnityEngine.Color defaultSelectedColor_Text;
 	public UnityEngine.Color defaultPlaceholderColor;
@@ -55,6 +59,10 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "defaultFont", defaultFont);
 		MainLoop.initAppropriateSystemField (system, "defaultCaretWidth", defaultCaretWidth);
 		MainLoop.initAppropriateSystemField (system, "defaultCaretHeight", defaultCaretHeight);
+		MainLoop.initAppropriateSystemField (system, "defaultCharSpacing", defaultCharSpacing);
+		MainLoop.initAppropriateSystemField (system, "defaultWordSpacing", defaultWordSpacing);
+		MainLoop.initAppropriateSystemField (system, "defaultLineSpacing", defaultLineSpacing);
+		MainLoop.initAppropriateSystemField (system, "defaultParagraphSpacing", defaultParagraphSpacing);
 		MainLoop.initAppropriateSystemField (system, "defaultNormalColor_Text", defaultNormalColor_Text);
 		MainLoop.initAppropriateSystemField (system, "defaultSelectedColor_Text", defaultSelectedColor_Text);
 		MainLoop.initAppropriateSystemField (system, "defaultPlaceholderColor", defaultPlaceholderColor);
@@ -143,6 +151,26 @@ public class SettingsManager_wrapper : BaseWrapper
 	public void setBorderTickness(System.Int32 value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setBorderTickness", value);
+	}
+
+	public void setCharSpacing(System.Int32 value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setCharSpacing", value);
+	}
+
+	public void setWordSpacing(System.Int32 value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setWordSpacing", value);
+	}
+
+	public void setLineSpacing(System.Int32 value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setLineSpacing", value);
+	}
+
+	public void setParagraphSpacing(System.Int32 value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setParagraphSpacing", value);
 	}
 
 }

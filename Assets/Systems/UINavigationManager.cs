@@ -14,12 +14,11 @@ public class UINavigationManager : FSystem
 
 	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
-	public List<GameObject> autoFocusProrityOnTab;
+	public List<GameObject> autoFocusPrority;
 	private GameObject lastSelected;
 	public EventSystem eventSystem;
 
 	private InputAction navigateAction;
-	private InputAction focusOnFirstUI;
 
 	protected override void onStart()
     {
@@ -30,7 +29,6 @@ public class UINavigationManager : FSystem
 			eventSystem = EventSystem.current;
 
 		navigateAction = InputSystem.actions.FindAction("Navigate");
-		focusOnFirstUI = InputSystem.actions.FindAction("FocusOnFirstUI");
 	}
 
     protected override void onProcess(int familiesUpdateCount)
@@ -43,12 +41,12 @@ public class UINavigationManager : FSystem
 		// Get the currently selected UI element from the event system.
 		GameObject selected = eventSystem.currentSelectedGameObject;
 
-		if (focusOnFirstUI.WasPressedThisFrame())
+		if (eventSystem.currentSelectedGameObject == null || !eventSystem.currentSelectedGameObject.activeInHierarchy || eventSystem.currentSelectedGameObject.GetComponent<Selectable>() == null || !eventSystem.currentSelectedGameObject.GetComponent<Selectable>().IsInteractable())
 		{
 			// Try to give focus on one of the priority list
 			bool focused = false;
-			if (autoFocusProrityOnTab != null)
-				foreach (GameObject target in autoFocusProrityOnTab)
+			if (autoFocusPrority != null)
+				foreach (GameObject target in autoFocusPrority)
 					if (target.activeInHierarchy)
 					{
 						eventSystem.SetSelectedGameObject(target);

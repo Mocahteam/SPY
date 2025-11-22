@@ -19,6 +19,7 @@ using System.IO;
 public class ConnexionManager : FSystem
 {
 	private Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
+	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
 
 	public GameObject prefabGameData;
 	public GameObject loadingScreen;
@@ -310,8 +311,11 @@ public class ConnexionManager : FSystem
 				userData.progression = null;
 				userData.highScore = null;
 
+				foreach (GameObject sID in f_sessionId)
+					sID.GetComponent<TMP_Text>().text = string.Join(" ", formatedString.ToCharArray());
+
 				// enregistrer cet ID dans la BD pour éviter les collisions
-				askToSendUserDate("undef", false);
+				askToSendUserData("undef", false);
 			}
 			else
 			{
@@ -346,10 +350,18 @@ public class ConnexionManager : FSystem
 	// See ButtonOkNoted button in ConnexionPanel panel in ConnexionScene scene
 	public void synchUserData(GameObject go)
 	{
-		askToSendUserDate(go.GetComponentInChildren<TMP_InputField>().text, go.GetComponentInChildren<Toggle>().isOn);
+		askToSendUserData(go.GetComponentInChildren<TMP_InputField>().text, go.GetComponentInChildren<Toggle>().isOn);
+		MainLoop.instance.StartCoroutine(delayLoadingTitleScreen());
 	}
 
-	private void askToSendUserDate(string schoolClass, bool isTeacher)
+	private IEnumerator delayLoadingTitleScreen()
+    {
+		yield return null;
+		yield return null;
+		GameObjectManager.loadScene("TitleScreen");
+	}
+
+	private void askToSendUserData(string schoolClass, bool isTeacher)
 	{
 		if (userData.progression == null)
 			userData.progression = new Dictionary<string, int>();

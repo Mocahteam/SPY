@@ -85,7 +85,6 @@
 				<ul>
 					<li><b>Échap</b> : Sélectionner le menu principal / Annuler l'action en cours</li>
 					<li><b>Shift + Échap</b> : sortir du canevas du jeu pour revenir dans la page HTML</li>
-					<li><b>Home</b> : sélectionner l'élément interactif le plus prioritaire</li>
 					<li><b>Touches directionnelles</b> : navigation dans les interfaces du jeu / déplacement des blocs</li>
 				</ul>
 			</div>
@@ -166,7 +165,7 @@
       <div class="container">
           <h1>Lecteur d'écran</h1>
 		  <h2>Identifier la zone du jeu dans la page Web</h2>
-		  <p>Pour accéder au canevas du jeu, naviguez dans la page jusqu'à arriver à l'objet "Application" ou "Zone interactive du jeu". Appuyez sur "Entrée" pour entrer dans le jeu. Une fois dans le jeu vous pouvez à tout moment : appuyer sur la touche "Home" pour automatiquement sélectionner l'élément interactif le plus prioritaire ; appuyer sur "Shift + Entrée" pour sortir du canevas du jeu et revenir dans le contexte de la page web.</p>
+		  <p>Pour accéder au canevas du jeu, naviguez dans la page jusqu'à arriver à l'objet "Application" ou "Zone interactive du jeu". Appuyez sur "Entrée" pour entrer dans le jeu. Une fois dans le jeu vous pouvez à tout moment appuyer sur "Shift + Entrée" pour sortir du canevas du jeu et revenir dans le contexte de la page web.</p>
 		  <p>Un peu de technique : Lorsqu'un objet du jeu obtient le focus, sa description textuelle est automatiquement envoyée vers la balise HTML "ScreenReaderSpan" avec le rôle "status". Cette balise est définie avec les propriétés aria-live="polite" et aria-atomic=true afin que le lecteur d'écran puisse être informé immédiatement des changements de son contenu et les rendre accessibles au joueur via la synthèse vocale ou une plage braille (testé avec une Brailliant Bi 40X et NVDA sur Chrome et Firefox).</p>
 		  <h2>Description de la scène</h2>
 		  <p>L'objectif du jeu est de déplacer un robot dans un labyrinthe, il est donc nécessaire de pouvoir accéder à une description de la scène de jeu et de suivre son évolution au cours de la simulation. Une description textuelle de la scène est en permanence synchronisée avec la simulation. Pour consulter l'état de la scène à un instant t, sélectionnez "Menu" puis "Voir carte textuelle" ou utilisez simplement le raccourci clavier "m".</p>

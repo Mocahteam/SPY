@@ -98,13 +98,16 @@ namespace DIG.GBLXAPI.Internal
 						batchStatements.Add(queuedStatement);
 					}
 				}
-				// Send to each endPoint
-				foreach (RemoteLRSAsync endPoint in _lrsEndpoints)
+				if (batchStatements.Count > 0)
 				{
-					if (waitComplete)
-						StartCoroutine(SendStatementCoroutine(endPoint, batchStatements));
-					else
-						SendStatementsImmediate(endPoint, batchStatements);
+					// Send to each endPoint
+					foreach (RemoteLRSAsync endPoint in _lrsEndpoints)
+					{
+						if (waitComplete)
+							StartCoroutine(SendStatementCoroutine(endPoint, batchStatements));
+						else
+							SendStatementsImmediate(endPoint, batchStatements);
+					}
 				}
 			}
         }

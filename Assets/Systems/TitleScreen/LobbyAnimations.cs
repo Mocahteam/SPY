@@ -12,7 +12,7 @@ public class LobbyAnimation : FSystem {
     public GameObject Destiny;
     public GameObject R102;
 
-    private string[] anims = new string[] { "Action", "ArmStretch", "IntroNail" };
+    private string[] anims = new string[] { "Action", "IntroNail", "ArmStretch" };
 
     public static LobbyAnimation instance;
 
@@ -30,32 +30,37 @@ public class LobbyAnimation : FSystem {
 
     private IEnumerator AnimDoorAndR102()
     {
+        Animator R102Anim = R102.GetComponent<Animator>();
         while (true)
         {
-            yield return new WaitForSeconds(Random.Range(3, 10));
-            R102.GetComponent<Animator>().SetTrigger("Action");
-            ActivationSlot doorSlot = Door.GetComponent<ActivationSlot>();
-            if (!doorSlot.state)
-                Door.GetComponent<Animator>().SetTrigger("Open");
-            else
-                Door.GetComponent<Animator>().SetTrigger("Close");
-            doorSlot.state = !doorSlot.state;
+            yield return new WaitForSeconds(Random.Range(5, 10));
+            int animChoice = Random.Range(0, 2);
+            R102Anim.SetTrigger(anims[animChoice]);
+            if (animChoice == 0)
+            {
+                ActivationSlot doorSlot = Door.GetComponent<ActivationSlot>();
+                if (!doorSlot.state)
+                    Door.GetComponent<Animator>().SetTrigger("Open");
+                else
+                    Door.GetComponent<Animator>().SetTrigger("Close");
+                doorSlot.state = !doorSlot.state;
+            }
         }
     }
 
     private IEnumerator AnimKyleAndDestiny()
     {
+        Animator kyleAnim = Kyle.GetComponent<Animator>();
+        Animator destinyAnim = Destiny.GetComponent<Animator>();
         while (true)
         {
             yield return new WaitForSeconds(Random.Range(5, 10));
             if (Random.Range(0f, 1f) > 0.5f)
             {
-                Animator kyleAnim = Kyle.GetComponent<Animator>();
                 kyleAnim.SetTrigger(anims[Random.Range(0, 3)]);
             }
             else
             {
-                Animator destinyAnim = Destiny.GetComponent<Animator>();
                 destinyAnim.SetTrigger(anims[Random.Range(0, 3)]);
             }
         }

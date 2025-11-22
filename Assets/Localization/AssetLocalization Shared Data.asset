@@ -33,12 +33,13 @@ MonoBehaviour:
       m_Items: []
   m_Metadata:
     m_Items:
-    - id: 0
+    - rid: 0
   m_KeyGenerator:
-    id: 1
+    rid: 1
   references:
-    version: 1
-    00000000:
+    version: 2
+    RefIds:
+    - rid: 0
       type: {class: AssetTypeMetadata, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
       data:
         m_Entries:
@@ -60,7 +61,7 @@ MonoBehaviour:
           - en
         m_TypeString: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-    00000001:
+    - rid: 1
       type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
         asm: Unity.Localization}
       data:

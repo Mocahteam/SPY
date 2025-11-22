@@ -54,6 +54,10 @@ public class SettingsManager : FSystem
 	public int defaultFont = 6;
 	public int defaultCaretWidth = 0;
 	public int defaultCaretHeight = 0;
+	public int defaultCharSpacing = 2;
+	public int defaultWordSpacing = 2;
+	public int defaultLineSpacing = 2;
+	public int defaultParagraphSpacing = 2;
 	public Color defaultNormalColor_Text = Color.black; // black
 	public Color defaultSelectedColor_Text = new Color(131f / 255f, 71f / 255f, 2f / 255f, 1f); // brown dark
 	public Color defaultPlaceholderColor = new Color(50f / 255f, 50f / 255f, 50f / 255f, 128f / 255f); // grey dark transparent
@@ -86,6 +90,10 @@ public class SettingsManager : FSystem
 	private int currentFont;
 	private int currentCaretWidth;
 	private int currentCaretHeight;
+	private int currentCharSpacing;
+	private int currentWordSpacing;
+	private int currentLineSpacing;
+	private int currentParagraphSpacing;
 	private Color currentNormalColor_Text;
 	private Color currentSelectedColor_Text;
 	private Color currentPlaceholderColor;
@@ -123,6 +131,7 @@ public class SettingsManager : FSystem
 			PlayerPrefs.DeleteAll();
 
 		f_allTexts.addEntryCallback(delegate (GameObject go) { syncColor_Text(go); });
+		f_allTexts.addEntryCallback(syncSpacing_Text);
 		f_textsSelectable.addEntryCallback(delegate (GameObject go) { syncColor_Text(go); });
 		f_modifiableFonts.addEntryCallback(syncFont);
 		f_fixedFonts.addEntryCallback(fixFont);
@@ -155,6 +164,8 @@ public class SettingsManager : FSystem
 		syncColors();
 		foreach (GameObject caretGO in f_inputfieldCaret)
 			sync_CaretHeight(caretGO);
+		foreach (GameObject textGO in f_allTexts)
+			syncSpacing_Text(textGO);
 	}
 
 	private void syncColors()
@@ -207,10 +218,19 @@ public class SettingsManager : FSystem
 		currentCaretHeight = PlayerPrefs.GetInt("caretHeight", defaultCaretHeight);
 		settingsContent.Find("SectionText/CaretHeight").GetComponentInChildren<TMP_Dropdown>().value = currentCaretHeight;
 
+		currentCharSpacing = PlayerPrefs.GetInt("charSpacing", defaultCharSpacing);
+		settingsContent.Find("SectionText/CharSpacing").GetComponentInChildren<TMP_Dropdown>().value = currentCharSpacing;
+		currentWordSpacing = PlayerPrefs.GetInt("wordSpacing", defaultWordSpacing);
+		settingsContent.Find("SectionText/WordSpacing").GetComponentInChildren<TMP_Dropdown>().value = currentWordSpacing;
+		currentLineSpacing = PlayerPrefs.GetInt("lineSpacing", defaultLineSpacing);
+		settingsContent.Find("SectionText/LineSpacing").GetComponentInChildren<TMP_Dropdown>().value = currentLineSpacing;
+		currentParagraphSpacing = PlayerPrefs.GetInt("paragraphSpacing", defaultParagraphSpacing);
+		settingsContent.Find("SectionText/ParagraphSpacing").GetComponentInChildren<TMP_Dropdown>().value = currentParagraphSpacing;
+
 		// Synchronisation de la couleur des textes
-		syncPlayerPrefColor("TextColorNormal", defaultNormalColor_Text, out currentNormalColor_Text, "SectionText/ColorTextNormal");
-		syncPlayerPrefColor("TextColorSelected", defaultSelectedColor_Text, out currentSelectedColor_Text, "SectionText/ColorTextSelected");
-		syncPlayerPrefColor("PlaceholderColor", defaultPlaceholderColor, out currentPlaceholderColor, "SectionText/ColorPlaceholder");
+		syncPlayerPrefColor("TextColorNormal", defaultNormalColor_Text, out currentNormalColor_Text, "SectionColor/ColorTextNormal");
+		syncPlayerPrefColor("TextColorSelected", defaultSelectedColor_Text, out currentSelectedColor_Text, "SectionColor/ColorTextSelected");
+		syncPlayerPrefColor("PlaceholderColor", defaultPlaceholderColor, out currentPlaceholderColor, "SectionColor/ColorPlaceholder");
 		// Synchronisation de la couleur des dropdown
 		syncPlayerPrefColor("DropdownColorNormal", defaultNormalColor_Dropdown, out currentNormalColor_Dropdown, "SectionColor/ColorDropdownNormal");
 		// Synchronisation de la couleur des inputfield
@@ -256,7 +276,6 @@ public class SettingsManager : FSystem
 	public void saveParameters()
     {
 		// TODO : voir comment gérer la sauvegarde des PlayerPref dissiminés dans le code, cas du orthographicView
-		// TODO : background inputField + Placeholder, Borders, Scrollbar (couleur normal == selected)
 		PlayerPrefs.SetInt("quality", currentQuality);
 		PlayerPrefs.SetInt("interaction", currentInteractionMode);
 		PlayerPrefs.SetFloat("UIScale", currentUIScale);
@@ -265,6 +284,10 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetInt("font", currentFont);
 		PlayerPrefs.SetInt("caretWidth", currentCaretWidth);
 		PlayerPrefs.SetInt("caretHeight", currentCaretHeight);
+		PlayerPrefs.SetInt("charSpacing", currentCharSpacing);
+		PlayerPrefs.SetInt("wordSpacing", currentWordSpacing);
+		PlayerPrefs.SetInt("lineSpacing", currentLineSpacing);
+		PlayerPrefs.SetInt("paragraphSpacing", currentParagraphSpacing);
 		PlayerPrefs.SetString("TextColorNormal", ColorUtility.ToHtmlStringRGBA(currentNormalColor_Text));
 		PlayerPrefs.SetString("TextColorSelected", ColorUtility.ToHtmlStringRGBA(currentSelectedColor_Text));
 		PlayerPrefs.SetString("PlaceholderColor", ColorUtility.ToHtmlStringRGBA(currentPlaceholderColor));
@@ -295,40 +318,45 @@ public class SettingsManager : FSystem
 
 	public void resetParameters()
     {
-		PlayerPrefs.SetInt("quality", defaultQuality);
-		PlayerPrefs.SetInt("interaction", defaultInteractionMode);
-		PlayerPrefs.SetFloat("UIScale", defaultUIScale);
-		PlayerPrefs.SetInt("wallTransparency", defaultWallTransparency);
-		PlayerPrefs.SetInt("orthographicView", defaultGameView);
-		PlayerPrefs.SetInt("font", defaultFont);
-		PlayerPrefs.SetInt("caretWidth", defaultCaretWidth);
-		PlayerPrefs.SetInt("caretHeight", defaultCaretHeight);
-		PlayerPrefs.SetString("TextColorNormal", ColorUtility.ToHtmlStringRGBA(defaultNormalColor_Text));
-		PlayerPrefs.SetString("TextColorSelected", ColorUtility.ToHtmlStringRGBA(defaultSelectedColor_Text));
-		PlayerPrefs.SetString("PlaceholderColor", ColorUtility.ToHtmlStringRGBA(defaultPlaceholderColor));
-		PlayerPrefs.SetString("DropdownColorNormal", ColorUtility.ToHtmlStringRGBA(defaultNormalColor_Dropdown));
-		PlayerPrefs.SetString("InputfieldColorNormal", ColorUtility.ToHtmlStringRGBA(defaultNormalColor_Inputfield));
-		PlayerPrefs.SetString("InputfieldColorSelected", ColorUtility.ToHtmlStringRGBA(defaultSelectedColor_Inputfield));
-		PlayerPrefs.SetString("InputfieldColorSelection", ColorUtility.ToHtmlStringRGBA(defaultSelectionColor_Inputfield));
-		PlayerPrefs.SetString("InputfieldColorCaret", ColorUtility.ToHtmlStringRGBA(defaultCaretColor_Inputfield));
-		PlayerPrefs.SetString("ButtonColorNormal", ColorUtility.ToHtmlStringRGBA(defaultNormalColor_Button));
-		PlayerPrefs.SetString("HighlightedColor", ColorUtility.ToHtmlStringRGBA(defaultHighlightedColor));
-		PlayerPrefs.SetString("PressedColor", ColorUtility.ToHtmlStringRGBA(defaultPressedColor));
-		PlayerPrefs.SetString("SelectedColor", ColorUtility.ToHtmlStringRGBA(defaultSelectedColor));
-		PlayerPrefs.SetString("DisabledColor", ColorUtility.ToHtmlStringRGBA(defaultDisabledColor));
-		PlayerPrefs.SetString("IconColor", ColorUtility.ToHtmlStringRGBA(defaultColor_Icon));
-		PlayerPrefs.SetString("PanelColor", ColorUtility.ToHtmlStringRGBA(defaultColor_Panel));
-		PlayerPrefs.SetString("PanelColorTexture", ColorUtility.ToHtmlStringRGBA(defaultColor_PanelTexture));
-		PlayerPrefs.SetString("BorderColor", ColorUtility.ToHtmlStringRGBA(defaultColor_Border));
-		PlayerPrefs.SetInt("BorderThickness", defaultBorderThickness);
-		PlayerPrefs.SetString("ScrollbarColorNormal", ColorUtility.ToHtmlStringRGBA(defaultNormalColor_Scrollbar));
-		PlayerPrefs.SetString("ScrollbarColorBackground", ColorUtility.ToHtmlStringRGBA(defaultBackgroundColor_Scrollbar));
-		PlayerPrefs.SetString("ScrollviewColor", ColorUtility.ToHtmlStringRGBA(defaultBackgroundColor_Scrollview));
-		PlayerPrefs.SetString("ToggleColorNormal", ColorUtility.ToHtmlStringRGBA(defaultNormalColor_Toggle));
-		PlayerPrefs.SetString("TooltipColor", ColorUtility.ToHtmlStringRGBA(defaultColor_Tooltip));
+		currentQuality = defaultQuality;
+		currentInteractionMode = defaultInteractionMode;
+		currentUIScale = defaultUIScale;
+		currentWallTransparency = defaultWallTransparency;
+		currentGameView = defaultGameView;
+		currentFont = defaultFont;
+		currentCaretWidth = defaultCaretWidth;
+		currentCaretHeight = defaultCaretHeight;
+		currentCharSpacing = defaultCharSpacing;
+		currentWordSpacing = defaultWordSpacing;
+		currentLineSpacing = defaultLineSpacing;
+		currentParagraphSpacing = defaultParagraphSpacing;
+		currentNormalColor_Text = defaultNormalColor_Text;
+		currentSelectedColor_Text = defaultSelectedColor_Text;
+		currentPlaceholderColor = defaultPlaceholderColor;
+		currentNormalColor_Dropdown = defaultNormalColor_Dropdown;
+		currentNormalColor_Inputfield = defaultNormalColor_Inputfield;
+		currentSelectedColor_Inputfield = defaultSelectedColor_Inputfield;
+		currentSelectionColor_Inputfield = defaultSelectionColor_Inputfield;
+		currentCaretColor_Inputfield = defaultCaretColor_Inputfield;
+		currentNormalColor_Button = defaultNormalColor_Button;
+		currentHighlightedColor = defaultHighlightedColor;
+		currentPressedColor = defaultPressedColor;
+		currentSelectedColor = defaultSelectedColor;
+		currentDisabledColor = defaultDisabledColor;
+		currentColor_Icon = defaultColor_Icon;
+		currentColor_Panel = defaultColor_Panel;
+		currentColor_PanelTexture = defaultColor_PanelTexture;
+		currentColor_Border = defaultColor_Border;
+		currentBorderThickness = defaultBorderThickness;
+		currentNormalColor_Scrollbar = defaultNormalColor_Scrollbar;
+		currentBackgroundColor_Scrollbar = defaultBackgroundColor_Scrollbar;
+		currentBackgroundColor_Scrollview = defaultBackgroundColor_Scrollview;
+		currentNormalColor_Toggle = defaultNormalColor_Toggle;
+		currentColor_Tooltip = defaultColor_Tooltip;
+
+		saveParameters();
 		// Synchronisation des PlayerPrefs avec les UI
 		loadPlayerPrefs();
-		PlayerPrefs.Save();
 
 		syncColors();
 	}
@@ -732,5 +760,43 @@ public class SettingsManager : FSystem
 	private void syncGraphicColor(GameObject go, Color? color)
 	{
 		go.GetComponent<Graphic>().color = color ?? Color.magenta;
+	}
+
+	public void setCharSpacing(int value)
+    {
+		currentCharSpacing = value;
+		foreach (GameObject go in f_allTexts)
+			syncSpacing_Text(go);
+	}
+
+	public void setWordSpacing(int value)
+	{
+		currentWordSpacing = value;
+		foreach (GameObject go in f_allTexts)
+			syncSpacing_Text(go);
+	}
+
+	public void setLineSpacing(int value)
+	{
+		currentLineSpacing = value;
+		foreach (GameObject go in f_allTexts)
+			syncSpacing_Text(go);
+	}
+
+	public void setParagraphSpacing(int value)
+	{
+		currentParagraphSpacing = value;
+		foreach (GameObject go in f_allTexts)
+			syncSpacing_Text(go);
+	}
+
+	private void syncSpacing_Text(GameObject textGO)
+    {
+		TextMeshProUGUI text = textGO.GetComponent<TextMeshProUGUI>();
+		// Transformation des numéro d'item sélectionné en valeurs d'espacement
+		text.characterSpacing = (currentCharSpacing - 2) * 10;
+		text.wordSpacing = (currentWordSpacing - 2) * 10;
+		text.lineSpacing = (currentLineSpacing - 2) * 10;
+		text.paragraphSpacing = (currentParagraphSpacing - 2) * 10;
 	}
 }
