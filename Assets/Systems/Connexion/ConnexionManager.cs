@@ -26,7 +26,6 @@ public class ConnexionManager : FSystem
 	public TMP_Text logs;
 	public TMP_Text progress;
 	public TMP_Text SPYVersion;
-	public TMP_Text sessionId;
 
 	private int webGL_fileLoaded = 0;
 	private int webGL_fileToLoad = 0;
@@ -99,6 +98,30 @@ public class ConnexionManager : FSystem
 		}
 		// wait level loading
 		MainLoop.instance.StartCoroutine(WaitLoadingData());
+	}
+
+	private IEnumerator WaitLoadingData()
+	{
+		// Enable Loading screen
+		GameObjectManager.setGameObjectState(loadingScreen, true);
+
+		// Attendre une seconde pour laisser le temps à webGL_fileToLoad d'être initialisé par les différents scénarios de chargement
+		yield return new WaitForSeconds(1f);
+
+		while (webGL_fileLoaded < webGL_fileToLoad)
+			yield return null;
+
+		// and, if require, we can load requested level by URL
+		if (loadLevelWithURL != "")
+			GameObjectManager.addComponent<AskToTestLevel>(MainLoop.instance.gameObject, new { url = loadLevelWithURL });
+		// Disable Loading screen
+		GameObjectManager.setGameObjectState(loadingScreen, false);
+
+		if (Application.isEditor && false)
+		{
+			SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
+			SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
+		}
 	}
 
 	private void GetScenariosAndLevels()
@@ -306,10 +329,11 @@ public class ConnexionManager : FSystem
 				webGL_fileLoaded++;
 				GBL_Interface.playerName = formatedString;
 				GBL_Interface.userUUID = formatedString;
-				sessionId.text = string.Join(" ", formatedString.ToCharArray());
 
 				userData.progression = null;
 				userData.highScore = null;
+				userData.currentScenario = "";
+				userData.levelToContinue = -1;
 
 				foreach (GameObject sID in f_sessionId)
 					sID.GetComponent<TMP_Text>().text = string.Join(" ", formatedString.ToCharArray());
@@ -375,13 +399,14 @@ public class ConnexionManager : FSystem
 
 	private IEnumerator GetProgressionWebRequest(string idSession)
 	{
-		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession=" + idSession);
+		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/index_new.php?idSession=" + idSession);
 		logs.text = "";
 		progress.text = "0%";
 		yield return www.SendWebRequest();
 		Localization loc = gameData.GetComponent<Localization>();
 		if (www.result != UnityWebRequest.Result.Success)
 		{
+			Debug.Log(www.result+" "+www.error);
 			logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession) + "</color>\n" + logs.text;
 			yield return new WaitForSeconds(1f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
@@ -405,7 +430,7 @@ public class ConnexionManager : FSystem
 				string[] stringSeparators = new string[] { "#SEP#" };
 				string[] tokens = www.downloadHandler.text.Split(stringSeparators, StringSplitOptions.None);
 				Debug.Log(www.downloadHandler.text);
-				if (tokens.Length != 4)
+				if (tokens.Length != 6)
 				{
 					// Session corrupted, ask to enter a new session code.
 					Debug.LogWarning(www.error);
@@ -421,32 +446,18 @@ public class ConnexionManager : FSystem
 					userData.highScore = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[1]);
 					if (userData.highScore == null)
 						userData.highScore = new Dictionary<string, int>();
-					userData.schoolClass = tokens[2];
-					userData.isTeacher = tokens[3] == "1";
+					userData.currentScenario = tokens[2];
+					int levelToContinue = -1;
+					Int32.TryParse(tokens[3], out levelToContinue);
+					userData.levelToContinue = levelToContinue;
+					userData.schoolClass = tokens[4];
+					userData.isTeacher = tokens[5] == "1";
 					GBL_Interface.playerName = idSession;
 					GBL_Interface.userUUID = idSession;
 					GameObjectManager.loadScene("TitleScreen");
 				}
 			}
 		}
-	}
-
-	private IEnumerator WaitLoadingData()
-	{
-		// Enable Loading screen
-		GameObjectManager.setGameObjectState(loadingScreen, true);
-
-		// Attendre une seconde pour laisser le temps à webGL_fileToLoad d'être initialisé par les différents scénarios de chargement
-		yield return new WaitForSeconds(1f);
-
-		while (webGL_fileLoaded < webGL_fileToLoad)
-			yield return null;
-
-		// and, if require, we can load requested level by URL
-		if (loadLevelWithURL != "")
-			GameObjectManager.addComponent<AskToTestLevel>(MainLoop.instance.gameObject, new { url = loadLevelWithURL });
-		// Disable Loading screen
-		GameObjectManager.setGameObjectState(loadingScreen, false);
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système

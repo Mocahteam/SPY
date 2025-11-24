@@ -11,6 +11,8 @@ public class UserData : MonoBehaviour {
 	public bool isTeacher;
 	public Dictionary<string, int> progression; // store for each scenario the number of unlocked levels
 	public Dictionary<string, int> highScore; // store for each level its star number
+	public string currentScenario;
+	public int levelToContinue;
 
 	private long lastFocusOut = -1;
 

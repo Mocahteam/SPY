@@ -152,9 +152,7 @@ public class EndGameManager : FSystem {
 			// Sauvegarde de l'état d'avancement des niveaux dans le scénario
 			UserData ud = gameData.GetComponent<UserData>();
 			if (ud.progression != null && (!ud.progression.ContainsKey(gameData.selectedScenario) || ud.progression[gameData.selectedScenario] < gameData.levelToLoad + 1))
-			{
 				ud.progression[gameData.selectedScenario] = gameData.levelToLoad + 1;
-			}
 
 			if (PlayerPrefs.GetInt(gameData.selectedScenario, 0) < gameData.levelToLoad + 1)
 				PlayerPrefs.SetInt(gameData.selectedScenario, gameData.levelToLoad + 1);
@@ -165,10 +163,17 @@ public class EndGameManager : FSystem {
 			{
 				GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
 				endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[1];
+				if (gameData.selectedScenario != UtilityLobby.testFromScenarioEditor && gameData.selectedScenario != UtilityLobby.testFromLevelEditor && gameData.selectedScenario != UtilityLobby.testFromUrl)
+				{
+					ud.currentScenario = "";
+					ud.levelToContinue = -1;
+				}
 			}
 			else
 			{
 				endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[2];
+				if (gameData.selectedScenario != UtilityLobby.testFromScenarioEditor && gameData.selectedScenario != UtilityLobby.testFromLevelEditor && gameData.selectedScenario != UtilityLobby.testFromUrl)
+					ud.levelToContinue++;
 			}
 			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
 			{
@@ -353,13 +358,8 @@ public class EndGameManager : FSystem {
 		if (savedScore < scoredStars)
 		{
 			PlayerPrefs.SetInt(highScoreKey + gameData.scoreKey, scoredStars);
-			PlayerPrefs.Save();
 			if (ud.highScore != null)
-			{
 				ud.highScore[highScoreKey] = scoredStars;
-				// ask to save progression
-				GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
-			}
 		}
 	}
 

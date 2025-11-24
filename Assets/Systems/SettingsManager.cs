@@ -24,7 +24,9 @@ public class SettingsManager : FSystem
 	private Family f_buttonsIcon = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new NoneOfProperties(PropertyMatcher.PROPERTY.HAS_CHILD)); // des boutons comme pour ouvrir les paramètres ou augmenter/réduire la taille de l'UI
 	private Family f_highlightable = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(TMP_Dropdown), typeof(Toggle), typeof(Scrollbar)));
 	private Family f_SyncSelectedColor = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_SyncSelectedColor"));
-	private Family f_panels = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel"));
+	private Family f_panels1 = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel"));
+	private Family f_panels2 = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel2"));
+	private Family f_panels3 = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel3"));
 	private Family f_borders = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Border"));
 	private Family f_scrollbar = FamilyManager.getFamily(new AllOfComponents(typeof(Scrollbar), typeof(Image)));
 	private Family f_scrollview = FamilyManager.getFamily(new AllOfComponents(typeof(ScrollRect), typeof(Image)), new NoneOfComponents(typeof(AutoBind))); // Le Autobind permet d'exclure les scrollRect contenus dans des dropdown
@@ -40,8 +42,9 @@ public class SettingsManager : FSystem
 	[DllImport("__Internal")]
 	private static extern bool ClearPlayerPrefs(); // call javascript
 
-	public Transform settingsContent;
-	public FlexibleColorPicker flexibleColorPicker;
+	public Transform settingsWindow;
+	private Transform settingsContent;
+	private FlexibleColorPicker flexibleColorPicker;
 	public CanvasScaler [] canvasScaler;
 	public TMP_FontAsset[] fonts;
 	public Selectable LoadingLogs;
@@ -72,7 +75,9 @@ public class SettingsManager : FSystem
 	public Color defaultSelectedColor = new Color(223f / 255f, 127f / 255f, 2f / 255f, 1f); // orange
 	public Color defaultDisabledColor = new Color(187f / 255f, 187f / 255f, 187f / 255f, 128f / 255f); // grey transparent
 	public Color defaultColor_Icon = Color.black; // black
-	public Color defaultColor_Panel = Color.white;
+	public Color defaultColor_Panel1 = Color.white;
+	public Color defaultColor_Panel2 = new Color(1f, 178f / 255f, 56f / 255f, 1f); // orange light
+	public Color defaultColor_Panel3 = new Color(179f / 255f, 179f / 255f, 179f / 255f, 1f); // grey light
 	public Color defaultColor_PanelTexture = new Color(0f, 0f, 0f, 7f / 255f); // black transparent
 	public Color defaultColor_Border = new Color(77f / 255f, 77f / 255f, 77f / 255f, 1f); // grey dark
 	public int defaultBorderThickness = 1;
@@ -108,7 +113,9 @@ public class SettingsManager : FSystem
 	private Color currentSelectedColor;
 	private Color currentDisabledColor;
 	private Color currentColor_Icon;
-	private Color currentColor_Panel;
+	private Color currentColor_Panel1;
+	private Color currentColor_Panel2;
+	private Color currentColor_Panel3;
 	private Color currentColor_PanelTexture;
 	private Color currentColor_Border;
 	private int currentBorderThickness;
@@ -127,6 +134,9 @@ public class SettingsManager : FSystem
 
 	protected override void onStart()
 	{
+		settingsContent = settingsWindow.Find("BackgroundPanel/Scroll View/Viewport/Content");
+		flexibleColorPicker = settingsWindow.GetComponentInChildren<FlexibleColorPicker>(true);
+
 		if (Application.platform == RuntimePlatform.WebGLPlayer && ClearPlayerPrefs())
 			PlayerPrefs.DeleteAll();
 
@@ -142,7 +152,9 @@ public class SettingsManager : FSystem
 		f_buttonsIcon.addEntryCallback(delegate (GameObject go) {syncNormalColor(go, currentColor_Icon); });
 		f_highlightable.addEntryCallback(delegate (GameObject go) { syncHighlightedColor(go); });
 		f_SyncSelectedColor.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, currentSelectedColor); });
-		f_panels.addEntryCallback(delegate (GameObject go) { syncColor_Panel(go); });
+		f_panels1.addEntryCallback(delegate (GameObject go) { syncColor_Panel(go); });
+		f_panels2.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, currentColor_Panel2); });
+		f_panels3.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, currentColor_Panel3); });
 		f_borders.addEntryCallback(delegate (GameObject go) { syncBorderProperties(go); });
 		f_scrollbar.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, currentNormalColor_Scrollbar); });
 		f_scrollbar.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, currentBackgroundColor_Scrollbar); });
@@ -178,7 +190,9 @@ public class SettingsManager : FSystem
 		syncColor(f_buttonsIcon, syncNormalColor, currentColor_Icon);
 		syncColor(f_highlightable, syncHighlightedColor);
 		syncColor(f_SyncSelectedColor, syncGraphicColor, currentSelectedColor);
-		syncColor(f_panels, syncColor_Panel);
+		syncColor(f_panels1, syncColor_Panel);
+		syncColor(f_panels2, syncGraphicColor, currentColor_Panel2);
+		syncColor(f_panels3, syncGraphicColor, currentColor_Panel3);
 		syncColor(f_borders, syncBorderProperties);
 		syncColor(f_scrollbar, syncNormalColor, currentNormalColor_Scrollbar);
 		syncColor(f_scrollbar, syncGraphicColor, currentBackgroundColor_Scrollbar);
@@ -251,7 +265,9 @@ public class SettingsManager : FSystem
 		// Synchronisation de la couleur des bouttons icônes
 		syncPlayerPrefColor("IconColor", defaultColor_Icon, out currentColor_Icon, "SectionColor/ColorIcon");
 		// Synchronisation de la couleur des panels
-		syncPlayerPrefColor("PanelColor", defaultColor_Panel, out currentColor_Panel, "SectionColor/ColorPanel");
+		syncPlayerPrefColor("Panel1Color", defaultColor_Panel1, out currentColor_Panel1, "SectionColor/ColorPanel1");
+		syncPlayerPrefColor("Panel2Color", defaultColor_Panel2, out currentColor_Panel2, "SectionColor/ColorPanel2");
+		syncPlayerPrefColor("Panel3Color", defaultColor_Panel3, out currentColor_Panel3, "SectionColor/ColorPanel3");
 		syncPlayerPrefColor("PanelColorTexture", defaultColor_PanelTexture, out currentColor_PanelTexture, "SectionColor/ColorPanelTexture");
 		// Synchronisation des propriétés de bordure
 		syncPlayerPrefColor("BorderColor", defaultColor_Border, out currentColor_Border, "SectionColor/ColorBorder");
@@ -302,7 +318,9 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetString("SelectedColor", ColorUtility.ToHtmlStringRGBA(currentSelectedColor));
 		PlayerPrefs.SetString("DisabledColor", ColorUtility.ToHtmlStringRGBA(currentDisabledColor));
 		PlayerPrefs.SetString("IconColor", ColorUtility.ToHtmlStringRGBA(currentColor_Icon));
-		PlayerPrefs.SetString("PanelColor", ColorUtility.ToHtmlStringRGBA(currentColor_Panel));
+		PlayerPrefs.SetString("Panel1Color", ColorUtility.ToHtmlStringRGBA(currentColor_Panel1));
+		PlayerPrefs.SetString("Panel2Color", ColorUtility.ToHtmlStringRGBA(currentColor_Panel2));
+		PlayerPrefs.SetString("Panel3Color", ColorUtility.ToHtmlStringRGBA(currentColor_Panel3));
 		PlayerPrefs.SetString("PanelColorTexture", ColorUtility.ToHtmlStringRGBA(currentColor_PanelTexture));
 		PlayerPrefs.SetString("BorderColor", ColorUtility.ToHtmlStringRGBA(currentColor_Border));
 		PlayerPrefs.SetInt("BorderThickness", currentBorderThickness);
@@ -344,7 +362,9 @@ public class SettingsManager : FSystem
 		currentSelectedColor = defaultSelectedColor;
 		currentDisabledColor = defaultDisabledColor;
 		currentColor_Icon = defaultColor_Icon;
-		currentColor_Panel = defaultColor_Panel;
+		currentColor_Panel1 = defaultColor_Panel1;
+		currentColor_Panel2 = defaultColor_Panel2;
+		currentColor_Panel3 = defaultColor_Panel3;
 		currentColor_PanelTexture = defaultColor_PanelTexture;
 		currentColor_Border = defaultColor_Border;
 		currentBorderThickness = defaultBorderThickness;
@@ -456,16 +476,28 @@ public class SettingsManager : FSystem
 					syncColor(f_toggle, syncColor_ToggleCheckmark);
 				});
 				break;
-			case "PanelColor":
+			case "Panel1Color":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
-					currentColor_Panel = c;
-					syncColor(f_panels, syncColor_Panel);
+					currentColor_Panel1 = c;
+					syncColor(f_panels1, syncColor_Panel);
+				});
+				break;
+			case "Panel2Color":
+				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
+					currentColor_Panel2 = c;
+					syncColor(f_panels2, syncGraphicColor, currentColor_Panel2);
+				});
+				break;
+			case "Panel3Color":
+				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
+					currentColor_Panel3 = c;
+					syncColor(f_panels3, syncGraphicColor, currentColor_Panel3);
 				});
 				break;
 			case "PanelColorTexture":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					currentColor_PanelTexture = c;
-					syncColor(f_panels, syncColor_Panel);
+					syncColor(f_panels1, syncColor_Panel);
 				});
 				break;
 			case "BorderColor":
@@ -739,7 +771,7 @@ public class SettingsManager : FSystem
 
 	private void syncColor_Panel(GameObject go, Color? unused = null)
 	{
-		syncGraphicColor(go, currentColor_Panel);
+		syncGraphicColor(go, currentColor_Panel1);
 		Transform texture = go.transform.Find("Texture");
 		if (texture != null)
 			syncGraphicColor(texture.gameObject, currentColor_PanelTexture);

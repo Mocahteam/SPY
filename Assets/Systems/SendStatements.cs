@@ -89,7 +89,7 @@ public class SendStatements : FSystem {
     {
         if (gameData.sendStatementEnabled)
         {
-            MainLoop.instance.StartCoroutine(PostUserData(GBL_Interface.playerName, userData.schoolClass, userData.isTeacher, JsonConvert.SerializeObject(userData.progression), JsonConvert.SerializeObject(userData.highScore)));
+            MainLoop.instance.StartCoroutine(PostUserData(GBL_Interface.playerName, userData.schoolClass, userData.isTeacher, JsonConvert.SerializeObject(userData.progression), JsonConvert.SerializeObject(userData.highScore), userData.currentScenario, userData.levelToContinue));
             foreach (SendUserData sp in go.GetComponents<SendUserData>())
                 GameObjectManager.removeComponent(sp);
             if (statementQueue != null)
@@ -97,12 +97,12 @@ public class SendStatements : FSystem {
         }
     }
 
-    private IEnumerator PostUserData(string idSession, string schoolClass, bool isTeacher, string progression, string highScore)
+    private IEnumerator PostUserData(string idSession, string schoolClass, bool isTeacher, string progression, string highScore, string currentScenario, int levelToContinue)
     {
         progression = progression == "null" ? "{}" : progression;
         highScore = highScore == "null" ? "{}" : highScore;
-        Debug.Log(idSession + "_"+ schoolClass + "_"+progression + "_" + highScore);
-        UnityWebRequest www = UnityWebRequest.PostWwwForm("https://spy.lip6.fr/ServerREST_LIP6/", "{\"idSession\":\"" + idSession + "\",\"class\":\"" + schoolClass + "\",\"isTeacher\":\""+(isTeacher ? 1 : 0)+"\",\"progression\":" + progression + ",\"highScore\":" + highScore + "}");
+        Debug.Log(idSession + "_"+ schoolClass + "_"+progression + "_" + highScore + "_" + currentScenario);
+        UnityWebRequest www = UnityWebRequest.PostWwwForm("https://spy.lip6.fr/ServerREST_LIP6/index_new.php", "{\"idSession\":\"" + idSession + "\",\"class\":\"" + schoolClass + "\",\"isTeacher\":\""+(isTeacher ? 1 : 0)+"\",\"progression\":" + progression + ",\"highScore\":" + highScore + ",\"currentScenario\":\"" + currentScenario + "\",\"levelToContinue\":" + levelToContinue + "}");
 
         yield return www.SendWebRequest();
 

@@ -3,8 +3,7 @@ using FYFY;
 
 public class SettingsManager_wrapper : BaseWrapper
 {
-	public UnityEngine.Transform settingsContent;
-	public FlexibleColorPicker flexibleColorPicker;
+	public UnityEngine.Transform settingsWindow;
 	public UnityEngine.UI.CanvasScaler[] canvasScaler;
 	public TMPro.TMP_FontAsset[] fonts;
 	public UnityEngine.UI.Selectable LoadingLogs;
@@ -34,7 +33,9 @@ public class SettingsManager_wrapper : BaseWrapper
 	public UnityEngine.Color defaultSelectedColor;
 	public UnityEngine.Color defaultDisabledColor;
 	public UnityEngine.Color defaultColor_Icon;
-	public UnityEngine.Color defaultColor_Panel;
+	public UnityEngine.Color defaultColor_Panel1;
+	public UnityEngine.Color defaultColor_Panel2;
+	public UnityEngine.Color defaultColor_Panel3;
 	public UnityEngine.Color defaultColor_PanelTexture;
 	public UnityEngine.Color defaultColor_Border;
 	public System.Int32 defaultBorderThickness;
@@ -46,8 +47,7 @@ public class SettingsManager_wrapper : BaseWrapper
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
-		MainLoop.initAppropriateSystemField (system, "settingsContent", settingsContent);
-		MainLoop.initAppropriateSystemField (system, "flexibleColorPicker", flexibleColorPicker);
+		MainLoop.initAppropriateSystemField (system, "settingsWindow", settingsWindow);
 		MainLoop.initAppropriateSystemField (system, "canvasScaler", canvasScaler);
 		MainLoop.initAppropriateSystemField (system, "fonts", fonts);
 		MainLoop.initAppropriateSystemField (system, "LoadingLogs", LoadingLogs);
@@ -77,7 +77,9 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "defaultSelectedColor", defaultSelectedColor);
 		MainLoop.initAppropriateSystemField (system, "defaultDisabledColor", defaultDisabledColor);
 		MainLoop.initAppropriateSystemField (system, "defaultColor_Icon", defaultColor_Icon);
-		MainLoop.initAppropriateSystemField (system, "defaultColor_Panel", defaultColor_Panel);
+		MainLoop.initAppropriateSystemField (system, "defaultColor_Panel1", defaultColor_Panel1);
+		MainLoop.initAppropriateSystemField (system, "defaultColor_Panel2", defaultColor_Panel2);
+		MainLoop.initAppropriateSystemField (system, "defaultColor_Panel3", defaultColor_Panel3);
 		MainLoop.initAppropriateSystemField (system, "defaultColor_PanelTexture", defaultColor_PanelTexture);
 		MainLoop.initAppropriateSystemField (system, "defaultColor_Border", defaultColor_Border);
 		MainLoop.initAppropriateSystemField (system, "defaultBorderThickness", defaultBorderThickness);

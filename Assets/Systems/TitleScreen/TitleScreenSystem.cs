@@ -18,13 +18,15 @@ public class TitleScreenSystem : FSystem {
 
 	private GameData gameData;
 	private UserData userData;
-	public GameObject mainCanvas;
-	public GameObject mainMenu;
+	public GameObject menuCampaigns;
+	public GameObject menuMissions;
 	public GameObject listOfCampaigns;
 	public GameObject listOfLevels;
+	public Button continueButton;
 	public GameObject playButton;
 	public GameObject quitButton;
 	public GameObject detailsCampaign;
+	public TMP_Text SPYVersion;
 
 	private UnityAction localCallback;
 
@@ -41,6 +43,8 @@ public class TitleScreenSystem : FSystem {
 
 	protected override void onStart()
 	{
+		SPYVersion.text = "V" + Application.version;
+
 		GameObject gameDataGO = GameObject.Find("GameData");
 		if (gameDataGO == null)
 			GameObjectManager.loadScene("ConnexionScene");
@@ -52,9 +56,9 @@ public class TitleScreenSystem : FSystem {
 			foreach (GameObject sID in f_sessionId)
 				sID.GetComponent<TMP_Text>().text = string.Join(" ", GBL_Interface.playerName.ToCharArray());
 
-			
-			Transform spyMenu = mainCanvas.transform.Find("SPYMenu");
-			mainMenu.GetComponentInParent<CanvasGroup>().interactable = true;
+			// gestion du bouton continue
+			continueButton.interactable = (gameData.scenarios.ContainsKey(userData.currentScenario) && userData.levelToContinue != -1 && userData.levelToContinue < gameData.scenarios[userData.currentScenario].levels.Count);
+
 			if (gameData.selectedScenario == UtilityLobby.testFromScenarioEditor) // reload scenario editor
 			{
 				launchScenarioEditor();
@@ -68,9 +72,9 @@ public class TitleScreenSystem : FSystem {
 				// reload last opened scenario
 				playButton.GetComponent<Button>().onClick.Invoke();
 				showLevels(gameData.selectedScenario);
-				GameObjectManager.setGameObjectState(spyMenu.Find("MenuCampaigns").gameObject, false); // be sure campaign menu is disabled
-				GameObjectManager.setGameObjectState(spyMenu.Find("MenuLevels").gameObject, true); // enable levels menu
-				MainLoop.instance.StartCoroutine(Utility.delayGOSelection(spyMenu.Find("MenuLevels").Find("Retour").gameObject));
+				GameObjectManager.setGameObjectState(menuCampaigns, false); // be sure campaign menu is disabled
+				GameObjectManager.setGameObjectState(menuMissions, true); // enable levels menu
+				MainLoop.instance.StartCoroutine(Utility.delayGOSelection(menuMissions.transform.Find("Retour").gameObject));
 			}
 
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
@@ -189,8 +193,8 @@ public class TitleScreenSystem : FSystem {
 	}
 
 	private void showLevels(string campaignKey) {
-		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("SPYMenu").Find("MenuCampaigns").gameObject, false);
-		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("SPYMenu").Find("MenuLevels").gameObject, true);
+		GameObjectManager.setGameObjectState(menuCampaigns, false);
+		GameObjectManager.setGameObjectState(menuMissions, true);
 		// delete all old level buttons
 		foreach (Transform child in listOfLevels.transform)
         {
@@ -230,9 +234,19 @@ public class TitleScreenSystem : FSystem {
 			MainLoop.instance.StartCoroutine(Utility.delayGOSelection(listOfLevels.transform.GetChild(0).Find("Button").gameObject));
 	}
 
+	public void continueScenario()
+    {
+		// garde pour être sûr que le niveau existe dans le scénario visé, mais normalement elle est déjà gérée par l'activation ou pas du bouton "Continue"
+		if (gameData.scenarios.ContainsKey(userData.currentScenario) && userData.levelToContinue != -1 && userData.levelToContinue < gameData.scenarios[userData.currentScenario].levels.Count)
+			launchLevel(userData.currentScenario, userData.levelToContinue);
+
+	}
+
 	public void launchLevel(string campaignKey, int levelToLoad) {
 		gameData.selectedScenario = campaignKey;
 		gameData.levelToLoad = levelToLoad;
+		userData.currentScenario = campaignKey;
+		userData.levelToContinue = levelToLoad;
 		GameObjectManager.loadScene("MainScene");
 	}
 
