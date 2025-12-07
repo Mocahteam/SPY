@@ -20,6 +20,7 @@ public class Tooltip : MonoBehaviour
 
     public void ShowTooltip(string tooltipString)
     {
+        Debug.Log("ShowTooltip");
         state = true;
         tooltipText.text = tooltipString;
     }

@@ -3,26 +3,20 @@ using FYFY;
 
 public class TitleScreenSystem_wrapper : BaseWrapper
 {
-	public UnityEngine.GameObject menuCampaigns;
-	public UnityEngine.GameObject menuMissions;
-	public UnityEngine.GameObject listOfCampaigns;
-	public UnityEngine.GameObject listOfLevels;
 	public UnityEngine.UI.Button continueButton;
 	public UnityEngine.GameObject playButton;
+	public UnityEngine.GameObject gameSelector;
+	public UnityEngine.GameObject gameTilePrefab;
 	public UnityEngine.GameObject quitButton;
-	public UnityEngine.GameObject detailsCampaign;
 	public TMPro.TMP_Text SPYVersion;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
-		MainLoop.initAppropriateSystemField (system, "menuCampaigns", menuCampaigns);
-		MainLoop.initAppropriateSystemField (system, "menuMissions", menuMissions);
-		MainLoop.initAppropriateSystemField (system, "listOfCampaigns", listOfCampaigns);
-		MainLoop.initAppropriateSystemField (system, "listOfLevels", listOfLevels);
 		MainLoop.initAppropriateSystemField (system, "continueButton", continueButton);
 		MainLoop.initAppropriateSystemField (system, "playButton", playButton);
+		MainLoop.initAppropriateSystemField (system, "gameSelector", gameSelector);
+		MainLoop.initAppropriateSystemField (system, "gameTilePrefab", gameTilePrefab);
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
-		MainLoop.initAppropriateSystemField (system, "detailsCampaign", detailsCampaign);
 		MainLoop.initAppropriateSystemField (system, "SPYVersion", SPYVersion);
 	}
 
@@ -34,6 +28,16 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public void displayScenarioList()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "displayScenarioList", null);
+	}
+
+	public void showDetails(GameKeys keys)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "showDetails", keys);
+	}
+
+	public void showLevels(GameKeys keys)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "showLevels", keys);
 	}
 
 	public void refreshCompetencies(UnityEngine.Transform content)
@@ -54,6 +58,11 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public void launchScenarioEditor()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "launchScenarioEditor", null);
+	}
+
+	public void launchConnexionScene()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "launchConnexionScene", null);
 	}
 
 	public void quitGame()

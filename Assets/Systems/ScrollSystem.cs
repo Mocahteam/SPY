@@ -80,4 +80,22 @@ public class ScrollSystem : FSystem
     {
         ExecuteEvents.ExecuteHierarchy(target.transform.parent.gameObject, ev, ExecuteEvents.scrollHandler);
     }
+
+    // Fait remonter l'évènement de drag sur le parent
+    public void onDrag(GameObject target, BaseEventData ev)
+    {
+        ExecuteEvents.ExecuteHierarchy(target.transform.parent.gameObject, ev, ExecuteEvents.dragHandler);
+    }
+
+    // Fait remonter l'évènement de beginDrag sur le parent
+    public void onBeginDrag(GameObject target, BaseEventData ev)
+    {
+        ExecuteEvents.ExecuteHierarchy(target.transform.parent.gameObject, ev, ExecuteEvents.beginDragHandler);
+    }
+
+    // Fait remonter l'évènement de EndDrag sur le parent
+    public void onEndDrag(GameObject target, BaseEventData ev)
+    {
+        ExecuteEvents.ExecuteHierarchy(target.transform.parent.gameObject, ev, ExecuteEvents.endDragHandler);
+    }
 }
