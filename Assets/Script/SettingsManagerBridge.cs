@@ -41,7 +41,12 @@ public class SettingsManagerBridge : MonoBehaviour
 	public void setGameView(int value)
     {
 		SettingsManager.instance.setGameView(value);
-    }
+	}
+
+	public void setTooltipView(int value)
+	{
+		SettingsManager.instance.setTooltipView(value);
+	}
 
 	public void hookListener(string key)
     {

@@ -6,7 +6,8 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.UI.Button continueButton;
 	public UnityEngine.GameObject playButton;
 	public UnityEngine.GameObject gameSelector;
-	public UnityEngine.GameObject gameTilePrefab;
+	public UnityEngine.GameObject TileScenarioPrefab;
+	public UnityEngine.GameObject TileMissionPrefab;
 	public UnityEngine.GameObject quitButton;
 	public TMPro.TMP_Text SPYVersion;
 	private void Start()
@@ -15,7 +16,8 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "continueButton", continueButton);
 		MainLoop.initAppropriateSystemField (system, "playButton", playButton);
 		MainLoop.initAppropriateSystemField (system, "gameSelector", gameSelector);
-		MainLoop.initAppropriateSystemField (system, "gameTilePrefab", gameTilePrefab);
+		MainLoop.initAppropriateSystemField (system, "TileScenarioPrefab", TileScenarioPrefab);
+		MainLoop.initAppropriateSystemField (system, "TileMissionPrefab", TileMissionPrefab);
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
 		MainLoop.initAppropriateSystemField (system, "SPYVersion", SPYVersion);
 	}
@@ -30,24 +32,29 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "displayScenarioList", null);
 	}
 
-	public void showDetails(GameKeys keys)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "showDetails", keys);
-	}
-
 	public void showLevels(GameKeys keys)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "showLevels", keys);
 	}
 
-	public void refreshCompetencies(UnityEngine.Transform content)
+	public void showDetails(GameKeys keys)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "refreshCompetencies", content);
+		MainLoop.callAppropriateSystemMethod (system, "showDetails", keys);
+	}
+
+	public void refreshCompetencies()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "refreshCompetencies", null);
 	}
 
 	public void continueScenario()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "continueScenario", null);
+	}
+
+	public void launchLevel(GameKeys gk)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "launchLevel", gk);
 	}
 
 	public void launchLevelEditor()

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -20,9 +19,11 @@ public class Tooltip : MonoBehaviour
 
     public void ShowTooltip(string tooltipString)
     {
-        Debug.Log("ShowTooltip");
-        state = true;
-        tooltipText.text = tooltipString;
+        if (PlayerPrefs.GetInt("tooltipView") == 1)
+        {
+            state = true;
+            tooltipText.text = tooltipString;
+        }
     }
 
     public void HideTooltip()

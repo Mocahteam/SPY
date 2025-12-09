@@ -11,4 +11,9 @@ public class TitleScreenSystemBridge : MonoBehaviour
     {
         TitleScreenSystem.instance.showDetails(key);
     }
+
+    public void launchLevel(GameKeys key)
+    {
+        TitleScreenSystem.instance.launchLevel(key);
+    }
 }

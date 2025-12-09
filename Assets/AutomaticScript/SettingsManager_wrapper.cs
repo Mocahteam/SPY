@@ -12,6 +12,7 @@ public class SettingsManager_wrapper : BaseWrapper
 	public System.Single defaultUIScale;
 	public System.Int32 defaultWallTransparency;
 	public System.Int32 defaultGameView;
+	public System.Int32 defaultTooltipView;
 	public System.Int32 defaultFont;
 	public System.Int32 defaultCaretWidth;
 	public System.Int32 defaultCaretHeight;
@@ -56,6 +57,7 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "defaultUIScale", defaultUIScale);
 		MainLoop.initAppropriateSystemField (system, "defaultWallTransparency", defaultWallTransparency);
 		MainLoop.initAppropriateSystemField (system, "defaultGameView", defaultGameView);
+		MainLoop.initAppropriateSystemField (system, "defaultTooltipView", defaultTooltipView);
 		MainLoop.initAppropriateSystemField (system, "defaultFont", defaultFont);
 		MainLoop.initAppropriateSystemField (system, "defaultCaretWidth", defaultCaretWidth);
 		MainLoop.initAppropriateSystemField (system, "defaultCaretHeight", defaultCaretHeight);
@@ -133,6 +135,11 @@ public class SettingsManager_wrapper : BaseWrapper
 	public void setGameView(System.Int32 value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setGameView", value);
+	}
+
+	public void setTooltipView(System.Int32 value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setTooltipView", value);
 	}
 
 	public void syncFonts(System.Int32 value)

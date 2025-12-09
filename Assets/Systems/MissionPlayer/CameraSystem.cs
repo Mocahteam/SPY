@@ -221,12 +221,15 @@ public class CameraSystem : FSystem {
 
 	public void setOrthographicView(bool state)
 	{
-		mainCamera.orthographic = state;
-		mainCamera.transform.parent.rotation = new Quaternion(0, 0, 0, 0);
-		if (mainCamera.orthographic)
-			mainCamera.transform.parent.Rotate(Vector3.back, -27); // -27 is a magic constant to put camera in direction of ground
-		PlayerPrefs.SetInt("orthographicView", mainCamera.orthographic ? 1 : 0);
-		PlayerPrefs.Save();
+		if (mainCamera != null)
+		{
+			mainCamera.orthographic = state;
+			mainCamera.transform.parent.rotation = new Quaternion(0, 0, 0, 0);
+			if (mainCamera.orthographic)
+				mainCamera.transform.parent.Rotate(Vector3.back, -27); // -27 is a magic constant to put camera in direction of ground
+			PlayerPrefs.SetInt("orthographicView", mainCamera.orthographic ? 1 : 0);
+			PlayerPrefs.Save();
+		}
 	}
 
 	public void set_UIFrontBack(float value)

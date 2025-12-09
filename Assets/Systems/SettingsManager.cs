@@ -54,6 +54,7 @@ public class SettingsManager : FSystem
 	public float defaultUIScale = 1;
 	public int defaultWallTransparency = 1;
 	public int defaultGameView = 0;
+	public int defaultTooltipView = 1;
 	public int defaultFont = 6;
 	public int defaultCaretWidth = 0;
 	public int defaultCaretHeight = 0;
@@ -92,6 +93,7 @@ public class SettingsManager : FSystem
 	private float currentUIScale;
 	private int currentWallTransparency;
 	private int currentGameView;
+	private int currentTooltipView;
 	private int currentFont;
 	private int currentCaretWidth;
 	private int currentCaretHeight;
@@ -224,6 +226,9 @@ public class SettingsManager : FSystem
 		currentGameView = PlayerPrefs.GetInt("orthographicView", defaultGameView);
 		settingsContent.Find("SectionGraphic/GameView").GetComponentInChildren<TMP_Dropdown>().value = currentGameView;
 
+		currentTooltipView = PlayerPrefs.GetInt("tooltipView", defaultTooltipView);
+		settingsContent.Find("SectionGraphic/Tooltip").GetComponentInChildren<TMP_Dropdown>().value = currentTooltipView;
+
 		currentFont = PlayerPrefs.GetInt("font", defaultFont);
 		settingsContent.Find("SectionText/FontDropdown").GetComponentInChildren<TMP_Dropdown>().value = currentFont;
 
@@ -297,6 +302,7 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetFloat("UIScale", currentUIScale);
 		PlayerPrefs.SetInt("wallTransparency", currentWallTransparency);
 		PlayerPrefs.SetInt("orthographicView", currentGameView);
+		PlayerPrefs.SetInt("tooltipView", currentTooltipView);
 		PlayerPrefs.SetInt("font", currentFont);
 		PlayerPrefs.SetInt("caretWidth", currentCaretWidth);
 		PlayerPrefs.SetInt("caretHeight", currentCaretHeight);
@@ -341,6 +347,7 @@ public class SettingsManager : FSystem
 		currentUIScale = defaultUIScale;
 		currentWallTransparency = defaultWallTransparency;
 		currentGameView = defaultGameView;
+		currentTooltipView = defaultTooltipView;
 		currentFont = defaultFont;
 		currentCaretWidth = defaultCaretWidth;
 		currentCaretHeight = defaultCaretHeight;
@@ -598,6 +605,11 @@ public class SettingsManager : FSystem
 		if (CameraSystem.instance != null)
 			CameraSystem.instance.setOrthographicView(value == 1);
 		currentGameView = value;
+	}
+
+	public void setTooltipView(int value)
+	{
+		currentTooltipView = value;
 	}
 
 	public void syncFonts(int value)
