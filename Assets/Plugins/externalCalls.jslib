@@ -93,5 +93,9 @@ mergeInto(LibraryManager.library, {
 	TryToCopy: function(txt){
 		var content = UTF8ToString(txt);
 		document.tryToCopy(content);
+	},
+	
+	TryToPaste: function(){
+		document.tryToPaste();
 	}
 });

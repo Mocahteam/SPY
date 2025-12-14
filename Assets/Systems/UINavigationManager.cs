@@ -35,8 +35,8 @@ public class UINavigationManager : FSystem
 	{
 		// Récupérer la valeur Vector2 de Navigate
 		Vector2 navigateValue = navigateAction.ReadValue<Vector2>();
-		if (navigateAction.WasPressedThisFrame())
-			Debug.Log(navigateValue);
+		/*if (navigateAction.WasPressedThisFrame())
+			Debug.Log(navigateValue);*/
 
 		// Get the currently selected UI element from the event system.
 		GameObject selected = eventSystem.currentSelectedGameObject;
@@ -169,7 +169,7 @@ public class UINavigationManager : FSystem
 				if (nav.UpLeft.Length > 0 && (navigateAction.WasPressedThisFrame() && (navigateValue.y > 0 || navigateValue.x < 0)))
 				{
 					foreach (Selectable sel in nav.UpLeft)
-						if (sel.gameObject.activeInHierarchy)
+						if (sel != null && sel.gameObject.activeInHierarchy)
 						{
 							EventSystem.current.SetSelectedGameObject(sel.gameObject);
 							break;
@@ -178,7 +178,7 @@ public class UINavigationManager : FSystem
 				else if (nav.DownRight.Length > 0 && (navigateAction.WasPressedThisFrame() && (navigateValue.y < 0 || navigateValue.x > 0)))
 				{
 					foreach (Selectable sel in nav.DownRight)
-						if (sel.gameObject.activeInHierarchy)
+						if (sel != null && sel.gameObject.activeInHierarchy)
 						{
 							EventSystem.current.SetSelectedGameObject(sel.gameObject);
 							break;

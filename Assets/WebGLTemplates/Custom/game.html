@@ -96,6 +96,7 @@
 		// Ajout au document de fonctions pour pouvoir les appeler dans le plugin Unity
 		document.updateLang = updateLang;
 		document.tryToCopy = tryToCopy;
+		document.tryToPaste = tryToPaste;
 		document.sendToScreenReader = sendToScreenReader;
 		
 		document.updateLang(lang);
@@ -244,10 +245,12 @@
 					
 		var script = document.createElement("script");
 		script.src = loaderUrl;
+		var unityInstance = null;
 		script.onload = () => {
 			createUnityInstance(canvas, config, (progress) => {
 				progressBarFull.style.width = 100 * progress + "%";
-			}).then((unityInstance) => {
+			}).then((instance) => {
+				unityInstance = instance;
 				loadingBar.style.display = "none";
 
 				fullscreenButton.onclick = () => {
@@ -389,7 +392,7 @@
 			if (navigator.clipboard && navigator.clipboard.writeText) {
 				try {
 					await navigator.clipboard.writeText(text);
-					console.log("le presse-papier est correctement paramétré : " + text);
+					console.log("écriture presse-papier : " + text);
 				} catch (err) {
 					console.log("Clipboard API échouée, utilisation du fallback : " + err);
 					// Si l'API moderne échoue, utiliser le fallback
@@ -402,6 +405,24 @@
 			}
 		}
 		
+		// Fonction principale du collage
+		async function tryToPaste() {
+			// Vérifier si l'API Clipboard moderne est disponible
+			if (navigator.clipboard && navigator.clipboard.readText) {
+				try {
+					text = await navigator.clipboard.readText();
+					console.log("lecture presse-papiers: " + text);
+					// see HotkeySystem
+					window.unityInstance.SendMessage('Main_Loop', 'paste', text);
+				} catch (err) {
+					alert("Clipboard API failed, paste canceled: " + err);
+				}
+			} else {
+				// L'API moderne n'est pas disponible, utiliser directement le fallback
+				alert("Clipboard API not available, paste cancel");
+			}
+		}
+
 		document.body.appendChild(script);
 		
 		// Détection lorsque le canvas prend le focus

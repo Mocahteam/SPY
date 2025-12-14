@@ -313,7 +313,7 @@ public class ConnexionManager : FSystem
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[0], formatedString) + "</color>\n" + logs.text;
-			yield return new WaitForSeconds(1f);
+			yield return new WaitForSeconds(2f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
 			{
 				logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[1], formatedString) + "</color>\n" + logs.text;
