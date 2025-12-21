@@ -181,7 +181,7 @@ public class TitleScreenSystem : FSystem {
 			// build navigation links
 			backDN.UpLeft[backDN.UpLeft.Length - 1] = gameList.GetChild(0).gameObject.GetComponent<Selectable>();
 			backDN.DownRight[backDN.DownRight.Length - 1] = gameList.GetChild(0).gameObject.GetComponent<Selectable>();
-			for (int i = 0; i < gameList.childCount - 1 ; i++)
+			for (int i = 0; i < gameList.childCount  ; i++)
             {
 				Selectable tile = gameList.GetChild(i).GetComponent<Selectable>();
 				Navigation nav = tile.navigation;
@@ -189,6 +189,7 @@ public class TitleScreenSystem : FSystem {
 				nav.selectOnLeft = i>0 ? gameList.GetChild(i-1).GetComponent<Selectable>() : null;
 				nav.selectOnRight = i<gameList.childCount-1 ? gameList.GetChild(i + 1).GetComponent<Selectable>() : null;
 				nav.selectOnDown = null; // définit lors de la selection de la tile
+				tile.navigation = nav;
 			}
 
 			// focus on the first scenario
@@ -290,11 +291,11 @@ public class TitleScreenSystem : FSystem {
 			// build navigation links
 			backDN.UpLeft[backDN.UpLeft.Length - 1] = gameList.GetChild(0).gameObject.GetComponent<Selectable>();
 			titleDN.DownRight[titleDN.DownRight.Length - 1] = gameList.GetChild(0).gameObject.GetComponent<Selectable>();
-			for (int i = 0; i < gameList.childCount - 1; i++)
+			for (int i = 0; i < gameList.childCount; i++)
 			{
 				Selectable tile = gameList.GetChild(i).GetComponent<Selectable>();
 				Navigation nav = tile.navigation;
-				nav.selectOnUp = backButton.GetComponent<Selectable>();
+				nav.selectOnUp = title.GetComponent<Selectable>();
 				nav.selectOnLeft = i > 0 ? gameList.GetChild(i - 1).GetComponent<Selectable>() : null;
 				nav.selectOnRight = i < gameList.childCount - 1 ? gameList.GetChild(i + 1).GetComponent<Selectable>() : null;
 				nav.selectOnDown = null; // définit lors de la selection de la tile
@@ -325,16 +326,25 @@ public class TitleScreenSystem : FSystem {
 			sel.navigation = nav;
 		}
 
-		TMP_Text title = gameDetails.Find("Title").GetComponentInChildren<TMP_Text>(true);
+		TMP_Text Detailstitle = gameDetails.Find("Title").GetComponentInChildren<TMP_Text>(true);
 		
 		// Set down navigation for Tile
 		Selectable curTile = keys.GetComponent<Selectable>();
 		Navigation curTileNav = curTile.navigation;
-		curTileNav.selectOnDown = title.GetComponent<Selectable>();
+		curTileNav.selectOnDown = Detailstitle.GetComponent<Selectable>();
 		curTile.navigation = curTileNav;
 
+		// Set down navigation for header
+		Transform headerTitle = gameSelector.transform.Find("Header/Title");
+		DynamicNavigation titleDN = headerTitle.GetComponent<DynamicNavigation>();
+		titleDN.DownRight[titleDN.DownRight.Length - 1] = curTile;
+		Transform backButton = gameSelector.transform.Find("Header/BackMainMenu");
+		DynamicNavigation backDN = backButton.GetComponent<DynamicNavigation>();
+		backDN.DownRight[backDN.DownRight.Length - 1] = curTile;
+
+
 		// Set up/left navigation for Title
-		Selectable titleSel = title.GetComponent<Selectable>();
+		Selectable titleSel = Detailstitle.GetComponent<Selectable>();
 		Navigation titleNav = titleSel.navigation;
 		titleNav.selectOnLeft = curTile;
 		titleNav.selectOnUp = curTile;
@@ -350,14 +360,14 @@ public class TitleScreenSystem : FSystem {
 		if (keys.scenarioKey != "" && keys.missionNumber == -1 && gameData.scenarios.ContainsKey(keys.scenarioKey))
 		{
 			GameObjectManager.setGameObjectState(gameDetails.gameObject, true);
-			title.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].name);
+			Detailstitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].name);
 			gameDescription.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].description);
 		}
 		// If the keys refer a scenario and a mission
 		else if (keys.scenarioKey != "" && keys.missionNumber != -1 && gameData.scenarios.ContainsKey(keys.scenarioKey) && gameData.scenarios[keys.scenarioKey].levels.Count > keys.missionNumber)
         {
 			GameObjectManager.setGameObjectState(gameDetails.gameObject, true);
-			title.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].name);
+			Detailstitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].name);
 			gameDescription.text = "";
 		}
 		else
