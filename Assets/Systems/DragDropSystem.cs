@@ -566,7 +566,7 @@ public class DragDropSystem : FSystem
 		GameObjectManager.addComponent<RefreshSizeOfEditableContainer>(MainLoop.instance.gameObject);
 
 		// Lance le son de dépôt du block d'action
-		audioSource.Play();
+		audioSource.PlayOneShot(Resources.Load("Sound/AddActionSound") as AudioClip);
 
 		// générer une trace seulement sur la scene principale
 		if (SceneManager.GetActiveScene().name == "MainScene")

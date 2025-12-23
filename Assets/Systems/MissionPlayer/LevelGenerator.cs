@@ -30,6 +30,7 @@ public class LevelGenerator : FSystem {
 	public GameObject editableCanvas;// Le container qui contient les Viewport/script containers
 	public GameObject scriptContainer;
 	public GameObject library; // Le viewport qui contient la librairie
+	public TMP_Text scenarioName;
 	public TMP_Text levelName;
 	public GameObject buttonExecute;
 	public Material[] groundMaterials;
@@ -57,6 +58,7 @@ public class LevelGenerator : FSystem {
 				XmlToLevel(gameData.levels[levelToLoad.src].OwnerDocument);
 			else
 				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Error });
+			scenarioName.text = Utility.extractLocale(gameData.selectedScenario);
 			levelName.text = Utility.extractLocale(levelToLoad.name);
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlButtons();

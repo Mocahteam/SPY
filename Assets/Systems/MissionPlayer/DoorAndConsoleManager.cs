@@ -11,7 +11,6 @@ public class DoorAndConsoleManager : FSystem {
 	private Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
 	private Family f_console = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position)));
 	private Family f_consoleTriggered = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(AudioSource), typeof(Triggered)));
-	private Family f_doorPath = FamilyManager.getFamily(new AllOfComponents(typeof(DoorPath)));
 
 	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
 

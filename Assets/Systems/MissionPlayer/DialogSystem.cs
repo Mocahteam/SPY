@@ -38,7 +38,7 @@ public class DialogSystem : FSystem
 		{
 			gameData = go.GetComponent<GameData>();
 			// Always disable bottom button, it will be enabled at the end of the dialogs (see Ok button)
-			GameObjectManager.setGameObjectState(showDialogsBottom, false);
+			GameObjectManager.setGameObjectState(showDialogsBottom.transform.parent.gameObject, false);
 			// Count number of briefing and debriefing dialogs
 			List<Dialog> tmpList = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].overridedDialogs;
 			if (tmpList != null) {
@@ -57,12 +57,12 @@ public class DialogSystem : FSystem
 		}
 
 		f_playingMode.addEntryCallback(delegate {
-			GameObjectManager.setGameObjectState(showDialogsBottom, false);
+			GameObjectManager.setGameObjectState(showDialogsBottom.transform.parent.gameObject, false);
 		});
 
 		f_editingMode.addEntryCallback(delegate {
 			if (overridedBriefingDialogs.Count > 0)
-				GameObjectManager.setGameObjectState(showDialogsBottom, true);
+				GameObjectManager.setGameObjectState(showDialogsBottom.transform.parent.gameObject, true);
 		});
 
 		f_ends.addEntryCallback(delegate
@@ -388,8 +388,7 @@ public class DialogSystem : FSystem
 		}
 		else
 		{
-			audio.clip = DownloadHandlerAudioClip.GetContent(www);
-			audio.Play();
+			audio.PlayOneShot(DownloadHandlerAudioClip.GetContent(www));
 		}
 	}
 

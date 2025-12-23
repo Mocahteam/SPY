@@ -7,6 +7,7 @@ public class LevelGenerator_wrapper : BaseWrapper
 	public UnityEngine.GameObject editableCanvas;
 	public UnityEngine.GameObject scriptContainer;
 	public UnityEngine.GameObject library;
+	public TMPro.TMP_Text scenarioName;
 	public TMPro.TMP_Text levelName;
 	public UnityEngine.GameObject buttonExecute;
 	public UnityEngine.Material[] groundMaterials;
@@ -19,6 +20,7 @@ public class LevelGenerator_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "editableCanvas", editableCanvas);
 		MainLoop.initAppropriateSystemField (system, "scriptContainer", scriptContainer);
 		MainLoop.initAppropriateSystemField (system, "library", library);
+		MainLoop.initAppropriateSystemField (system, "scenarioName", scenarioName);
 		MainLoop.initAppropriateSystemField (system, "levelName", levelName);
 		MainLoop.initAppropriateSystemField (system, "buttonExecute", buttonExecute);
 		MainLoop.initAppropriateSystemField (system, "groundMaterials", groundMaterials);

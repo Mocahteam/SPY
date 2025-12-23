@@ -33,7 +33,7 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
 
     public void showBriefingOverride(GameObject src)
     {
-        ParamCompetenceSystem.instance.showBriefingOverride(gameObject.GetComponent< DataLevelBehaviour>(), src);
+        ParamCompetenceSystem.instance.showBriefingOverride(gameObject.GetComponent<DataLevelBehaviour>(), src);
     }
 
     public void setNextFocusedGameObject(GameObject go)

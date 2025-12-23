@@ -21,7 +21,10 @@ public class SettingsManager : FSystem
 	private Family f_inputfield = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
 	private Family f_inputfieldCaret = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_SelectionCaret)));
 	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("DefaultButton"));
-	private Family f_buttonsIcon = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new NoneOfProperties(PropertyMatcher.PROPERTY.HAS_CHILD)); // des boutons comme pour ouvrir les paramètres ou augmenter/réduire la taille de l'UI
+	private Family f_buttonsIcon = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("ButtonIcon")); // des boutons comme pour ouvrir les paramètres ou augmenter/réduire la taille de l'UI ou ouvrir les compétences, les icones des dropdown et des toggle...
+	private Family f_buttonsPlay = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("PlayButton"));
+	private Family f_buttonsPause = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("PauseButton"));
+	private Family f_buttonsStop = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("StopButton"));
 	private Family f_highlightable = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(TMP_Dropdown), typeof(Toggle), typeof(Scrollbar)));
 	private Family f_SyncSelectedColor = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_SyncSelectedColor"));
 	private Family f_panels1 = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel"));
@@ -42,52 +45,13 @@ public class SettingsManager : FSystem
 	[DllImport("__Internal")]
 	private static extern bool ClearPlayerPrefs(); // call javascript
 
+	private DefaultSettingsValues dsf;
 	public Transform settingsWindow;
 	private Transform settingsContent;
 	private FlexibleColorPicker flexibleColorPicker;
 	public CanvasScaler [] canvasScaler;
-	public TMP_FontAsset[] fonts;
 	public Selectable LoadingLogs;
-
-	public int defaultQuality = 2;
-	public int defaultInteractionMode = 0;
-	public float defaultUIScale = 1;
-	public int defaultWallTransparency = 1;
-	public int defaultGameView = 0;
-	public int defaultTooltipView = 1;
-	public int defaultFont = 6;
-	public int defaultCaretWidth = 0;
-	public int defaultCaretHeight = 0;
-	public int defaultCharSpacing = 2;
-	public int defaultWordSpacing = 2;
-	public int defaultLineSpacing = 2;
-	public int defaultParagraphSpacing = 2;
-	public Color defaultNormalColor_Text = Color.black; // black
-	public Color defaultSelectedColor_Text = new Color(131f / 255f, 71f / 255f, 2f / 255f, 1f); // brown dark
-	public Color defaultPlaceholderColor = new Color(50f / 255f, 50f / 255f, 50f / 255f, 128f / 255f); // grey dark transparent
-	public Color defaultNormalColor_Dropdown = Color.white;
-	public Color defaultNormalColor_Inputfield = Color.white;
-	public Color defaultSelectedColor_Inputfield = new Color(200f / 255f, 200f / 255f, 200f / 255f, 1f); // grey light
-	public Color defaultSelectionColor_Inputfield = new Color(168f / 255f, 206f / 255f, 1f, 192f / 255f); // blue light transparent
-	public Color defaultCaretColor_Inputfield = new Color(50f / 255f, 50f / 255f, 50f / 255f, 1f); // frey dark
-	public Color defaultNormalColor_Button = new Color(1f, 1f, 1f, 0f); // transparent
-	public Color defaultHighlightedColor = new Color(1f, 178f/255f, 56f/255f, 1f); // orange light
-	public Color defaultPressedColor = new Color(194f / 255f, 94f / 255f, 0f, 1f); // brown
-	public Color defaultSelectedColor = new Color(223f / 255f, 127f / 255f, 2f / 255f, 1f); // orange
-	public Color defaultDisabledColor = new Color(187f / 255f, 187f / 255f, 187f / 255f, 128f / 255f); // grey transparent
-	public Color defaultColor_Icon = Color.black; // black
-	public Color defaultColor_Panel1 = Color.white;
-	public Color defaultColor_Panel2 = new Color(1f, 178f / 255f, 56f / 255f, 1f); // orange light
-	public Color defaultColor_Panel3 = new Color(179f / 255f, 179f / 255f, 179f / 255f, 1f); // grey light
-	public Color defaultColor_PanelTexture = new Color(0f, 0f, 0f, 7f / 255f); // black transparent
-	public Color defaultColor_Border = new Color(77f / 255f, 77f / 255f, 77f / 255f, 1f); // grey dark
-	public int defaultBorderThickness = 1;
-	public Color defaultNormalColor_Scrollbar = new Color(223f / 255f, 127f / 255f, 2f / 255f, 1f); // orange
-	public Color defaultBackgroundColor_Scrollbar = new Color(1f, 178f / 255f, 56f / 255f, 1f); // orange light
-	public Color defaultBackgroundColor_Scrollview = new Color(1f, 1f, 1f, 0f); // transparent
-	public Color defaultNormalColor_Toggle = Color.white;
-	public Color defaultColor_Tooltip = Color.white;
-
+	
 	private int currentQuality;
 	private int currentInteractionMode;
 	private float currentUIScale;
@@ -126,6 +90,9 @@ public class SettingsManager : FSystem
 	private Color currentBackgroundColor_Scrollview;
 	private Color currentNormalColor_Toggle;
 	private Color currentColor_Tooltip;
+	private Color currentPlayButtonColor;
+	private Color currentPauseButtonColor;
+	private Color currentStopButtonColor;
 
 	private TMP_Text currentSizeText;
 
@@ -138,6 +105,7 @@ public class SettingsManager : FSystem
 	{
 		settingsContent = settingsWindow.Find("BackgroundPanel/Scroll View/Viewport/Content");
 		flexibleColorPicker = settingsWindow.GetComponentInChildren<FlexibleColorPicker>(true);
+		dsf = settingsWindow.GetComponent<DefaultSettingsValues>();
 
 		if (Application.platform == RuntimePlatform.WebGLPlayer && ClearPlayerPrefs())
 			PlayerPrefs.DeleteAll();
@@ -152,6 +120,9 @@ public class SettingsManager : FSystem
 		f_inputfieldCaret.addEntryCallback(sync_CaretHeight);
 		f_buttons.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, currentNormalColor_Button); });
 		f_buttonsIcon.addEntryCallback(delegate (GameObject go) {syncNormalColor(go, currentColor_Icon); });
+		f_buttonsPlay.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, currentPlayButtonColor); });
+		f_buttonsPause.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, currentPauseButtonColor); });
+		f_buttonsStop.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, currentStopButtonColor); });
 		f_highlightable.addEntryCallback(delegate (GameObject go) { syncHighlightedColor(go); });
 		f_SyncSelectedColor.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, currentSelectedColor); });
 		f_panels1.addEntryCallback(delegate (GameObject go) { syncColor_Panel(go); });
@@ -190,6 +161,9 @@ public class SettingsManager : FSystem
 		syncColor(f_inputfield, sync_Inputfield);
 		syncColor(f_buttons, syncNormalColor, currentNormalColor_Button);
 		syncColor(f_buttonsIcon, syncNormalColor, currentColor_Icon);
+		syncColor(f_buttonsPlay, syncNormalColor, currentPlayButtonColor);
+		syncColor(f_buttonsPause, syncNormalColor, currentPauseButtonColor);
+		syncColor(f_buttonsStop, syncNormalColor, currentStopButtonColor);
 		syncColor(f_highlightable, syncHighlightedColor);
 		syncColor(f_SyncSelectedColor, syncGraphicColor, currentSelectedColor);
 		syncColor(f_panels1, syncColor_Panel);
@@ -207,85 +181,89 @@ public class SettingsManager : FSystem
 	// lit les PlayerPrefs et initialise les UI en conséquence
 	private void loadPlayerPrefs()
 	{
-		currentQuality = PlayerPrefs.GetInt("quality", defaultQuality);
-		settingsContent.Find("SectionGraphic/Quality").GetComponentInChildren<TMP_Dropdown>().value = currentQuality;
+		currentQuality = PlayerPrefs.GetInt("quality", dsf.defaultQuality);
+		settingsContent.Find("SectionGraphic/GridContainer/Grid/Quality").GetComponentInChildren<TMP_Dropdown>().value = currentQuality;
 
-		currentInteractionMode = PlayerPrefs.GetInt("interaction", Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 1 : defaultInteractionMode);
-		settingsContent.Find("SectionGraphic/InteractionMode").GetComponentInChildren<TMP_Dropdown>().value = currentInteractionMode;
+		currentInteractionMode = PlayerPrefs.GetInt("interaction", Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 1 : dsf.defaultInteractionMode);
+		settingsContent.Find("SectionGraphic/GridContainer/Grid/InteractionMode").GetComponentInChildren<TMP_Dropdown>().value = currentInteractionMode;
 
 		// définition de la taille de l'interface
-		currentSizeText = settingsContent.Find("SectionGraphic/UISize").Find("CurrentSize").GetComponent<TMP_Text>();
-		currentUIScale = PlayerPrefs.GetFloat("UIScale", (float)Math.Max(defaultUIScale, Math.Round((double)Screen.currentResolution.width / 2048, 2))); // do not reduce scale under defaultUIScale and multiply scale for definition higher than 2048
+		currentSizeText = settingsContent.Find("SectionGraphic/GridContainer/Grid/UISize").Find("CurrentSize").GetComponent<TMP_Text>();
+		currentUIScale = PlayerPrefs.GetFloat("UIScale", (float)Math.Max(dsf.defaultUIScale, Math.Round((double)Screen.currentResolution.width / 2048, 2))); // do not reduce scale under defaultUIScale and multiply scale for definition higher than 2048
 		currentSizeText.text = currentUIScale + "";
 		foreach (CanvasScaler canvas in canvasScaler)
 			canvas.scaleFactor = currentUIScale;
 
-		currentWallTransparency = PlayerPrefs.GetInt("wallTransparency", defaultWallTransparency);
-		settingsContent.Find("SectionGraphic/WallTransparency").GetComponentInChildren<TMP_Dropdown>().value = currentWallTransparency;
+		currentWallTransparency = PlayerPrefs.GetInt("wallTransparency", dsf.defaultWallTransparency);
+		settingsContent.Find("SectionGraphic/GridContainer/Grid/WallTransparency").GetComponentInChildren<TMP_Dropdown>().value = currentWallTransparency;
 
-		currentGameView = PlayerPrefs.GetInt("orthographicView", defaultGameView);
-		settingsContent.Find("SectionGraphic/GameView").GetComponentInChildren<TMP_Dropdown>().value = currentGameView;
+		currentGameView = PlayerPrefs.GetInt("orthographicView", dsf.defaultGameView);
+		settingsContent.Find("SectionGraphic/GridContainer/Grid/GameView").GetComponentInChildren<TMP_Dropdown>().value = currentGameView;
 
-		currentTooltipView = PlayerPrefs.GetInt("tooltipView", defaultTooltipView);
-		settingsContent.Find("SectionGraphic/Tooltip").GetComponentInChildren<TMP_Dropdown>().value = currentTooltipView;
+		currentTooltipView = PlayerPrefs.GetInt("tooltipView", dsf.defaultTooltipView);
+		settingsContent.Find("SectionGraphic/GridContainer/Grid/Tooltip").GetComponentInChildren<TMP_Dropdown>().value = currentTooltipView;
 
-		currentFont = PlayerPrefs.GetInt("font", defaultFont);
-		settingsContent.Find("SectionText/FontDropdown").GetComponentInChildren<TMP_Dropdown>().value = currentFont;
+		currentFont = PlayerPrefs.GetInt("font", dsf.defaultFont);
+		settingsContent.Find("SectionText/GridContainer/Grid/FontDropdown").GetComponentInChildren<TMP_Dropdown>().value = currentFont;
 
-		currentCaretWidth = PlayerPrefs.GetInt("caretWidth", defaultCaretWidth);
-		settingsContent.Find("SectionText/CaretWidth").GetComponentInChildren<TMP_Dropdown>().value = currentCaretWidth;
-		currentCaretHeight = PlayerPrefs.GetInt("caretHeight", defaultCaretHeight);
-		settingsContent.Find("SectionText/CaretHeight").GetComponentInChildren<TMP_Dropdown>().value = currentCaretHeight;
+		currentCaretWidth = PlayerPrefs.GetInt("caretWidth", dsf.defaultCaretWidth);
+		settingsContent.Find("SectionText/GridContainer/Grid/CaretWidth").GetComponentInChildren<TMP_Dropdown>().value = currentCaretWidth;
+		currentCaretHeight = PlayerPrefs.GetInt("caretHeight", dsf.defaultCaretHeight);
+		settingsContent.Find("SectionText/GridContainer/Grid/CaretHeight").GetComponentInChildren<TMP_Dropdown>().value = currentCaretHeight;
 
-		currentCharSpacing = PlayerPrefs.GetInt("charSpacing", defaultCharSpacing);
-		settingsContent.Find("SectionText/CharSpacing").GetComponentInChildren<TMP_Dropdown>().value = currentCharSpacing;
-		currentWordSpacing = PlayerPrefs.GetInt("wordSpacing", defaultWordSpacing);
-		settingsContent.Find("SectionText/WordSpacing").GetComponentInChildren<TMP_Dropdown>().value = currentWordSpacing;
-		currentLineSpacing = PlayerPrefs.GetInt("lineSpacing", defaultLineSpacing);
-		settingsContent.Find("SectionText/LineSpacing").GetComponentInChildren<TMP_Dropdown>().value = currentLineSpacing;
-		currentParagraphSpacing = PlayerPrefs.GetInt("paragraphSpacing", defaultParagraphSpacing);
-		settingsContent.Find("SectionText/ParagraphSpacing").GetComponentInChildren<TMP_Dropdown>().value = currentParagraphSpacing;
+		currentCharSpacing = PlayerPrefs.GetInt("charSpacing", dsf.defaultCharSpacing);
+		settingsContent.Find("SectionText/GridContainer/Grid/CharSpacing").GetComponentInChildren<TMP_Dropdown>().value = currentCharSpacing;
+		currentWordSpacing = PlayerPrefs.GetInt("wordSpacing", dsf.defaultWordSpacing);
+		settingsContent.Find("SectionText/GridContainer/Grid/WordSpacing").GetComponentInChildren<TMP_Dropdown>().value = currentWordSpacing;
+		currentLineSpacing = PlayerPrefs.GetInt("lineSpacing", dsf.defaultLineSpacing);
+		settingsContent.Find("SectionText/GridContainer/Grid/LineSpacing").GetComponentInChildren<TMP_Dropdown>().value = currentLineSpacing;
+		currentParagraphSpacing = PlayerPrefs.GetInt("paragraphSpacing", dsf.defaultParagraphSpacing);
+		settingsContent.Find("SectionText/GridContainer/Grid/ParagraphSpacing").GetComponentInChildren<TMP_Dropdown>().value = currentParagraphSpacing;
 
 		// Synchronisation de la couleur des textes
-		syncPlayerPrefColor("TextColorNormal", defaultNormalColor_Text, out currentNormalColor_Text, "SectionColor/ColorTextNormal");
-		syncPlayerPrefColor("TextColorSelected", defaultSelectedColor_Text, out currentSelectedColor_Text, "SectionColor/ColorTextSelected");
-		syncPlayerPrefColor("PlaceholderColor", defaultPlaceholderColor, out currentPlaceholderColor, "SectionColor/ColorPlaceholder");
+		syncPlayerPrefColor("TextColorNormal", dsf.defaultNormalColor_Text, out currentNormalColor_Text, "SectionColor/GridContainer/Grid/ColorTextNormal");
+		syncPlayerPrefColor("TextColorSelected", dsf.defaultSelectedColor_Text, out currentSelectedColor_Text, "SectionColor/GridContainer/Grid/ColorTextSelected");
+		syncPlayerPrefColor("PlaceholderColor", dsf.defaultPlaceholderColor, out currentPlaceholderColor, "SectionColor/GridContainer/Grid/ColorPlaceholder");
 		// Synchronisation de la couleur des dropdown
-		syncPlayerPrefColor("DropdownColorNormal", defaultNormalColor_Dropdown, out currentNormalColor_Dropdown, "SectionColor/ColorDropdownNormal");
+		syncPlayerPrefColor("DropdownColorNormal", dsf.defaultNormalColor_Dropdown, out currentNormalColor_Dropdown, "SectionColor/GridContainer/Grid/ColorDropdownNormal");
 		// Synchronisation de la couleur des inputfield
-		syncPlayerPrefColor("InputfieldColorNormal", defaultNormalColor_Inputfield, out currentNormalColor_Inputfield, "SectionColor/ColorInputfieldNormal");
-		syncPlayerPrefColor("InputfieldColorSelected", defaultSelectedColor_Inputfield, out currentSelectedColor_Inputfield, "SectionColor/ColorInputfieldSelected");
-		syncPlayerPrefColor("InputfieldColorSelection", defaultSelectionColor_Inputfield, out currentSelectionColor_Inputfield, "SectionColor/ColorInputfieldSelection");
-		syncPlayerPrefColor("InputfieldColorCaret", defaultCaretColor_Inputfield, out currentCaretColor_Inputfield, "SectionColor/ColorInputfieldCaret");
+		syncPlayerPrefColor("InputfieldColorNormal", dsf.defaultNormalColor_Inputfield, out currentNormalColor_Inputfield, "SectionColor/GridContainer/Grid/ColorInputfieldNormal");
+		syncPlayerPrefColor("InputfieldColorSelected", dsf.defaultSelectedColor_Inputfield, out currentSelectedColor_Inputfield, "SectionColor/GridContainer/Grid/ColorInputfieldSelected");
+		syncPlayerPrefColor("InputfieldColorSelection", dsf.defaultSelectionColor_Inputfield, out currentSelectionColor_Inputfield, "SectionColor/GridContainer/Grid/ColorInputfieldSelection");
+		syncPlayerPrefColor("InputfieldColorCaret", dsf.defaultCaretColor_Inputfield, out currentCaretColor_Inputfield, "SectionColor/GridContainer/Grid/ColorInputfieldCaret");
 		// Synchronisation de la couleur des bouttons
-		syncPlayerPrefColor("ButtonColorNormal", defaultNormalColor_Button, out currentNormalColor_Button, "SectionColor/ColorButtonNormal");
+		syncPlayerPrefColor("ButtonColorNormal", dsf.defaultNormalColor_Button, out currentNormalColor_Button, "SectionColor/GridContainer/Grid/ColorButtonNormal");
 		// Synchronisation de la couleur des highlighted
-		syncPlayerPrefColor("HighlightedColor", defaultHighlightedColor, out currentHighlightedColor, "SectionColor/ColorHighlighted");
+		syncPlayerPrefColor("HighlightedColor", dsf.defaultHighlightedColor, out currentHighlightedColor, "SectionColor/GridContainer/Grid/ColorHighlighted");
 		// Synchronisation de la couleur des pressed
-		syncPlayerPrefColor("PressedColor", defaultPressedColor, out currentPressedColor, "SectionColor/ColorPressed");
+		syncPlayerPrefColor("PressedColor", dsf.defaultPressedColor, out currentPressedColor, "SectionColor/GridContainer/Grid/ColorPressed");
 		// Synchronisation de la couleur des selected
-		syncPlayerPrefColor("SelectedColor", defaultSelectedColor, out currentSelectedColor, "SectionColor/ColorSelected");
+		syncPlayerPrefColor("SelectedColor", dsf.defaultSelectedColor, out currentSelectedColor, "SectionColor/GridContainer/Grid/ColorSelected");
 		// Synchronisation de la couleur des disabled
-		syncPlayerPrefColor("DisabledColor", defaultDisabledColor, out currentDisabledColor, "SectionColor/ColorDisabled");
+		syncPlayerPrefColor("DisabledColor", dsf.defaultDisabledColor, out currentDisabledColor, "SectionColor/GridContainer/Grid/ColorDisabled");
 		// Synchronisation de la couleur des bouttons icônes
-		syncPlayerPrefColor("IconColor", defaultColor_Icon, out currentColor_Icon, "SectionColor/ColorIcon");
+		syncPlayerPrefColor("IconColor", dsf.defaultColor_Icon, out currentColor_Icon, "SectionColor/GridContainer/Grid/ColorIcon");
 		// Synchronisation de la couleur des panels
-		syncPlayerPrefColor("Panel1Color", defaultColor_Panel1, out currentColor_Panel1, "SectionColor/ColorPanel1");
-		syncPlayerPrefColor("Panel2Color", defaultColor_Panel2, out currentColor_Panel2, "SectionColor/ColorPanel2");
-		syncPlayerPrefColor("Panel3Color", defaultColor_Panel3, out currentColor_Panel3, "SectionColor/ColorPanel3");
-		syncPlayerPrefColor("PanelColorTexture", defaultColor_PanelTexture, out currentColor_PanelTexture, "SectionColor/ColorPanelTexture");
+		syncPlayerPrefColor("Panel1Color", dsf.defaultColor_Panel1, out currentColor_Panel1, "SectionColor/GridContainer/Grid/ColorPanel1");
+		syncPlayerPrefColor("Panel2Color", dsf.defaultColor_Panel2, out currentColor_Panel2, "SectionColor/GridContainer/Grid/ColorPanel2");
+		syncPlayerPrefColor("Panel3Color", dsf.defaultColor_Panel3, out currentColor_Panel3, "SectionColor/GridContainer/Grid/ColorPanel3");
+		syncPlayerPrefColor("PanelColorTexture", dsf.defaultColor_PanelTexture, out currentColor_PanelTexture, "SectionColor/GridContainer/Grid/ColorPanelTexture");
 		// Synchronisation des propriétés de bordure
-		syncPlayerPrefColor("BorderColor", defaultColor_Border, out currentColor_Border, "SectionColor/ColorBorder");
-		currentBorderThickness = PlayerPrefs.GetInt("BorderThickness", defaultBorderThickness);
-		settingsContent.Find("SectionColor/ThicknessBorder").GetComponentInChildren<TMP_Dropdown>().value = currentBorderThickness-1;
+		syncPlayerPrefColor("BorderColor", dsf.defaultColor_Border, out currentColor_Border, "SectionColor/GridContainer/Grid/ColorBorder");
+		currentBorderThickness = PlayerPrefs.GetInt("BorderThickness", dsf.defaultBorderThickness);
+		settingsContent.Find("SectionColor/GridContainer/Grid/ThicknessBorder").GetComponentInChildren<TMP_Dropdown>().value = currentBorderThickness-1;
 		// Synchronisation de la couleur des scrollbars
-		syncPlayerPrefColor("ScrollbarColorNormal", defaultNormalColor_Scrollbar, out currentNormalColor_Scrollbar, "SectionColor/ColorScrollbarNormal");
-		syncPlayerPrefColor("ScrollbarColorBackground", defaultBackgroundColor_Scrollbar, out currentBackgroundColor_Scrollbar, "SectionColor/ColorScrollbarBackground");
-		syncPlayerPrefColor("ScrollviewColor", defaultBackgroundColor_Scrollview, out currentBackgroundColor_Scrollview, "SectionColor/ColorScrollview");
+		syncPlayerPrefColor("ScrollbarColorNormal", dsf.defaultNormalColor_Scrollbar, out currentNormalColor_Scrollbar, "SectionColor/GridContainer/Grid/ColorScrollbarNormal");
+		syncPlayerPrefColor("ScrollbarColorBackground", dsf.defaultBackgroundColor_Scrollbar, out currentBackgroundColor_Scrollbar, "SectionColor/GridContainer/Grid/ColorScrollbarBackground");
+		syncPlayerPrefColor("ScrollviewColor", dsf.defaultBackgroundColor_Scrollview, out currentBackgroundColor_Scrollview, "SectionColor/GridContainer/Grid/ColorScrollview");
 		// Synchronisation de la couleur des toggles
-		syncPlayerPrefColor("ToggleColorNormal", defaultNormalColor_Toggle, out currentNormalColor_Toggle, "SectionColor/ColorToggleNormal");
+		syncPlayerPrefColor("ToggleColorNormal", dsf.defaultNormalColor_Toggle, out currentNormalColor_Toggle, "SectionColor/GridContainer/Grid/ColorToggleNormal");
 		// Synchronisation de la couleur des tooltip
-		syncPlayerPrefColor("TooltipColor", defaultColor_Tooltip, out currentColor_Tooltip, "SectionColor/ColorTooltip");
+		syncPlayerPrefColor("TooltipColor", dsf.defaultColor_Tooltip, out currentColor_Tooltip, "SectionColor/GridContainer/Grid/ColorTooltip");
+		// Synchronisation des couleurs du player
+		syncPlayerPrefColor("PlayColor", dsf.defaultPlayButtonColor, out currentPlayButtonColor, "PlayerColors/GridContainer/Grid/ColorPlayButton");
+		syncPlayerPrefColor("PauseColor", dsf.defaultPauseButtonColor, out currentPauseButtonColor, "PlayerColors/GridContainer/Grid/ColorPauseButton");
+		syncPlayerPrefColor("StopColor", dsf.defaultStopButtonColor, out currentStopButtonColor, "PlayerColors/GridContainer/Grid/ColorStopButton");
 	}
 
 	private void syncPlayerPrefColor(string playerPrefKey, Color defaultColor, out Color currentColor, string goName)
@@ -335,6 +313,9 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetString("ScrollviewColor", ColorUtility.ToHtmlStringRGBA(currentBackgroundColor_Scrollview));
 		PlayerPrefs.SetString("ToggleColorNormal", ColorUtility.ToHtmlStringRGBA(currentNormalColor_Toggle));
 		PlayerPrefs.SetString("TooltipColor", ColorUtility.ToHtmlStringRGBA(currentColor_Tooltip));
+		PlayerPrefs.SetString("PlayColor", ColorUtility.ToHtmlStringRGBA(currentPlayButtonColor));
+		PlayerPrefs.SetString("PauseColor", ColorUtility.ToHtmlStringRGBA(currentPauseButtonColor));
+		PlayerPrefs.SetString("StopColor", ColorUtility.ToHtmlStringRGBA(currentStopButtonColor));
 		PlayerPrefs.Save();
 		// TODO : Penser à sauvegarder dans la BD le choix de la langue
 
@@ -342,44 +323,47 @@ public class SettingsManager : FSystem
 
 	public void resetParameters()
     {
-		currentQuality = defaultQuality;
-		currentInteractionMode = defaultInteractionMode;
-		currentUIScale = defaultUIScale;
-		currentWallTransparency = defaultWallTransparency;
-		currentGameView = defaultGameView;
-		currentTooltipView = defaultTooltipView;
-		currentFont = defaultFont;
-		currentCaretWidth = defaultCaretWidth;
-		currentCaretHeight = defaultCaretHeight;
-		currentCharSpacing = defaultCharSpacing;
-		currentWordSpacing = defaultWordSpacing;
-		currentLineSpacing = defaultLineSpacing;
-		currentParagraphSpacing = defaultParagraphSpacing;
-		currentNormalColor_Text = defaultNormalColor_Text;
-		currentSelectedColor_Text = defaultSelectedColor_Text;
-		currentPlaceholderColor = defaultPlaceholderColor;
-		currentNormalColor_Dropdown = defaultNormalColor_Dropdown;
-		currentNormalColor_Inputfield = defaultNormalColor_Inputfield;
-		currentSelectedColor_Inputfield = defaultSelectedColor_Inputfield;
-		currentSelectionColor_Inputfield = defaultSelectionColor_Inputfield;
-		currentCaretColor_Inputfield = defaultCaretColor_Inputfield;
-		currentNormalColor_Button = defaultNormalColor_Button;
-		currentHighlightedColor = defaultHighlightedColor;
-		currentPressedColor = defaultPressedColor;
-		currentSelectedColor = defaultSelectedColor;
-		currentDisabledColor = defaultDisabledColor;
-		currentColor_Icon = defaultColor_Icon;
-		currentColor_Panel1 = defaultColor_Panel1;
-		currentColor_Panel2 = defaultColor_Panel2;
-		currentColor_Panel3 = defaultColor_Panel3;
-		currentColor_PanelTexture = defaultColor_PanelTexture;
-		currentColor_Border = defaultColor_Border;
-		currentBorderThickness = defaultBorderThickness;
-		currentNormalColor_Scrollbar = defaultNormalColor_Scrollbar;
-		currentBackgroundColor_Scrollbar = defaultBackgroundColor_Scrollbar;
-		currentBackgroundColor_Scrollview = defaultBackgroundColor_Scrollview;
-		currentNormalColor_Toggle = defaultNormalColor_Toggle;
-		currentColor_Tooltip = defaultColor_Tooltip;
+		currentQuality = dsf.defaultQuality;
+		currentInteractionMode = dsf.defaultInteractionMode;
+		currentUIScale = dsf.defaultUIScale;
+		currentWallTransparency = dsf.defaultWallTransparency;
+		currentGameView = dsf.defaultGameView;
+		currentTooltipView = dsf.defaultTooltipView;
+		currentFont = dsf.defaultFont;
+		currentCaretWidth = dsf.defaultCaretWidth;
+		currentCaretHeight = dsf.defaultCaretHeight;
+		currentCharSpacing = dsf.defaultCharSpacing;
+		currentWordSpacing = dsf.defaultWordSpacing;
+		currentLineSpacing = dsf.defaultLineSpacing;
+		currentParagraphSpacing = dsf.defaultParagraphSpacing;
+		currentNormalColor_Text = dsf.defaultNormalColor_Text;
+		currentSelectedColor_Text = dsf.defaultSelectedColor_Text;
+		currentPlaceholderColor = dsf.defaultPlaceholderColor;
+		currentNormalColor_Dropdown = dsf.defaultNormalColor_Dropdown;
+		currentNormalColor_Inputfield = dsf.defaultNormalColor_Inputfield;
+		currentSelectedColor_Inputfield = dsf.defaultSelectedColor_Inputfield;
+		currentSelectionColor_Inputfield = dsf.defaultSelectionColor_Inputfield;
+		currentCaretColor_Inputfield = dsf.defaultCaretColor_Inputfield;
+		currentNormalColor_Button = dsf.defaultNormalColor_Button;
+		currentHighlightedColor = dsf.defaultHighlightedColor;
+		currentPressedColor = dsf.defaultPressedColor;
+		currentSelectedColor = dsf.defaultSelectedColor;
+		currentDisabledColor = dsf.defaultDisabledColor;
+		currentColor_Icon = dsf.defaultColor_Icon;
+		currentColor_Panel1 = dsf.defaultColor_Panel1;
+		currentColor_Panel2 = dsf.defaultColor_Panel2;
+		currentColor_Panel3 = dsf.defaultColor_Panel3;
+		currentColor_PanelTexture = dsf.defaultColor_PanelTexture;
+		currentColor_Border = dsf.defaultColor_Border;
+		currentBorderThickness = dsf.defaultBorderThickness;
+		currentNormalColor_Scrollbar = dsf.defaultNormalColor_Scrollbar;
+		currentBackgroundColor_Scrollbar = dsf.defaultBackgroundColor_Scrollbar;
+		currentBackgroundColor_Scrollview = dsf.defaultBackgroundColor_Scrollview;
+		currentNormalColor_Toggle = dsf.defaultNormalColor_Toggle;
+		currentColor_Tooltip = dsf.defaultColor_Tooltip;
+		currentPlayButtonColor = dsf.defaultPlayButtonColor;
+		currentPauseButtonColor = dsf.defaultPauseButtonColor;
+		currentStopButtonColor = dsf.defaultStopButtonColor;
 
 		saveParameters();
 		// Synchronisation des PlayerPrefs avec les UI
@@ -543,6 +527,24 @@ public class SettingsManager : FSystem
 					syncColor(f_tooltip, syncGraphicColor, currentColor_Tooltip);
 				});
 				break;
+			case "PlayColor":
+				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
+					currentColor_Icon = c;
+					syncColor(f_buttonsPlay, syncNormalColor, currentPlayButtonColor);
+				});
+				break;
+			case "PauseColor":
+				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
+					currentColor_Icon = c;
+					syncColor(f_buttonsPause, syncNormalColor, currentPauseButtonColor);
+				});
+				break;
+			case "StopColor":
+				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
+					currentColor_Icon = c;
+					syncColor(f_buttonsStop, syncNormalColor, currentStopButtonColor);
+				});
+				break;
 		}
 	}
 
@@ -623,9 +625,9 @@ public class SettingsManager : FSystem
     {
 		TMP_InputField inputField = go.GetComponent<TMP_InputField>();
 		if (inputField != null)
-			inputField.fontAsset = fonts[currentFont];
+			inputField.fontAsset = dsf.fonts[currentFont];
 		else
-			go.GetComponent<TextMeshProUGUI>().font = fonts[currentFont];
+			go.GetComponent<TextMeshProUGUI>().font = dsf.fonts[currentFont];
 	}
 
 	// Fonction utilisée pour définir la font dans la liste déroulante de sélection de la font dans les paramètres
@@ -634,31 +636,31 @@ public class SettingsManager : FSystem
 		TextMeshProUGUI option = go.GetComponent<TextMeshProUGUI>();
 		switch (option.text)
         {
-			case "Arial": option.font = fonts[0];
+			case "Arial": option.font = dsf.fonts[0];
 				break;
 			case "Comic Sans MS":
-				option.font = fonts[1];
+				option.font = dsf.fonts[1];
 				break;
 			case "Liberation Sans SDF":
-				option.font = fonts[2];
+				option.font = dsf.fonts[2];
 				break;
 			case "Luciole":
-				option.font = fonts[3];
+				option.font = dsf.fonts[3];
 				break;
 			case "Open Dyslexic":
-				option.font = fonts[4];
+				option.font = dsf.fonts[4];
 				break;
 			case "Orbitron":
-				option.font = fonts[5];
+				option.font = dsf.fonts[5];
 				break;
 			case "Roboto":
-				option.font = fonts[6];
+				option.font = dsf.fonts[6];
 				break;
 			case "Tahoma":
-				option.font = fonts[7];
+				option.font = dsf.fonts[7];
 				break;
 			case "Verdana":
-				option.font = fonts[8];
+				option.font = dsf.fonts[8];
 				break;
 		}
 	}

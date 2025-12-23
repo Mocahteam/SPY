@@ -106,22 +106,26 @@ public class EndGameManager : FSystem {
 	private void displayEndPanel(GameObject unused)
 	{
 		// display end panel (we need immediate enabling)
+		endPanel.GetComponentInParent<Canvas>().GetComponent<CanvasGroup>().interactable = false;
 		endPanel.transform.parent.gameObject.SetActive(true);
 		GameObjectManager.setGameObjectState(endPanel.transform.Find("Score").gameObject, false);
 		GameObjectManager.setGameObjectState(endPanel.transform.Find("Feedback").gameObject, false);
 		// Get the first end that occurs
 		if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Detected)
 		{
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
 			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[0];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
-			endPanel.GetComponent<AudioSource>().loop = true;
-			endPanel.GetComponent<AudioSource>().Play();
+
+			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
+			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.loop = true;
+			audio.Play();
+
 			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
 			{
 				verb = "completed",
@@ -136,13 +140,12 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Win)
 		{
 			int _score = (10000 / (gameData.totalActionBlocUsed + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, true);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, true);
 			Debug.Log("Score: " + _score);
 			setScoreStars(_score);
 
-			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/VictorySound") as AudioClip;
-			endPanel.GetComponent<AudioSource>().loop = false;
-			endPanel.GetComponent<AudioSource>().Play();
+			endPanel.GetComponentInParent<AudioSource>().PlayOneShot(Resources.Load("Sound/VictorySound") as AudioClip);
+			
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);
@@ -188,16 +191,19 @@ public class EndGameManager : FSystem {
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.BadCondition)
 		{
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
 			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[3];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
-			endPanel.GetComponent<AudioSource>().loop = true;
-			endPanel.GetComponent<AudioSource>().Play();
+
+			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
+			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.loop = true;
+			audio.Play();
+
 			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
 			{
 				verb = "bugged",
@@ -209,16 +215,19 @@ public class EndGameManager : FSystem {
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoMoreAttempt)
 		{
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
 			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[4];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
-			endPanel.GetComponent<AudioSource>().loop = true;
-			endPanel.GetComponent<AudioSource>().Play();
+
+			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
+			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.loop = true;
+			audio.Play();
+
 			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
 			{
 				verb = "completed",
@@ -232,16 +241,19 @@ public class EndGameManager : FSystem {
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoAction)
 		{
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
 			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[5];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
-			endPanel.GetComponent<AudioSource>().loop = true;
-			endPanel.GetComponent<AudioSource>().Play();
+
+			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
+			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.loop = true;
+			audio.Play();
+
 			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
 			{
 				verb = "bugged",
@@ -253,16 +265,19 @@ public class EndGameManager : FSystem {
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.InfiniteLoop)
 		{
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
 			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[6];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
-			endPanel.GetComponent<AudioSource>().loop = true;
-			endPanel.GetComponent<AudioSource>().Play();
+
+			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
+			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.loop = true;
+			audio.Play();
+
 			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
 			{
 				verb = "bugged",
@@ -274,16 +289,19 @@ public class EndGameManager : FSystem {
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Error)
 		{
-			GameObjectManager.setGameObjectState(endPanel.transform.Find("ScoreCanvas").gameObject, false);
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
 			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[7];
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-			endPanel.GetComponent<AudioSource>().clip = Resources.Load("Sound/LoseSound") as AudioClip;
-			endPanel.GetComponent<AudioSource>().loop = true;
-			endPanel.GetComponent<AudioSource>().Play();
+
+			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
+			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.loop = true;
+			audio.Play();
+
 			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
 			{
 				verb = "bugged",
@@ -336,8 +354,15 @@ public class EndGameManager : FSystem {
 		}
 
 		// Affiche le nombre d'étoile désiré
-		Transform stars = endPanel.transform.Find("ScoreCanvas").Find("Stars");
-		stars.GetComponent<Image>().sprite = stars.GetComponent<SpriteList>().source[scoredStars];
+		Transform stars = endPanel.transform.Find("StarsCanvas");
+		Button colorModel = endPanel.GetComponentInChildren<Button>(true);
+
+		Image star1 = stars.transform.Find("Star1").GetComponent<Image>();
+		Image star2 = stars.transform.Find("Star2").GetComponent<Image>();
+		Image star3 = stars.transform.Find("Star3").GetComponent<Image>();
+		star1.color = scoredStars >= 1 ? colorModel.colors.highlightedColor : colorModel.colors.disabledColor;
+		star2.color = scoredStars >= 2 ? colorModel.colors.highlightedColor : colorModel.colors.disabledColor;
+		star3.color = scoredStars == 3 ? colorModel.colors.highlightedColor : colorModel.colors.disabledColor;
 		stars.GetComponent<TooltipContent>().text = stars.GetComponent<StringList>().texts[scoredStars];
 
 		// Affichage du score
