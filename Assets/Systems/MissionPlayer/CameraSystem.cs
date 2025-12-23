@@ -94,15 +94,15 @@ public class CameraSystem : FSystem {
 			rotateCamera(UI_rotateValue, 0);
 
 		// Move camera with wheel click
-		if (middleClick.WasPressedThisFrame())
+		if (middleClick.IsPressed())
 		{
 			Cursor.lockState = CursorLockMode.Locked;
 			Cursor.visible = false;
 
-			Vector2Control pointerPos = Pointer.current.position;
+			DeltaControl delta = Pointer.current.delta;
 
-			float mouseX = pointerPos.x.value;
-			float mouseY = pointerPos.y.value;
+			float mouseX = delta.x.value;
+			float mouseY = delta.y.value;
 
 			float dist = Mathf.Abs(Mathf.Abs(mouseX) - Mathf.Abs(mouseY));
 			if (Mathf.Abs(mouseY) > Mathf.Abs(mouseX))
@@ -145,10 +145,10 @@ public class CameraSystem : FSystem {
 		}
 
 		// Orbit rotation
-		else if (rightClick.WasPressedThisFrame())
+		else if (rightClick.IsPressed())
 		{
-			Vector2Control pointerPos = Pointer.current.position;
-			rotateCamera(pointerPos.x.value, !mainCamera.orthographic ? pointerPos.y.value : 0);
+			DeltaControl delta = Pointer.current.delta;
+			rotateCamera(delta.x.value, !mainCamera.orthographic ? delta.y.value : 0);
 		}
 		else
 		{

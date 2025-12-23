@@ -51,11 +51,6 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "deleteElement", elementToDelete);
 	}
 
-	public void refreshHierarchyContainers(UnityEngine.GameObject elementToRefresh)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "refreshHierarchyContainers", elementToRefresh);
-	}
-
 	public void checkDoubleClick(UnityEngine.EventSystems.BaseEventData element)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "checkDoubleClick", element);

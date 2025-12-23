@@ -30,11 +30,13 @@ public class GridAutoHeight : MonoBehaviour
     }
 #endif
 
-    void Recalculate()
+    public void Recalculate()
     {
         if (grid == null || layout == null) return;
 
-        int count = grid.transform.childCount;
+        int count = 0;
+        foreach (Transform child in grid.transform)
+            count += child.gameObject.activeInHierarchy ? 1 : 0;
         int cols = Mathf.Max(1, Mathf.FloorToInt(((RectTransform)grid.transform).rect.width / (grid.cellSize.x + grid.spacing.x)));
         int rows = Mathf.CeilToInt((float)count / cols);
 

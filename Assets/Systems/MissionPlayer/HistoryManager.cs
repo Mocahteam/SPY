@@ -228,7 +228,6 @@ public class HistoryManager : FSystem
 			}
 			//destroy history
 			GameObject.Destroy(gameData.actionsHistory);
-			LayoutRebuilder.ForceRebuildLayoutImmediate(EditableCanvas.GetComponent<RectTransform>());
 			//enable Play button
 			buttonExecute.GetComponent<Button>().interactable = true;
 			// disable editable container if won

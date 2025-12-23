@@ -265,10 +265,6 @@ public class EditableContainerSystem : FSystem
 					if (slot.slotType != ReplacementSlot.SlotType.BaseCondition)
 						GameObjectManager.setGameObjectState(slot.gameObject, false);
 
-			if (script != null && dropArea != null)
-				// refresh all the hierarchy of parent containers
-				GameObjectManager.addComponent<NeedRefreshHierarchy>(dropArea);
-
 			// Update size of parent GameObject
 			MainLoop.instance.StartCoroutine(setEditableSize(true));
 			return name;

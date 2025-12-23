@@ -41,7 +41,6 @@ public class DragDropSystem : FSystem
 	private Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
 	private Family f_operators = FamilyManager.getFamily(new AllOfComponents(typeof(BaseOperator)));
 	private Family f_elementToDelete = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToDelete)));
-	private Family f_elementToRefresh = FamilyManager.getFamily(new AllOfComponents(typeof(NeedRefreshHierarchy)));
 	private Family f_defaultDropZone = FamilyManager.getFamily(new AllOfComponents(typeof(Selected)));
 	private Family f_inventory = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // les éléments disponibles dans l'inventaire
 
@@ -98,12 +97,6 @@ public class DragDropSystem : FSystem
 
 		f_elementToDelete.addEntryCallback(deleteElement);
 		f_defaultDropZone.addEntryCallback(selectNewDefaultDropZone);
-		f_elementToRefresh.addEntryCallback(delegate (GameObject go)
-		{
-			refreshHierarchyContainers(go);
-			foreach (NeedRefreshHierarchy ntr in go.GetComponents<NeedRefreshHierarchy>())
-				GameObjectManager.removeComponent(ntr);
-		});
 		f_playMode.addEntryCallback(delegate {
 			Pause = true;
 			string scriptsContent = "";
@@ -429,8 +422,6 @@ public class DragDropSystem : FSystem
 		// Rend le bouton d'execution actif (ou non)
 		GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
-		refreshHierarchyContainers(parent.gameObject);
-
 		// générer une trace seulement sur la scene principale
 		if (SceneManager.GetActiveScene().name == "MainScene")
 			GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
@@ -560,8 +551,6 @@ public class DragDropSystem : FSystem
 		foreach (BaseCondition condChild in itemDragged.GetComponentsInChildren<BaseCondition>(true))
 			GameObjectManager.addComponent<Dropped>(condChild.gameObject);
 
-		// refresh all the hierarchy of parent containers
-		refreshHierarchyContainers(itemDragged);
 		// Update size of parent GameObject
 		GameObjectManager.addComponent<RefreshSizeOfEditableContainer>(MainLoop.instance.gameObject);
 
@@ -612,9 +601,6 @@ public class DragDropSystem : FSystem
 			// Réactivation d'une EmptyZone si nécessaire
 			UtilityGame.manageEmptyZone(elementToDelete);
 
-			// refresh all the hierarchy of parent containers
-			refreshHierarchyContainers(elementToDelete);
-
 			// On l'associe (temporairement) au Canvas Main
 			elementToDelete.transform.SetParent(mainCanvas.transform, false); // We need to perform it immediatelly to write change in statement
 			elementToDelete.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
@@ -654,26 +640,6 @@ public class DragDropSystem : FSystem
 			GameObjectManager.removeComponent(selectedDZ);
 	}
 
-	// Refresh the hierarchy (parent by parent) from elementToRefresh. Used in Control prefabs (If, For, ...)
-	public void refreshHierarchyContainers(GameObject elementToRefresh)
-    {
-		// refresh all the hierarchy of parent containers
-		Transform parent = elementToRefresh.transform.parent;
-		while (parent is RectTransform)
-		{
-			MainLoop.instance.StartCoroutine(forceUIRefresh((RectTransform)parent));
-			parent = parent.parent;
-		}
-	}
-
-	// Besoin d'attendre l'update pour effectuer le recalcul de la taille des containers
-	private IEnumerator forceUIRefresh(RectTransform bloc)
-	{
-		yield return null;
-		yield return null;
-		LayoutRebuilder.ForceRebuildLayoutImmediate(bloc);
-	}
-
 	// Si double clic sur l'élément de la bibliothèque (voir l'inspector), ajoute le bloc d'action au dernier container utilisé
 	public void checkDoubleClick(BaseEventData element)
     {
@@ -691,8 +657,6 @@ public class DragDropSystem : FSystem
 				GameObjectManager.bind(itemDragged);
 				// On l'envoie sur la dernière dropzone utilisée
 				addDraggedItemOnDropZone(lastDropZoneUsed);
-				// refresh all the hierarchy of parent containers
-				refreshHierarchyContainers(lastDropZoneUsed);
 
 				if (viewLastDropZone != null)
 					MainLoop.instance.StopCoroutine(viewLastDropZone);

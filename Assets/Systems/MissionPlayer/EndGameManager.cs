@@ -319,7 +319,6 @@ public class EndGameManager : FSystem {
     {
 		yield return new WaitForSeconds(0.5f); // Wait other scripts define wanted selected button to override it
 		EventSystem.current.SetSelectedGameObject(target);
-		LayoutRebuilder.ForceRebuildLayoutImmediate(target.transform.parent.parent as RectTransform);
 	}
 
 	private IEnumerator delaySendStatement(GameObject src, object componentValues)

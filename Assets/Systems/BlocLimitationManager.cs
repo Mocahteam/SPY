@@ -97,6 +97,7 @@ public class BlocLimitationManager : FSystem
 		{
 			bool isActive = gameData.actionBlockLimit[draggableGO.name] != 0; // negative means no limit
 			GameObjectManager.setGameObjectState(draggableGO, isActive);
+			int childCount = isActive ? 1 : -1; // On compte ou décompte un enfant supplémentaire pour anticiper le setGameObjectState qui ne prendra effet qu'à la prochaine frame
 			if (isActive)
 			{
 				if (gameData.actionBlockLimit[draggableGO.name] < 0)
@@ -105,11 +106,14 @@ public class BlocLimitationManager : FSystem
 				else
 				{
 					// limited action => init and show counter
-					GameObject counterText = draggableGO.transform.GetChild(1).gameObject;
-					counterText.GetComponent<TextMeshProUGUI>().text = Utility.getFormatedText(counterText.GetComponentInParent<Localization>(true).localization[0], gameData.actionBlockLimit[draggableGO.name].ToString());
-					GameObjectManager.setGameObjectState(counterText, true);
+					draggableGO.GetComponentInChildren<TextMeshProUGUI>(true).text = gameData.actionBlockLimit[draggableGO.name].ToString();
+					GameObjectManager.setGameObjectState(draggableGO.transform.GetChild(1).gameObject, true);
 				}
 			}
+			// Count enabled sibling and toggle parent panel accordingly
+			foreach (Transform child in draggableGO.transform.parent)
+				childCount += child.gameObject.activeInHierarchy ? 1 : 0;
+			GameObjectManager.setGameObjectState(draggableGO.transform.parent.parent.parent.gameObject, childCount > 0);
 		}
 	}
 

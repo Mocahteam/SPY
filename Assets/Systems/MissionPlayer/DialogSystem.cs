@@ -164,7 +164,6 @@ public class DialogSystem : FSystem
 			GameObjectManager.setGameObjectState(textGO, true);
 			string localeDependent = Utility.extractLocale(dialog.text);
 			textGO.GetComponent<TextMeshProUGUI>().text = localeDependent;
-			LayoutRebuilder.ForceRebuildLayoutImmediate(textGO.transform as RectTransform);
 			dialogReturn = localeDependent;
 		}
 		else

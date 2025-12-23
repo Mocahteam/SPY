@@ -407,9 +407,6 @@ public class TitleScreenSystem : FSystem {
 				details.text += txt;
 			else
 				details.text += competencyPanel.GetComponent<Localization>().localization[0];
-			/*LayoutRebuilder.ForceRebuildLayoutImmediate(content as RectTransform);
-			// auto move to the top od the panel
-			(content as RectTransform).anchoredPosition = new Vector2(0, 0);*/
 		}
 	}
 

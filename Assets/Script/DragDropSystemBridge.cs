@@ -3,7 +3,10 @@ using UnityEngine.EventSystems;
 
 public class DragDropSystemBridge : MonoBehaviour
 {
-
+    public void checkDoubleClick(BaseEventData e)
+    {
+        DragDropSystem.instance.checkDoubleClick(e);
+    }
     public void checkRightClickForDelete(BaseEventData e)
     {
         // On verifie si c'est bien un clic-droit
@@ -30,6 +33,11 @@ public class DragDropSystemBridge : MonoBehaviour
         }
     }
 
+    public void beginDragElementFromEditableScript(BaseEventData e)
+    {
+        DragDropSystem.instance.beginDragElementFromEditableScript(e);
+    }
+
     public void dragElement(BaseEventData e)
     {
         DragDropSystem.instance.dragElement();
@@ -40,10 +48,6 @@ public class DragDropSystemBridge : MonoBehaviour
         DragDropSystem.instance.endDragElement();
     }
 
-    public void refreshHierarchyContainers()
-    {
-        DragDropSystem.instance.refreshHierarchyContainers(gameObject);
-    }
     public void onlyPositiveInteger(string newValue)
     {
         DragDropSystem.instance.onlyPositiveInteger(gameObject, newValue);

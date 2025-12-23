@@ -10,11 +10,6 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
         ParamCompetenceSystem.instance.infoCompetence(GetComponent<Competency>());
     }
 
-    public void refreshUI()
-    {
-        ParamCompetenceSystem.instance.refreshUI((RectTransform)transform);
-    }
-
     public void showLevelInfo()
     {
         TryGetComponent<DataLevelBehaviour>(out DataLevelBehaviour overridedData);

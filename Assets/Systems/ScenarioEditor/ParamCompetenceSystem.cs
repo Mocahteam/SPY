@@ -174,7 +174,6 @@ public class ParamCompetenceSystem : FSystem
 			comp.gameObject.SetActive(true);
 			yield return null;
 		}
-		LayoutRebuilder.ForceRebuildLayoutImmediate(ContentCompMenu.transform as RectTransform);
 		refreshLevelInfo();
 		
 		if (Application.platform == RuntimePlatform.WindowsEditor)
@@ -368,11 +367,9 @@ public class ParamCompetenceSystem : FSystem
 			{
 				GameObject newLevel = GameObject.Instantiate(hookedMission, scenarioContent.transform);
 				newLevel.GetComponentInChildren<TMP_Text>().text = Utility.extractFileName(levelPath.src);
-				LayoutRebuilder.ForceRebuildLayoutImmediate(newLevel.transform as RectTransform);
 				newLevel.GetComponent<DataLevelBehaviour>().data = levelPath.clone();
 				GameObjectManager.bind(newLevel);
 			}
-			LayoutRebuilder.ForceRebuildLayoutImmediate(scenarioContent.transform as RectTransform);
 		}
 	}
 
@@ -466,7 +463,6 @@ public class ParamCompetenceSystem : FSystem
 					contentInfo.text += txt;
 				else
 					contentInfo.text += "\t" + contentLoc.localization[5] + "\n";
-				LayoutRebuilder.ForceRebuildLayoutImmediate(contentInfo.transform as RectTransform);
 			}
 			else
 				contentInfo.text += contentLoc.localization[6];
@@ -517,8 +513,6 @@ public class ParamCompetenceSystem : FSystem
 	{
 		GameObject newLevel = GameObject.Instantiate(hookedMission, contentScenario.transform);
 		newLevel.GetComponentInChildren<TMP_Text>().text = contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text;
-		LayoutRebuilder.ForceRebuildLayoutImmediate(newLevel.transform as RectTransform);
-		LayoutRebuilder.ForceRebuildLayoutImmediate(contentScenario.transform as RectTransform);
 		newLevel.GetComponent<DataLevelBehaviour>().data = contentInfoCompatibleLevel.GetComponent<DataLevelBehaviour>().data.clone();
 		GameObjectManager.bind(newLevel);
 	}
@@ -555,24 +549,6 @@ public class ParamCompetenceSystem : FSystem
 		if (go.transform.GetSiblingIndex() + step < 0 || go.transform.GetSiblingIndex() + step > go.transform.parent.childCount)
 			step = 0;
 		go.transform.SetSiblingIndex(go.transform.GetSiblingIndex() + step);
-	}
-
-	public void refreshUI(RectTransform competency)
-	{
-		MainLoop.instance.StartCoroutine(delayRefreshUI(competency));
-	}
-
-	private IEnumerator delayRefreshUI(RectTransform competency)
-    {
-		yield return null;
-		Competency comp = competency.GetComponentInParent<Competency>();
-		while (comp != null)
-		{
-			competency = comp.transform as RectTransform;
-			LayoutRebuilder.ForceRebuildLayoutImmediate(competency);
-			comp = competency.parent.GetComponentInParent<Competency>();
-		}
-		LayoutRebuilder.ForceRebuildLayoutImmediate(competency.transform.parent as RectTransform);
 	}
 
 	public void saveScenario(TMP_InputField scenarioName)

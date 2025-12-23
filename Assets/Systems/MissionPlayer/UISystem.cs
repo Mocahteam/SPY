@@ -4,9 +4,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
 using FYFY_plugins.PointerManager;
-using System;
 using UnityEngine.EventSystems;
-using TMPro;
 using UnityEngine.InputSystem;
 
 /// <summary>
@@ -29,8 +27,6 @@ public class UISystem : FSystem {
 
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
-
-	private Family f_enabledinventoryBlocks = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	private GameData gameData;
 
@@ -77,9 +73,6 @@ public class UISystem : FSystem {
 			setExecutionView(false);
 		});
 
-		f_enabledinventoryBlocks.addEntryCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
-		f_enabledinventoryBlocks.addExitCallback(delegate { MainLoop.instance.StartCoroutine(forceLibraryRefresh()); });
-
 		f_newEnd.addEntryCallback(delegate { levelFinished(true); });
 		f_newEnd.addExitCallback(delegate { levelFinished(false); });
 
@@ -89,8 +82,6 @@ public class UISystem : FSystem {
 				foreach (NeedRefreshPlayButton need in go.GetComponents<NeedRefreshPlayButton>())
 					GameObjectManager.removeComponent(need);
 		});
-
-		MainLoop.instance.StartCoroutine(forceLibraryRefresh());
 	}
 
 	// Lors d'une fin d'exécution de séquence, gére les différents éléments à ré-afficher ou si il faut sauvegarder la progression du joueur
@@ -100,7 +91,7 @@ public class UISystem : FSystem {
 		setExecutionView(false);
 
 		// Hide library panel
-		GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.gameObject, !state);
+		GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.parent.gameObject, !state);
 		// Hide menu panel
 		GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, !state);
 	}
@@ -149,12 +140,6 @@ public class UISystem : FSystem {
 				buttonExecute.GetComponent<Button>().interactable = true;
 			}
 		}
-	}
-
-	private IEnumerator forceLibraryRefresh()
-    {
-		yield return null;
-		LayoutRebuilder.ForceRebuildLayoutImmediate(libraryPanel.GetComponent<RectTransform>());
 	}
 
 	// keep current executed action viewable in the executable panel
@@ -353,7 +338,6 @@ public class UISystem : FSystem {
 
 		// On harmonise l'affichage de l'UI container des agents
 		foreach (GameObject go in f_agents){
-			LayoutRebuilder.ForceRebuildLayoutImmediate(go.GetComponent<ScriptRef>().executablePanel.GetComponent<RectTransform>());
 			if(go.CompareTag("Player")){				
 				GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().executablePanel, true);				
 			}
