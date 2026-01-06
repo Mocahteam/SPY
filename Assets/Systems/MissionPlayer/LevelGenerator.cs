@@ -27,9 +27,7 @@ public class LevelGenerator : FSystem {
 	private int nbAgentCreate = 0; // Nombre d'agents créés
 	private int nbDroneCreate = 0; // Nombre de drones créés
 
-	public GameObject editableCanvas;// Le container qui contient les Viewport/script containers
 	public GameObject scriptContainer;
-	public GameObject library; // Le viewport qui contient la librairie
 	public TMP_Text scenarioName;
 	public TMP_Text levelName;
 	public GameObject buttonExecute;

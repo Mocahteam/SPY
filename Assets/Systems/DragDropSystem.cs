@@ -384,7 +384,6 @@ public class DragDropSystem : FSystem
     {
 		itemDragged = model;
 		GameObjectManager.addComponent<Dragging>(itemDragged);
-		Transform parent = itemDragged.transform.parent;
 
 		string content = UtilityGame.exportBlockToString(itemDragged.GetComponent<Highlightable>());
 

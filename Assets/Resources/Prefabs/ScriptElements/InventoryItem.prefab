@@ -141,7 +141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6666667, g: 0.5019608, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -216,7 +216,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 2748233678389437217}
           m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
-          m_MethodName: beginDragElementFromEditableScript
+          m_MethodName: beginDragElementFromLibrary
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -295,7 +295,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0, g: 0, b: 0, a: 1}
+    m_NormalColor: {r: 0.6666667, g: 0.5019608, b: 1, a: 1}
     m_HighlightedColor: {r: 1, g: 0.69803923, b: 0.21960784, a: 1}
     m_PressedColor: {r: 0.7607843, g: 0.36862746, b: 0, a: 1}
     m_SelectedColor: {r: 0.9137255, g: 0.49803922, b: 0.007843138, a: 1}
@@ -314,7 +314,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 3426755410547913283}
+  m_TargetGraphic: {fileID: 3426755410131463896}
 --- !u!114 &2748233678389437217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,7 +340,7 @@ GameObject:
   - component: {fileID: 3426755410547913283}
   m_Layer: 5
   m_Name: IconImage
-  m_TagString: Untagged
+  m_TagString: UI_Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -386,7 +386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

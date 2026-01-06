@@ -2,6 +2,7 @@ using UnityEngine;
 using FYFY;
 using TMPro;
 using FYFY_plugins.PointerManager;
+using System.Collections;
 
 /// <summary>
 /// This system manages blocs limitation in inventory
@@ -97,7 +98,6 @@ public class BlocLimitationManager : FSystem
 		{
 			bool isActive = gameData.actionBlockLimit[draggableGO.name] != 0; // negative means no limit
 			GameObjectManager.setGameObjectState(draggableGO, isActive);
-			int childCount = isActive ? 1 : -1; // On compte ou décompte un enfant supplémentaire pour anticiper le setGameObjectState qui ne prendra effet qu'à la prochaine frame
 			if (isActive)
 			{
 				if (gameData.actionBlockLimit[draggableGO.name] < 0)
@@ -110,11 +110,18 @@ public class BlocLimitationManager : FSystem
 					GameObjectManager.setGameObjectState(draggableGO.transform.GetChild(1).gameObject, true);
 				}
 			}
-			// Count enabled sibling and toggle parent panel accordingly
-			foreach (Transform child in draggableGO.transform.parent)
-				childCount += child.gameObject.activeInHierarchy ? 1 : 0;
-			GameObjectManager.setGameObjectState(draggableGO.transform.parent.parent.parent.gameObject, childCount > 0);
+			MainLoop.instance.StartCoroutine(delayCategoryVisibility(draggableGO.transform.parent));
 		}
+	}
+
+	private IEnumerator delayCategoryVisibility(Transform grid)
+    {
+		yield return null;
+		yield return null;
+		int childCount = 0;
+		foreach (Transform child in grid)
+			childCount += child.gameObject.activeSelf ? 1 : 0;
+		GameObjectManager.setGameObjectState(grid.parent.parent.gameObject, childCount > 0);
 	}
 
 	// Remove one item from library

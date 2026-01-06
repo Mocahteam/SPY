@@ -32,7 +32,6 @@ public class HotkeySystem : FSystem
 	public EventTrigger cameraZoomIn;
 	public EventTrigger cameraZoomOut;
 
-	public GameObject virtualKeyboard;
 	public Button showBriefing;
 	public Button showMapDesc;
 	public Button buttonCopyCode;
@@ -109,9 +108,9 @@ public class HotkeySystem : FSystem
 	{
 		if (inputFieldNotSelected())
 		{
-			//Active/désactive le menu echap si on appuit sur echap et qu'on n'est pas en train de drag un element et que le clavier virtuel n'est pas ouvert et qu'il ne faut pas l'ignorer
+			//Active/désactive le menu echap si on appuit sur echap et qu'on n'est pas en train de drag un element et qu'il ne faut pas l'ignorer
 			// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
-			if (mainMenu != null && cancel_act.WasPressedThisFrame() && ! exitWebGL_act.WasPressedThisFrame() && f_dragging.Count == 0 && f_dropZoneEnabled.Count == 0 && !replacementSlotEnabled() && !virtualKeyboard.activeInHierarchy && !cancelNextEscape)
+			if (mainMenu != null && cancel_act.WasPressedThisFrame() && ! exitWebGL_act.WasPressedThisFrame() && f_dragging.Count == 0 && f_dropZoneEnabled.Count == 0 && !replacementSlotEnabled() && !cancelNextEscape)
 				mainMenu.onClick.Invoke();
 			// Autoriser le prochain Echap
 			cancelNextEscape = false;

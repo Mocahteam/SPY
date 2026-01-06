@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EditableCanvacComponent : MonoBehaviour {
+public class EditableCanvasComponent : MonoBehaviour {
 	// Combien de viewport contient l'éditable container
 	public int nbViewportContainer = 1;
 }

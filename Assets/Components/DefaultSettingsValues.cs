@@ -42,7 +42,65 @@ public class DefaultSettingsValues : MonoBehaviour
 	public Color defaultBackgroundColor_Scrollview = new Color(1f, 1f, 1f, 0f); // transparent
 	public Color defaultNormalColor_Toggle = Color.white;
 	public Color defaultColor_Tooltip = Color.white;
-	public Color defaultPlayButtonColor = new Color(30f / 255f, 93f / 255f, 19f / 255f, 1f); // green
-	public Color defaultPauseButtonColor = new Color(10f / 255f, 76f / 255f, 199f / 255f, 1f); // green
-	public Color defaultStopButtonColor = new Color(173f / 255f, 11f / 255f, 11f / 255f, 1f); // green
+	public Color defaultPlayButtonColor = new Color(30f / 255f, 93f / 255f, 19f / 255f, 1f); // dark green
+	public Color defaultPauseButtonColor = new Color(10f / 255f, 76f / 255f, 199f / 255f, 1f); // dark blue
+	public Color defaultStopButtonColor = new Color(173f / 255f, 11f / 255f, 11f / 255f, 1f); // dark red
+	public Color defaultActionBlockColor = new Color(170f / 255f, 128f / 255f, 1f, 1f); // light purple
+	public Color defaultControlBlockColor = new Color(253f / 255f, 99f / 255f, 195f / 255f, 1f); // pink
+	public Color defaultOperatorBlockColor = new Color(89f / 255f, 192f / 255f, 89f / 255f, 1f); // green
+	public Color defaultCaptorBlockColor = new Color(92f / 255f, 177f / 255f, 214f / 255f, 1f); // light blue
+	public Color defaultDropAreaColor = new Color(114f / 255f, 1f, 121f / 255f, 1f); // green
+	public Color defaultHighlightingColor = new Color(1f, 1f, 0f, 1f); // yellow
+
+
+
+	public int currentQuality;
+	public int currentInteractionMode;
+	public float currentUIScale;
+	public int currentWallTransparency;
+	public int currentGameView;
+	public int currentTooltipView;
+	public int currentFont;
+	public int currentCaretWidth;
+	public int currentCaretHeight;
+	public int currentCharSpacing;
+	public int currentWordSpacing;
+	public int currentLineSpacing;
+	public int currentParagraphSpacing;
+	public Color currentNormalColor_Text;
+	public Color currentSelectedColor_Text;
+	public Color currentPlaceholderColor;
+	public Color currentNormalColor_Dropdown;
+	public Color currentNormalColor_Inputfield;
+	public Color currentSelectedColor_Inputfield;
+	public Color currentSelectionColor_Inputfield;
+	public Color currentCaretColor_Inputfield;
+	public Color currentNormalColor_Button;
+	public Color currentHighlightedColor;
+	public Color currentPressedColor;
+	public Color currentSelectedColor;
+	public Color currentDisabledColor;
+	public Color currentColor_Icon;
+	public Color currentColor_Panel1;
+	public Color currentColor_Panel2;
+	public Color currentColor_Panel3;
+	public Color currentColor_PanelTexture;
+	public Color currentColor_Border;
+	public int currentBorderThickness;
+	public Color currentNormalColor_Scrollbar;
+	public Color currentBackgroundColor_Scrollbar;
+	public Color currentBackgroundColor_Scrollview;
+	public Color currentNormalColor_Toggle;
+	public Color currentColor_Tooltip;
+	public Color currentPlayButtonColor;
+	public Color currentPauseButtonColor;
+	public Color currentStopButtonColor;
+	public Color currentActionBlockColor;
+	public Color currentControlBlockColor;
+	public Color currentOperatorBlockColor;
+	public Color currentCaptorBlockColor;
+	public Color currentDropAreaColor; 
+	public Color currentHighlightingColor;
+
+	public TMP_Text currentSizeText;
 }

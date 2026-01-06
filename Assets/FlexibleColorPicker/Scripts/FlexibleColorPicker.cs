@@ -567,7 +567,7 @@ public class FlexibleColorPicker : MonoBehaviour
     {
         if (hexInput == null || !hexInput.gameObject.activeInHierarchy)
             return;
-        hexInput.SetTextWithoutNotify("#" + ColorUtility.ToHtmlStringRGB(this.color));
+        hexInput.SetTextWithoutNotify("#" + ColorUtility.ToHtmlStringRGBA(this.color));
     }
 
     private void TypeHex(string input, bool finish)
@@ -623,7 +623,7 @@ public class FlexibleColorPicker : MonoBehaviour
     /// Sanitive a given string so that it encodes a valid hex color string
     /// </summary>
     /// <param name="input">Input string</param>
-    /// <param name="full">Insert zeroes to match #RRGGBB format </param>
+    /// <param name="full">Insert zeroes to match #RRGGBBAA format </param>
     public static string GetSanitizedHex(string input, bool full)
     {
         if (string.IsNullOrEmpty(input))
@@ -633,14 +633,14 @@ public class FlexibleColorPicker : MonoBehaviour
         toReturn.Add('#');
         int i = 0;
         char[] chars = input.ToCharArray();
-        while (toReturn.Count < 7 && i < input.Length)
+        while (toReturn.Count < 9 && i < input.Length)
         {
             char nextChar = char.ToUpper(chars[i++]);
             if (IsValidHexChar(nextChar))
                 toReturn.Add(nextChar);
         }
 
-        while (full && toReturn.Count < 7)
+        while (full && toReturn.Count < 9)
             //toReturn.Insert(1, '0');
             toReturn.Add('0');
 

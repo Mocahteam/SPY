@@ -167,6 +167,178 @@
 				{"src": "Levels/BlocklyMaze/Niveau09.xml", "name": "Mission09"},
 				{"src": "Levels/BlocklyMaze/Niveau10.xml", "name": "Mission10"}
 			]
+		},
+		{
+			"key": "IleCodesPerdus",
+			"name": "L'île des codes perdus",
+			"description": "Dans ce scénario, tu vas aider Roby, ton robot, à traverser l’île des codes perdus en programmant ses actions pour récupérer tous les fragments du code et trouver les sorties pour chaque zone.",
+			"levels": [
+				{
+					"src": "Levels/ExpIleCodesPerdus/M01.xml",
+					"name": "Mission 1",
+					"overridedDialogs": [
+						{"text": "Bienvenue sur l’île des codes perdus.", "enableInteraction":false, "briefingType":0},
+						{"text": "Cette île possède un ancien système de sécurité qui protégeait ses habitants.<br><br>Un jour, ce système s’est explosé et les morceaux du code se sont dispersés partout sur l’île. Sans ces codes, les sorties sont verrouillées et personne ne peut quitter l’île.", "enableInteraction":false, "briefingType":0},
+						{"text": "Roby doit traverser les zones et récupérer tous les fragments de code dorés pour libérer l’île.", "enableInteraction":false, "briefingType":0},
+						{"text": "Pour aider Roby, programme ses actions dans le bon ordre.<br><br><br>Attention, l’île est pleine d’obstacles et de pièges!", "enableInteraction":false, "briefingType":0},
+						{"text": "Place le bloc “Avancer” dans ton programme pour aider Roby à franchir la première zone.", "img":"../../Explorateur/Images/moveForward.png", "imgHeight":45, "enableInteraction":true, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M02.xml",
+					"name": "Mission 2",
+					"overridedDialogs": [
+						{"text": "Le premier fragment du code est sur ton chemin. Tu n’as pas besoin de t’arrêter pour le récupérer : avance simplement vers la sortie.", "enableInteraction":false, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M03.xml",
+					"name": "Mission 3",
+					"overridedDialogs": [
+						{"text": "Tu peux maintenant utiliser des actions pour tourner à gauche et tourner à droite.<br><br>Attention! Quand le robot tourne, il reste sur place.", "img":"../../Explorateur/Images/turnleftright.png", "imgHeight":45, "enableInteraction": true, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M04.xml",
+					"name": "Mission 4",
+					"overridedDialogs": [
+						{"text": "Tu peux maintenant utiliser l'action 'Se retourner' qui est équivalente à deux actions 'Pivoter à gauche' ou deux actions 'Pivoter à droite'.", "img": "../../Explorateur/Images/TurnBackIcon.png", "imgHeight":45, "enableInteraction":false, "briefingType":0},
+						{"text":"Salut ! Je suis Chat PGT. Je te ferai signe s’il y a un piège.<br><br>", "img":"chatgpt.png", "imgHeight":90, "enableInteraction":false, "briefingType":0},
+						{"text":"Fais attention à la direction du robot.", "img":"chatgpt.png", "imgHeight":90, "enableInteraction":false, "briefingType":0},
+						{"text":"Fais attention aux distractions, elles peuvent t’éloigner de ton objectif ! Reste concentré !", "img":"chatgpt.png", "imgHeight":90, "enableInteraction":false, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M05.xml",
+					"name": "Mission 5",
+					"overridedDialogs": [
+						{"text":"Une porte bloque le passage!", "enableInteraction":false, "briefingType":0},
+						{"text":"Regarde ! Il y a un ordinateur qui contrôle la porte.", "enableInteraction":false, "briefingType":0},
+						{"text":"Il suffit d'utiliser l'action 'Activer' sur la case de l'ordinateur pour ouvrir la porte (il n'est pas nécessaire d'être face à l'ordinateur).", "enableInteraction":true, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M06.xml",
+					"name": "Mission 6",
+					"overridedDialogs": [
+						{"text":"Roby a déjà programmé ses actions, mais quelque chose ne va pas !<br>À toi de modifier le programme pour le corriger.", "enableInteraction":false, "briefingType":0},
+						{"text":"Ton ami Chat PGT est de retour !<br>L'erreur se cache à la fin du programme... à toi de le trouver !", "img":"chatgpt.png", "imgHeight":90, "enableInteraction":true, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M07.xml",
+					"name": "Mission 7",
+					"overridedDialogs": [
+						{"text":"Attention ! Bug protège la zone.", "enableInteraction":false, "briefingType":0},
+						{"text":"Il veut empêcher Roby de récupérer les fragments.", "enableInteraction":false, "briefingType":0},
+						{"text":"Évite les zones rouges pour réussir !", "enableInteraction":false, "briefingType":0},
+						{"text":"Aide Roby à trouver le bon programme parmi les trois. Écris son prénom 'Roby' au-dessus du bon programme pour qu’il l’exécute.", "enableInteraction":false, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M08.xml",
+					"name": "Mission 8",
+					"overridedDialogs": [
+						{"text":"Dans ce stage, tu es en mission express. Il n’y a plus de temps!", "enableInteraction":false, "briefingType":0},
+						{"text":"Utilise les boucles pour répéter plusieurs fois les actions.", "enableInteraction":false, "briefingType":0},
+						{"text":"Pour cette mission, Roby a déjà préparé son programme en utilisant le bloc 'Répéter'. Lance-le pour voir son comportement.", "img":"../../Repetiteur/Images/forExample.png", "enableInteraction":false, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M09.xml",
+					"name": "Mission 9",
+					"overridedDialogs": [
+						{"text":"Roby a préparé son programme. Mais il te reste à choisir le nombre de répétitions pour chaque bloc 'Répéter'.", "enableInteraction":false, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M10.xml",
+					"name": "Mission 10",
+					"overridedDialogs": [
+						{"text":"À toi de jouer !", "enableInteraction":false, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M11.xml",
+					"name": "Mission 11"
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M12.xml",
+					"name": "Mission 12",
+					"overridedDialogs": [
+						{"text":"Tu peux placer un bloc 'Répéter' à l’intérieur d’un autre bloc 'Répéter'.", "img":"chatgpt.png", "imgHeight":90, "enableInteraction":false, "briefingType":2}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M13.xml",
+					"name": "Mission 13",
+					"overridedDialogs": [
+						{"text":"Bug est de retour ! Clique sur lui pour voir/cacher son comportement.", "enableInteraction":false, "briefingType":0},
+						{"text":"Tu disposes maintenant de la nouvelle action 'Attendre'. Elle permet d'ordonner au robot de faire une pose avant de passer à l'action suivante.", "img":"../../Repetiteur/Images/WaitIcon.png", "imgHeight":50, "enableInteraction":false, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M14.xml",
+					"name": "Mission 14",
+					"overridedDialogs": [
+						{"text":"Cette pièce est bien gardée !", "enableInteraction":false, "briefingType":0},
+						{"text":"Peut être que la porte pourrait permettre à bloquer les Bugs ?", "img":"chatgpt.png", "imgHeight":90, "enableInteraction":false, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M15.xml",
+					"name": "Mission 15",
+					"overridedDialogs": [
+						{"text":"Ici, la visibilité est réduite... Le bloc 'Tant que' va être utile.", "enableInteraction":false, "briefingType":0},
+						{"text":"Contrairement au bloc 'Répéter', où tu choisis un nombre de répétitions, le bloc « Tant que » répète les actions tant que la condition est vraie.<br><br>Tu peux donc utiliser des capteurs dans un bloc 'Tant que'.", "img":"../../BlocklyMaze/Images/whileWall.png", "imgHeight":120, "enableInteraction":false, "briefingType":0},
+						{"text":"Tu disposes aussi d’un nouveau capteur qui permet de vérifier si Roby est sur la case du terminal.", "enableInteraction":false, "briefingType":0},
+						{"text":"Enfin, le bloc 'Non' te permet de vérifier si une condition est fausse.", "img":"../../BlocklyMaze/Images/notOperator.png", "imgHeight":60, "enableInteraction":false, "briefingType":0},
+						{"text":"Le programme est déjà exécuté par Roby. Tant que la sortie n’est pas détectée, Roby avance.", "enableInteraction":true, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M16.xml",
+					"name": "Mission 16",
+					"overridedDialogs": [
+						{"text":"Un bloc 'Si' va exécuter ce qu'il contient seulement si la condition est vraie.", "img":"../../BlocklyMaze/Images/ifPathLeft.png", "imgHeight":120, "enableInteraction":false, "briefingType":0},
+						{"text":"Tu peux placer le bloc 'Si' à l’intérieur du bloc 'Tant que' pour faire d’autres actions selon la situation.", "enableInteraction":false, "briefingType":0},
+						{"text":"Essaie de tourner à gauche s'il y a un chemin vers la gauche.", "img":"chatgpt.png", "imgHeight":90, "enableInteraction":true, "briefingType":0},
+						{"text":"Tu peux placer le bloc 'Si' à l’intérieur du bloc 'Tant que' pour faire d’autres actions selon la situation.", "img":"chatgpt.png", "enableInteraction":false, "briefingType":2}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M17.xml",
+					"name": "Mission 17",
+					"overridedDialogs": [
+						{"text":"Tu disposes maintenant de 3 capteurs qui indiquent vrai si un passage se trouve devant le robot, à gauche ou à droite.", "img":"../../BlocklyMaze/Images/pathCaptors.png", "imgHeight":45, "enableInteraction":true, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M18.xml",
+					"name": "Mission 18",
+					"overridedDialogs": [
+						{"text":"Tu dispose pour cette mission d'un nouveau bloc, le bloc 'Ou'. A toi de deviner comment l'utiliser mais observe bien la forme des blocs que tu peux glisser dedans...", "enableInteraction":false, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M19.xml",
+					"name": "Mission 19",
+					"overridedDialogs": [
+						{"text":"Tiens, un autre robot a rejoint Roby : Pixy.<br>Vous êtes presque arrivés à la sortie de l’île.", "enableInteraction":false, "briefingType":0},
+						{"text":"Tu dois maintenant programmer les deux robots : l’un avec le bloc 'Répéter' et l’autre avec le bloc 'Tant que'.", "enableInteraction":false, "briefingType":0},
+						{"text":"Tu peux les programmer en parallèle pour qu’ils arrivent en même temps à la sortie.", "enableInteraction":false, "briefingType":0}
+					]
+				},
+				{
+					"src": "Levels/ExpIleCodesPerdus/M20.xml",
+					"name": "Mission 20",
+					"overridedDialogs": [
+						{"text":"Maintenant, tu ne peux utiliser qu’une seule ligne de communication pour contrôler les deux robots.", "enableInteraction":false, "briefingType":0},
+						{"text":"Trouve un programme commun pour qu’ils récupèrent les derniers fragments et atteignent la sortie.", "enableInteraction":false, "briefingType":0},
+						{"text":"Félicitations ! Tu as réussi à trouver tous les fragments du code et à libérer l’île.", "img":"pouce.png", "enableInteraction":false, "briefingType":1}
+					]
+				},
+			]
 		}
 	]
 }

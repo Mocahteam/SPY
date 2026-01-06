@@ -38,6 +38,11 @@ public class DragDropSystemBridge : MonoBehaviour
         DragDropSystem.instance.beginDragElementFromEditableScript(e);
     }
 
+    public void beginDragElementFromLibrary(BaseEventData e)
+    {
+        DragDropSystem.instance.beginDragElementFromLibrary(e);
+    }
+    
     public void dragElement(BaseEventData e)
     {
         DragDropSystem.instance.dragElement();

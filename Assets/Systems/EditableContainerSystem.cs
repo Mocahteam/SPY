@@ -176,9 +176,9 @@ public class EditableContainerSystem : FSystem
 			// We secure the scale
 			cloneContainer.transform.localScale = new Vector3(1, 1, 1);
 			// On regarde combien de viewport container contient l'éditable pour mettre le nouveau viewport à la bonne position
-			cloneContainer.transform.SetSiblingIndex(EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer);
+			cloneContainer.transform.SetSiblingIndex(EditableCanvas.GetComponent<EditableCanvasComponent>().nbViewportContainer);
 			// Puis on imcrémente le nombre de viewport contenue dans l'éditable
-			EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer += 1;
+			EditableCanvas.GetComponent<EditableCanvasComponent>().nbViewportContainer += 1;
 
 			// Affiche le bon nom
 			if (name != "")
@@ -191,7 +191,7 @@ public class EditableContainerSystem : FSystem
 			else
 			{
 				bool nameOk = false;
-				for (int i = EditableCanvas.GetComponent<EditableCanvacComponent>().nbViewportContainer; !nameOk; i++)
+				for (int i = EditableCanvas.GetComponent<EditableCanvasComponent>().nbViewportContainer; !nameOk; i++)
 				{
 					// Si le nom n'est pas déjà utilisé on nomme le nouveau container de cette façon
 					if (!nameContainerUsed("Script" + i))
@@ -291,7 +291,7 @@ public class EditableContainerSystem : FSystem
 		editableContainers.ForceUpdateRectTransforms();
 		yield return null;
 		// compute new size
-		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(maxWidth, editableContainers.rect.width));
+		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(maxWidth, editableContainers.rect.width+10)); // +10 pour la taille de la scrollbar
 
 		if (autoScroll)
 		{

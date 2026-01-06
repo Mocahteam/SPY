@@ -226,7 +226,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -73.900024, y: -13}
+  m_AnchoredPosition: {x: -86.1, y: -13}
   m_SizeDelta: {x: 15, y: 100}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &1065183267238975558
@@ -1507,7 +1507,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 280}
+  m_SizeDelta: {x: 230, y: 280}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &699970808142393444
 CanvasRenderer:
@@ -1541,7 +1541,6 @@ MonoBehaviour:
   - image: {fileID: 4362609615118428843}
   - image: {fileID: 210177021955796657}
   hexInput: {fileID: 7760337350861130606}
-  startingColor: {r: 1, g: 0, b: 0, a: 1}
   onColorChange:
     m_PersistentCalls:
       m_Calls: []
@@ -3136,7 +3135,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -27.100021, y: -13}
+  m_AnchoredPosition: {x: -39.300003, y: -13}
   m_SizeDelta: {x: 15, y: 100}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &3609599956372737701
@@ -3382,7 +3381,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -49.500015, y: -13}
+  m_AnchoredPosition: {x: -61.699997, y: -13}
   m_SizeDelta: {x: 15, y: 100}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &3344173388362950796
@@ -4132,7 +4131,7 @@ PrefabInstance:
     - target: {fileID: 4011001891186411671, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 71.3
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4011001891186411671, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
@@ -4212,7 +4211,7 @@ PrefabInstance:
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
       propertyPath: m_Text
-      value: '#FF0000'
+      value: '#RRGGBBAA'
       objectReference: {fileID: 0}
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
@@ -4332,7 +4331,12 @@ PrefabInstance:
     - target: {fileID: 8766086984630181173, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
       propertyPath: m_text
-      value: "#FF0000\u200B"
+      value: "#RRGGBBAA\u200B"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766086984630181173, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_overflowMode
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -20,7 +20,6 @@ public class HotkeySystem_wrapper : BaseWrapper
 	public UnityEngine.EventSystems.EventTrigger cameraFocusOn;
 	public UnityEngine.EventSystems.EventTrigger cameraZoomIn;
 	public UnityEngine.EventSystems.EventTrigger cameraZoomOut;
-	public UnityEngine.GameObject virtualKeyboard;
 	public UnityEngine.UI.Button showBriefing;
 	public UnityEngine.UI.Button showMapDesc;
 	public UnityEngine.UI.Button buttonCopyCode;
@@ -44,7 +43,6 @@ public class HotkeySystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "cameraFocusOn", cameraFocusOn);
 		MainLoop.initAppropriateSystemField (system, "cameraZoomIn", cameraZoomIn);
 		MainLoop.initAppropriateSystemField (system, "cameraZoomOut", cameraZoomOut);
-		MainLoop.initAppropriateSystemField (system, "virtualKeyboard", virtualKeyboard);
 		MainLoop.initAppropriateSystemField (system, "showBriefing", showBriefing);
 		MainLoop.initAppropriateSystemField (system, "showMapDesc", showMapDesc);
 		MainLoop.initAppropriateSystemField (system, "buttonCopyCode", buttonCopyCode);

@@ -447,7 +447,7 @@ public class ConnexionManager : FSystem
 					if (userData.highScore == null)
 						userData.highScore = new Dictionary<string, int>();
 					userData.currentScenario = tokens[2];
-					int levelToContinue = -1;
+					int levelToContinue;
 					Int32.TryParse(tokens[3], out levelToContinue);
 					userData.levelToContinue = levelToContinue;
 					userData.schoolClass = tokens[4];

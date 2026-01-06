@@ -19,4 +19,14 @@ public class ScrollSystemBridge : MonoBehaviour
     {
         ScrollSystem.instance.onEndDrag(gameObject, ev);
     }
+
+    public void setVerticalSpeed(float newSpeed)
+    {
+        ScrollSystem.instance.setVerticalSpeed(newSpeed);
+    }
+
+    public void setHorizontalSpeed(float newSpeed)
+    {
+        ScrollSystem.instance.setHorizontalSpeed(newSpeed);
+    }
 }
