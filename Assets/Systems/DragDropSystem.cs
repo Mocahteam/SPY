@@ -758,12 +758,11 @@ public class DragDropSystem : FSystem
 	public void onlyPositiveInteger(GameObject forBlock, string newValue)
 	{
 		int oldValue = forBlock.GetComponent<ForControl>().nbFor;
-		Transform input = forBlock.transform.Find("Header");
 		int res;
 		bool success = Int32.TryParse(newValue, out res);
 		if (!success || (success && Int32.Parse(newValue) <= 0))
 		{
-			input.GetComponentInChildren<TMP_InputField>().text = "0";
+			forBlock.GetComponentInChildren<TMP_InputField>(true).text = "0";
 			res = 0;
 		}
 		forBlock.GetComponent<ForControl>().nbFor = res;

@@ -550,10 +550,9 @@ public static class UtilityGame
 			// Cas des structures de contrôle
 			else if (script is ControlElement)
 			{
-				DropZone dz = script.transform.Find("Header").GetComponentInChildren<DropZone>(true);
+				DropZone dz = script.GetComponentInChildren<DropZone>(true);
 				if (dz != null && dz.gameObject == focusedArea)
 					export += exportType == ExportType.PseudoCode ? "#### " : indent(indentLevel) + "<!--####-->\n";
-				ControlElement control = script as ControlElement;
 				// Cas du WHILE
 				if (script is WhileControl)
 				{

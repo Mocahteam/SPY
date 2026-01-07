@@ -38,6 +38,7 @@ public class SettingsManager : FSystem
 	private Family f_blocks = FamilyManager.getFamily(new AllOfComponents(typeof(Selectable)), new AnyOfComponents(typeof(LibraryItemRef), typeof(ElementToDrag)), new AnyOfTags("UI_Action", "UI_Control", "UI_Operator", "UI_Captor"));
 	private Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
 	private Family f_highlightable = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(LibraryItemRef)));
+	private Family f_conditionNotif = FamilyManager.getFamily(new AnyOfComponents(typeof(Image)), new AnyOfTags("ConditionNotif"));
 
 
 	public static SettingsManager instance;
@@ -96,6 +97,7 @@ public class SettingsManager : FSystem
 		f_blocks.addEntryCallback(delegate (GameObject go) { syncBlockColor(go); });
 		f_dropArea.addEntryCallback(delegate (GameObject go) { syncDropAreaColor(go); });
 		f_highlightable.addEntryCallback(delegate (GameObject go) { setHighlightingColor(go); });
+		f_conditionNotif.addEntryCallback(delegate (GameObject go) { syncConditionNotif(go); });
 
 		f_settingsOpened.addEntryCallback(delegate (GameObject unused) { loadPlayerPrefs(); });
 		
@@ -140,6 +142,7 @@ public class SettingsManager : FSystem
 		syncColor(f_blocks, syncBlockColor);
 		syncColor(f_dropArea, syncDropAreaColor);
 		syncColor(f_highlightable, setHighlightingColor);
+		syncColor(f_conditionNotif, syncConditionNotif);
 	}
 
 	// lit les PlayerPrefs et initialise les UI en conséquence
@@ -234,6 +237,8 @@ public class SettingsManager : FSystem
 		syncPlayerPrefColor("CaptorBlockColor", dsf.defaultCaptorBlockColor, out dsf.currentCaptorBlockColor, "PlayerColors/GridContainer/Grid/ColorCaptorBlock");
 		syncPlayerPrefColor("DropAreaColor", dsf.defaultDropAreaColor, out dsf.currentDropAreaColor, "PlayerColors/GridContainer/Grid/ColorDropArea");
 		syncPlayerPrefColor("HighlightingColor", dsf.defaultHighlightingColor, out dsf.currentHighlightingColor, "PlayerColors/GridContainer/Grid/ColorHighlighting");
+		syncPlayerPrefColor("CaptorTrueColor", dsf.defaultCaptorTrueColor, out dsf.currentCaptorTrueColor, "PlayerColors/GridContainer/Grid/ColorCaptorTrue");
+		syncPlayerPrefColor("CaptorFalseColor", dsf.defaultCaptorFalseColor, out dsf.currentCaptorFalseColor, "PlayerColors/GridContainer/Grid/ColorCaptorFalse");
 	}
 
 	private void syncPlayerPrefColor(string playerPrefKey, Color defaultColor, out Color currentColor, string goName)
@@ -292,6 +297,8 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetString("CaptorBlockColor", ColorUtility.ToHtmlStringRGBA(dsf.currentCaptorBlockColor));
 		PlayerPrefs.SetString("DropAreaColor", ColorUtility.ToHtmlStringRGBA(dsf.currentDropAreaColor));
 		PlayerPrefs.SetString("HighlightingColor", ColorUtility.ToHtmlStringRGBA(dsf.currentHighlightingColor));
+		PlayerPrefs.SetString("CaptorTrueColor", ColorUtility.ToHtmlStringRGBA(dsf.currentCaptorTrueColor));
+		PlayerPrefs.SetString("CaptorFalseColor", ColorUtility.ToHtmlStringRGBA(dsf.currentCaptorFalseColor));
 		PlayerPrefs.Save();
 		// TODO : Penser à sauvegarder dans la BD le choix de la langue
 
@@ -346,6 +353,8 @@ public class SettingsManager : FSystem
 		dsf.currentCaptorBlockColor = dsf.defaultCaptorBlockColor;
 		dsf.currentDropAreaColor = dsf.defaultDropAreaColor;
 		dsf.currentHighlightingColor = dsf.defaultHighlightingColor;
+		dsf.currentCaptorTrueColor = dsf.defaultCaptorTrueColor;
+		dsf.currentCaptorFalseColor = dsf.defaultCaptorFalseColor;
 
 		saveParameters();
 		// Synchronisation des PlayerPrefs avec les UI
@@ -559,6 +568,18 @@ public class SettingsManager : FSystem
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					dsf.currentHighlightingColor = c;
 					syncColor(f_highlightable, setHighlightingColor);
+				});
+				break;
+			case "CaptorTrueColor":
+				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
+					dsf.currentCaptorTrueColor = c;
+					syncColor(f_conditionNotif, syncConditionNotif);
+				});
+				break;
+			case "CaptorFalseColor":
+				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
+					dsf.currentCaptorFalseColor = c;
+					syncColor(f_conditionNotif, syncConditionNotif);
 				});
 				break;
 		}
@@ -897,6 +918,14 @@ public class SettingsManager : FSystem
 		else
 			go.GetComponent<BasicAction>().highlightedColor = dsf.currentHighlightingColor;
 	}
-
 	
+	private void syncConditionNotif(GameObject go, Color? unused = null)
+	{
+		if (go.name == "true")
+			syncGraphicColor(go, dsf.currentCaptorTrueColor);
+		else
+			syncGraphicColor(go, dsf.currentCaptorFalseColor);
+	}
+
+
 }

@@ -37,7 +37,7 @@ public class GridAutoHeight : MonoBehaviour
         int count = 0;
         foreach (Transform child in grid.transform)
             count += child.gameObject.activeInHierarchy ? 1 : 0;
-        int cols = Mathf.Max(1, Mathf.FloorToInt(((RectTransform)grid.transform).rect.width / (grid.cellSize.x + grid.spacing.x)));
+        int cols = Mathf.Max(1, Mathf.FloorToInt((((RectTransform)grid.transform).rect.width - grid.padding.left - grid.padding.right) / (grid.cellSize.x + grid.spacing.x )));
         int rows = Mathf.CeilToInt((float)count / cols);
 
         float height =

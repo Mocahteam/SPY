@@ -283,8 +283,8 @@ public class SaveFileSystem : FSystem
 		{
 			Transform editorViewportScriptContainer = editableContainer.transform.GetChild(i).Find("ScriptContainer");
 			string scriptName = editorViewportScriptContainer.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text;
-			TMP_Dropdown editMode = editorViewportScriptContainer.Find("LevelEditorPanel").Find("EditMode_Dropdown").GetComponent<TMP_Dropdown>();
-			TMP_Dropdown type = editorViewportScriptContainer.Find("LevelEditorPanel").Find("ProgType_Dropdown").GetComponent<TMP_Dropdown>();
+			TMP_Dropdown editMode = editorViewportScriptContainer.Find("LevelEditorPanel").Find("EditMode_Dropdown").GetComponentInChildren<TMP_Dropdown>(true);
+			TMP_Dropdown type = editorViewportScriptContainer.Find("LevelEditorPanel").Find("ProgType_Dropdown").GetComponentInChildren<TMP_Dropdown>(true);
 			levelExport += "\t<script outputLine=\""+ scriptName + "\" editMode=\""+ editMode.value + "\" type=\""+ type.value + "\">\n";
 
 			// on ignore les fils sans Highlightable

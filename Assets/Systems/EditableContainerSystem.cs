@@ -234,8 +234,8 @@ public class EditableContainerSystem : FSystem
             {
 				// si on est dans l'éditeur on affiche l'UI permettant de configurer le mode et le type
 				panel.gameObject.SetActive(true);
-				panel.Find("EditMode_Dropdown").GetComponent<TMP_Dropdown>().value = (int)editState;
-				panel.Find("ProgType_Dropdown").GetComponent<TMP_Dropdown>().value = (int)typeState;
+				panel.Find("EditMode_Dropdown").GetComponentInChildren<TMP_Dropdown>(true).value = (int)editState;
+				panel.Find("ProgType_Dropdown").GetComponentInChildren<TMP_Dropdown>(true).value = (int)typeState;
 			}
 				
 			cloneContainer.GetComponentInChildren<UIRootContainer>().editState = editState;

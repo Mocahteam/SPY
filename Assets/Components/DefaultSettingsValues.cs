@@ -51,6 +51,8 @@ public class DefaultSettingsValues : MonoBehaviour
 	public Color defaultCaptorBlockColor = new Color(92f / 255f, 177f / 255f, 214f / 255f, 1f); // light blue
 	public Color defaultDropAreaColor = new Color(114f / 255f, 1f, 121f / 255f, 1f); // green
 	public Color defaultHighlightingColor = new Color(1f, 1f, 0f, 1f); // yellow
+	public Color defaultCaptorTrueColor = new Color(0f, 1f, 12f / 255f, 1f); // green
+	public Color defaultCaptorFalseColor = new Color(1f, 0f, 5f / 255f, 1f); // red
 
 
 
@@ -101,6 +103,8 @@ public class DefaultSettingsValues : MonoBehaviour
 	public Color currentCaptorBlockColor;
 	public Color currentDropAreaColor; 
 	public Color currentHighlightingColor;
+	public Color currentCaptorTrueColor;
+	public Color currentCaptorFalseColor;
 
 	public TMP_Text currentSizeText;
 }
