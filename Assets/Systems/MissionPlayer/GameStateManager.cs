@@ -121,9 +121,9 @@ public class GameStateManager : FSystem {
             {
                 LinkedWith lw = parentScrollRect.transform.parent.GetComponentInChildren<LinkedWith>();
                 if (lw != null) // "for" of a drone in the executable panel
-                    fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = fc.currentFor + " / " + fc.nbFor.ToString();
+                    fc.GetComponentInChildren<TMP_InputField>(true).text = fc.currentFor + " / " + fc.nbFor.ToString();
                 else // "for" in an editable panel
-                    fc.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = fc.nbFor.ToString();
+                    fc.GetComponentInChildren<TMP_InputField>(true).text = fc.nbFor.ToString();
             }
         }
 

@@ -21,11 +21,11 @@ public class SettingsManager : FSystem
 	private Family f_inputfield = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
 	private Family f_inputfieldCaret = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_SelectionCaret)));
 	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("DefaultButton"));
-	private Family f_icons = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(Image)), new AnyOfTags("UI_Icon"));
+	private Family f_icons = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(Selectable), typeof(Image)), new AnyOfTags("UI_Icon"));
 	private Family f_buttonsPlay = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("PlayButton"));
 	private Family f_buttonsPause = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("PauseButton"));
-	private Family f_buttonsStop = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("StopButton"));
-	private Family f_selectable = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(TMP_Dropdown), typeof(Toggle), typeof(Scrollbar)));
+	private Family f_buttonsStop = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("StopButton", "ResetButton", "RemoveButton"));
+	private Family f_selectable = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(TMP_Dropdown), typeof(Toggle), typeof(Scrollbar), typeof(Selectable)), new NoneOfComponents(typeof(TextMeshProUGUI), typeof(LibraryItemRef), typeof(ElementToDrag)));
 	private Family f_SyncSelectedColor = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_SyncSelectedColor"));
 	private Family f_panels1 = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel"));
 	private Family f_panels2 = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel2"));
@@ -155,7 +155,7 @@ public class SettingsManager : FSystem
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/InteractionMode").GetComponentInChildren<TMP_Dropdown>().value = dsf.currentInteractionMode;
 
 		// définition de la taille de l'interface
-		dsf.currentSizeText = settingsContent.Find("SectionGraphic/GridContainer/Grid/UISize").Find("CurrentSize").GetComponent<TMP_Text>();
+		dsf.currentSizeText = settingsContent.Find("SectionGraphic/GridContainer/Grid/UISize/CurrentSize").GetComponent<TMP_Text>();
 		dsf.currentUIScale = PlayerPrefs.GetFloat("UIScale", (float)Math.Max(dsf.defaultUIScale, Math.Round((double)Screen.currentResolution.width / 2048, 2))); // do not reduce scale under defaultUIScale and multiply scale for definition higher than 2048
 		dsf.currentSizeText.text = dsf.currentUIScale + "";
 		foreach (CanvasScaler canvas in canvasScaler)

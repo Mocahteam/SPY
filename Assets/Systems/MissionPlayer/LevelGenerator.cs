@@ -115,7 +115,7 @@ public class LevelGenerator : FSystem {
 					int amount = int.Parse(child.Attributes.GetNamedItem("amount").Value);
 					if (amount > 0)
 					{
-						GameObject amountGO = buttonExecute.transform.GetChild(1).gameObject;
+						GameObject amountGO = buttonExecute.transform.GetChild(0).gameObject;
 						GameObjectManager.setGameObjectState(amountGO, true);
 						amountGO.GetComponentInChildren<TMP_Text>(true).text = "" + amount;
 					}
@@ -293,7 +293,7 @@ public class LevelGenerator : FSystem {
 		// Associer à l'agent l'UI container
 		scriptref.executablePanel = executablePanel;
 		// Associer à l'agent le script container
-		scriptref.executableScript = executablePanel.transform.Find("Scroll View").Find("Viewport").Find("ScriptContainer").gameObject;
+		scriptref.executableScript = executablePanel.transform.Find("Scroll View/Viewport/ScriptContainer").gameObject;
 		// Association de l'agent au script de gestion des fonctions
 		executablePanel.GetComponentInChildren<LinkedWith>(true).target = entity;
 
@@ -309,20 +309,20 @@ public class LevelGenerator : FSystem {
 				agentEdit.associatedScriptName = "Agent" + nbAgentCreate;
 
 			// Chargement de l'icône de l'agent sur la localisation
-			executablePanel.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
+			executablePanel.transform.Find("Header/locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
-			executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_Text>().text = agentEdit.associatedScriptName;
+			executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().text = agentEdit.associatedScriptName;
 			executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName = agentEdit.associatedScriptName;
 		}
 		else if (type == "guard" || type == "enemy")
 		{
 			nbDroneCreate++;
 			// Chargement de l'icône de l'agent sur la localisation
-			executablePanel.transform.Find("Header").Find("locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
+			executablePanel.transform.Find("Header/locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
 			if(nameAgent == "")
 				nameAgent = "Drone "+nbDroneCreate;
-			executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_Text>().text = nameAgent;
+			executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().text = nameAgent;
 			executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName = nameAgent;
 		}
 

@@ -2,19 +2,24 @@
 using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 
 public class Tooltip : MonoBehaviour
 {
     private TMP_Text tooltipText;
     private RectTransform rectTransform;
     private bool state;
+    private InputAction navigateAction;
+    private InputAction pointActionUI;
 
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
         tooltipText = GetComponentInChildren<TMP_Text>();
         state = false;
-        
+        navigateAction = InputSystem.actions.FindAction("Navigate");
+        pointActionUI = EventSystem.current.GetComponent<InputSystemUIInputModule>().point.action;
     }
 
     public void ShowTooltip(string tooltipString)
@@ -31,13 +36,34 @@ public class Tooltip : MonoBehaviour
         state = false;
     }
 
-    private void Update()
+    private void LateUpdate()
     {
+        GameObject currentSelectedGO = EventSystem.current.currentSelectedGameObject;
+        // Si on utilise la navigation clavier on désactive le gestionnaire de pointage (souris, touch...) pour éviter qu'il entre en conflit avec la navigation clavier
+        if (navigateAction.WasPressedThisFrame() && pointActionUI.enabled)
+        {
+            HideTooltip();
+            pointActionUI.Disable();
+            Cursor.visible = false;
+        }
+        // Si le pointeur bouge, on réactive le gestionnaire de pointage
+        else if (Pointer.current.delta.ReadValue() != Vector2.zero && !pointActionUI.enabled)
+        {
+            HideTooltip();
+            pointActionUI.Enable();
+            Cursor.visible = true;
+        }
+
         if (state)
         {
-            Vector2Control pointerPos = Pointer.current.position;
-
-            Vector2 tooltipPos = new Vector2(pointerPos.x.value, pointerPos.y.value);
+            Vector2 tooltipPos;
+            if (pointActionUI.enabled || currentSelectedGO == null) {
+                Vector2Control pointerPos = Pointer.current.position;
+                tooltipPos  = new Vector2(pointerPos.x.value, pointerPos.y.value);
+            } else
+            {
+                tooltipPos = new Vector2(currentSelectedGO.transform.position.x, currentSelectedGO.transform.position.y);
+            }
 
             // recaller la position du tooltip pour qu'il soit dirigé vers le centre de l'écran
             if (tooltipPos.x > Screen.width / 2)
@@ -54,6 +80,6 @@ public class Tooltip : MonoBehaviour
         }
         else
             // maintenir le tooltip hors de l'écran
-            transform.position = new Vector3(0, -100);
+            transform.position = new Vector3(-100, -100);
     }
 }

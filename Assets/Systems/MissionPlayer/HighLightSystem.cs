@@ -14,9 +14,6 @@ public class HighLightSystem : FSystem {
 	private Family f_highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new AnyOfComponents( typeof(CurrentAction), typeof(PointerOver)));
 	private Family f_nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new NoneOfComponents(typeof(CurrentAction), typeof(PointerOver), typeof(Dragging)));
 
-	private Family f_focusedSyncColors = FamilyManager.getFamily(new AllOfComponents(typeof(SynColors), typeof(Selectable), typeof(PointerOver)));
-	private Family f_unfocusedSyncColors = FamilyManager.getFamily(new AllOfComponents(typeof(SynColors), typeof(Selectable)), new NoneOfComponents(typeof(PointerOver)));
-
 	public GameObject dialogPanel;
 
 	private InputAction click;
@@ -29,24 +26,7 @@ public class HighLightSystem : FSystem {
 		f_highlightedAction.addEntryCallback(highLightItem);
 		f_nonCurrentAction.addEntryCallback(unHighLightItem);
 
-		f_focusedSyncColors.addEntryCallback(delegate (GameObject go) {
-			propagateColor(go, true);
-		});
-		f_unfocusedSyncColors.addEntryCallback(delegate (GameObject go) {
-			propagateColor(go, false);
-		});
-
 		click = InputSystem.actions.FindAction("Click");
-	}
-
-	private void propagateColor(GameObject go, bool useHighlightColor)
-    {
-		Selectable sel = go.GetComponent<Selectable>();
-		Color color = useHighlightColor ? sel.colors.highlightedColor : sel.colors.normalColor;
-		if (!sel.interactable)
-			color = sel.colors.disabledColor;
-		foreach (Image img in go.GetComponent<SynColors>().targets)
-			img.color = color;
 	}
 
 	// Use to process your families.
@@ -108,7 +88,6 @@ public class HighLightSystem : FSystem {
 					else
 						cb.disabledColor = parent.GetComponent<Highlightable>().highlightedColor;
 					sel.colors = cb;
-					propagateColor(parent.gameObject, false);
 				}
 				parent = parent.parent;
 			}
@@ -148,7 +127,6 @@ public class HighLightSystem : FSystem {
 					else
 						cb.disabledColor = parent.GetComponent<Highlightable>().baseColor;
 					sel.colors = cb;
-					propagateColor(parent.gameObject, false);
 				}
 				parent = parent.parent;
 			}

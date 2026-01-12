@@ -96,7 +96,6 @@ public class CameraSystem : FSystem {
 		// Move camera with wheel click
 		if (middleClick.IsPressed())
 		{
-			Cursor.lockState = CursorLockMode.Locked;
 			Cursor.visible = false;
 
 			DeltaControl delta = Pointer.current.delta;
@@ -127,7 +126,6 @@ public class CameraSystem : FSystem {
 				moveLeftRight(mouseX * dragSpeed);
 			unfocusAgent();
 		}
-
 		// Zoom with scroll wheel only if UI element is not focused
 		else if ((Mouse.current.scroll.y.value < 0 && f_UIfocused.Count == 0) || UI_zoomValue > 0) // Zoom out
 		{
@@ -147,14 +145,13 @@ public class CameraSystem : FSystem {
 		// Orbit rotation
 		else if (rightClick.IsPressed())
 		{
+			Cursor.visible = false;
 			DeltaControl delta = Pointer.current.delta;
 			rotateCamera(delta.x.value, !mainCamera.orthographic ? delta.y.value : 0);
 		}
-		else
-		{
-			Cursor.lockState = CursorLockMode.None;
+
+		if (middleClick.WasReleasedThisFrame() || rightClick.WasReleasedThisFrame())
 			Cursor.visible = true;
-		}
 	}
 	
 	private void moveFrontBack(float value)

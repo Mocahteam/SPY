@@ -31,6 +31,9 @@ public class TitleScreenSystem : FSystem {
 	private Transform gameDetails;
 	private Transform competencyPanel;
 	private string lastScenarioSelected = "";
+	private int lastMissionSelected = -1;
+
+	private bool isTileListDragged = false; // pour savoir si on est en train de dragger le panneau de présentation des scénarios/missions pour ne pas prendre en compte le clic
 
 	private UnityAction localCallback;
 
@@ -79,6 +82,7 @@ public class TitleScreenSystem : FSystem {
 			{
 				// reload last opened scenario
 				playButton.GetComponent<Button>().onClick.Invoke();
+				lastMissionSelected = gameData.levelToLoad;
 				showLevels(gameData.selectedScenario);
 			}
 
@@ -131,9 +135,9 @@ public class TitleScreenSystem : FSystem {
 		// remove all old tiles
 		removeAllOldTiles();
 
-		Transform backButton = gameSelector.transform.Find("Header/BackMainMenu");
+		Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu");
 		GameObjectManager.setGameObjectState(backButton.gameObject, true);
-		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/BackScenarios").gameObject, false);
+		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios").gameObject, false);
 		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/Title").gameObject, false);
 
 		//create scenarios' button
@@ -192,9 +196,9 @@ public class TitleScreenSystem : FSystem {
 				tile.navigation = nav;
 			}
 
-			// focus on the first scenario
 			if (lastScenarioSelected != "")
 			{
+				// focus on previous selected scenario
 				foreach (Transform child in gameList)
 					if (child.GetComponent<GameKeys>().scenarioKey == lastScenarioSelected)
 					{
@@ -203,6 +207,7 @@ public class TitleScreenSystem : FSystem {
 					}
 			}
 			else
+				// focus on the first scenario
 				MainLoop.instance.StartCoroutine(Utility.delayGOSelection(gameList.GetChild(0).gameObject));
 		}
 		else
@@ -216,6 +221,10 @@ public class TitleScreenSystem : FSystem {
 		scenarioTile.GetComponent<TooltipContent>().text = scenarioTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text + "<br>" + sl.texts[0] + scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text + "<br>" + sl.texts[0]+ scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text;
 	}
 
+	public void setDraggingState(bool newState){
+		isTileListDragged = newState;
+	}
+
 	public void showLevels(GameKeys keys)
     {
 		showLevels(keys.scenarioKey);
@@ -223,14 +232,17 @@ public class TitleScreenSystem : FSystem {
 
 	private void showLevels(string scenarioKey)
 	{
+		if (isTileListDragged)
+			return;
+
 		lastScenarioSelected = scenarioKey;
 
 		// delete all old tiles
 		removeAllOldTiles();
 
-		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/BackMainMenu").gameObject, false);
-		Transform backButton = gameSelector.transform.Find("Header/BackScenarios");
-		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/BackScenarios").gameObject, true);
+		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu").gameObject, false);
+		Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios");
+		GameObjectManager.setGameObjectState(backButton.gameObject, true);
 		Transform title = gameSelector.transform.Find("Header/Title");
 		GameObjectManager.setGameObjectState(title.gameObject, true);
 
@@ -301,9 +313,21 @@ public class TitleScreenSystem : FSystem {
 				nav.selectOnDown = null; // définit lors de la selection de la tile
 				tile.navigation = nav;
 			}
-			
-			// focus on the first mission
-			MainLoop.instance.StartCoroutine(Utility.delayGOSelection(gameList.GetChild(0).gameObject));
+
+
+			if (lastMissionSelected != -1)
+			{
+				// focus on previous selected scenario
+				foreach (Transform child in gameList)
+					if (child.GetComponent<GameKeys>().missionNumber == lastMissionSelected)
+					{
+						MainLoop.instance.StartCoroutine(Utility.delayGOSelection(child.gameObject));
+						break;
+					}
+			}
+			else
+				// focus on the first mission
+				MainLoop.instance.StartCoroutine(Utility.delayGOSelection(gameList.GetChild(0).gameObject));
 		}
 		else
 			EventSystem.current.SetSelectedGameObject(backButton.gameObject);
@@ -338,7 +362,7 @@ public class TitleScreenSystem : FSystem {
 		Transform headerTitle = gameSelector.transform.Find("Header/Title");
 		DynamicNavigation titleDN = headerTitle.GetComponent<DynamicNavigation>();
 		titleDN.DownRight[titleDN.DownRight.Length - 1] = curTile;
-		Transform backButton = gameSelector.transform.Find("Header/BackMainMenu");
+		Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu");
 		DynamicNavigation backDN = backButton.GetComponent<DynamicNavigation>();
 		backDN.DownRight[backDN.DownRight.Length - 1] = curTile;
 
@@ -378,7 +402,7 @@ public class TitleScreenSystem : FSystem {
 	public void refreshCompetencies()
 	{
 		GameKeys comp_gk = competencyPanel.GetComponent<GameKeys>();
-		TextMeshProUGUI details = competencyPanel.Find("CompetencyPopup/Scroll View").GetComponentInChildren<TextMeshProUGUI>(true);
+		TextMeshProUGUI details = competencyPanel.Find("Scroll View").GetComponentInChildren<TextMeshProUGUI>(true);
 		details.text = "";
 		if (gameData.scenarios.ContainsKey(comp_gk.scenarioKey))
 		{
@@ -419,7 +443,8 @@ public class TitleScreenSystem : FSystem {
 
 	public void launchLevel(GameKeys gk)
 	{
-		launchLevel(gk.scenarioKey, gk.missionNumber);
+		if (!isTileListDragged)
+			launchLevel(gk.scenarioKey, gk.missionNumber);
 	}
 
 	public void launchLevel(string scenarioKey, int missionNumber) {

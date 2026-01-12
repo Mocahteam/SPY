@@ -40,7 +40,9 @@ public static class Utility
 			if (dialogXML.Attributes.GetNamedItem("sound") != null)
 				dialog.sound = dialogXML.Attributes.GetNamedItem("sound").Value;
 			if (dialogXML.Attributes.GetNamedItem("video") != null)
-				dialog.video = dialogXML.Attributes.GetNamedItem("video").Value;
+				dialog.video = dialogXML.Attributes.GetNamedItem("video").Value; 
+			if (dialogXML.Attributes.GetNamedItem("videoHeight") != null)
+				dialog.videoHeight = float.Parse(dialogXML.Attributes.GetNamedItem("videoHeight").Value);
 			if (dialogXML.Attributes.GetNamedItem("enableInteraction") != null)
 				dialog.enableInteraction = int.Parse(dialogXML.Attributes.GetNamedItem("enableInteraction").Value) == 1;
 			if (dialogXML.Attributes.GetNamedItem("briefingType") != null)

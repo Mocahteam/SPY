@@ -16,4 +16,9 @@ public class TitleScreenSystemBridge : MonoBehaviour
     {
         TitleScreenSystem.instance.launchLevel(key);
     }
+
+    public void setDraggingState(bool newSate)
+    {
+        TitleScreenSystem.instance.setDraggingState(newSate);
+    }
 }

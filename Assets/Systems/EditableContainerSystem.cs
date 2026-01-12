@@ -207,12 +207,12 @@ public class EditableContainerSystem : FSystem
 			MainLoop.instance.StartCoroutine(tcheckLinkName());
 
 			// on paramètre le mode et le type différemment si on est dans l'éditeur ou dans le player
-			Transform panel = cloneContainer.transform.Find("ScriptContainer").Find("LevelEditorPanel");
+			Transform panel = cloneContainer.transform.Find("ScriptContainer/LevelEditorPanel");
 			if (!isEditorContext)
 			{
 				// si on est dans le player on cache l'UI permettant de configurer le mode et le type
 				panel.gameObject.SetActive(false);
-				Transform header = cloneContainer.transform.Find("ScriptContainer").Find("Header");
+				Transform header = cloneContainer.transform.Find("ScriptContainer/Header");
 				Transform containerName = header.Find("ContainerName");
 				// et si on est en mode Lock, on bloque l'édition et on interdit de supprimer le script
 				if (editState == UIRootContainer.EditMode.Locked)
@@ -314,7 +314,7 @@ public class EditableContainerSystem : FSystem
 				verb = "cleaned",
 				objectType = "script",
 				activityExtensions = new Dictionary<string, string>() {
-				{ "value", scriptContainer.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text }
+				{ "value", scriptContainer.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text }
 			}
 			});
 
@@ -335,7 +335,7 @@ public class EditableContainerSystem : FSystem
 				verb = "deleted",
 				objectType = "script",
 				activityExtensions = new Dictionary<string, string>() {
-					{ "value", scriptContainerPointer.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text }
+					{ "value", scriptContainerPointer.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text }
 				}
 			});
 		}
@@ -386,7 +386,7 @@ public class EditableContainerSystem : FSystem
 				}
 				// On change pour son nouveau nom
 				containerSelected.scriptName = newName;
-				containerSelected.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text = newName;
+				containerSelected.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text = newName;
 
 				// générer une trace seulement sur la scene principale
 				if (SceneManager.GetActiveScene().name == "MainScene")
@@ -402,7 +402,7 @@ public class EditableContainerSystem : FSystem
 			}
 			else
 			{ // Sinon on annule le changement
-				containerSelected.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text = oldName;
+				containerSelected.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text = oldName;
 			}
 		}
 		MainLoop.instance.StartCoroutine(tcheckLinkName());
@@ -411,6 +411,9 @@ public class EditableContainerSystem : FSystem
 	// Vérifie si le nom proposé existe déjà ou non pour un script container
 	private bool nameContainerUsed(string nameTested)
 	{
+		if (nameTested == "")
+			return false;
+
 		Transform editableContainers = EditableCanvas.transform.Find("EditableContainers");
 		foreach (Transform container in editableContainers)
 			if (container.GetComponentInChildren<UIRootContainer>().scriptName.ToLower() == nameTested.ToLower())
@@ -436,9 +439,9 @@ public class EditableContainerSystem : FSystem
 
 			// Si même nom trouvé on met l'arriére plan blanc
 			if (nameSame)
-				container.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().image.color = Color.white;
+				container.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().image.color = Color.white;
 			else // sinon rouge 
-				container.transform.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
+				container.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
 		}
 
 		// On fait la même chose pour les agents
@@ -451,9 +454,9 @@ public class EditableContainerSystem : FSystem
 
 			// Si même nom trouvé on met l'arriére transparent
 			if (nameSame)
-				agent.GetComponent<ScriptRef>().executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_Text>().color = new Color(1f, 1f, 1f, 1f);
+				agent.GetComponent<ScriptRef>().executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().color = new Color(1f, 1f, 1f, 1f);
 			else // sinon rouge 
-				agent.GetComponent<ScriptRef>().executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_Text>().color = new Color(1f, 0.4f, 0.28f, 1f);
+				agent.GetComponent<ScriptRef>().executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().color = new Color(1f, 0.4f, 0.28f, 1f);
 		}
 	}
 }

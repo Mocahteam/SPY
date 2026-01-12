@@ -129,7 +129,7 @@ public class MapDesc : FSystem
             Position pos = drone.GetComponent<Position>();
             // récupération du nom du drone
             ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
-            string droneName = scriptRef.executablePanel.transform.Find("Header").Find("agentName").GetComponent<TMP_Text>().text;
+            string droneName = scriptRef.executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().text;
             exportMap[pos.x, pos.y] += "+("+ gameDataLoc.localization[40] + ": " + droneName + " " + drone.GetComponent<Direction>().direction + ")";
         }
 

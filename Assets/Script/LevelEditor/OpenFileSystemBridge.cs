@@ -10,6 +10,6 @@ public class OpenFileSystemBridge : MonoBehaviour
 
     public void loadLevel()
     {
-        gameObject.transform.parent.parent.parent.parent.Find("Buttons").Find("LoadButton").GetComponent<Button>().onClick.Invoke();
+        gameObject.transform.parent.parent.parent.parent.Find("Buttons/LoadButton").GetComponent<Button>().onClick.Invoke();
     }
 }

@@ -87,7 +87,7 @@ public class SaveFileSystem : FSystem
 		if (levelData.levelName != null || levelData.levelName != "")
 			saveName.text = Path.GetFileNameWithoutExtension(levelData.levelName);
 		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
-		EventSystem.current.SetSelectedGameObject(saveName.transform.parent.Find("Buttons").Find("CancelButton").gameObject);
+		EventSystem.current.SetSelectedGameObject(saveName.transform.parent.Find("Buttons/CancelButton").gameObject);
 	}
 
 	// see ValideMessageButton (only called in standalone context, not used for WebGL)
@@ -282,9 +282,9 @@ public class SaveFileSystem : FSystem
 		for (int i = 0; i < editableContainer.transform.childCount; i++)
 		{
 			Transform editorViewportScriptContainer = editableContainer.transform.GetChild(i).Find("ScriptContainer");
-			string scriptName = editorViewportScriptContainer.Find("Header").Find("ContainerName").GetComponent<TMP_InputField>().text;
-			TMP_Dropdown editMode = editorViewportScriptContainer.Find("LevelEditorPanel").Find("EditMode_Dropdown").GetComponentInChildren<TMP_Dropdown>(true);
-			TMP_Dropdown type = editorViewportScriptContainer.Find("LevelEditorPanel").Find("ProgType_Dropdown").GetComponentInChildren<TMP_Dropdown>(true);
+			string scriptName = editorViewportScriptContainer.Find("Header/ContainerName").GetComponent<TMP_InputField>().text;
+			TMP_Dropdown editMode = editorViewportScriptContainer.Find("LevelEditorPanel/EditMode_Dropdown").GetComponentInChildren<TMP_Dropdown>(true);
+			TMP_Dropdown type = editorViewportScriptContainer.Find("LevelEditorPanel/ProgType_Dropdown").GetComponentInChildren<TMP_Dropdown>(true);
 			levelExport += "\t<script outputLine=\""+ scriptName + "\" editMode=\""+ editMode.value + "\" type=\""+ type.value + "\">\n";
 
 			// on ignore les fils sans Highlightable

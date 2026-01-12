@@ -1,11 +1,14 @@
 ﻿using UnityEngine.EventSystems;
 using UnityEngine;
 using FYFY;
+using UnityEngine.InputSystem.UI;
+using UnityEngine.InputSystem;
 
 public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
     public string text;
     private Tooltip tooltip = null;
+    private InputAction pointActionUI;
 
     private void Start()
     {
@@ -17,9 +20,10 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
         else
             tooltip = tooltipGO.GetComponent<Tooltip>();
+        pointActionUI = EventSystem.current.GetComponent<InputSystemUIInputModule>().point.action;
     }
 
-    private void formatContent()
+    private void formatContent(GameObject selectedGO)
     {
         if (tooltip != null)
         {
@@ -31,11 +35,12 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
-        formatContent();
+        if (pointActionUI.enabled)
+            formatContent(eventData.selectedObject);
     }
     public void OnSelect(BaseEventData eventData)
     {
-        formatContent();
+        formatContent(eventData.selectedObject);
     }
     
     private void hideTooltip()
@@ -45,7 +50,8 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
     public void OnPointerExit(PointerEventData eventData)
     {
-        hideTooltip();
+        if (pointActionUI.enabled)
+            hideTooltip();
     }
     public void OnDeselect(BaseEventData eventData)
     {

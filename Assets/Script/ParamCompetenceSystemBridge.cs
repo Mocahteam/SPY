@@ -42,6 +42,6 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
 
     public void loadScenario()
     {
-        gameObject.transform.parent.parent.parent.parent.Find("Buttons").Find("LoadButton").GetComponent<Button>().onClick.Invoke();
+        gameObject.transform.parent.parent.parent.parent.Find("Buttons/LoadButton").GetComponent<Button>().onClick.Invoke();
     }
 }

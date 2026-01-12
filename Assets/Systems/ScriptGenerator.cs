@@ -74,7 +74,7 @@ public class ScriptGenerator : FSystem {
 					for (int i = 1; i < scriptRef.executableScript.transform.childCount; i++)
 						GameObjectManager.bind(scriptRef.executableScript.transform.GetChild(i).gameObject);
 					// On fait apparaitre le panneau du robot
-					scriptRef.executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
+					scriptRef.executablePanel.transform.Find("Header/Toggle").GetComponent<Toggle>().isOn = true;
 					GameObjectManager.setGameObjectState(scriptRef.executablePanel, true);
 					GameObject.Destroy(tmpContainer);
 					droneFound = true;
@@ -278,7 +278,7 @@ public class ScriptGenerator : FSystem {
 				BaseElement action = obj.GetComponent<ForControl>();
 
 				((ForControl)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
-				obj.transform.GetComponentInChildren<TMP_InputField>().text = ((ForControl)action).nbFor.ToString();
+				obj.GetComponentInChildren<TMP_InputField>(true).text = ((ForControl)action).nbFor.ToString();
 
 				if (actionNode.HasChildNodes)
 					processXMLInstruction(firstContainerBloc, actionNode);

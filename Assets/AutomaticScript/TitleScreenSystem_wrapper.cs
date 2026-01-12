@@ -32,6 +32,11 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "displayScenarioList", null);
 	}
 
+	public void setDraggingState(System.Boolean newState)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setDraggingState", newState);
+	}
+
 	public void showLevels(GameKeys keys)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "showLevels", keys);

@@ -167,7 +167,7 @@ public class ParamCompetenceSystem : FSystem
 						// move this competency to its parent
 						comp.transform.SetParent(parentComp.transform.Find("SubCompetencies"), false);
 						// enable Hide button
-						parentComp.transform.Find("Header").Find("ButtonHide").gameObject.SetActive(true);
+						parentComp.transform.Find("Header/ButtonHide").gameObject.SetActive(true);
 						break;
 					}
 			}
@@ -607,6 +607,7 @@ public class ParamCompetenceSystem : FSystem
 					scenarioExport += dialog.camY != -1 ? "camY=\"" + dialog.camY + "\" " : "";
 					scenarioExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + dialog.sound + "\" " : "";
 					scenarioExport += dialog.video != null && dialog.video != "" ? "video=\"" + dialog.video + "\" " : "";
+					scenarioExport += dialog.videoHeight != -1 ? "videoHeight=\"" + dialog.videoHeight + "\" " : "";
 					scenarioExport += "enableInteraction=\"" + (dialog.enableInteraction ? "1" : "0") + "\" ";
 					scenarioExport += "briefingType=\"" + dialog.briefingType + "\" />\n";
 				}
@@ -732,6 +733,8 @@ public class ParamCompetenceSystem : FSystem
 						input.text = dialog.sound;
 					else if (input.name == "VideoPath_input" && dialog.video != null)
 						input.text = dialog.video;
+					else if (input.name == "VideoSize_input" && dialog.videoHeight != -1)
+						input.text = "" + dialog.videoHeight;
 					else
 						input.text = "";
 				}
@@ -779,6 +782,8 @@ public class ParamCompetenceSystem : FSystem
 						dialog.sound = input.text.Replace('\"', '\'');
 					else if (input.name == "VideoPath_input" && input.text != "")
 						dialog.video = input.text.Replace('\"', '\'');
+					else if (input.name == "VideoSize_input" && input.text != "")
+						dialog.videoHeight = float.Parse(input.text);
 				}
 				dialog.enableInteraction = child.GetComponentInChildren<Toggle>().isOn;
 				dialog.briefingType = child.GetComponentInChildren<TMP_Dropdown>().value;

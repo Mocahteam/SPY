@@ -86,6 +86,9 @@ public class DialogSystem : FSystem
 				(f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && overridedDebriefingWinDialogs != null && nDebriefingWinDialog < overridedDebriefingWinDialogs.Count) ||
 				(f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && overridedDebriefingDefeatDialogs != null && nDebriefingDefeatDialog < overridedDebriefingDefeatDialogs.Count)))
 			showDialogPanel();
+
+		if (dialogPanel.activeInHierarchy)
+			updateDialogSize();
 	}
 
 
@@ -158,7 +161,7 @@ public class DialogSystem : FSystem
 		// get Dialog
 		Dialog dialog = f_ends.Count == 0 ? overridedBriefingDialogs[nBriefingDialog] : (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs[nDebriefingWinDialog] : overridedDebriefingDefeatDialogs[nDebriefingDefeatDialog]);
 		// set text
-		GameObject textGO = dialogPanel.transform.Find("Text").gameObject;
+		GameObject textGO = dialogPanel.transform.Find("Scroll View/Viewport/Content/Text").gameObject;
 		if (dialog.text != null)
 		{
 			GameObjectManager.setGameObjectState(textGO, true);
@@ -169,21 +172,22 @@ public class DialogSystem : FSystem
 		else
 			GameObjectManager.setGameObjectState(textGO, false);
 		// set image
-		GameObject imageGO = dialogPanel.transform.Find("Image").gameObject;
+		GameObject imageGO = dialogPanel.transform.Find("Scroll View/Viewport/Content/Image").gameObject;
 		if (dialog.img != null)
 		{
+			GameObjectManager.setGameObjectState(imageGO, true);
 			string localeDependent = Utility.extractLocale(dialog.img);
 			if (localeDependent.ToLower().StartsWith("http"))
-				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), localeDependent));
+				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), localeDependent, dialog));
 			else
 			{
 				if (Application.platform == RuntimePlatform.WebGLPlayer)
 				{
 					Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src);
-					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + localeDependent));
+					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + localeDependent, dialog));
 				}
 				else
-					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) + "/Images/" + localeDependent));
+					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) + "/Images/" + localeDependent, dialog));
 			}
 			dialogReturn += (dialogReturn != "" ? "\n" : "") + localeDependent;
 		}
@@ -192,7 +196,7 @@ public class DialogSystem : FSystem
 		// set imgDesc
 		if (dialog.imgDesc != null)
 		{
-			GameObject imgDescGO = dialogPanel.transform.Find("Image").Find("ImgDesc").gameObject;
+			GameObject imgDescGO = dialogPanel.transform.Find("Scroll View/Viewport/Content/Image/ImgDesc").gameObject;
 			string imgDesc = Utility.extractLocale(dialog.imgDesc);
 			imgDescGO.GetComponent<TMP_Text>().text = imgDesc;
 		}
@@ -232,7 +236,7 @@ public class DialogSystem : FSystem
 				videoPlayer.url = localeDependent;
 				RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
 				rawImage.enabled = false;
-				MainLoop.instance.StartCoroutine(waitLoadingVideo());
+				MainLoop.instance.StartCoroutine(waitLoadingVideo(dialog));
 			}
 			else
 				GameObjectManager.setGameObjectState(videoPlayer.gameObject, false);
@@ -275,35 +279,43 @@ public class DialogSystem : FSystem
 			MainLoop.instance.StartCoroutine(Utility.delayGOSelection(textGO));
 		}
 
+		MainLoop.instance.StartCoroutine(forceScrollBarUp());
+
 		return dialogReturn;
 	}
 
-	private IEnumerator waitLoadingVideo()
+	private IEnumerator waitLoadingVideo(Dialog dialog)
     {
 		VideoPlayer videoPlayer = dialogPanel.GetComponentInChildren<VideoPlayer>(true);
 		while (!videoPlayer.isPrepared)
 			yield return null;
-		setVideoSize();
-	}
-
-	private void setVideoSize()
-    {
-		VideoPlayer videoPlayer = dialogPanel.GetComponentInChildren<VideoPlayer>(true);
+		// set video size
 		RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
 		rawImage.enabled = true;
-		rawImage.rectTransform.sizeDelta = new Vector2(videoPlayer.width * rawImage.rectTransform.rect.height / videoPlayer.height, rawImage.rectTransform.rect.height);
+		LayoutElement layout = videoPlayer.GetComponent<LayoutElement>();
+		if (dialog.videoHeight != -1)
+		{
+			layout.preferredHeight = dialog.videoHeight;
+			layout.preferredWidth = videoPlayer.width * (dialog.videoHeight / videoPlayer.height);
+		}
+		else
+		{
+			layout.preferredHeight = videoPlayer.height;
+			layout.preferredWidth = videoPlayer.width;
+		}
+		MainLoop.instance.StartCoroutine(forceScrollBarUp());
 	}
 
 	// Active ou non le bouton Ok du panel dialogue
 	public void setActiveOKButton(bool active)
 	{
-		GameObject okButton = dialogPanel.transform.Find("Buttons").Find("OKButton").gameObject;
+		GameObject okButton = dialogPanel.transform.Find("Buttons/OKButton").gameObject;
 		GameObjectManager.setGameObjectState(okButton, active);
 		if (active)
 		{
 			EventSystem.current.SetSelectedGameObject(okButton);
 			// Définir le bouton ok comme le voisin de droite du bouton précédent
-			GameObject prevButton = dialogPanel.transform.Find("Buttons").Find("PrevButton").gameObject;
+			GameObject prevButton = dialogPanel.transform.Find("Buttons/PrevButton").gameObject;
 			Navigation nav = prevButton.GetComponent<Button>().navigation;
 			nav.selectOnRight = okButton.GetComponent<Button>();
 			prevButton.GetComponent<Button>().navigation = nav;
@@ -315,13 +327,13 @@ public class DialogSystem : FSystem
 	// Active ou non le bouton next du panel dialogue
 	public void setActiveNextButton(bool active)
 	{
-		GameObject nextButton = dialogPanel.transform.Find("Buttons").Find("NextButton").gameObject;
+		GameObject nextButton = dialogPanel.transform.Find("Buttons/NextButton").gameObject;
 		GameObjectManager.setGameObjectState(nextButton, active);
 		if (active)
 		{
 			EventSystem.current.SetSelectedGameObject(nextButton);
 			// Définir le bouton suivant comme le voisin de droite du bouton précédent
-			GameObject prevButton = dialogPanel.transform.Find("Buttons").Find("PrevButton").gameObject;
+			GameObject prevButton = dialogPanel.transform.Find("Buttons/PrevButton").gameObject;
 			Navigation nav = prevButton.GetComponent<Button>().navigation;
 			nav.selectOnRight = nextButton.GetComponent<Button>();
 			prevButton.GetComponent<Button>().navigation = nav;
@@ -332,7 +344,7 @@ public class DialogSystem : FSystem
 	// Active ou non le bouton next du panel dialogue
 	public void setActivePrevButton(bool active)
 	{
-		GameObject prevButton = dialogPanel.transform.Find("Buttons").Find("PrevButton").gameObject;
+		GameObject prevButton = dialogPanel.transform.Find("Buttons/PrevButton").gameObject;
 		prevButton.GetComponent<Button>().interactable = active;
 		if (active)
 			EventSystem.current.SetSelectedGameObject(prevButton);
@@ -355,7 +367,7 @@ public class DialogSystem : FSystem
 		});
 	}
 
-	private IEnumerator GetTextureWebRequest(Image img, string path)
+	private IEnumerator GetTextureWebRequest(Image img, string path, Dialog dialog)
 	{
 		UnityWebRequest www = UnityWebRequestTexture.GetTexture(path);
 		yield return www.SendWebRequest();
@@ -364,13 +376,23 @@ public class DialogSystem : FSystem
 		{
 			Debug.Log(www.error);
 			yield return new WaitForSeconds(0.5f);
-			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, path));
+			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, path, dialog));
 		}
 		else
 		{
 			Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
 			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
-			MainLoop.instance.StartCoroutine(setWantedHeight(img));
+			// Appliquer la bonne taille à l'image
+			LayoutElement layout = img.GetComponent<LayoutElement>();
+			if (dialog.imgHeight != -1) {
+				layout.preferredHeight = dialog.imgHeight;
+				layout.preferredWidth = tex2D.width * (dialog.imgHeight / tex2D.height);
+			} else
+			{
+				layout.preferredHeight = tex2D.height;
+				layout.preferredWidth = tex2D.width;
+			}
+			MainLoop.instance.StartCoroutine(forceScrollBarUp());
 		}
 	}
 
@@ -391,18 +413,40 @@ public class DialogSystem : FSystem
 		}
 	}
 
-	private IEnumerator setWantedHeight(Image img)
+	private void updateDialogSize()
 	{
-		img.gameObject.SetActive(false); // Force disabling image to compute panel height with only buttons and text
-		yield return new WaitForSeconds(0.1f); // take time to update UI
-		RectTransform rectParent = (RectTransform)img.transform.parent;
-		float maxHeight = Screen.height - (rectParent.sizeDelta.y + 20); // compute available space add 20 to include top and bottom margin
-		// get Dialog
-		Dialog dialog = f_ends.Count == 0 ? overridedBriefingDialogs[nBriefingDialog] : (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs[nDebriefingWinDialog] : overridedDebriefingDefeatDialogs[nDebriefingDefeatDialog]);
-		if (dialog.imgHeight != -1)
-			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, Math.Min(dialog.imgHeight, maxHeight));
+		Rect rect = (dialogPanel.transform as RectTransform).rect;
+		Rect currentWindowRect = (dialogPanel.transform.parent as RectTransform).rect;
+		Rect currentImgRect = (dialogPanel.transform.Find("Scroll View/Viewport/Content/Image") as RectTransform).rect;
+		Rect currentVideoRect = (dialogPanel.transform.Find("Scroll View/Viewport/Content/Video Player") as RectTransform).rect;
+		Rect currentButtonsRect = (dialogPanel.transform.Find("Buttons").transform as RectTransform).rect;
+
+		float oldWidth = rect.width;
+		float oldHeight = rect.height;
+
+		rect.width = Mathf.Max(currentImgRect.width, currentVideoRect.width, currentButtonsRect.width + 10);
+		if (rect.width > currentWindowRect.width - 10)
+			rect.width = currentWindowRect.width - 10;
 		else
-			((RectTransform)img.transform).sizeDelta = new Vector2(((RectTransform)img.transform).sizeDelta.x, Math.Min(img.GetComponent<LayoutElement>().preferredHeight, maxHeight));
-		GameObjectManager.setGameObjectState(img.gameObject, true); // now we can show image
+			rect.width += (currentWindowRect.width-rect.width)/2;
+
+		Rect currentContentRect = (dialogPanel.transform.Find("Scroll View/Viewport/Content") as RectTransform).rect;
+
+		rect.height = currentContentRect.height + currentButtonsRect.height + 40; // +40 pour les marges
+		if (rect.height > currentWindowRect.height - 20)
+			rect.height = currentWindowRect.height - 20;
+
+		(dialogPanel.transform as RectTransform).sizeDelta = new Vector2(rect.width, rect.height);
+
+		// force scroll bar up
+		if (rect.width != oldWidth || rect.height != oldHeight)
+			MainLoop.instance.StartCoroutine(forceScrollBarUp());
+	}
+
+	private IEnumerator forceScrollBarUp()
+	{
+		yield return null;
+		yield return null;
+		dialogPanel.GetComponentInChildren<Scrollbar>(true).value = 1f;
 	}
 }

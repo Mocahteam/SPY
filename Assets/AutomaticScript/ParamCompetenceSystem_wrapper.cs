@@ -102,11 +102,6 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "removeItemFromParent", go);
 	}
 
-	public void refreshUI(UnityEngine.RectTransform competency)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "refreshUI", competency);
-	}
-
 	public void saveScenario(TMPro.TMP_InputField scenarioName)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "saveScenario", scenarioName);

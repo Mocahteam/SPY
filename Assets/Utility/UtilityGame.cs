@@ -197,24 +197,25 @@ public static class UtilityGame
 			// Si activé, on note le nombre de tour de boucle à faire
 			if (!isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
 			{
+				TMP_InputField counter = forAct.GetComponentInChildren<TMP_InputField>(true);
 				try
 				{
-					forAct.nbFor = int.Parse(forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text);
+					forAct.nbFor = int.Parse(counter.text);
 				} catch{
 					forAct.nbFor = 0;
 				}
-				forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+				counter.text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 			}// Sinon on met tout à 0
 			else if (isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
 			{
 				forAct.currentFor = 0;
-				forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = forAct.nbFor.ToString();
+				forAct.GetComponentInChildren<TMP_InputField>(true).text = forAct.nbFor.ToString();
 			}
 			else if (forAct is WhileControl)
 			{
 				// On traduit la condition en string
 				((WhileControl)forAct).condition = new List<ConditionItem>();
-				conditionToStrings(forAct.gameObject.transform.Find("ConditionContainer").GetChild(0).gameObject, ((WhileControl)forAct).condition);
+				conditionToStrings(forAct.transform.Find("ConditionContainer").GetChild(0).gameObject, ((WhileControl)forAct).condition);
 
 			}
 			// On parcourt les éléments présent dans le block action
@@ -558,7 +559,7 @@ public static class UtilityGame
 				{
 					export += exportType == ExportType.PseudoCode ? "WHILE (" : indent(indentLevel) + "<while>\n" + indent(indentLevel+1) + "<condition>\n";
 
-					if (script.transform.Find("ConditionContainer").Find("EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+					if (script.transform.Find("ConditionContainer/EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
 						export += exportType == ExportType.PseudoCode ? "####" : indent(indentLevel + 2) + "<!--####-->\n";
 					else
 						export += exportBlockToString(script.transform.Find("ConditionContainer").GetComponentInChildren<BaseCondition>(true), focusedArea, exportType, indentLevel + 2);
@@ -583,7 +584,7 @@ public static class UtilityGame
 				{
 					export += exportType == ExportType.PseudoCode ? "IF (" : indent(indentLevel) + (script is IfElseControl ? "<ifElse>\n" : "<if>\n") + indent(indentLevel+1) + "<condition>\n";
 
-					if (script.transform.Find("ConditionContainer").Find("EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
+					if (script.transform.Find("ConditionContainer/EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
 						export += exportType == ExportType.PseudoCode ? "####" : indent(indentLevel + 2) + "<!--####-->\n";
 					else
 						export += exportBlockToString(script.transform.Find("ConditionContainer").GetComponentInChildren<BaseCondition>(true), focusedArea, exportType, indentLevel + 2);

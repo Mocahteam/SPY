@@ -23,7 +23,6 @@ public class TilePopupSystem : FSystem
 	public GameObject doorSlotPopup;
 	public GameObject furniturePopup;
 	public GameObject skinPopup;
-	public GameObject virtualKeyboard;
 
 	public PaintableGrid paintableGrid;
 
@@ -91,7 +90,7 @@ public class TilePopupSystem : FSystem
 		}
 
 		// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
-		if (f_activePopups.Count > 0 && (virtualKeyboard == null || !virtualKeyboard.activeInHierarchy) && ((cancel.WasPressedThisFrame() && !exitWebGL.WasPressedThisFrame()) || selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && click.WasPressedThisFrame() && f_focusedPopups.Count == 0)))
+		if (f_activePopups.Count > 0 && ((cancel.WasPressedThisFrame() && !exitWebGL.WasPressedThisFrame()) || selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && click.WasPressedThisFrame() && f_focusedPopups.Count == 0)))
 		{
 			hideAllPopups();
 			selectedObject = null; // be sure

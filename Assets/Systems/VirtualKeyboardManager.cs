@@ -53,13 +53,13 @@ public class VirtualKeyboardManager : FSystem {
 		GameObjectManager.setGameObjectState(virtualKeyboard, true);
 		selectedInputField = input.GetComponent<TMP_InputField>();
 		mirrorInputField.text = selectedInputField.text;
-		mirrorInputField.transform.Find("Text Area").Find("Placeholder").GetComponent<TMP_Text>().text = selectedInputField.transform.Find("Text Area").Find("Placeholder").GetComponent<TMP_Text>().text;
+		mirrorInputField.transform.Find("Text Area/Placeholder").GetComponent<TMP_Text>().text = selectedInputField.transform.Find("Text Area/Placeholder").GetComponent<TMP_Text>().text;
 		mirrorInputField.characterValidation = selectedInputField.characterValidation;
 		if (mirrorInputField.characterValidation == TMP_InputField.CharacterValidation.Integer)
-			GameObjectManager.setGameObjectState(virtualKeyboard.transform.Find("Panel").Find("Alphabet").gameObject, false);
+			GameObjectManager.setGameObjectState(virtualKeyboard.transform.Find("Panel/Alphabet").gameObject, false);
 		else
-			GameObjectManager.setGameObjectState(virtualKeyboard.transform.Find("Panel").Find("Alphabet").gameObject, true);
-		EventSystem.current.SetSelectedGameObject(virtualKeyboard.transform.Find("Panel").Find("Close").gameObject);
+			GameObjectManager.setGameObjectState(virtualKeyboard.transform.Find("Panel/Alphabet").gameObject, true);
+		EventSystem.current.SetSelectedGameObject(virtualKeyboard.transform.Find("Panel/Close").gameObject);
 	}
 
 	public void closeKeyboard()

@@ -329,7 +329,7 @@ public class UISystem : FSystem {
 				for (int i = 1; i < executableContainer.transform.childCount; i++)
 					GameObjectManager.bind(executableContainer.transform.GetChild(i).gameObject);
 				// On développe le panneau au cas où il aurait été réduit
-				robot.GetComponent<ScriptRef>().executablePanel.transform.Find("Header").Find("Toggle").GetComponent<Toggle>().isOn = true;
+				robot.GetComponent<ScriptRef>().executablePanel.transform.Find("Header/Toggle").GetComponent<Toggle>().isOn = true;
 			}
 		}
 		

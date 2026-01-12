@@ -153,14 +153,15 @@ public class CurrentActionManager : FSystem
 			else if (action.GetComponent<ForControl>())
 			{
 				ForControl forCont = action.GetComponent<ForControl>();
+				TMP_InputField counter = forCont.GetComponentInChildren<TMP_InputField>(true);
 				// pulse counter
 				if (forCont.gameObject.activeInHierarchy)
-					forCont.StartCoroutine(UtilityGame.pulseItem(forCont.transform.GetChild(1).GetChild(1).gameObject));
+					forCont.StartCoroutine(UtilityGame.pulseItem(counter.gameObject));
 				// check if this ForControl include a child and nb iteration != 0 and end loop not reached
 				if (forCont.firstChild != null && forCont.nbFor != 0 && forCont.currentFor < forCont.nbFor)
 				{
 					forCont.currentFor++;
-					forCont.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
+					counter.text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
 					// get first action of its first child (could be if, for...)
 					return rec_getFirstActionOf(forCont.firstChild, agent);
 				}
@@ -171,7 +172,7 @@ public class CurrentActionManager : FSystem
                     {
 						// reset nb iteration to 0
 						forCont.currentFor = 0;
-						forCont.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
+						counter.text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
 					}
 					return rec_getFirstActionOf(forCont.next, agent);
 				}
@@ -396,13 +397,14 @@ public class CurrentActionManager : FSystem
 		// check if it is a ForAction
 		else if(currentAction.GetComponent<ForControl>()){
 			ForControl forAct = currentAction.GetComponent<ForControl>();
+			TMP_InputField counter = forAct.GetComponentInChildren<TMP_InputField>(true);
 			// pulse counter
-			forAct.StartCoroutine(UtilityGame.pulseItem(forAct.transform.GetChild(1).GetChild(1).gameObject));
+			forAct.StartCoroutine(UtilityGame.pulseItem(counter.gameObject));
 			// ForAction reach the number of iterations
 			if (forAct.currentFor >= forAct.nbFor){
 				// reset nb iteration to 0
 				forAct.currentFor = 0;
-				forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+				counter.text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 				// return next action
 				if(forAct.next == null || forAct.next.GetComponent<BasicAction>())
 					return forAct.next;
@@ -416,7 +418,7 @@ public class CurrentActionManager : FSystem
 				{
 					// reset nb iteration to 0
 					forAct.currentFor = 0;
-					forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+					counter.text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 					// return next action
 					if (forAct.next == null || forAct.next.GetComponent<BasicAction>())
 						return forAct.next;
@@ -428,7 +430,7 @@ public class CurrentActionManager : FSystem
 				{
 					// add one iteration
 					forAct.currentFor++;
-					forAct.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+					counter.text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 					// return first child
 					if (forAct.firstChild == null || forAct.firstChild.GetComponent<BasicAction>())
 						return forAct.firstChild;
