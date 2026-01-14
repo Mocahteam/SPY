@@ -37,7 +37,7 @@ public class HighLightSystem : FSystem {
 		{
 			GameObject go = highLightedItem.GetComponent<ScriptRef>().executablePanel;
 			GameObjectManager.setGameObjectState(go,!go.activeInHierarchy);
-			dialogPanel.GetComponentInParent<AudioSource>().PlayOneShot(Resources.Load("Sound/LoseSound") as AudioClip);
+			dialogPanel.GetComponentInParent<AudioSource>().PlayOneShot(Resources.Load("Sound/ActivationSound") as AudioClip);
 		}
 	}
 

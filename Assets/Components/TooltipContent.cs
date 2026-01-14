@@ -40,6 +40,7 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
     public void OnSelect(BaseEventData eventData)
     {
+        pointActionUI.Disable(); // Pour ne pas que l'objet sélectionné par code ait son tooltip qui continue à suivre le curseur de la souris
         formatContent(eventData.selectedObject);
     }
     

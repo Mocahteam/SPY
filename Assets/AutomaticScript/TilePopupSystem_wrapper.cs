@@ -10,7 +10,6 @@ public class TilePopupSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject doorSlotPopup;
 	public UnityEngine.GameObject furniturePopup;
 	public UnityEngine.GameObject skinPopup;
-	public UnityEngine.GameObject virtualKeyboard;
 	public PaintableGrid paintableGrid;
 	public UnityEngine.GameObject selection;
 	private void Start()
@@ -23,7 +22,6 @@ public class TilePopupSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "doorSlotPopup", doorSlotPopup);
 		MainLoop.initAppropriateSystemField (system, "furniturePopup", furniturePopup);
 		MainLoop.initAppropriateSystemField (system, "skinPopup", skinPopup);
-		MainLoop.initAppropriateSystemField (system, "virtualKeyboard", virtualKeyboard);
 		MainLoop.initAppropriateSystemField (system, "paintableGrid", paintableGrid);
 		MainLoop.initAppropriateSystemField (system, "selection", selection);
 	}

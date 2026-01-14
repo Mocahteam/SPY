@@ -4,13 +4,11 @@ using FYFY;
 public class SettingsManager_wrapper : BaseWrapper
 {
 	public UnityEngine.Transform settingsWindow;
-	public UnityEngine.UI.CanvasScaler[] canvasScaler;
 	public UnityEngine.UI.Selectable LoadingLogs;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "settingsWindow", settingsWindow);
-		MainLoop.initAppropriateSystemField (system, "canvasScaler", canvasScaler);
 		MainLoop.initAppropriateSystemField (system, "LoadingLogs", LoadingLogs);
 	}
 

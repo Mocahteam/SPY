@@ -39,6 +39,7 @@ public class SettingsManager : FSystem
 	private Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
 	private Family f_highlightable = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(LibraryItemRef)));
 	private Family f_conditionNotif = FamilyManager.getFamily(new AnyOfComponents(typeof(Image)), new AnyOfTags("ConditionNotif"));
+	private Family f_canvasScaler = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasScaler)));
 
 
 	public static SettingsManager instance;
@@ -53,7 +54,6 @@ public class SettingsManager : FSystem
 	public Transform settingsWindow;
 	private Transform settingsContent;
 	private FlexibleColorPicker flexibleColorPicker;
-	public CanvasScaler[] canvasScaler;
 	public Selectable LoadingLogs;
 
 	public SettingsManager()
@@ -155,11 +155,13 @@ public class SettingsManager : FSystem
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/InteractionMode").GetComponentInChildren<TMP_Dropdown>().value = dsf.currentInteractionMode;
 
 		// définition de la taille de l'interface
+		float uiWidth = f_canvasScaler.Count > 0 ? (f_canvasScaler.First().transform as RectTransform).rect.width : Screen.currentResolution.width;
+		Debug.Log((float)Math.Max(dsf.defaultUIScale, Math.Round(uiWidth / 1280, 2)));
 		dsf.currentSizeText = settingsContent.Find("SectionGraphic/GridContainer/Grid/UISize/CurrentSize").GetComponent<TMP_Text>();
-		dsf.currentUIScale = PlayerPrefs.GetFloat("UIScale", (float)Math.Max(dsf.defaultUIScale, Math.Round((double)Screen.currentResolution.width / 2048, 2))); // do not reduce scale under defaultUIScale and multiply scale for definition higher than 2048
+		dsf.currentUIScale = PlayerPrefs.GetFloat("UIScale", (float)Math.Max(dsf.defaultUIScale, Math.Round(uiWidth / 1280, 2))); // do not reduce scale under defaultUIScale and multiply scale for definition higher than 1280
 		dsf.currentSizeText.text = dsf.currentUIScale + "";
-		foreach (CanvasScaler canvas in canvasScaler)
-			canvas.scaleFactor = dsf.currentUIScale;
+		foreach (GameObject scalerGo in f_canvasScaler)
+			scalerGo.GetComponent<CanvasScaler>().scaleFactor = dsf.currentUIScale;
 
 		dsf.currentWallTransparency = PlayerPrefs.GetInt("wallTransparency", dsf.defaultWallTransparency);
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/WallTransparency").GetComponentInChildren<TMP_Dropdown>().value = dsf.currentWallTransparency;
@@ -619,16 +621,16 @@ public class SettingsManager : FSystem
 	public void increaseUISize()
 	{
 		dsf.currentUIScale += 0.25f;
-		foreach (CanvasScaler canvas in canvasScaler)
-			canvas.scaleFactor = dsf.currentUIScale;
+		foreach (GameObject scalerGo in f_canvasScaler)
+			scalerGo.GetComponent<CanvasScaler>().scaleFactor = dsf.currentUIScale;
 		dsf.currentSizeText.text = dsf.currentUIScale + "";
 	}
 	public void decreaseUISize()
 	{
 		if (dsf.currentUIScale >= 0.5f)
 			dsf.currentUIScale -= 0.25f;
-		foreach (CanvasScaler canvas in canvasScaler)
-			canvas.scaleFactor = dsf.currentUIScale;
+		foreach (GameObject scalerGo in f_canvasScaler)
+			scalerGo.GetComponent<CanvasScaler>().scaleFactor = dsf.currentUIScale;
 		dsf.currentSizeText.text = dsf.currentUIScale + "";
 	}
 
