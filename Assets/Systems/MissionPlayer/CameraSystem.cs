@@ -48,6 +48,8 @@ public class CameraSystem : FSystem {
 	// Déplacement avec la molette
 	public float dragSpeed;
 
+	public DefaultSettingsValues settings;
+
 	public static CameraSystem instance;
 
 	public CameraSystem()
@@ -76,7 +78,12 @@ public class CameraSystem : FSystem {
 			GameObjectManager.removeComponent(newTarget);
 		});
 
-		f_playingMode.addEntryCallback(focusOnNearestAgent);
+		f_playingMode.addEntryCallback(delegate (GameObject go) {
+			if (settings.currentCameraTracking == 1)
+				focusOnNearestAgent(go);
+			else
+				unfocusAgent();
+		});
 	}
 
 	// Use to process your families.

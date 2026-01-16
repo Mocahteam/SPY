@@ -36,7 +36,12 @@ public class SettingsManagerBridge : MonoBehaviour
 	public void setWallTransparency(int value)
     {
 		SettingsManager.instance.setWallTransparency(value);
-    }
+	}
+
+	public void setCameraTracking(int value)
+	{
+		SettingsManager.instance.setCameraTracking(value);
+	}
 
 	public void setGameView(int value)
     {

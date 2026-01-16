@@ -98,68 +98,6 @@ public class UINavigationManager : FSystem
 		}
 		// ---- end ----
 
-		// ---- On Scroll View, auto scroll on item selection ----
-		// Do nothing if there are none OR if the selected game object is not a child of a scroll rect OR if the selected game object is the same as it was last frame,
-		// meaning we haven't to move.
-		if (selected != null && selected.GetComponentInParent<ScrollRect>() != null && selected != lastSelected)
-		{
-			// Get the content
-			ScrollRect scrollRect = selected.GetComponentInParent<ScrollRect>();
-			RectTransform viewport = scrollRect.viewport;
-			RectTransform contentPanel = scrollRect.content;
-
-			float selectedInContent_Y = Mathf.Abs(contentPanel.InverseTransformPoint(selected.transform.position).y);
-			float selectedInContent_X = Mathf.Abs(contentPanel.InverseTransformPoint(selected.transform.position).x);
-
-			Vector2 targetAnchoredPosition = new Vector2(contentPanel.anchoredPosition.x, contentPanel.anchoredPosition.y);
-			// we auto focus vertically on selected object only if vertical scroll is enabled and it is not visible
-			if (scrollRect.vertical && (selectedInContent_Y - contentPanel.anchoredPosition.y < 0 || (selectedInContent_Y + (selected.transform as RectTransform).rect.height) - contentPanel.anchoredPosition.y > viewport.rect.height))
-			{
-				// check if selected object is too high
-				if (selectedInContent_Y - contentPanel.anchoredPosition.y < 0)
-				{
-					targetAnchoredPosition = new Vector2(
-						targetAnchoredPosition.x,
-						selectedInContent_Y - (selected.transform as RectTransform).rect.height
-					);
-				}
-				// selected object is too low
-				else
-				{
-					targetAnchoredPosition = new Vector2(
-						targetAnchoredPosition.x,
-						selectedInContent_Y + (selected.transform as RectTransform).rect.height*1.5f - viewport.rect.height
-					);
-				}
-
-				contentPanel.anchoredPosition = targetAnchoredPosition;
-			}
-
-			// we auto focus horizontally on selected object only if horizontal scroll is enabled and it is not visible
-			// WARNING : on horizontal scroll contentPanel.anchoredPosition.x is negative
-			if (scrollRect.horizontal && (selectedInContent_X + contentPanel.anchoredPosition.x < 0 || (selectedInContent_X + (selected.transform as RectTransform).rect.width) + contentPanel.anchoredPosition.x > viewport.rect.width))
-			{
-				// check if selected object is too high
-				if (selectedInContent_X + contentPanel.anchoredPosition.x < 0)
-				{
-					targetAnchoredPosition = new Vector2(
-						-(selectedInContent_X-(selected.transform as RectTransform).rect.width),
-						targetAnchoredPosition.y
-					);
-				}
-				// selected object is too low
-				else
-				{
-					targetAnchoredPosition = new Vector2(
-						-(selectedInContent_X + (selected.transform as RectTransform).rect.width - viewport.rect.width),
-						targetAnchoredPosition.y
-					);
-				}
-				contentPanel.anchoredPosition = targetAnchoredPosition;
-			}
-		}
-		// ---- end ----
-
 		// define next GameObject to focus for dynamic navigation
 		foreach (GameObject navGO in f_dynamicNavigation)
 		{

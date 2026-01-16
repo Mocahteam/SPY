@@ -10,7 +10,7 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     private Tooltip tooltip = null;
     private InputAction pointActionUI;
 
-    private void Start()
+    private void Awake()
     {
         GameObject tooltipGO = GameObject.Find("TooltipUI_Pointer");
         if (!tooltipGO)
@@ -20,10 +20,11 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
         else
             tooltip = tooltipGO.GetComponent<Tooltip>();
+
         pointActionUI = EventSystem.current.GetComponent<InputSystemUIInputModule>().point.action;
     }
 
-    private void formatContent(GameObject selectedGO)
+    private void formatContent()
     {
         if (tooltip != null)
         {
@@ -36,12 +37,12 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (pointActionUI.enabled)
-            formatContent(eventData.selectedObject);
+            formatContent();
     }
     public void OnSelect(BaseEventData eventData)
     {
         pointActionUI.Disable(); // Pour ne pas que l'objet sélectionné par code ait son tooltip qui continue à suivre le curseur de la souris
-        formatContent(eventData.selectedObject);
+        formatContent();
     }
     
     private void hideTooltip()

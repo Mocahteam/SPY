@@ -7222,6 +7222,7 @@ GameObject:
   - component: {fileID: 1645587998}
   - component: {fileID: 1645588000}
   - component: {fileID: 1645588003}
+  - component: {fileID: 1645588004}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -7291,6 +7292,10 @@ MonoBehaviour:
       PublicKeyToken=null
     _typeFullName: PopupManager
     _pause: 0
+  - _typeAssemblyQualifiedName: ScrollSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    _typeFullName: ScrollSystem
+    _pause: 0
   _lateUpdateSystemDescriptions: []
   _forceUpdateInspector: 0
   _loadingState: 0
@@ -7333,8 +7338,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settingsWindow: {fileID: 229117188}
-  canvasScaler:
-  - {fileID: 5756562373438947384}
   LoadingLogs: {fileID: 37207034}
 --- !u!114 &1645587994
 MonoBehaviour:
@@ -7475,6 +7478,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelInfoUser: {fileID: 630651645}
+--- !u!114 &1645588004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645587984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c61ec87aa61ae34da92acff0730a64e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScrollSystem_wrapper
+  scrollRect: {fileID: 0}
+  autoScrollUp: {fileID: 0}
+  autoScrollDown: {fileID: 0}
+  autoScrollLeft: {fileID: 0}
+  autoScrollRight: {fileID: 0}
 --- !u!1001 &1660540947
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -14,7 +14,6 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class UISystem : FSystem {
 	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Player"));
-	private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction), typeof(LibraryItemRef), typeof(CurrentAction)));
 	private Family f_agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private Family f_viewportContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les containers viewport
 	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
@@ -31,7 +30,6 @@ public class UISystem : FSystem {
 	private GameData gameData;
 
 	private float touchUp;
-	private Coroutine viewCurrentAction = null;
 
 	public GameObject LevelGO;
 	public GameObject buttonMenu;
@@ -56,13 +54,6 @@ public class UISystem : FSystem {
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
-		
-		f_currentActions.addEntryCallback(delegate (GameObject go)
-		{
-			if (viewCurrentAction != null)
-				MainLoop.instance.StopCoroutine(viewCurrentAction);
-			viewCurrentAction = MainLoop.instance.StartCoroutine(keepCurrentActionViewable(go));
-		});
 
 		f_playingMode.addEntryCallback(delegate {
 			copyEditableScriptsToExecutablePanels();
@@ -138,48 +129,6 @@ public class UISystem : FSystem {
 			if (container.GetComponentsInChildren<BaseElement>(true).Length > 0)
 			{
 				buttonExecute.GetComponent<Button>().interactable = true;
-			}
-		}
-	}
-
-	// keep current executed action viewable in the executable panel
-	private IEnumerator keepCurrentActionViewable(GameObject go){
-		if (go.activeInHierarchy)
-		{
-			RectTransform goRect = go.transform as RectTransform;
-
-			// We look for the script container
-			RectTransform scriptContainer = goRect.parent as RectTransform;
-			while (scriptContainer.tag != "ScriptConstructor")
-				scriptContainer = scriptContainer.parent as RectTransform;
-			RectTransform viewport = scriptContainer.parent as RectTransform;
-
-			float goRectY = Mathf.Abs(scriptContainer.InverseTransformPoint(goRect.transform.position).y);
-
-			Vector2 targetAnchoredPosition = new Vector2(scriptContainer.anchoredPosition.x, scriptContainer.anchoredPosition.y);
-			// we auto focus on current action if it is not visible
-			// check if current action is too high
-			if ((goRectY-goRect.rect.height) - scriptContainer.anchoredPosition.y < 0)
-			{
-				targetAnchoredPosition = new Vector2(
-					targetAnchoredPosition.x,
-					goRectY - (goRect.rect.height * 2f) // move view a little bit higher than last current action position
-				);
-			}
-			// check if current action is too low
-			else if ((goRectY + goRect.rect.height) - scriptContainer.anchoredPosition.y > viewport.rect.height)
-			{
-				targetAnchoredPosition = new Vector2(
-					targetAnchoredPosition.x,
-					-viewport.rect.height + goRectY + goRect.rect.height * 2
-				);
-			}
-
-			float distance = Vector2.Distance(scriptContainer.anchoredPosition, targetAnchoredPosition);
-			while (Vector2.Distance(scriptContainer.anchoredPosition, targetAnchoredPosition) > 0.1f)
-			{
-				scriptContainer.anchoredPosition = Vector2.MoveTowards(scriptContainer.anchoredPosition, targetAnchoredPosition, distance / 10);
-				yield return null;
 			}
 		}
 	}

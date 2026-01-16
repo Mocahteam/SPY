@@ -263,6 +263,30 @@ public class EndGameManager : FSystem {
 				}
 			}));
 		}
+		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NamingError)
+		{
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[8];
+			Transform buttons = endPanel.transform.Find("Buttons");
+			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
+			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
+			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, false);
+			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
+
+			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
+			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.loop = true;
+			audio.Play();
+
+			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			{
+				verb = "bugged",
+				objectType = "program",
+				activityExtensions = new Dictionary<string, string>() {
+					{ "error", "NamingError" }
+				}
+			}));
+		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.InfiniteLoop)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);

@@ -8,6 +8,7 @@ public class DefaultSettingsValues : MonoBehaviour
 	public int defaultInteractionMode = 0;
 	public float defaultUIScale = 1;
 	public int defaultWallTransparency = 1;
+	public int defaultCameraTracking = 1;
 	public int defaultGameView = 0;
 	public int defaultTooltipView = 1;
 	public int defaultFont = 6;
@@ -60,6 +61,7 @@ public class DefaultSettingsValues : MonoBehaviour
 	public int currentInteractionMode;
 	public float currentUIScale;
 	public int currentWallTransparency;
+	public int currentCameraTracking;
 	public int currentGameView;
 	public int currentTooltipView;
 	public int currentFont;

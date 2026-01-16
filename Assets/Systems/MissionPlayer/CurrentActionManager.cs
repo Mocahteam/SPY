@@ -29,6 +29,8 @@ public class CurrentActionManager : FSystem
 	private HashSet<int> exploredScripItem;
 	private bool infiniteLoopDetected;
 
+	public Transform editableContainers;
+
 	public static CurrentActionManager instance;
 
 	public CurrentActionManager()
@@ -67,7 +69,12 @@ public class CurrentActionManager : FSystem
 				if (infiniteLoopDetected)
 					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.InfiniteLoop });
 				else
-					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoAction });
+				{
+					if (atLeastOnePlayerAndScriptIsAssociated())
+						GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoAction });
+					else
+						GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NamingError });
+				}
 			}
 			else
 			{
@@ -85,6 +92,15 @@ public class CurrentActionManager : FSystem
 		}
 
 		GameObjectManager.removeComponent<ExecutablePanelReady>(go);
+	}
+
+	private bool atLeastOnePlayerAndScriptIsAssociated()
+    {
+		foreach (Transform container in editableContainers)
+			foreach (GameObject player in f_player)
+				if (container.GetComponentInChildren<UIRootContainer>(true).scriptName.ToLower() == player.GetComponent<AgentEdit>().name.ToLower())
+					return true;
+		return false;
 	}
 
 	private GameObject addCurrentActionOnFirstAction(GameObject agent)

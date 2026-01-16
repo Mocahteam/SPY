@@ -9,6 +9,7 @@ public class NewEnd : MonoBehaviour {
 	public static int NoAction = 5;
 	public static int InfiniteLoop = 6;
 	public static int Error = 7;
+	public static int NamingError = 8;
 
 	public int endType;
 }

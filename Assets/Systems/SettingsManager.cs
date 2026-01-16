@@ -156,7 +156,6 @@ public class SettingsManager : FSystem
 
 		// définition de la taille de l'interface
 		float uiWidth = f_canvasScaler.Count > 0 ? (f_canvasScaler.First().transform as RectTransform).rect.width : Screen.currentResolution.width;
-		Debug.Log((float)Math.Max(dsf.defaultUIScale, Math.Round(uiWidth / 1280, 2)));
 		dsf.currentSizeText = settingsContent.Find("SectionGraphic/GridContainer/Grid/UISize/CurrentSize").GetComponent<TMP_Text>();
 		dsf.currentUIScale = PlayerPrefs.GetFloat("UIScale", (float)Math.Max(dsf.defaultUIScale, Math.Round(uiWidth / 1280, 2))); // do not reduce scale under defaultUIScale and multiply scale for definition higher than 1280
 		dsf.currentSizeText.text = dsf.currentUIScale + "";
@@ -165,6 +164,9 @@ public class SettingsManager : FSystem
 
 		dsf.currentWallTransparency = PlayerPrefs.GetInt("wallTransparency", dsf.defaultWallTransparency);
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/WallTransparency").GetComponentInChildren<TMP_Dropdown>().value = dsf.currentWallTransparency;
+
+		dsf.currentCameraTracking = PlayerPrefs.GetInt("cameraTracking", dsf.defaultCameraTracking);
+		settingsContent.Find("SectionGraphic/GridContainer/Grid/CameraTracking").GetComponentInChildren<TMP_Dropdown>().value = dsf.currentCameraTracking;
 
 		dsf.currentGameView = PlayerPrefs.GetInt("orthographicView", dsf.defaultGameView);
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/GameView").GetComponentInChildren<TMP_Dropdown>().value = dsf.currentGameView;
@@ -256,6 +258,7 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetInt("interaction", dsf.currentInteractionMode);
 		PlayerPrefs.SetFloat("UIScale", dsf.currentUIScale);
 		PlayerPrefs.SetInt("wallTransparency", dsf.currentWallTransparency);
+		PlayerPrefs.SetInt("cameraTracking", dsf.currentCameraTracking);
 		PlayerPrefs.SetInt("orthographicView", dsf.currentGameView);
 		PlayerPrefs.SetInt("tooltipView", dsf.currentTooltipView);
 		PlayerPrefs.SetInt("font", dsf.currentFont);
@@ -310,8 +313,10 @@ public class SettingsManager : FSystem
 	{
 		dsf.currentQuality = dsf.defaultQuality;
 		dsf.currentInteractionMode = dsf.defaultInteractionMode;
-		dsf.currentUIScale = dsf.defaultUIScale;
+		float uiWidth = f_canvasScaler.Count > 0 ? (f_canvasScaler.First().transform as RectTransform).rect.width : Screen.currentResolution.width;
+		dsf.currentUIScale = (float)Math.Max(dsf.defaultUIScale, Math.Round(uiWidth / 1280, 2));
 		dsf.currentWallTransparency = dsf.defaultWallTransparency;
+		dsf.currentCameraTracking = dsf.defaultCameraTracking;
 		dsf.currentGameView = dsf.defaultGameView;
 		dsf.currentTooltipView = dsf.defaultTooltipView;
 		dsf.currentFont = dsf.defaultFont;
@@ -639,6 +644,11 @@ public class SettingsManager : FSystem
 		if (ObstableTransparencySystem.instance != null)
 			ObstableTransparencySystem.instance.Pause = value == 0;
 		dsf.currentWallTransparency = value;
+	}
+
+	public void setCameraTracking(int value)
+	{
+		dsf.currentCameraTracking = value;
 	}
 
 	public void setGameView(int value)

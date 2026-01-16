@@ -100,7 +100,6 @@ public class MapDesc : FSystem
 
     private void updateMap(GameObject unused)
     {
-        Debug.Log("updateMap");
         // Calcul du nombre maximal de y
         int yMax = 0;
         foreach (int key in staticMap.Keys)

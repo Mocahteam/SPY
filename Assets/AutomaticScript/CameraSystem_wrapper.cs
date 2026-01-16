@@ -9,6 +9,7 @@ public class CameraSystem_wrapper : BaseWrapper
 	public System.Single cameraZoomMin;
 	public System.Single cameraZoomMax;
 	public System.Single dragSpeed;
+	public DefaultSettingsValues settings;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -18,6 +19,7 @@ public class CameraSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "cameraZoomMin", cameraZoomMin);
 		MainLoop.initAppropriateSystemField (system, "cameraZoomMax", cameraZoomMax);
 		MainLoop.initAppropriateSystemField (system, "dragSpeed", dragSpeed);
+		MainLoop.initAppropriateSystemField (system, "settings", settings);
 	}
 
 	public void ToggleOrthographicPerspective()

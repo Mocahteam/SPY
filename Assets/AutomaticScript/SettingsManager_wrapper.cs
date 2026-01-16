@@ -52,6 +52,11 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "setWallTransparency", value);
 	}
 
+	public void setCameraTracking(System.Int32 value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setCameraTracking", value);
+	}
+
 	public void setGameView(System.Int32 value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setGameView", value);
