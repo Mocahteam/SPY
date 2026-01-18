@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using FYFY;
-using FYFY_plugins.TriggerManager;
 
 /// <summary>
 /// Manage detector areas
@@ -12,46 +11,23 @@ public class DetectorManager : FSystem {
 	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
     private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
     private Family f_enemyMoved = FamilyManager.getFamily(new AllOfComponents(typeof(Moved)), new AnyOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
-    private Family f_robotcollision = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
 
     private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
     private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
     public GameObject LevelGO;
-    private GameData gameData;
-    private bool activeRedDetector;
 
     protected override void onStart()
     {
-        activeRedDetector = false;
-        GameObject go = GameObject.Find("GameData");
-        if (go != null)
-            gameData = go.GetComponent<GameData>();
         f_gameLoaded.addEntryCallback(delegate { updateDetectors(); });
         f_enemyMoved.addEntryCallback(updateDetector);
-        f_robotcollision.addEntryCallback(onNewCollision);
 
         f_playingMode.addEntryCallback(delegate {
-            activeRedDetector = true;
             updateDetectors();
         });
         f_editingMode.addEntryCallback(delegate {
-            activeRedDetector = false;
             updateDetectors();
         });
-    }
-
-    private void onNewCollision(GameObject robot){
-		if(activeRedDetector){
-			Triggered3D trigger = robot.GetComponent<Triggered3D>();
-			foreach(GameObject target in trigger.Targets){
-				//Check if the player collide with a detection cell
-				if (target.GetComponent<Detector>() != null){
-					//end level
-					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Detected });
-				}
-			}			
-		}
     }
 
     // Used by ReloadState button in inspector
@@ -133,8 +109,8 @@ public class DetectorManager : FSystem {
         bool stop = false;
         for (int i = 0; i < dr.range; i++)
         {
-            int x = drone_pos.x + i*xStep + 1*xStep;
-            int y = drone_pos.y + i*yStep + 1*yStep;
+            float x = drone_pos.x + i*xStep + 1*xStep;
+            float y = drone_pos.y + i*yStep + 1*yStep;
             foreach (GameObject wall in f_wall)
                 if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().y == y)
                     stop = true;

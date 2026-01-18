@@ -137,6 +137,32 @@ public class EndGameManager : FSystem {
 				}
 			}));
 		}
+		if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Collision)
+		{
+			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[9];
+			Transform buttons = endPanel.transform.Find("Buttons");
+			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
+			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
+			GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, true);
+			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
+
+			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
+			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.loop = true;
+			audio.Play();
+
+			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			{
+				verb = "completed",
+				objectType = "level",
+				result = true,
+				success = -1,
+				resultExtensions = new Dictionary<string, string>() {
+					{ "error", "Collision" }
+				}
+			}));
+		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Win)
 		{
 			int _score = (10000 / (gameData.totalActionBlocUsed + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);

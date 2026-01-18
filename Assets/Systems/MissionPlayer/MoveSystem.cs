@@ -45,18 +45,12 @@ public class MoveSystem : FSystem {
 					go.GetComponent<Animator>().SetInteger("Danse", Mathf.FloorToInt(Random.Range(1, 11)));
 			}
 		}
-		// en cas de détection
-		else if (end.GetComponent<NewEnd>().endType == NewEnd.Detected)
+		// en cas de détection ou de collision
+		else if (end.GetComponent<NewEnd>().endType == NewEnd.Detected || end.GetComponent<NewEnd>().endType == NewEnd.Collision)
 		{
 			foreach (GameObject robot in f_robotcollision)
 			{
-				Triggered3D trigger = robot.GetComponent<Triggered3D>();
-				foreach (GameObject target in trigger.Targets)
-				{
-					//Check if the player collide with a detection cell
-					if (target.GetComponent<Detector>() != null)
-						robot.GetComponent<Animator>().SetTrigger("Death");
-				}
+				robot.GetComponent<Animator>().SetTrigger("Death");
 			}
 		}
 		// for other end type, nothing to do more

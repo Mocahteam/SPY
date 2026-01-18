@@ -3453,6 +3453,7 @@ GameObject:
   - component: {fileID: 361349251}
   - component: {fileID: 361349252}
   - component: {fileID: 361349253}
+  - component: {fileID: 361349254}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -3762,6 +3763,10 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: ObstableTransparencySystem, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: ObstableTransparencySystem
+    _pause: 0
+  - _typeAssemblyQualifiedName: RobotCollisionManager, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: RobotCollisionManager
     _pause: 0
   _lateUpdateSystemDescriptions:
   - _typeAssemblyQualifiedName: HighLightSystem, Assembly-CSharp, Version=0.0.0.0,
@@ -4116,6 +4121,18 @@ MonoBehaviour:
     m_Bits: 4294967295
   transparencyAlpha: 0.3
   fadeSpeed: 5
+--- !u!114 &361349254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13de2ad069e89d544a36d2a1f3715095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RobotCollisionManager_wrapper
 --- !u!1 &369729339
 GameObject:
   m_ObjectHideFlags: 0
@@ -11133,6 +11150,20 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: 'localization.Array.data[8]'
+    - rid: 7469272039258587215
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 329749063849467904
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: 'localization.Array.data[9]'
     - rid: 8163430786238513273
       type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
         asm: Unity.Localization}
@@ -11149,6 +11180,7 @@ MonoBehaviour:
           - rid: 8163430786238513282
           - rid: 8163430786238513283
           - rid: 7469272014153318463
+          - rid: 7469272039258587215
         m_UpdateType: 1
         m_Changed:
           m_PersistentCalls:
@@ -11290,6 +11322,7 @@ MonoBehaviour:
   - ERREUR de chargement de la mission, veuillez retourner au menu principal !
   - "Aucun programme n'a \xE9t\xE9 charg\xE9 en m\xE9moire,<br>v\xE9rifie que tu
     as bien indiqu\xE9 le nom d'un robot pour au moins une zone de programme."
+  - Attention aux collisions ! Les robots sont fragiles.
 --- !u!1 &1306805415
 GameObject:
   m_ObjectHideFlags: 0
@@ -23326,12 +23359,12 @@ PrefabInstance:
     - target: {fileID: 2588882460585280641, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.000011727315
+      value: 0.0000014533745
       objectReference: {fileID: 0}
     - target: {fileID: 2588882460585280641, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000061606464
+      value: -0.00001753542
       objectReference: {fileID: 0}
     - target: {fileID: 2675783668531543769, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}

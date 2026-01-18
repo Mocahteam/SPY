@@ -14,8 +14,8 @@ public class SaveContent {
         public int y;
         public RawPosition (Position pos)
         {
-            x = pos.x;
-            y = pos.y;
+            x = (int)pos.x;
+            y = (int)pos.y;
         }
     }
 

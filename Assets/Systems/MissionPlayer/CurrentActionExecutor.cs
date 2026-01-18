@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using FYFY;
+using System.Collections.Generic;
 
 /// <summary>
 /// This system executes new currentActions
@@ -18,51 +19,39 @@ public class CurrentActionExecutor : FSystem {
 
 	protected override void onProcess(int familiesUpdateCount)
 	{
+		List<GameObject> agentWillCollide = new List<GameObject>();
 		foreach (GameObject agent in f_agent)
 		{
 			// count inaction if a robot have no CurrentAction
 			if (agent.tag == "Player" && agent.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>(true) == null)
 				agent.GetComponent<ScriptRef>().nbOfInactions++;
-			// Cancel move if target position is used by another agent
-			bool conflict = true;
-			while (conflict)
-			{
-				conflict = false;
-				foreach (GameObject agent2 in f_agent)
-					if (agent != agent2 && agent.tag == agent2.tag && agent.tag == "Player")
-					{
-						Position r1Pos = agent.GetComponent<Position>();
-						Position r2Pos = agent2.GetComponent<Position>();
-						// check if the two robots move on the same position => forbiden
-						if (r2Pos.targetX != -1 && r2Pos.targetY != -1 && r1Pos.targetX == r2Pos.targetX && r1Pos.targetY == r2Pos.targetY)
-						{
-							r2Pos.targetX = -1;
-							r2Pos.targetY = -1;
-							conflict = true;
-							GameObjectManager.addComponent<ForceMoveAnimation>(agent2);
-						}
+			// Predict if collision will occurs
+			bool predictCollision = false;
+			foreach (GameObject agent2 in f_agent) {
+				if (agent != agent2 && agent.tag == agent2.tag && agent.tag == "Player")
+				{
+					Position r1Pos = agent.GetComponent<Position>();
+					Position r2Pos = agent2.GetComponent<Position>();
+					// check if the two robots move on the same position => forbiden
+					predictCollision = (r2Pos.targetX != -1 && r2Pos.targetY != -1 && r1Pos.targetX == r2Pos.targetX && r1Pos.targetY == r2Pos.targetY) ||
 						// one robot doesn't move and the other try to move on its position => forbiden
-						else if (r2Pos.targetX == -1 && r2Pos.targetY == -1 && r1Pos.targetX == r2Pos.x && r1Pos.targetY == r2Pos.y)
-						{
-							r1Pos.targetX = -1;
-							r1Pos.targetY = -1;
-							conflict = true;
-							GameObjectManager.addComponent<ForceMoveAnimation>(agent);
-						}
+						(r2Pos.targetX == -1 && r2Pos.targetY == -1 && r1Pos.targetX == r2Pos.x && r1Pos.targetY == r2Pos.y) ||
 						// the two robot want to exchange their position => forbiden
-						else if (r1Pos.targetX == r2Pos.x && r1Pos.targetY == r2Pos.y && r1Pos.x == r2Pos.targetX && r1Pos.y == r2Pos.targetY)
-                        {
-							r1Pos.targetX = -1;
-							r1Pos.targetY = -1;
-							r2Pos.targetX = -1;
-							r2Pos.targetY = -1;
-							conflict = true;
-							GameObjectManager.addComponent<ForceMoveAnimation>(agent);
-							GameObjectManager.addComponent<ForceMoveAnimation>(agent2);
-						}
-
-					}
+						(r1Pos.targetX == r2Pos.x && r1Pos.targetY == r2Pos.y && r1Pos.x == r2Pos.targetX && r1Pos.y == r2Pos.targetY);
+					if (predictCollision)
+						break;
+				}
 			}
+			if (predictCollision)
+				agentWillCollide.Add(agent);
+		}
+
+		// Reduce move if collision
+		foreach(GameObject agent in agentWillCollide)
+        {
+			Position pos = agent.GetComponent<Position>();
+			pos.targetX += pos.x == pos.targetX ? 0 : (pos.x < pos.targetX ? -0.2f : 0.2f);
+			pos.targetY += pos.y == pos.targetY ? 0 : (pos.y < pos.targetY ? -0.2f : 0.2f);
 		}
 
 		// Record valid movements
@@ -123,37 +112,24 @@ public class CurrentActionExecutor : FSystem {
 		Position pos = go.GetComponent<Position>();
 		switch (go.GetComponent<Direction>().direction){
 			case Direction.Dir.North:
-				if (!checkObstacle(pos.x, pos.y - 1))
-				{
-					pos.targetX = pos.x;
-					pos.targetY = pos.y - 1;
-				}
-				else
-					GameObjectManager.addComponent<ForceMoveAnimation>(go);
+				pos.targetX = pos.x;
+				pos.targetY = pos.y - 1;
+				pos.targetY += checkObstacle((int)pos.x, (int)pos.y - 1);
 				break;
 			case Direction.Dir.South:
-				if(!checkObstacle(pos.x,pos.y + 1)){
-					pos.targetX = pos.x;
-					pos.targetY = pos.y + 1;
-				}
-				else
-					GameObjectManager.addComponent<ForceMoveAnimation>(go);
+				pos.targetX = pos.x;
+				pos.targetY = pos.y + 1;
+				pos.targetY -= checkObstacle((int)pos.x, (int)pos.y + 1);
 				break;
 			case Direction.Dir.East:
-				if(!checkObstacle(pos.x + 1, pos.y)){
-					pos.targetX = pos.x + 1;
-					pos.targetY = pos.y;
-				}
-				else
-					GameObjectManager.addComponent<ForceMoveAnimation>(go);
+				pos.targetX = pos.x + 1;
+				pos.targetY = pos.y;
+				pos.targetX -= checkObstacle((int)pos.x + 1, (int)pos.y);
 				break;
 			case Direction.Dir.West:
-				if(!checkObstacle(pos.x - 1, pos.y)){
-					pos.targetX = pos.x - 1;
-					pos.targetY = pos.y;
-				}
-				else
-					GameObjectManager.addComponent<ForceMoveAnimation>(go);
+				pos.targetX = pos.x - 1;
+				pos.targetY = pos.y;
+				pos.targetX += checkObstacle((int)pos.x - 1, (int)pos.y);
 				break;
 		}
 	}
@@ -209,13 +185,20 @@ public class CurrentActionExecutor : FSystem {
 		}
 	}
 
-	private bool checkObstacle(int x, int z){
+	// Retourne la distance à prendre en compte en fonction de la nature de l'obstacle:
+	// 0 <=> no obstacles
+	// 0.5 <=> Wall
+	// 0 <=> closed Door
+	private float checkObstacle(int x, int z){
 		foreach( GameObject go in f_obstacles){
-			if(go.GetComponent<Position>().x == x && go.GetComponent<Position>().y == z)
+			if (go.GetComponent<Position>().x == x && go.GetComponent<Position>().y == z) {
+				if (go.CompareTag("Wall"))
+					return 0.5f;
 				// si c'est une porte vérifier si elle est ouverte
-				if (go.CompareTag("Wall") || (go.CompareTag("Door") && !go.GetComponent<ActivationSlot>().state))
-					return true;
+				else if (go.CompareTag("Door") && !go.GetComponent<ActivationSlot>().state)
+					return 0;
+			}
 		}
-		return false;
+		return 0;
 	}
 }
