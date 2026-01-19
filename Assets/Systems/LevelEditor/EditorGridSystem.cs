@@ -229,7 +229,8 @@ public class EditorGridSystem : FSystem
 						Debug.Log("Warning: Skipped door from file " + levelKey + ". Wrong data!");
 					}
 					break;
-				case "player":
+				case "robot":
+				case "player": // backward compatibility
 					try
 					{
 						position = getPositionFromXElement(child);
@@ -243,7 +244,8 @@ public class EditorGridSystem : FSystem
 						Debug.Log("Warning: Skipped player from file " + levelKey + ". Wrong data!");
 					}
 					break;
-				case "enemy":
+				case "guard":
+				case "enemy": // backward compatibility
 					try
 					{
 						position = getPositionFromXElement(child);

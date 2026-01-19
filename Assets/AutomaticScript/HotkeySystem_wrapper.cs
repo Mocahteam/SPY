@@ -50,4 +50,9 @@ public class HotkeySystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "buttonCopyCode", buttonCopyCode);
 	}
 
+	public void paste(System.String content)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "paste", content);
+	}
+
 }

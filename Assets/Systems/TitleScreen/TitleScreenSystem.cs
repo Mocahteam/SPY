@@ -213,7 +213,8 @@ public class TitleScreenSystem : FSystem {
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[0], formatedString) + "</color>\n" + logs.text;
-			yield return new WaitForSeconds(0.5f);
+			Debug.Log(www.error);
+			yield return new WaitForSeconds(2f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
 			{
 				logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[1], formatedString) + "</color>\n" + logs.text;
@@ -551,7 +552,7 @@ public class TitleScreenSystem : FSystem {
 		public string content;
 	}
 
-	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/index.html) via le Wrapper du Système
+	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
 	public void importLevelOrScenario(string content)
 	{
 		Localization loc = gameData.GetComponent<Localization>();
@@ -705,13 +706,13 @@ public class TitleScreenSystem : FSystem {
 		GameObjectManager.loadScene("EditorScene");
 	}
 
-	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/index.html) via le Wrapper du Système
+	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
 	public void askToLoadLevel(string levelToLoad)
     {
 		loadLevelWithURL = levelToLoad;
 	}
 
-	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/index.html) via le Wrapper du Système
+	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
 	public void enableSendStatement()
 	{
 		if (gameData == null)

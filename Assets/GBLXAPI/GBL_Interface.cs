@@ -29,7 +29,8 @@ public static class GBL_Interface {
     //Statements will be sent to all addresses in this list
     public static List<GBLConfig> lrsAddresses = new List<GBLConfig>() {
         // Root statement to Dev store in editor and Prod store else
-        Application.isEditor ? new GBLConfig("https://lrsels.lip6.fr/data/xAPI", "e6efcf3eac5c03e121af621dae0df3a50c8733f0", "ffda037ebf1368a89e5b8b59d30a1b77beebc27e") : new GBLConfig("https://lrsels.lip6.fr/data/xAPI", "9fe9fa9a494f2b34b3cf355dcf20219d7be35b14", "b547a66817be9c2dbad2a5f583e704397c9db809")
+        Application.isEditor ? new GBLConfig("https://lrsels.lip6.fr/data/xAPI", "e6efcf3eac5c03e121af621dae0df3a50c8733f0", "ffda037ebf1368a89e5b8b59d30a1b77beebc27e") : new GBLConfig("https://lrsels.lip6.fr/data/xAPI", "9fe9fa9a494f2b34b3cf355dcf20219d7be35b14", "b547a66817be9c2dbad2a5f583e704397c9db809"),
+        Application.isEditor ? new GBLConfig("https://latte.proj.lip6.fr/lrs/xAPI", "spy-dev", "UkQf'W3^em>6") : new GBLConfig("https://latte.proj.lip6.fr/lrs/xAPI", "spy-prod", "m)Bcr9<_yrBm")
     };
 	public static string userUUID = ""; // Muratet : overrided in TitleScreenSystem system
     public static string playerName = ""; // Muratet : overrided in TitleScreenSystem system

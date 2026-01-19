@@ -1,4 +1,5 @@
 using FYFY;
+using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -39,6 +40,12 @@ public class HotkeySystem : FSystem
 	private bool cancelNextEscape;
 
 	public Button buttonCopyCode;
+
+	[DllImport("__Internal")]
+	private static extern void TryToCopy(string txt); // call javascript => send txt to html to copy in clipboard
+
+	[DllImport("__Internal")]
+	private static extern string TryToPaste(); // call javascript => get txt from html clipboard
 
 	protected override void onStart()
     {
@@ -162,8 +169,50 @@ public class HotkeySystem : FSystem
 			// Copy code
 			if (buttonCopyCode != null && buttonCopyCode.gameObject.activeInHierarchy && useOnlyCtrl() && Input.GetKeyDown(KeyCode.C))
 				buttonCopyCode.onClick.Invoke();
+		} else if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused && Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			TMP_InputField focused_inputField = EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>();
+			int start = Mathf.Min(focused_inputField.selectionStringAnchorPosition, focused_inputField.selectionStringFocusPosition);
+			int end = Mathf.Max(focused_inputField.selectionStringAnchorPosition, focused_inputField.selectionStringFocusPosition);
+			int length = end - start;
+
+			if (useOnlyCtrl() && Input.GetKeyDown(KeyCode.C))
+			{
+				if (length > 0)
+				{
+					Debug.Log("UNITY Copy: _" + focused_inputField.text.Substring(start, length) + "_");
+					TryToCopy(focused_inputField.text.Substring(start, length));
+					// cancel internal copy
+					GUIUtility.systemCopyBuffer = "";
+				}
+				else
+					Debug.Log("UNITY Copy: Nothing to copy");
+			}
+			else if (useOnlyCtrl() && Input.GetKeyDown(KeyCode.V))
+            {
+				TryToPaste();
+			}
+
 		}
 	}
+
+	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
+	public void paste(string content)
+    {
+		if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused && Application.platform == RuntimePlatform.WebGLPlayer)
+        {
+			TMP_InputField focused_inputField = EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>();
+			int start = Mathf.Min(focused_inputField.selectionStringAnchorPosition, focused_inputField.selectionStringFocusPosition);
+			int end = Mathf.Max(focused_inputField.selectionStringAnchorPosition, focused_inputField.selectionStringFocusPosition);
+			Debug.Log("UNITY Paste: _" + focused_inputField.text.Substring(0, start) + content + focused_inputField.text.Substring(end, focused_inputField.text.Length - end) + "_");
+			focused_inputField.text = focused_inputField.text.Substring(0, start) + content + focused_inputField.text.Substring(end, focused_inputField.text.Length - end);
+			Debug.Log(focused_inputField.caretPosition + " " + focused_inputField.stringPosition + " " + focused_inputField.selectionStringAnchorPosition + " " + focused_inputField.selectionStringFocusPosition);
+			focused_inputField.caretPosition = start + content.Length;
+			Debug.Log(focused_inputField.caretPosition + " " + focused_inputField.stringPosition+" " + focused_inputField.selectionStringAnchorPosition+" "+ focused_inputField.selectionStringFocusPosition);
+		}
+
+	}
+
 	private bool inputFieldNotSelected()
 	{
 		return EventSystem.current == null || EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null || !EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused;
