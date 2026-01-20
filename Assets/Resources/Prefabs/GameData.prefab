@@ -133,6 +133,7 @@ MonoBehaviour:
   - "Tu n'as pas r\xE9ussi \xE0 atteindre le t\xE9l\xE9porteur et tu n'as plus d'ex\xE9cution
     disponible.<br>Essaye de r\xE9soudre cette mission en moins de coup !"
   - "Aucune action ne peut \xEAtre ex\xE9cut\xE9e !"
+  - Mo
 --- !u!114 &2951319979171891393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,6 +149,7 @@ MonoBehaviour:
   schoolClass: Dev
   isTeacher: 1
   currentScenario: 
+  levelToContinue: 0
 --- !u!114 &4475231556668354259
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,6 +167,20 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 7469272039258587253
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 330871793944616960
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: 'localization.Array.data[48]'
     - rid: 7873247016763261064
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -232,6 +248,7 @@ MonoBehaviour:
           - rid: 8163430786238513301
           - rid: 8163430786238513303
           - rid: 7873247016763261064
+          - rid: 7469272039258587253
         m_UpdateType: 1
         m_Changed:
           m_PersistentCalls:

@@ -14,7 +14,7 @@ public class DoorAndConsoleManager : FSystem {
 
 	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
 
-	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY), new NoneOfLayers(12)); // layer 12 is for furniture
 
 	private GameData gameData;
 
@@ -312,7 +312,8 @@ public class DoorAndConsoleManager : FSystem {
 		foreach(GameObject wall in f_wall)
         {
 			Position posWall = wall.GetComponent<Position>();
-			if (posWall.x == x && posWall.y == y)
+			// for all visible Wall
+			if (posWall.x == x && posWall.y == y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
 				return true;
         }
 		return false;

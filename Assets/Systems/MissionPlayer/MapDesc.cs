@@ -82,7 +82,7 @@ public class MapDesc : FSystem
             Position pos = wall.GetComponent<Position>();
             if (!staticMap.ContainsKey((int)pos.x))
                 staticMap[(int)pos.x] = new Dictionary<int, string>();
-            staticMap[(int)pos.x][(int)pos.y] = gameDataLoc.localization[36];
+            staticMap[(int)pos.x][(int)pos.y] = wall.layer == 12 ? gameDataLoc.localization[48] : gameDataLoc.localization[36]; // layer 12 is for furniture
         }
         if (!gameData.hideExit && !gameData.fogEnabled)
         {

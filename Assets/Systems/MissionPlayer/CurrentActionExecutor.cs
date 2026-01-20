@@ -188,12 +188,13 @@ public class CurrentActionExecutor : FSystem {
 	// Retourne la distance à prendre en compte en fonction de la nature de l'obstacle:
 	// 0 <=> no obstacles
 	// 0.5 <=> Wall
+	// 0.2 <=> Furniture
 	// 0 <=> closed Door
 	private float checkObstacle(int x, int z){
 		foreach( GameObject go in f_obstacles){
 			if (go.GetComponent<Position>().x == x && go.GetComponent<Position>().y == z) {
 				if (go.CompareTag("Wall"))
-					return 0.5f;
+					return go.layer == 12 ? 0.2f : 0.5f; // layer 12 is for furniture
 				// si c'est une porte vérifier si elle est ouverte
 				else if (go.CompareTag("Door") && !go.GetComponent<ActivationSlot>().state)
 					return 0;

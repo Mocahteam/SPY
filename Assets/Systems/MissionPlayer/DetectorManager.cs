@@ -112,7 +112,7 @@ public class DetectorManager : FSystem {
             float x = drone_pos.x + i*xStep + 1*xStep;
             float y = drone_pos.y + i*yStep + 1*yStep;
             foreach (GameObject blocker in f_viewBlocker)
-                if (blocker.GetComponent<Position>().x == x && blocker.GetComponent<Position>().y == y && (blocker.tag == "Wall" || (blocker.tag == "Door" && !blocker.GetComponent<ActivationSlot>().state)))
+                if (blocker.GetComponent<Position>().x == x && blocker.GetComponent<Position>().y == y && ((blocker.tag == "Wall" && blocker.layer != 12) || (blocker.tag == "Door" && !blocker.GetComponent<ActivationSlot>().state))) // layer 12 is for furniture
                     stop = true;
             if (stop)
                 break;
