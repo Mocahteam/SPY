@@ -15170,6 +15170,7 @@ GameObject:
   - component: {fileID: 1071398013}
   - component: {fileID: 1071398012}
   - component: {fileID: 1071398016}
+  - component: {fileID: 1071398017}
   m_Layer: 5
   m_Name: ScriptEditorCanvas
   m_TagString: ScriptEditorCanvas
@@ -15272,6 +15273,103 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!82 &1071398017
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071398011}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1074007867
 GameObject:
   m_ObjectHideFlags: 0
@@ -18245,6 +18343,11 @@ PrefabInstance:
     - target: {fileID: 5853814557817885972, guid: 1a16c512b3cd8cd459319f4de1729f46,
         type: 3}
       propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6247479135774176008, guid: 1a16c512b3cd8cd459319f4de1729f46,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6308765103327136240, guid: 1a16c512b3cd8cd459319f4de1729f46,
@@ -25492,6 +25595,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5726d717640aa604598450dc9fe43aac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &1536808857 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2588882460585280641, guid: 3dce7a0df7989214ea5dbb548f234c1c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1365115973}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1536808858 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2474323062725959719, guid: 3dce7a0df7989214ea5dbb548f234c1c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1365115973}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1365115976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1536808859 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6070375200041684063, guid: 3dce7a0df7989214ea5dbb548f234c1c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1365115973}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1536808860 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7535332066303841303, guid: 3dce7a0df7989214ea5dbb548f234c1c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1365115973}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1539635102
 GameObject:
   m_ObjectHideFlags: 0
@@ -31975,10 +32108,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51c06974314b61340bb7bdc9124951b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EditableCanvas: {fileID: 0}
+  EditableCanvas: {fileID: 1536808859}
   prefabViewportScriptContainer: {fileID: 2876508349418875100, guid: bbdf9c9ea1f0cd64c9de2123ed0edf28,
     type: 3}
-  addContainerButton: {fileID: 0}
+  addContainerButton: {fileID: 1536808858}
   maxWidth: 500
 --- !u!114 &2049420947
 MonoBehaviour:
@@ -32032,7 +32165,7 @@ MonoBehaviour:
   hideExitsToggle: {fileID: 134369709}
   score2Input: {fileID: 939846900}
   score3Input: {fileID: 271669331}
-  editableContainers: {fileID: 0}
+  editableContainers: {fileID: 1536808857}
   hideColor: {r: 0.5568628, g: 0.5568628, b: 0.5568628, a: 1}
   limitedColor: {r: 0.6509804, g: 0.58431375, b: 0, a: 1}
   unlimitedColor: {r: 0, g: 0.6509804, b: 0.42745098, a: 1}
@@ -32049,9 +32182,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCanvas: {fileID: 1071398011}
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 1071398017}
   catchTime: 0.5
-  editableContainers: {fileID: 0}
+  editableContainers: {fileID: 1536808857}
 --- !u!114 &2049420951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32076,11 +32209,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c61ec87aa61ae34da92acff0730a64e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollRect: {fileID: 0}
-  autoScrollUp: {fileID: 0}
-  autoScrollDown: {fileID: 0}
-  autoScrollLeft: {fileID: 0}
-  autoScrollRight: {fileID: 0}
 --- !u!114 &2049420953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32100,7 +32228,7 @@ MonoBehaviour:
   HideExits: {fileID: 134369709}
   score2: {fileID: 939846900}
   score3: {fileID: 271669331}
-  editableContainer: {fileID: 0}
+  editableContainer: {fileID: 1536808860}
   levelData: {fileID: 625788295}
   paintableGrid: {fileID: 1662234106}
   UIgroup:
@@ -32175,11 +32303,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settingsWindow: {fileID: 971333511}
-  canvasScaler:
-  - {fileID: 1301641486}
-  - {fileID: 1539635105}
-  - {fileID: 1071398013}
-  - {fileID: 306145203}
   LoadingLogs: {fileID: 0}
 --- !u!114 &2049420960
 MonoBehaviour:

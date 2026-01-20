@@ -8,7 +8,7 @@ public class DetectorManager : FSystem {
 
 	private Family f_enemy = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
 	private Family f_detector = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody)));
-	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
+	private Family f_viewBlocker = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Door"));
     private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
     private Family f_enemyMoved = FamilyManager.getFamily(new AllOfComponents(typeof(Moved)), new AnyOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
 
@@ -111,8 +111,8 @@ public class DetectorManager : FSystem {
         {
             float x = drone_pos.x + i*xStep + 1*xStep;
             float y = drone_pos.y + i*yStep + 1*yStep;
-            foreach (GameObject wall in f_wall)
-                if (wall.GetComponent<Position>().x == x && wall.GetComponent<Position>().y == y)
+            foreach (GameObject blocker in f_viewBlocker)
+                if (blocker.GetComponent<Position>().x == x && blocker.GetComponent<Position>().y == y && (blocker.tag == "Wall" || (blocker.tag == "Door" && !blocker.GetComponent<ActivationSlot>().state)))
                     stop = true;
             if (stop)
                 break;

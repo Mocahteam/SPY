@@ -50,8 +50,8 @@ public class CurrentActionExecutor : FSystem {
 		foreach(GameObject agent in agentWillCollide)
         {
 			Position pos = agent.GetComponent<Position>();
-			pos.targetX += pos.x == pos.targetX ? 0 : (pos.x < pos.targetX ? -0.2f : 0.2f);
-			pos.targetY += pos.y == pos.targetY ? 0 : (pos.y < pos.targetY ? -0.2f : 0.2f);
+			pos.targetX += pos.x == pos.targetX ? 0 : (pos.x < pos.targetX ? -0.15f : 0.15f);
+			pos.targetY += pos.y == pos.targetY ? 0 : (pos.y < pos.targetY ? -0.15f : 0.15f);
 		}
 
 		// Record valid movements

@@ -78,15 +78,9 @@ public class DoorAndConsoleManager : FSystem {
 		Animator anim = door.GetComponent<Animator>();
 		anim.speed = gameData.gameSpeed_current;
 		if (door.GetComponent<ActivationSlot>().state)
-		{
 			anim.SetTrigger("Open");
-			anim.GetComponent<Collider>().enabled = false;
-		}
 		else
-		{
 			anim.SetTrigger("Close");
-			anim.GetComponent<Collider>().enabled = true;
-		}
     }
 
 	private void onNewConsoleTriggered(GameObject consoleGO)
