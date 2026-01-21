@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using FYFY;
 using FYFY_plugins.CollisionManager;
-using System.Collections;
 using FYFY_plugins.TriggerManager;
 
 /// <summary>
@@ -11,7 +10,6 @@ public class MoveSystem : FSystem {
 
 	private Family f_movable = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
 	private Family f_drone = FamilyManager.getFamily(new NoneOfComponents(typeof(InCollision3D)), new AllOfComponents(typeof(Rigidbody)), new AnyOfTags("Drone"));
-	private Family f_forceMove = FamilyManager.getFamily(new AllOfComponents(typeof(ForceMoveAnimation)));
 	private Family f_end = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family f_robotcollision = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
 
@@ -29,7 +27,6 @@ public class MoveSystem : FSystem {
 		foreach (GameObject movable in f_movable)
 			initAgentDirection(movable);
 		f_movable.addEntryCallback(initAgentDirection);
-		f_forceMove.addEntryCallback(onForceMove);
 		f_drone.addEntryCallback(resetVelocity);
 		f_end.addEntryCallback(onNewEnd);
 	}
@@ -75,19 +72,6 @@ public class MoveSystem : FSystem {
 		}
 	}
 
-	private void onForceMove(GameObject go)
-    {
-		playMoveAnimation(go);
-		MainLoop.instance.StartCoroutine(removeForceMoving(go));
-    }
-
-	private IEnumerator removeForceMoving(GameObject go)
-    {
-		yield return new WaitForSeconds(.5f);
-		foreach (ForceMoveAnimation forceMove in go.GetComponentsInChildren<ForceMoveAnimation>(true))
-			GameObjectManager.removeComponent(forceMove);
-	}
-
 	private void playMoveAnimation(GameObject go)
     {
 		if (go.GetComponent<Animator>() != null)
@@ -119,7 +103,7 @@ public class MoveSystem : FSystem {
 			}
 			else
 			{
-				if (go.GetComponent<Animator>() && go.tag == "Player" && go.GetComponent<ForceMoveAnimation>() == null)
+				if (go.GetComponent<Animator>() && go.tag == "Player")
 				{
 					// Stop moving
 					go.GetComponent<Animator>().SetFloat("Walk", -1f);

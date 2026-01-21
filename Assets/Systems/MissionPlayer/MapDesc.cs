@@ -32,6 +32,9 @@ public class MapDesc : FSystem
 
     private Localization gameDataLoc;
     private GameData gameData;
+
+    private Coroutine delayMapCoroutine;
+
     protected override void onStart()
     {
         GameObject go = GameObject.Find("GameData");
@@ -47,15 +50,14 @@ public class MapDesc : FSystem
 
         lineModel = panel.transform.Find("Model");
         lastFyfyUpdate = -1;
+        delayMapCoroutine = null;
     }
 
     private void onNewCurrentAction(GameObject unused)
     {
-        if (lastFyfyUpdate != MainLoop.instance.familiesUpdateCount)
-        {
-            lastFyfyUpdate = MainLoop.instance.familiesUpdateCount;
-            MainLoop.instance.StartCoroutine(delayUpdateMap());
-        }
+        // on ne veut qu'une seule mise à jour de la map pour toutes les current actions
+        if (delayMapCoroutine == null)
+            delayMapCoroutine = MainLoop.instance.StartCoroutine(delayUpdateMap());
     }
 
     private IEnumerator delayUpdateMap()
@@ -64,6 +66,7 @@ public class MapDesc : FSystem
         yield return null;
         yield return null;
         updateMap(null);
+        delayMapCoroutine = null;
     }
 
     private void buildStaticMap(GameObject unused)

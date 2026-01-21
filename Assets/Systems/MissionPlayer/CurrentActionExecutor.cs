@@ -55,15 +55,18 @@ public class CurrentActionExecutor : FSystem {
 		}
 
 		// Record valid movements
-		foreach (GameObject robot in f_agent)
+		foreach (GameObject agent in f_agent)
 		{
-			Position pos = robot.GetComponent<Position>();
+			Position pos = agent.GetComponent<Position>();
 			if (pos.targetX != -1 && pos.targetY != -1)
 			{
 				pos.x = pos.targetX;
 				pos.y = pos.targetY;
 				pos.targetX = -1;
 				pos.targetY = -1;
+				// notify agent moving
+				if (agent.CompareTag("Drone") && !agent.GetComponent<Moved>())
+					GameObjectManager.addComponent<Moved>(agent);
 			}
 		}
 		Pause = true;
@@ -103,9 +106,6 @@ public class CurrentActionExecutor : FSystem {
 		ca.StopAllCoroutines();
 		if (ca.gameObject.activeInHierarchy)
 			ca.StartCoroutine(UtilityGame.pulseItem(ca.gameObject));
-		// notify agent moving
-		if (ca.agent.CompareTag("Drone") && !ca.agent.GetComponent<Moved>())
-			GameObjectManager.addComponent<Moved>(ca.agent);
 	}
 
 	private void ApplyForward(GameObject go){
