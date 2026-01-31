@@ -284,6 +284,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "SelectNextProgrammingArea",
+                    "type": "Button",
+                    "id": "b6b8d688-8480-4ce3-bf6a-6068c13f33cf",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -944,6 +953,17 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "MapDesc",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "71fb42ed-d0b7-4587-afb4-d18ceef9c93f",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SelectNextProgrammingArea",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

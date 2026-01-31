@@ -1,5 +1,6 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
+using System.Collections;
 using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class TTSSystem : FSystem
     private Family f_inputFields = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
     private Family f_toggles = FamilyManager.getFamily(new AllOfComponents(typeof(Toggle)));
     private Family f_scrollBars = FamilyManager.getFamily(new AllOfComponents(typeof(Scrollbar)));
+    private Family f_agentSelection = FamilyManager.getFamily(new AnyOfTags("HaloSelection"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 
     [DllImport("__Internal")]
@@ -32,6 +34,8 @@ public class TTSSystem : FSystem
     private GameObject previousSelectedGO;
     private GameObject previousFocusedGO;
     private Vector2 previousMousePosition;
+
+    private Coroutine currentActionBuilder = null;
 
     public EventSystem eventSystem;
 
@@ -59,6 +63,10 @@ public class TTSSystem : FSystem
         foreach (GameObject scrollbar in f_scrollBars)
             onNewScrollbar(scrollbar);
         f_scrollBars.addEntryCallback(onNewScrollbar);
+
+        foreach (GameObject selection in f_agentSelection)
+            onNewAgentSelected(selection);
+        f_agentSelection.addEntryCallback(onNewAgentSelected);
     }
 
     protected override void onProcess(int familiesUpdateCount)
@@ -68,11 +76,6 @@ public class TTSSystem : FSystem
             previousSelectedGO = eventSystem.currentSelectedGameObject;
             defTTS(previousSelectedGO);
         }
-    }
-
-    private void ifFocused_SendToScreenReader(string content)
-    {
-        SendToScreenReader(content);
     }
 
     private void onNewSelectable(GameObject selectable)
@@ -88,6 +91,20 @@ public class TTSSystem : FSystem
         Vector2Control pointerPos = Pointer.current.position;
         if (previousMousePosition != new Vector2(pointerPos.x.value, pointerPos.y.value))
             defTTS(focused);
+    }
+
+    private void onNewAgentSelected(GameObject haloSelection)
+    {
+        Localization loc = gameData.GetComponent<Localization>();
+        string agentName = haloSelection.transform.parent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName;
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+        {
+            if (!InstructionOnly())
+                CallTTS(loc.localization[18] + agentName);
+            SendToScreenReader(loc.localization[18] + agentName);
+        }
+        else
+            Debug.Log(loc.localization[18] + agentName);
     }
 
     private void defTTS(GameObject focused)
@@ -150,7 +167,7 @@ public class TTSSystem : FSystem
             }
         }
 
-        if (select && !select.IsInteractable() && focused.GetComponent<CurrentAction>() != null)
+        if (select && !select.IsInteractable())
             suffix += ", " + loc.localization[30]; // "désactivée" : "disabled";
 
 
@@ -174,7 +191,7 @@ public class TTSSystem : FSystem
         {
             if (!InstructionOnly() || focused.transform.parent.gameObject.name == "DialogPanel")
                 CallTTS(content + suffix);
-            ifFocused_SendToScreenReader(content + suffix);
+            SendToScreenReader(content + suffix);
         }
         else
             Debug.Log(content + suffix);
@@ -186,21 +203,30 @@ public class TTSSystem : FSystem
 
     private void onNewCurrentAction(GameObject unused)
     {
+        // Utilisation d'une coroutine parce qu'on ne veut faire se traitement qu'une seule fois pour toutes les CurrentActions
+        if (currentActionBuilder == null)
+            currentActionBuilder = MainLoop.instance.StartCoroutine(buildTTSForCurrentActions());
+    }
+
+    private IEnumerator buildTTSForCurrentActions()
+    {
+        yield return null;
         string actions = "";
         Localization loc = gameData.GetComponent<Localization>();
         foreach (GameObject currentAction in f_currentAction)
         {
-            actions += currentAction.GetComponent<CurrentAction>().agent.GetComponent<ScriptRef>().executableScript.GetComponent<UIRootExecutor>().scriptName + " " + loc.localization[29] + " " + currentAction.GetComponentInChildren<TooltipContent>().text+". ";
+            actions += currentAction.GetComponent<CurrentAction>().agent.GetComponent<ScriptRef>().executableScript.GetComponent<UIRootExecutor>().scriptName + " " + loc.localization[29] + " " + currentAction.GetComponentInChildren<TooltipContent>().text + ". ";
         }
 
         if (Application.platform == RuntimePlatform.WebGLPlayer)
         {
             if (!InstructionOnly())
                 CallTTS(actions);
-            ifFocused_SendToScreenReader(actions);
+            SendToScreenReader(actions);
         }
         else
             Debug.Log(actions);
+        currentActionBuilder = null;
     }
 
     // Pour vocaliser le texte sélectionné à l'intérieur d'un inputField
@@ -216,7 +242,7 @@ public class TTSSystem : FSystem
                 
                 if (!InstructionOnly())
                     CallTTS(output);
-                ifFocused_SendToScreenReader(output);
+                SendToScreenReader(output);
             }
             else
                 Debug.Log(output);
@@ -235,7 +261,7 @@ public class TTSSystem : FSystem
             {
                 if (!InstructionOnly())
                     CallTTS(output);
-                ifFocused_SendToScreenReader(output);
+                SendToScreenReader(output);
             }
             else
                 Debug.Log(output);
@@ -255,7 +281,7 @@ public class TTSSystem : FSystem
                 {
                     if (!InstructionOnly())
                         CallTTS(scrollbar.value + "");
-                    ifFocused_SendToScreenReader(scrollbar.value + "");
+                    SendToScreenReader(scrollbar.value + "");
                 }
                 else
                     Debug.Log(scrollbar.value);

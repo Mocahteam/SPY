@@ -7,16 +7,15 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 // Scroll automatically editable panel when player drag an item on the borders of the editable panel
-// Bubble scroll event in editable panel
 public class ScrollSystem : FSystem
 {
     private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction), typeof(LibraryItemRef), typeof(CurrentAction)));
     private Family f_autoScroll = FamilyManager.getFamily(new AllOfComponents(typeof(AutoScroll), typeof(ScrollRect)));
+    private Family f_scrollOn = FamilyManager.getFamily(new AllOfComponents(typeof(ScrollOn)));
 
     private EventSystem eventSystem;
     private GameObject lastSelected = null;
-    private Coroutine viewCurrentAction = null;
 
     public static ScrollSystem instance;
 
@@ -30,13 +29,13 @@ public class ScrollSystem : FSystem
         eventSystem = EventSystem.current;
 
         f_currentActions.addEntryCallback(focusViewOn);
-        /*delegate (GameObject go)
-        {
-            focusViewOn
-            if (viewCurrentAction != null)
-                MainLoop.instance.StopCoroutine(viewCurrentAction);
-            viewCurrentAction = MainLoop.instance.StartCoroutine(keepCurrentActionViewable(go));
-        });*/
+        f_scrollOn.addEntryCallback(delegate (GameObject go) { MainLoop.instance.StartCoroutine(delayFocusOn(go)); });
+    }
+
+    private IEnumerator delayFocusOn(GameObject go)
+    {
+        yield return null;
+        focusViewOn(go);
     }
 
     protected override void onProcess(int familiesUpdateCount)
@@ -98,19 +97,19 @@ public class ScrollSystem : FSystem
         RectTransform viewport = scrollRect.viewport;
         RectTransform contentPanel = scrollRect.content;
 
-        float selectedInContent_Y = Mathf.Abs(contentPanel.InverseTransformPoint(target.transform.position).y);
-        float selectedInContent_X = Mathf.Abs(contentPanel.InverseTransformPoint(target.transform.position).x);
+        float targetInContent_Y = Mathf.Abs(contentPanel.InverseTransformPoint(target.transform.position).y);
+        float targetInContent_X = Mathf.Abs(contentPanel.InverseTransformPoint(target.transform.position).x);
 
         Vector2 targetAnchoredPosition = new Vector2(contentPanel.anchoredPosition.x, contentPanel.anchoredPosition.y);
-        // we auto focus vertically on selected object only if vertical scroll is enabled and it is not visible
-        if (scrollRect.vertical && (selectedInContent_Y - contentPanel.anchoredPosition.y < 0 || (selectedInContent_Y + (target.transform as RectTransform).rect.height) - contentPanel.anchoredPosition.y > viewport.rect.height))
+        // we auto focus vertically on target object only if vertical scroll is enabled and it is not visible
+        if (scrollRect.vertical && (targetInContent_Y - contentPanel.anchoredPosition.y < 0 || (targetInContent_Y + (target.transform as RectTransform).rect.height) - contentPanel.anchoredPosition.y > viewport.rect.height))
         {
             // check if selected object is too high
-            if (selectedInContent_Y - contentPanel.anchoredPosition.y < 0)
+            if (targetInContent_Y - contentPanel.anchoredPosition.y < 0)
             {
                 targetAnchoredPosition = new Vector2(
                     targetAnchoredPosition.x,
-                    selectedInContent_Y - (target.transform as RectTransform).rect.height
+                    targetInContent_Y - (target.transform as RectTransform).rect.height
                 );
             }
             // selected object is too low
@@ -118,7 +117,7 @@ public class ScrollSystem : FSystem
             {
                 targetAnchoredPosition = new Vector2(
                     targetAnchoredPosition.x,
-                    selectedInContent_Y + (target.transform as RectTransform).rect.height * 1.5f - viewport.rect.height
+                    targetInContent_Y + (target.transform as RectTransform).rect.height * 1.5f - viewport.rect.height
                 );
             }
 
@@ -127,13 +126,13 @@ public class ScrollSystem : FSystem
 
         // we auto focus horizontally on selected object only if horizontal scroll is enabled and it is not visible
         // WARNING : on horizontal scroll contentPanel.anchoredPosition.x is negative
-        if (scrollRect.horizontal && (selectedInContent_X + contentPanel.anchoredPosition.x < 0 || (selectedInContent_X + (target.transform as RectTransform).rect.width) + contentPanel.anchoredPosition.x > viewport.rect.width))
+        if (scrollRect.horizontal && (targetInContent_X + contentPanel.anchoredPosition.x < 0 || (targetInContent_X + (target.transform as RectTransform).rect.width) + contentPanel.anchoredPosition.x > viewport.rect.width))
         {
             // check if selected object is too high
-            if (selectedInContent_X + contentPanel.anchoredPosition.x < 0)
+            if (targetInContent_X + contentPanel.anchoredPosition.x < 0)
             {
                 targetAnchoredPosition = new Vector2(
-                    -(selectedInContent_X - (target.transform as RectTransform).rect.width),
+                    -(targetInContent_X - (target.transform as RectTransform).rect.width),
                     targetAnchoredPosition.y
                 );
             }
@@ -141,55 +140,14 @@ public class ScrollSystem : FSystem
             else
             {
                 targetAnchoredPosition = new Vector2(
-                    -(selectedInContent_X + (target.transform as RectTransform).rect.width - viewport.rect.width),
+                    -(targetInContent_X + (target.transform as RectTransform).rect.width - viewport.rect.width),
                     targetAnchoredPosition.y
                 );
             }
             contentPanel.anchoredPosition = targetAnchoredPosition;
         }
-    }
-
-    // keep current executed action viewable in the executable panel
-    private IEnumerator keepCurrentActionViewable(GameObject go)
-    {
-        if (go.activeInHierarchy)
-        {
-            RectTransform goRect = go.transform as RectTransform;
-
-            // We look for the script container
-            RectTransform scriptContainer = goRect.parent as RectTransform;
-            while (scriptContainer.tag != "ScriptConstructor")
-                scriptContainer = scriptContainer.parent as RectTransform;
-            RectTransform viewport = scriptContainer.parent as RectTransform;
-
-            float goRectY = Mathf.Abs(scriptContainer.InverseTransformPoint(goRect.transform.position).y);
-
-            Vector2 targetAnchoredPosition = new Vector2(scriptContainer.anchoredPosition.x, scriptContainer.anchoredPosition.y);
-            // we auto focus on current action if it is not visible
-            // check if current action is too high
-            if ((goRectY - goRect.rect.height) - scriptContainer.anchoredPosition.y < 0)
-            {
-                targetAnchoredPosition = new Vector2(
-                    targetAnchoredPosition.x,
-                    goRectY - (goRect.rect.height * 2f) // move view a little bit higher than last current action position
-                );
-            }
-            // check if current action is too low
-            else if ((goRectY + goRect.rect.height) - scriptContainer.anchoredPosition.y > viewport.rect.height)
-            {
-                targetAnchoredPosition = new Vector2(
-                    targetAnchoredPosition.x,
-                    -viewport.rect.height + goRectY + goRect.rect.height * 2f
-                );
-            }
-
-            float distance = Vector2.Distance(scriptContainer.anchoredPosition, targetAnchoredPosition);
-            while (Vector2.Distance(scriptContainer.anchoredPosition, targetAnchoredPosition) > 0.1f)
-            {
-                scriptContainer.anchoredPosition = Vector2.MoveTowards(scriptContainer.anchoredPosition, targetAnchoredPosition, distance / 10);
-                yield return null;
-            }
-        }
+        if (target.GetComponent<ScrollOn>())
+            GameObjectManager.removeComponent<ScrollOn>(target);
     }
 
     public void setVerticalSpeed(AutoScroll autoScroll, float newSpeed)
@@ -200,29 +158,5 @@ public class ScrollSystem : FSystem
     public void setHorizontalSpeed(AutoScroll autoScroll, float newSpeed)
     {
         autoScroll.horizontalSpeed = newSpeed;
-    }
-
-    // Fait remonter l'évènement de scroll sur le parent
-    public void onScroll(GameObject target, BaseEventData ev)
-    {
-        ExecuteEvents.ExecuteHierarchy(target.transform.parent.gameObject, ev, ExecuteEvents.scrollHandler);
-    }
-
-    // Fait remonter l'évènement de drag sur le parent
-    public void onDrag(GameObject target, BaseEventData ev)
-    {
-        ExecuteEvents.ExecuteHierarchy(target.transform.parent.gameObject, ev, ExecuteEvents.dragHandler);
-    }
-
-    // Fait remonter l'évènement de beginDrag sur le parent
-    public void onBeginDrag(GameObject target, BaseEventData ev)
-    {
-        ExecuteEvents.ExecuteHierarchy(target.transform.parent.gameObject, ev, ExecuteEvents.beginDragHandler);
-    }
-
-    // Fait remonter l'évènement de EndDrag sur le parent
-    public void onEndDrag(GameObject target, BaseEventData ev)
-    {
-        ExecuteEvents.ExecuteHierarchy(target.transform.parent.gameObject, ev, ExecuteEvents.endDragHandler);
     }
 }

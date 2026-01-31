@@ -10,4 +10,9 @@ public class MapDesc_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "panel", panel);
 	}
 
+	public void askToRefreshMapDesc()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "askToRefreshMapDesc", null);
+	}
+
 }

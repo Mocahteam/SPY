@@ -20,6 +20,7 @@ public class LevelGenerator : FSystem {
 	private Family f_draggableElement = FamilyManager.getFamily(new AnyOfComponents(typeof(ElementToDrag)));
 	private Family f_players = FamilyManager.getFamily(new AnyOfTags("Player"));
 	private Family f_lights = FamilyManager.getFamily(new AllOfComponents(typeof(Light)));
+	private Family f_executionPanels = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootExecutor)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	public GameObject LevelGO;
 	private List<List<int>> map;
@@ -33,6 +34,7 @@ public class LevelGenerator : FSystem {
 	public GameObject buttonExecute;
 	public Material[] groundMaterials;
 	public Material[] wallMaterials;
+	public Material[] wallMaterialsFade;
 	public GameObject[] skinPrefabs;
 
 	[DllImport("__Internal")]
@@ -60,6 +62,7 @@ public class LevelGenerator : FSystem {
 			levelName.text = Utility.extractLocale(levelToLoad.name);
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlButtons();
+			f_executionPanels.addEntryCallback(computeExecutionPanelWidth);
             GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 			{
 				verb = "launched",
@@ -71,6 +74,16 @@ public class LevelGenerator : FSystem {
 				}
 			});
 		}
+	}
+
+	private void computeExecutionPanelWidth(GameObject scriptContainer)
+    {
+		// Calcul de la largeur du panneau
+		RectTransform panel = scriptContainer.transform.parent.parent.parent as RectTransform;
+		// On force le recalcul du scriptContainer pour être sûr d'avoir la bonne taille
+		LayoutRebuilder.ForceRebuildLayoutImmediate(scriptContainer.transform as RectTransform);
+		// On met à jour la largeur préférée et prenant en compte la place pour la scrollbar
+		panel.GetComponent<LayoutElement>().preferredWidth = Mathf.Max(110, (scriptContainer.transform as RectTransform).rect.width + (scriptContainer.GetComponentInParent<ScrollRect>().verticalScrollbar.transform as RectTransform).rect.width);
 	}
 
 	// Read xml document and create all game objects
@@ -276,7 +289,7 @@ public class LevelGenerator : FSystem {
 				break;
 			case "guard":
 			case "enemy": // backward compatibility
-				entity = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,3.8f,gridX*3), Quaternion.Euler(0,0,0), LevelGO.transform);
+				entity = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, LevelGO.transform.position + new Vector3(gridY*3,4.4f,gridX*3), Quaternion.Euler(0,0,0), LevelGO.transform);
 				break;
 		}
 
@@ -308,8 +321,6 @@ public class LevelGenerator : FSystem {
 			else
 				agentEdit.associatedScriptName = "Agent" + nbAgentCreate;
 
-			// Chargement de l'icône de l'agent sur la localisation
-			executablePanel.transform.Find("Header/locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/robotIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
 			executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().text = agentEdit.associatedScriptName;
 			executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName = agentEdit.associatedScriptName;
@@ -317,8 +328,6 @@ public class LevelGenerator : FSystem {
 		else if (type == "guard" || type == "enemy")
 		{
 			nbDroneCreate++;
-			// Chargement de l'icône de l'agent sur la localisation
-			executablePanel.transform.Find("Header/locateButton").GetComponentInChildren<Image>().sprite = Resources.Load("UI Images/droneIcon", typeof(Sprite)) as Sprite;
 			// Affichage du nom de l'agent
 			if(nameAgent == "")
 				nameAgent = "Drone "+nbDroneCreate;
@@ -416,9 +425,14 @@ public class LevelGenerator : FSystem {
 		{
 			if (Random.Range(0f, 1f) > 0.9f)
 			{
+				int choice = Random.Range(0, wallMaterials.Length);
 				Material[] mats = wall.GetComponent<MeshRenderer>().materials;
-				mats[1] = wallMaterials[Random.Range(0, wallMaterials.Length)];
+				mats[1] = wallMaterials[choice];
 				wall.GetComponent<MeshRenderer>().materials = mats;
+
+				WallMaterials wm = wall.GetComponent<WallMaterials>();
+				wm.sideOpaque = wallMaterials[choice];
+				wm.sideFade = wallMaterialsFade[choice];
 			}
 		}
 
@@ -451,7 +465,7 @@ public class LevelGenerator : FSystem {
 	}
 
 	private void readXMLLimits(XmlNode limitsNode){
-		string actionName = null;
+		string actionName;
 		foreach (XmlNode limitNode in limitsNode.ChildNodes)
 		{
 			actionName = limitNode.Attributes.GetNamedItem("blockType").Value;

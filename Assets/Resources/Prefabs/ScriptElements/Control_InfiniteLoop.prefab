@@ -18,8 +18,8 @@ GameObject:
   - component: {fileID: 2900834206394558807}
   - component: {fileID: 2705636384479632924}
   - component: {fileID: 5308914122993031288}
-  - component: {fileID: 8881532605589861155}
   - component: {fileID: 4385729529893367979}
+  - component: {fileID: 7917024404387264168}
   m_Layer: 5
   m_Name: Control_InfiniteLoop
   m_TagString: UI_Control
@@ -115,7 +115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 0
+    m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -216,13 +216,13 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - eventID: 3
+  - eventID: 7
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 6195889844468152799}
-          m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
-          m_MethodName: checkRightClickForDelete
+        - m_Target: {fileID: 7917024404387264168}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -232,13 +232,13 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - eventID: 7
+  - eventID: 3
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 8881532605589861155}
-          m_TargetAssemblyTypeName: BubbleScrollEvent, Assembly-CSharp
-          m_MethodName: onScroll
+        - m_Target: {fileID: 6195889844468152799}
+          m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
+          m_MethodName: checkRightClickForDelete
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -303,18 +303,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   linkedTo: {fileID: 0}
---- !u!114 &8881532605589861155
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 589826222410828797}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50838c88540be0d47b943f08efeafafb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4385729529893367979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -327,6 +315,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da366280509c2874aa0abd598cabb17a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7917024404387264168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589826222410828797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3313d93844bc2c47b3de187e4060528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BubbleEvent
 --- !u!1 &1844801932685815915
 GameObject:
   m_ObjectHideFlags: 0
@@ -530,7 +530,6 @@ GameObject:
   - component: {fileID: 4435016572614460956}
   - component: {fileID: 8403825015964938175}
   - component: {fileID: 2247956749940064751}
-  - component: {fileID: 738194859985399181}
   m_Layer: 5
   m_Name: Container
   m_TagString: Untagged
@@ -592,18 +591,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &738194859985399181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8301838759094395345}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -53623643, guid: e160884b7e39b8e479dc90c5b7dcec1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &748349042810839333
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -717,6 +704,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Forever
       objectReference: {fileID: 0}
+    - target: {fileID: 8869929397520200795, guid: 4fdcd5065fbff574d8a0a77b388b5583,
+        type: 3}
+      propertyPath: m_Navigation.m_Mode
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
       propertyPath: m_text
@@ -750,6 +742,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 6286008962775922781}
+    - targetCorrespondingSourceObject: {fileID: 1848616423792054055, guid: 4fdcd5065fbff574d8a0a77b388b5583,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5259446789166364979}
+    - targetCorrespondingSourceObject: {fileID: 1848616423792054055, guid: 4fdcd5065fbff574d8a0a77b388b5583,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2586513128151097241}
   m_SourcePrefab: {fileID: 100100000, guid: 4fdcd5065fbff574d8a0a77b388b5583, type: 3}
 --- !u!224 &1020623460118257892 stripped
 RectTransform:
@@ -803,6 +803,111 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: m_text
+--- !u!114 &5259446789166364979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1424599465539038722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 7
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2586513128151097241}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleScroll
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2586513128151097241}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubblePointerUp
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 13
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2586513128151097241}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleBeginDrag
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 5
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2586513128151097241}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleDrag
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 14
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2586513128151097241}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleEndDrag
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!114 &2586513128151097241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1424599465539038722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3313d93844bc2c47b3de187e4060528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BubbleEvent
 --- !u!114 &8521899943795193293 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,

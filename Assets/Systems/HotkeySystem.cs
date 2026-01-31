@@ -10,8 +10,9 @@ public class HotkeySystem : FSystem
 {
 	private Family f_dropZoneEnabled = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Les drops zones visibles
 	private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
-	private Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(Outline), typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family f_InputFields = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
+	private Family f_programmingArea = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)));
 
 	public Button mainMenu;
 	public Button buttonExecute;
@@ -35,6 +36,8 @@ public class HotkeySystem : FSystem
 	public Button showBriefing;
 	public Button showMapDesc;
 	public Button buttonCopyCode;
+
+	public Button AddContainerButton;
 	
 	[DllImport("__Internal")]
 	private static extern void TryToCopy(string txt); // call javascript => send txt to html to copy in clipboard
@@ -42,6 +45,7 @@ public class HotkeySystem : FSystem
 	[DllImport("__Internal")]
 	private static extern string TryToPaste(); // call javascript => get txt from html clipboard
 
+	private EventSystem eventSystem;
 
 	private bool cancelNextEscape;
 
@@ -64,6 +68,7 @@ public class HotkeySystem : FSystem
 	private InputAction mapDesc_act;
 	private InputAction copy_act;
 	private InputAction paste_act;
+	private InputAction focusOnNextProgrammingArea_act;
 
 	protected override void onStart()
 	{
@@ -86,12 +91,16 @@ public class HotkeySystem : FSystem
 		mapDesc_act = InputSystem.actions.FindAction("MapDesc");
 		copy_act = InputSystem.actions.FindAction("Copy");
 		paste_act = InputSystem.actions.FindAction("Paste");
+		focusOnNextProgrammingArea_act = InputSystem.actions.FindAction("SelectNextProgrammingArea");
 
 		cancelNextEscape = false;
         foreach (GameObject go in f_InputFields)
 			onNewInputField(go);
 		f_InputFields.addEntryCallback(onNewInputField);
-    }
+
+		eventSystem = EventSystem.current;
+
+	}
 
 	private void onNewInputField(GameObject go)
     {
@@ -186,10 +195,45 @@ public class HotkeySystem : FSystem
 			// Copy code
 			if (buttonCopyCode != null && buttonCopyCode.gameObject.activeInHierarchy && copy_act.WasPressedThisFrame())
 				buttonCopyCode.onClick.Invoke();
+
+			// Select next programmingArea
+			if (focusOnNextProgrammingArea_act.WasPressedThisFrame())
+            {
+				if (f_programmingArea.Count > 0)
+				{
+					// Vérifier si l'objet actuellement sélectionné est dans la hierarchie d'une zone de programmation
+					if (eventSystem.currentSelectedGameObject != null && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() != null)
+					{
+						// Sélectionner la suivante
+						GameObject currentProgrammingArea = eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>().gameObject;
+						for (int i = 0; i < f_programmingArea.Count; i++)
+						{
+							if (f_programmingArea.getAt(i) == currentProgrammingArea)
+							{
+								if (i < f_programmingArea.Count - 1)
+									eventSystem.SetSelectedGameObject(f_programmingArea.getAt(i + 1).GetComponentInChildren<TMP_InputField>().gameObject);
+								else
+									eventSystem.SetSelectedGameObject(f_programmingArea.First().GetComponentInChildren<TMP_InputField>().gameObject);
+							}
+
+						}
+						eventSystem.SetSelectedGameObject(f_programmingArea.First().GetComponentInChildren<TMP_InputField>().gameObject);
+					}
+					else
+					{
+						// Sélectionner la première
+						eventSystem.SetSelectedGameObject(f_programmingArea.First().GetComponentInChildren<TMP_InputField>().gameObject);
+					}
+				}
+				else if (AddContainerButton != null)
+					// select + button
+					eventSystem.SetSelectedGameObject(AddContainerButton.gameObject);
+
+			}
 		}
-		else if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused && Application.platform == RuntimePlatform.WebGLPlayer)
+		else if (eventSystem.currentSelectedGameObject != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused && Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-			TMP_InputField focused_inputField = EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>();
+			TMP_InputField focused_inputField = eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>();
 			int start = Mathf.Min(focused_inputField.selectionStringAnchorPosition, focused_inputField.selectionStringFocusPosition);
 			int end = Mathf.Max(focused_inputField.selectionStringAnchorPosition, focused_inputField.selectionStringFocusPosition);
 			int length = end - start;
@@ -217,9 +261,9 @@ public class HotkeySystem : FSystem
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
 	public void paste(string content)
 	{
-		if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused && Application.platform == RuntimePlatform.WebGLPlayer)
+		if (eventSystem.currentSelectedGameObject != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused && Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-			TMP_InputField focused_inputField = EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>();
+			TMP_InputField focused_inputField = eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>();
 			int start = Mathf.Min(focused_inputField.selectionStringAnchorPosition, focused_inputField.selectionStringFocusPosition);
 			int end = Mathf.Max(focused_inputField.selectionStringAnchorPosition, focused_inputField.selectionStringFocusPosition);
 			Debug.Log("UNITY Paste: _" + focused_inputField.text.Substring(0, start) + content + focused_inputField.text.Substring(end, focused_inputField.text.Length - end) + "_");
@@ -233,13 +277,13 @@ public class HotkeySystem : FSystem
 
 	private bool inputFieldNotSelected()
 	{
-		return EventSystem.current == null || EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null || !EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused;
+		return eventSystem.currentSelectedGameObject == null || eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>() == null || !eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused;
 	}
 
 	private void callEntry(EventTrigger trigger, EventTriggerType type)
 	{
 		// Création d'un pointer Event par défaut
-		PointerEventData pointerData = new PointerEventData(EventSystem.current);
+		PointerEventData pointerData = new PointerEventData(eventSystem);
 		// Parcourir les entrée pour chercher le bon type
 		foreach (EventTrigger.Entry entry in trigger.triggers)
 		{
@@ -252,7 +296,7 @@ public class HotkeySystem : FSystem
 	private bool replacementSlotEnabled()
 	{
 		foreach (GameObject replacementSlot in f_replacementSlot)
-			if (replacementSlot.GetComponent<Outline>().enabled)
+			if (replacementSlot.GetComponentInChildren<Outline>().enabled)
 				return true;
 		return false;
 	}

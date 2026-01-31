@@ -108,6 +108,7 @@ GameObject:
   - component: {fileID: 5258513922945448628}
   - component: {fileID: 4164705081140548168}
   - component: {fileID: 3183794418170269004}
+  - component: {fileID: 6046009868423659190}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -192,6 +193,21 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &6046009868423659190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 872837508377854038}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0.6037736, b: 0.02130962, a: 1}
+  m_EffectDistance: {x: 3, y: -3}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1915165436565398917
 GameObject:
   m_ObjectHideFlags: 0
@@ -319,9 +335,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2917644214645016425}
-          m_TargetAssemblyTypeName: ScrollSystemBridge, Assembly-CSharp
-          m_MethodName: onScroll
+        - m_Target: {fileID: 7184293950127230287}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -455,10 +471,9 @@ GameObject:
   - component: {fileID: 1721759257969761979}
   - component: {fileID: 2522982906285849175}
   - component: {fileID: 8558040175345273437}
-  - component: {fileID: 7986432655126575220}
   - component: {fileID: 8059886816321738139}
-  - component: {fileID: 2917644214645016425}
   - component: {fileID: 597149978524709112}
+  - component: {fileID: 7184293950127230287}
   m_Layer: 5
   m_Name: Operator_Or
   m_TagString: UI_Operator
@@ -647,9 +662,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2917644214645016425}
-          m_TargetAssemblyTypeName: BubbleScrollEvent, Assembly-CSharp
-          m_MethodName: onScroll
+        - m_Target: {fileID: 7184293950127230287}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -672,7 +687,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 0
+    m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -739,21 +754,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   linkedTo: {fileID: 0}
---- !u!114 &7986432655126575220
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3821364993045877023}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0.6039216, b: 0.019607844, a: 1}
-  m_EffectDistance: {x: 3, y: -3}
-  m_UseGraphicAlpha: 1
 --- !u!114 &8059886816321738139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -767,18 +767,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slotType: 1
---- !u!114 &2917644214645016425
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3821364993045877023}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50838c88540be0d47b943f08efeafafb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &597149978524709112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -791,6 +779,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da366280509c2874aa0abd598cabb17a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7184293950127230287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3821364993045877023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3313d93844bc2c47b3de187e4060528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BubbleEvent
 --- !u!1 &8438776797957812110
 GameObject:
   m_ObjectHideFlags: 0

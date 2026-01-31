@@ -92,10 +92,9 @@ GameObject:
   - component: {fileID: 1721759257969761979}
   - component: {fileID: 2522982906285849175}
   - component: {fileID: 8518420125127011074}
-  - component: {fileID: 2697659401814754074}
   - component: {fileID: 5338833214349603121}
-  - component: {fileID: 5607525844389498537}
   - component: {fileID: 7299229595040165769}
+  - component: {fileID: 4030654497507188108}
   m_Layer: 5
   m_Name: Operator_And
   m_TagString: UI_Operator
@@ -284,9 +283,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 5607525844389498537}
-          m_TargetAssemblyTypeName: BubbleScrollEvent, Assembly-CSharp
-          m_MethodName: onScroll
+        - m_Target: {fileID: 4030654497507188108}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -309,7 +308,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 0
+    m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -376,21 +375,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   linkedTo: {fileID: 0}
---- !u!114 &2697659401814754074
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3821364993045877023}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0.6037736, b: 0.02130962, a: 1}
-  m_EffectDistance: {x: 3, y: -3}
-  m_UseGraphicAlpha: 1
 --- !u!114 &5338833214349603121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -404,18 +388,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slotType: 1
---- !u!114 &5607525844389498537
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3821364993045877023}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50838c88540be0d47b943f08efeafafb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7299229595040165769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -428,6 +400,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da366280509c2874aa0abd598cabb17a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4030654497507188108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3821364993045877023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3313d93844bc2c47b3de187e4060528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BubbleEvent
 --- !u!1 &4396151512815711180
 GameObject:
   m_ObjectHideFlags: 0
@@ -791,9 +775,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 5607525844389498537}
-          m_TargetAssemblyTypeName: BubbleScrollEvent, Assembly-CSharp
-          m_MethodName: onScroll
+        - m_Target: {fileID: 4030654497507188108}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -847,6 +831,7 @@ GameObject:
   - component: {fileID: 1406632344318756482}
   - component: {fileID: 4099698839598462929}
   - component: {fileID: 2666563071217422088}
+  - component: {fileID: 3473684497528621072}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -931,6 +916,21 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &3473684497528621072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7772587764975172603}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0.6037736, b: 0.02130962, a: 1}
+  m_EffectDistance: {x: 3, y: -3}
+  m_UseGraphicAlpha: 1
 --- !u!1001 &867701199725188339
 PrefabInstance:
   m_ObjectHideFlags: 0

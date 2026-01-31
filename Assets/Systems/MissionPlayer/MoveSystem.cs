@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using FYFY;
 using FYFY_plugins.CollisionManager;
-using FYFY_plugins.TriggerManager;
+using System.Collections;
 
 /// <summary>
 /// Manage position and Direction component to move agent accordingly
@@ -9,15 +9,21 @@ using FYFY_plugins.TriggerManager;
 public class MoveSystem : FSystem {
 
 	private Family f_movable = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
-	private Family f_drone = FamilyManager.getFamily(new NoneOfComponents(typeof(InCollision3D)), new AllOfComponents(typeof(Rigidbody)), new AnyOfTags("Drone"));
 	private Family f_end = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
-	private Family f_robotcollision = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
+	private Family f_positionCorrected = FamilyManager.getFamily(new AllOfComponents(typeof(PositionCorrected)));
 
 	public float turnSpeed;
 	public float moveSpeed;
 	public AudioClip footSlow;
 	public AudioClip footSpeed;
 	private GameData gameData;
+
+	public static MoveSystem instance;
+
+	public MoveSystem()
+    {
+		instance = this;
+    }
 
 	protected override void onStart()
 	{
@@ -27,8 +33,12 @@ public class MoveSystem : FSystem {
 		foreach (GameObject movable in f_movable)
 			initAgentDirection(movable);
 		f_movable.addEntryCallback(initAgentDirection);
-		f_drone.addEntryCallback(resetVelocity);
 		f_end.addEntryCallback(onNewEnd);
+
+		// Lorsqu'on reçoit du CurrentActionExecutor la notif comme quoi les positions ont été corrigées, on lance le onProcess pour lancer les animation
+		f_positionCorrected.addEntryCallback(delegate { Pause = false; });
+
+		Pause = true;
 	}
 
 	private void onNewEnd(GameObject end)
@@ -38,16 +48,8 @@ public class MoveSystem : FSystem {
 		{
 			foreach (GameObject go in f_movable)
 			{
-				if (go.GetComponent<Animator>() && go.tag == "Player")
+				if (go.GetComponent<Animator>() && go.CompareTag("Player"))
 					go.GetComponent<Animator>().SetInteger("Danse", Mathf.FloorToInt(Random.Range(1, 11)));
-			}
-		}
-		// en cas de détection ou de collision
-		else if (end.GetComponent<NewEnd>().endType == NewEnd.Detected || end.GetComponent<NewEnd>().endType == NewEnd.Collision)
-		{
-			foreach (GameObject robot in f_robotcollision)
-			{
-				robot.GetComponent<Animator>().SetTrigger("Death");
 			}
 		}
 		// for other end type, nothing to do more
@@ -72,42 +74,38 @@ public class MoveSystem : FSystem {
 		}
 	}
 
-	private void playMoveAnimation(GameObject go)
-    {
-		if (go.GetComponent<Animator>() != null)
-		{
-			if (gameData.gameSpeed_current == gameData.gameSpeed_default)
-			{
-				go.GetComponent<Animator>().SetFloat("Walk", 1f);
-				go.GetComponent<Animator>().SetFloat("Run", -1f);
-			}
-			else
-			{
-				go.GetComponent<Animator>().SetFloat("Walk", -1f);
-				go.GetComponent<Animator>().SetFloat("Run", 1f);
-			}
-		}
-	}
-
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-
+		int movingCpt = 0;
 		foreach (GameObject go in f_movable)
 		{
 			// Manage position
 			if (Mathf.Abs(go.transform.localPosition.z / 3 - go.GetComponent<Position>().x) > 0.01f || Mathf.Abs(go.transform.localPosition.x / 3 - go.GetComponent<Position>().y) > 0.01f)
 			{
 				go.transform.localPosition = Vector3.MoveTowards(go.transform.localPosition, new Vector3(go.GetComponent<Position>().y * 3, go.transform.localPosition.y, go.GetComponent<Position>().x * 3), moveSpeed * gameData.gameSpeed_current * Time.deltaTime);
-				if (go.GetComponent<Animator>() && go.tag == "Player")
-					playMoveAnimation(go);
+				if (go.GetComponent<Animator>() && go.CompareTag("Player"))
+                {
+					if (gameData.gameSpeed_current == gameData.gameSpeed_default)
+					{
+						go.GetComponent<Animator>().SetFloat("Walk", 1f);
+						go.GetComponent<Animator>().SetFloat("Run", -1f);
+					}
+					else
+					{
+						go.GetComponent<Animator>().SetFloat("Walk", -1f);
+						go.GetComponent<Animator>().SetFloat("Run", 1f);
+					}
+					go.GetComponent<ScriptRef>().StopAllCoroutines();
+				}
+				movingCpt++;
 			}
 			else
 			{
-				if (go.GetComponent<Animator>() && go.tag == "Player")
+				// Position atteinte
+				if (go.GetComponent<Animator>() && go.CompareTag("Player"))
 				{
-					// Stop moving
-					go.GetComponent<Animator>().SetFloat("Walk", -1f);
-					go.GetComponent<Animator>().SetFloat("Run", -1f);
+					// On stope l'animation dans une coroutine pour éviter de voir le robot faire une micro pause entre deux steps, ainsi le onProcess stoppera cette coroutine si l'animation doit continuer
+					go.GetComponent<ScriptRef>().StartCoroutine(delayStopAnim(go.GetComponent<Animator>()));
 				}
 			}
 
@@ -131,24 +129,36 @@ public class MoveSystem : FSystem {
 			if (target.eulerAngles.y != go.transform.eulerAngles.y)
 			{
 				go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, target, turnSpeed * gameData.gameSpeed_current * Time.deltaTime);
-				if (go.GetComponent<Animator>() && go.tag == "Player")
+				if (go.GetComponent<Animator>() && go.CompareTag("Player"))
 					go.GetComponent<Animator>().SetFloat("Rotate", 1f);
+				movingCpt++;
 			}
 			else
-				if (go.GetComponent<Animator>() && go.tag == "Player")
+				if (go.GetComponent<Animator>() && go.CompareTag("Player"))
 					go.GetComponent<Animator>().SetFloat("Rotate", -1f);
 		}
+		if (movingCpt == 0)
+			Pause = true;
 	}
 
-	private void resetVelocity(GameObject go)
-    {
-		go.GetComponent<Rigidbody>().linearVelocity = new Vector3(0, 0, 0);
-    }
-
-	public  void idleAnimations()
+	public  void syncAnimations()
 	{
 		foreach (GameObject go in f_movable)
-			if (go.GetComponent<Animator>() && go.tag == "Player")
+			if (go.GetComponent<Animator>() && go.GetComponent<ScriptRef>() && !go.GetComponent<ScriptRef>().isBroken)
+			{
 				go.GetComponent<Animator>().SetTrigger("Idle");
+				go.GetComponent<Collider>().enabled = true;
+			}
+	}
+
+	private IEnumerator delayStopAnim(Animator anim)
+    {
+		// On laisse passé quelques frames avant de stopper l'animation pour laisser le temps de stopper cette coroutine si l'animation doit continuer
+		yield return null;
+		yield return null;
+		yield return null;
+		yield return null;
+		anim.SetFloat("Walk", -1f);
+		anim.SetFloat("Run", -1f);
 	}
 }

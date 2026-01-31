@@ -15,12 +15,12 @@ GameObject:
   - component: {fileID: 709554376303757313}
   - component: {fileID: 8339845762760229321}
   - component: {fileID: 7524691193620451864}
-  - component: {fileID: 5688242783878916740}
   - component: {fileID: 4418068244119050922}
   - component: {fileID: 5398451711570853583}
   - component: {fileID: 2587477506047014650}
   - component: {fileID: 2023803382168195105}
   - component: {fileID: 166919440855979064}
+  - component: {fileID: 1695115900565131880}
   m_Layer: 5
   m_Name: EmptySlot
   m_TagString: UI_Panel3
@@ -71,7 +71,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.69803923, g: 0.69803923, b: 0.69803923, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -139,18 +139,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44c1ecbb4c96ca841badb3b0d50e5bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5688242783878916740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 614420622717238934}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50838c88540be0d47b943f08efeafafb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4418068244119050922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,25 +156,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 5688242783878916740}
-          m_TargetAssemblyTypeName: ScrollSystemBridge, Assembly-CSharp
-          m_MethodName: onScroll
-          m_Mode: 0
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-  - eventID: 14
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5688242783878916740}
-          m_TargetAssemblyTypeName: ScrollSystemBridge, Assembly-CSharp
-          m_MethodName: onScroll
+        - m_Target: {fileID: 1695115900565131880}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -265,7 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 0
+    m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -313,6 +285,18 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1695115900565131880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 614420622717238934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3313d93844bc2c47b3de187e4060528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BubbleEvent
 --- !u!1 &1060737230579591396
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,7 +316,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2028482596119784459
 RectTransform:
   m_ObjectHideFlags: 0
@@ -439,9 +423,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 5688242783878916740}
-          m_TargetAssemblyTypeName: BubbleScrollEvent, Assembly-CSharp
-          m_MethodName: onScroll
+        - m_Target: {fileID: 1695115900565131880}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

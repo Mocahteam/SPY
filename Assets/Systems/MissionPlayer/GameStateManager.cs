@@ -2,6 +2,7 @@ using UnityEngine;
 using FYFY;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections;
 
 /// <summary>
 /// This manager enables to save the game state and to restore it on demand for instance when the player is detected by drones, he can reset the game on a state just before the previous execution
@@ -12,6 +13,7 @@ public class GameStateManager : FSystem {
     private Family f_directions = FamilyManager.getFamily(new AllOfComponents(typeof(Direction)), new NoneOfComponents(typeof(Detector)));
     private Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new NoneOfComponents(typeof(Detector)));
     private Family f_doors = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot)));
+    private Family f_scriptRefs = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
     private Family f_forControls = FamilyManager.getFamily(new AllOfComponents(typeof(ForControl)));
 
@@ -59,6 +61,9 @@ public class GameStateManager : FSystem {
         save.rawSave.doors.Clear();
         foreach (GameObject door in f_doors)
             save.rawSave.doors.Add(new SaveContent.RawActivationSlot(door.GetComponent<ActivationSlot>()));
+        save.rawSave.scriptRefs.Clear();
+        foreach (GameObject scriptRef in f_scriptRefs)
+            save.rawSave.scriptRefs.Add(new SaveContent.RawScriptRef(scriptRef.GetComponent<ScriptRef>()));
         save.rawSave.currentDroneActions.Clear();    
         foreach(GameObject go in f_currentActions)
             if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
@@ -91,8 +96,27 @@ public class GameStateManager : FSystem {
             coin_go.GetComponent<Renderer>().enabled = save.rawSave.coinsState[i];
             coin_go.GetComponent<Collider>().enabled = save.rawSave.coinsState[i];
         }
-        for (int i = 0; i < f_directions.Count && i < save.rawSave.directions.Count ; i++)
-            f_directions.getAt(i).GetComponent<Direction>().direction = save.rawSave.directions[i];
+        for (int i = 0; i < f_directions.Count && i < save.rawSave.directions.Count; i++)
+        {
+            GameObject go = f_directions.getAt(i);
+            go.GetComponent<Direction>().direction = save.rawSave.directions[i];
+            // Orienter correctement l'objet
+            switch (save.rawSave.directions[i]) 
+            {
+                case Direction.Dir.North:
+                    go.transform.rotation = Quaternion.Euler(0, -90, 0);
+                    break;
+                case Direction.Dir.East:
+                    go.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    break;
+                case Direction.Dir.West:
+                    go.transform.rotation = Quaternion.Euler(0, 180, 0);
+                    break;
+                case Direction.Dir.South:
+                    go.transform.rotation = Quaternion.Euler(0, 90, 0);
+                    break;
+            }
+        }
         for (int i = 0; i < f_positions.Count && i < save.rawSave.positions.Count ; i++)
         {
             Position pos = f_positions.getAt(i).GetComponent<Position>();
@@ -106,11 +130,18 @@ public class GameStateManager : FSystem {
             ActivationSlot act = f_doors.getAt(i).GetComponent<ActivationSlot>();
             act.state = save.rawSave.doors[i].state;
         }
-        foreach(GameObject go in f_currentActions)
+        for (int i = 0; i < f_scriptRefs.Count && i < save.rawSave.scriptRefs.Count; i++)
+        {
+            ScriptRef scriptRef = f_scriptRefs.getAt(i).GetComponent<ScriptRef>();
+            scriptRef.scriptFinished = save.rawSave.scriptRefs[i].scriptFinished;
+            scriptRef.isBroken = save.rawSave.scriptRefs[i].isBroken;
+        }
+        foreach (GameObject go in f_currentActions)
             if(go.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
                 GameObjectManager.removeComponent<CurrentAction>(go);
         foreach(SaveContent.RawCurrentAction act in save.rawSave.currentDroneActions)
-            GameObjectManager.addComponent<CurrentAction>(act.action, new{agent = act.agent});
+            // on demande d'ajouter la CurrentAction à la prochaine frame => A cet frame on bascule en EditMode et pour ignorer l'exécution de la restauration de cette current action, il faut attendre que le basculement en EditMode soit acté
+            MainLoop.instance.StartCoroutine(delayAddCurrentAction(act.action, act.agent));
         for (int i = 0; i < f_forControls.Count && i < save.rawSave.currentLoopParams.Count; i++)
         {
             ForControl fc = f_forControls.getAt(i).GetComponent<ForControl>();
@@ -133,5 +164,12 @@ public class GameStateManager : FSystem {
             TMP_Text amountText = playButtonAmount.GetComponentInChildren<TMP_Text>();
             amountText.text = "" + (int.Parse(amountText.text) + 1);
         }
+    }
+
+    private IEnumerator delayAddCurrentAction(GameObject nextAction, GameObject agent)
+    {
+        yield return null; // on restaure une CurrentAction mais on ne veut pas l'exécuter car on bascule en EditMode, donc on attend d'être bien en EditMode avant d'ajouter les CurrentActions
+        Debug.Log("AddCurrentAction GameStateManager !!!!!");
+        GameObjectManager.addComponent<CurrentAction>(nextAction, new { agent = agent });
     }
 }

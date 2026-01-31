@@ -35,9 +35,4 @@ public class StepSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "setToDefaultTimeStep", null);
 	}
 
-	public void startStepImmediate()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "startStepImmediate", null);
-	}
-
 }

@@ -67,6 +67,9 @@ public class SettingsManager : FSystem
 		flexibleColorPicker = settingsWindow.GetComponentInChildren<FlexibleColorPicker>(true);
 		dsf = settingsWindow.GetComponent<DefaultSettingsValues>();
 
+		loadPlayerPrefs();
+		saveParameters();
+
 		if (Application.platform == RuntimePlatform.WebGLPlayer && ClearPlayerPrefs())
 			PlayerPrefs.DeleteAll();
 
@@ -91,7 +94,7 @@ public class SettingsManager : FSystem
 		f_borders.addEntryCallback(delegate (GameObject go) { syncBorderProperties(go); });
 		f_scrollbar.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, dsf.currentNormalColor_Scrollbar); });
 		f_scrollbar.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, dsf.currentBackgroundColor_Scrollbar); });
-		f_scrollview.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, dsf.currentBackgroundColor_Scrollview); });
+		f_scrollview.addEntryCallback(delegate (GameObject go) { Debug.Log("Add new scrollView: "+go.name);  syncGraphicColor(go, dsf.currentBackgroundColor_Scrollview); });
 		f_toggle.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, dsf.currentNormalColor_Toggle); });
 		f_tooltip.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, dsf.currentColor_Tooltip); });
 		f_blocks.addEntryCallback(delegate (GameObject go) { syncBlockColor(go); });
@@ -100,9 +103,6 @@ public class SettingsManager : FSystem
 		f_conditionNotif.addEntryCallback(delegate (GameObject go) { syncConditionNotif(go); });
 
 		f_settingsOpened.addEntryCallback(delegate (GameObject unused) { loadPlayerPrefs(); });
-		
-		loadPlayerPrefs();
-		saveParameters();
 
 		MainLoop.instance.StartCoroutine(waitLocalizationLoaded());
 	}
@@ -120,7 +120,7 @@ public class SettingsManager : FSystem
 	private void syncColors()
 	{
 		syncColor(f_allTexts, syncColor_Text);
-		SyncLocalization.instance.syncLocale();
+		SyncLocalization.instance.syncLocale(); // because it change colors
 		syncColor(f_dropdown, syncColor_Dropdown);
 		syncColor(f_inputfield, sync_Inputfield);
 		syncColor(f_buttons, syncNormalColor, dsf.currentNormalColor_Button);
@@ -920,13 +920,17 @@ public class SettingsManager : FSystem
 		if (go.GetComponent<DropZone>())
 			syncGraphicColor(go.transform.Find("PositionBar").gameObject, dsf.currentDropAreaColor);
         else
-			go.GetComponent<Outline>().effectColor = dsf.currentDropAreaColor;
+			go.GetComponentInChildren<Outline>().effectColor = dsf.currentDropAreaColor;
 	}
 
 	private void setHighlightingColor(GameObject go, Color? unused = null)
 	{
 		if (go.GetComponent<Highlightable>())
+		{
 			go.GetComponent<Highlightable>().highlightedColor = dsf.currentHighlightingColor;
+			if (go.CompareTag("Player") || go.CompareTag("Drone"))
+				go.transform.Find("HaloSelection").GetComponent<Renderer>().material.color = dsf.currentHighlightingColor;
+		}
 		else
 			go.GetComponent<BasicAction>().highlightedColor = dsf.currentHighlightingColor;
 	}

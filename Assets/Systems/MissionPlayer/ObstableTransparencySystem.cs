@@ -8,15 +8,12 @@ public class ObstableTransparencySystem : FSystem
     public Camera playerCamera;
 
     [Header("Paramètres")]
-    public LayerMask wallLayerMask = -1; // Layers considérés comme des murs
-    public float transparencyAlpha = 0.3f; // Niveau de transparence (0 = invisible, 1 = opaque)
+    public LayerMask wallLayerMask = -1; // Layers considérés comme des murs (voir Inspector, default -1 <=> Everything)
+    public float alphaRatio = 0.7f; // Niveau d'opacité (1 = invisible, 0 = opaque)
     public float fadeSpeed = 5f; // Vitesse de transition
 
     private Family f_agents = FamilyManager.getFamily(new AnyOfTags("Drone", "Player"));
-    private Family f_walls = FamilyManager.getFamily(new AnyOfTags("Wall"), new AllOfComponents(typeof(MeshRenderer)));
 
-    private Dictionary<Renderer, List<Material>> originalMaterials = new Dictionary<Renderer, List<Material>>();
-    private Dictionary<Renderer, List<Material>> transparentMaterials = new Dictionary<Renderer, List<Material>>();
     private List<Renderer> currentTransparentWalls = new List<Renderer>();
 
     public static ObstableTransparencySystem instance;
@@ -25,32 +22,6 @@ public class ObstableTransparencySystem : FSystem
     public ObstableTransparencySystem()
     {
         instance = this;
-    }
-
-    protected override void onStart()
-    {
-        foreach (GameObject wall in f_walls)
-            cache(wall);
-        f_walls.addEntryCallback(cache);
-    }
-
-    private void cache(GameObject wall)
-    {
-        Renderer renderer = wall.GetComponent<Renderer>();
-        if (!originalMaterials.ContainsKey(renderer))
-        {
-            originalMaterials[renderer] = new List<Material>(renderer.materials);
-        }
-        if (!transparentMaterials.ContainsKey(renderer))
-        {
-            transparentMaterials[renderer] = new List<Material>();
-            foreach (Material mat in renderer.materials)
-            {
-                Material transparentMat = new Material(mat);
-                SetMaterialTransparent(transparentMat);
-                transparentMaterials[renderer].Add(transparentMat);
-            }
-        }
     }
 
     // Use to process your families.
@@ -78,33 +49,23 @@ public class ObstableTransparencySystem : FSystem
             foreach (RaycastHit hit in hits)
             {
                 Renderer renderer = hit.collider.GetComponent<Renderer>();
-                if (renderer != null && renderer.gameObject.tag == "Wall")
-                {
+                if (renderer != null && !wallsToMakeTransparent.Contains(renderer))
                     wallsToMakeTransparent.Add(renderer);
-                }
             }
         }
 
         // Rendre les murs transparents
         foreach (Renderer wall in wallsToMakeTransparent)
-        {
             MakeWallTransparent(wall);
-        }
 
         // Restaurer l'opacité des murs qui ne sont plus obstrués
         List<Renderer> wallsToRestore = new List<Renderer>();
         foreach (Renderer wall in currentTransparentWalls)
-        {
             if (!wallsToMakeTransparent.Contains(wall))
-            {
                 wallsToRestore.Add(wall);
-            }
-        }
 
         foreach (Renderer wall in wallsToRestore)
-        {
             RestoreWallOpacity(wall);
-        }
     }
 
     void MakeWallTransparent(Renderer wallRenderer)
@@ -114,7 +75,9 @@ public class ObstableTransparencySystem : FSystem
         currentTransparentWalls.Add(wallRenderer);
 
         // Démarrer la coroutine de fondu
-        MainLoop.instance.StartCoroutine(FadeToTransparent(wallRenderer));
+        WallMaterials wm = wallRenderer.GetComponent<WallMaterials>();
+        wm.StopAllCoroutines();
+        wm.StartCoroutine(FadeToTransparent(wallRenderer));
     }
 
     void RestoreWallOpacity(Renderer wallRenderer)
@@ -124,47 +87,25 @@ public class ObstableTransparencySystem : FSystem
         currentTransparentWalls.Remove(wallRenderer);
 
         // Démarrer la coroutine de restauration
-        MainLoop.instance.StartCoroutine(FadeToOpaque(wallRenderer));
-    }
-
-    void SetMaterialTransparent(Material material)
-    {
-        if (material.HasProperty("_Mode"))
-        {
-            material.SetFloat("_Mode", 2); // Fade mode
-        }
-        material.SetOverrideTag("RenderType", "Transparent");
-
-        // Changer le mode de rendu pour supporter la transparence
-        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-        material.SetInt("_ZWrite", 0);
-        material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-
-        // Activer les keywords si supportés
-        try
-        {
-            material.DisableKeyword("_ALPHATEST_ON");
-            material.EnableKeyword("_ALPHABLEND_ON");
-            material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-        }
-        catch (System.Exception)
-        {
-            // Ignorer les erreurs de keywords en WebGL
-            Debug.LogWarning("Keywords not supported in WebGL build");
-        }
+        WallMaterials wm = wallRenderer.GetComponent<WallMaterials>();
+        wm.StopAllCoroutines();
+        wm.StartCoroutine(FadeToOpaque(wallRenderer));
     }
 
     System.Collections.IEnumerator FadeToTransparent(Renderer wallRenderer)
     {
-        // switch on material that support transparency
-        wallRenderer.materials = transparentMaterials[wallRenderer].ToArray();
+        // Get source materials
+        WallMaterials srcMat = wallRenderer.GetComponent<WallMaterials>();
+        // Copy Fade materials
+        Material topFadeMat = new Material(srcMat.topBottomFade);
+        Material sideFadeMat = new Material(srcMat.sideFade);
 
-        // set color to opaque version
-        for (int i = 0; i < wallRenderer.materials.Length; i++) {
-            Material mat = wallRenderer.materials[i];
-            mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, 1f);
-        }
+        // switch on material that support fading
+        wallRenderer.materials = new Material[] { topFadeMat, sideFadeMat };
+
+        // set color not transparent
+        for (int i = 0; i < wallRenderer.materials.Length; i++)
+            wallRenderer.materials[i].color = new Color(1f, 1f, 1f, 1f);
 
         // fade colors
         float timer = 0f;
@@ -172,60 +113,42 @@ public class ObstableTransparencySystem : FSystem
         {
             timer += Time.deltaTime * fadeSpeed;
             for (int i = 0; i < wallRenderer.materials.Length; i++)
-            {
-                Material mat = wallRenderer.materials[i];
-                Color currentColor = mat.color;
-                Color targetColor = new Color(currentColor.r, currentColor.g, currentColor.b, transparencyAlpha);
-                Color newColor = Color.Lerp(currentColor, targetColor, timer);
-                mat.color = newColor;
-            }
+                wallRenderer.materials[i].color = new Color(1f, 1f, 1f, 1f - alphaRatio * timer);
             yield return null;
         }
 
         // be sure transparent color is now applied
         for (int i = 0; i < wallRenderer.materials.Length; i++)
-        {
-            Material mat = wallRenderer.materials[i];
-            wallRenderer.materials[i].color = new Color(mat.color.r, mat.color.g, mat.color.b, transparencyAlpha);
-        }
+            wallRenderer.materials[i].color = new Color(1f, 1f, 1f, 1f - alphaRatio);
     }
 
     System.Collections.IEnumerator FadeToOpaque(Renderer wallRenderer)
     {
-        // switch on material that support transparency
-        wallRenderer.materials = transparentMaterials[wallRenderer].ToArray();
+        // Get source materials
+        WallMaterials srcMat = wallRenderer.GetComponent<WallMaterials>();
+        
+        // Copy Fade materials
+        Material topFadeMat = new Material(srcMat.topBottomFade);
+        Material sideFadeMat = new Material(srcMat.sideFade);
 
-        // set color to opaque version
+        // switch on material that support fading
+        wallRenderer.materials = new Material[] { topFadeMat, sideFadeMat };
+
+        // Be sure to start on transparent color
         for (int i = 0; i < wallRenderer.materials.Length; i++)
-        {
-            Material mat = wallRenderer.materials[i];
-            mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, 1f);
-        }
+            wallRenderer.materials[i].color = new Color(1f, 1f, 1f, 1f - alphaRatio);
 
         // fade colors
-        float timer = 0f;
-        while (timer < 1f)
+        float timer = 1f;
+        while (timer > 0f)
         {
-            timer += Time.deltaTime * fadeSpeed;
+            timer -= Time.deltaTime * fadeSpeed;
             for (int i = 0; i < wallRenderer.materials.Length; i++)
-            {
-                Material mat = wallRenderer.materials[i];
-                Color currentColor = mat.color;
-                Color targetColor = new Color(mat.color.r, mat.color.g, mat.color.b, 1f);
-                Color newColor = Color.Lerp(currentColor, targetColor, timer);
-                mat.color = newColor;
-            }
+                wallRenderer.materials[i].color = new Color(1f, 1f, 1f, 1f - alphaRatio * timer);
             yield return null;
         }
 
-        // Restaurer le matériau original
-        wallRenderer.materials = originalMaterials[wallRenderer].ToArray();
-
-        // be sure color is opaque
-        for (int i = 0; i < wallRenderer.materials.Length; i++)
-        {
-            Material mat = wallRenderer.materials[i];
-            wallRenderer.materials[i].color = new Color(mat.color.r, mat.color.g, mat.color.b, 1f);
-        }
+        // Etre sur que le materiau est opaque en affectant la source opaque
+        wallRenderer.materials = new Material[] { srcMat.topBottomOpaque, srcMat.sideOpaque };
     }
 }

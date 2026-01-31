@@ -16,9 +16,9 @@ public class MoveSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "footSpeed", footSpeed);
 	}
 
-	public void idleAnimations()
+	public void syncAnimations()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "idleAnimations", null);
+		MainLoop.callAppropriateSystemMethod (system, "syncAnimations", null);
 	}
 
 }

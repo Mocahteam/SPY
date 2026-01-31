@@ -16,7 +16,7 @@ public class UISystem : FSystem {
 	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Player"));
 	private Family f_agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
 	private Family f_viewportContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les containers viewport
-	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
+	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts editables
 	private Family f_removeButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton")); // Les petites poubelles de chaque panneau d'édition
 	private Family f_pointerOver = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Tous les objets pointés
 	private Family f_tooltipContent = FamilyManager.getFamily(new AllOfComponents(typeof(TooltipContent))); // Tous les tooltips
@@ -277,8 +277,6 @@ public class UISystem : FSystem {
 				// bind all child (except the first "header")
 				for (int i = 1; i < executableContainer.transform.childCount; i++)
 					GameObjectManager.bind(executableContainer.transform.GetChild(i).gameObject);
-				// On développe le panneau au cas où il aurait été réduit
-				robot.GetComponent<ScriptRef>().executablePanel.transform.Find("Header/Toggle").GetComponent<Toggle>().isOn = true;
 			}
 		}
 		

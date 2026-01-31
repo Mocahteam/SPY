@@ -107,10 +107,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1219861198870165606}
   - component: {fileID: 3598411971677362121}
-  - component: {fileID: 1256171576436134233}
   - component: {fileID: 6129447631597020798}
   - component: {fileID: 751903559111706687}
   - component: {fileID: 8854240174029766973}
+  - component: {fileID: 7928111981295459012}
   m_Layer: 5
   m_Name: CompetencyToggle
   m_TagString: Untagged
@@ -149,18 +149,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1f68e7190f8afc74b94e4bbbd752f99a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1256171576436134233
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1219861198870165607}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50838c88540be0d47b943f08efeafafb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &6129447631597020798
@@ -221,6 +209,18 @@ MonoBehaviour:
   description: 
   filters: []
   rule: 
+--- !u!114 &7928111981295459012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219861198870165607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3313d93844bc2c47b3de187e4060528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BubbleEvent
 --- !u!1 &1219861199226368051
 GameObject:
   m_ObjectHideFlags: 0
@@ -959,6 +959,7 @@ GameObject:
   - component: {fileID: 3567382254697889629}
   - component: {fileID: 8156903141573305733}
   - component: {fileID: 5807578878279841771}
+  - component: {fileID: 7195248825250942499}
   m_Layer: 5
   m_Name: Toggle
   m_TagString: Untagged
@@ -1068,9 +1069,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1256171576436134233}
-          m_TargetAssemblyTypeName: BubbleScrollEvent, Assembly-CSharp
-          m_MethodName: onScroll
+        - m_Target: {fileID: 7928111981295459012}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1100,9 +1101,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1256171576436134233}
-          m_TargetAssemblyTypeName: ScrollSystemBridge, Assembly-CSharp
-          m_MethodName: onBeginDrag
+        - m_Target: {fileID: 7928111981295459012}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleBeginDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1116,9 +1117,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1256171576436134233}
-          m_TargetAssemblyTypeName: ScrollSystemBridge, Assembly-CSharp
-          m_MethodName: onDrag
+        - m_Target: {fileID: 7928111981295459012}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1132,9 +1133,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1256171576436134233}
-          m_TargetAssemblyTypeName: ScrollSystemBridge, Assembly-CSharp
-          m_MethodName: onEndDrag
+        - m_Target: {fileID: 7928111981295459012}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleEndDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1204,6 +1205,18 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &7195248825250942499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8583430066750003123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3313d93844bc2c47b3de187e4060528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &9192280264290497945
 GameObject:
   m_ObjectHideFlags: 0
@@ -1309,6 +1322,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

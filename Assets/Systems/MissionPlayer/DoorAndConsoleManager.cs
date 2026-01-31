@@ -14,9 +14,7 @@ public class DoorAndConsoleManager : FSystem {
 
 	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
 
-	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY), new NoneOfLayers(12)); // layer 12 is for furniture
-
-	private GameData gameData;
+	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	public GameObject LevelGO;
 	public GameObject doorPathPrefab;
@@ -31,9 +29,6 @@ public class DoorAndConsoleManager : FSystem {
 
 	protected override void onStart()
 	{
-		GameObject go = GameObject.Find("GameData");
-		if (go != null)
-			gameData = go.GetComponent<GameData>();
 		f_consoleTriggered.addEntryCallback(onNewConsoleTriggered); // Console will enter in this family when Triggered component will be added to console (see CurrentActionExecutor)
 		f_gameLoaded.addEntryCallback(connectDoorsAndConsoles);
 		forceDoorSync();
@@ -76,7 +71,6 @@ public class DoorAndConsoleManager : FSystem {
 	private void syncState(GameObject door)
     {
 		Animator anim = door.GetComponent<Animator>();
-		anim.speed = gameData.gameSpeed_current;
 		if (door.GetComponent<ActivationSlot>().state)
 			anim.SetTrigger("Open");
 		else

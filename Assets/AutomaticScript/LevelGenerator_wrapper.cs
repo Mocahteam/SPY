@@ -10,6 +10,7 @@ public class LevelGenerator_wrapper : BaseWrapper
 	public UnityEngine.GameObject buttonExecute;
 	public UnityEngine.Material[] groundMaterials;
 	public UnityEngine.Material[] wallMaterials;
+	public UnityEngine.Material[] wallMaterialsFade;
 	public UnityEngine.GameObject[] skinPrefabs;
 	private void Start()
 	{
@@ -21,6 +22,7 @@ public class LevelGenerator_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "buttonExecute", buttonExecute);
 		MainLoop.initAppropriateSystemField (system, "groundMaterials", groundMaterials);
 		MainLoop.initAppropriateSystemField (system, "wallMaterials", wallMaterials);
+		MainLoop.initAppropriateSystemField (system, "wallMaterialsFade", wallMaterialsFade);
 		MainLoop.initAppropriateSystemField (system, "skinPrefabs", skinPrefabs);
 	}
 

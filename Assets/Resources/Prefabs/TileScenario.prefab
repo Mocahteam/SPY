@@ -562,10 +562,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3570436189153307294, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8036150638147826191}
-    - targetCorrespondingSourceObject: {fileID: 3570436189153307294, guid: 26bc23b5216990641ac165a0942ed4cc,
-        type: 3}
-      insertIndex: -1
       addedObject: {fileID: 4671778237883299657}
     - targetCorrespondingSourceObject: {fileID: 3570436189153307294, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
@@ -575,6 +571,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 822370193658971668}
+    - targetCorrespondingSourceObject: {fileID: 3570436189153307294, guid: 26bc23b5216990641ac165a0942ed4cc,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8783052144203522422}
   m_SourcePrefab: {fileID: 100100000, guid: 26bc23b5216990641ac165a0942ed4cc, type: 3}
 --- !u!1 &869810155920655909 stripped
 GameObject:
@@ -631,9 +631,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 8036150638147826191}
-          m_TargetAssemblyTypeName: ScrollSystemBridge, Assembly-CSharp
-          m_MethodName: onScroll
+        - m_Target: {fileID: 8783052144203522422}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -647,9 +647,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 8036150638147826191}
-          m_TargetAssemblyTypeName: ScrollSystemBridge, Assembly-CSharp
-          m_MethodName: onDrag
+        - m_Target: {fileID: 8783052144203522422}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -663,9 +663,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 8036150638147826191}
-          m_TargetAssemblyTypeName: ScrollSystemBridge, Assembly-CSharp
-          m_MethodName: onBeginDrag
+        - m_Target: {fileID: 8783052144203522422}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleBeginDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -691,9 +691,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 8036150638147826191}
-          m_TargetAssemblyTypeName: ScrollSystemBridge, Assembly-CSharp
-          m_MethodName: onEndDrag
+        - m_Target: {fileID: 8783052144203522422}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleEndDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -739,18 +739,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9d72b99cf51e404898f89c7fcd671f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8036150638147826191
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 869810155920655909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50838c88540be0d47b943f08efeafafb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &4671778237883299657
@@ -839,6 +827,18 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: 'texts.Array.data[1]'
+--- !u!114 &8783052144203522422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 869810155920655909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3313d93844bc2c47b3de187e4060528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BubbleEvent
 --- !u!224 &4828328961010223989 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 9124073963817658318, guid: 26bc23b5216990641ac165a0942ed4cc,

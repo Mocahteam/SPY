@@ -10,8 +10,8 @@ using UnityEngine.InputSystem.Controls;
 /// This system manages main camera (movement, rotation, focus on/follow agent...)
 /// </summary>
 public class CameraSystem : FSystem {
-	// In games agents controlable by the player
-	private Family f_player = FamilyManager.getFamily(new AnyOfTags("Player"));
+	// In games agents 
+	private Family f_agent = FamilyManager.getFamily(new AnyOfTags("Player", "Drone"));
 	// Contains current UI focused
 	private Family f_UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver)));
 	private Family f_focusOn = FamilyManager.getFamily(new AllOfComponents(typeof(FocusCamOn)));
@@ -67,7 +67,7 @@ public class CameraSystem : FSystem {
 			ToggleOrthographicPerspective();
 
 		// set current camera target (the first player)
-		f_player.addEntryCallback(delegate (GameObject go) { focusOnAgent(go); });
+		f_agent.addEntryCallback(delegate (GameObject go) { if (go.CompareTag("Player")) focusOnAgent(go); });
 
 		f_focusOn.addEntryCallback(delegate (GameObject go)
 		{
@@ -80,7 +80,7 @@ public class CameraSystem : FSystem {
 
 		f_playingMode.addEntryCallback(delegate (GameObject go) {
 			if (settings.currentCameraTracking == 1)
-				focusOnNearestAgent(go);
+				focusOnNearestAgent();
 			else
 				unfocusAgent();
 		});
@@ -292,25 +292,28 @@ public class CameraSystem : FSystem {
 
 	public void focusOnAgent(GameObject agent)
     {
+		unfocusAgent();
 		targetAgent = agent.transform;
 		lastAgentFocused = targetAgent;
 		GameObjectManager.setGameObjectParent(mainCamera.transform.parent.parent.gameObject, agent, true);
+		GameObjectManager.setGameObjectState(targetAgent.Find("HaloSelection").gameObject, true);
 		MainLoop.instance.StartCoroutine(travelingOnAgent());
 
 		camera_logging("focusOnAgent", agent.ToString());
 	}
 
-	private void focusOnNearestAgent(GameObject unused)
-    {
+	private void focusOnNearestAgent()
+    { 
 		if (targetAgent != null)
 			return;
 		Transform cameraTarget = mainCamera.transform.parent.parent;
 		float minDistance = float.MaxValue;
 		GameObject agentCandidate = null;
-		foreach (GameObject agent in f_player) {
+		foreach (GameObject agent in f_agent) {
 			float localDistance = Vector3.Distance(cameraTarget.position, agent.transform.position);
-			if (localDistance < minDistance)
+			if (localDistance < minDistance && agent.CompareTag("Player"))
 			{
+				Debug.Log(agent.name);
 				agentCandidate = agent;
 				minDistance = localDistance;
 			}
@@ -326,24 +329,24 @@ public class CameraSystem : FSystem {
     {
 		if (lastAgentFocused == null)
 		{
-			focusOnAgent(f_player.First());
+			focusOnNearestAgent();
 			return;
 		}
 
-		for (int i = 0; i < f_player.Count; i++)
+		for (int i = 0; i < f_agent.Count; i++)
         {
-			if (f_player.getAt(i).transform == lastAgentFocused)
+			if (f_agent.getAt(i).transform == lastAgentFocused)
 			{
-				if (i == f_player.Count - 1)
+				if (i == f_agent.Count - 1)
 				{
-					focusOnAgent(f_player.First());
-					camera_logging("focusNextAgent", f_player.First().ToString());
+					focusOnAgent(f_agent.First());
+					camera_logging("focusNextAgent", f_agent.First().ToString());
 					break;
 				}
 				else
 				{
-					focusOnAgent(f_player.getAt(i + 1));
-					camera_logging("focusNextAgent", f_player.getAt(i + 1).ToString());
+					focusOnAgent(f_agent.getAt(i + 1));
+					camera_logging("focusNextAgent", f_agent.getAt(i + 1).ToString());
 					break;
 				}
 			}
@@ -355,6 +358,7 @@ public class CameraSystem : FSystem {
 		if (targetAgent != null)
         {
 			GameObjectManager.setGameObjectParent(mainCamera.transform.parent.parent.gameObject, targetAgent.parent.gameObject, true);
+			GameObjectManager.setGameObjectState(targetAgent.Find("HaloSelection").gameObject, false);
 			targetAgent = null;
 		}
     }

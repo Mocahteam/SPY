@@ -73,12 +73,11 @@ public class LobbyAnimation : FSystem {
             yield return new WaitForSeconds(Random.Range(3, 6));
             float step = Random.Range(0f, 50f);
             step *= Random.Range(0f, 1f) > 0.5f ? 1 : -1;
-            Animation animator = Drone.GetComponentInChildren<Animation>();
-            Quaternion target = animator.transform.rotation * Quaternion.AngleAxis(step, Vector3.up);
-            while (animator.transform.rotation != target)
+            Quaternion target = Drone.transform.rotation * Quaternion.AngleAxis(step, Vector3.up);
+            while (Drone.transform.rotation != target)
             {
                 yield return null;
-                animator.transform.rotation = Quaternion.RotateTowards(animator.transform.rotation, target, 0.5f);
+                Drone.transform.rotation = Quaternion.RotateTowards(Drone.transform.rotation, target, 0.5f);
             }
         }
     }

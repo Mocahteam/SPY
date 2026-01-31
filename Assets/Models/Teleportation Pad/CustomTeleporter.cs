@@ -188,7 +188,7 @@ public class CustomTeleporter : MonoBehaviour
 		if(objectTag != "")
 		{
 			//if the objects tag is the same as the one allowed in the inspector
-			if(trig.gameObject.tag == objectTag)
+			if(trig.gameObject.CompareTag(objectTag))
 			{
 				//set the subject to be the entered object
 				subject = trig.transform;
@@ -226,7 +226,7 @@ public class CustomTeleporter : MonoBehaviour
 		if(objectTag != "")
 		{
 			//if the objects tag is the same as the one allowed in the inspector
-			if(trig.gameObject.tag == objectTag)
+			if(trig.gameObject.CompareTag(objectTag))
 			{
 				//set that the object left
 				inside = false;

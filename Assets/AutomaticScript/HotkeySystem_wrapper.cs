@@ -23,6 +23,7 @@ public class HotkeySystem_wrapper : BaseWrapper
 	public UnityEngine.UI.Button showBriefing;
 	public UnityEngine.UI.Button showMapDesc;
 	public UnityEngine.UI.Button buttonCopyCode;
+	public UnityEngine.UI.Button AddContainerButton;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -46,6 +47,7 @@ public class HotkeySystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "showBriefing", showBriefing);
 		MainLoop.initAppropriateSystemField (system, "showMapDesc", showMapDesc);
 		MainLoop.initAppropriateSystemField (system, "buttonCopyCode", buttonCopyCode);
+		MainLoop.initAppropriateSystemField (system, "AddContainerButton", AddContainerButton);
 	}
 
 	public void paste(System.String content)

@@ -14,8 +14,8 @@ public class SaveContent {
         public int y;
         public RawPosition (Position pos)
         {
-            x = (int)pos.x;
-            y = (int)pos.y;
+            x = Mathf.RoundToInt(pos.x);
+            y = Mathf.RoundToInt(pos.y);
         }
     }
 
@@ -26,6 +26,18 @@ public class SaveContent {
         public RawActivationSlot(ActivationSlot act)
         {
             state = act.state;
+        }
+    }
+
+    [Serializable]
+    public class RawScriptRef
+    {
+        public bool scriptFinished;
+        public bool isBroken;
+        public RawScriptRef(ScriptRef scriprRef)
+        {
+            scriptFinished = scriprRef.scriptFinished;
+            isBroken = scriprRef.isBroken;
         }
     }
 
@@ -58,6 +70,7 @@ public class SaveContent {
         public List<Direction.Dir> directions = new List<Direction.Dir>();
         public List<RawPosition> positions = new List<RawPosition>();
         public List<RawActivationSlot> doors = new List<RawActivationSlot>();
+        public List<RawScriptRef> scriptRefs = new List<RawScriptRef>();
         public List<RawCurrentAction> currentDroneActions = new List<RawCurrentAction>();
         public List<RawLoop> currentLoopParams = new List<RawLoop>();
         public int totalCoin = 0;

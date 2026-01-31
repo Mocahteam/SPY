@@ -58,7 +58,7 @@ public static class UtilityGame
 				// On met l'élément à la position voulue
 				item.transform.SetSiblingIndex(repSlot.transform.GetSiblingIndex()); 
 				// disable empty slot
-				repSlot.GetComponent<Outline>().enabled = false;
+				repSlot.GetComponentInChildren<Outline>().enabled = false;
 
 				// if binded set this empty slot as default
 				if (GameObjectManager.isBound(repSlot.gameObject) && !repSlot.GetComponent<Selected>())
@@ -75,7 +75,7 @@ public static class UtilityGame
 				if (!repSlot.GetComponent<BaseCondition>())
 				{
 					// disable empty slot
-					repSlot.GetComponent<Outline>().enabled = false;
+					repSlot.GetComponentInChildren<Outline>().enabled = false;
 
 					// Because this function can be call for binded GO or not
 					if (GameObjectManager.isBound(repSlot.gameObject)) GameObjectManager.setGameObjectState(repSlot.transform.gameObject, false);
@@ -598,7 +598,7 @@ public static class UtilityGame
 				for (int i = 0; i < container.childCount; i++)
 					if (container.GetChild(i).GetComponent<ReplacementSlot>() == null)
 						export += (exportType == ExportType.PseudoCode ? " " : "") + exportBlockToString(container.GetChild(i).GetComponent<BaseElement>(), focusedArea, exportType, indentLevel + 1);
-				if (container.GetChild(container.childCount - 1).gameObject == focusedArea)
+				if (container.childCount > 0 && container.GetChild(container.childCount - 1).gameObject == focusedArea)
 					export += exportType == ExportType.PseudoCode ? " ####" : indent(indentLevel + 1) + "<!--####-->\n";
 
 				export += exportType == ExportType.PseudoCode ? " }" : script switch {

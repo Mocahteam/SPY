@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 798324812124307841}
   - component: {fileID: 8879046373836919291}
   - component: {fileID: 1143203723681373708}
-  - component: {fileID: 4861463834424595646}
   - component: {fileID: 7313560295030798144}
   m_Layer: 5
   m_Name: DropZone
@@ -87,18 +86,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44c1ecbb4c96ca841badb3b0d50e5bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4861463834424595646
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4385548912209064310}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50838c88540be0d47b943f08efeafafb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7313560295030798144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,6 +119,7 @@ GameObject:
   - component: {fileID: 3153833252466232841}
   - component: {fileID: 8895530775805849435}
   - component: {fileID: 7637550776563377514}
+  - component: {fileID: 6305140485531596608}
   m_Layer: 5
   m_Name: DropZoneTrigger
   m_TagString: Untagged
@@ -207,9 +195,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 4861463834424595646}
-          m_TargetAssemblyTypeName: BubbleScrollEvent, Assembly-CSharp
-          m_MethodName: onScroll
+        - m_Target: {fileID: 6305140485531596608}
+          m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
+          m_MethodName: bubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -269,6 +257,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da366280509c2874aa0abd598cabb17a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6305140485531596608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5584550996111043944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3313d93844bc2c47b3de187e4060528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BubbleEvent
 --- !u!1 &8584057427495514601
 GameObject:
   m_ObjectHideFlags: 0

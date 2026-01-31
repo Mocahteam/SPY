@@ -17,7 +17,7 @@ public class CurrentActionManager : FSystem
 	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family f_conditionNotifs = FamilyManager.getFamily(new AnyOfTags("ConditionNotif"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
-	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
+	private Family f_obstacles = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Furniture"));
 	private Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
 	private Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family f_redDetector = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
@@ -81,10 +81,13 @@ public class CurrentActionManager : FSystem
 				// init currentAction on the first action of ennemies
 				bool forceNewStep = false;
 				foreach (GameObject drone in f_drone)
-					if (!drone.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>(true) && !drone.GetComponent<ScriptRef>().scriptFinished)
+				{
+					ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
+					if (!scriptRef.executableScript.GetComponentInChildren<CurrentAction>(true) && !scriptRef.scriptFinished && !scriptRef.isBroken)
 						addCurrentActionOnFirstAction(drone);
 					else
 						forceNewStep = true; // will move currentAction on next action
+				}
 
 				if (forceNewStep)
 					onNewStep();
@@ -98,7 +101,7 @@ public class CurrentActionManager : FSystem
     {
 		foreach (Transform container in editableContainers)
 			foreach (GameObject player in f_player)
-				if (container.GetComponentInChildren<UIRootContainer>(true).scriptName.ToLower() == player.GetComponent<AgentEdit>().name.ToLower())
+				if (container.GetComponentInChildren<UIRootContainer>(true).scriptName.ToLower() == player.GetComponent<AgentEdit>().associatedScriptName.ToLower())
 					return true;
 		return false;
 	}
@@ -114,6 +117,7 @@ public class CurrentActionManager : FSystem
 		if (firstAction != null)
 		{
 			// Set this action as CurrentAction
+			Debug.Log("AddCurrentAction CurrentAction Manager->addCurrentActionOnFirstAction !!!!!");
 			GameObjectManager.addComponent<CurrentAction>(firstAction, new { agent = agent });
 		}
 
@@ -263,10 +267,10 @@ public class CurrentActionManager : FSystem
 			case "WallFront":
 			case "WallLeft":
 			case "WallRight":
-				// check only visible walls
-				foreach (GameObject wall in f_wall)
-					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
+				// check only visible obstacles
+				foreach (GameObject obstacle in f_obstacles)
+					if (obstacle.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+					 obstacle.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && obstacle.GetComponent<Renderer>() != null && obstacle.GetComponent<Renderer>().enabled)
 					{
 						ifok = true;
 						break;
@@ -276,10 +280,10 @@ public class CurrentActionManager : FSystem
 			case "PathLeft":
 			case "PathRight":
 				ifok = true;
-				// check visible and invisible walls
-				foreach (GameObject wall in f_wall)
-					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-						wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+				// check visible and invisible obstacles
+				foreach (GameObject obstacle in f_obstacles)
+					if (obstacle.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+						obstacle.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 					{
 						ifok = false;
 						break;
@@ -308,7 +312,7 @@ public class CurrentActionManager : FSystem
 			case "Enemy": // enemies
 				foreach (GameObject drone in f_drone)
 					if (drone.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-						drone.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+						drone.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && !drone.GetComponent<ScriptRef>().isBroken)
 					{
 						ifok = true;
 						break;
@@ -359,6 +363,7 @@ public class CurrentActionManager : FSystem
 	// one step consists in removing the current actions this frame and adding new CurrentAction components next frame
 	private void onNewStep()
 	{
+		Debug.Log("CurrentActionManager : NEW STEP received !!!!!!!!!!!!! " + MainLoop.instance.familiesUpdateCount);
 		// hide all conditions notifications
 		foreach (GameObject notif in f_conditionNotifs)
 			GameObjectManager.setGameObjectState(notif, false);
@@ -368,16 +373,17 @@ public class CurrentActionManager : FSystem
 			CurrentAction currentAction = currentActionGO.GetComponent<CurrentAction>();
 			nextAction = getNextAction(currentActionGO, currentAction.agent);
 			// check if we reach last action of a drone
-			if (nextAction == null && currentActionGO.GetComponent<CurrentAction>().agent.CompareTag("Drone"))
-				currentActionGO.GetComponent<CurrentAction>().agent.GetComponent<ScriptRef>().scriptFinished = true;
-			else if (nextAction != null)
+			if (nextAction == null && currentAction.agent.CompareTag("Drone"))
+				currentAction.agent.GetComponent<ScriptRef>().scriptFinished = true;
+			else if (nextAction != null && !currentAction.agent.GetComponent<ScriptRef>().isBroken)
 			{
-				//ask to add CurrentAction on next frame => this frame we will remove current CurrentActions
+				//ask to add CurrentAction on next frame => this frame we remove current CurrentActions
 				MainLoop.instance.StartCoroutine(delayAddCurrentAction(nextAction, currentAction.agent));
 			}
 			else if (infiniteLoopDetected)
 				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.InfiniteLoop });
-			GameObjectManager.removeComponent<CurrentAction>(currentActionGO);
+			Debug.Log("Remove Current Action from " + currentAction.agent.name +" "+currentActionGO.GetInstanceID()+" " + MainLoop.instance.familiesUpdateCount);
+			GameObjectManager.removeComponent(currentAction);
 		}
 	}
 
@@ -499,6 +505,7 @@ public class CurrentActionManager : FSystem
 	private IEnumerator delayAddCurrentAction(GameObject nextAction, GameObject agent)
 	{
 		yield return null; // we add new CurrentAction next frame otherwise families are not notified to this adding because at the begining of this frame GameObject already contains CurrentAction
+		Debug.Log("AddCurrentAction CurrentActionManager->delayAddCurrentAction !!!!! " + MainLoop.instance.familiesUpdateCount);
 		GameObjectManager.addComponent<CurrentAction>(nextAction, new { agent = agent });
 	}
 }

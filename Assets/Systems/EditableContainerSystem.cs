@@ -31,8 +31,9 @@ public class EditableContainerSystem : FSystem
 {
 	// Les familles
 	private Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édités
-	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts
-	private Family f_refreshSize = FamilyManager.getFamily(new AllOfComponents(typeof(RefreshSizeOfEditableContainer)));
+	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts editable
+	private Family f_activeScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Les containers de scripts editable actifs
+	private Family f_refreshSize = FamilyManager.getFamily(new AnyOfComponents(typeof(ResetBlocLimit), typeof(Dropped))); // A chaque fois qu'un objet est ajouté ou supprimé la largeur du script peut changer donc on met à jour la taille du conteneur
 	private Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
 	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
 	private Family f_forceRemoveContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ForceRemoveContainer)));
@@ -121,18 +122,18 @@ public class EditableContainerSystem : FSystem
 		{
 			removeContainer(go, true);
 		});
+
+		f_activeScriptContainer.addEntryCallback(delegate (GameObject go)
+		{
+			MainLoop.instance.StartCoroutine(setEditableSize(true));
+		});
 	}
 
     protected override void onProcess(int familiesUpdateCount)
     {
-        if (f_refreshSize.Count > 0) // better to process like this than callback on family (here we are sure to process all components
-        {
-			// Update size of parent GameObject
+        if (f_refreshSize.Count > 0 && f_activeScriptContainer.Count > 0)
 			MainLoop.instance.StartCoroutine(setEditableSize(false));
-			foreach(GameObject go in f_refreshSize)
-				foreach (RefreshSizeOfEditableContainer trigger in go.GetComponents<RefreshSizeOfEditableContainer>())
-					GameObjectManager.removeComponent(trigger);
-		}
+
 		foreach (GameObject go in f_addSpecificContainer)
 			foreach (AddSpecificContainer asc in go.GetComponents<AddSpecificContainer>())
 			{
@@ -265,8 +266,6 @@ public class EditableContainerSystem : FSystem
 					if (slot.slotType != ReplacementSlot.SlotType.BaseCondition)
 						GameObjectManager.setGameObjectState(slot.gameObject, false);
 
-			// Update size of parent GameObject
-			MainLoop.instance.StartCoroutine(setEditableSize(true));
 			return name;
 		}
 		else
@@ -278,24 +277,12 @@ public class EditableContainerSystem : FSystem
 		yield return null;
 		yield return null;
 		RectTransform editableContainers = (RectTransform)EditableCanvas.transform.Find("EditableContainers");
-		// Resolve bug when creating editable component, it is the child of the verticalLayout but not included inside!!!
-		// We just disable and enable it and force update rect
-		if (editableContainers.childCount > 0)
-		{
-			foreach (Transform child in editableContainers)
-			{
-				child.gameObject.SetActive(false);
-				child.gameObject.SetActive(true);
-			}
-		}
-		editableContainers.ForceUpdateRectTransforms();
-		yield return null;
-		// compute new size
-		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(maxWidth, editableContainers.rect.width+10)); // +10 pour la taille de la scrollbar
+		LayoutRebuilder.ForceRebuildLayoutImmediate(editableContainers);
+		// compute new size including scroll bar
+		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(maxWidth, editableContainers.rect.width + (editableContainers.GetComponentInParent<ScrollRect>().verticalScrollbar.transform as RectTransform).rect.width));
 
 		if (autoScroll)
 		{
-			yield return null;
 			// move scroll bar on the last added container
 			ScrollRect scroll = EditableCanvas.GetComponentInParent<ScrollRect>(true);
 			scroll.verticalScrollbar.value = 1;
@@ -359,8 +346,8 @@ public class EditableContainerSystem : FSystem
 		yield return null;
 		GameObjectManager.unbind(container);
 		Object.Destroy(container);
-		// Update size of parent GameObject
-		MainLoop.instance.StartCoroutine(setEditableSize(true));
+		if (f_activeScriptContainer.Count > 0)
+			MainLoop.instance.StartCoroutine(setEditableSize(true));
 	}
 
 	// Rename the script window

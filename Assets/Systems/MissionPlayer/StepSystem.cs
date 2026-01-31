@@ -1,7 +1,6 @@
 ﻿using FYFY;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -16,12 +15,15 @@ public class StepSystem : FSystem {
     private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
     private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
-    private Family f_executablePanels = FamilyManager.getFamily(new AnyOfTags("ScriptConstructor"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+    private Family f_executablePanels = FamilyManager.getFamily(new AnyOfTags("ScriptConstructor"), new AllOfComponents(typeof(UIRootExecutor)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
-    private float timeStepCpt;
-	private GameData gameData;
+    private Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position), typeof(Animator)), new AnyOfTags("Door"));
+
+    private GameData gameData;
     private int nbStep;
     private bool newStepAskedByPlayer;
+    private float startStepTime;
+    private bool needPause;
 
     public RectTransform editableContainers;
 
@@ -29,84 +31,94 @@ public class StepSystem : FSystem {
     {
         nbStep = 0;
         newStepAskedByPlayer = false;
+        needPause = false;
         GameObject go = GameObject.Find("GameData");
         if (go != null)
-        {
             gameData = go.GetComponent<GameData>();
-            timeStepCpt = 1 / gameData.gameSpeed_current;
-        }
         f_newStep.addEntryCallback(onNewStep);
 
         f_playingMode.addEntryCallback(delegate
         {
             // count a new execution
             gameData.totalExecute++;
-            gameData.totalStep++;
-            timeStepCpt = 1 / gameData.gameSpeed_current;
-            nbStep++;
-            Pause = false;
             setToDefaultTimeStep();
+
+            gameData.totalStep++;
+            startStepTime = Time.time;
+            nbStep++;
+
+            Pause = false;
         });
 
         f_editingMode.addEntryCallback(delegate
         {
             Pause = true;
         });
+
+        f_newEnd.addEntryCallback(delegate { Debug.Log("StepSystem NEW END received : " + MainLoop.instance.familiesUpdateCount); });
+
+        Pause = true;
     }
 
     private void onNewStep(GameObject go)
     {
-        GameObjectManager.removeComponent(go.GetComponent<NewStep>());  
-        timeStepCpt = (1 / gameData.gameSpeed_current) + timeStepCpt; // le "+ timeStepCpt" permet de prendre en compte le débordement de temps de la frame précédente
+        GameObjectManager.removeComponent(go.GetComponent<NewStep>());
     }
 
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
-        //Organize each steps
-        if (f_newEnd.Count == 0 && playerHasNextAction()) // pas de fin et encore au moins une action à exécuter
+        // Attendre que le temps d'un pas de simulation soit écoulé
+        if (Time.time - startStepTime >= 1 / gameData.gameSpeed_current)
         {
-            if (timeStepCpt <= 0 || newStepAskedByPlayer) // temps d'un pas de simulation écoulé ou nouvelle action demandée par le joueur
+            // pas de fin ET encore au moins une action à exécuter
+            if (f_newEnd.Count == 0 && playerHasNextAction())
             {
-                // new step
-                GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
-                gameData.totalStep++;
-                nbStep++;
-                if (newStepAskedByPlayer)
+                // Si le joueur à demandé de mettre en pause
+                if (needPause)
                 {
-                    newStepAskedByPlayer = false;
+                    needPause = false;
                     Pause = true;
+
+                    string scriptsContent = "";
+                    foreach (GameObject executablePanel in f_executablePanels)
+                        scriptsContent += exportExecutableScriptToString(executablePanel.transform);
+
+                    GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+                    {
+                        verb = "paused",
+                        objectType = "program",
+                        activityExtensions = new Dictionary<string, string>() {
+                            { "context", scriptsContent }
+                        }
+                    });
+                }
+                else
+                {
+                    // start a new Step
+                    Debug.Log("StepSystem : build NEW STEP !!!!!!!!!!!!! " + MainLoop.instance.familiesUpdateCount);
+                    GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
+                    startStepTime = Time.time;
+                    gameData.totalStep++;
+                    nbStep++;
+
+                    if (newStepAskedByPlayer)
+                    {
+                        MainLoop.instance.StartCoroutine(delaySteppedStatement());
+                        newStepAskedByPlayer = false;
+                        Pause = true;
+                    }
                 }
             }
-            else // temps d'un pas non encore écoulé et pas d'action demandée par le joueur
-                timeStepCpt -= Time.deltaTime;
-        }
-        else // fin détectée ou plus d'action à exécuter
-        {
-            if (timeStepCpt > 0)
-                timeStepCpt -= Time.deltaTime;
-            else
+            else // fin détectée ou plus d'action à exécuter
             {
-                MainLoop.instance.StartCoroutine(delayCheckEnd());
+                GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
+                // We save history if no end or win
+                if (f_newEnd.Count <= 0)
+                    GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
+                needPause = false;
                 Pause = true;
             }
         }
-    }
-
-    private IEnumerator delayCheckEnd()
-    {
-        // wait a new possible current action
-        yield return null;
-        yield return null;
-        // If there are still no actions => return to edit mode
-        if (!playerHasNextAction() || f_newEnd.Count > 0)
-        {
-            GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
-            // We save history if no end or win
-            if (f_newEnd.Count <= 0)
-                GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
-        }
-        else
-            Pause = false;
     }
 
     // Check if one of the robot programmed by the player has a next action to perform
@@ -122,29 +134,19 @@ public class StepSystem : FSystem {
 
     // See PauseButton, ContinueButton in editor
     public void autoExecuteStep(bool on){
-        Pause = !on;
 
-        if (Pause)
-        {
-            string scriptsContent = "";
-            foreach (GameObject executablePanel in f_executablePanels)
-                scriptsContent += exportExecutableScriptToString(executablePanel.transform);
-
-            GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
-            {
-                verb ="paused",
-                objectType = "program",
-                activityExtensions = new Dictionary<string, string>() {
-                    { "context", scriptsContent }
-                }
-            });
-        } else
+        if (on)
         {
             GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
             {
                 verb = "resumed",
                 objectType = "program"
             });
+            Pause = false;
+        }
+        else
+        {
+            needPause = true;
         }
     }
 
@@ -159,14 +161,17 @@ public class StepSystem : FSystem {
 
     // See NextStepButton in editor
     public void goToNextStep(){
-        Pause = false;
-        newStepAskedByPlayer = true;
-        MainLoop.instance.StartCoroutine(delayStatement());
+        if (Time.time - startStepTime >= 1 / gameData.gameSpeed_current)
+        {
+            Pause = false;
+            newStepAskedByPlayer = true;
+        }
     }
 
-    private IEnumerator delayStatement()
+    private IEnumerator delaySteppedStatement()
     {
-        yield return new WaitForSeconds(.25f);
+        // On attend une frame que les nouvelles CurrentActions soient définies
+        yield return null;
         string scriptsContent = "";
         foreach (GameObject executablePanel in f_executablePanels)
             scriptsContent += exportExecutableScriptToString(executablePanel.transform);
@@ -190,15 +195,18 @@ public class StepSystem : FSystem {
     // See SpeedButton in editor
     public void speedTimeStep(){
         gameData.gameSpeed_current = gameData.gameSpeed_default * 3f;
+        syncDoorSpeedAnimation();
     }
 
     // See ContinueButton in editor
     public void setToDefaultTimeStep(){
         gameData.gameSpeed_current = gameData.gameSpeed_default;
+        syncDoorSpeedAnimation();
     }
 
-    public void startStepImmediate()
+    private void syncDoorSpeedAnimation()
     {
-        timeStepCpt = 0.1f; // To quickly start the next step
+        foreach (GameObject door in f_door)
+            door.GetComponent<Animator>().speed = gameData.gameSpeed_current;
     }
 }

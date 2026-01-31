@@ -19,6 +19,8 @@ public class UINavigationManager : FSystem
 	public EventSystem eventSystem;
 
 	private InputAction navigateAction;
+	private InputAction rightClick;
+	private InputAction middleClick;
 
 	protected override void onStart()
     {
@@ -29,19 +31,26 @@ public class UINavigationManager : FSystem
 			eventSystem = EventSystem.current;
 
 		navigateAction = InputSystem.actions.FindAction("Navigate");
+		rightClick = InputSystem.actions.FindAction("RightClick");
+		middleClick = InputSystem.actions.FindAction("MiddleClick");
 	}
 
     protected override void onProcess(int familiesUpdateCount)
 	{
 		// Récupérer la valeur Vector2 de Navigate
 		Vector2 navigateValue = navigateAction.ReadValue<Vector2>();
-		/*if (navigateAction.WasPressedThisFrame())
-			Debug.Log(navigateValue);*/
 
 		// Get the currently selected UI element from the event system.
 		GameObject selected = eventSystem.currentSelectedGameObject;
 
-		if (eventSystem.currentSelectedGameObject == null || !eventSystem.currentSelectedGameObject.activeInHierarchy || eventSystem.currentSelectedGameObject.GetComponent<Selectable>() == null || !eventSystem.currentSelectedGameObject.GetComponent<Selectable>().IsInteractable())
+		// Par défaut un clic-droit ou un clic-molette déclenche un PointerDown. A chaque PointerDown l'EventSystem regarde s'il doit sélectionner un objet, sur un clic droit il considère que non et donc rend le currentSelectedGameObject à null. Comme on utilise le clic-droit pour supprimer des blocs, si le currentSelectedGameObject devient null à chaque suppression, le UINavigationManager sélectionne alors automatiquement le prochain gameObject ce qui nous fait sortir de la zone d'édition. On annule donc se comportement en maintenant le currentSelectedGameObject au précédent connu.
+		if (selected == null && lastSelected != null && (rightClick.WasPressedThisFrame() || middleClick.WasPressedThisFrame()))
+		{
+			selected = lastSelected;
+			eventSystem.SetSelectedGameObject(selected);
+		}
+
+		if (selected == null || !selected.activeInHierarchy || selected.GetComponent<Selectable>() == null)
 		{
 			// Try to give focus on one of the priority list
 			bool focused = false;

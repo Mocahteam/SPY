@@ -10,10 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 6875830718608308871}
   - component: {fileID: 7549158938064909602}
+  - component: {fileID: 729886799117910803}
   - component: {fileID: 5701829014482715112}
   - component: {fileID: 6558256999202143231}
   - component: {fileID: 469241069185690479}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cube_Wall
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -43,6 +44,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6061857430448218173}
   m_Mesh: {fileID: 8467973019869391972, guid: bd577b4cba02db546951bc6261332d94, type: 3}
+--- !u!114 &729886799117910803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6061857430448218173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d310f3647c6bf44d83ba678a2d95d4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  topBottomOpaque: {fileID: 2100000, guid: 374d7062a023ad348b0f91a8c2d53a07, type: 2}
+  sideOpaque: {fileID: 2100000, guid: de7e32ef6c2e84928aee67cf65292972, type: 2}
+  topBottomFade: {fileID: 2100000, guid: 4e529e6530fa69348b2264b41ff183f3, type: 2}
+  sideFade: {fileID: 2100000, guid: ae8277f5257eb084a9fdec1c4db3470c, type: 2}
 --- !u!23 &5701829014482715112
 MeshRenderer:
   m_ObjectHideFlags: 0
