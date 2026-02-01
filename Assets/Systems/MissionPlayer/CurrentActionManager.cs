@@ -117,7 +117,6 @@ public class CurrentActionManager : FSystem
 		if (firstAction != null)
 		{
 			// Set this action as CurrentAction
-			Debug.Log("AddCurrentAction CurrentAction Manager->addCurrentActionOnFirstAction !!!!!");
 			GameObjectManager.addComponent<CurrentAction>(firstAction, new { agent = agent });
 		}
 
@@ -363,7 +362,6 @@ public class CurrentActionManager : FSystem
 	// one step consists in removing the current actions this frame and adding new CurrentAction components next frame
 	private void onNewStep()
 	{
-		Debug.Log("CurrentActionManager : NEW STEP received !!!!!!!!!!!!! " + MainLoop.instance.familiesUpdateCount);
 		// hide all conditions notifications
 		foreach (GameObject notif in f_conditionNotifs)
 			GameObjectManager.setGameObjectState(notif, false);
@@ -382,7 +380,6 @@ public class CurrentActionManager : FSystem
 			}
 			else if (infiniteLoopDetected)
 				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.InfiniteLoop });
-			Debug.Log("Remove Current Action from " + currentAction.agent.name +" "+currentActionGO.GetInstanceID()+" " + MainLoop.instance.familiesUpdateCount);
 			GameObjectManager.removeComponent(currentAction);
 		}
 	}
@@ -505,7 +502,6 @@ public class CurrentActionManager : FSystem
 	private IEnumerator delayAddCurrentAction(GameObject nextAction, GameObject agent)
 	{
 		yield return null; // we add new CurrentAction next frame otherwise families are not notified to this adding because at the begining of this frame GameObject already contains CurrentAction
-		Debug.Log("AddCurrentAction CurrentActionManager->delayAddCurrentAction !!!!! " + MainLoop.instance.familiesUpdateCount);
 		GameObjectManager.addComponent<CurrentAction>(nextAction, new { agent = agent });
 	}
 }

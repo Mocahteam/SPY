@@ -115,7 +115,7 @@ public class HotkeySystem : FSystem
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount)
 	{
-		if (inputFieldNotSelected())
+		if (Utility.inputFieldNotSelected())
 		{
 			//Active/désactive le menu echap si on appuit sur echap et qu'on n'est pas en train de drag un element et qu'il ne faut pas l'ignorer
 			// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
@@ -242,13 +242,10 @@ public class HotkeySystem : FSystem
 			{
 				if (length > 0)
 				{
-					Debug.Log("UNITY Copy: _" + focused_inputField.text.Substring(start, length) + "_");
 					TryToCopy(focused_inputField.text.Substring(start, length));
 					// cancel internal copy
 					GUIUtility.systemCopyBuffer = "";
 				}
-				else
-					Debug.Log("UNITY Copy: Nothing to copy");
 			}
 			else if (paste_act.WasPressedThisFrame())
 			{
@@ -266,18 +263,10 @@ public class HotkeySystem : FSystem
 			TMP_InputField focused_inputField = eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>();
 			int start = Mathf.Min(focused_inputField.selectionStringAnchorPosition, focused_inputField.selectionStringFocusPosition);
 			int end = Mathf.Max(focused_inputField.selectionStringAnchorPosition, focused_inputField.selectionStringFocusPosition);
-			Debug.Log("UNITY Paste: _" + focused_inputField.text.Substring(0, start) + content + focused_inputField.text.Substring(end, focused_inputField.text.Length - end) + "_");
 			focused_inputField.text = focused_inputField.text.Substring(0, start) + content + focused_inputField.text.Substring(end, focused_inputField.text.Length - end);
-			Debug.Log(focused_inputField.caretPosition + " " + focused_inputField.stringPosition + " " + focused_inputField.selectionStringAnchorPosition + " " + focused_inputField.selectionStringFocusPosition);
 			focused_inputField.caretPosition = start + content.Length;
-			Debug.Log(focused_inputField.caretPosition + " " + focused_inputField.stringPosition + " " + focused_inputField.selectionStringAnchorPosition + " " + focused_inputField.selectionStringFocusPosition);
 		}
 
-	}
-
-	private bool inputFieldNotSelected()
-	{
-		return eventSystem.currentSelectedGameObject == null || eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>() == null || !eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused;
 	}
 
 	private void callEntry(EventTrigger trigger, EventTriggerType type)

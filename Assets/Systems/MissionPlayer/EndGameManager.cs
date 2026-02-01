@@ -267,7 +267,6 @@ public class EndGameManager : FSystem {
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoAction)
 		{
-			Debug.Log("NoAction End");
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
 			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[5];
 			Transform buttons = endPanel.transform.Find("Buttons");
@@ -292,7 +291,6 @@ public class EndGameManager : FSystem {
 		}
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NamingError)
 		{
-			Debug.Log("NamingError End");
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
 			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[8];
 			Transform buttons = endPanel.transform.Find("Buttons");

@@ -401,7 +401,6 @@ public class CameraSystem : FSystem {
 				}
 			});
 			last_action_time = cur_time;
-			//Debug.Log("Log " + camera_action);
 		}
 	}
 }

@@ -113,6 +113,9 @@ public class LevelGenerator : FSystem {
 		// check if dragdropDisabled node exists and set gamedata accordingly
 		gameData.dragDropEnabled = doc.GetElementsByTagName("dragdropDisabled").Count == 0;
 
+		gameData.fogEnabled = false;
+		gameData.levelToLoadScore = new int[2] { 0, 0 };
+
 		foreach (XmlNode child in root.ChildNodes)
 		{
 			switch (child.Name)
@@ -210,7 +213,6 @@ public class LevelGenerator : FSystem {
 					MainLoop.instance.StartCoroutine(delayRefreshMainLoop());
 					break;
 				case "score":
-					gameData.levelToLoadScore = new int[2];
 					gameData.levelToLoadScore[0] = int.Parse(child.Attributes.GetNamedItem("threeStars").Value);
 					gameData.levelToLoadScore[1] = int.Parse(child.Attributes.GetNamedItem("twoStars").Value);
 					break;
@@ -245,8 +247,11 @@ public class LevelGenerator : FSystem {
 		// Désactiver la skybox
 		Camera.main.clearFlags = CameraClearFlags.SolidColor;
 		// Allumer les lumières de tous les robots
-		foreach (GameObject player in f_players)
-			player.GetComponentInChildren<Light>().enabled = true;
+		foreach (GameObject player in f_players) {
+			Light[] lights = player.GetComponentsInChildren<Light>();
+			foreach (Light light in lights)
+				light.enabled = true;
+		}
 	}
 
 	// read the map and create wall, ground, spawn and exit

@@ -6,6 +6,21 @@ using UnityEngine;
 /// <summary>
 /// Manage steps (automatic simulation or controled by player)
 /// </summary>
+/// 
+/*La boucle de simulation orchestre plusieurs systèmes
+ * Le StepSystem genère à temps constant le composant NewStep, soit la génération de ce composant à l'instant T
+ * en T' (début du lateUpdate) dans le CurrentActionManager, le composant NewStep déclenche la suppression des currentActions et demande d'ajouter en T+1 des nouvelles currentActions (coroutines)
+ * en T+1 (phase d'update) ajout des currentActions par les coroutines lancées par le CurrentActionManager
+ * en T+1' (début du lateUpdate) le CurrentActionExecutor dépile les nouvelles CurrentActions et s'auto réveille pour corriger les déplacement en cas de prédiction de collisions
+ * en T+1'' (phase de lateUpdate) le CurrentActionExecutor corrige les positions à atteindre en fonction des collisions prédites et informe les systèmes dépendants que tout est ok avec le composant PositionCorrected
+ *      A noter que l'exécution des actions Activate ajoutent des composant Triggered
+ * en post T+2 sur l'écoute du composant PositionCorrected, les callback du MoveSystem et du DetectorManager activent leurs onProcess et le DoorAndConsoleManager dépile les Triggered et synchronise les portes => les portes sont donc à jour quand le DetectorManager va processer
+ * en T+2 (phase d'update) le MoveSystem et le DetectorManager font leur job (onProcess)
+ * ...
+ * Les collisions arrivent avant le déclenchement du STEP suivant se qui peur déclencher des NewEnd
+ * ...
+ * en T+X => quand la durée d'un step est dépassé, génération d'un nouveau NewStep
+ */
 public class StepSystem : FSystem {
 
     private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
@@ -55,8 +70,6 @@ public class StepSystem : FSystem {
             Pause = true;
         });
 
-        f_newEnd.addEntryCallback(delegate { Debug.Log("StepSystem NEW END received : " + MainLoop.instance.familiesUpdateCount); });
-
         Pause = true;
     }
 
@@ -95,7 +108,6 @@ public class StepSystem : FSystem {
                 else
                 {
                     // start a new Step
-                    Debug.Log("StepSystem : build NEW STEP !!!!!!!!!!!!! " + MainLoop.instance.familiesUpdateCount);
                     GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
                     startStepTime = Time.time;
                     gameData.totalStep++;

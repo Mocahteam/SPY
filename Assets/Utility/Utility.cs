@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Localization.Settings;
@@ -88,5 +89,10 @@ public static class Utility
 		for (int i = 0; i < nbYield; i++)
 			yield return null;
 		EventSystem.current.SetSelectedGameObject(go);
+	}
+
+	public static bool inputFieldNotSelected()
+	{
+		return EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null || !EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused;
 	}
 }

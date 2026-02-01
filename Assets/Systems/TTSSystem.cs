@@ -1,6 +1,7 @@
 using FYFY;
 using FYFY_plugins.PointerManager;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
@@ -34,6 +35,7 @@ public class TTSSystem : FSystem
     private GameObject previousSelectedGO;
     private GameObject previousFocusedGO;
     private Vector2 previousMousePosition;
+    private Dictionary<Scrollbar, float> lastScrollbarNotif;
 
     private Coroutine currentActionBuilder = null;
 
@@ -41,6 +43,8 @@ public class TTSSystem : FSystem
 
     protected override void onStart()
     {
+        lastScrollbarNotif = new Dictionary<Scrollbar, float>();
+
         GameObject go = GameObject.Find("GameData");
         if (go != null)
             gameData = go.GetComponent<GameData>();
@@ -272,10 +276,12 @@ public class TTSSystem : FSystem
     private void onNewScrollbar(GameObject scrollbar_GO)
     {
         Scrollbar scrollbar = scrollbar_GO.GetComponent<Scrollbar>();
+        if (!lastScrollbarNotif.ContainsKey(scrollbar))
+            lastScrollbarNotif.Add(scrollbar, scrollbar.value);
         scrollbar.onValueChanged.AddListener(delegate (float value)
         {
-            // N'envoyer à la synthèse vocale que si elle a le focus
-            if (scrollbar_GO == previousFocusedGO || scrollbar_GO == eventSystem.currentSelectedGameObject)
+            // N'envoyer à la synthèse vocale que si elle a le focus ET que le delta de scroll dépasse le seuil
+            if ((scrollbar_GO == previousFocusedGO || scrollbar_GO == eventSystem.currentSelectedGameObject) && Mathf.Abs(lastScrollbarNotif[scrollbar]-scrollbar.value) > 0.1f)
             {
                 if (Application.platform == RuntimePlatform.WebGLPlayer)
                 {
@@ -285,6 +291,7 @@ public class TTSSystem : FSystem
                 }
                 else
                     Debug.Log(scrollbar.value);
+                lastScrollbarNotif[scrollbar] = scrollbar.value;
             }
         });
     }

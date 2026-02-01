@@ -94,7 +94,7 @@ public class SettingsManager : FSystem
 		f_borders.addEntryCallback(delegate (GameObject go) { syncBorderProperties(go); });
 		f_scrollbar.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, dsf.currentNormalColor_Scrollbar); });
 		f_scrollbar.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, dsf.currentBackgroundColor_Scrollbar); });
-		f_scrollview.addEntryCallback(delegate (GameObject go) { Debug.Log("Add new scrollView: "+go.name);  syncGraphicColor(go, dsf.currentBackgroundColor_Scrollview); });
+		f_scrollview.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, dsf.currentBackgroundColor_Scrollview); });
 		f_toggle.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, dsf.currentNormalColor_Toggle); });
 		f_tooltip.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, dsf.currentColor_Tooltip); });
 		f_blocks.addEntryCallback(delegate (GameObject go) { syncBlockColor(go); });

@@ -179,7 +179,7 @@ public class DragDropSystem : FSystem
 			if (navigateValue.y < 0 && itemDragged != null)
 				moveItemDragged(0, -Time.deltaTime * 100);
 
-			if (deleteKeyboard.WasPressedThisFrame() && eventSystem.currentSelectedGameObject.GetComponentInParent<LibraryItemRef>() && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() && itemDragged == null && insertRef == null)
+			if (deleteKeyboard.WasPressedThisFrame() && eventSystem.currentSelectedGameObject.GetComponentInParent<LibraryItemRef>() && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() && itemDragged == null && insertRef == null && Utility.inputFieldNotSelected())
 				deleteElement(eventSystem.currentSelectedGameObject.GetComponentInParent<LibraryItemRef>().gameObject); // On passe par le LibraryItemRef pour récupérer le gameObject pour gérer le cas par exemple où un enfant du bloc est sélectionné comme le texte "Then" dans un If
 
 			if (insert.WasPressedThisFrame() && eventSystem.currentSelectedGameObject != null && (eventSystem.currentSelectedGameObject.GetComponent<LibraryItemRef>() || eventSystem.currentSelectedGameObject.GetComponent<ReplacementSlot>()) && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() && itemDragged == null)

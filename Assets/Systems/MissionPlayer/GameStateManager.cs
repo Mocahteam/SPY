@@ -169,7 +169,6 @@ public class GameStateManager : FSystem {
     private IEnumerator delayAddCurrentAction(GameObject nextAction, GameObject agent)
     {
         yield return null; // on restaure une CurrentAction mais on ne veut pas l'exécuter car on bascule en EditMode, donc on attend d'être bien en EditMode avant d'ajouter les CurrentActions
-        Debug.Log("AddCurrentAction GameStateManager !!!!!");
         GameObjectManager.addComponent<CurrentAction>(nextAction, new { agent = agent });
     }
 }
