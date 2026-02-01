@@ -35,6 +35,7 @@ public class HotkeySystem : FSystem
 
 	public Button showBriefing;
 	public Button showMapDesc;
+	public Button closeMapDesc;
 	public Button buttonCopyCode;
 
 	public Button AddContainerButton;
@@ -189,8 +190,13 @@ public class HotkeySystem : FSystem
 				showBriefing.onClick.Invoke();
 
 			// Map description
-			if (showMapDesc != null && mapDesc_act.WasPressedThisFrame())
-				showMapDesc.onClick.Invoke();
+			if (mapDesc_act.WasPressedThisFrame())
+			{
+				if (closeMapDesc != null && closeMapDesc.gameObject.activeInHierarchy)
+					closeMapDesc.onClick.Invoke();
+				else if (showMapDesc != null)
+					showMapDesc.onClick.Invoke();
+			}
 
 			// Copy code
 			if (buttonCopyCode != null && buttonCopyCode.gameObject.activeInHierarchy && copy_act.WasPressedThisFrame())

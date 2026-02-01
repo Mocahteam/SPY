@@ -22,6 +22,7 @@ public class HotkeySystem_wrapper : BaseWrapper
 	public UnityEngine.EventSystems.EventTrigger cameraZoomOut;
 	public UnityEngine.UI.Button showBriefing;
 	public UnityEngine.UI.Button showMapDesc;
+	public UnityEngine.UI.Button closeMapDesc;
 	public UnityEngine.UI.Button buttonCopyCode;
 	public UnityEngine.UI.Button AddContainerButton;
 	private void Start()
@@ -46,6 +47,7 @@ public class HotkeySystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "cameraZoomOut", cameraZoomOut);
 		MainLoop.initAppropriateSystemField (system, "showBriefing", showBriefing);
 		MainLoop.initAppropriateSystemField (system, "showMapDesc", showMapDesc);
+		MainLoop.initAppropriateSystemField (system, "closeMapDesc", closeMapDesc);
 		MainLoop.initAppropriateSystemField (system, "buttonCopyCode", buttonCopyCode);
 		MainLoop.initAppropriateSystemField (system, "AddContainerButton", AddContainerButton);
 	}

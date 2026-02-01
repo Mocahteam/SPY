@@ -379,8 +379,8 @@ public class DragDropSystem : FSystem
 	public void beginDragElementFromEditableScript(BaseEventData element)
     {
 		// On verifie si c'est un évènement généré par le bouton gauche de la souris
-		if (!Pause && gameData.dragDropEnabled && (element as PointerEventData).button == PointerEventData.InputButton.Left && element.selectedObject != null)
-			initBlockFromEditableScript(element.selectedObject);
+		if (!Pause && gameData.dragDropEnabled && (element as PointerEventData).button == PointerEventData.InputButton.Left && element.selectedObject != null && element.selectedObject.GetComponentInParent<Highlightable>() != null)
+			initBlockFromEditableScript(element.selectedObject.GetComponentInParent<Highlightable>().gameObject);
 	}
 
 	private void initBlockFromEditableScript(GameObject model)

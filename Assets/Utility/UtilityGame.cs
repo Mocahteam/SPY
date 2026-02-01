@@ -360,7 +360,7 @@ public static class UtilityGame
 				BaseOperator bo;
 				if (condition.TryGetComponent<BaseOperator>(out bo))
 				{
-					Transform conditionContainer = bo.transform.GetChild(1);
+					Transform conditionContainer = bo.transform.Find("Container");
 					// Si c'est une négation on met "!" puis on fait une récursive sur le container et on renvoie le tous traduit en string
 					if (bo.operatorType == BaseOperator.OperatorType.NotOperator)
 					{
