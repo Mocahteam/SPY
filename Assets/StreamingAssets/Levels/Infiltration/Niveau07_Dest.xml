@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<level>
+  <map>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+    <line><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "2" /><cell value= "1" /></line>
+    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+  </map>
+  <dialogs>
+	<dialog text="[fr]Plusieurs chemins sont possibles dans ce couloir. Nos ingénieurs ont conçu deux programmes. A toi de décider celui que tu souhaites envoyer à Plok...[/fr][en]Several paths are possible in this corridor. Our engineers have designed two programs. It's up to you to decide which one you want to send to Plok...[/en]" />
+	<dialog text="[fr]Rappelle toi, pour envoyer un programme à un robot il faut bien préciser son nom dans la zone de programme.[/fr][en]Remember, to send a program to a robot, you need to specify its name in the editing area.[/en]" />
+  </dialogs>
+  <dragdropDisabled />
+  <executionLimit amount="1" />
+  <blockLimits>
+    <blockLimit blockType="Forward" limit="0" />
+    <blockLimit blockType="TurnLeft" limit="0" />
+    <blockLimit blockType="TurnRight" limit="0" />
+    <blockLimit blockType="Wait" limit="0" />
+    <blockLimit blockType="Activate" limit="0" />
+    <blockLimit blockType="TurnBack" limit="0" />
+    <blockLimit blockType="IfThen" limit="0" />
+    <blockLimit blockType="IfElse" limit="0" />
+    <blockLimit blockType="ForLoop" limit="0" />
+    <blockLimit blockType="While" limit="0" />
+    <blockLimit blockType="Forever" limit="0" />
+    <blockLimit blockType="AndOperator" limit="0" />
+    <blockLimit blockType="OrOperator" limit="0" />
+    <blockLimit blockType="NotOperator" limit="0" />
+    <blockLimit blockType="WallFront" limit="0" />
+    <blockLimit blockType="Enemy" limit="0" />
+    <blockLimit blockType="RedArea" limit="0" />
+    <blockLimit blockType="FieldGate" limit="0" />
+    <blockLimit blockType="Terminal" limit="0" />
+    <blockLimit blockType="Exit" limit="0" />
+  </blockLimits>
+  <robot inputLine="Plok" posY="5" posX="4" direction="0" />
+  <script outputLine="Script1" editMode="2" type="0">
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+  </script>
+  <script outputLine="Script2" editMode="2" type="1">
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnLeft"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+    <action type="Forward"/>
+	<action type="TurnRight"/>
+    <action type="Forward"/>
+  </script>
+  <score twoStars="3892" threeStars="3976"/>
+</level>
