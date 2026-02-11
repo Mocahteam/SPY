@@ -17,9 +17,10 @@ public class CurrentActionManager : FSystem
 	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
 	private Family f_conditionNotifs = FamilyManager.getFamily(new AnyOfTags("ConditionNotif"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
-	private Family f_obstacles = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Furniture"));
+	private Family f_walls = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
+	private Family f_furnitures = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Furniture"));
 	private Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
-	private Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
 	private Family f_redDetector = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
 	private Family f_activableConsole = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)));
 	private Family f_exit = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
@@ -65,7 +66,6 @@ public class CurrentActionManager : FSystem
 			}
 			if (!atLeastOneFirstAction || infiniteLoopDetected)
 			{
-				GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
 				if (infiniteLoopDetected)
 					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.InfiniteLoop });
 				else
@@ -240,7 +240,7 @@ public class CurrentActionManager : FSystem
 	private bool checkCaptor(ConditionItem ele, GameObject agent)
 	{
 		string key = ele.key;
-		bool ifok = false;
+		bool result = false;
 		// get absolute target position depending on player orientation and relative direction to observe
 		// On commence par identifier quelle case doit être regardée pour voir si la condition est respectée
 		Vector2 vec = new Vector2();
@@ -266,35 +266,57 @@ public class CurrentActionManager : FSystem
 			case "WallFront":
 			case "WallLeft":
 			case "WallRight":
-				// check only visible obstacles
-				foreach (GameObject obstacle in f_obstacles)
-					if (obstacle.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-					 obstacle.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && obstacle.GetComponent<Renderer>() != null && obstacle.GetComponent<Renderer>().enabled)
+				// check only visible walls
+				foreach (GameObject xall in f_walls)
+					if (xall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+					 xall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && xall.GetComponent<Renderer>() != null && xall.GetComponent<Renderer>().enabled)
 					{
-						ifok = true;
+						result = true;
 						break;
 					}
 				break;
 			case "PathFront":
 			case "PathLeft":
 			case "PathRight":
-				ifok = true;
+				result = true;
 				// check visible and invisible obstacles
-				foreach (GameObject obstacle in f_obstacles)
-					if (obstacle.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-						obstacle.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+				foreach (GameObject wall in f_walls)
+					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+						wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 					{
-						ifok = false;
+						result = false;
 						break;
 					}
-                if (ifok)
+                if (result)
                 {
-					// check doors
+					// check doors closed
 					foreach (GameObject door in f_door)
 						if (door.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-							door.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+							door.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && !door.GetComponent<ActivationSlot>().state)
 						{
-							ifok = false;
+							result = false;
+							break;
+						}
+				}
+				if (result)
+				{
+					// check furnitures
+					foreach (GameObject furniture in f_furnitures)
+						if (furniture.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+							furniture.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+						{
+							result = false;
+							break;
+						}
+				}
+				if (result)
+				{
+					// check furnitures
+					foreach (GameObject player in f_player)
+						if (player.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+							player.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+						{
+							result = false;
 							break;
 						}
 				}
@@ -302,9 +324,9 @@ public class CurrentActionManager : FSystem
 			case "FieldGate": // doors
 				foreach (GameObject door in f_door)
 					if (door.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-					 door.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+					 door.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && !door.GetComponent<ActivationSlot>().state)
 					{
-						ifok = true;
+						result = true;
 						break;
 					}
 				break;
@@ -313,7 +335,25 @@ public class CurrentActionManager : FSystem
 					if (drone.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 						drone.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && !drone.GetComponent<ScriptRef>().isBroken)
 					{
-						ifok = true;
+						result = true;
+						break;
+					}
+				break;
+			case "Player":
+				foreach (GameObject player in f_player)
+					if (player.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+						player.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+					{
+						result = true;
+						break;
+					}
+				break;
+			case "Furniture":
+				foreach (GameObject furniture in f_furnitures)
+					if (furniture.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+						furniture.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
+					{
+						result = true;
 						break;
 					}
 				break;
@@ -324,7 +364,7 @@ public class CurrentActionManager : FSystem
 					if (console.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 						console.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 					{
-						ifok = true;
+						result = true;
 						break;
 					}
 				}
@@ -334,7 +374,7 @@ public class CurrentActionManager : FSystem
 					if (detector.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 					 detector.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 					{
-						ifok = true;
+						result = true;
 						break;
 					}
 				break;
@@ -345,17 +385,17 @@ public class CurrentActionManager : FSystem
 					if (exit.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
 					 exit.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y)
 					{
-						ifok = true;
+						result = true;
 						break;
 					}
 				}
 				break;
 		}
 		// notification de l'évaluation 
-		GameObject notif = ele.target.transform.Find(ifok ? "true" : "false").gameObject;
+		GameObject notif = ele.target.transform.Find(result ? "true" : "false").gameObject;
 		GameObjectManager.setGameObjectState(notif, true);
 		MainLoop.instance.StartCoroutine(UtilityGame.pulseItem(notif));
-		return ifok;
+		return result;
 
 	}
 

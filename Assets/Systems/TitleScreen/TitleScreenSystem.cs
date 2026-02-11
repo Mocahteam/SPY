@@ -139,6 +139,7 @@ public class TitleScreenSystem : FSystem {
 		GameObjectManager.setGameObjectState(backButton.gameObject, true);
 		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios").gameObject, false);
 		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/Title").gameObject, false);
+		Selectable detailstitle = gameDetails.Find("Title").GetComponentInChildren<Selectable>(true);
 
 		//create scenarios' button
 		List<string> sortedScenarios = new List<string>();
@@ -192,7 +193,7 @@ public class TitleScreenSystem : FSystem {
 				nav.selectOnUp = backButton.GetComponent<Selectable>();
 				nav.selectOnLeft = i>0 ? gameList.GetChild(i-1).GetComponent<Selectable>() : null;
 				nav.selectOnRight = i<gameList.childCount-1 ? gameList.GetChild(i + 1).GetComponent<Selectable>() : null;
-				nav.selectOnDown = null; // définit lors de la selection de la tile
+				nav.selectOnDown = detailstitle;
 				tile.navigation = nav;
 			}
 
@@ -243,11 +244,12 @@ public class TitleScreenSystem : FSystem {
 		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu").gameObject, false);
 		Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios");
 		GameObjectManager.setGameObjectState(backButton.gameObject, true);
-		Transform title = gameSelector.transform.Find("Header/Title");
-		GameObjectManager.setGameObjectState(title.gameObject, true);
+		Transform headerTitle = gameSelector.transform.Find("Header/Title");
+		Selectable detailstitle = gameDetails.Find("Title").GetComponentInChildren<Selectable>(true);
+		GameObjectManager.setGameObjectState(headerTitle.gameObject, true);
 
 		// set scenario name as Title
-		title.GetComponent<TMP_Text>().text = Utility.extractLocale(gameData.scenarios[scenarioKey].name);
+		headerTitle.GetComponent<TMP_Text>().text = Utility.extractLocale(gameData.scenarios[scenarioKey].name);
 		// create level buttons for this campaign
 		for (int i = 0; i < gameData.scenarios[scenarioKey].levels.Count; i++)
 		{
@@ -295,7 +297,7 @@ public class TitleScreenSystem : FSystem {
 		// reset navigation links
 		DynamicNavigation backDN = backButton.GetComponent<DynamicNavigation>();
 		backDN.UpLeft[backDN.UpLeft.Length - 1] = null;
-		DynamicNavigation titleDN = title.GetComponent<DynamicNavigation>();
+		DynamicNavigation titleDN = headerTitle.GetComponent<DynamicNavigation>();
 		titleDN.DownRight[titleDN.DownRight.Length - 1] = null;
 
 		if (gameList.childCount > 0)
@@ -307,10 +309,10 @@ public class TitleScreenSystem : FSystem {
 			{
 				Selectable tile = gameList.GetChild(i).GetComponent<Selectable>();
 				Navigation nav = tile.navigation;
-				nav.selectOnUp = title.GetComponent<Selectable>();
+				nav.selectOnUp = headerTitle.GetComponent<Selectable>();
 				nav.selectOnLeft = i > 0 ? gameList.GetChild(i - 1).GetComponent<Selectable>() : null;
 				nav.selectOnRight = i < gameList.childCount - 1 ? gameList.GetChild(i + 1).GetComponent<Selectable>() : null;
-				nav.selectOnDown = null; // définit lors de la selection de la tile
+				nav.selectOnDown = detailstitle;
 				tile.navigation = nav;
 			}
 
@@ -341,22 +343,7 @@ public class TitleScreenSystem : FSystem {
 
 	public void showDetails(GameKeys keys)
 	{
-		// Cancel down navigation for all tiles
-		foreach (Transform tile in gameList)
-		{
-			Selectable sel = tile.GetComponent<Selectable>();
-			Navigation nav = sel.navigation;
-			nav.selectOnDown = null;
-			sel.navigation = nav;
-		}
-
-		TMP_Text Detailstitle = gameDetails.Find("Title").GetComponentInChildren<TMP_Text>(true);
-		
-		// Set down navigation for Tile
 		Selectable curTile = keys.GetComponent<Selectable>();
-		Navigation curTileNav = curTile.navigation;
-		curTileNav.selectOnDown = Detailstitle.GetComponent<Selectable>();
-		curTile.navigation = curTileNav;
 
 		// Set down navigation for header
 		Transform headerTitle = gameSelector.transform.Find("Header/Title");
@@ -366,42 +353,60 @@ public class TitleScreenSystem : FSystem {
 		DynamicNavigation backDN = backButton.GetComponent<DynamicNavigation>();
 		backDN.DownRight[backDN.DownRight.Length - 1] = curTile;
 
-
-		// Set up/left navigation for Title
-		Selectable titleSel = Detailstitle.GetComponent<Selectable>();
+		// Set up/left navigation for details title
+		TMP_Text detailsTitle = gameDetails.Find("Title").GetComponentInChildren<TMP_Text>(true);
+		Selectable titleSel = detailsTitle.GetComponent<Selectable>();
 		Navigation titleNav = titleSel.navigation;
 		titleNav.selectOnLeft = curTile;
 		titleNav.selectOnUp = curTile;
 		titleSel.navigation = titleNav;
 
+		detailsTitle.text = detailsTitle.GetComponentInParent<Localization>().localization[1]; // default show "Mission locked"
 		TMP_Text gameDescription = gameDetails.Find("Scroll View").GetComponentInChildren<TMP_Text>(true);
-		
+		Image miniView = gameDetails.Find("MiniView").GetComponent<Image>();
+
 		GameKeys comp_gk = competencyPanel.GetComponent<GameKeys>();
 		comp_gk.scenarioKey = keys.scenarioKey;
 		comp_gk.missionNumber = keys.missionNumber;
 
-		// If the keys refer a scenario without a mission defined
+		// If the keys refer a scenario without a mission defined => show scenario data
 		if (keys.scenarioKey != "" && keys.missionNumber == -1 && gameData.scenarios.ContainsKey(keys.scenarioKey))
 		{
-			GameObjectManager.setGameObjectState(gameDetails.gameObject, true);
-			Detailstitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].name);
+			detailsTitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].name);
+			GameObjectManager.setGameObjectState(gameDescription.gameObject, true);
 			gameDescription.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].description);
+			GameObjectManager.setGameObjectState(miniView.gameObject, false);
 		}
-		// If the keys refer a scenario and a mission
+		// If the keys refer a scenario and a mission => show mission data
 		else if (keys.scenarioKey != "" && keys.missionNumber != -1 && gameData.scenarios.ContainsKey(keys.scenarioKey) && gameData.scenarios[keys.scenarioKey].levels.Count > keys.missionNumber)
         {
-			GameObjectManager.setGameObjectState(gameDetails.gameObject, true);
-			Detailstitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].name);
+			detailsTitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].name);
+			GameObjectManager.setGameObjectState(gameDescription.gameObject, false);
 			gameDescription.text = "";
+			GameObjectManager.setGameObjectState(miniView.gameObject, true);
+			// try to load mini view
+			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].src.Replace(".xml", PlayerPrefs.GetInt("localization") == 1 ? "_en.png" : ".png"), miniView));
 		}
-		else
-			GameObjectManager.setGameObjectState(gameDetails.gameObject, false);
 	}
 
 	// See competency selector in CompetencyPanel
 	public void refreshCompetencies()
 	{
 		GameKeys comp_gk = competencyPanel.GetComponent<GameKeys>();
+
+		// Set title
+		TextMeshProUGUI title = competencyPanel.Find("Title").GetComponentInChildren<TextMeshProUGUI>(true);
+		title.text = "";
+		if (comp_gk.scenarioKey != "" && gameData.scenarios.ContainsKey(comp_gk.scenarioKey))
+		{
+			WebGlScenario scenar = gameData.scenarios[comp_gk.scenarioKey];
+			title.text = Utility.extractLocale(scenar.name);
+			if (comp_gk.missionNumber != -1 && scenar.levels.Count > comp_gk.missionNumber)
+				title.text += " / " + Utility.extractLocale(scenar.levels[comp_gk.missionNumber].name);
+			title.text += title.GetComponentInParent<Localization>().localization[2];
+		}
+		title.text += title.GetComponentInParent<Localization>().localization[3];
+
 		TextMeshProUGUI details = competencyPanel.Find("Scroll View").GetComponentInChildren<TextMeshProUGUI>(true);
 		details.text = "";
 		if (gameData.scenarios.ContainsKey(comp_gk.scenarioKey))
@@ -430,7 +435,7 @@ public class TitleScreenSystem : FSystem {
 			if (txt != "")
 				details.text += txt;
 			else
-				details.text += competencyPanel.GetComponent<Localization>().localization[0];
+				details.text += competencyPanel.GetComponentInParent<Localization>().localization[0];
 		}
 	}
 

@@ -17,28 +17,7 @@
 	<dialog text="[fr]Evitons de saturer la ligne de communication en multipliant les ordres 'Avancer'. Tu vas utiliser une boucle, pour répeter plusieurs fois les actions ! Je t'en ai préparé une mais elle est peut être mal configurée...[/fr][en]Let's avoid saturating the communication line with multiple 'Move Forward' actions. We're going to use a loop, to repeat the actions several times! I have prepared one for you, but it may be badly configured...[/en]" img="forExample.png" imgHeight="200" />
   </dialogs>
   <executionLimit amount="1" />
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="0" />
-    <blockLimit blockType="TurnLeft" limit="0" />
-    <blockLimit blockType="TurnRight" limit="0" />
-    <blockLimit blockType="Wait" limit="0" />
-    <blockLimit blockType="Activate" limit="0" />
-    <blockLimit blockType="TurnBack" limit="0" />
-    <blockLimit blockType="IfThen" limit="0" />
-    <blockLimit blockType="IfElse" limit="0" />
-    <blockLimit blockType="ForLoop" limit="0" />
-    <blockLimit blockType="While" limit="0" />
-    <blockLimit blockType="Forever" limit="0" />
-    <blockLimit blockType="AndOperator" limit="0" />
-    <blockLimit blockType="OrOperator" limit="0" />
-    <blockLimit blockType="NotOperator" limit="0" />
-    <blockLimit blockType="WallFront" limit="0" />
-    <blockLimit blockType="Enemy" limit="0" />
-    <blockLimit blockType="RedArea" limit="0" />
-    <blockLimit blockType="FieldGate" limit="0" />
-    <blockLimit blockType="Terminal" limit="0" />
-    <blockLimit blockType="Exit" limit="0" />
-  </blockLimits>
+  
   <coin posY="2" posX="1" />
   <robot inputLine="Erty" posY="9" posX="1" direction="0" skin="1" />
   <script outputLine="Erty" editMode="0" type="2">

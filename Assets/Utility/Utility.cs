@@ -1,3 +1,4 @@
+using FYFY;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +7,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Localization.Settings;
+using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public static class Utility
 {
@@ -94,5 +97,34 @@ public static class Utility
 	public static bool inputFieldNotSelected()
 	{
 		return EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null || !EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused;
+	}
+
+	public static IEnumerator GetTextureWebRequest(string miniViewUri, Image target)
+	{
+		UnityWebRequest www = UnityWebRequestTexture.GetTexture(miniViewUri);
+		yield return www.SendWebRequest();
+
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			Debug.Log(www.error);
+			setTexture(null, target);
+		}
+		else
+		{
+			Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
+			setTexture(tex2D, target);
+		}
+	}
+
+	private static void setTexture(Texture2D tex2D, Image target)
+	{
+		if (tex2D != null)
+		{
+			GameObjectManager.setGameObjectState(target.gameObject, true);
+			target.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+			target.preserveAspect = true;
+		}
+		else
+			GameObjectManager.setGameObjectState(target.gameObject, false);
 	}
 }

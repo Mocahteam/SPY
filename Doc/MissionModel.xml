@@ -64,7 +64,7 @@
 	<blockLimits>
 		<!-- 
 			blockLimit (optional): this tag enables to define  the amount of specific programming block available. It contains two attributes:
-				blockType (mandatory): the key of a type of block in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack", "IfThen", "IfElse", "ForLoop", "While", "Forever", "AndOperator", "OrOperator", "NotOperator", "WallFront", "WallLeft", "WallRight", "PathFront", "PathLeft", "PathRight", "Enemy", "RedArea", "FieldGate", "Terminal", "Exit"}
+				blockType (mandatory): the key of a type of block in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack", "IfThen", "IfElse", "ForLoop", "While", "Forever", "AndOperator", "OrOperator", "NotOperator", "WallFront", "WallLeft", "WallRight", "PathFront", "PathLeft", "PathRight", "Enemy", "Player", "Furniture", "RedArea", "FieldGate", "Terminal", "Exit"}
 				limit (mandatory): >0 the amount of blocks available for the player, ==0 this block type is hidden for the player, <0 unlimited accès of this block type
 		-->
 		<blockLimit blockType="Forward" limit="-1" />
@@ -88,6 +88,8 @@
 		<blockLimit blockType="PathLeft" limit="0" />
 		<blockLimit blockType="PathRight" limit="0" />
 		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
 		<blockLimit blockType="RedArea" limit="0" />
 		<blockLimit blockType="FieldGate" limit="0" />
 		<blockLimit blockType="Terminal" limit="0" />

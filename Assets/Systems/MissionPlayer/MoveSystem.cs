@@ -74,15 +74,38 @@ public class MoveSystem : FSystem {
 		}
 	}
 
+	private int verticalStrength(Position pos)
+    {
+		if (pos.transform.localPosition.x > pos.y * 3)
+			return 1;
+		else if (pos.transform.localPosition.x < pos.y * 3)
+			return -1;
+		else
+			return 0;
+	}
+
+	private int horizontalStrength(Position pos)
+	{
+		if (pos.transform.localPosition.z > pos.x * 3)
+			return 1;
+		else if (pos.transform.localPosition.z < pos.x * 3)
+			return -1;
+		else
+			return 0;
+	}
+
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		int movingCpt = 0;
 		foreach (GameObject go in f_movable)
 		{
 			// Manage position
+			Position pos = go.GetComponent<Position>();
 			if (Mathf.Abs(go.transform.localPosition.z / 3 - go.GetComponent<Position>().x) > 0.01f || Mathf.Abs(go.transform.localPosition.x / 3 - go.GetComponent<Position>().y) > 0.01f)
 			{
-				go.transform.localPosition = Vector3.MoveTowards(go.transform.localPosition, new Vector3(go.GetComponent<Position>().y * 3, go.transform.localPosition.y, go.GetComponent<Position>().x * 3), moveSpeed * gameData.gameSpeed_current * Time.deltaTime);
+				// calcul de la position de départ
+				Vector3 startPosition = new Vector3(3 * (pos.y + verticalStrength(pos)), go.transform.localPosition.y, 3 * (pos.x + horizontalStrength(pos)));
+				go.transform.localPosition = Vector3.MoveTowards(startPosition, new Vector3(pos.y * 3, go.transform.localPosition.y, pos.x * 3), moveSpeed * gameData.gameSpeed_current * Mathf.Min(1f / gameData.gameSpeed_current, Time.time - gameData.startStepTime));
 				if (go.GetComponent<Animator>() && go.CompareTag("Player"))
                 {
 					if (gameData.gameSpeed_current == gameData.gameSpeed_default)
@@ -102,6 +125,7 @@ public class MoveSystem : FSystem {
 			else
 			{
 				// Position atteinte
+				go.transform.localPosition = new Vector3(pos.y * 3, go.transform.localPosition.y, pos.x * 3);
 				if (go.GetComponent<Animator>() && go.CompareTag("Player"))
 				{
 					// On stope l'animation dans une coroutine pour éviter de voir le robot faire une micro pause entre deux steps, ainsi le onProcess stoppera cette coroutine si l'animation doit continuer

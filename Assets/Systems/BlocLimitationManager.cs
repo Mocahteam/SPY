@@ -110,8 +110,8 @@ public class BlocLimitationManager : FSystem
 					GameObjectManager.setGameObjectState(draggableGO.transform.GetChild(1).gameObject, true);
 				}
 			}
-			MainLoop.instance.StartCoroutine(delayCategoryVisibility(draggableGO.transform.parent));
 		}
+		MainLoop.instance.StartCoroutine(delayCategoryVisibility(draggableGO.transform.parent));
 	}
 
 	private IEnumerator delayCategoryVisibility(Transform grid)

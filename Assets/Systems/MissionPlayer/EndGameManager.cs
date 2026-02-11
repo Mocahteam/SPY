@@ -110,6 +110,8 @@ public class EndGameManager : FSystem {
 		endPanel.transform.parent.gameObject.SetActive(true);
 		GameObjectManager.setGameObjectState(endPanel.transform.Find("Score").gameObject, false);
 		GameObjectManager.setGameObjectState(endPanel.transform.Find("Feedback").gameObject, false);
+		// Switch to edit mode
+		GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
 		// Get the first end that occurs
 		if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Detected)
 		{

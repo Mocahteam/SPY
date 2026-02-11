@@ -18,6 +18,7 @@ public class GameData : MonoBehaviour {
 	public GameObject actionsHistory; //all actions made in the level, displayed at the end
 	public float gameSpeed_default = 1f;
 	public float gameSpeed_current = 1f;
+	public float startStepTime;
 	public bool dragDropEnabled = true;
 	public bool sendStatementEnabled = true;
 	public bool hideExit = false;

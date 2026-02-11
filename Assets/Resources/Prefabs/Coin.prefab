@@ -108,7 +108,6 @@ GameObject:
   - component: {fileID: 8863503898800417741}
   - component: {fileID: 1438155388532235625}
   - component: {fileID: 4132121110223891748}
-  - component: {fileID: 490998545865607541}
   - component: {fileID: 1143663562972800929}
   - component: {fileID: 1626675993019719406}
   - component: {fileID: 988339646854609815}
@@ -116,6 +115,7 @@ GameObject:
   - component: {fileID: 3209823679356204186}
   - component: {fileID: 490913905107958832}
   - component: {fileID: 5879434370232383199}
+  - component: {fileID: 7914056303339136181}
   m_Layer: 0
   m_Name: Coin
   m_TagString: Coin
@@ -197,29 +197,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &490998545865607541
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8004794425240735006}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!114 &1143663562972800929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5210,6 +5187,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!135 &7914056303339136181
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8004794425240735006}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1.0000002
+  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940699}
 --- !u!1 &8183060837076320008
 GameObject:
   m_ObjectHideFlags: 0

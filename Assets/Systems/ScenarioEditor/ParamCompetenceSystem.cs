@@ -407,10 +407,12 @@ public class ParamCompetenceSystem : FSystem
 			// Display Title
 			contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text = path;
 			// erase previous miniView
-			setMiniView(null);
+			Image miniView = contentInfoCompatibleLevel.transform.Find("LevelMiniView").GetComponent<Image>();
+			GameObjectManager.setGameObjectState(miniView.gameObject, false);
 			// Display miniView
-			string imgPath = new Uri(mainPath + "/" + path.Replace(".xml", ".png")).AbsoluteUri;
-			MainLoop.instance.StartCoroutine(GetMiniViewWebRequest(imgPath));
+			string imgPath = new Uri(mainPath + "/" + path.Replace(".xml", PlayerPrefs.GetInt("localization") == 1 ? "_en.png" : ".png")).AbsoluteUri;
+
+			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(imgPath, miniView));
 			XmlNode levelSelected = gameData.levels[absolutePath];
 			List<Dialog> defaultDialogs = new List<Dialog>();
 			XmlNodeList XMLDialogs = levelSelected.OwnerDocument.GetElementsByTagName("dialogs");
@@ -476,36 +478,6 @@ public class ParamCompetenceSystem : FSystem
 			localCallback = null;
 			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[11], path), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
 		}
-	}
-
-	private IEnumerator GetMiniViewWebRequest(string miniViewUri)
-	{
-		UnityWebRequest www = UnityWebRequestTexture.GetTexture(miniViewUri);
-		yield return www.SendWebRequest();
-
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			Debug.Log(www.error);
-			setMiniView(null);
-		}
-		else
-		{
-			Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
-			setMiniView(tex2D);
-		}
-	}
-
-	private void setMiniView(Texture2D tex2D)
-    {
-		if (tex2D != null)
-		{
-			GameObjectManager.setGameObjectState(contentInfoCompatibleLevel.transform.Find("LevelMiniView").gameObject, true);
-			Image img = contentInfoCompatibleLevel.transform.Find("LevelMiniView").GetComponent<Image>();
-			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
-			img.preserveAspect = true;
-		}
-		else
-			GameObjectManager.setGameObjectState(contentInfoCompatibleLevel.transform.Find("LevelMiniView").gameObject, false);
 	}
 
 	// Used on ButtonAddToScenario

@@ -37,7 +37,6 @@ public class StepSystem : FSystem {
     private GameData gameData;
     private int nbStep;
     private bool newStepAskedByPlayer;
-    private float startStepTime;
     private bool needPause;
 
     public RectTransform editableContainers;
@@ -59,7 +58,7 @@ public class StepSystem : FSystem {
             setToDefaultTimeStep();
 
             gameData.totalStep++;
-            startStepTime = Time.time;
+            gameData.startStepTime = Time.time;
             nbStep++;
 
             Pause = false;
@@ -76,17 +75,20 @@ public class StepSystem : FSystem {
     private void onNewStep(GameObject go)
     {
         GameObjectManager.removeComponent(go.GetComponent<NewStep>());
+        gameData.startStepTime = Time.time;
+        gameData.totalStep++;
+        nbStep++;
     }
 
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
         // Attendre que le temps d'un pas de simulation soit écoulé
-        if (Time.time - startStepTime >= 1 / gameData.gameSpeed_current)
+        if (Time.time - gameData.startStepTime >= 1 / gameData.gameSpeed_current)
         {
-            // pas de fin ET encore au moins une action à exécuter
-            if (f_newEnd.Count == 0 && playerHasNextAction())
+            // Une fois qu'on a bien attendu que le temps était écoulé, on vérifie si une fin ne se serait pas déclenchée avant de chercher à lancer un nouveau Step
+            if (f_newEnd.Count == 0)
             {
-                // Si le joueur à demandé de mettre en pause
+                // Si le joueur a demandé de mettre en pause
                 if (needPause)
                 {
                     needPause = false;
@@ -105,13 +107,20 @@ public class StepSystem : FSystem {
                         }
                     });
                 }
+                // Si aucun robot n'a d'action suivante, revenir en mode éditeur
+                else if (!playerHasNextAction())
+                {
+                    GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
+                    GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
+                    needPause = false;
+                    Pause = true;
+                }
+
+                // Cas général, on demande un nouveau pas de simulation
                 else
                 {
                     // start a new Step
                     GameObjectManager.addComponent<NewStep>(MainLoop.instance.gameObject);
-                    startStepTime = Time.time;
-                    gameData.totalStep++;
-                    nbStep++;
 
                     if (newStepAskedByPlayer)
                     {
@@ -120,15 +129,6 @@ public class StepSystem : FSystem {
                         Pause = true;
                     }
                 }
-            }
-            else // fin détectée ou plus d'action à exécuter
-            {
-                GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
-                // We save history if no end or win
-                if (f_newEnd.Count <= 0)
-                    GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
-                needPause = false;
-                Pause = true;
             }
         }
     }
@@ -173,7 +173,7 @@ public class StepSystem : FSystem {
 
     // See NextStepButton in editor
     public void goToNextStep(){
-        if (Time.time - startStepTime >= 1 / gameData.gameSpeed_current)
+        if (Time.time - gameData.startStepTime >= 1 / gameData.gameSpeed_current)
         {
             Pause = false;
             newStepAskedByPlayer = true;
