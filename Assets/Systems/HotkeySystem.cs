@@ -36,6 +36,7 @@ public class HotkeySystem : FSystem
 	public Button showBriefing;
 	public Button showMapDesc;
 	public Button closeMapDesc;
+	public GameObject inventory;
 	public Button buttonCopyCode;
 
 	public Button AddContainerButton;
@@ -70,6 +71,7 @@ public class HotkeySystem : FSystem
 	private InputAction copy_act;
 	private InputAction paste_act;
 	private InputAction focusOnNextProgrammingArea_act;
+	private InputAction focusOnInventory_act;
 
 	protected override void onStart()
 	{
@@ -93,6 +95,7 @@ public class HotkeySystem : FSystem
 		copy_act = InputSystem.actions.FindAction("Copy");
 		paste_act = InputSystem.actions.FindAction("Paste");
 		focusOnNextProgrammingArea_act = InputSystem.actions.FindAction("SelectNextProgrammingArea");
+		focusOnInventory_act = InputSystem.actions.FindAction("SelectInventory");
 
 		cancelNextEscape = false;
         foreach (GameObject go in f_InputFields)
@@ -236,6 +239,10 @@ public class HotkeySystem : FSystem
 					eventSystem.SetSelectedGameObject(AddContainerButton.gameObject);
 
 			}
+
+			// Select inventory
+			if (inventory != null && inventory.activeInHierarchy && focusOnInventory_act.WasPressedThisFrame())
+				eventSystem.SetSelectedGameObject(inventory);
 		}
 		else if (eventSystem.currentSelectedGameObject != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused && Application.platform == RuntimePlatform.WebGLPlayer)
 		{
