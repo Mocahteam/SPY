@@ -123,7 +123,7 @@ public class HistoryManager : FSystem
 			if (agentSelected != null)
             {
 				// We add wait blocs if only one is required or if this level do not provide unlimited for loop blocs
-				if (minNbOfInaction == 1 || gameData.actionBlockLimit["ForLoop"] != -1)
+				if (minNbOfInaction == 1 || !gameData.actionBlockLimit.ContainsKey("ForLoop") || gameData.actionBlockLimit["ForLoop"] != -1)
 				{
 					for (int i = 0; i < minNbOfInaction; i++)
 					{
