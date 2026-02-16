@@ -43,6 +43,7 @@ public class EditorGridSystem : FSystem
 	private GameData gameData;
 
 	private InputAction click;
+	private InputAction clickHold;
 	private InputAction rightClick;
 
 	public EditorGridSystem()
@@ -58,6 +59,7 @@ public class EditorGridSystem : FSystem
 			gameData = go.GetComponent<GameData>();
 
 		click = InputSystem.actions.FindAction("Click");
+		clickHold = InputSystem.actions.FindAction("ClickHold");
 		rightClick = InputSystem.actions.FindAction("RightClick");
 
 		resetGrid();
@@ -122,7 +124,7 @@ public class EditorGridSystem : FSystem
 		if (placingCursor != null)
 			Cursor.SetCursor(placingCursor, new Vector2(placingCursor.width / 2.0f, placingCursor.height / 2.0f), CursorMode.Auto);
 
-		if (f_UIfocused.Count == 0 && click.WasPressedThisFrame() && activeBrush != Cell.Select)
+		if (f_UIfocused.Count == 0 && (click.WasPressedThisFrame() || clickHold.IsPressed()) && activeBrush != Cell.Select)
 			setTile(pos.y, pos.x, activeBrush);
 	}
 

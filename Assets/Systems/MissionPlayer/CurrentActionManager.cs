@@ -48,6 +48,8 @@ public class CurrentActionManager : FSystem
 			foreach (GameObject robot in f_player)
 				robot.GetComponent<ScriptRef>().nbOfInactions = 0;
 		});
+
+		Pause = true;
 	}
 
 	private void initFirstsActions(GameObject go)

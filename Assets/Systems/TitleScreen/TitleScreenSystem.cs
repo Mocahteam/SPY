@@ -92,6 +92,8 @@ public class TitleScreenSystem : FSystem {
 				GameObjectManager.setGameObjectState(quitButton, false);
 			}
 		}
+
+		Pause = true;
 	}
 
 	private class JavaScriptData
@@ -362,7 +364,7 @@ public class TitleScreenSystem : FSystem {
 		titleSel.navigation = titleNav;
 
 		detailsTitle.text = detailsTitle.GetComponentInParent<Localization>().localization[1]; // default show "Mission locked"
-		TMP_Text gameDescription = gameDetails.Find("Scroll View").GetComponentInChildren<TMP_Text>(true);
+		GameObject gameDescription = gameDetails.Find("Scroll View").gameObject;
 		Image miniView = gameDetails.Find("MiniView").GetComponent<Image>();
 
 		GameKeys comp_gk = competencyPanel.GetComponent<GameKeys>();
@@ -373,16 +375,16 @@ public class TitleScreenSystem : FSystem {
 		if (keys.scenarioKey != "" && keys.missionNumber == -1 && gameData.scenarios.ContainsKey(keys.scenarioKey))
 		{
 			detailsTitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].name);
-			GameObjectManager.setGameObjectState(gameDescription.gameObject, true);
-			gameDescription.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].description);
+			GameObjectManager.setGameObjectState(gameDescription, true);
+			gameDescription.GetComponentInChildren<TMP_Text>(true).text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].description);
 			GameObjectManager.setGameObjectState(miniView.gameObject, false);
 		}
 		// If the keys refer a scenario and a mission => show mission data
 		else if (keys.scenarioKey != "" && keys.missionNumber != -1 && gameData.scenarios.ContainsKey(keys.scenarioKey) && gameData.scenarios[keys.scenarioKey].levels.Count > keys.missionNumber)
         {
 			detailsTitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].name);
-			GameObjectManager.setGameObjectState(gameDescription.gameObject, false);
-			gameDescription.text = "";
+			GameObjectManager.setGameObjectState(gameDescription, false);
+			gameDescription.GetComponentInChildren<TMP_Text>(true).text = "";
 			GameObjectManager.setGameObjectState(miniView.gameObject, true);
 			// try to load mini view
 			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].src.Replace(".xml", PlayerPrefs.GetInt("localization") == 1 ? "_en.png" : ".png"), miniView));

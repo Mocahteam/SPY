@@ -45,6 +45,8 @@ public class BlocLimitationManager : FSystem
 
 		f_droppedActions.addEntryCallback(useAction);
 		f_deletedActions.addEntryCallback(unuseAction);
+
+		Pause = true;
 	}
 
 	//Recursive script destroyer

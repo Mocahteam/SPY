@@ -26,6 +26,8 @@ public class LobbyAnimation : FSystem {
         MainLoop.instance.StartCoroutine(AnimDoorAndR102());
         MainLoop.instance.StartCoroutine(AnimKyleAndDestiny());
         MainLoop.instance.StartCoroutine(AnimDrone());
+
+        Pause = true;
     }
 
     private IEnumerator AnimDoorAndR102()

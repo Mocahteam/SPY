@@ -74,6 +74,8 @@ public class LevelGenerator : FSystem {
 				}
 			});
 		}
+
+		Pause = true;
 	}
 
 	private void computeExecutionPanelWidth(GameObject scriptContainer)
@@ -81,7 +83,7 @@ public class LevelGenerator : FSystem {
 		// Calcul de la largeur du panneau
 		RectTransform panel = scriptContainer.transform.parent.parent.parent as RectTransform;
 		// On force le recalcul du scriptContainer pour être sûr d'avoir la bonne taille
-		LayoutRebuilder.ForceRebuildLayoutImmediate(scriptContainer.transform as RectTransform);
+		LayoutRebuilder.MarkLayoutForRebuild(scriptContainer.transform as RectTransform);
 		// On met à jour la largeur préférée et prenant en compte la place pour la scrollbar
 		panel.GetComponent<LayoutElement>().preferredWidth = Mathf.Max(110, (scriptContainer.transform as RectTransform).rect.width + (scriptContainer.GetComponentInParent<ScrollRect>().verticalScrollbar.transform as RectTransform).rect.width);
 	}

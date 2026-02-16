@@ -76,6 +76,8 @@ public class ConnexionManager : FSystem
 		}
 
 		MainLoop.instance.StartCoroutine(waitLocalizationLoaded());
+
+		Pause = true;
 	}
 
 	private IEnumerator waitLocalizationLoaded()

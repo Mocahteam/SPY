@@ -12,9 +12,4 @@ public class CompetenciesLoader_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "prefabComp", prefabComp);
 	}
 
-	public void saveReferetialSelected(System.Int32 referentialId)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "saveReferetialSelected", referentialId);
-	}
-
 }

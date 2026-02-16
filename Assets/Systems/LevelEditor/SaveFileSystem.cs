@@ -6,7 +6,6 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System.IO;
 using System.Runtime.InteropServices;
-using UnityEngine.EventSystems;
 using System.Xml;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
@@ -27,8 +26,6 @@ public class SaveFileSystem : FSystem
 	public GameObject editableContainer;
 	public LevelData levelData;
 	public PaintableGrid paintableGrid;
-
-	public CanvasGroup[] UIgroup;
 
 	public static SaveFileSystem instance;
 
@@ -86,11 +83,9 @@ public class SaveFileSystem : FSystem
 	{
 		if (levelData.levelName != null || levelData.levelName != "")
 			saveName.text = Path.GetFileNameWithoutExtension(levelData.levelName);
-		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
-		EventSystem.current.SetSelectedGameObject(saveName.transform.parent.Find("Buttons/CancelButton").gameObject);
 	}
 
-	// see ValideMessageButton (only called in standalone context, not used for WebGL)
+	// see ValideMessageButton
 	public void saveXmlFile()
 	{
 		Localization loc = gameData.GetComponent<Localization>();
@@ -166,10 +161,6 @@ public class SaveFileSystem : FSystem
 		}
 		// Be sure saving windows is disabled
 		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, false);
-
-		// Réactiver tous les canvas
-		foreach (CanvasGroup g in UIgroup)
-			g.interactable = true;
 	}
 
 	private string buildLevelContent()

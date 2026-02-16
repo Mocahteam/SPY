@@ -44,4 +44,9 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
     {
         gameObject.transform.parent.parent.parent.parent.Find("Buttons/LoadButton").GetComponent<Button>().onClick.Invoke();
     }
+
+    public void markLayoutForRebuild(RectTransform transform)
+    {
+        ParamCompetenceSystem.instance.markLayoutForRebuild(transform);
+    }
 }

@@ -41,6 +41,8 @@ public class HistoryManager : FSystem
 		f_newEnd.addEntryCallback(levelFinished);
 
 		MainLoop.instance.StartCoroutine(delayLoadHistory());
+
+		Pause = true;
 	}
 
 	// check if player win the game and if true, load history

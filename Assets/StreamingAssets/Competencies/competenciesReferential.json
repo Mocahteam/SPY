@@ -1240,6 +1240,78 @@
 						}
 					],
 					"rule": "exitInLib >= 1 or exitInScript >= 1"
+				},
+				{
+					"key": "SPY_Captor_Player",
+					"parentKey": "SPY_Captors",
+					"name": "[fr]F38 Capteur \"Robot détecté en face\"[/fr][en]F38 \"Robot detected in front\" sensor[/en]",
+					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Robot détecté en face\".[/fr][en]Give the player the option of using \"Robot detected in front\" blocks.[/en]",
+					"filters": [
+						{
+							"label": "playerInLib",
+							"tag": "blockLimit",
+							"constraints": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "Player"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "playerInScript",
+							"tag": "action",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "Player"
+								}
+							]
+						}
+					],
+					"rule": "playerInLib >= 1 or playerInScript >= 1"
+				},
+				{
+					"key": "SPY_Captor_Furniture",
+					"parentKey": "SPY_Captors",
+					"name": "[fr]F39 Capteur \"Mobilier détecté en face\"[/fr][en]F39 \"Furniture detected in front\" sensor[/en]",
+					"description": "[fr]Donner au joueur la possibilité d'utiliser des capteurs \"Mobilier détecté en face\".[/fr][en]Give the player the option of using \"Furniture detected in front\" blocks.[/en]",
+					"filters": [
+						{
+							"label": "furnitureInLib",
+							"tag": "blockLimit",
+							"constraints": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "Furniture"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "<>",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "furnitureInScript",
+							"tag": "action",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "Furniture"
+								}
+							]
+						}
+					],
+					"rule": "furnitureInLib >= 1 or furnitureInScript >= 1"
 				}
 			]
 		},
@@ -1456,7 +1528,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
 									"attribute": "limit",
@@ -1472,7 +1544,7 @@
 								{
 									"attribute": "type",
 									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
 						}
@@ -1532,7 +1604,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
 									"attribute": "limit",
@@ -1548,7 +1620,7 @@
 								{
 									"attribute": "type",
 									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
 						},
@@ -2083,7 +2155,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
 									"attribute": "limit",
@@ -2099,7 +2171,7 @@
 								{
 									"attribute": "type",
 									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
 						},
@@ -2181,7 +2253,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
 									"attribute": "limit",
@@ -2197,7 +2269,7 @@
 								{
 									"attribute": "type",
 									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
 						},
@@ -2284,7 +2356,7 @@
 								{
 									"attribute": "blockType",
 									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
 								},
 								{
 									"attribute": "limit",
@@ -2300,7 +2372,7 @@
 								{
 									"attribute": "type",
 									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|RedArea|FieldGate|Terminal|Exit"
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
 								}
 							]
 						},

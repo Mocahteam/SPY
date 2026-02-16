@@ -41,6 +41,8 @@ public class GameStateManager : FSystem {
             gameData = go.GetComponent<GameData>();
         save = new SaveContent();
         f_playingMode.addEntryCallback(delegate { SaveState(); });
+
+        Pause = true;
     }
 
     // Save data of all interactable objects in scene

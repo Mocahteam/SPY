@@ -25,6 +25,8 @@ public class CoinManager : FSystem {
 
 		f_playingMode.addEntryCallback(delegate { activeCoin = true; });
 		f_editingMode.addEntryCallback(delegate { activeCoin = false; });
+
+		Pause = true;
 	}
 
 	private void onNewCollision(GameObject robot){

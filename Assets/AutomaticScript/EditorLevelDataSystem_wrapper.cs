@@ -28,9 +28,9 @@ public class EditorLevelDataSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "unlimitedColor", unlimitedColor);
 	}
 
-	public void resetMetaData()
+	public void resetMetaData(System.Boolean unlockAll)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "resetMetaData", null);
+		MainLoop.callAppropriateSystemMethod (system, "resetMetaData", unlockAll);
 	}
 
 	public void preventMinusSign(TMPro.TMP_InputField input)

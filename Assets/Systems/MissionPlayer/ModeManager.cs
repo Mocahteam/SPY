@@ -33,6 +33,8 @@ public class ModeManager : FSystem {
 				foreach (PlayMode em in editModeGO.GetComponents<PlayMode>())
 					GameObjectManager.removeComponent(em);
 		});
+
+		Pause = true;
 	}
 
 	// Used in ExecuteButton in inspector

@@ -4,6 +4,7 @@ using FYFY;
 public class HotkeySystem_wrapper : BaseWrapper
 {
 	public UnityEngine.UI.Button mainMenu;
+	public UnityEngine.UI.Button closeMainMenu;
 	public UnityEngine.UI.Button buttonExecute;
 	public UnityEngine.UI.Button buttonPause;
 	public UnityEngine.UI.Button buttonNextStep;
@@ -30,6 +31,7 @@ public class HotkeySystem_wrapper : BaseWrapper
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "mainMenu", mainMenu);
+		MainLoop.initAppropriateSystemField (system, "closeMainMenu", closeMainMenu);
 		MainLoop.initAppropriateSystemField (system, "buttonExecute", buttonExecute);
 		MainLoop.initAppropriateSystemField (system, "buttonPause", buttonPause);
 		MainLoop.initAppropriateSystemField (system, "buttonNextStep", buttonNextStep);

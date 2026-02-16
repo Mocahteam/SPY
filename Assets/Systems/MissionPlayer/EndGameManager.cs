@@ -53,6 +53,8 @@ public class EndGameManager : FSystem {
 		f_playingMode.addExitCallback(delegate {
 			MainLoop.instance.StartCoroutine(delayNoMoreAttemptDetection());
 		});
+
+		Pause = true;
 	}
 
 	private IEnumerator delayDisableEndPanel()
@@ -363,14 +365,6 @@ public class EndGameManager : FSystem {
 				}
 			}));
 		}
-		// Force to focus on "Content" child
-		MainLoop.instance.StartCoroutine(delayNewButtonFocused(endPanel.transform.Find("Content").gameObject));
-	}
-
-	private IEnumerator delayNewButtonFocused(GameObject target)
-    {
-		yield return new WaitForSeconds(0.5f); // Wait other scripts define wanted selected button to override it
-		EventSystem.current.SetSelectedGameObject(target);
 	}
 
 	private IEnumerator delaySendStatement(GameObject src, object componentValues)

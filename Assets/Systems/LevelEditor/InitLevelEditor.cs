@@ -7,20 +7,13 @@ using UnityEngine.UI;
 
 public class InitLevelEditor : FSystem
 {
-	public GameObject menuCanvas;
 	public Button mapTab;
 	public Button scriptTab;
 	public Button paramTab;
 	public GameObject mapContent;
 	public GameObject scriptContent;
 	public GameObject paramContent;
-	public GameObject initFocused;
 
-	public GameObject menuEscape;
-	public GameObject closePanelButton;
-	public CanvasGroup[] canvasGroups;
-
-	private UnityAction localCallback;
 	private GameData gameData;
 
 	[DllImport("__Internal")]
@@ -40,22 +33,14 @@ public class InitLevelEditor : FSystem
 			gameData = gameDataGO.GetComponent<GameData>();
 			
 			// config default UI
-			GameObjectManager.setGameObjectState(menuCanvas, false);
 			mapTab.interactable = false;
 			scriptTab.interactable = true;
 			paramTab.interactable = true;
 			mapContent.SetActive(true);
-			EventSystem.current.SetSelectedGameObject(initFocused);
 			GameObjectManager.refresh(mapContent);
 			GameObjectManager.setGameObjectState(scriptContent, false);
 			GameObjectManager.setGameObjectState(paramContent, false);
 
-			if (Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser())
-			{
-				localCallback = null;
-				Localization loc = gameData.GetComponent<Localization>();
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[9], OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
-			}
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlButtons();
 
@@ -83,25 +68,5 @@ public class InitLevelEditor : FSystem
 	public void returnToLobby()
 	{
 		GameObjectManager.loadScene("TitleScreen");
-	}
-
-	public void toggleMainMenu()
-	{
-		// si le menu n'est pas affiché, on l'affiche
-		if (!menuCanvas.activeInHierarchy)
-		{
-			menuCanvas.SetActive(true);
-			EventSystem.current.SetSelectedGameObject(closePanelButton);
-			foreach (CanvasGroup g in canvasGroups)
-				g.interactable = false;
-		}
-		// sinon faire l'inverse
-		else
-		{
-			menuCanvas.SetActive(false);
-			EventSystem.current.SetSelectedGameObject(menuEscape);
-			foreach (CanvasGroup g in canvasGroups)
-				g.interactable = true;
-		}
 	}
 }

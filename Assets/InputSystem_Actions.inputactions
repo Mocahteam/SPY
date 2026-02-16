@@ -52,6 +52,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "ClickHold",
+                    "type": "PassThrough",
+                    "id": "aaea70ba-9436-49e9-b102-61d2a3e3fda0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "RightClick",
                     "type": "PassThrough",
                     "id": "7ccbd77d-1508-4ac3-acac-7adc38953dca",
@@ -621,6 +630,50 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "82a4140b-bf1b-4129-87a5-60371e84ec8e",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "ClickHold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5e5fe498-ffe3-40fb-8514-5fb8950b516d",
+                    "path": "<Pen>/tip",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "ClickHold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b563cb87-0dfc-48e2-8f14-040dcb7e91cc",
+                    "path": "<Touchscreen>/touch*/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Touch",
+                    "action": "ClickHold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "65bb191f-d3c0-4331-a2a3-87a3e0b97662",
+                    "path": "<XRController>/trigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "XR",
+                    "action": "ClickHold",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -1,8 +1,10 @@
 using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public static class UtilityEditor
 {
@@ -57,5 +59,52 @@ public static class UtilityEditor
 				}
 		}
 		return isValid;
+	}
+
+	public static void buildLoadingPanelNavigation(Transform loadingPanel)
+    {
+		// Build navigation
+		Transform content = loadingPanel.Find("Scroll View/Viewport/Content");
+		Selectable up;
+		Selectable down;
+		Selectable filterSelect = loadingPanel.Find("Filter").GetComponent<TMP_InputField>();
+		Navigation filterNavigation = filterSelect.navigation;
+		Selectable loadButtonSelect = loadingPanel.Find("Buttons/LoadButton").GetComponent<Button>();
+		Navigation loadButtonNavigation = loadButtonSelect.navigation;
+		// Définir par défaut une navigation entre le filtre et le bouton de chargement au cas où la liste serait vide
+		filterNavigation.selectOnDown = loadButtonSelect;
+		filterNavigation.selectOnRight = loadButtonSelect;
+		loadButtonNavigation.selectOnUp = filterSelect;
+		loadButtonNavigation.selectOnLeft = filterSelect;
+		// Parcourir tous les enfants pour définir la bonne navigation
+		for (int i = 0; i < content.childCount; i++)
+		{
+			Selectable currentScenar = content.GetChild(i).GetComponentInChildren<Button>();
+			if (i == 0)
+			{
+				up = filterSelect;
+				filterNavigation.selectOnDown = currentScenar;
+				filterNavigation.selectOnRight = currentScenar;
+			}
+			else
+				up = content.GetChild(i - 1).GetComponentInChildren<Button>();
+			if (i == content.childCount - 1)
+			{
+				down = loadButtonSelect;
+				loadButtonNavigation.selectOnUp = currentScenar;
+				loadButtonNavigation.selectOnLeft = currentScenar;
+			}
+			else
+				down = content.GetChild(i + 1).GetComponentInChildren<Button>();
+			Navigation nav = currentScenar.navigation;
+			nav.selectOnUp = up;
+			nav.selectOnLeft = up;
+			nav.selectOnDown = down;
+			nav.selectOnRight = down;
+			currentScenar.navigation = nav;
+		}
+		// Valider pour le filtre et le bouton de chargement la navigation finale
+		filterSelect.navigation = filterNavigation;
+		loadButtonSelect.navigation = loadButtonNavigation;
 	}
 }

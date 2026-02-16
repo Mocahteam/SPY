@@ -32,14 +32,12 @@ public class UISystem : FSystem {
 	private float touchUp;
 
 	public GameObject LevelGO;
-	public GameObject buttonMenu;
 	public GameObject buttonExecute;
 	public GameObject buttonPause;
 	public GameObject buttonNextStep;
 	public GameObject buttonContinue;
 	public GameObject buttonSpeed;
 	public GameObject buttonStop;
-	public GameObject menuEchap;
 	public GameObject canvas;
 	public GameObject libraryPanel;
 
@@ -290,20 +288,4 @@ public class UISystem : FSystem {
 			}
 		}
 	}
-
-	// Permet d'activer ou désactiver le menu echap
-	public void setActiveEscapeMenu()
-    {
-		// Si le menu est activé, le désactiver
-        if (menuEchap.activeInHierarchy)
-        {
-			menuEchap.SetActive(false);
-			EventSystem.current.SetSelectedGameObject(buttonMenu);
-		}// Et inversement
-        else
-        {
-			menuEchap.SetActive(true);
-			EventSystem.current.SetSelectedGameObject(menuEchap.GetComponentInChildren<Button>().gameObject);
-		}
-    }
 }

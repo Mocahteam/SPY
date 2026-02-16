@@ -33,6 +33,8 @@ public class DoorAndConsoleManager : FSystem {
 		f_gameLoaded.addEntryCallback(connectDoorsAndConsoles);
 		forceDoorSync();
 		f_door.addEntryCallback(syncState);
+
+		Pause = true;
 	}
 
 	private IEnumerator animatePath(DoorPath path)

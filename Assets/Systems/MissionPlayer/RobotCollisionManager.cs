@@ -22,6 +22,8 @@ public class RobotCollisionManager : FSystem
         });
 
         f_agentCollision.addEntryCallback(onNewCollision);
+
+        Pause = true;
     }
 
 	private void onNewCollision(GameObject agent)

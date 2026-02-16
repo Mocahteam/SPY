@@ -5,11 +5,13 @@ public class OpenFileSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject loadingLevelContent;
 	public LevelData levelData;
+	public TMPro.TMP_InputField savingInputField;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "loadingLevelContent", loadingLevelContent);
 		MainLoop.initAppropriateSystemField (system, "levelData", levelData);
+		MainLoop.initAppropriateSystemField (system, "savingInputField", savingInputField);
 	}
 
 	public void refreshListOfLevels(System.String filter)

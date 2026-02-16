@@ -34,6 +34,7 @@ public class SyncLocalization : FSystem {
     protected override void onStart()
     {
         MainLoop.instance.StartCoroutine(WaitLocalizationInitialized());
+        Pause = true;
     }
 
     private IEnumerator WaitLocalizationInitialized()

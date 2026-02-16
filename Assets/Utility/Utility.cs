@@ -120,8 +120,26 @@ public static class Utility
 	{
 		if (tex2D != null)
 		{
+			int width = tex2D.width;
+			int height = tex2D.height;
+			RectTransform targetTransform = target.transform as RectTransform;
+			if (targetTransform.rect.width != 0 && targetTransform.rect.width < width)
+            {
+				width = (int)targetTransform.rect.width;
+				height = width * tex2D.height / tex2D.width;
+			}
+			if (targetTransform.rect.height != 0 && targetTransform.rect.height < height)
+			{
+				height = (int)targetTransform.rect.height;
+				width = height * tex2D.width / tex2D.height;
+			}
+
 			GameObjectManager.setGameObjectState(target.gameObject, true);
 			target.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+			// On ajoute un LayoutElement que s'il n'y en a pas, sinon on laisse la config telle qu'elle a été configurée dans l'éditeur
+			LayoutElement layout = target.GetComponent<LayoutElement>();
+			if (layout == null)
+				GameObjectManager.addComponent<LayoutElement>(target.gameObject, new { preferredWidth = width, preferredHeight = height});
 			target.preserveAspect = true;
 		}
 		else

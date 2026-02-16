@@ -13,6 +13,7 @@ public class OpenFileSystem : FSystem {
 
 	public GameObject loadingLevelContent;
 	public LevelData levelData;
+	public TMP_InputField savingInputField;
 	private GameObject selectedLevelGO;
 
 	private GameData gameData;
@@ -34,33 +35,45 @@ public class OpenFileSystem : FSystem {
 		}
 
 		f_newLoading.addEntryCallback(levelLoaded);
+
+		Pause = true;
 	}
 
-	// see Open menu and filter field in loading panel
+	// see Load menu in MenuPanel and filter field in loading panel
 	public void refreshListOfLevels(string filter)
 	{
+		// sync filter with the content of the input field (in the case of input field is not empty and loading panel is called from the menu)
+		TMP_InputField input = loadingLevelContent.transform.parent.parent.parent.GetComponentInChildren<TMP_InputField>();
+		if (input.text != filter)
+		{
+			input.text = filter;
+			return;
+		}
+
 		// remove all old buttons
-		for(int i = loadingLevelContent.transform.childCount - 1; i >= 0; i--)
+		for (int i = loadingLevelContent.transform.childCount - 1; i >= 0; i--)
         {
 			Transform child = loadingLevelContent.transform.GetChild(i);
 			GameObjectManager.unbind(child.gameObject);
-			child.SetParent(null);
+			child.SetParent(null); // because destroying is not immediate
 			GameObject.Destroy(child.gameObject);
 		}
 
 		//create levels buttons
 		List<string> buttonsName = new List<string>();
 		foreach (string key in gameData.levels.Keys)
-			if (key != UtilityLobby.testFromLevelEditor && Utility.extractFileName(key).Contains(filter)) // // we don't create a button for tested level
+			if (key != UtilityLobby.testFromLevelEditor && Utility.extractFileName(key).ToLower().Contains(filter.ToLower())) // // we don't create a button for tested level
 				buttonsName.Add(Utility.extractFileName(key));
 		buttonsName.Sort();
 		foreach (string key in buttonsName)
 		{
 			GameObject levelItem = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/LevelEditor/LevelAvailable") as GameObject, loadingLevelContent.transform);
-			levelItem.GetComponent<TextMeshProUGUI>().text = key;
+			levelItem.GetComponentInChildren<TextMeshProUGUI>().text = key;
 			GameObjectManager.bind(levelItem);
 		}
 		selectedLevelGO = null;
+
+		UtilityEditor.buildLoadingPanelNavigation(loadingLevelContent.transform.parent.parent.parent);
 	}
 
 	public void onLevelSelected(GameObject go)
@@ -81,6 +94,7 @@ public class OpenFileSystem : FSystem {
 		if (selectedLevelGO != null)
         {
 			levelData.levelName = selectedLevelGO.GetComponentInChildren<TMP_Text>().text;
+			savingInputField.text = levelData.levelName;
 			if (gameData.levels.ContainsKey(new Uri(Application.streamingAssetsPath + "/" + selectedLevelGO.GetComponentInChildren<TMP_Text>().text).AbsoluteUri))
 				levelData.filePath = new Uri(Application.streamingAssetsPath + "/" + levelData.levelName).AbsoluteUri;
 			else if (gameData.levels.ContainsKey(new Uri(Application.persistentDataPath + "/" + selectedLevelGO.GetComponentInChildren<TMP_Text>().text).AbsoluteUri))

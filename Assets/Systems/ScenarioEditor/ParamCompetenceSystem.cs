@@ -9,7 +9,6 @@ using System;
 using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using System.Collections;
-using UnityEngine.Networking;
 using UnityEngine.EventSystems;
 
 public class ParamCompetenceSystem : FSystem
@@ -38,23 +37,18 @@ public class ParamCompetenceSystem : FSystem
 	public GameObject hookedMission; // Un niveau accroché à un scénario
 	public GameObject contentScenario; // Le panneau contenant les niveaux sélectionnés pour le scénario
 	public Button testLevelBt;
-	public Button downloadLevelBt;
 	public Button addToScenario;
 	public GameObject savingPanel;
 	public GameObject editBriefingPanel;
 	public GameObject briefingItemPrefab;
 	public TMP_InputField scenarioAbstract;
 	public TMP_InputField scenarioName;
-	public GameObject scenarioContent;
 	public GameObject loadingScenarioContent;
 	public GameObject mainCanvas;
 	public TMP_InputField levelFilterByName;
 
 	[DllImport("__Internal")]
 	private static extern void Save(string content, string defaultName); // call javascript
-
-	[DllImport("__Internal")]
-	private static extern void DownloadLevel(string uri); // call javascript
 
 	private GameData gameData;
 	private GameObject currentBriefingEdit;
@@ -80,8 +74,10 @@ public class ParamCompetenceSystem : FSystem
 		selectedScenarioGO = null;
 
 		competenciesLoadedAndReady = false;
-		createCompetencies(); // important le système "CompetenciesLoader" doit être positionner AVANT ce système pour que les DropDown utilisé dans cette fonction soient correctement renseignés
+		createCompetencies(); // important le système "ReferentialLoader" doit être positionner AVANT ce système pour que les DropDown utilisé dans cette fonction soient correctement renseignés
 		MainLoop.instance.StartCoroutine(delayshowCompatibleLevels());
+
+		Pause = true;
 	}
 
 	// used in DropdownReferential dropdown 
@@ -148,11 +144,8 @@ public class ParamCompetenceSystem : FSystem
 			competency.GetComponentInChildren<TMP_Text>().text = Utility.extractLocale(comp.id);
 			GameObjectManager.bind(competency);
 		}
-		MainLoop.instance.StartCoroutine(buildCompetenciesHierarchy());
-	}
 
-	private IEnumerator buildCompetenciesHierarchy()
-    {
+		// build Competencies Hierarchy
 		// move sub-competencies
 		Competency[] competencies = ContentCompMenu.transform.GetComponentsInChildren<Competency>(true);
 		foreach (Competency comp in competencies)
@@ -172,10 +165,10 @@ public class ParamCompetenceSystem : FSystem
 					}
 			}
 			comp.gameObject.SetActive(true);
-			yield return null;
 		}
-		refreshLevelInfo();
-		
+
+		MainLoop.instance.StartCoroutine(delayRefreshLevelInfo());
+
 		if (Application.platform == RuntimePlatform.WindowsEditor)
 			DebugLogLevelsCompetencies();
 
@@ -268,7 +261,6 @@ public class ParamCompetenceSystem : FSystem
 				GameObject.Destroy(child.gameObject);
 			}
 			testLevelBt.interactable = false;
-			downloadLevelBt.interactable = false;
 			addToScenario.interactable = false;
 			// Instanciate one button for each level
 			List<GameObject> sortedLevels = new List<GameObject>();
@@ -317,12 +309,21 @@ public class ParamCompetenceSystem : FSystem
 	// See ButtonLoadScenario
 	public void displayLoadingPanel(string filter)
 	{
+		// sync filter with the content of the input field (in the case of input field is not empty and loading panel is called from the menu)
+		TMP_InputField input = mainCanvas.transform.Find("LoadingPanel").GetComponentInChildren<TMP_InputField>();
+		if (input.text != filter) { 
+			input.text = filter;
+			return;
+		}
+
 		selectedScenarioGO = null;
 		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("LoadingPanel").gameObject, true);
 		// remove all old scenario
-		foreach (Transform child in loadingScenarioContent.transform)
+		for (int i = loadingScenarioContent.transform.childCount - 1; i >= 0; i--)
 		{
+			Transform child = loadingScenarioContent.transform.GetChild(i);
 			GameObjectManager.unbind(child.gameObject);
+			child.SetParent(null); // because destroying is not immediate
 			GameObject.Destroy(child.gameObject);
 		}
 
@@ -330,16 +331,18 @@ public class ParamCompetenceSystem : FSystem
 		List<string> sortedScenarios = new List<string>();
 		foreach (string key in gameData.scenarios.Keys)
 		{
-			if (key != UtilityLobby.testFromScenarioEditor && key != UtilityLobby.testFromLevelEditor && key != UtilityLobby.testFromUrl && key != UtilityLobby.editingScenario && key.Contains(filter)) // we don't add new line for tested levels
+			if (key != UtilityLobby.testFromScenarioEditor && key != UtilityLobby.testFromLevelEditor && key != UtilityLobby.testFromUrl && key != UtilityLobby.editingScenario && key.ToLower().Contains(filter.ToLower())) // we don't add new line for tested levels
 				sortedScenarios.Add(key);
 		}
 		sortedScenarios.Sort();
 		foreach (string key in sortedScenarios)
 		{
 			GameObject scenarioItem = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/ScenarioEditor/ScenarioAvailable") as GameObject, loadingScenarioContent.transform);
-			scenarioItem.GetComponent<TextMeshProUGUI>().text = key;
+			scenarioItem.GetComponentInChildren<TextMeshProUGUI>(true).text = key;
 			GameObjectManager.bind(scenarioItem);
 		}
+
+		UtilityEditor.buildLoadingPanelNavigation(loadingScenarioContent.transform.parent.parent.parent);
 	}
 
 	// see LoadButton in LoadingPanel in TitleScreen scene
@@ -353,8 +356,10 @@ public class ParamCompetenceSystem : FSystem
     {
 		if (gameData.scenarios.ContainsKey(scenarioKey))
 		{
+			savingPanel.GetComponentInChildren<TMP_InputField>(true).text = scenarioKey;
+
 			//remove all old scenario
-			foreach (Transform child in scenarioContent.transform)
+			foreach (Transform child in contentScenario.transform)
 			{
 				GameObjectManager.unbind(child.gameObject);
 				GameObject.Destroy(child.gameObject);
@@ -365,7 +370,7 @@ public class ParamCompetenceSystem : FSystem
 
 			foreach (DataLevel levelPath in gameData.scenarios[scenarioKey].levels)
 			{
-				GameObject newLevel = GameObject.Instantiate(hookedMission, scenarioContent.transform);
+				GameObject newLevel = GameObject.Instantiate(hookedMission, contentScenario.transform);
 				newLevel.GetComponentInChildren<TMP_Text>().text = Utility.extractFileName(levelPath.src);
 				newLevel.GetComponent<DataLevelBehaviour>().data = levelPath.clone();
 				GameObjectManager.bind(newLevel);
@@ -378,8 +383,9 @@ public class ParamCompetenceSystem : FSystem
 		selectedScenarioGO = go;
 	}
 
-	private void refreshLevelInfo()
+	private IEnumerator delayRefreshLevelInfo()
     {
+		yield return null;
 		string path = contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text;
 		if (path != "")
 		{
@@ -469,7 +475,6 @@ public class ParamCompetenceSystem : FSystem
 			else
 				contentInfo.text += contentLoc.localization[6];
 			testLevelBt.interactable = true;
-			downloadLevelBt.interactable = true;
 			addToScenario.interactable = true;
 		}
         else
@@ -639,8 +644,9 @@ public class ParamCompetenceSystem : FSystem
 	public void displaySavingPanel(TMP_InputField scenarName)
 	{
 		GameObjectManager.setGameObjectState(savingPanel, true);
-		// init savingPanel to the name of scenario
-		savingPanel.GetComponentInChildren<TMP_InputField>(true).text = scenarName.text;
+		// init savingPanel to the name of scenario if no name previously defined
+		if (savingPanel.GetComponentInChildren<TMP_InputField>(true).text == "")
+			savingPanel.GetComponentInChildren<TMP_InputField>(true).text = scenarName.text;
 	}
 
 	public void showBriefingOverride(DataLevelBehaviour dataLevel, GameObject src)
@@ -655,7 +661,6 @@ public class ParamCompetenceSystem : FSystem
 			overridedBriefing = dataLevel;
 			GameObjectManager.setGameObjectState(compatibleLevelsPanel, false);
 			GameObjectManager.setGameObjectState(editBriefingPanel, true);
-			EventSystem.current.SetSelectedGameObject(editBriefingPanel.transform.Find("CloseButton").gameObject);
 			// remove all old briefing items
 			Transform viewportContent = editBriefingPanel.transform.Find("Scroll View").GetChild(0).GetChild(0);
 			while (viewportContent.childCount > 3) {
@@ -804,11 +809,6 @@ public class ParamCompetenceSystem : FSystem
 		testLevel(dl, UtilityLobby.testFromUrl);
 	}
 
-	public void downloadLevel(DataLevelBehaviour dlb)
-	{
-		DownloadLevel(dlb.data.src);
-	}
-
 	private void DebugLogLevelsCompetencies()
     {
 		// select all levels
@@ -836,4 +836,10 @@ public class ParamCompetenceSystem : FSystem
 		}
 		File.WriteAllText("exportAssociationMissions"+ f_compSelector.First().GetComponent<TMP_Dropdown>().options[f_compSelector.First().GetComponent<TMP_Dropdown>().value].text+"Ref.txt", csvExport);
 	}
+
+	// Used in briefing input fields (see BriefingItem prefab -> TextPanel -> Text_input) to force sync its height with its content
+	public void markLayoutForRebuild(RectTransform transform)
+    {
+		LayoutRebuilder.MarkLayoutForRebuild(transform);
+    }
 }

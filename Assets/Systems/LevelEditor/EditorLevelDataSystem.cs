@@ -45,12 +45,14 @@ public class EditorLevelDataSystem : FSystem {
 				gameData.actionBlockLimit[block.GetComponent<EditorBlockData>().name] = -1;
 		}
 
-		resetMetaData();
+		resetMetaData(true);
 
 		f_newLoading.addEntryCallback(loadLevel);
+
+		Pause = true;
 	}
 
-	public void resetMetaData()
+	public void resetMetaData(bool unlockAll)
 	{
 		executionLimitContainer.GetComponentInChildren<Toggle>(true).isOn = false;
 		dragAndDropToggle.isOn = true;
@@ -65,13 +67,21 @@ public class EditorLevelDataSystem : FSystem {
 
 		foreach (GameObject go in f_editorblocks)
         {
-			go.transform.Find("HideToggle").GetComponent<Toggle>().isOn = true;
+			if (unlockAll)
+			{
+				go.transform.Find("HideToggle").GetComponent<Toggle>().isOn = false;
+				go.transform.Find("LimitToggle").GetComponent<Toggle>().isOn = true;
+			}
+			else
+            {
+				go.transform.Find("HideToggle").GetComponent<Toggle>().isOn = true;
+			}
 		}
 	}
 
 	private void loadLevel(GameObject go)
 	{
-		resetMetaData();
+		resetMetaData(false);
 
 		string levelKey = go.GetComponent<NewLevelToLoad>().levelKey;
 		XmlDocument doc = gameData.levels[levelKey].OwnerDocument;
@@ -213,12 +223,12 @@ public class EditorLevelDataSystem : FSystem {
 		if (newState)
 		{
 			inputField.text = "0";
-			source.GetComponent<Image>().color = hideColor;
+			source.transform.Find("Overlay").GetComponent<Image>().color = hideColor;
 		}
 		else
 		{
 			inputField.text = "1";
-			source.GetComponent<Image>().color = limitedColor;
+			source.transform.Find("Overlay").GetComponent<Image>().color = limitedColor;
 		}
 	}
 
@@ -230,12 +240,12 @@ public class EditorLevelDataSystem : FSystem {
 		if (newState)
 		{
 			inputField.text = "-1";
-			source.GetComponent<Image>().color = unlimitedColor;
+			source.transform.Find("Overlay").GetComponent<Image>().color = unlimitedColor;
 		}
 		else
 		{
 			inputField.text = "1";
-			source.GetComponent<Image>().color = limitedColor;
+			source.transform.Find("Overlay").GetComponent<Image>().color = limitedColor;
 		}
 	}
 

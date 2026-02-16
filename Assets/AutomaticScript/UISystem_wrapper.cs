@@ -4,28 +4,24 @@ using FYFY;
 public class UISystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject LevelGO;
-	public UnityEngine.GameObject buttonMenu;
 	public UnityEngine.GameObject buttonExecute;
 	public UnityEngine.GameObject buttonPause;
 	public UnityEngine.GameObject buttonNextStep;
 	public UnityEngine.GameObject buttonContinue;
 	public UnityEngine.GameObject buttonSpeed;
 	public UnityEngine.GameObject buttonStop;
-	public UnityEngine.GameObject menuEchap;
 	public UnityEngine.GameObject canvas;
 	public UnityEngine.GameObject libraryPanel;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "LevelGO", LevelGO);
-		MainLoop.initAppropriateSystemField (system, "buttonMenu", buttonMenu);
 		MainLoop.initAppropriateSystemField (system, "buttonExecute", buttonExecute);
 		MainLoop.initAppropriateSystemField (system, "buttonPause", buttonPause);
 		MainLoop.initAppropriateSystemField (system, "buttonNextStep", buttonNextStep);
 		MainLoop.initAppropriateSystemField (system, "buttonContinue", buttonContinue);
 		MainLoop.initAppropriateSystemField (system, "buttonSpeed", buttonSpeed);
 		MainLoop.initAppropriateSystemField (system, "buttonStop", buttonStop);
-		MainLoop.initAppropriateSystemField (system, "menuEchap", menuEchap);
 		MainLoop.initAppropriateSystemField (system, "canvas", canvas);
 		MainLoop.initAppropriateSystemField (system, "libraryPanel", libraryPanel);
 	}
@@ -58,11 +54,6 @@ public class UISystem_wrapper : BaseWrapper
 	public void retry()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "retry", null);
-	}
-
-	public void setActiveEscapeMenu()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "setActiveEscapeMenu", null);
 	}
 
 }

@@ -105,6 +105,8 @@ public class SettingsManager : FSystem
 		f_settingsOpened.addEntryCallback(delegate (GameObject unused) { loadPlayerPrefs(); });
 
 		MainLoop.instance.StartCoroutine(waitLocalizationLoaded());
+
+		Pause = true;
 	}
 	private IEnumerator waitLocalizationLoaded()
 	{

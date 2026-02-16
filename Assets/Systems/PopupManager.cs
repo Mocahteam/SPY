@@ -69,12 +69,6 @@ public class PopupManager : FSystem {
 		MainLoop.instance.StartCoroutine(forceScrollBarUp());
 	}
 
-	public void turnOnCanvas()
-	{
-		foreach (GameObject canvas in f_canvasGroup)
-			canvas.GetComponent<CanvasGroup>().interactable = true;
-	}
-
 	private void updatePopupSize()
 	{
 		Rect currentWindowRect = (panelInfoUser.transform as RectTransform).rect;

@@ -277,7 +277,7 @@ public class EditableContainerSystem : FSystem
 		yield return null;
 		yield return null;
 		RectTransform editableContainers = (RectTransform)EditableCanvas.transform.Find("EditableContainers");
-		LayoutRebuilder.ForceRebuildLayoutImmediate(editableContainers);
+		LayoutRebuilder.MarkLayoutForRebuild(editableContainers);
 		// compute new size including scroll bar
 		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(maxWidth, editableContainers.rect.width + (editableContainers.GetComponentInParent<ScrollRect>().verticalScrollbar.transform as RectTransform).rect.width));
 
@@ -329,8 +329,6 @@ public class EditableContainerSystem : FSystem
 
 		deleteContent(scriptContainerPointer);
 		MainLoop.instance.StartCoroutine(realDelete(container));
-
-		EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
 	}
 
 	private void deleteContent (GameObject container)

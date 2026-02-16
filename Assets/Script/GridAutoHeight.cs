@@ -49,9 +49,7 @@ public class GridAutoHeight : MonoBehaviour
         if (layout.preferredHeight != height)
         {
             layout.preferredHeight = height;
-            LayoutRebuilder.MarkLayoutForRebuild(
-                (RectTransform)transform
-            );
+            LayoutRebuilder.MarkLayoutForRebuild((RectTransform)transform);
         }
     }
 }

@@ -10,9 +10,4 @@ public class PopupManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "panelInfoUser", panelInfoUser);
 	}
 
-	public void turnOnCanvas()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "turnOnCanvas", null);
-	}
-
 }

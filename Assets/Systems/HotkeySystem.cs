@@ -15,6 +15,7 @@ public class HotkeySystem : FSystem
 	private Family f_programmingArea = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)));
 
 	public Button mainMenu;
+	public Button closeMainMenu;
 	public Button buttonExecute;
 	public Button buttonPause;
 	public Button buttonNextStep;
@@ -123,8 +124,10 @@ public class HotkeySystem : FSystem
 		{
 			//Active/désactive le menu echap si on appuit sur echap et qu'on n'est pas en train de drag un element et qu'il ne faut pas l'ignorer
 			// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
-			if (mainMenu != null && cancel_act.WasPressedThisFrame() && ! exitWebGL_act.WasPressedThisFrame() && f_dragging.Count == 0 && f_dropZoneEnabled.Count == 0 && !replacementSlotEnabled() && !cancelNextEscape)
+			if (mainMenu != null && mainMenu.gameObject.activeInHierarchy && mainMenu.IsInteractable() && cancel_act.WasPressedThisFrame() && !exitWebGL_act.WasPressedThisFrame() && f_dragging.Count == 0 && f_dropZoneEnabled.Count == 0 && !replacementSlotEnabled() && !cancelNextEscape)
 				mainMenu.onClick.Invoke();
+			else if (closeMainMenu != null && closeMainMenu.gameObject.activeInHierarchy && closeMainMenu.IsInteractable() && cancel_act.WasPressedThisFrame() && !exitWebGL_act.WasPressedThisFrame() && f_dragging.Count == 0 && f_dropZoneEnabled.Count == 0 && !replacementSlotEnabled() && !cancelNextEscape)
+				closeMainMenu.onClick.Invoke();
 			// Autoriser le prochain Echap
 			cancelNextEscape = false;
 
@@ -244,6 +247,7 @@ public class HotkeySystem : FSystem
 			if (inventory != null && inventory.activeInHierarchy && focusOnInventory_act.WasPressedThisFrame())
 				eventSystem.SetSelectedGameObject(inventory);
 		}
+		/* Gestion du copier-coller dans les InputField (visiblement les versions des navigateurs au moment de ce test et la version d'Unity 6.3 rendent le copier_coller fonctionnel en natif) 
 		else if (eventSystem.currentSelectedGameObject != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused && Application.platform == RuntimePlatform.WebGLPlayer)
 		{
 			TMP_InputField focused_inputField = eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>();
@@ -264,8 +268,7 @@ public class HotkeySystem : FSystem
 			{
 				TryToPaste();
 			}
-
-		}
+		}*/
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système

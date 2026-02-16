@@ -14,14 +14,12 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject hookedMission;
 	public UnityEngine.GameObject contentScenario;
 	public UnityEngine.UI.Button testLevelBt;
-	public UnityEngine.UI.Button downloadLevelBt;
 	public UnityEngine.UI.Button addToScenario;
 	public UnityEngine.GameObject savingPanel;
 	public UnityEngine.GameObject editBriefingPanel;
 	public UnityEngine.GameObject briefingItemPrefab;
 	public TMPro.TMP_InputField scenarioAbstract;
 	public TMPro.TMP_InputField scenarioName;
-	public UnityEngine.GameObject scenarioContent;
 	public UnityEngine.GameObject loadingScenarioContent;
 	public UnityEngine.GameObject mainCanvas;
 	public TMPro.TMP_InputField levelFilterByName;
@@ -39,14 +37,12 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "hookedMission", hookedMission);
 		MainLoop.initAppropriateSystemField (system, "contentScenario", contentScenario);
 		MainLoop.initAppropriateSystemField (system, "testLevelBt", testLevelBt);
-		MainLoop.initAppropriateSystemField (system, "downloadLevelBt", downloadLevelBt);
 		MainLoop.initAppropriateSystemField (system, "addToScenario", addToScenario);
 		MainLoop.initAppropriateSystemField (system, "savingPanel", savingPanel);
 		MainLoop.initAppropriateSystemField (system, "editBriefingPanel", editBriefingPanel);
 		MainLoop.initAppropriateSystemField (system, "briefingItemPrefab", briefingItemPrefab);
 		MainLoop.initAppropriateSystemField (system, "scenarioAbstract", scenarioAbstract);
 		MainLoop.initAppropriateSystemField (system, "scenarioName", scenarioName);
-		MainLoop.initAppropriateSystemField (system, "scenarioContent", scenarioContent);
 		MainLoop.initAppropriateSystemField (system, "loadingScenarioContent", loadingScenarioContent);
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
 		MainLoop.initAppropriateSystemField (system, "levelFilterByName", levelFilterByName);
@@ -127,9 +123,9 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "testLevel", dlb);
 	}
 
-	public void downloadLevel(DataLevelBehaviour dlb)
+	public void markLayoutForRebuild(UnityEngine.RectTransform transform)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "downloadLevel", dlb);
+		MainLoop.callAppropriateSystemMethod (system, "markLayoutForRebuild", transform);
 	}
 
 }
