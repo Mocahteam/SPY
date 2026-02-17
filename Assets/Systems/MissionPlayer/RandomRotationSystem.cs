@@ -19,6 +19,11 @@ public class RandomRotationSystem : FSystem {
             rr.speed = Random.Range(0.02f, 0.15f);
             rr.axes = new Vector3(Random.value, Random.value, Random.value);
         }
+        if (f_rotationGOs.First() != null)
+        {
+            Transform decoration = f_rotationGOs.First().transform.parent;
+            decoration.Rotate(Random.Range(0, 360), 0, 0);
+        }
     }
 
     // Use to process your families.
@@ -29,5 +34,11 @@ public class RandomRotationSystem : FSystem {
             RandomRotation rr = go.GetComponent<RandomRotation>();
             go.transform.Rotate(rr.axes.x * rr.speed, rr.axes.y * rr.speed, rr.axes.z * rr.speed);
         }
+        if (f_rotationGOs.First() != null)
+        {
+            Transform decoration = f_rotationGOs.First().transform.parent;
+            decoration.Rotate(Time.deltaTime * 2, 0, 0);
+        }
+
     }
 }

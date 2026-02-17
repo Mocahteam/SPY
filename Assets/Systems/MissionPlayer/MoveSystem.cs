@@ -76,9 +76,9 @@ public class MoveSystem : FSystem {
 
 	private int verticalStrength(Position pos)
     {
-		if (pos.transform.localPosition.x > pos.y * 3)
+		if (pos.transform.localPosition.x - (pos.y * 3) > 0.01f)
 			return 1;
-		else if (pos.transform.localPosition.x < pos.y * 3)
+		else if (pos.transform.localPosition.x - (pos.y * 3) < -0.01f)
 			return -1;
 		else
 			return 0;
@@ -86,9 +86,9 @@ public class MoveSystem : FSystem {
 
 	private int horizontalStrength(Position pos)
 	{
-		if (pos.transform.localPosition.z > pos.x * 3)
+		if (pos.transform.localPosition.z - (pos.x * 3) > 0.01f)
 			return 1;
-		else if (pos.transform.localPosition.z < pos.x * 3)
+		else if (pos.transform.localPosition.z - (pos.x * 3) < -0.01f)
 			return -1;
 		else
 			return 0;
@@ -158,8 +158,11 @@ public class MoveSystem : FSystem {
 				movingCpt++;
 			}
 			else
+			{
+				go.transform.rotation = target;
 				if (go.GetComponent<Animator>() && go.CompareTag("Player"))
 					go.GetComponent<Animator>().SetFloat("Rotate", -1f);
+			}
 		}
 		if (movingCpt == 0)
 			Pause = true;
@@ -182,6 +185,7 @@ public class MoveSystem : FSystem {
 		yield return null;
 		yield return null;
 		yield return null;
+		Debug.Log("Stop animations");
 		anim.SetFloat("Walk", -1f);
 		anim.SetFloat("Run", -1f);
 	}

@@ -83,6 +83,7 @@ public class SaveFileSystem : FSystem
 	{
 		if (levelData.levelName != null || levelData.levelName != "")
 			saveName.text = Path.GetFileNameWithoutExtension(levelData.levelName);
+		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
 	}
 
 	// see ValideMessageButton
