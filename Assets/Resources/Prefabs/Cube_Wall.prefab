@@ -29,8 +29,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6061857430448218173}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.50000006, y: 0.50000006, z: -0.49999997, w: -0.49999994}
-  m_LocalPosition: {x: 2.53, y: 11.83, z: 9.58}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 150, y: 150, z: 150}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -85,8 +85,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 374d7062a023ad348b0f91a8c2d53a07, type: 2}
   - {fileID: 2100000, guid: de7e32ef6c2e84928aee67cf65292972, type: 2}
+  - {fileID: 2100000, guid: 374d7062a023ad348b0f91a8c2d53a07, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -121,9 +121,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 939f185e71e58074b845f685049068ab, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  x: 0
-  y: 0
+  m_EditorClassIdentifier: Assembly-CSharp::Position
+  startX: -1
+  startY: -1
+  x: -1
+  y: -1
   targetX: -1
   targetY: -1
 --- !u!65 &469241069185690479

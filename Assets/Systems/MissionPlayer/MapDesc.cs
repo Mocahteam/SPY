@@ -76,8 +76,8 @@ public class MapDesc : FSystem
         staticMap = new Dictionary<int, Dictionary<int, string>>();
         foreach (GameObject ground in f_grounds)
         {
-            int x = (int)(ground.transform.localPosition.z / 3); // C'est bien le z du transform dans le x de la map du jeu
-            int y = (int)(ground.transform.localPosition.x / 3); // et le x du transform dans le y de la map du jeu
+            int x = (int)(ground.transform.localPosition.x / 3);
+            int y = -(int)(ground.transform.localPosition.z / 3); // c'est bien l'opposé du z à mettre dans le y
             if (!staticMap.ContainsKey(x))
                 staticMap[x] = new Dictionary<int, string>();
             staticMap[x][y] = gameDataLoc.localization[35];
@@ -85,16 +85,16 @@ public class MapDesc : FSystem
         foreach (GameObject wall in f_walls)
         {
             Position pos = wall.GetComponent<Position>();
-            if (!staticMap.ContainsKey(Mathf.RoundToInt(pos.x)))
-                staticMap[Mathf.RoundToInt(pos.x)] = new Dictionary<int, string>();
-            staticMap[Mathf.RoundToInt(pos.x)][Mathf.RoundToInt(pos.y)] = gameDataLoc.localization[36];
+            if (!staticMap.ContainsKey(pos.x))
+                staticMap[pos.x] = new Dictionary<int, string>();
+            staticMap[pos.x][pos.y] = gameDataLoc.localization[36];
         }
         foreach (GameObject furniture in f_furnitures)
         {
             Position pos = furniture.GetComponent<Position>();
-            if (!staticMap.ContainsKey(Mathf.RoundToInt(pos.x)))
-                staticMap[Mathf.RoundToInt(pos.x)] = new Dictionary<int, string>();
-            staticMap[Mathf.RoundToInt(pos.x)][Mathf.RoundToInt(pos.y)] = gameDataLoc.localization[48];
+            if (!staticMap.ContainsKey(pos.x))
+                staticMap[pos.x] = new Dictionary<int, string>();
+            staticMap[pos.x][pos.y] = gameDataLoc.localization[48];
         }
         if (!gameData.hideExit && !gameData.fogEnabled)
         {
@@ -102,7 +102,7 @@ public class MapDesc : FSystem
             {
                 Position pos = teleport.GetComponent<Position>();
                 // On ignore les "Spawn" pas utile pour la description de la carte, juste de la déco
-                staticMap[Mathf.RoundToInt(pos.x)][Mathf.RoundToInt(pos.y)] = teleport.CompareTag("Exit") ? gameDataLoc.localization[37] : staticMap[Mathf.RoundToInt(pos.x)][Mathf.RoundToInt(pos.y)];
+                staticMap[pos.x][pos.y] = teleport.CompareTag("Exit") ? gameDataLoc.localization[37] : staticMap[pos.x][pos.y];
             }
         }
 
@@ -127,13 +127,13 @@ public class MapDesc : FSystem
             foreach (GameObject coin in f_coins)
             {
                 Position pos = coin.GetComponent<Position>();
-                exportMap[Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y)] += "+" + gameDataLoc.localization[38];
+                exportMap[pos.x, pos.y] += "+" + gameDataLoc.localization[38];
             }
 
             foreach (GameObject player in f_players)
             {
                 Position pos = player.GetComponent<Position>();
-                exportMap[Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y)] += "+(" + gameDataLoc.localization[39] + ": " + player.GetComponent<AgentEdit>().associatedScriptName + " " + (player.GetComponent<ScriptRef>().isBroken ? gameDataLoc.localization[6] : player.GetComponent<Direction>().direction) + ")";
+                exportMap[pos.x, pos.y] += "+(" + gameDataLoc.localization[39] + ": " + player.GetComponent<AgentEdit>().associatedScriptName + " " + (player.GetComponent<ScriptRef>().isBroken ? gameDataLoc.localization[6] : player.GetComponent<Direction>().direction) + ")";
             }
 
             foreach (GameObject drone in f_drone)
@@ -142,28 +142,28 @@ public class MapDesc : FSystem
                 // récupération du nom du drone
                 ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
                 string droneName = scriptRef.executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().text;
-                exportMap[Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y)] += "+(" + gameDataLoc.localization[40] + ": " + droneName + " " + (scriptRef.isBroken ? gameDataLoc.localization[6] : drone.GetComponent<Direction>().direction) + ")";
+                exportMap[pos.x, pos.y] += "+(" + gameDataLoc.localization[40] + ": " + droneName + " " + (scriptRef.isBroken ? gameDataLoc.localization[6] : drone.GetComponent<Direction>().direction) + ")";
             }
 
             foreach (GameObject redArea in f_redDetector)
             {
                 Position pos = redArea.GetComponent<Position>();
                 // Ajouter l'observation si ce n'est pas déjà présent sur cette case
-                if (pos.x != -1 && pos.y != -1 && !exportMap[Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y)].Contains("+" + gameDataLoc.localization[41]))
-                    exportMap[Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y)] += "+" + gameDataLoc.localization[41];
+                if (pos.x != -1 && pos.y != -1 && !exportMap[pos.x, pos.y].Contains("+" + gameDataLoc.localization[41]))
+                    exportMap[pos.x, pos.y] += "+" + gameDataLoc.localization[41];
             }
 
             foreach (GameObject door in f_doors)
             {
                 Position pos = door.GetComponent<Position>();
                 ActivationSlot act = door.GetComponent<ActivationSlot>();
-                exportMap[Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y)] += "+(" + gameDataLoc.localization[42] + act.slotID + " " + (act.state ? gameDataLoc.localization[44] : gameDataLoc.localization[43]) + ")";
+                exportMap[pos.x, pos.y] += "+(" + gameDataLoc.localization[42] + act.slotID + " " + (act.state ? gameDataLoc.localization[44] : gameDataLoc.localization[43]) + ")";
             }
 
             foreach (GameObject console in f_consoles)
             {
                 Position pos = console.GetComponent<Position>();
-                exportMap[Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y)] += "+(" + gameDataLoc.localization[45] + " " + String.Join(",", console.GetComponent<Activable>().slotID) + ")";
+                exportMap[pos.x, pos.y] += "+(" + gameDataLoc.localization[45] + " " + String.Join(",", console.GetComponent<Activable>().slotID) + ")";
             }
 
             // Affichage de la taille de la carte

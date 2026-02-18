@@ -101,7 +101,7 @@ public class ObstableTransparencySystem : FSystem
         Material sideFadeMat = new Material(srcMat.sideFade);
 
         // switch on material that support fading
-        wallRenderer.materials = new Material[] { topFadeMat, sideFadeMat };
+        wallRenderer.materials = new Material[] { sideFadeMat, topFadeMat };
 
         // set color not transparent
         for (int i = 0; i < wallRenderer.materials.Length; i++)
@@ -132,7 +132,7 @@ public class ObstableTransparencySystem : FSystem
         Material sideFadeMat = new Material(srcMat.sideFade);
 
         // switch on material that support fading
-        wallRenderer.materials = new Material[] { topFadeMat, sideFadeMat };
+        wallRenderer.materials = new Material[] { sideFadeMat, topFadeMat };
 
         // Be sure to start on transparent color
         for (int i = 0; i < wallRenderer.materials.Length; i++)
@@ -149,6 +149,6 @@ public class ObstableTransparencySystem : FSystem
         }
 
         // Etre sur que le materiau est opaque en affectant la source opaque
-        wallRenderer.materials = new Material[] { srcMat.topBottomOpaque, srcMat.sideOpaque };
+        wallRenderer.materials = new Material[] { srcMat.sideOpaque, srcMat.topBottomOpaque };
     }
 }

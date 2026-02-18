@@ -60,38 +60,18 @@ public class MoveSystem : FSystem {
 		switch (agent.GetComponent<Direction>().direction)
 		{
 			case Direction.Dir.North:
-				agent.transform.rotation = Quaternion.Euler(0, -90, 0);
-				break;
-			case Direction.Dir.East:
 				agent.transform.rotation = Quaternion.Euler(0, 0, 0);
 				break;
-			case Direction.Dir.West:
-				agent.transform.rotation = Quaternion.Euler(0, 180, 0);
-				break;
-			case Direction.Dir.South:
+			case Direction.Dir.East:
 				agent.transform.rotation = Quaternion.Euler(0, 90, 0);
 				break;
+			case Direction.Dir.West:
+				agent.transform.rotation = Quaternion.Euler(0, -90, 0);
+				break;
+			case Direction.Dir.South:
+				agent.transform.rotation = Quaternion.Euler(0, 180, 0);
+				break;
 		}
-	}
-
-	private int verticalStrength(Position pos)
-    {
-		if (pos.transform.localPosition.x - (pos.y * 3) > 0.01f)
-			return 1;
-		else if (pos.transform.localPosition.x - (pos.y * 3) < -0.01f)
-			return -1;
-		else
-			return 0;
-	}
-
-	private int horizontalStrength(Position pos)
-	{
-		if (pos.transform.localPosition.z - (pos.x * 3) > 0.01f)
-			return 1;
-		else if (pos.transform.localPosition.z - (pos.x * 3) < -0.01f)
-			return -1;
-		else
-			return 0;
 	}
 
 	// Use to process your families.
@@ -101,35 +81,43 @@ public class MoveSystem : FSystem {
 		{
 			// Manage position
 			Position pos = go.GetComponent<Position>();
-			if (Mathf.Abs(go.transform.localPosition.z / 3 - go.GetComponent<Position>().x) > 0.01f || Mathf.Abs(go.transform.localPosition.x / 3 - go.GetComponent<Position>().y) > 0.01f)
+			if (pos.targetX != -1 && pos.targetY != -1)
 			{
-				// calcul de la position de départ
-				Vector3 startPosition = new Vector3(3 * (pos.y + verticalStrength(pos)), go.transform.localPosition.y, 3 * (pos.x + horizontalStrength(pos)));
-				go.transform.localPosition = Vector3.MoveTowards(startPosition, new Vector3(pos.y * 3, go.transform.localPosition.y, pos.x * 3), moveSpeed * gameData.gameSpeed_current * Mathf.Min(1f / gameData.gameSpeed_current, Time.time - gameData.startStepTime));
-				if (go.GetComponent<Animator>() && go.CompareTag("Player"))
-                {
-					if (gameData.gameSpeed_current == gameData.gameSpeed_default)
-					{
-						go.GetComponent<Animator>().SetFloat("Walk", 1f);
-						go.GetComponent<Animator>().SetFloat("Run", -1f);
-					}
-					else
-					{
-						go.GetComponent<Animator>().SetFloat("Walk", -1f);
-						go.GetComponent<Animator>().SetFloat("Run", 1f);
-					}
-					go.GetComponent<ScriptRef>().StopAllCoroutines();
-				}
-				movingCpt++;
-			}
-			else
-			{
-				// Position atteinte
-				go.transform.localPosition = new Vector3(pos.y * 3, go.transform.localPosition.y, pos.x * 3);
-				if (go.GetComponent<Animator>() && go.CompareTag("Player"))
+				if (Mathf.Abs(go.transform.localPosition.x / 3 - pos.targetX) > 0.01f || Mathf.Abs(go.transform.localPosition.z / 3 + pos.targetY) > 0.01f)
 				{
-					// On stope l'animation dans une coroutine pour éviter de voir le robot faire une micro pause entre deux steps, ainsi le onProcess stoppera cette coroutine si l'animation doit continuer
-					go.GetComponent<ScriptRef>().StartCoroutine(delayStopAnim(go.GetComponent<Animator>()));
+					// calcul de la position de départ
+					Vector3 startPosition = new Vector3(3 * pos.startX, go.transform.localPosition.y, -3 * pos.startY);
+					Vector3 targetPosition = new Vector3(3 * pos.targetX, go.transform.localPosition.y, -3 * pos.targetY);
+					go.transform.localPosition = Vector3.MoveTowards(startPosition, targetPosition, moveSpeed * gameData.gameSpeed_current * Mathf.Min(1f / gameData.gameSpeed_current, Time.time - gameData.startStepTime));
+					if (go.GetComponent<Animator>() && go.CompareTag("Player"))
+					{
+						if (gameData.gameSpeed_current == gameData.gameSpeed_default)
+						{
+							go.GetComponent<Animator>().SetFloat("Walk", 1f);
+							go.GetComponent<Animator>().SetFloat("Run", -1f);
+						}
+						else
+						{
+							go.GetComponent<Animator>().SetFloat("Walk", -1f);
+							go.GetComponent<Animator>().SetFloat("Run", 1f);
+						}
+						go.GetComponent<ScriptRef>().StopAllCoroutines();
+					}
+					movingCpt++;
+				}
+				else
+				{
+					// Position atteinte
+					go.transform.localPosition = new Vector3(pos.targetX * 3, go.transform.localPosition.y, -pos.targetY * 3);
+					pos.targetX = -1;
+					pos.targetY = -1;
+					pos.startX = -1;
+					pos.startY = -1;
+					if (go.GetComponent<Animator>() && go.CompareTag("Player"))
+					{
+						// On stope l'animation dans une coroutine pour éviter de voir le robot faire une micro pause entre deux steps, ainsi le onProcess stoppera cette coroutine si l'animation doit continuer
+						go.GetComponent<ScriptRef>().StartCoroutine(delayStopAnim(go.GetComponent<Animator>()));
+					}
 				}
 			}
 
@@ -138,16 +126,16 @@ public class MoveSystem : FSystem {
 			switch (go.GetComponent<Direction>().direction)
 			{
 				case Direction.Dir.North:
-					target = Quaternion.Euler(0, -90, 0);
-					break;
-				case Direction.Dir.East:
 					target = Quaternion.Euler(0, 0, 0);
 					break;
+				case Direction.Dir.East:
+					target = Quaternion.Euler(0, 90, 0);
+					break;
 				case Direction.Dir.West:
-					target = Quaternion.Euler(0, 180, 0);
+					target = Quaternion.Euler(0, -90, 0);
 					break;
 				case Direction.Dir.South:
-					target = Quaternion.Euler(0, 90, 0);
+					target = Quaternion.Euler(0, 180, 0);
 					break;
 			}
 			if (target.eulerAngles.y != go.transform.eulerAngles.y)

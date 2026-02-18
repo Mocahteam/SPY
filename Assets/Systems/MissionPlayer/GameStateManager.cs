@@ -106,16 +106,16 @@ public class GameStateManager : FSystem {
             switch (save.rawSave.directions[i]) 
             {
                 case Direction.Dir.North:
-                    go.transform.rotation = Quaternion.Euler(0, -90, 0);
-                    break;
-                case Direction.Dir.East:
                     go.transform.rotation = Quaternion.Euler(0, 0, 0);
                     break;
+                case Direction.Dir.East:
+                    go.transform.rotation = Quaternion.Euler(0, 90, 0);
+                    break;
                 case Direction.Dir.West:
-                    go.transform.rotation = Quaternion.Euler(0, 180, 0);
+                    go.transform.rotation = Quaternion.Euler(0, -90, 0);
                     break;
                 case Direction.Dir.South:
-                    go.transform.rotation = Quaternion.Euler(0, 90, 0);
+                    go.transform.rotation = Quaternion.Euler(0, 180, 0);
                     break;
             }
         }
@@ -124,8 +124,12 @@ public class GameStateManager : FSystem {
             Position pos = f_positions.getAt(i).GetComponent<Position>();
             pos.x = save.rawSave.positions[i].x;
             pos.y = save.rawSave.positions[i].y;
+            pos.startX = -1;
+            pos.startY = -1;
+            pos.targetX = -1;
+            pos.targetY = -1;
             // Téléport object to the right position
-            pos.transform.position = level.transform.position + new Vector3(pos.y * 3, pos.transform.position.y - level.transform.position.y, pos.x * 3);
+            pos.transform.position = level.transform.position + new Vector3(pos.x * 3, pos.transform.position.y - level.transform.position.y, -pos.y * 3);
         }
         for (int i = 0; i < f_doors.Count && i < save.rawSave.doors.Count; i++)
         {

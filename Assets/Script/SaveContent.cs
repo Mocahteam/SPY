@@ -14,8 +14,8 @@ public class SaveContent {
         public int y;
         public RawPosition (Position pos)
         {
-            x = Mathf.RoundToInt(pos.x);
-            y = Mathf.RoundToInt(pos.y);
+            x = pos.x;
+            y = pos.y;
         }
     }
 

@@ -201,7 +201,12 @@ public class HotkeySystem : FSystem
 				if (closeMapDesc != null && closeMapDesc.gameObject.activeInHierarchy)
 					closeMapDesc.onClick.Invoke();
 				else if (showMapDesc != null)
+				{
+					// Si le bouton d'affichage de la map n'est pas visible, on simule l'appel à l'affichage du menu avant d'invoquer l'affichage de la carte qui refermera automatiquement le menu principal, sinon l'affichage de la carte toggle le menu principal est l'affiche 
+					if (mainMenu != null && !showMapDesc.gameObject.activeInHierarchy)
+						mainMenu.onClick.Invoke();
 					showMapDesc.onClick.Invoke();
+				}
 			}
 
 			// Copy code

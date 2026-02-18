@@ -269,9 +269,9 @@ public class CurrentActionManager : FSystem
 			case "WallLeft":
 			case "WallRight":
 				// check only visible walls
-				foreach (GameObject xall in f_walls)
-					if (xall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
-					 xall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && xall.GetComponent<Renderer>() != null && xall.GetComponent<Renderer>().enabled)
+				foreach (GameObject wall in f_walls)
+					if (wall.GetComponent<Position>().x == agent.GetComponent<Position>().x + vec.x &&
+					 wall.GetComponent<Position>().y == agent.GetComponent<Position>().y + vec.y && wall.GetComponent<Renderer>() != null && wall.GetComponent<Renderer>().enabled)
 					{
 						result = true;
 						break;

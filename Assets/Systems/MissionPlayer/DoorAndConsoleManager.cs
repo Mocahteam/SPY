@@ -176,7 +176,7 @@ public class DoorAndConsoleManager : FSystem {
 				int x = 0;
 				while (consolePos.x + x != doorPos.x)
 				{
-					GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, LevelGO.transform.position + new Vector3(consolePos.y * 3, 3, (consolePos.x + x + xStep / 2f) * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
+					GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, LevelGO.transform.position + new Vector3((consolePos.x + x + xStep / 2f) * 3, 3, -consolePos.y * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
 					bool isWallInPos = isWall(consolePos.x + x, consolePos.y);
 					bool isWallInStep = isWall(consolePos.x + x + xStep, consolePos.y);
 
@@ -237,7 +237,7 @@ public class DoorAndConsoleManager : FSystem {
 				int y = 0;
 				while (consolePos.y + y != doorPos.y)
 				{
-					GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, LevelGO.transform.position + new Vector3((consolePos.y + y + yStep / 2f) * 3, 3, (consolePos.x + x) * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
+					GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, LevelGO.transform.position + new Vector3((consolePos.x + x) * 3, 3, -(consolePos.y + y + yStep / 2f) * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
 					bool isWallInPos = isWall(consolePos.x + x, consolePos.y + y);
 					bool isWallInStep = isWall(consolePos.x + x, consolePos.y + y + yStep);
 
@@ -303,7 +303,7 @@ public class DoorAndConsoleManager : FSystem {
 		}
 	}
 
-	private bool isWall(float x, float y)
+	private bool isWall(int x, int y)
     {
 		foreach(GameObject wall in f_wall)
         {

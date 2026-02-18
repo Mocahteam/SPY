@@ -38,9 +38,9 @@ public class CurrentActionExecutor : FSystem {
 					// check if the two robots move on the same position => forbiden
 					predictCollision = (r2Pos.targetX != -1 && r2Pos.targetY != -1 && r1Pos.targetX == r2Pos.targetX && r1Pos.targetY == r2Pos.targetY) ||
 						// one robot doesn't move and the other try to move on its position => forbiden
-						(r2Pos.targetX == -1 && r2Pos.targetY == -1 && r1Pos.targetX == r2Pos.x && r1Pos.targetY == r2Pos.y) ||
+						(r2Pos.targetX == -1 && r2Pos.targetY == -1 && r1Pos.targetX == r2Pos.startX && r1Pos.targetY == r2Pos.startY) ||
 						// the two robot want to exchange their position => forbiden
-						(r1Pos.targetX == r2Pos.x && r1Pos.targetY == r2Pos.y && r1Pos.x == r2Pos.targetX && r1Pos.y == r2Pos.targetY);
+						(r1Pos.targetX == r2Pos.startX && r1Pos.targetY == r2Pos.startY && r1Pos.startX == r2Pos.targetX && r1Pos.startY == r2Pos.targetY);
 					if (predictCollision)
 						break;
 				}
@@ -49,26 +49,25 @@ public class CurrentActionExecutor : FSystem {
 				agentWillCollide.Add(agent);
 		}
 
-		// Reduce move if collision
+		// Reduce move if collision between agents
 		foreach(GameObject agent in agentWillCollide)
         {
 			Position pos = agent.GetComponent<Position>();
-			pos.targetX += pos.x == pos.targetX ? 0 : (pos.x < pos.targetX ? -0.15f : 0.15f);
-			pos.targetY += pos.y == pos.targetY ? 0 : (pos.y < pos.targetY ? -0.15f : 0.15f);
+			pos.targetX += pos.startX == pos.targetX ? 0 : (pos.startX < pos.targetX ? -0.15f : 0.15f);
+			pos.targetY += pos.startY == pos.targetY ? 0 : (pos.startY < pos.targetY ? -0.15f : 0.15f);
 		}
 
-		// Record valid movements
+		// validate new position based on rounding corrected target position
 		foreach (GameObject agent in f_agent)
 		{
 			Position pos = agent.GetComponent<Position>();
 			if (pos.targetX != -1 && pos.targetY != -1)
 			{
-				pos.x = pos.targetX;
-				pos.y = pos.targetY;
-				pos.targetX = -1;
-				pos.targetY = -1;
+				pos.x = Mathf.RoundToInt(pos.targetX);
+				pos.y = Mathf.RoundToInt(pos.targetY);
 			}
 		}
+
 		// maintenant que les positions prennent en compte les futures collisions, lancer les systèmes dépendants
 		GameObjectManager.addComponent<PositionCorrected>(MainLoop.instance.gameObject);
 		Pause = true;
@@ -82,6 +81,13 @@ public class CurrentActionExecutor : FSystem {
 			Pause = false; // activates onProcess to manage future collisions and to count inactions
 
 			CurrentAction ca = currentAction.GetComponent<CurrentAction>();
+
+			// reset data used to move
+			Position pos = ca.agent.GetComponent<Position>();
+			pos.startX = -1;
+			pos.startY = -1;
+			pos.targetX = -1;
+			pos.targetY = -1;
 
 			// process action depending on action type
 			switch (currentAction.GetComponent<BasicAction>().actionType)
@@ -117,26 +123,24 @@ public class CurrentActionExecutor : FSystem {
 
 	private void ApplyForward(GameObject go){
 		Position pos = go.GetComponent<Position>();
+		pos.startX = pos.x;
+		pos.startY = pos.y;
 		switch (go.GetComponent<Direction>().direction){
 			case Direction.Dir.North:
-				pos.targetX = pos.x;
-				pos.targetY = pos.y - 1;
-				pos.targetY += checkObstacle(go, Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y) - 1);
+				pos.targetX = pos.startX;
+				pos.targetY = pos.startY - checkObstacle(go, pos.startX, pos.startY - 1);
 				break;
 			case Direction.Dir.South:
-				pos.targetX = pos.x;
-				pos.targetY = pos.y + 1;
-				pos.targetY -= checkObstacle(go, Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y) + 1);
+				pos.targetX = pos.startX;
+				pos.targetY = pos.startY + checkObstacle(go, pos.startX, pos.startY + 1);
 				break;
 			case Direction.Dir.East:
-				pos.targetX = pos.x + 1;
-				pos.targetY = pos.y;
-				pos.targetX -= checkObstacle(go, Mathf.RoundToInt(pos.x) + 1, Mathf.RoundToInt(pos.y));
+				pos.targetX = pos.startX + checkObstacle(go, pos.startX + 1, pos.startY);
+				pos.targetY = pos.startY;
 				break;
 			case Direction.Dir.West:
-				pos.targetX = pos.x - 1;
-				pos.targetY = pos.y;
-				pos.targetX += checkObstacle(go, Mathf.RoundToInt(pos.x) - 1, Mathf.RoundToInt(pos.y));
+				pos.targetX = pos.startX - checkObstacle(go, pos.startX - 1, pos.startY);
+				pos.targetY = pos.startY;
 				break;
 		}
 	}
@@ -192,23 +196,23 @@ public class CurrentActionExecutor : FSystem {
 		}
 	}
 
-	// Retourne la pénalité de distance à prendre en compte en fonction de la nature de l'obstacle:
-	// No obstacles => 0
-	// Wall => 0.51 (volontairement à 0.51 pour qu'avec l'arondi l'agent soit considéré sur la case avant le déplacement)
-	// Furniture => player:0.2, drone:0
-	// Door closed => 0
-	private float checkObstacle(GameObject agent, int x, int z){
+	// Retourne la distance à parcourir en fonction de la nature de l'obstacle:
+	// No obstacles => 1
+	// Wall => 0.49 (volontairement inférieur à 0.5 pour que l'arrondi nous donne la position de la case de départ)
+	// Furniture => player:0.8, drone:1
+	// Door closed => 1
+	private float checkObstacle(GameObject agent, int simTargetX, int simTargetY){
 		foreach( GameObject obstacle in f_obstacles){
-			if (obstacle.GetComponent<Position>().x == x && obstacle.GetComponent<Position>().y == z) {
+			if (obstacle.GetComponent<Position>().x == simTargetX && obstacle.GetComponent<Position>().y == simTargetY) {
 				if (obstacle.CompareTag("Wall"))
-					return 0.51f;
+					return 0.49f;
 				else if (obstacle.CompareTag("Furniture"))
-					return (agent.CompareTag("Player") ? 0.2f : 0f);
+					return (agent.CompareTag("Player") ? 0.8f : 1f);
 				// si c'est une porte vérifier si elle est ouverte
 				else if (obstacle.CompareTag("Door") && !obstacle.GetComponent<ActivationSlot>().state)
-					return 0f;
+					return 1f;
 			}
 		}
-		return 0f;
+		return 1f;
 	}
 }

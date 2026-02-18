@@ -47,6 +47,7 @@ public class EditableContainerSystem : FSystem
 	public int maxWidth;
 
 	private bool isEditorContext;
+	private bool newScriptContainer = false;
 
 	private GameData gameData;
 
@@ -125,14 +126,14 @@ public class EditableContainerSystem : FSystem
 
 		f_activeScriptContainer.addEntryCallback(delegate (GameObject go)
 		{
-			MainLoop.instance.StartCoroutine(setEditableSize(true));
+			newScriptContainer = true;
 		});
 	}
 
     protected override void onProcess(int familiesUpdateCount)
     {
-        if (f_refreshSize.Count > 0 && f_activeScriptContainer.Count > 0)
-			MainLoop.instance.StartCoroutine(setEditableSize(false));
+        if ((f_refreshSize.Count > 0 && f_activeScriptContainer.Count > 0) || newScriptContainer)
+			MainLoop.instance.StartCoroutine(setEditableSize(newScriptContainer));
 
 		foreach (GameObject go in f_addSpecificContainer)
 			foreach (AddSpecificContainer asc in go.GetComponents<AddSpecificContainer>())
@@ -277,9 +278,9 @@ public class EditableContainerSystem : FSystem
 		yield return null;
 		yield return null;
 		RectTransform editableContainers = (RectTransform)EditableCanvas.transform.Find("EditableContainers");
-		LayoutRebuilder.MarkLayoutForRebuild(editableContainers);
 		// compute new size including scroll bar
-		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(maxWidth, editableContainers.rect.width + (editableContainers.GetComponentInParent<ScrollRect>().verticalScrollbar.transform as RectTransform).rect.width));
+		((RectTransform)EditableCanvas.transform.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(maxWidth, editableContainers.rect.width + (EditableCanvas.GetComponentInParent<ScrollRect>().verticalScrollbar.transform as RectTransform).rect.width));
+		LayoutRebuilder.MarkLayoutForRebuild((RectTransform)EditableCanvas.transform.parent);
 
 		if (autoScroll)
 		{
@@ -288,6 +289,8 @@ public class EditableContainerSystem : FSystem
 			scroll.verticalScrollbar.value = 1;
 			scroll.horizontalScrollbar.value = 1;
 		}
+
+		newScriptContainer = false;
 	}
 
 	// Empty the script window

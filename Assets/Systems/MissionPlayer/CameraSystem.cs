@@ -73,7 +73,7 @@ public class CameraSystem : FSystem {
 		{
 			FocusCamOn newTarget = go.GetComponent<FocusCamOn>();
 			unfocusAgent();
-			targetPos = new Vector3(newTarget.camY * 3, 3.5f, newTarget.camX * 3);
+			targetPos = new Vector3(newTarget.camX * 3, 3.5f, -newTarget.camY * 3);
 			MainLoop.instance.StartCoroutine(travelingOnPos());
 			GameObjectManager.removeComponent(newTarget);
 		});

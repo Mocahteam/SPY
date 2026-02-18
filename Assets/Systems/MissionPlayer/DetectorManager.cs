@@ -68,17 +68,15 @@ public class DetectorManager : FSystem {
         //Generate detection cells
         DetectRange dr = drone.GetComponent<DetectRange>();
         Position drone_pos = drone.GetComponent<Position>();
-        int drone_x = Mathf.RoundToInt(drone_pos.x);
-        int drone_y = Mathf.RoundToInt(drone_pos.y);
         // Si la position que le drone cherche à atteindre est une porte fermée (par exemple) il va se planter dans ce cas on ne cherche même pas à générer les zones de détection
-        if (!drone.GetComponent<ScriptRef>().isBroken && !viewIsLocked(drone_x, drone_y))
+        if (!drone.GetComponent<ScriptRef>().isBroken && !viewIsLocked(drone_pos.x, drone_pos.y))
         {
             // Create detector under drone
             if (dr.selfRange)
             {
-                GameObject newRedArea = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, LevelGO.transform.position + new Vector3(Mathf.RoundToInt(drone_pos.y) * 3, 1.5f, Mathf.RoundToInt(drone_pos.x) * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
-                newRedArea.GetComponent<Position>().x = drone_x;
-                newRedArea.GetComponent<Position>().y = drone_y;
+                GameObject newRedArea = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, LevelGO.transform.position + new Vector3(drone_pos.x * 3, 1.5f, -drone_pos.y * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
+                newRedArea.GetComponent<Position>().x = drone_pos.x;
+                newRedArea.GetComponent<Position>().y = drone_pos.y;
                 newRedArea.GetComponent<Detector>().owner = drone;
                 GameObjectManager.bind(newRedArea);
             }
@@ -122,13 +120,13 @@ public class DetectorManager : FSystem {
         Position drone_pos = drone.GetComponent<Position>();
         for (int i = 0; i < dr.range; i++)
         {
-            int x = Mathf.RoundToInt(drone_pos.x) + i*xStep + 1*xStep;
-            int y = Mathf.RoundToInt(drone_pos.y) + i*yStep + 1*yStep;
+            int x = drone_pos.x + i*xStep + 1*xStep;
+            int y = drone_pos.y + i*yStep + 1*yStep;
             if (viewIsLocked(x, y))
                 break;
             else
             {
-                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, LevelGO.transform.position + new Vector3(y * 3, 1.5f, x * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
+                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, LevelGO.transform.position + new Vector3(x * 3, 1.5f, -y * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
                 obj.GetComponent<Position>().x = x;
                 obj.GetComponent<Position>().y = y;
                 obj.GetComponent<Detector>().owner = drone;
@@ -140,7 +138,7 @@ public class DetectorManager : FSystem {
     private bool viewIsLocked(int x, int y)
     {
         foreach (GameObject blocker in f_viewBlocker)
-            if (Mathf.RoundToInt(blocker.GetComponent<Position>().x) == x && Mathf.RoundToInt(blocker.GetComponent<Position>().y) == y && (blocker.CompareTag("Wall") || (blocker.CompareTag("Door") && !blocker.GetComponent<ActivationSlot>().state)))
+            if (blocker.GetComponent<Position>().x == x && blocker.GetComponent<Position>().y == y && (blocker.CompareTag("Wall") || (blocker.CompareTag("Door") && !blocker.GetComponent<ActivationSlot>().state)))
                 return true;
         return false;
     }
