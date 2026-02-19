@@ -75,7 +75,7 @@ public class SaveFileSystem : FSystem
 		test.levels.Add(dl);
 		gameData.scenarios[UtilityLobby.testFromLevelEditor] = test;
 		gameData.levelToLoad = 0;
-		GameObjectManager.loadScene("MainScene");
+		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
 	}
 
 	// See Button Save

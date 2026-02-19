@@ -102,53 +102,44 @@ public class ScriptGenerator : FSystem {
 	private GameObject readXMLCondition(XmlNode conditionNode)
 	{
 		GameObject obj = null;
-		ReplacementSlot[] slots = null;
+		ReplacementSlot[] slots;
+
+		string libraryId = conditionNode.Name switch
+		{
+			"and" => "AndOperator",
+			"or" => "OrOperator",
+			"not" => "NotOperator",
+			"captor" => conditionNode.Attributes.GetNamedItem("type").Value,
+			_ => "Undef"
+		};
+
+		if (libraryId != "Undef")
+		{
+			obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(libraryId), mainCanvas);
+			// Vérifier que ce node est connu pour la gestion des blocs disponibles, si non le définir
+			if (!gameData.actionBlockLimit.ContainsKey(libraryId))
+				gameData.actionBlockLimit[libraryId] = 0;
+		}
 		switch (conditionNode.Name)
 		{
 			case "and":
-				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("AndOperator"), mainCanvas);
-				slots = obj.GetComponentsInChildren<ReplacementSlot>(true);
-				if (conditionNode.HasChildNodes)
-				{
-					GameObject emptyZone = null;
-					foreach (XmlNode andNode in conditionNode.ChildNodes)
-					{
-						if (andNode.Name == "conditionLeft")
-							// The Left slot is the second ReplacementSlot (first is the And operator)
-							emptyZone = slots[1].gameObject;
-						if (andNode.Name == "conditionRight")
-							// The Right slot is the third ReplacementSlot
-							emptyZone = slots[2].gameObject;
-						if (emptyZone != null && andNode.HasChildNodes)
-						{
-							// Parse xml condition
-							GameObject child = readXMLCondition(andNode.FirstChild);
-							// Add child to empty zone
-							UtilityGame.addItemOnDropArea(child, emptyZone);
-						}
-						emptyZone = null;
-					}
-				}
-				break;
-
 			case "or":
-				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("OrOperator"), mainCanvas);
 				slots = obj.GetComponentsInChildren<ReplacementSlot>(true);
 				if (conditionNode.HasChildNodes)
 				{
 					GameObject emptyZone = null;
-					foreach (XmlNode orNode in conditionNode.ChildNodes)
+					foreach (XmlNode node in conditionNode.ChildNodes)
 					{
-						if (orNode.Name == "conditionLeft")
-							// The Left slot is the second ReplacementSlot (first is the And operator)
+						if (node.Name == "conditionLeft")
+							// The Left slot is the second ReplacementSlot (first is the And/Or operator)
 							emptyZone = slots[1].gameObject;
-						if (orNode.Name == "conditionRight")
+						if (node.Name == "conditionRight")
 							// The Right slot is the third ReplacementSlot
 							emptyZone = slots[2].gameObject;
-						if (emptyZone != null && orNode.HasChildNodes)
+						if (emptyZone != null && node.HasChildNodes)
 						{
 							// Parse xml condition
-							GameObject child = readXMLCondition(orNode.FirstChild);
+							GameObject child = readXMLCondition(node.FirstChild);
 							// Add child to empty zone
 							UtilityGame.addItemOnDropArea(child, emptyZone);
 						}
@@ -158,7 +149,6 @@ public class ScriptGenerator : FSystem {
 				break;
 
 			case "not":
-				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("NotOperator"), mainCanvas);
 				if (conditionNode.HasChildNodes)
 				{
 					GameObject emptyZone = obj.transform.Find("Container").GetChild(1).gameObject;
@@ -166,9 +156,6 @@ public class ScriptGenerator : FSystem {
 					// Add child to empty zone
 					UtilityGame.addItemOnDropArea(child, emptyZone);
 				}
-				break;
-			case "captor":
-				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(conditionNode.Attributes.GetNamedItem("type").Value), mainCanvas);
 				break;
 		}
 
@@ -193,15 +180,36 @@ public class ScriptGenerator : FSystem {
 	// Transforme le noeud d'action XML en gameObject
 	private GameObject readXMLInstruction(XmlNode actionNode)
 	{
+		// Vérifier que ce node est connu pour la gestion des blocs disponibles, si non le définir
+		if (!gameData.actionBlockLimit.ContainsKey(actionNode.Name))
+			gameData.actionBlockLimit[actionNode.Name] = 0;
+
 		GameObject obj = null;
-		Transform conditionContainer = null;
-		Transform firstContainerBloc = null;
-		Transform secondContainerBloc = null;
+		Transform conditionContainer;
+		Transform firstContainerBloc;
+		Transform secondContainerBloc;
+
+		string libraryId = actionNode.Name switch{
+			"if" => "IfThen",
+			"ifElse" => "IfElse",
+			"for" => "ForLoop",
+			"while" => "While",
+			"forever" => "Forever",
+			"action" => actionNode.Attributes.GetNamedItem("type").Value,
+			_ => "Undef"
+		};
+
+		if (libraryId != "Undef")
+		{
+			obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(libraryId), mainCanvas);
+			// Vérifier que ce node est connu pour la gestion des blocs disponibles, si non le définir
+			if (!gameData.actionBlockLimit.ContainsKey(libraryId))
+				gameData.actionBlockLimit[libraryId] = 0;
+		}
+
 		switch (actionNode.Name)
 		{
 			case "if":
-				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("IfThen"), mainCanvas);
-
 				conditionContainer = obj.transform.Find("ConditionContainer");
 				firstContainerBloc = obj.transform.Find("Container");
 
@@ -230,7 +238,6 @@ public class ScriptGenerator : FSystem {
 				break;
 
 			case "ifElse":
-				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("IfElse"), mainCanvas);
 				conditionContainer = obj.transform.Find("ConditionContainer");
 				firstContainerBloc = obj.transform.Find("Container");
 				secondContainerBloc = obj.transform.Find("ElseContainer");
@@ -265,7 +272,6 @@ public class ScriptGenerator : FSystem {
 				break;
 
 			case "for":
-				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("ForLoop"), mainCanvas);
 				firstContainerBloc = obj.transform.Find("Container");
 				BaseElement action = obj.GetComponent<ForControl>();
 
@@ -277,7 +283,6 @@ public class ScriptGenerator : FSystem {
 				break;
 
 			case "while":
-				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("While"), mainCanvas);
 				firstContainerBloc = obj.transform.Find("Container");
 				conditionContainer = obj.transform.Find("ConditionContainer");
 
@@ -306,14 +311,10 @@ public class ScriptGenerator : FSystem {
 				break;
 
 			case "forever":
-				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName("Forever"), mainCanvas);
 				firstContainerBloc = obj.transform.Find("Container");
 
 				if (actionNode.HasChildNodes)
 					processXMLInstruction(firstContainerBloc, actionNode);
-				break;
-			case "action":
-				obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(actionNode.Attributes.GetNamedItem("type").Value), mainCanvas);
 				break;
 		}
 

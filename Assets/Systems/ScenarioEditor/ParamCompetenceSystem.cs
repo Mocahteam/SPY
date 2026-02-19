@@ -798,7 +798,7 @@ public class ParamCompetenceSystem : FSystem
 		test.levels.Add(dl);
 		gameData.scenarios[context] = test;
 		gameData.levelToLoad = 0;
-		GameObjectManager.loadScene("MainScene");
+		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
 	}
 
 	private void testLevelPath(string levelToLoad)

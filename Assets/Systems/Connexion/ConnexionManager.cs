@@ -119,11 +119,11 @@ public class ConnexionManager : FSystem
 		// Disable Loading screen
 		GameObjectManager.setGameObjectState(loadingScreen, false);
 
-		if (Application.isEditor)
+		/*if (Application.isEditor)
 		{
 			SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
 			SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
-		}
+		}*/
 	}
 
 	private void GetScenariosAndLevels()
@@ -384,7 +384,7 @@ public class ConnexionManager : FSystem
     {
 		yield return null;
 		yield return null;
-		GameObjectManager.loadScene("TitleScreen");
+		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });
 	}
 
 	private void askToSendUserData(string schoolClass, bool isTeacher)
@@ -456,7 +456,7 @@ public class ConnexionManager : FSystem
 					userData.isTeacher = tokens[5] == "1";
 					GBL_Interface.playerName = idSession;
 					GBL_Interface.userUUID = idSession;
-					GameObjectManager.loadScene("TitleScreen");
+					GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });
 				}
 			}
 		}

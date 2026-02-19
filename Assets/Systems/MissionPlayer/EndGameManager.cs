@@ -39,7 +39,6 @@ public class EndGameManager : FSystem {
 		// Pour être sûr que le composant de Localization se synchronise bien avec la langue choisie, on active le end panel...
 		if (!endPanel.transform.parent.gameObject.activeInHierarchy)
 		{
-			endPanel.GetComponentInParent<CanvasGroup>().alpha = 0; // pour ne pas voir le flash du endpanel
 			endPanel.transform.parent.gameObject.SetActive(true);
 		}
 		// ... et on le désactive pour laisser le temps pour la synchronisation de la Localization et surtout pour être sûr que le panneau n'est pas visible au joueur
@@ -63,9 +62,6 @@ public class EndGameManager : FSystem {
     {
 		yield return null;
 		GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
-		yield return null;
-		// et on remet le alpha du canvas group à 1 pour bien qu'il soit visible lors de son afficahge à la fin de la mission
-		endPanel.GetComponentInParent<CanvasGroup>().alpha = 1;
 	}
 
 	private IEnumerator delayCheckEnd()

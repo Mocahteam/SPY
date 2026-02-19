@@ -45,7 +45,7 @@ public class UserData : MonoBehaviour {
 				gd.actionsHistory = null;
 				yield return null;
 				yield return null;
-				GameObjectManager.loadScene("ConnexionScene");
+				GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "ConnexionScene" });
 			}
 		}
 	}

@@ -15,7 +15,7 @@ public class InitScenarioEditorManager : FSystem
 	{
 		GameObject gameDataGO = GameObject.Find("GameData");
 		if (gameDataGO == null)
-			GameObjectManager.loadScene("ConnexionScene");
+			GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "ConnexionScene" });
 		else
 		{
 			gameData = gameDataGO.GetComponent<GameData>();
@@ -33,11 +33,12 @@ public class InitScenarioEditorManager : FSystem
 	public void reloadEditor()
     {
 		gameData.selectedScenario = "";
-		GameObjectManager.loadScene("ScenarioEditor");
+		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "ScenarioEditor" });
 	}
 
 	public void returnToLobby()
 	{
-		GameObjectManager.loadScene("TitleScreen");
+		gameData.selectedScenario = "";
+		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });
 	}
 }

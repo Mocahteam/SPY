@@ -52,7 +52,7 @@ public class TitleScreenSystem : FSystem {
 	{
 		GameObject gameDataGO = GameObject.Find("GameData");
 		if (gameDataGO == null)
-			GameObjectManager.loadScene("ConnexionScene");
+			GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "ConnexionScene" });
 		else
 		{
 			SPYVersion.text = "V" + Application.version;
@@ -80,10 +80,16 @@ public class TitleScreenSystem : FSystem {
 			}
 			else if (gameData.selectedScenario != "" && gameData.selectedScenario != UtilityLobby.testFromUrl)
 			{
-				// reload last opened scenario
+				// Show scenario list
+				lastScenarioSelected = gameData.selectedScenario;
 				playButton.GetComponent<Button>().onClick.Invoke();
-				lastMissionSelected = gameData.levelToLoad;
-				showLevels(gameData.selectedScenario);
+				// Si on n'est pas sur la dernière mission, afficher la liste des missions
+				if (gameData.levelToLoad < gameData.scenarios[gameData.selectedScenario].levels.Count - 1)
+				{
+					// reload last opened scenario
+					lastMissionSelected = gameData.levelToLoad;
+					showLevels(gameData.selectedScenario);
+				}
 			}
 
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
@@ -318,7 +324,6 @@ public class TitleScreenSystem : FSystem {
 				tile.navigation = nav;
 			}
 
-
 			if (lastMissionSelected != -1)
 			{
 				// focus on previous selected scenario
@@ -388,6 +393,12 @@ public class TitleScreenSystem : FSystem {
 			GameObjectManager.setGameObjectState(miniView.gameObject, true);
 			// try to load mini view
 			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].src.Replace(".xml", PlayerPrefs.GetInt("localization") == 1 ? "_en.png" : ".png"), miniView));
+		}
+		// Else locked mission
+        else
+		{
+			GameObjectManager.setGameObjectState(gameDescription, false);
+			GameObjectManager.setGameObjectState(miniView.gameObject, false);
 		}
 	}
 
@@ -459,22 +470,22 @@ public class TitleScreenSystem : FSystem {
 		gameData.levelToLoad = missionNumber;
 		userData.currentScenario = scenarioKey;
 		userData.levelToContinue = missionNumber;
-		GameObjectManager.loadScene("MainScene");
+		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
 	}
 
 	public void launchLevelEditor()
-    {
-		GameObjectManager.loadScene("MissionEditor");
+	{
+		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MissionEditor" });
 	}
 
 	public void launchScenarioEditor()
 	{
-		GameObjectManager.loadScene("ScenarioEditor");
+		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "ScenarioEditor" });
 	}
 
 	public void launchConnexionScene()
-    {
-		GameObjectManager.loadScene("ConnexionScene");
+	{
+		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "ConnexionScene" });
 	}
 
 	// See Quitter button in editor

@@ -163,7 +163,7 @@ public class UISystem : FSystem {
 	// Permet de relancer le niveau au début
 	public void restartScene(){
 		initZeroVariableLevel();
-		GameObjectManager.loadScene("MainScene");
+		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
 	}
 
 
@@ -180,7 +180,7 @@ public class UISystem : FSystem {
 				}
 		});
 		gameData.actionsHistory = null;
-		GameObjectManager.loadScene("TitleScreen");
+		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });
 	}
 
 

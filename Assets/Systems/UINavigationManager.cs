@@ -50,8 +50,8 @@ public class UINavigationManager : FSystem
 			eventSystem.SetSelectedGameObject(selected);
 		}
 
-		// On va chercher à donner le focus si on n'a pas d'objet sélectionné ou qu'il n'est pas actif dans la hierarchie ou qu'il n'est pas Selectable ou qu'il est Selectable mais inactif (pour les objet Selectable est inactif on gère quand même le cas des actions inactives dans une zone de programme, dans ce cas on leur laisse le focus dessus, se sont les seuls objets inactif que l'on va autoriser à sélectionner)
-		if (selected == null || !selected.activeInHierarchy || selected.GetComponent<Selectable>() == null || (!selected.GetComponent<Selectable>().IsInteractable() && selected.GetComponentInParent<UIRootContainer>() == null && selected.GetComponentInParent<UIRootExecutor>() == null))
+		// On va chercher à donner le focus si on n'a pas d'objet sélectionné ou qu'il n'est pas actif dans la hierarchie ou qu'il n'est pas Selectable ou qu'il est Selectable mais inactif (pour les objets Selectable et inactifs on gère quand même les cas des actions inactives dans une zone de programme et les tiles de sélection dans TitleScreen, dans ces cas on leur laisse le focus dessus, se sont les seuls objets inactif que l'on va autoriser à sélectionner)
+		if (selected == null || !selected.activeInHierarchy || selected.GetComponent<Selectable>() == null || (!selected.GetComponent<Selectable>().IsInteractable() && selected.GetComponentInParent<UIRootContainer>() == null && selected.GetComponentInParent<UIRootExecutor>() == null && selected.transform.parent.name != "GameList"))
 		{
 			// Try to give focus on one of the priority list
 			bool focused = false;
