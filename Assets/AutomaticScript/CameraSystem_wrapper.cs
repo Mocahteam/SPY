@@ -9,6 +9,9 @@ public class CameraSystem_wrapper : BaseWrapper
 	public System.Single cameraZoomMin;
 	public System.Single cameraZoomMax;
 	public System.Single dragSpeed;
+	public UnityEngine.Localization.Components.LocalizeStringEvent lseTurnLeft;
+	public UnityEngine.Localization.Components.LocalizeStringEvent lseMoveUp;
+	public UnityEngine.Localization.Components.LocalizeStringEvent lseMoveLeft;
 	public DefaultSettingsValues settings;
 	private void Start()
 	{
@@ -19,6 +22,9 @@ public class CameraSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "cameraZoomMin", cameraZoomMin);
 		MainLoop.initAppropriateSystemField (system, "cameraZoomMax", cameraZoomMax);
 		MainLoop.initAppropriateSystemField (system, "dragSpeed", dragSpeed);
+		MainLoop.initAppropriateSystemField (system, "lseTurnLeft", lseTurnLeft);
+		MainLoop.initAppropriateSystemField (system, "lseMoveUp", lseMoveUp);
+		MainLoop.initAppropriateSystemField (system, "lseMoveLeft", lseMoveLeft);
 		MainLoop.initAppropriateSystemField (system, "settings", settings);
 	}
 

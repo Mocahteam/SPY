@@ -43,15 +43,15 @@ public class Dialog
 [Serializable]
 public class DataLevel
 {
-	public string src; // contains full uri including persistentDataPath or streamingAssetsPath OR special tokens to come back to editors (scenario and level)
-	public string name; // The name of the level without extension
+	public string filePath; // contains full uri including persistentDataPath or streamingAssetsPath OR special tokens to come back to editors (scenario and level)
+	public string missionName; // The name of the level without extension
 	public List<Dialog> overridedDialogs = null;
 
 	public DataLevel clone()
 	{
 		DataLevel copy = new DataLevel();
-		copy.src = src;
-		copy.name = name;
+		copy.filePath = filePath;
+		copy.missionName = missionName;
 		if (overridedDialogs != null)
 		{
 			copy.overridedDialogs = new List<Dialog>();

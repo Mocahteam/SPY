@@ -84,6 +84,11 @@ mergeInto(LibraryManager.library, {
 		document.sendToScreenReader(content);
 	},
 
+	IsTTSEnabled: function(){
+		var switchTTS = document.getElementById("switchTTS");
+		return switchTTS.checked;
+	},
+
 	InstructionOnly: function(){
 		var switchTTS = document.getElementById("switchTTS");
 		var tts_briefing = document.getElementById("TTS_briefing");

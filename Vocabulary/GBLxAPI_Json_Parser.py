@@ -12,7 +12,7 @@ from jsonmerge import merge
 
 # This function takes all of the GBLxAPI Vocabulary information in the workbook named workbookName
 # and parses it to json, writing to a file with the name defined in target.
-def GenerateJson(workbookName, target, nameCol, uriCol, descrCol):
+def GenerateJson(workbookName, target):
     wb = xlrd.open_workbook(filename=workbookName)
 
     totalMap = {} # totalMap has keys in [Activity, Grade, Domain, Focus, etc]
@@ -23,18 +23,9 @@ def GenerateJson(workbookName, target, nameCol, uriCol, descrCol):
         
         sectionMap = {} # sectionMap has keys in [Counting, Algebra, Energy, etc]
 
-        # local variables to allow for column overrides
-        nc = nameCol
-        uc = uriCol
-        dc = descrCol
-
-        # override column values for specific manually populated sheets in the default file
-        # for automatically populated sheets, the default file uses columns F, I, and BB. For manual population, it's much easier to use A, B, and C.
-        # This should not affect the values for the user vocab, since this file uses A, B, and C already.
-        if ws.name in ["Verb", "Activity", "Extension", "Grade"]:
-            nc = 0 # A
-            uc = 1 # B
-            dc = 2 # C
+        nc = 0 # A column in Excel file
+        uc = 1 # B column in Excel file
+        dc = 2 # C column in Excel file
 
         for row in range(1, ws.nrows): # indexing from 1 to skip header row
             itemMap = {} # itemMap has keys in [name, description, id]
@@ -65,14 +56,8 @@ def GenerateJson(workbookName, target, nameCol, uriCol, descrCol):
 
 print("Converting your data...")
 
-# Load default vocabulary
-# 5 == row F, 8 == row I, 53 == row BB in Excel
-print("Loading default vocabulary...")
-GenerateJson('GBLxAPI_Vocab_Default.xls', 'GBLxAPI_Vocab_Default.json', 5, 53, 8)
-
 # Load user overrides
-# 0 == row A, 1 == row B, 2 == row C in Excel
-print("Loading user overrides...")
-GenerateJson('GBLxAPI_Vocab_User.xls', 'GBLxAPI_Vocab_User.json', 0, 1, 2)
+print("Loading user data...")
+GenerateJson('GBLxAPI_Vocab_User.xls', 'GBLxAPI_Vocab_User.json')
 
-print("All done! Move the two generated Json files to Resources/Data to use the GBLxAPI vocabulary in your Unity project.")
+print("All done! Move the generated Json file to Resources/Data to use the GBLxAPI vocabulary in your Unity project.")

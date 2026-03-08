@@ -183,11 +183,11 @@ public class DialogSystem : FSystem
 			{
 				if (Application.platform == RuntimePlatform.WebGLPlayer)
 				{
-					Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src);
+					Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath);
 					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + localeDependent, dialog));
 				}
 				else
-					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) + "/Images/" + localeDependent, dialog));
+					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Images/" + localeDependent, dialog));
 			}
 			dialogReturn += (dialogReturn != "" ? "\n" : "") + localeDependent;
 		}
@@ -217,11 +217,11 @@ public class DialogSystem : FSystem
 			{
 				if (Application.platform == RuntimePlatform.WebGLPlayer)
 				{
-					Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src);
+					Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath);
 					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Sounds/" + localeDependent));
 				}
 				else
-					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].src) + "/Sounds/" + localeDependent));
+					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Sounds/" + localeDependent));
 			}
 			dialogReturn += (dialogReturn != "" ? "\n" : "") + localeDependent;
 		}

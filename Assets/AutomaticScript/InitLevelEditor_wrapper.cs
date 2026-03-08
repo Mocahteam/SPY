@@ -9,6 +9,7 @@ public class InitLevelEditor_wrapper : BaseWrapper
 	public UnityEngine.GameObject mapContent;
 	public UnityEngine.GameObject scriptContent;
 	public UnityEngine.GameObject paramContent;
+	public DataLevelBehaviour dataLevel;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -18,6 +19,7 @@ public class InitLevelEditor_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "mapContent", mapContent);
 		MainLoop.initAppropriateSystemField (system, "scriptContent", scriptContent);
 		MainLoop.initAppropriateSystemField (system, "paramContent", paramContent);
+		MainLoop.initAppropriateSystemField (system, "dataLevel", dataLevel);
 	}
 
 	public void reloadEditor()

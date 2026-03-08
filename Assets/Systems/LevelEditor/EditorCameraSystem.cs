@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using FYFY;
 using FYFY_plugins.PointerManager;
-using UnityEngine.EventSystems;
-using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.Localization.Components;
 
 /// <summary>
 /// This system manages main camera in editor (movement, zoom)
@@ -28,6 +27,10 @@ public class EditorCameraSystem : FSystem
 	// Distance maximale de zoom
 	public float cameraZoomMax;
 
+	public LocalizeStringEvent lseTurnLeft;
+	public LocalizeStringEvent lseMoveUp;
+	public LocalizeStringEvent lseMoveLeft;
+
 	public static EditorCameraSystem instance;
 
 	public EditorCameraSystem()
@@ -38,6 +41,14 @@ public class EditorCameraSystem : FSystem
 	protected override void onStart()
 	{
 		middleClick = InputSystem.actions.FindAction("MiddleClick");
+
+		// synchronise le contenu des tooltip en fonction du clavier utilisé (azerty vs qwerty'
+		lseTurnLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0) } };
+		lseTurnLeft.RefreshString();
+		lseMoveUp.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveUp").GetBindingDisplayString(0) } };
+		lseMoveUp.RefreshString();
+		lseMoveLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveLeft").GetBindingDisplayString(0) } };
+		lseMoveLeft.RefreshString();
 	}
 
 	// Use to process your families.
@@ -50,32 +61,12 @@ public class EditorCameraSystem : FSystem
 			moveLeftRight(UI_leftRightValue);
 
 		// Move camera with wheel click
-		if (middleClick.WasPressedThisFrame() && f_UIfocused.Count == 0)
+		if (middleClick.IsPressed() && f_UIfocused.Count == 0)
 		{
-			Vector2Control pointerPos = Pointer.current.position;
+			DeltaControl delta = Pointer.current.delta;
 
-			float mouseX = pointerPos.x.value;
-			float mouseY = pointerPos.y.value;
-
-			float dist = Mathf.Abs(Mathf.Abs(mouseX) - Mathf.Abs(mouseY));
-			if (Mathf.Abs(mouseY) > Mathf.Abs(mouseX)){
-				mouseY = mouseY > 0 ? -1 : (mouseY < 0 ? 1 : 0);
-				mouseX = (mouseX > 0 ? -dist : (mouseX < 0 ? dist : 0));
-            }
-			else if (Mathf.Abs(mouseX) > Mathf.Abs(mouseY)){
-				mouseY = mouseY > 0 ? -dist : (mouseY < 0 ? dist : 0);
-				mouseX = (mouseX > 0 ? -1 : (mouseX < 0 ? 1 : 0));
-			}
-			else
-			{
-				mouseY = mouseY > 0 ? -1 : (mouseY < 0 ? 1 : 0);
-				mouseX = (mouseX > 0 ? -1 : (mouseX < 0 ? 1 : 0));
-			}
-
-			if (mouseY != 0)
-				moveFrontBack(mouseY*2);
-			if (mouseX != 0)
-				moveLeftRight(mouseX*2);
+			moveFrontBack(-delta.y.value);
+			moveLeftRight(-delta.x.value);
 		}
 
 		// Zoom with scroll wheel only if UI element is not focused

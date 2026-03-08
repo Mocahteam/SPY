@@ -18,10 +18,8 @@ public class ParamCompetenceSystem : FSystem
 	// Familles
 	private Family f_UI_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency)), new AnyOfProperties(PropertyMatcher.PROPERTY.HAS_CHILD)); // Les compétences qui ont des enfants, donc les éléments d'UI pour le référentiel sélectionné
 	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
-	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family f_askToTestLevel = FamilyManager.getFamily(new AllOfComponents(typeof(AskToTestLevel)));
 	private UnityAction localCallback;
-	private DataLevelBehaviour overridedBriefing;
 	private GameObject selectedScenarioGO;
 	private bool competenciesLoadedAndReady;
 
@@ -46,12 +44,12 @@ public class ParamCompetenceSystem : FSystem
 	public GameObject loadingScenarioContent;
 	public GameObject mainCanvas;
 	public TMP_InputField levelFilterByName;
+	public Button closeBriefing;
 
 	[DllImport("__Internal")]
 	private static extern void Save(string content, string defaultName); // call javascript
 
 	private GameData gameData;
-	private GameObject currentBriefingEdit;
 
 	public ParamCompetenceSystem()
 	{
@@ -301,7 +299,7 @@ public class ParamCompetenceSystem : FSystem
 		{
 			loadScenario(UtilityLobby.editingScenario);
 			DataLevel dl = gameData.scenarios[gameData.selectedScenario].levels[0];
-			showLevelInfo(Utility.extractFileName(dl.src), dl);
+			showLevelInfo(Utility.extractFileName(dl.filePath), dl);
 			gameData.selectedScenario = "";
 		}
 	}
@@ -349,7 +347,13 @@ public class ParamCompetenceSystem : FSystem
 	public void loadScenario()
 	{
 		if (selectedScenarioGO != null)
+		{
+			// reset UI
+			if (closeBriefing.gameObject.activeInHierarchy)
+				closeBriefing.onClick.Invoke();
+
 			loadScenario(selectedScenarioGO.GetComponentInChildren<TMP_Text>().text);
+		}
 	}
 
 	private void loadScenario(string scenarioKey)
@@ -371,7 +375,7 @@ public class ParamCompetenceSystem : FSystem
 			foreach (DataLevel levelPath in gameData.scenarios[scenarioKey].levels)
 			{
 				GameObject newLevel = GameObject.Instantiate(hookedMission, contentScenario.transform);
-				newLevel.GetComponentInChildren<TMP_Text>().text = Utility.extractFileName(levelPath.src);
+				newLevel.GetComponentInChildren<TMP_Text>().text = Utility.extractFileName(levelPath.filePath);
 				newLevel.GetComponent<DataLevelBehaviour>().data = levelPath.clone();
 				GameObjectManager.bind(newLevel);
 			}
@@ -386,13 +390,19 @@ public class ParamCompetenceSystem : FSystem
 	private IEnumerator delayRefreshLevelInfo()
     {
 		yield return null;
+		refreshLevelInfo();
+
+	}
+
+	public void refreshLevelInfo()
+    {
 		string path = contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text;
 		if (path != "")
 		{
 			DataLevel dataLevel = contentInfoCompatibleLevel.GetComponent<DataLevelBehaviour>().data;
 			showLevelInfo(path, dataLevel);
 		}
-    }
+	}
 
 	public void showLevelInfo(string path, DataLevelBehaviour overridedData = null)
 	{
@@ -433,8 +443,8 @@ public class ParamCompetenceSystem : FSystem
 				DataLevelBehaviour dlb = contentInfoCompatibleLevel.GetComponent<DataLevelBehaviour>();
 				if (overridedData == null)
 				{
-					dlb.data.src = absolutePath;
-					dlb.data.name = Path.GetFileNameWithoutExtension(path);
+					dlb.data.filePath = absolutePath;
+					dlb.data.missionName = Path.GetFileNameWithoutExtension(path);
 					dlb.data.overridedDialogs = null; // to load default
 				}
 				else
@@ -501,33 +511,6 @@ public class ParamCompetenceSystem : FSystem
 			panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text = comp.description;
 	}
 
-	public void removeItemFromParent(GameObject go)
-	{
-		if (EventSystem.current.currentSelectedGameObject.transform.IsChildOf(go.transform)) {
-			if (go.transform.parent.childCount > 1)
-            {
-				if (go.transform.GetSiblingIndex() < go.transform.parent.childCount - 1)
-					EventSystem.current.SetSelectedGameObject(go.transform.parent.GetChild(go.transform.GetSiblingIndex() + 1).gameObject.GetComponentInChildren<Button>().gameObject);
-				else
-					EventSystem.current.SetSelectedGameObject(go.transform.parent.GetChild(go.transform.GetSiblingIndex() - 1).gameObject.GetComponentInChildren<Button>().gameObject);
-			}
-            else
-            {
-				if (f_buttons.Count > 0)
-					EventSystem.current.SetSelectedGameObject(f_buttons.First());
-			}
-		}
-		GameObjectManager.unbind(go);
-		GameObject.Destroy(go);
-	}
-
-	public void moveItemInParent(GameObject go, int step)
-	{
-		if (go.transform.GetSiblingIndex() + step < 0 || go.transform.GetSiblingIndex() + step > go.transform.parent.childCount)
-			step = 0;
-		go.transform.SetSiblingIndex(go.transform.GetSiblingIndex() + step);
-	}
-
 	public void saveScenario(TMP_InputField scenarioName)
 	{
 		Localization loc = gameData.GetComponent<Localization>();
@@ -567,9 +550,9 @@ public class ParamCompetenceSystem : FSystem
 		foreach (Transform child in contentScenario.transform)
 		{
 			DataLevel dataLevel = child.GetComponent<DataLevelBehaviour>().data;
-			if (dataLevel.name == null || dataLevel.name == "")
-				dataLevel.name = Path.GetFileNameWithoutExtension(dataLevel.src);
-			scenarioExport += "\t<level src=\"" + child.GetComponentInChildren<TMP_Text>().text + "\" name=\"" + dataLevel.name + "\"";
+			if (dataLevel.missionName == null || dataLevel.missionName == "")
+				dataLevel.missionName = Path.GetFileNameWithoutExtension(dataLevel.filePath);
+			scenarioExport += "\t<level src=\"" + child.GetComponentInChildren<TMP_Text>().text + "\" name=\"" + dataLevel.missionName + "\"";
 			if (dataLevel.overridedDialogs != null && dataLevel.overridedDialogs.Count > 0)
 			{
 				scenarioExport += " >\n\t\t<dialogs>\n";
@@ -649,137 +632,11 @@ public class ParamCompetenceSystem : FSystem
 			savingPanel.GetComponentInChildren<TMP_InputField>(true).text = scenarName.text;
 	}
 
-	public void showBriefingOverride(DataLevelBehaviour dataLevel, GameObject src)
+	public void showBriefingOverride()
     {
-		if (dataLevel == null)
-			Debug.LogError("Missing DataLevelBehaviour component");
-		else
-		{
-			// sauvegarder le bouton qui a appelé la fenêtre afin de pouvoir y remettre le focus dessus à la fin de l'édition
-			currentBriefingEdit = src;
-
-			overridedBriefing = dataLevel;
-			GameObjectManager.setGameObjectState(compatibleLevelsPanel, false);
-			GameObjectManager.setGameObjectState(editBriefingPanel, true);
-			// remove all old briefing items
-			Transform viewportContent = editBriefingPanel.transform.Find("Scroll View").GetChild(0).GetChild(0);
-			while (viewportContent.childCount > 3) {
-				Transform child = viewportContent.GetChild(viewportContent.childCount - 1);
-				GameObjectManager.unbind(child.gameObject);
-				child.SetParent(null);
-				GameObject.Destroy(child.gameObject);
-			}
-
-			foreach (TMP_InputField input in editBriefingPanel.GetComponentsInChildren<TMP_InputField>(true))
-			{
-				if (input.gameObject.name == "MissionPathContent")
-					input.text = dataLevel.data.src;
-				if (input.gameObject.name == "NameContent")
-					input.text = dataLevel.data.name;
-			}
-
-			if (dataLevel.data.overridedDialogs == null)
-            {
-				XmlNode levelSelected = gameData.levels[dataLevel.data.src];
-				dataLevel.data.overridedDialogs = new List<Dialog>();
-				XmlNodeList XMLDialogs = levelSelected.OwnerDocument.GetElementsByTagName("dialogs");
-				if (XMLDialogs.Count > 0)
-					Utility.readXMLDialogs(XMLDialogs[0], dataLevel.data.overridedDialogs);
-			}
-
-			// add briefing items
-			foreach (Dialog dialog in dataLevel.data.overridedDialogs)
-			{
-				GameObject newItem = GameObject.Instantiate(briefingItemPrefab, viewportContent, false);
-				GameObjectManager.bind(newItem);
-				foreach (TMP_InputField input in newItem.GetComponentsInChildren<TMP_InputField>(true))
-				{
-					if (input.name == "Text_input" && dialog.text != null)
-						input.text = dialog.text;
-					else if (input.name == "ImgPath_input" && dialog.img != null)
-						input.text = dialog.img;
-					else if (input.name == "ImgDesc_input" && dialog.imgDesc != null)
-						input.text = dialog.imgDesc;
-					else if (input.name == "ImgSize_input" && dialog.imgHeight != -1)
-						input.text = "" + dialog.imgHeight;
-					else if (input.name == "CamX_input" && dialog.camX != -1)
-						input.text = "" + dialog.camX;
-					else if (input.name == "CamY_input" && dialog.camY != -1)
-						input.text = "" + dialog.camY;
-					else if (input.name == "SoundPath_input" && dialog.sound != null)
-						input.text = dialog.sound;
-					else if (input.name == "VideoPath_input" && dialog.video != null)
-						input.text = dialog.video;
-					else if (input.name == "VideoSize_input" && dialog.videoHeight != -1)
-						input.text = "" + dialog.videoHeight;
-					else
-						input.text = "";
-				}
-				newItem.GetComponentInChildren<Toggle>().isOn = dialog.enableInteraction;
-				newItem.GetComponentInChildren<TMP_Dropdown>().value = dialog.briefingType;
-			}
-		}
+		GameObjectManager.setGameObjectState(compatibleLevelsPanel, false);
+		GameObjectManager.setGameObjectState(editBriefingPanel, true);
     }
-
-	public void saveBriefingOverride()
-    {
-		if (overridedBriefing != null)
-		{
-			string path = "";
-			foreach (TMP_InputField input in editBriefingPanel.GetComponentsInChildren<TMP_InputField>(true))
-			{
-				if (input.gameObject.name == "MissionPathContent")
-					path = input.text;
-				if (input.gameObject.name == "NameContent")
-					overridedBriefing.data.name = input.text.Replace('\"', '\'');
-			}
-
-			// save briefing items
-			overridedBriefing.data.overridedDialogs = new List<Dialog>();
-			Transform viewportContent = editBriefingPanel.transform.Find("Scroll View").GetChild(0).GetChild(0);
-			for (int i = 3; i < viewportContent.childCount; i++)
-			{
-				Transform child = viewportContent.GetChild(i);
-				Dialog dialog = new Dialog();
-				foreach (TMP_InputField input in child.GetComponentsInChildren<TMP_InputField>(true))
-				{
-					if (input.name == "Text_input" && input.text != "")
-						dialog.text = input.text.Replace('\"', '\'');
-					else if (input.name == "ImgPath_input" && input.text != "")
-						dialog.img = input.text.Replace('\"', '\'');
-					else if (input.name == "ImgDesc_input" && input.text != "")
-						dialog.imgDesc = input.text.Replace('\"', '\'');
-					else if (input.name == "ImgSize_input" && input.text != "")
-						dialog.imgHeight = float.Parse(input.text);
-					else if (input.name == "CamX_input" && input.text != "")
-						dialog.camX = int.Parse(input.text);
-					else if (input.name == "CamY_input" && input.text != "")
-						dialog.camY = int.Parse(input.text);
-					else if (input.name == "SoundPath_input" && input.text != "")
-						dialog.sound = input.text.Replace('\"', '\'');
-					else if (input.name == "VideoPath_input" && input.text != "")
-						dialog.video = input.text.Replace('\"', '\'');
-					else if (input.name == "VideoSize_input" && input.text != "")
-						dialog.videoHeight = float.Parse(input.text);
-				}
-				dialog.enableInteraction = child.GetComponentInChildren<Toggle>().isOn;
-				dialog.briefingType = child.GetComponentInChildren<TMP_Dropdown>().value;
-				overridedBriefing.data.overridedDialogs.Add(dialog);
-			}
-			showLevelInfo(Utility.extractFileName(path), overridedBriefing);
-
-			// remettre le focus sur le bouton qui a appelé la fenêtre
-			if (currentBriefingEdit != null)
-				EventSystem.current.SetSelectedGameObject(currentBriefingEdit);
-			currentBriefingEdit = null;
-		}
-    }
-
-	public void addNewBriefing(GameObject parent)
-    {
-		GameObject newItem = GameObject.Instantiate(briefingItemPrefab, parent.transform, false);
-		GameObjectManager.bind(newItem);
-	}
 
 	//Used on scenario editing window (see button ButtonTestLevel)
 	public void testLevel(DataLevelBehaviour dlb)
@@ -804,8 +661,8 @@ public class ParamCompetenceSystem : FSystem
 	private void testLevelPath(string levelToLoad)
 	{
 		DataLevel dl = new DataLevel();
-		dl.src = new Uri(Application.streamingAssetsPath + "/" + levelToLoad).AbsoluteUri;
-		dl.name = Path.GetFileNameWithoutExtension(dl.src);
+		dl.filePath = new Uri(Application.streamingAssetsPath + "/" + levelToLoad).AbsoluteUri;
+		dl.missionName = Path.GetFileNameWithoutExtension(dl.filePath);
 		testLevel(dl, UtilityLobby.testFromUrl);
 	}
 
@@ -836,10 +693,4 @@ public class ParamCompetenceSystem : FSystem
 		}
 		File.WriteAllText("exportAssociationMissions"+ f_compSelector.First().GetComponent<TMP_Dropdown>().options[f_compSelector.First().GetComponent<TMP_Dropdown>().value].text+"Ref.txt", csvExport);
 	}
-
-	// Used in briefing input fields (see BriefingItem prefab -> TextPanel -> Text_input) to force sync its height with its content
-	public void markLayoutForRebuild(RectTransform transform)
-    {
-		LayoutRebuilder.MarkLayoutForRebuild(transform);
-    }
 }

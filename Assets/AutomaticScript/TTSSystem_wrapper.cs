@@ -10,4 +10,9 @@ public class TTSSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "eventSystem", eventSystem);
 	}
 
+	public void toggleTTS()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "toggleTTS", null);
+	}
+
 }

@@ -19,6 +19,7 @@ public class EditorLevelDataSystem : FSystem {
 	public TMP_InputField score2Input;
 	public TMP_InputField score3Input;
 	public Transform editableContainers;
+	public DataLevelBehaviour dataLevel;
 
 	public Color hideColor;
 	public Color limitedColor;
@@ -100,7 +101,7 @@ public class EditorLevelDataSystem : FSystem {
 			switch (child.Name)
 			{
 				case "dialogs":
-					// dialogs are defined in the scenario editor
+					Utility.readXMLDialogs(child, dataLevel.data.overridedDialogs);
 					break;
 				case "executionLimit":
 					try

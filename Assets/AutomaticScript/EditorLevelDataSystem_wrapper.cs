@@ -10,6 +10,7 @@ public class EditorLevelDataSystem_wrapper : BaseWrapper
 	public TMPro.TMP_InputField score2Input;
 	public TMPro.TMP_InputField score3Input;
 	public UnityEngine.Transform editableContainers;
+	public DataLevelBehaviour dataLevel;
 	public UnityEngine.Color hideColor;
 	public UnityEngine.Color limitedColor;
 	public UnityEngine.Color unlimitedColor;
@@ -23,6 +24,7 @@ public class EditorLevelDataSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "score2Input", score2Input);
 		MainLoop.initAppropriateSystemField (system, "score3Input", score3Input);
 		MainLoop.initAppropriateSystemField (system, "editableContainers", editableContainers);
+		MainLoop.initAppropriateSystemField (system, "dataLevel", dataLevel);
 		MainLoop.initAppropriateSystemField (system, "hideColor", hideColor);
 		MainLoop.initAppropriateSystemField (system, "limitedColor", limitedColor);
 		MainLoop.initAppropriateSystemField (system, "unlimitedColor", unlimitedColor);

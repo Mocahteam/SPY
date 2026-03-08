@@ -1,18 +1,20 @@
 <?xml version="1.0"?>
 <level>
   <map>
-    <line><cell value="0" /><cell value="0" /><cell value="0" /></line>
-    <line><cell value="0" /><cell value="2" /><cell value="0" /></line>
-    <line><cell value="0" /><cell value="0" /><cell value="0" /></line>
-    <line><cell value="0" /><cell value="0" /><cell value="0" /></line>
-    <line><cell value="0" /><cell value="3" /><cell value="0" /></line>
-    <line><cell value="0" /><cell value="0" /><cell value="0" /></line>
+    <line><cell value="-1"/><cell value="-1"/><cell value="-1"/><cell value="-1"/><cell value="-1"/></line>
+    <line><cell value="-1"/><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1"/></line>
+    <line><cell value="-1"/><cell value="0" /><cell value="2" /><cell value="0" /><cell value="-1"/></line>
+    <line><cell value="-1"/><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1"/></line>
+    <line><cell value="-1"/><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1"/></line>
+    <line><cell value="-1"/><cell value="0" /><cell value="3" /><cell value="0" /><cell value="-1"/></line>
+    <line><cell value="-1"/><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1"/></line>
+    <line><cell value="-1"/><cell value="-1"/><cell value="-1"/><cell value="-1"/><cell value="-1"/></line>
   </map>
   <blockLimits>
     <blockLimit blockType="Forward" limit="3" />
   </blockLimits>
-  <coin posY="4" posX="1" />
-  <robot inputLine="Erty" posY="1" posX="1" direction="1" />
+  <coin posY="5" posX="2" />
+  <robot inputLine="Erty" posY="2" posX="2" direction="1" />
   <script outputLine="Erty" editMode="0" type="2">
     <action type="Forward"/>
   </script>

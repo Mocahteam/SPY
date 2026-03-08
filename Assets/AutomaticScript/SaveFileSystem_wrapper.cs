@@ -11,7 +11,7 @@ public class SaveFileSystem_wrapper : BaseWrapper
 	public TMPro.TMP_InputField score2;
 	public TMPro.TMP_InputField score3;
 	public UnityEngine.GameObject editableContainer;
-	public LevelData levelData;
+	public DataLevelBehaviour dataLevel;
 	public PaintableGrid paintableGrid;
 	private void Start()
 	{
@@ -24,7 +24,7 @@ public class SaveFileSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "score2", score2);
 		MainLoop.initAppropriateSystemField (system, "score3", score3);
 		MainLoop.initAppropriateSystemField (system, "editableContainer", editableContainer);
-		MainLoop.initAppropriateSystemField (system, "levelData", levelData);
+		MainLoop.initAppropriateSystemField (system, "dataLevel", dataLevel);
 		MainLoop.initAppropriateSystemField (system, "paintableGrid", paintableGrid);
 	}
 

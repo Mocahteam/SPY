@@ -15,7 +15,8 @@ public class UIRootContainer : MonoBehaviour {
 		Optimal, // Le script donné résout le niveau de manière optimale
 		NonOptimal, // Le script donné résout le niveau de manière non optimale
 		Bugged, // Le script donné ne résout pas en l'état le niveau (incomplet, bug)
-		Undefined
+		Undefined,
+		Hidden // le script donné est une solution (caché au joueur)
 	};
 	public SolutionType type = SolutionType.Undefined;
 }

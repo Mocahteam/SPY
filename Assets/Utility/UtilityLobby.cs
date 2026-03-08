@@ -46,14 +46,14 @@ public static class UtilityLobby
 			{
 				DataLevel dl = new DataLevel();
 				// get src
-				dl.src = new Uri(Application.streamingAssetsPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsoluteUri;
+				dl.filePath = new Uri(Application.streamingAssetsPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsoluteUri;
 
 				// get name
 				if (child.Attributes.GetNamedItem("name") != null)
-					dl.name = child.Attributes.GetNamedItem("name").Value;
+					dl.missionName = child.Attributes.GetNamedItem("name").Value;
 				else
 					// if not def, use file name
-					dl.name = Path.GetFileNameWithoutExtension(dl.src);
+					dl.missionName = Path.GetFileNameWithoutExtension(dl.filePath);
 
 				// load overrided dialogs
 				foreach (XmlNode subChild in child.ChildNodes)

@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.Localization.Components;
 
 /// <summary>
 /// This system manages main camera (movement, rotation, focus on/follow agent...)
@@ -48,6 +49,10 @@ public class CameraSystem : FSystem {
 	// Déplacement avec la molette
 	public float dragSpeed;
 
+	public LocalizeStringEvent lseTurnLeft;
+	public LocalizeStringEvent lseMoveUp;
+	public LocalizeStringEvent lseMoveLeft;
+
 	public DefaultSettingsValues settings;
 
 	public static CameraSystem instance;
@@ -61,6 +66,14 @@ public class CameraSystem : FSystem {
 	{
 		middleClick = InputSystem.actions.FindAction("MiddleClick");
 		rightClick = InputSystem.actions.FindAction("RightClick");
+
+		// synchronise le contenu des tooltip en fonction du clavier utilisé (azerty vs qwerty'
+		lseTurnLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0) } };
+		lseTurnLeft.RefreshString();
+		lseMoveUp.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveUp").GetBindingDisplayString(0) } };
+		lseMoveUp.RefreshString();
+		lseMoveLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveLeft").GetBindingDisplayString(0) } };
+		lseMoveLeft.RefreshString();
 
 		mainCamera = Camera.main;
 		if (PlayerPrefs.GetInt("orthographicView", 0) == 1)
@@ -107,30 +120,8 @@ public class CameraSystem : FSystem {
 
 			DeltaControl delta = Pointer.current.delta;
 
-			float mouseX = delta.x.value;
-			float mouseY = delta.y.value;
-
-			float dist = Mathf.Abs(Mathf.Abs(mouseX) - Mathf.Abs(mouseY));
-			if (Mathf.Abs(mouseY) > Mathf.Abs(mouseX))
-			{
-				mouseY = mouseY > 0 ? -1 : (mouseY < 0 ? 1 : 0);
-				mouseX = (mouseX > 0 ? -dist : (mouseX < 0 ? dist : 0));
-			}
-			else if (Mathf.Abs(mouseX) > Mathf.Abs(mouseY))
-			{
-				mouseY = mouseY > 0 ? -dist : (mouseY < 0 ? dist : 0);
-				mouseX = (mouseX > 0 ? -1 : (mouseX < 0 ? 1 : 0));
-			}
-			else
-			{
-				mouseY = mouseY > 0 ? -1 : (mouseY < 0 ? 1 : 0);
-				mouseX = (mouseX > 0 ? -1 : (mouseX < 0 ? 1 : 0));
-			}
-
-			if (mouseY != 0)
-				moveFrontBack(mouseY * dragSpeed);
-			if (mouseX != 0)
-				moveLeftRight(mouseX * dragSpeed);
+			moveFrontBack(-delta.y.value * dragSpeed);
+			moveLeftRight(-delta.x.value * dragSpeed);
 			unfocusAgent();
 		}
 		// Zoom with scroll wheel only if UI element is not focused

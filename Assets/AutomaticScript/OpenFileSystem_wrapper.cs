@@ -4,14 +4,16 @@ using FYFY;
 public class OpenFileSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject loadingLevelContent;
-	public LevelData levelData;
-	public TMPro.TMP_InputField savingInputField;
+	public DataLevelBehaviour dataLevel;
+	public UnityEngine.UI.Button closeBriefing;
+	public UnityEngine.UI.Button mapEditorTab;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "loadingLevelContent", loadingLevelContent);
-		MainLoop.initAppropriateSystemField (system, "levelData", levelData);
-		MainLoop.initAppropriateSystemField (system, "savingInputField", savingInputField);
+		MainLoop.initAppropriateSystemField (system, "dataLevel", dataLevel);
+		MainLoop.initAppropriateSystemField (system, "closeBriefing", closeBriefing);
+		MainLoop.initAppropriateSystemField (system, "mapEditorTab", mapEditorTab);
 	}
 
 	public void refreshListOfLevels(System.String filter)

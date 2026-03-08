@@ -1,30 +1,69 @@
 <?xml version="1.0"?>
 <level>
-  <map>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-    <line><cell value= "1" /><cell value= "3" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "2" /><cell value= "1" /></line>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-  </map>
-  <dialogs>
-	<dialog text="[fr]Une porte bloque le passage ![/fr][en]A door blocks the way![/en]" camY="2" camX="1" />
-	<dialog text="[fr]Regarde ! Il y a un ordinateur qui contrôle la porte.[/fr][en]Check it out! There's a computer controlling the door.[/en]" img="terminalSolo.png" imgHeight="140" camY="4" camX="1" />
-	<dialog text="[fr]Il suffit d'utiliser l'action 'Activer' sur la case de l'ordinateur pour ouvrir la porte (il n'est pas nécessaire d'être face à l'ordinateur).[/fr][en]Simply use the 'Activate' action on the computer square to open the door (you don't need to be facing the computer).[/en]" img="ActivateIcon.png" imgHeight="45" camY="5" camX="1" />
-  </dialogs>
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="-1" />
-    <blockLimit blockType="TurnLeft" limit="-1" />
-    <blockLimit blockType="TurnRight" limit="-1" />
-    <blockLimit blockType="Activate" limit="-1" />
-  </blockLimits>
-  <console posY="3" posX="1" direction="3">
-    <slot slotId="0" />
-  </console>
-  <door posY="2" posX="1" slotId="0" direction="0" state="0" />
-  <robot inputLine="Erty" posY="5" posX="1" direction="0" skin="1" />
-  <script outputLine="Erty" editMode="0" />
-  <score twoStars="4499" threeStars="5499"/>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="3" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="2" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="[fr]Une porte bloque le passage ![/fr][en]A door blocks the way![/en]" camX="2" camY="3" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Regarde ! Il y a un ordinateur qui contrôle la porte.[/fr][en]Check it out! There's a computer controlling the door.[/en]" img="terminalSolo.png" imgDesc="[fr]Illustration d'un ordinateur.{/fr][en]Illustration of a computer.[/en]" imgHeight="140" camX="2" camY="4" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Il suffit d'utiliser l'action 'Activer' sur la case de l'ordinateur pour ouvrir la porte (il n'est pas nécessaire d'être face à l'ordinateur).[/fr][en]Simply use the 'Activate' action on the computer square to open the door (you don't need to be facing the computer).[/en]" img="ActivateIcon.png" imgDesc="[fr]Illustration de l'action Activer.[/fr][en]Illustration of the Activate action.[/en]" imgHeight="45" camX="2" camY="6" enableInteraction="0" briefingType="0" />
+	</dialogs>
+	<score twoStars="4499" threeStars="5499"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="-1" />
+		<blockLimit blockType="TurnLeft" limit="-1" />
+		<blockLimit blockType="TurnRight" limit="-1" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="-1" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="0" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<console posX="2" posY="3" direction="3">
+		<slot slotId="0" />
+	</console>
+
+	<door posX="2" posY="2" slotId="0" direction="0" state="0" />
+
+	<robot inputLine="Erty" posX="2" posY="5" direction="0" skin="1" />
+
+	<script outputLine="Erty" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Sol_Erty" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Activate"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+	</script>
+
 </level>

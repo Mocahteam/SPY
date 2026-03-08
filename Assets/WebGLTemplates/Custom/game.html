@@ -136,7 +136,7 @@
 		
 		var alreadyNotified = false;
 		
-		// Cette fonction est nécessaire pour que la synthèse vocale fonctionne sur iPhone. Il faut qu'une première "utterance" soit jouée directement sur le click de l'utilisateur. Donc on joue une "utterance" vide avant de récupérer la liste de mots du serveur et lancer ensuite la synthèse de chaque mot récupéré
+		// Cette fonction est nécessaire pour que la synthèse vocale fonctionne sur iPhone. Il faut qu'une première "utterance" soit jouée directement sur le click de l'utilisateur. Donc on joue une "utterance" vide
 		function initSound(cb_TTS){
 			if (cb_TTS.checked == true){
 				// notification pour iPhone and co pour recommander de brancher des écouteurs, sinon on n'entend rien...
@@ -153,6 +153,8 @@
 			} else {
 				document.getElementById('TTSConfig').style.visibility = 'hidden';
 			}
+			// See TTSSystem
+			window.unityInstance.SendMessage('Main_Loop', 'toggleTTS');
 		}
 
         // Configuration du MutationObserver

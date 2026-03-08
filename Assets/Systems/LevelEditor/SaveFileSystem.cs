@@ -24,7 +24,7 @@ public class SaveFileSystem : FSystem
 	public TMP_InputField score3;
 
 	public GameObject editableContainer;
-	public LevelData levelData;
+	public DataLevelBehaviour dataLevel;
 	public PaintableGrid paintableGrid;
 
 	public static SaveFileSystem instance;
@@ -65,14 +65,15 @@ public class SaveFileSystem : FSystem
 		XmlDocument doc = new XmlDocument();
 		doc.LoadXml(exportXML);
 		Utility.removeComments(doc);
-		gameData.levels[UtilityLobby.testFromLevelEditor] = doc.GetElementsByTagName("level")[0];
+		if (dataLevel.data.filePath == null || dataLevel.data.filePath == "")
+			dataLevel.data.filePath = UtilityLobby.testFromLevelEditor;
+		gameData.levels[dataLevel.data.filePath] = doc.GetElementsByTagName("level")[0];
 		gameData.selectedScenario = UtilityLobby.testFromLevelEditor;
 		WebGlScenario test = new WebGlScenario();
 		test.levels = new List<DataLevel>();
-		DataLevel dl = new DataLevel();
-		dl.src = UtilityLobby.testFromLevelEditor;
-		dl.name = UtilityLobby.testFromLevelEditor;
-		test.levels.Add(dl);
+		if (dataLevel.data.missionName == null || dataLevel.data.missionName == "")
+			dataLevel.data.missionName = UtilityLobby.testFromLevelEditor;
+		test.levels.Add(dataLevel.data);
 		gameData.scenarios[UtilityLobby.testFromLevelEditor] = test;
 		gameData.levelToLoad = 0;
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
@@ -81,8 +82,8 @@ public class SaveFileSystem : FSystem
 	// See Button Save
 	public void displaySavingPanel()
 	{
-		if (levelData.levelName != null || levelData.levelName != "")
-			saveName.text = Path.GetFileNameWithoutExtension(levelData.levelName);
+		if (dataLevel.data.missionName != null && dataLevel.data.missionName != "" && dataLevel.data.missionName != UtilityLobby.testFromLevelEditor)
+			saveName.text = Path.GetFileNameWithoutExtension(dataLevel.data.missionName);
 		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
 	}
 
@@ -146,8 +147,8 @@ public class SaveFileSystem : FSystem
 				string path = Application.persistentDataPath + "/Levels/" + saveName.text;
 				// Write on disk
 				File.WriteAllText(path, levelExport);
-				levelData.levelName = saveName.text;
-				levelData.filePath = new Uri(path).AbsoluteUri;
+				dataLevel.data.missionName = saveName.text;
+				dataLevel.data.filePath = new Uri(path).AbsoluteUri;
 				// Add/Replace level content in memory
 				gameData.levels[new Uri(path).AbsoluteUri] = doc.GetElementsByTagName("level")[0];
 
@@ -208,6 +209,27 @@ public class SaveFileSystem : FSystem
 			levelExport += "<cell value=\"" + (int)Cell.Void + "\" />";
 		levelExport += "</line>\n";
 		levelExport += "\t</map>\n\n";
+
+		if (dataLevel.data.overridedDialogs.Count > 0)
+        {
+			levelExport += "\t<dialogs>\n";
+			foreach (Dialog dialog in dataLevel.data.overridedDialogs)
+            {
+				levelExport += "\t\t<dialog ";
+				levelExport += dialog.text != null && dialog.text != "" ? "text=\"" + dialog.text + "\" " : "";
+				levelExport += dialog.img != null && dialog.img != "" ? "img=\"" + dialog.img + "\" " : "";
+				levelExport += dialog.imgDesc != null && dialog.imgDesc != "" ? "imgDesc=\"" + dialog.imgDesc + "\" " : "";
+				levelExport += dialog.imgHeight != -1 ? "imgHeight=\"" + dialog.imgHeight + "\" " : "";
+				levelExport += dialog.camX != -1 ? "camX=\"" + dialog.camX + "\" " : "";
+				levelExport += dialog.camY != -1 ? "camY=\"" + dialog.camY + "\" " : "";
+				levelExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + dialog.sound + "\" " : "";
+				levelExport += dialog.video != null && dialog.video != "" ? "video=\"" + dialog.video + "\" " : "";
+				levelExport += dialog.videoHeight != -1 ? "videoHeight=\"" + dialog.videoHeight + "\" " : "";
+				levelExport += "enableInteraction=\"" + (dialog.enableInteraction ? "1" : "0") + "\" ";
+				levelExport += "briefingType=\"" + dialog.briefingType + "\" />\n";
+            }
+			levelExport += "\t</dialogs>\n";
+		}
 
 		if (!DragDrop.isOn)
 			levelExport += "\t<dragdropDisabled />\n\n";

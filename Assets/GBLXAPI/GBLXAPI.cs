@@ -54,34 +54,15 @@ namespace DIG.GBLXAPI
 
 			Timers = new DurationSlotTracker();
 
-			// Load the educational standard defaults
-			StandardsJson = null;
-			try
-            {
-				string defaultJsonText = Resources.Load<TextAsset>(GBLConfig.StandardsDefaultPath).text;
-				StandardsJson = JObject.Parse(defaultJsonText);
-            }
-			catch
-            {
-				Debug.LogError($"Missing GBLxAPI default vocabulary! Learning standards cannot be tracked without this file. Run Vocabulary/GBL_Json_Parser.py and ensure that the resulting GBLxAPI_Vocab_Default.json file is moved into the Resources/Data folder.");
-			}
-
 			// Load the user configured standards
-			JObject userJson = null;
 			try
 			{
 				string userJsonText = Resources.Load<TextAsset>(GBLConfig.StandardsUserPath).text;
-				userJson = JObject.Parse(userJsonText);
+				StandardsJson = JObject.Parse(userJsonText);
 			}
 			catch
 			{
 				Debug.LogWarning("Missing GBLxAPI vocabulary user overrides. Default vocabulary will be used for learning tracking. To implement user overrides, run Vocabulary/GBL_Json_Parser.py and ensure that the resulting GBLxAPI_Vocab_User.json file is moved to the Assets/Resources/Data folder.");
-			}
-
-			// Merge the two json files, letting the user config overwrite the defaults
-			if (StandardsJson != null && userJson != null)
-			{
-				StandardsJson.Merge(userJson);
 			}
 
 			IsInit = true;

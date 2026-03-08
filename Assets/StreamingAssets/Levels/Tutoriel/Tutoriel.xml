@@ -1,23 +1,95 @@
 <?xml version="1.0"?>
 <level>
-  <map>
-    <line><cell value="0" /><cell value="0" /><cell value="0" /></line>
-    <line><cell value="0" /><cell value="3" /><cell value="0" /></line>
-    <line><cell value="0" /><cell value="2" /><cell value="0" /></line>
-    <line><cell value="0" /><cell value="0" /><cell value="0" /></line>
-  </map>
-  <dialogs>
-	<dialog text="[fr]Bienvenue dans SPY !&#xA;&#xA;Dans ce jeu tu vas apprendre à programmer un robot.&#xA;Ton objectif sera toujours de déplacer le robot sur le téléporteur de sortie comme illustré sur la vidéo ci-dessous.&#xA;&#xA;Appuie sur le bouton 'Suivant' pour que je t'explique la suite.[/fr][en]Welcome to SPY!&#xA;&#xA;In this game, you will learn how to program a robot.&#xA;Your objective will always be to move the robot on the exit teleporter as illustrated in the video below.&#xA;&#xA;Press the 'Next' button and I will explain what happens next.[/en]" video="https://spy.lip6.fr/StreamingAssets/Levels/Tutoriel/Videos/tuto.mp4" videoHeight="250"/>
-	<dialog text="[fr]Tu peux à tout moment accéder au menu de la mission pour, par exemple, revoir les textes d'introduction, relancer la mission ou la quitter.&#xA;&#xA;Tu peux appuyer sur le bouton 'Suivant'.[/fr][en]You can access the mission menu at any time to, for example, review the briefing, restart the mission or exit it.&#xA;&#xA;You can press the 'Next' button.[/en]" img="[fr]menu.png[/fr][en]menu_en.png[/en]" imgHeight="250" />
-	<dialog text="[fr]La caméra suit automatiquement le déplacement du robot mais tu peux la contrôler avec les boutons situés en bas à droite du jeu. N'hésite pas à expérimenter ces commandes.&#xA;&#xA;Quand tu as terminé appluie sur le bouton 'Suivant'.[/fr][en]The camera automatically follows the robot's movements, but you can control it using the buttons at the bottom right of the game. Feel free to experiment with these controls.&#xA;&#xA;When you've finished, press the 'Next' button.[/en]" img="cameraControl.png" imgHeight="110" enableInteraction="1" />
-	<dialog text="[fr]Pour programmer le robot tu auras à ta disposition des blocs qui sont disponibles dans la partie gauche de l'écran.&#xA;Dans ce tutoriel tu ne peux utiliser que le bloc 'Avancer', mais dans la suite du jeu tu pourras découvrir pleins d'autres actions.&#xA;&#xA;Tu peux maintenant cliquer sur le bouton 'Suivant' pour passer à la suite.[/fr][en]To program the robot, you'll need the blocks available on the left of the screen.&#xA;In this tutorial, you'll only be able to use the 'Move Forward' block, but in the rest of the game you'll be able to discover lots of other actions.&#xA;&#xA;You can now click on the 'Next' button to continue.[/en]" />
-	<dialog text="[fr]Essaye de glisser le bloc 'Avancer' dans la zone de programme du robot comme illustré sur l'image ci-dessous.&#xA;&#xA;Quand tu auras terminé, clique sur le bouton 'Suivant'.[/fr][en]Try dragging the 'Move Forward' block into the robot's program area, as shown in the image below. When you've finished, click on the 'Next' button.[/en]" img="[fr]addBlock.png[/fr][en]addBlock_en.png[/en]" imgHeight="250" enableInteraction="1" />
-	<dialog text="[fr]Maintenant tu vas pouvoir essayer d'exécuter ton programme. Il te suffit pour cela de cliquer sur le bouton 'Lecture' que tu trouveras en haut à gauche du jeu.&#xA;&#xA;Clique sur le bouton 'OK' pour fermer ce tutoriel et lance ton programme avec le bouton 'Lecture' comme illustré ci-dessous.&#xA;&#xA;C'est à toi de jouer ![/fr][en]Now you can try running your program. All you have to do is click on the 'Play' button at the top left of the game.&#xA;&#xA;Click on the 'OK' button to close this tutorial and launch your program with the 'Play' button, as illustrated below.&#xA;&#xA;Now it's your turn to play![/en]" img="[fr]play.png[/fr][en]play_en.png[/en]" imgHeight="250" />
-  </dialogs>
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="1" />
-  </blockLimits>
-  <robot inputLine="Plok" posY="2" posX="1" direction="0" />
-  <script outputLine="Plok" editMode="0" />
-  <score twoStars="0" threeStars="10500"/>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="3" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="2" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="[fr]Bienvenue dans SPY !
+
+Dans ce jeu tu vas apprendre à programmer un robot.
+Ton objectif sera toujours de déplacer le robot sur le téléporteur de sortie comme illustré sur la vidéo ci-dessous.
+
+Appuie sur le bouton 'Suivant' pour que je t'explique la suite.[/fr][en]Welcome to SPY!
+
+In this game, you will learn how to program a robot.
+Your objective will always be to move the robot on the exit teleporter as illustrated in the video below.
+
+Press the 'Next' button and I will explain what happens next.[/en]" video="https://spy.lip6.fr/StreamingAssets/Levels/Tutoriel/Videos/tuto.mp4" videoHeight="250" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Tu peux à tout moment accéder au menu de la mission pour, par exemple, revoir les textes d'introduction, relancer la mission ou la quitter.
+
+Tu peux appuyer sur le bouton 'Suivant'.[/fr][en]You can access the mission menu at any time to, for example, review the briefing, restart the mission or exit it.
+
+You can press the 'Next' button.[/en]" img="[fr]menu.png[/fr][en]menu_en.png[/en]" imgDesc="[fr]Le bouton menu se trouve en haut à gauche de l'interface, il est accessible avec la touche Echap du clavier.[/fr][en]The menu button is located at the top left of the interface and can be accessed using the Esc key on the keyboard.[/en]" imgHeight="250" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]La caméra suit automatiquement le déplacement du robot mais tu peux la contrôler avec les boutons situés en bas à droite du jeu. N'hésite pas à expérimenter ces commandes.
+
+Quand tu as terminé, appuie sur le bouton 'Suivant'.[/fr][en]The camera automatically follows the robot's movements, but you can control it using the buttons at the bottom right of the game. Feel free to experiment with these controls.
+
+When you've finished, press the 'Next' button.[/en]" img="cameraControl.png" imgDesc="[fr]Le panneau de contrôle de la caméra se trouve en bas à droite de la fenêtre du jeu. Consulte la page web d'accessibilité du jeu pour connaître les raccourcis claviers disponibles.[/fr][en]The camera control panel is located at the bottom right of the game window. Check the game's accessibility webpage for available keyboard shortcuts.[/en]" imgHeight="110" enableInteraction="1" briefingType="0" />
+		<dialog text="[fr]Pour programmer le robot tu auras à ta disposition des blocs qui sont disponibles dans ton inventaire.
+Dans ce tutoriel tu ne peux utiliser que le bloc 'Avancer', mais dans la suite du jeu tu pourras découvrir pleins d'autres actions.
+
+Tu peux maintenant cliquer sur le bouton 'Suivant' pour passer à la suite.[/fr][en]To program the robot, you'll need the blocks available on your inventory.
+In this tutorial, you'll only be able to use the 'Move Forward' block, but in the rest of the game you'll be able to discover lots of other actions.
+
+You can now click on the 'Next' button to continue.[/en]" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Essaye d'ajouter le bloc 'Avancer' dans la zone de programme du robot.
+
+Quand tu auras terminé, clique sur le bouton 'Suivant'.[/fr][en]Try to add the 'Move Forward' block into the robot's program area. When you've finished, click on the 'Next' button.[/en]" img="[fr]addBlock.png[/fr][en]addBlock_en.png[/en]" imgDesc="[fr]Trois modes sont accessibles pour ajouter un bloc à ton programme, le mode glisser/déposer à la souris, le mode glisser/déposer au clavier, et le mode insertion au clavier. Consulte la page web d'accessibilité du jeu pour avoir plus d'information sur ces différents modes.[/fr][en]There are three modes available for adding a block to your program: drag-and-drop with the mouse, drag-and-drop with the keyboard, and keyboard insertion. See the game's accessibility webpage for more information about these different modes.[/en]" imgHeight="250" enableInteraction="1" briefingType="0" />
+		<dialog text="[fr]Maintenant tu vas pouvoir essayer d'exécuter ton programme. Il te suffit pour cela de cliquer sur le bouton 'Lancer l'exécution'.
+
+Clique sur le bouton 'OK' pour fermer ce tutoriel et lance ton programme avec le bouton 'Lancer l'exécution'.
+
+C'est à toi de jouer ![/fr][en]Now you can try running your program. All you have to do is click on the 'Start execution' button.
+
+Click on the 'OK' button to close this tutorial and launch your program with the 'Start execution' button.
+
+Now it's your turn to play![/en]" img="[fr]play.png[/fr][en]play_en.png[/en]" imgDesc="[fr]Le bouton 'Lancer l'exécution' se trouve en haut à gauche de l'interface, tu peux aussi utiliser la touche espace pour lancer et mettre en pause l'exécution de ton programme.[/fr][en]The “Start execution” button is located at the top left of the interface. You can also use the space bar to start and pause the execution of your program.[/en]" imgHeight="250" enableInteraction="0" briefingType="0" />
+	</dialogs>
+	<score twoStars="0" threeStars="10500"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="1" />
+		<blockLimit blockType="TurnLeft" limit="0" />
+		<blockLimit blockType="TurnRight" limit="0" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="0" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<robot inputLine="Plok" posX="2" posY="3" direction="0" skin="0" />
+
+	<script outputLine="Plok" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Sol_Plok" editMode="2" type="4">
+		<action type="Forward"/>
+	</script>
+
 </level>

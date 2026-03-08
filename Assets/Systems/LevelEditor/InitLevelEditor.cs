@@ -1,8 +1,7 @@
 using FYFY;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class InitLevelEditor : FSystem
@@ -13,6 +12,7 @@ public class InitLevelEditor : FSystem
 	public GameObject mapContent;
 	public GameObject scriptContent;
 	public GameObject paramContent;
+	public DataLevelBehaviour dataLevel;
 
 	private GameData gameData;
 
@@ -54,7 +54,13 @@ public class InitLevelEditor : FSystem
 			if (gameData.selectedScenario == UtilityLobby.testFromLevelEditor)
 			{
 				gameData.selectedScenario = "";
-				GameObjectManager.addComponent<NewLevelToLoad>(gameData.gameObject, new { levelKey = UtilityLobby.testFromLevelEditor });
+				// get DataLevel
+				DataLevel dl = gameData.scenarios[UtilityLobby.testFromLevelEditor].levels[0];
+				dataLevel.data.missionName = dl.missionName;
+				dataLevel.data.filePath = dl.filePath;
+				dataLevel.data.overridedDialogs = new List<Dialog>();
+				// Ask to load tested level
+				GameObjectManager.addComponent<NewLevelToLoad>(gameData.gameObject, new { levelKey = dataLevel.data.filePath });
 			}
 		}
 	}

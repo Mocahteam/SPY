@@ -1,5 +1,4 @@
 {
-    "action": {},
     "activity": {
         "block": {
             "description": {
@@ -37,6 +36,15 @@
                 "en-US": "competencies"
             }
         },
+        "level": {
+            "description": {
+                "en-US": "a level of a game or of a gamified learning platform. a level is logic partition of progression in any video game. completing a level means advancing in the progression of the game."
+            },
+            "id": "https://w3id.org/xapi/seriousgames/activity-types/level",
+            "name": {
+                "en-US": "level"
+            }
+        },
         "leveleditor": {
             "description": {
                 "en-US": "the level editor"
@@ -72,11 +80,17 @@
             "name": {
                 "en-US": "script"
             }
+        },
+        "tts": {
+            "description": {
+                "en-US": "the text-to-speech option"
+            },
+            "id": "https://spy.lip6.fr/xapi/activity-types/tts",
+            "name": {
+                "en-US": "tts"
+            }
         }
     },
-    "content": {},
-    "direction": {},
-    "domain": {},
     "extension": {
         "content": {
             "description": {
@@ -114,6 +128,15 @@
                 "en-US": "oldvalue"
             }
         },
+        "progress": {
+            "description": {
+                "en-US": "a decimal number (3 significant figures with 2 figures following the decimal point) between 0 and 1 (inclusive) to indicate the value of progress in a completable. indicates the progress in a completable. this extension appears in the statement's result."
+            },
+            "id": "https://w3id.org/xapi/seriousgames/extensions/progress",
+            "name": {
+                "en-US": "progress"
+            }
+        },
         "score": {
             "description": {
                 "en-US": "score at the end of a level"
@@ -133,17 +156,6 @@
             }
         }
     },
-    "focus": {},
-    "grade": {},
-    "link": {},
-    "position": {},
-    "skills": {},
-    "state": {},
-    "subdomain": {},
-    "time": {},
-    "topic": {},
-    "type": {},
-    "value": {},
     "verb": {
         "bugged": {
             "description": {
@@ -172,6 +184,15 @@
                 "en-US": "closed"
             }
         },
+        "completed": {
+            "description": {
+                "en-US": "indicates the actor finished or concluded the activity normally."
+            },
+            "id": "http://adlnet.gov/expapi/verbs/completed",
+            "name": {
+                "en-US": "completed"
+            }
+        },
         "created": {
             "description": {
                 "en-US": "indicates that the actor creates a new script"
@@ -190,6 +211,24 @@
                 "en-US": "deleted"
             }
         },
+        "disabled": {
+            "description": {
+                "en-US": "indicates that the actor turned off a particular part or feature of the system."
+            },
+            "id": "http://id.tincanapi.com/verb/disabled",
+            "name": {
+                "en-US": "disabled"
+            }
+        },
+        "enabled": {
+            "description": {
+                "en-US": "indicates that the actor turned on a particular part or feature of the system. it works with the verb disabled."
+            },
+            "id": "http://id.tincanapi.com/verb/enabled",
+            "name": {
+                "en-US": "enabled"
+            }
+        },
         "executed": {
             "description": {
                 "en-US": "indicates that the actor executes programs"
@@ -197,6 +236,15 @@
             "id": "https://spy.lip6.fr/xapi/verbs/executed",
             "name": {
                 "en-US": "executed"
+            }
+        },
+        "exited": {
+            "description": {
+                "en-US": "indicates the actor intentionally departed from the activity or object."
+            },
+            "id": "http://adlnet.gov/expapi/verbs/exited",
+            "name": {
+                "en-US": "exited"
             }
         },
         "filtered": {
@@ -215,6 +263,24 @@
             "id": "https://spy.lip6.fr/xapi/verbs/inserted",
             "name": {
                 "en-US": "inserted"
+            }
+        },
+        "interacted": {
+            "description": {
+                "en-US": "indicates the actor engaged with a physical or virtual object."
+            },
+            "id": "http://adlnet.gov/expapi/verbs/interacted",
+            "name": {
+                "en-US": "interacted"
+            }
+        },
+        "launched": {
+            "description": {
+                "en-US": "indicates the actor attempted to start an activity."
+            },
+            "id": "http://adlnet.gov/expapi/verbs/launched",
+            "name": {
+                "en-US": "launched"
             }
         },
         "modified": {

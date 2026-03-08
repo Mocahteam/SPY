@@ -119,11 +119,11 @@ public class ConnexionManager : FSystem
 		// Disable Loading screen
 		GameObjectManager.setGameObjectState(loadingScreen, false);
 
-		/*if (Application.isEditor)
+		if (Application.isEditor)
 		{
 			SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
 			SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
-		}*/
+		}
 	}
 
 	private void GetScenariosAndLevels()
@@ -174,7 +174,7 @@ public class ConnexionManager : FSystem
 				gameData.scenarios[scenarioRaw.key] = scenarioRaw;
 				foreach (DataLevel levelPath in scenarioRaw.levels)
 				{
-					levelPath.src = new Uri(Application.streamingAssetsPath + "/" + levelPath.src).AbsoluteUri;
+					levelPath.filePath = new Uri(Application.streamingAssetsPath + "/" + levelPath.filePath).AbsoluteUri;
 				}
 			}
 		}
@@ -205,7 +205,7 @@ public class ConnexionManager : FSystem
 			webGL_fileToLoad += levelsListRaw.levels.Count;
 			// try to load all levels
 			foreach (DataLevel levelRaw in levelsListRaw.levels)
-				MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(new Uri(Application.streamingAssetsPath + "/" + levelRaw.src).AbsoluteUri));
+				MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(new Uri(Application.streamingAssetsPath + "/" + levelRaw.filePath).AbsoluteUri));
 		}
 	}
 

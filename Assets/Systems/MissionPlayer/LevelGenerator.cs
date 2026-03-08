@@ -54,12 +54,12 @@ public class LevelGenerator : FSystem {
 		{
 			gameData = gameDataGO.GetComponent<GameData>();
 			DataLevel levelToLoad = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad];
-			if (gameData.levels.ContainsKey(levelToLoad.src))
-				XmlToLevel(gameData.levels[levelToLoad.src].OwnerDocument);
+			if (gameData.levels.ContainsKey(levelToLoad.filePath))
+				XmlToLevel(gameData.levels[levelToLoad.filePath].OwnerDocument);
 			else
 				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Error });
 			scenarioName.text = Utility.extractLocale(gameData.selectedScenario);
-			levelName.text = Utility.extractLocale(levelToLoad.name);
+			levelName.text = Utility.extractLocale(levelToLoad.missionName);
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlButtons();
 			f_executionPanels.addEntryCallback(computeExecutionPanelWidth);
@@ -68,9 +68,9 @@ public class LevelGenerator : FSystem {
 				verb = "launched",
 				objectType = "level",
 				activityExtensions = new Dictionary<string, string>() {
-					{ "value", Utility.extractFileName(levelToLoad.src) },
+					{ "value", Utility.extractFileName(levelToLoad.filePath) },
 					{ "context", gameData.selectedScenario },
-					{ "progress", levelToLoad.name }
+					{ "progress", levelToLoad.missionName }
 				}
 			});
 		}
@@ -182,36 +182,39 @@ public class LevelGenerator : FSystem {
 					createDecoration(child.Attributes.GetNamedItem("name").Value, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value), (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value));
 					break;
 				case "script":
-					UIRootContainer.EditMode editModeByUser = UIRootContainer.EditMode.Locked;
-					XmlNode editMode = child.Attributes.GetNamedItem("editMode");
 					int tmpValue;
-					if (editMode != null && int.TryParse(editMode.Value, out tmpValue))
-						editModeByUser = (UIRootContainer.EditMode)tmpValue;
 					UIRootContainer.SolutionType typeByUser = UIRootContainer.SolutionType.Undefined;
 					XmlNode typeNode = child.Attributes.GetNamedItem("type");
 					if (typeNode != null && int.TryParse(typeNode.Value, out tmpValue))
 						typeByUser = (UIRootContainer.SolutionType)tmpValue;
-					XmlNode name = child.Attributes.GetNamedItem("outputLine");
-					if (name == null)
-						name = child.Attributes.GetNamedItem("name"); // for retrocompatibility
-
-					// Ask to create script
-					/* We can't used :
-					GameObjectManager.addComponent<ScriptToLoad>(MainLoop.instance.gameObject, new
+					if (typeByUser != UIRootContainer.SolutionType.Hidden)
 					{
-						scriptNode = child,
-						scriptName = Utility.extractLocale(name.Value),
-						editMode = editModeByUser,
-						type = typeByUser
-					});
-					because we get exception "not IConvertible" when we try to get the component !!! something wrong with XmlNode attribute of ScriptToLoad component...
-					Solution: we add ScriptToLoad component to the MainLoop immediately, we init each of its attributes and we ask to refresh the MainLoop to update families*/
-					ScriptToLoad stl = MainLoop.instance.gameObject.AddComponent<ScriptToLoad>();
-					stl.scriptNode = child;
-					stl.scriptName = Utility.extractLocale(name.Value);
-					stl.editMode = editModeByUser;
-					stl.type = typeByUser;
-					MainLoop.instance.StartCoroutine(delayRefreshMainLoop());
+						UIRootContainer.EditMode editModeByUser = UIRootContainer.EditMode.Locked;
+						XmlNode editMode = child.Attributes.GetNamedItem("editMode");
+						if (editMode != null && int.TryParse(editMode.Value, out tmpValue))
+							editModeByUser = (UIRootContainer.EditMode)tmpValue;
+						XmlNode name = child.Attributes.GetNamedItem("outputLine");
+						if (name == null)
+							name = child.Attributes.GetNamedItem("name"); // for retrocompatibility
+
+						// Ask to create script
+						/* We can't used :
+						GameObjectManager.addComponent<ScriptToLoad>(MainLoop.instance.gameObject, new
+						{
+							scriptNode = child,
+							scriptName = Utility.extractLocale(name.Value),
+							editMode = editModeByUser,
+							type = typeByUser
+						});
+						because we get exception "not IConvertible" when we try to get the component !!! something wrong with XmlNode attribute of ScriptToLoad component...
+						Solution: we add ScriptToLoad component to the MainLoop immediately, we init each of its attributes and we ask to refresh the MainLoop to update families*/
+						ScriptToLoad stl = MainLoop.instance.gameObject.AddComponent<ScriptToLoad>();
+						stl.scriptNode = child;
+						stl.scriptName = Utility.extractLocale(name.Value);
+						stl.editMode = editModeByUser;
+						stl.type = typeByUser;
+						MainLoop.instance.StartCoroutine(delayRefreshMainLoop());
+					}
 					break;
 				case "score":
 					gameData.levelToLoadScore[0] = int.Parse(child.Attributes.GetNamedItem("threeStars").Value);

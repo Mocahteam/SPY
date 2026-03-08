@@ -16,19 +16,9 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
         ParamCompetenceSystem.instance.showLevelInfo(GetComponentInChildren<TMP_Text>().text, overridedData);
     }
 
-    public void removeItemFromParent()
+    public void showBriefingOverride()
     {
-        ParamCompetenceSystem.instance.removeItemFromParent(gameObject);
-    }
-
-    public void moveItemInParent(int step)
-    {
-        ParamCompetenceSystem.instance.moveItemInParent(gameObject, step);
-    }
-
-    public void showBriefingOverride(GameObject src)
-    {
-        ParamCompetenceSystem.instance.showBriefingOverride(gameObject.GetComponent<DataLevelBehaviour>(), src);
+        ParamCompetenceSystem.instance.showBriefingOverride();
     }
 
     public void setNextFocusedGameObject(GameObject go)
@@ -43,10 +33,5 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
     public void loadScenario()
     {
         gameObject.transform.parent.parent.parent.parent.Find("Buttons/LoadButton").GetComponent<Button>().onClick.Invoke();
-    }
-
-    public void markLayoutForRebuild(RectTransform transform)
-    {
-        ParamCompetenceSystem.instance.markLayoutForRebuild(transform);
     }
 }

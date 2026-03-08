@@ -1,19 +1,61 @@
 <?xml version="1.0"?>
 <level>
-  <map>
-    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value= "3" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "2" /></line>
-    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-  </map>
-  <dialogs>
-	<dialog text="[fr]Tu peux voir le nom d'un robot en le sélectionnant.[/fr][en]You can see a robot's name by selecting it.[/en]" img="[fr]robotName.png[/fr][en]robotName_en.png[/en]" imgHeight="200" />
-	<dialog text="[fr]Tu peux indiquer le nom du robot à contrôler dans la zone de programme.[/fr][en]You can enter the name of the robot to be controlled in the editing area.[/en]" img="[fr]scriptName.png[/fr][en]scriptName_en.png[/en]" imgHeight="175" />
-  </dialogs>
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="4" />
-  </blockLimits>
-  <door posY="1" posX="1" direction="2" slotId="0" state="1" />
-  <robot inputLine="Plok" posY="1" posX="4" direction="3" />
-  <script outputLine="" editMode="2" />
-  <score twoStars="5000" threeStars="6000"/>  
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="3" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="2" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="[fr]Tu peux voir le nom d'un robot en le sélectionnant.[/fr][en]You can see a robot's name by selecting it.[/en]" img="[fr]robotName.png[/fr][en]robotName_en.png[/en]" imgDesc="[fr]Utilise la touche 'c' de ton clavier pour passer d'un robot à l'autre.[/fr][en]Use the 'c' key on your keyboard to switch between robots.[/en]" imgHeight="200" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Tu peux indiquer le nom du robot à contrôler dans la zone de programme.[/fr][en]You can enter the name of the robot to be controlled in the editing area.[/en]" img="[fr]scriptName.png[/fr][en]scriptName_en.png[/en]" imgDesc="[fr]Utilise la touche 'p' de ton clavier pour sélectionner une zone de programme.[/fr][en]Use the 'p' key on your keyboard to select a program area.[/en]" imgHeight="175" enableInteraction="0" briefingType="0" />
+	</dialogs>
+	<score twoStars="5000" threeStars="6000"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="4" />
+		<blockLimit blockType="TurnLeft" limit="0" />
+		<blockLimit blockType="TurnRight" limit="0" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="0" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<door posX="2" posY="2" slotId="0" direction="2" state="1" />
+
+	<robot inputLine="Plok" posX="5" posY="2" direction="3" skin="0" />
+
+	<script outputLine="Script1" editMode="2" type="3">
+	</script>
+
+	<script outputLine="Sol_Plok" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+	</script>
+
 </level>

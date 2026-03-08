@@ -227,14 +227,18 @@ public class HotkeySystem : FSystem
 						{
 							if (f_programmingArea.getAt(i) == currentProgrammingArea)
 							{
+								// Si il y a encore une zone de programme, on la sélectionne
 								if (i < f_programmingArea.Count - 1)
 									eventSystem.SetSelectedGameObject(f_programmingArea.getAt(i + 1).GetComponentInChildren<TMP_InputField>().gameObject);
+								// si on est sur la dernière et que le bouton '+' est actif et visible, on le sélectionne
+								else if(AddContainerButton != null && AddContainerButton.gameObject.activeInHierarchy && AddContainerButton.interactable)
+									eventSystem.SetSelectedGameObject(AddContainerButton.gameObject);
+								// sinon on revient au premier
 								else
 									eventSystem.SetSelectedGameObject(f_programmingArea.First().GetComponentInChildren<TMP_InputField>().gameObject);
 							}
 
 						}
-						eventSystem.SetSelectedGameObject(f_programmingArea.First().GetComponentInChildren<TMP_InputField>().gameObject);
 					}
 					else
 					{
@@ -242,7 +246,7 @@ public class HotkeySystem : FSystem
 						eventSystem.SetSelectedGameObject(f_programmingArea.First().GetComponentInChildren<TMP_InputField>().gameObject);
 					}
 				}
-				else if (AddContainerButton != null)
+				else if (AddContainerButton != null && AddContainerButton.gameObject.activeInHierarchy && AddContainerButton.interactable)
 					// select + button
 					eventSystem.SetSelectedGameObject(AddContainerButton.gameObject);
 

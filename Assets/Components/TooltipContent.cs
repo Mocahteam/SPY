@@ -64,4 +64,9 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         hideTooltip();
     }
+
+    public void setText(string newContent)
+    {
+        text = newContent;
+    }
 }

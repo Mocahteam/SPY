@@ -117,7 +117,7 @@ public class UINavigationManager : FSystem
 				if (nav.UpLeft.Length > 0 && (navigateAction.WasPressedThisFrame() && (navigateValue.y > 0 || navigateValue.x < 0)))
 				{
 					foreach (Selectable sel in nav.UpLeft)
-						if (sel != null && sel.gameObject.activeInHierarchy)
+						if (sel != null && sel.gameObject.activeInHierarchy && sel.interactable)
 						{
 							EventSystem.current.SetSelectedGameObject(sel.gameObject);
 							break;
@@ -126,7 +126,7 @@ public class UINavigationManager : FSystem
 				else if (nav.DownRight.Length > 0 && (navigateAction.WasPressedThisFrame() && (navigateValue.y < 0 || navigateValue.x > 0)))
 				{
 					foreach (Selectable sel in nav.DownRight)
-						if (sel != null && sel.gameObject.activeInHierarchy)
+						if (sel != null && sel.gameObject.activeInHierarchy && sel.interactable)
 						{
 							EventSystem.current.SetSelectedGameObject(sel.gameObject);
 							break;

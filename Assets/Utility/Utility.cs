@@ -101,6 +101,9 @@ public static class Utility
 
 	public static IEnumerator GetTextureWebRequest(string miniViewUri, Image target)
 	{
+		// effacer la texture precedente
+		setTexture(null, target);
+		// Faire la requette pour récupérer la nouvelle
 		UnityWebRequest www = UnityWebRequestTexture.GetTexture(miniViewUri);
 		yield return www.SendWebRequest();
 

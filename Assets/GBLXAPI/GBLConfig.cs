@@ -2,7 +2,6 @@
 {
     public class GBLConfig
     {
-        public const string StandardsDefaultPath = "data/GBLxAPI_Vocab_Default";
         public const string StandardsUserPath = "data/GBLxAPI_Vocab_User";
 
         public string lrsURL;

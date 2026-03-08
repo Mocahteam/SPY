@@ -1,18 +1,56 @@
 <?xml version="1.0"?>
 <level>
-  <map>
-    <line><cell value= "1" /><cell value= "2" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "3" /><cell value= "1" /></line>
-  </map>
-  <dialogs>
-	<dialog text="[fr]Tu peux créer tes propres zones de programme à l'aide du bouton '+'.[/fr][en]You can create your own editing area using the '+' button.[/en]" img="[fr]CreateScript.png[/fr][en]CreateScript_en.png[/en]" imgHeight="150" />
-	<dialog text="[fr]Il ne te faudra pas oublier d'indiquer le nom du robot à qui tu souhaites envoyer ton programme.[/fr][en]Don't forget to indicate the name of the robot you want to send your program to.[/en]" />
-  </dialogs>
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="3" />
-  </blockLimits>
-  <robot inputLine="Plok" posY="0" posX="1" direction="1" />
-  <score twoStars="0" threeStars="6750"/>  
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="2" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="3" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="[fr]Tu peux créer tes propres zones de programme à l'aide du bouton '+'.[/fr][en]You can create your own editing area using the '+' button.[/en]" img="[fr]CreateScript.png[/fr][en]CreateScript_en.png[/en]" imgDesc="[fr]Tu peux utiliser la touche 'p' de ton clavier pour sélectionner ce bouton.[/fr][en]You can use the 'p' key on your keyboard to select this button.[/en]" imgHeight="150" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Il ne te faudra pas oublier d'indiquer le nom du robot à qui tu souhaites envoyer ton programme.[/fr][en]Don't forget to indicate the name of the robot you want to send your program to.[/en]" enableInteraction="0" briefingType="0" />
+	</dialogs>
+	<score twoStars="0" threeStars="6750"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="3" />
+		<blockLimit blockType="TurnLeft" limit="0" />
+		<blockLimit blockType="TurnRight" limit="0" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="0" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<robot inputLine="Plok" posX="2" posY="1" direction="1" skin="0" />
+
+	<script outputLine="Sol_Plok" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+	</script>
+
 </level>

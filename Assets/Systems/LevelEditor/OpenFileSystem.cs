@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FYFY;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Application = UnityEngine.Application;
 
 public class OpenFileSystem : FSystem {
@@ -12,9 +13,11 @@ public class OpenFileSystem : FSystem {
 	private Family f_newLoading = FamilyManager.getFamily(new AllOfComponents(typeof(NewLevelToLoad)));
 
 	public GameObject loadingLevelContent;
-	public LevelData levelData;
-	public TMP_InputField savingInputField;
+	public DataLevelBehaviour dataLevel;
 	private GameObject selectedLevelGO;
+
+	public Button closeBriefing;
+	public Button mapEditorTab;
 
 	private GameData gameData;
 
@@ -84,24 +87,32 @@ public class OpenFileSystem : FSystem {
 	// See New GO in MenuCanvas
 	public void resetFileData()
     {
-		levelData.levelName = "";
-		levelData.filePath = "";
+		dataLevel.data.missionName = "";
+		dataLevel.data.filePath = "";
+		dataLevel.data.overridedDialogs = new List<Dialog>();
 	}
 
 	// See LoadButton GameObject
 	public void loadLevel()
     {
 		if (selectedLevelGO != null)
-        {
-			levelData.levelName = selectedLevelGO.GetComponentInChildren<TMP_Text>().text;
-			savingInputField.text = levelData.levelName;
-			if (gameData.levels.ContainsKey(new Uri(Application.streamingAssetsPath + "/" + selectedLevelGO.GetComponentInChildren<TMP_Text>().text).AbsoluteUri))
-				levelData.filePath = new Uri(Application.streamingAssetsPath + "/" + levelData.levelName).AbsoluteUri;
-			else if (gameData.levels.ContainsKey(new Uri(Application.persistentDataPath + "/" + selectedLevelGO.GetComponentInChildren<TMP_Text>().text).AbsoluteUri))
-				levelData.filePath = new Uri(Application.persistentDataPath + "/" + levelData.levelName).AbsoluteUri;
+		{
+			// reset UI
+			if (closeBriefing.gameObject.activeInHierarchy)
+				closeBriefing.onClick.Invoke();
+			if (mapEditorTab.interactable)
+				mapEditorTab.onClick.Invoke();
+
+			dataLevel.data.missionName = selectedLevelGO.GetComponentInChildren<TMP_Text>().text;
+			if (gameData.levels.ContainsKey(new Uri(Application.streamingAssetsPath + "/" + dataLevel.data.missionName).AbsoluteUri))
+				dataLevel.data.filePath = new Uri(Application.streamingAssetsPath + "/" + dataLevel.data.missionName).AbsoluteUri;
+			else if (gameData.levels.ContainsKey(new Uri(Application.persistentDataPath + "/" + dataLevel.data.missionName).AbsoluteUri))
+				dataLevel.data.filePath = new Uri(Application.persistentDataPath + "/" + dataLevel.data.missionName).AbsoluteUri;
 			else
-				levelData.filePath = levelData.levelName;
-			GameObjectManager.addComponent<NewLevelToLoad>(gameData.gameObject, new { levelKey = levelData.filePath });
+				dataLevel.data.filePath = dataLevel.data.missionName;
+			// reset dialog
+			dataLevel.data.overridedDialogs = new List<Dialog>();
+			GameObjectManager.addComponent<NewLevelToLoad>(gameData.gameObject, new { levelKey = dataLevel.data.filePath });
 		}
 	}
 

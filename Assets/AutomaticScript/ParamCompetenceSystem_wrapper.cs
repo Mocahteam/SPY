@@ -23,6 +23,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject loadingScenarioContent;
 	public UnityEngine.GameObject mainCanvas;
 	public TMPro.TMP_InputField levelFilterByName;
+	public UnityEngine.UI.Button closeBriefing;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -46,6 +47,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "loadingScenarioContent", loadingScenarioContent);
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
 		MainLoop.initAppropriateSystemField (system, "levelFilterByName", levelFilterByName);
+		MainLoop.initAppropriateSystemField (system, "closeBriefing", closeBriefing);
 	}
 
 	public void selectCompetencies(System.Int32 referentialId)
@@ -83,6 +85,11 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "onScenarioSelected", go);
 	}
 
+	public void refreshLevelInfo()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "refreshLevelInfo", null);
+	}
+
 	public void addCurrentLevelToScenario()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "addCurrentLevelToScenario", null);
@@ -91,11 +98,6 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public void infoCompetence(Competency comp)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "infoCompetence", comp);
-	}
-
-	public void removeItemFromParent(UnityEngine.GameObject go)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "removeItemFromParent", go);
 	}
 
 	public void saveScenario(TMPro.TMP_InputField scenarioName)
@@ -108,24 +110,14 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "displaySavingPanel", scenarName);
 	}
 
-	public void saveBriefingOverride()
+	public void showBriefingOverride()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "saveBriefingOverride", null);
-	}
-
-	public void addNewBriefing(UnityEngine.GameObject parent)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "addNewBriefing", parent);
+		MainLoop.callAppropriateSystemMethod (system, "showBriefingOverride", null);
 	}
 
 	public void testLevel(DataLevelBehaviour dlb)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "testLevel", dlb);
-	}
-
-	public void markLayoutForRebuild(UnityEngine.RectTransform transform)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "markLayoutForRebuild", transform);
 	}
 
 }

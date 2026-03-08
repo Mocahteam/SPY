@@ -164,7 +164,7 @@ public class TitleScreenSystem : FSystem {
 			int totalStars = 0;
 			foreach (DataLevel dl in gameData.scenarios[key].levels)
 			{
-				string highScoreKey = Utility.extractFileName(dl.src);
+				string highScoreKey = Utility.extractFileName(dl.filePath);
 				totalStars += (userData.highScore != null ? (userData.highScore.ContainsKey(highScoreKey) ? userData.highScore[highScoreKey] : 0) : PlayerPrefs.GetInt(highScoreKey + gameData.scoreKey, 0)); //0 star by default
 			}
 			scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text = totalStars + "/" + (gameData.scenarios[key].levels.Count * 3);
@@ -266,7 +266,7 @@ public class TitleScreenSystem : FSystem {
 
 			DataLevel levelData = gameData.scenarios[scenarioKey].levels[i];
 			//scores
-			string highScoreKey = Utility.extractFileName(levelData.src);
+			string highScoreKey = Utility.extractFileName(levelData.filePath);
 			int scoredStars = (userData.highScore != null ? (userData.highScore.ContainsKey(highScoreKey) ? userData.highScore[highScoreKey] : 0) : PlayerPrefs.GetInt(highScoreKey + gameData.scoreKey, 0)); //0 star by default
 
 			Image star1 = missionTile.transform.Find("Star1").GetComponent<Image>();
@@ -276,7 +276,7 @@ public class TitleScreenSystem : FSystem {
 			star2.color = scoredStars >= 2 ? missionButton.colors.highlightedColor : missionButton.colors.disabledColor;
 			star3.color = scoredStars == 3 ? missionButton.colors.highlightedColor : missionButton.colors.disabledColor;
 
-			missionTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = Utility.extractLocale(levelData.name);
+			missionTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = Utility.extractLocale(levelData.missionName);
 
 			int tooltipText = scoredStars;
 			// lock/unlock levels
@@ -387,12 +387,12 @@ public class TitleScreenSystem : FSystem {
 		// If the keys refer a scenario and a mission => show mission data
 		else if (keys.scenarioKey != "" && keys.missionNumber != -1 && gameData.scenarios.ContainsKey(keys.scenarioKey) && gameData.scenarios[keys.scenarioKey].levels.Count > keys.missionNumber)
         {
-			detailsTitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].name);
+			detailsTitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].missionName);
 			GameObjectManager.setGameObjectState(gameDescription, false);
 			gameDescription.GetComponentInChildren<TMP_Text>(true).text = "";
 			GameObjectManager.setGameObjectState(miniView.gameObject, true);
 			// try to load mini view
-			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].src.Replace(".xml", PlayerPrefs.GetInt("localization") == 1 ? "_en.png" : ".png"), miniView));
+			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].filePath.Replace(".xml", PlayerPrefs.GetInt("localization") == 1 ? "_en.png" : ".png"), miniView));
 		}
 		// Else locked mission
         else
@@ -415,7 +415,7 @@ public class TitleScreenSystem : FSystem {
 			WebGlScenario scenar = gameData.scenarios[comp_gk.scenarioKey];
 			title.text = Utility.extractLocale(scenar.name);
 			if (comp_gk.missionNumber != -1 && scenar.levels.Count > comp_gk.missionNumber)
-				title.text += " / " + Utility.extractLocale(scenar.levels[comp_gk.missionNumber].name);
+				title.text += " / " + Utility.extractLocale(scenar.levels[comp_gk.missionNumber].missionName);
 			title.text += title.GetComponentInParent<Localization>().localization[2];
 		}
 		title.text += title.GetComponentInParent<Localization>().localization[3];
@@ -439,7 +439,7 @@ public class TitleScreenSystem : FSystem {
 			foreach (GameObject comp in f_competencies)
 				if (comp.GetComponent<Competency>().referential == referentialName)
 					foreach (DataLevel levelKey in levelKeys)
-						if (gameData.levels.ContainsKey(levelKey.src) && UtilityLobby.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.src].OwnerDocument))
+						if (gameData.levels.ContainsKey(levelKey.filePath) && UtilityLobby.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.filePath].OwnerDocument))
 						{
 							txt += Utility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
 							break;

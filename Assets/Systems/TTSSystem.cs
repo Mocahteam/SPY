@@ -29,6 +29,9 @@ public class TTSSystem : FSystem
     private static extern string SendToScreenReader(string txt); // call javascript => send txt to html to be accessible by screen readers
 
     [DllImport("__Internal")]
+    private static extern bool IsTTSEnabled(); // call javascript => return true if "TTS" is checked in html
+
+    [DllImport("__Internal")]
     private static extern bool InstructionOnly(); // call javascript => return true if "Instruction" is checked in html
 
     private GameData gameData;
@@ -71,6 +74,16 @@ public class TTSSystem : FSystem
         foreach (GameObject selection in f_agentSelection)
             onNewAgentSelected(selection);
         f_agentSelection.addEntryCallback(onNewAgentSelected);
+
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+            // get current state 
+            gameData.newTTS_state = IsTTSEnabled();
+    }
+
+    // Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
+    public void toggleTTS()
+    {
+        gameData.newTTS_state = IsTTSEnabled();
     }
 
     protected override void onProcess(int familiesUpdateCount)
@@ -79,6 +92,20 @@ public class TTSSystem : FSystem
         {
             previousSelectedGO = eventSystem.currentSelectedGameObject;
             defTTS(previousSelectedGO);
+        }
+
+        // send statement if TTS state change
+        if (Application.platform == RuntimePlatform.WebGLPlayer && gameData.newTTS_state != gameData.oldTTS_state)
+        {
+            gameData.oldTTS_state = gameData.newTTS_state;
+            GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+            {
+                verb = gameData.newTTS_state ? "enabled" : "disabled",
+                objectType = "tts",
+                activityExtensions = new Dictionary<string, string>() {
+                    { "value", InstructionOnly() ? "instructions" : "all" }
+                }
+            });
         }
     }
 
