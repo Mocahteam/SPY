@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -38,6 +40,46 @@ public static class UtilityEditor
 			2 => Cell.Destiny,
 			_ => Cell.Kyle
 		};
+	}
+
+	public static string IntToLetters(int number)
+	{
+		string result = "";
+		while (number >= 0)
+		{
+			result = (char)('A' + number % 26) + result;
+			number = number / 26 - 1;
+		}
+		return result;
+	}
+
+	public static Tuple<int, int> LettersToInts(string input)
+	{
+		// Séparer les lettres des chiffres via Regex
+		var match = Regex.Match(input.ToUpper(), @"([A-Z]+)([0-9]+)");
+
+		if (!match.Success)
+		{
+			Debug.LogWarning("LettersToInts -> Warning format must be composed with letters followed by digits (ex: AB34).");
+			return new Tuple<int, int>(-1, -1);
+		}
+
+		string columnPart = match.Groups[1].Value;
+		string rowPart = match.Groups[2].Value;
+
+		// 1. Calcul du X (Base 26)
+		int x = 0;
+		foreach (char c in columnPart)
+			x = x * 26 + (c - 'A' + 1);
+		// On soustrait 1 pour avoir un index 0 (A = 0)
+		x -= 1;
+
+		// 2. Calcul du Y
+		int y = int.Parse(rowPart);
+		// On soustrait 1 pour l'index 0 (ligne 1 = index 0)
+		y -= 1;
+
+		return new Tuple<int, int>(x, y);
 	}
 
 	/// <summary>

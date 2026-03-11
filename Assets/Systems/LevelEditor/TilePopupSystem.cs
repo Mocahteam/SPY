@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using FYFY_plugins.PointerManager;
 using TMPro;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 public class TilePopupSystem : FSystem
 {
@@ -16,13 +17,9 @@ public class TilePopupSystem : FSystem
 	private Family f_focusedPopups = FamilyManager.getFamily(new AllOfComponents(typeof(Popup), typeof(PointerOver)));
 
 	public static TilePopupSystem instance;
-	public GameObject orientationPopup;
-	public GameObject inputLinePopup;
-	public GameObject rangePopup;
-	public GameObject consoleSlotsPopup;
-	public GameObject doorSlotPopup;
-	public GameObject furniturePopup;
-	public GameObject skinPopup;
+	public Transform objectPanelContent;
+	public GameObject tileSettingsPrefab;
+	public Transform tileSettingsParent;
 
 	public PaintableGrid paintableGrid;
 
@@ -30,7 +27,7 @@ public class TilePopupSystem : FSystem
 
 	private const string FurniturePrefix = "Prefabs/Modern Furniture/Prefabs/";
 	private const string PathXmlPrefix = "Modern Furniture/Prefabs/";
-	private FloorObject selectedObject;
+	private FloorObject[] selectedObjects = null;
 
 	private InputAction click;
 	private InputAction rightClick;
@@ -38,6 +35,10 @@ public class TilePopupSystem : FSystem
 	private InputAction exitWebGL;
 
 	private List<string> furnitureNameToPath = new List<string>();
+	private List<string> furnitureOptions = new List<string>();
+
+	private UnityAction localCallback;
+	private GameData gameData;
 
 	public TilePopupSystem()
 	{
@@ -47,9 +48,13 @@ public class TilePopupSystem : FSystem
 	// Use to init system before the first onProcess call
 	protected override void onStart()
 	{
-		hideAllPopups();
-		initFurniturePopup();
-		selectedObject = null;
+		GameObject go = GameObject.Find("GameData");
+		if (go != null)
+			gameData = go.GetComponent<GameData>();
+
+		destroyAllPopups();
+		initFurnitureDropDownData();
+		selectedObjects = new FloorObject[3];
 
 		click = InputSystem.actions.FindAction("Click");
 		rightClick = InputSystem.actions.FindAction("RightClick");
@@ -57,20 +62,14 @@ public class TilePopupSystem : FSystem
 		exitWebGL = InputSystem.actions.FindAction("ExitWebGL");
 	}
 
-	private void initFurniturePopup()
+	private void initFurnitureDropDownData()
 	{
 		// Change the path provided here to load more options
-		var prefabs = Resources.LoadAll<GameObject>(FurniturePrefix).ToList();
-		var prefabNames = prefabs.GroupBy(p => p.name).Select(g => g.First().name).ToList();
-		TMP_Dropdown dropdown = furniturePopup.GetComponentInChildren<TMP_Dropdown>();
+		List<GameObject> prefabs = Resources.LoadAll<GameObject>(FurniturePrefix).ToList();
+		furnitureOptions = prefabs.GroupBy(p => p.name).Select(g => g.First().name).ToList();
 
-		List<string> options = new List<string>();
-		foreach (string name in prefabNames)
-		{
+		foreach (string name in furnitureOptions)
 			furnitureNameToPath.Add(PathXmlPrefix + name);
-			options.Add(name);
-		}
-		furniturePopup.GetComponentInChildren<TMP_Dropdown>().AddOptions(options);
 	}
 
 	// Use to process your families.
@@ -79,69 +78,117 @@ public class TilePopupSystem : FSystem
 		Vector2Int pos = UtilityEditor.mousePosToGridPos(paintableGrid.GetComponent<Tilemap>());
 		Tuple<int, int> posTuple = new Tuple<int, int>(pos.y, pos.x);
 
-		if (rightClick.WasPressedThisFrame() && selectedObject != null && selectedObject.line == pos.y && selectedObject.col == pos.x)
+		// sur un clic droit ou un Echap, on déselectionne la tile
+		if (isContentOnLayer(selectedObjects) && (
+			rightClick.WasPressedThisFrame() || // on déselectionne sur un clic droit
+			click.WasPressedThisFrame() && (!paintableGrid.floorObjects.ContainsKey(posTuple) || !isContentOnLayer(paintableGrid.floorObjects[posTuple])) && f_focusedPopups.Count == 0)) // on déselectionne sur un clic gauche dans le vide qui n'est pas sur une popup sinon quand on intéragit avec la popup, ça déselectionne automatiquement
 		{
-			selectedObject = null;
+			selectedObjects = new FloorObject[3];
 		}
+		// sur un clic gauche qui pointe des objets, on les sélectionne
+		if (click.WasPressedThisFrame() && paintableGrid.floorObjects.ContainsKey(posTuple) && f_focusedPopups.Count == 0)
+			selectedObjects = paintableGrid.floorObjects[posTuple];
 
-		if (click.WasPressedThisFrame() && paintableGrid.floorObjects.ContainsKey(posTuple) && paintableGrid.floorObjects[posTuple].selectable)
+		// si des popup sont affichées et qu'aucun objet n'est sélectionné, on les supprime
+		if (f_activePopups.Count > 0 && !isContentOnLayer(selectedObjects))
+			destroyAllPopups();
+
+		// sur la frame ou le clic a eu lieu, on crée les nouvelles popups
+		if (click.WasPressedThisFrame() && isContentOnLayer(selectedObjects) && f_focusedPopups.Count == 0)
+			refreshPopups(pos.x, pos.y, false);
+
+		if (isContentOnLayer(selectedObjects))
 		{
-			selectedObject = paintableGrid.floorObjects[posTuple];
+			FloorObject floorObject = selectedObjects[0] ?? selectedObjects[1] ?? selectedObjects[2];
+			GameObjectManager.setGameObjectState(selection, true);
+			selection.transform.localPosition = new Vector3(-UtilityEditor.gridMaxSize/2 + floorObject.col + 0.5f, UtilityEditor.gridMaxSize / 2 - floorObject.line + 0.5f);
 		}
+		else
+			GameObjectManager.setGameObjectState(selection, false);
+	}
 
-		// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
-		if (f_activePopups.Count > 0 && ((cancel.WasPressedThisFrame() && !exitWebGL.WasPressedThisFrame()) || selectedObject == null || (!paintableGrid.floorObjects.ContainsKey(posTuple) && click.WasPressedThisFrame() && f_focusedPopups.Count == 0)))
-		{
-			hideAllPopups();
-			selectedObject = null; // be sure
-		}
+	private bool isContentOnLayer(FloorObject[] floorObjects)
+    {
+		return floorObjects != null && (floorObjects[0] != null || floorObjects[1] != null || floorObjects[2] != null);
+	}
 
-		if (click.WasPressedThisFrame() && selectedObject != null && f_focusedPopups.Count == 0)
+	private void refreshPopups(int x, int y, bool autoFocusLastPosition)
+    {
+		// on commence par supprimer les anciennes
+		destroyAllPopups();
+		foreach (FloorObject selectedObject in selectedObjects)
 		{
-			hideAllPopups();
-			GameObjectManager.setGameObjectState(orientationPopup.transform.parent.parent.parent.gameObject, true);
+			if (selectedObject == null)
+				continue;
+			GameObject tileSettings = GameObject.Instantiate<GameObject>(tileSettingsPrefab, tileSettingsParent);
+			GameObject positionPopup = tileSettings.transform.Find("PositionPopup").gameObject;
+			positionPopup.GetComponentInChildren<TMP_InputField>().text = UtilityEditor.IntToLetters(x) + (y + 1);
+			GameObject orientationPopup = tileSettings.transform.Find("OrientationPopup").gameObject;
+			GameObject inputLinePopup = tileSettings.transform.Find("InputLinePopup").gameObject;
+			GameObject rangePopup = tileSettings.transform.Find("rangePopup").gameObject;
+			GameObject consoleSlotsPopup = tileSettings.transform.Find("consoleSlotsPopup").gameObject;
+			GameObject doorSlotPopup = tileSettings.transform.Find("doorSlotPopup").gameObject;
+			GameObject furniturePopup = tileSettings.transform.Find("furniturePopup").gameObject;
+			GameObject skinPopup = tileSettings.transform.Find("skinPopup").gameObject;
+			// par défaut onj désactive tout
+			orientationPopup.SetActive(false);
+			inputLinePopup.SetActive(false);
+			rangePopup.SetActive(false);
+			consoleSlotsPopup.SetActive(false);
+			doorSlotPopup.SetActive(false);
+			furniturePopup.SetActive(false);
+			skinPopup.SetActive(false);
+			tileSettings.GetComponent<Popup>().floorObject = selectedObject;
+			string title;
 			switch (selectedObject)
 			{
 				case Door d:
+					title = objectPanelContent.Find("Door").GetComponentInChildren<TMP_Text>().text;
 					// enable popups
-					GameObjectManager.setGameObjectState(orientationPopup, true);
-					GameObjectManager.setGameObjectState(doorSlotPopup, true);
+					orientationPopup.SetActive(true);
+					doorSlotPopup.SetActive(true);
 					// load data
-					doorSlotPopup.GetComponentInChildren<TMP_InputField>().text = d.slot;
-					doorSlotPopup.GetComponentInChildren<Toggle>().isOn = d.state;
+					doorSlotPopup.GetComponentInChildren<TMP_InputField>(true).text = d.slot;
+					doorSlotPopup.GetComponentInChildren<Toggle>(true).isOn = d.state;
 					break;
 				case Console c:
+					title = objectPanelContent.Find("Console").GetComponentInChildren<TMP_Text>().text;
 					// enable popups
-					GameObjectManager.setGameObjectState(orientationPopup, true);
-					GameObjectManager.setGameObjectState(consoleSlotsPopup, true);
+					orientationPopup.SetActive(true);
+					consoleSlotsPopup.SetActive(true);
 					// load data
-					consoleSlotsPopup.GetComponentInChildren<TMP_InputField>().text = string.Join(", ", c.slots);
+					consoleSlotsPopup.GetComponentInChildren<TMP_InputField>(true).text = string.Join(", ", c.slots);
 					break;
 				case PlayerRobot pr:
+					title = objectPanelContent.Find("AllyRobot").GetComponentInChildren<TMP_Text>().text;
 					// enable popups
-					GameObjectManager.setGameObjectState(orientationPopup, true);
-					GameObjectManager.setGameObjectState(inputLinePopup, true);
-					GameObjectManager.setGameObjectState(skinPopup, true);
+					orientationPopup.SetActive(true);
+					inputLinePopup.SetActive(true);
+					skinPopup.SetActive(true);
 					// load data
-					inputLinePopup.GetComponentInChildren<TMP_InputField>().text = pr.inputLine;
-					skinPopup.GetComponentInChildren<TMP_Dropdown>().value = UtilityEditor.SkinToInt(pr.type);
+					inputLinePopup.GetComponentInChildren<TMP_InputField>(true).text = pr.inputLine;
+					skinPopup.GetComponentInChildren<TMP_Dropdown>(true).value = UtilityEditor.SkinToInt(pr.type);
 					break;
 				case EnemyRobot er:
+					title = objectPanelContent.Find("EnemyRobot").GetComponentInChildren<TMP_Text>().text;
 					// enable popups
-					GameObjectManager.setGameObjectState(orientationPopup, true);
-					GameObjectManager.setGameObjectState(inputLinePopup, true);
-					GameObjectManager.setGameObjectState(rangePopup, true);
+					orientationPopup.SetActive(true);
+					inputLinePopup.SetActive(true);
+					rangePopup.SetActive(true);
 					// load data
-					inputLinePopup.GetComponentInChildren<TMP_InputField>().text = er.inputLine;
-					rangePopup.GetComponentInChildren<TMP_InputField>().text = er.range.ToString();
-					rangePopup.GetComponentInChildren<Toggle>().isOn = !er.selfRange;
-					rangePopup.GetComponentInChildren<TMP_Dropdown>().value = (int)er.typeRange;
+					inputLinePopup.GetComponentInChildren<TMP_InputField>(true).text = er.inputLine;
+					rangePopup.GetComponentInChildren<TMP_InputField>(true).text = er.range.ToString();
+					rangePopup.GetComponentInChildren<Toggle>(true).isOn = !er.selfRange;
+					rangePopup.GetComponentInChildren<TMP_Dropdown>(true).value = (int)er.typeRange;
 					break;
-				case DecorationObject deco:
+				case DecorationObject _:
+					title = objectPanelContent.Find("Deco").GetComponentInChildren<TMP_Text>().text;
 					// enable popups
-					GameObjectManager.setGameObjectState(orientationPopup, true);
-					GameObjectManager.setGameObjectState(furniturePopup, true);
+					orientationPopup.SetActive(true);
+					furniturePopup.SetActive(true);
 					// load data
+					furniturePopup.GetComponentInChildren<TMP_Dropdown>(true).AddOptions(furnitureOptions);
+					// select appropriate entry
 					int i = 0;
 					foreach (string value in furnitureNameToPath)
 					{
@@ -149,115 +196,148 @@ public class TilePopupSystem : FSystem
 							break;
 						i++;
 					}
-					furniturePopup.GetComponentInChildren<TMP_Dropdown>().value = i;
+					furniturePopup.GetComponentInChildren<TMP_Dropdown>(true).value = i;
+					break;
+				default:
+					title = objectPanelContent.Find("Coin").GetComponentInChildren<TMP_Text>().text;
 					break;
 			}
+			tileSettings.transform.Find("Title").GetComponentInChildren<TMP_Text>().text = title;
+			GameObjectManager.bind(tileSettings);
 		}
-
-		if (selectedObject != null)
-		{
-			GameObjectManager.setGameObjectState(selection, true);
-			selection.transform.localPosition = new Vector3(-UtilityEditor.gridMaxSize/2 + selectedObject.col + 0.5f, UtilityEditor.gridMaxSize / 2 - selectedObject.line + 0.5f);
-		}
-		else
-			GameObjectManager.setGameObjectState(selection, false);
+		if (autoFocusLastPosition)
+			Utility.delayGOSelection(tileSettingsParent.GetChild(tileSettingsParent.childCount - 1).GetComponentInChildren<TMP_InputField>(true).gameObject, 1);
 	}
 
-	private void hideAllPopups()
+	private void destroyAllPopups()
 	{
+		Debug.Log("destroyAllPopups !!!!!!!!!!!!!");
 		foreach (GameObject popup in f_popups)
-			GameObjectManager.setGameObjectState(popup, false);
-		if (f_popups.Count > 0)
-			GameObjectManager.setGameObjectState(f_popups.First().transform.parent.parent.parent.gameObject, false);
+		{
+			GameObjectManager.unbind(popup);
+			popup.transform.SetParent(null);
+			UnityEngine.Object.Destroy(popup);
+		}
+		GameObjectManager.setGameObjectState(selection, false);
+	}
+
+	// See trash gameObject
+	public void removeTileSettings(GameObject settings)
+    {
+		if (settings.transform.parent.childCount == 1)
+			GameObjectManager.setGameObjectState(selection, false);
+		EditorGridSystem.instance.removeTile(settings.GetComponent<Popup>().floorObject);
+		GameObjectManager.unbind(settings);
+		settings.transform.SetParent(null);
+		UnityEngine.Object.Destroy(settings);
+    }
+
+	// See PositionPopup GameoBject childs
+	public void moveTile(GameObject settings, string newPosition)
+    {
+		FloorObject selectedObject = settings.GetComponent<Popup>().floorObject;
+		Tuple<int, int> newPos = UtilityEditor.LettersToInts(newPosition);
+		bool moveDone = false;
+		if (newPos.Item1 != -1 && newPos.Item2 != -1)
+		{
+			if (newPos.Item1 != selectedObject.col || newPos.Item2 != selectedObject.line)
+			{
+				if (EditorGridSystem.instance.moveTile(selectedObject, newPos.Item1, newPos.Item2))
+				{
+					selectedObjects = paintableGrid.floorObjects[newPos];
+					refreshPopups(newPos.Item1, newPos.Item2, true);
+					moveDone = true;
+				}
+			}
+			else
+				moveDone = true; // Si la nouvelle poisition est égale à l'ancienne on considère que le déplacement c'est bien passé
+		}
+		if (!moveDone)
+		{
+			localCallback = null;
+			Localization loc = gameData.GetComponent<Localization>();
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[49], newPosition), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+		}
 	}
 
 	// See UP, Right, Down and Left GameObjects
-	public void rotateObject(int newOrientation)
+	public void rotateObject(GameObject settings, int newOrientation)
 	{
-		if (selectedObject != null)
-		{
-			selectedObject.orientation = (Direction.Dir)newOrientation;
-			Tuple<int, int> posTuple = new Tuple<int, int>(selectedObject.line, selectedObject.col);
-			EditorGridSystem.instance.rotateObject((Direction.Dir)newOrientation, selectedObject.line, selectedObject.col);
-		}
+		FloorObject selectedObject = settings.GetComponent<Popup>().floorObject;
+		selectedObject.orientation = (Direction.Dir)newOrientation;
+		EditorGridSystem.instance.rotateObject((Direction.Dir)newOrientation, selectedObject.line, selectedObject.col, selectedObject.layer);
 	}
 
 	// see InputLinePopup GameObject childs
-	public void popUpInputLine(string newData)
+	public void popUpInputLine(GameObject settings, string newData)
 	{
-		if (selectedObject != null)
-			((Robot)selectedObject).inputLine = newData;
+		FloorObject selectedObject = settings.GetComponent<Popup>().floorObject;
+		((Robot)selectedObject).inputLine = newData;
 	}
 
 	// see rangePopup GameObject childs
-	public void popupRangeInputField(string newData)
+	public void popupRangeInputField(GameObject settings, string newData)
 	{
-		if (selectedObject != null)
-			((EnemyRobot)selectedObject).range = int.TryParse(newData, out int x) ? x : 0;
+		FloorObject selectedObject = settings.GetComponent<Popup>().floorObject;
+		((EnemyRobot)selectedObject).range = int.TryParse(newData, out int x) ? x : 0;
 	}
 
 	// see rangePopup GameObject childs
-	public void popupRangeToggle(bool newData)
+	public void popupRangeToggle(GameObject settings, bool newData)
 	{
-		if (selectedObject != null)
-			((EnemyRobot)selectedObject).selfRange = !newData;
+		FloorObject selectedObject = settings.GetComponent<Popup>().floorObject;
+		((EnemyRobot)selectedObject).selfRange = !newData;
 	}
 
 	// see rangePopup GameObject childs
-	public void popupRangeDropDown(int newData)
+	public void popupRangeDropDown(GameObject settings, int newData)
 	{
-		if (selectedObject != null)
-			((EnemyRobot)selectedObject).typeRange = (DetectRange.Type)newData;
+		FloorObject selectedObject = settings.GetComponent<Popup>().floorObject;
+		((EnemyRobot)selectedObject).typeRange = (DetectRange.Type)newData;
 	}
 
 	// see consoleSlotsPopup GameObject childs
-	public void popupConsoleSlots(string newData)
+	public void popupConsoleSlots(GameObject settings, string newData)
 	{
-		if (selectedObject != null)
-		{
-			string trimmed = String.Concat(newData.Where(c => !Char.IsWhiteSpace(c)));
-			int[] ints = Array.ConvertAll(trimmed.Split(','), s => int.TryParse(s, out int x) ? x : -1);
-			((Console)selectedObject).slots = trimmed.Split(',');
-		}
+		FloorObject selectedObject = settings.GetComponent<Popup>().floorObject;
+		string trimmed = String.Concat(newData.Where(c => !Char.IsWhiteSpace(c)));
+		int[] ints = Array.ConvertAll(trimmed.Split(','), s => int.TryParse(s, out int x) ? x : -1);
+		((Console)selectedObject).slots = trimmed.Split(',');
 	}
 
 	// see doorSlotPopup GameObject childs
-	public void popupDoorSlot(string newData)
+	public void popupDoorSlot(GameObject settings, string newData)
 	{
-		if (selectedObject != null)
-			((Door)selectedObject).slot = newData;
+		FloorObject selectedObject = settings.GetComponent<Popup>().floorObject;
+		((Door)selectedObject).slot = newData;
 	}
 
 	// see doorSlotsPopup GameObject childs
-	public void popupDoorToggle(bool newData)
+	public void popupDoorToggle(GameObject settings, bool newData)
 	{
-		if (selectedObject != null)
-			((Door)selectedObject).state = newData;
+		FloorObject selectedObject = settings.GetComponent<Popup>().floorObject;
+		((Door)selectedObject).state = newData;
 	}
 
 	// see furniturePopup GameObject childs
-	public void popupFurnitureDropDown(int newData)
+	public void popupFurnitureDropDown(GameObject settings, int newData)
 	{
-		if (selectedObject != null)
-			((DecorationObject)selectedObject).path = furnitureNameToPath[newData];
+		FloorObject selectedObject = settings.GetComponent<Popup>().floorObject;
+		((DecorationObject)selectedObject).path = furnitureNameToPath[newData];
 	}
 
 	// see skinPopup GameObject childs
-	public void popupSkinDropDown(int newData)
+	public void popupSkinDropDown(GameObject settings, int newData)
 	{
-		if (selectedObject != null)
-		{
-			PlayerRobot player = ((PlayerRobot)selectedObject);
-			// sauvegarde de l'input line
-			string inputLine = player.inputLine;
-			// on réinitialise le type à Void
-			player.type = Cell.Void;
-			EditorGridSystem.instance.setTile(player.line, player.col, UtilityEditor.IntToSkin(newData), player.orientation);
-			// association de la nouvelle tile créée à l'objet sélectionné
-			Tuple<int, int> posTuple = new Tuple<int, int>(player.line, player.col);
-			selectedObject = paintableGrid.floorObjects[posTuple];
-			// restauration de l'inputLine
-			((PlayerRobot)selectedObject).inputLine = inputLine;
-		}
+		Popup setting = settings.GetComponent<Popup>();
+		// Parce que dans le setTile de l'EditorGridSystem on va recréer un FloorObject, on sauvegarde son input line pour pouvoir la restaurer
+		// sauvegarde de l'input line
+		string inputLine = (setting.floorObject as PlayerRobot).inputLine;
+		EditorGridSystem.instance.removeTile(setting.floorObject);
+		FloorObject newFloorObject = EditorGridSystem.instance.setTile(setting.floorObject.line, setting.floorObject.col, UtilityEditor.IntToSkin(newData), setting.floorObject.orientation);
+		// restauration de l'inputLine
+		(newFloorObject as PlayerRobot).inputLine = inputLine;
+		// et réassociation du nouvel objet à sa fenêtre de config
+		setting.floorObject = newFloorObject;
 	}
 }

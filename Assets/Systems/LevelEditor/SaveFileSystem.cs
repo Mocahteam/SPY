@@ -258,38 +258,42 @@ public class SaveFileSystem : FSystem
 
 		foreach (Tuple<int, int> foCoords in paintableGrid.floorObjects.Keys)
 		{
-			FloorObject fo = paintableGrid.floorObjects[foCoords];
-			switch (fo)
+			foreach (FloorObject fo in paintableGrid.floorObjects[foCoords])
 			{
-				case Console c:
-					levelExport += "\t<console posX=\"" + (c.col+1 - minCol) + "\" posY=\""+ (c.line+1 - minLine) + "\" direction=\""+ (int)c.orientation + "\">\n";
-					// add each slot
-					foreach (string slot in c.slots)
-						levelExport += "\t\t<slot slotId=\""+ slot + "\" />\n";
-					levelExport += "\t</console>\n\n";
-					break;
-				case Door d:
-					levelExport += "\t<door posX=\"" + (d.col+1 - minCol) + "\" posY=\"" + (d.line+ 1 - minLine) + "\" slotId=\""+ d.slot + "\" direction=\""+ (int)d.orientation + "\" state=\"" + (d.state ? "1" : "0") + "\" />\n\n";
-					break;
-				case PlayerRobot pr:
-					Debug.Log(pr.orientation);
-					levelExport += "\t<robot inputLine=\""+ pr.inputLine + "\" posX=\"" + (pr.col + 1 - minCol) + "\" posY=\"" + (pr.line + 1 - minLine) + "\" direction=\"" + (int)pr.orientation + "\" skin=\""+UtilityEditor.SkinToInt(pr.type)+"\" />\n\n";
-					break;
-				case EnemyRobot er:
-					levelExport += "\t<guard inputLine=\"" + er.inputLine + "\" posX=\"" + (er.col + 1 - minCol) + "\" posY=\"" + (er.line + 1 - minLine) + "\" direction=\"" + (int)er.orientation + "\" range=\""+ er.range + "\" selfRange=\""+(er.selfRange ? "True" : "False") +"\" typeRange=\""+ (int)er.typeRange + "\" />\n\n";
-					break;
-				case DecorationObject deco:
-					levelExport += "\t<decoration name=\""+ deco.path + "\" posX=\"" + (deco.col + 1 - minCol) + "\" posY=\"" + (deco.line + 1 - minLine) + "\" direction=\"" + (int)deco.orientation + "\" />\n\n";
-					break;
-
-				default:
-					if (fo.type != Cell.Coin)
-					{
-						Debug.Log("Unexpected floor object type, object ignored: " + fo.type);
+				switch (fo)
+				{
+					case null:
 						break;
-					}
-					levelExport += "\t<coin posX=\"" + (fo.col + 1 - minCol) + "\" posY=\"" + (fo.line + 1 - minLine) + "\" />\n\n";
-					break;
+					case Console c:
+						levelExport += "\t<console posX=\"" + (c.col + 1 - minCol) + "\" posY=\"" + (c.line + 1 - minLine) + "\" direction=\"" + (int)c.orientation + "\">\n";
+						// add each slot
+						foreach (string slot in c.slots)
+							levelExport += "\t\t<slot slotId=\"" + slot + "\" />\n";
+						levelExport += "\t</console>\n\n";
+						break;
+					case Door d:
+						levelExport += "\t<door posX=\"" + (d.col + 1 - minCol) + "\" posY=\"" + (d.line + 1 - minLine) + "\" slotId=\"" + d.slot + "\" direction=\"" + (int)d.orientation + "\" state=\"" + (d.state ? "1" : "0") + "\" />\n\n";
+						break;
+					case PlayerRobot pr:
+						Debug.Log(pr.orientation);
+						levelExport += "\t<robot inputLine=\"" + pr.inputLine + "\" posX=\"" + (pr.col + 1 - minCol) + "\" posY=\"" + (pr.line + 1 - minLine) + "\" direction=\"" + (int)pr.orientation + "\" skin=\"" + UtilityEditor.SkinToInt(pr.type) + "\" />\n\n";
+						break;
+					case EnemyRobot er:
+						levelExport += "\t<guard inputLine=\"" + er.inputLine + "\" posX=\"" + (er.col + 1 - minCol) + "\" posY=\"" + (er.line + 1 - minLine) + "\" direction=\"" + (int)er.orientation + "\" range=\"" + er.range + "\" selfRange=\"" + (er.selfRange ? "True" : "False") + "\" typeRange=\"" + (int)er.typeRange + "\" />\n\n";
+						break;
+					case DecorationObject deco:
+						levelExport += "\t<decoration name=\"" + deco.path + "\" posX=\"" + (deco.col + 1 - minCol) + "\" posY=\"" + (deco.line + 1 - minLine) + "\" direction=\"" + (int)deco.orientation + "\" />\n\n";
+						break;
+
+					default:
+						if (fo.type != Cell.Coin)
+						{
+							Debug.Log("Unexpected floor object type, object ignored: " + fo.type);
+							break;
+						}
+						levelExport += "\t<coin posX=\"" + (fo.col + 1 - minCol) + "\" posY=\"" + (fo.line + 1 - minLine) + "\" />\n\n";
+						break;
+				}
 			}
 		}
 

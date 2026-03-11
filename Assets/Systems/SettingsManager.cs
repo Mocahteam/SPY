@@ -38,6 +38,7 @@ public class SettingsManager : FSystem
 	private Family f_blocks = FamilyManager.getFamily(new AllOfComponents(typeof(Selectable)), new AnyOfComponents(typeof(LibraryItemRef), typeof(ElementToDrag)), new AnyOfTags("UI_Action", "UI_Control", "UI_Operator", "UI_Captor"));
 	private Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
 	private Family f_highlightable = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(LibraryItemRef)));
+	private Family f_tileSelection = FamilyManager.getFamily(new AllOfComponents(typeof(SpriteRenderer)), new AnyOfTags("TileSelection"));
 	private Family f_conditionNotif = FamilyManager.getFamily(new AnyOfComponents(typeof(Image)), new AnyOfTags("ConditionNotif"));
 	private Family f_canvasScaler = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasScaler)));
 
@@ -100,6 +101,7 @@ public class SettingsManager : FSystem
 		f_blocks.addEntryCallback(delegate (GameObject go) { syncBlockColor(go); });
 		f_dropArea.addEntryCallback(delegate (GameObject go) { syncDropAreaColor(go); });
 		f_highlightable.addEntryCallback(delegate (GameObject go) { setHighlightingColor(go); });
+		f_tileSelection.addEntryCallback(delegate (GameObject go) { syncTileColor(go); });
 		f_conditionNotif.addEntryCallback(delegate (GameObject go) { syncConditionNotif(go); });
 
 		f_settingsOpened.addEntryCallback(delegate (GameObject unused) { loadPlayerPrefs(); });
@@ -144,6 +146,7 @@ public class SettingsManager : FSystem
 		syncColor(f_blocks, syncBlockColor);
 		syncColor(f_dropArea, syncDropAreaColor);
 		syncColor(f_highlightable, setHighlightingColor);
+		syncColor(f_tileSelection, syncTileColor);
 		syncColor(f_conditionNotif, syncConditionNotif);
 	}
 
@@ -577,6 +580,7 @@ public class SettingsManager : FSystem
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					dsf.currentHighlightingColor = c;
 					syncColor(f_highlightable, setHighlightingColor);
+					syncColor(f_tileSelection, syncTileColor);
 				});
 				break;
 			case "CaptorTrueColor":
@@ -936,7 +940,12 @@ public class SettingsManager : FSystem
 		else
 			go.GetComponent<BasicAction>().highlightedColor = dsf.currentHighlightingColor;
 	}
-	
+
+	private void syncTileColor(GameObject go, Color? unused = null)
+	{
+		go.GetComponent<SpriteRenderer>().color = new Color(dsf.currentHighlightingColor.r, dsf.currentHighlightingColor.g, dsf.currentHighlightingColor.b, dsf.currentHighlightingColor.a * 0.6f);
+	}
+
 	private void syncConditionNotif(GameObject go, Color? unused = null)
 	{
 		if (go.name == "true")

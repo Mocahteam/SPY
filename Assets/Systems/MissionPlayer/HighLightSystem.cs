@@ -95,10 +95,12 @@ public class HighLightSystem : FSystem {
 
 		// then process world GameObjects (Walls, drone, robots...)
 		else if (go.GetComponentInChildren<Renderer>(true)){
-			go.GetComponentInChildren<Renderer>(true).material.color = go.GetComponent<Highlightable>().highlightedColor;
+			foreach (Material material in go.GetComponentInChildren<Renderer>(true).materials)
+				material.color = go.GetComponent<Highlightable>().highlightedColor;
 			if (go.CompareTag("Player") || go.CompareTag("Drone"))
 				go.transform.Find("HaloSelection").GetComponent<Renderer>().material.color = go.GetComponent<Highlightable>().highlightedColor;
-			if (go.GetComponent<ScriptRef>()){
+			if (go.GetComponent<ScriptRef>())
+			{
 				Image img = go.GetComponent<ScriptRef>().executablePanel.transform.Find("Scroll View").GetComponent<Image>();
 				img.color = img.GetComponent<Highlightable>().highlightedColor;
 			}
@@ -136,7 +138,8 @@ public class HighLightSystem : FSystem {
 		// the case of world GameObjects (robot, ground...)
 		else if (go.GetComponentInChildren<Renderer>(true))
 		{
-			go.GetComponentInChildren<Renderer>(true).material.color = go.GetComponent<Highlightable>().baseColor;
+			foreach (Material material in go.GetComponentInChildren<Renderer>(true).materials)
+				material.color = go.GetComponent<Highlightable>().baseColor;
 			if (go.GetComponent<ScriptRef>())
 			{
 				Image img = go.GetComponent<ScriptRef>().executablePanel.transform.Find("Scroll View").GetComponent<Image>();
