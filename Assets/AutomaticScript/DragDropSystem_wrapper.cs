@@ -5,14 +5,12 @@ public class DragDropSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject mainCanvas;
 	public UnityEngine.AudioSource audioSource;
-	public System.Single catchTime;
 	public UnityEngine.RectTransform editableContainers;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
 		MainLoop.initAppropriateSystemField (system, "audioSource", audioSource);
-		MainLoop.initAppropriateSystemField (system, "catchTime", catchTime);
 		MainLoop.initAppropriateSystemField (system, "editableContainers", editableContainers);
 	}
 
@@ -51,9 +49,9 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "deleteElement", elementToDelete);
 	}
 
-	public void checkDoubleClick(UnityEngine.EventSystems.BaseEventData element)
+	public void checkSpecialClick(UnityEngine.EventSystems.BaseEventData element)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "checkDoubleClick", element);
+		MainLoop.callAppropriateSystemMethod (system, "checkSpecialClick", element);
 	}
 
 }

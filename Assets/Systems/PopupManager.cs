@@ -61,6 +61,8 @@ public class PopupManager : FSystem {
 		buttonsTransform.GetChild(1).GetComponentInChildren<TMP_Text>(true).text = mfu.CancelButton;
 
 		GameObjectManager.setGameObjectState(panelInfoUser, true);
+		// Force le focus sur la popup. On ne passe pas part le UINavigationManager car dans le cas de la modalité d'insertion d'un bloc dans le DragDropSystem le focus est dans une zone d'édition qui même si elle est disable permet la navigation au clavier, donc s'il n'y a plus de blocs dans l'inventaire le focus reste dans la zone d'édition et ne passe pas dans la popup, donc on le force à la main.
+		MainLoop.instance.StartCoroutine(Utility.delayGOSelection(messageForUser.gameObject, 1));
 
 		// in case of several messages pop in one frame
 		foreach (MessageForUser message in go.GetComponents<MessageForUser>())

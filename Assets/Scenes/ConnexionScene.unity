@@ -6490,12 +6490,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 8757454328064810878}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1419468673 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7669885433948548925, guid: 82a19256246efb347a34a95f18dddc89,
-    type: 3}
-  m_PrefabInstance: {fileID: 8757454328064810878}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1457205060 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000446060150347598, guid: bae527ae87f763c4eaf4bfcc24112fd8,
@@ -7392,10 +7386,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoFocusPrority:
-  - {fileID: 1419468673}
   - {fileID: 1213388586}
   - {fileID: 1575353410250596000}
   - {fileID: 3471219}
+  - {fileID: 8757454328064810879}
   - {fileID: 1638386969}
   - {fileID: 1164787626}
   - {fileID: 1062682006}
@@ -7437,6 +7431,7 @@ MonoBehaviour:
   inventory: {fileID: 0}
   buttonCopyCode: {fileID: 1193984433}
   AddContainerButton: {fileID: 0}
+  cancelNextEscape: 0
 --- !u!114 &1645588000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21883,6 +21878,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82a19256246efb347a34a95f18dddc89, type: 3}
+--- !u!1 &8757454328064810879 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7669885433948548925, guid: 82a19256246efb347a34a95f18dddc89,
+    type: 3}
+  m_PrefabInstance: {fileID: 8757454328064810878}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8796977734136769615
 PrefabInstance:
   m_ObjectHideFlags: 0

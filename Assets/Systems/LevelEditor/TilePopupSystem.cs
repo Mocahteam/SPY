@@ -17,7 +17,7 @@ public class TilePopupSystem : FSystem
 	private Family f_focusedPopups = FamilyManager.getFamily(new AllOfComponents(typeof(Popup), typeof(PointerOver)));
 
 	public static TilePopupSystem instance;
-	public Transform objectPanelContent;
+	public Transform toolboxPanelContent;
 	public GameObject tileSettingsPrefab;
 	public Transform tileSettingsParent;
 
@@ -31,8 +31,6 @@ public class TilePopupSystem : FSystem
 
 	private InputAction click;
 	private InputAction rightClick;
-	private InputAction cancel;
-	private InputAction exitWebGL;
 
 	private List<string> furnitureNameToPath = new List<string>();
 	private List<string> furnitureOptions = new List<string>();
@@ -58,8 +56,6 @@ public class TilePopupSystem : FSystem
 
 		click = InputSystem.actions.FindAction("Click");
 		rightClick = InputSystem.actions.FindAction("RightClick");
-		cancel = InputSystem.actions.FindAction("Cancel");
-		exitWebGL = InputSystem.actions.FindAction("ExitWebGL");
 	}
 
 	private void initFurnitureDropDownData()
@@ -143,7 +139,7 @@ public class TilePopupSystem : FSystem
 			switch (selectedObject)
 			{
 				case Door d:
-					title = objectPanelContent.Find("Door").GetComponentInChildren<TMP_Text>().text;
+					title = toolboxPanelContent.Find("Door").GetComponentInChildren<TMP_Text>().text;
 					// enable popups
 					orientationPopup.SetActive(true);
 					doorSlotPopup.SetActive(true);
@@ -152,7 +148,7 @@ public class TilePopupSystem : FSystem
 					doorSlotPopup.GetComponentInChildren<Toggle>(true).isOn = d.state;
 					break;
 				case Console c:
-					title = objectPanelContent.Find("Console").GetComponentInChildren<TMP_Text>().text;
+					title = toolboxPanelContent.Find("Console").GetComponentInChildren<TMP_Text>().text;
 					// enable popups
 					orientationPopup.SetActive(true);
 					consoleSlotsPopup.SetActive(true);
@@ -160,7 +156,7 @@ public class TilePopupSystem : FSystem
 					consoleSlotsPopup.GetComponentInChildren<TMP_InputField>(true).text = string.Join(", ", c.slots);
 					break;
 				case PlayerRobot pr:
-					title = objectPanelContent.Find("AllyRobot").GetComponentInChildren<TMP_Text>().text;
+					title = toolboxPanelContent.Find("AllyRobot").GetComponentInChildren<TMP_Text>().text;
 					// enable popups
 					orientationPopup.SetActive(true);
 					inputLinePopup.SetActive(true);
@@ -170,7 +166,7 @@ public class TilePopupSystem : FSystem
 					skinPopup.GetComponentInChildren<TMP_Dropdown>(true).value = UtilityEditor.SkinToInt(pr.type);
 					break;
 				case EnemyRobot er:
-					title = objectPanelContent.Find("EnemyRobot").GetComponentInChildren<TMP_Text>().text;
+					title = toolboxPanelContent.Find("EnemyRobot").GetComponentInChildren<TMP_Text>().text;
 					// enable popups
 					orientationPopup.SetActive(true);
 					inputLinePopup.SetActive(true);
@@ -182,7 +178,7 @@ public class TilePopupSystem : FSystem
 					rangePopup.GetComponentInChildren<TMP_Dropdown>(true).value = (int)er.typeRange;
 					break;
 				case DecorationObject _:
-					title = objectPanelContent.Find("Deco").GetComponentInChildren<TMP_Text>().text;
+					title = toolboxPanelContent.Find("Deco").GetComponentInChildren<TMP_Text>().text;
 					// enable popups
 					orientationPopup.SetActive(true);
 					furniturePopup.SetActive(true);
@@ -199,14 +195,14 @@ public class TilePopupSystem : FSystem
 					furniturePopup.GetComponentInChildren<TMP_Dropdown>(true).value = i;
 					break;
 				default:
-					title = objectPanelContent.Find("Coin").GetComponentInChildren<TMP_Text>().text;
+					title = toolboxPanelContent.Find("Coin").GetComponentInChildren<TMP_Text>().text;
 					break;
 			}
 			tileSettings.transform.Find("Title").GetComponentInChildren<TMP_Text>().text = title;
 			GameObjectManager.bind(tileSettings);
 		}
 		if (autoFocusLastPosition)
-			Utility.delayGOSelection(tileSettingsParent.GetChild(tileSettingsParent.childCount - 1).GetComponentInChildren<TMP_InputField>(true).gameObject, 1);
+			MainLoop.instance.StartCoroutine(Utility.delayGOSelection(tileSettingsParent.GetChild(tileSettingsParent.childCount - 1).GetComponentInChildren<TMP_InputField>(true).gameObject, 1));
 	}
 
 	private void destroyAllPopups()

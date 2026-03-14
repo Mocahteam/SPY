@@ -206,7 +206,8 @@ public class EditableContainerSystem : FSystem
 					}
 				}
 			}
-			MainLoop.instance.StartCoroutine(tcheckLinkName());
+			if (!isEditorContext)
+				MainLoop.instance.StartCoroutine(tcheckLinkName());
 
 			// on paramètre le mode et le type différemment si on est dans l'éditeur ou dans le player
 			Transform panel = cloneContainer.transform.Find("ScriptContainer/LevelEditorPanel");
@@ -261,7 +262,7 @@ public class EditableContainerSystem : FSystem
 			// On ajoute le nouveau viewport container à FYFY
 			GameObjectManager.bind(cloneContainer);
 
-			// if drag&drop diabled => hide all replacement slots that are not BaseCondition
+			// if drag&drop disabled => hide all replacement slots that are not BaseCondition
 			if (!gameData.dragDropEnabled)
 				foreach (ReplacementSlot slot in cloneContainer.GetComponentsInChildren<ReplacementSlot>(true))
 					if (slot.slotType != ReplacementSlot.SlotType.BaseCondition)
@@ -358,11 +359,11 @@ public class EditableContainerSystem : FSystem
 		string oldName = containerSelected.scriptName;
 		if (oldName != newName)
 		{
-			// Si le nom n'est pas utilisé et que le mode n'est pas locked
-			if (!nameContainerUsed(newName) && containerSelected.editState != UIRootContainer.EditMode.Locked)
+			// Si le nom n'est pas utilisé et que le mode n'est pas locked (ignorer ça si on est dans l'éditeur de mission)
+			if (!nameContainerUsed(newName) && (containerSelected.editState != UIRootContainer.EditMode.Locked || isEditorContext))
 			{
-				// Si le container est en mode synch, rechercher le ou les agents associés
-				if (containerSelected.editState == UIRootContainer.EditMode.Synch)
+				// Si le container est en mode synch, rechercher le ou les agents associés (uniquement dans le player)
+				if (containerSelected.editState == UIRootContainer.EditMode.Synch && SceneManager.GetActiveScene().name == "MainScene")
 				{
 					// On met à jour le nom de tous les agents qui auraient le même nom pour garder l'association avec le container editable
 					foreach (GameObject agent in f_agent)
@@ -377,7 +378,7 @@ public class EditableContainerSystem : FSystem
 				containerSelected.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text = newName;
 
 				// générer une trace seulement sur la scene principale
-				if (SceneManager.GetActiveScene().name == "MainScene")
+				if (!isEditorContext)
 					GameObjectManager.addComponent<ActionPerformedForLRS>(containerSelected.gameObject, new
 					{
 						verb = "renamed",
@@ -393,7 +394,9 @@ public class EditableContainerSystem : FSystem
 				containerSelected.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text = oldName;
 			}
 		}
-		MainLoop.instance.StartCoroutine(tcheckLinkName());
+		// On vérifie l'association du nom uniquement sur la scène principale
+		if (!isEditorContext)
+			MainLoop.instance.StartCoroutine(tcheckLinkName());
 	}
 
 	// Vérifie si le nom proposé existe déjà ou non pour un script container

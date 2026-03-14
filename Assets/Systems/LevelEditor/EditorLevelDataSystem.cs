@@ -43,7 +43,7 @@ public class EditorLevelDataSystem : FSystem {
 			// all blocks are unlimited inside level editor
 			gameData.actionBlockLimit = new Dictionary<string, int>();
 			foreach (GameObject block in f_editorblocks)
-				gameData.actionBlockLimit[block.GetComponent<EditorBlockData>().name] = -1;
+				gameData.actionBlockLimit[block.GetComponent<EditorBlockData>().blockName] = -1;
 		}
 
 		resetMetaData(true);

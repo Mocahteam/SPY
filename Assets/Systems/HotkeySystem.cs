@@ -50,7 +50,7 @@ public class HotkeySystem : FSystem
 
 	private EventSystem eventSystem;
 
-	private bool cancelNextEscape;
+	public bool cancelNextEscape;
 
 	private InputAction cancel_act;
 	private InputAction exitWebGL_act;
@@ -73,6 +73,14 @@ public class HotkeySystem : FSystem
 	private InputAction paste_act;
 	private InputAction focusOnNextProgrammingArea_act;
 	private InputAction focusOnInventory_act;
+
+	// L'instance
+	public static HotkeySystem instance;
+
+	public HotkeySystem()
+	{
+		instance = this;
+	}
 
 	protected override void onStart()
 	{

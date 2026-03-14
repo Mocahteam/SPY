@@ -113,13 +113,13 @@ public class ScriptGenerator : FSystem {
 			_ => "Undef"
 		};
 
+		// Vérifier que ce node est connu pour la gestion des blocs disponibles, si non le définir
+		if (!gameData.actionBlockLimit.ContainsKey(libraryId))
+			gameData.actionBlockLimit[libraryId] = 0;
+
 		if (libraryId != "Undef")
-		{
 			obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(libraryId), mainCanvas);
-			// Vérifier que ce node est connu pour la gestion des blocs disponibles, si non le définir
-			if (!gameData.actionBlockLimit.ContainsKey(libraryId))
-				gameData.actionBlockLimit[libraryId] = 0;
-		}
+		
 		switch (conditionNode.Name)
 		{
 			case "and":
@@ -180,10 +180,6 @@ public class ScriptGenerator : FSystem {
 	// Transforme le noeud d'action XML en gameObject
 	private GameObject readXMLInstruction(XmlNode actionNode)
 	{
-		// Vérifier que ce node est connu pour la gestion des blocs disponibles, si non le définir
-		if (!gameData.actionBlockLimit.ContainsKey(actionNode.Name))
-			gameData.actionBlockLimit[actionNode.Name] = 0;
-
 		GameObject obj = null;
 		Transform conditionContainer;
 		Transform firstContainerBloc;
@@ -199,13 +195,12 @@ public class ScriptGenerator : FSystem {
 			_ => "Undef"
 		};
 
+		// Vérifier que ce node est connu pour la gestion des blocs disponibles, si non le définir
+		if (!gameData.actionBlockLimit.ContainsKey(libraryId))
+			gameData.actionBlockLimit[libraryId] = 0;
+
 		if (libraryId != "Undef")
-		{
 			obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(libraryId), mainCanvas);
-			// Vérifier que ce node est connu pour la gestion des blocs disponibles, si non le définir
-			if (!gameData.actionBlockLimit.ContainsKey(libraryId))
-				gameData.actionBlockLimit[libraryId] = 0;
-		}
 
 		switch (actionNode.Name)
 		{

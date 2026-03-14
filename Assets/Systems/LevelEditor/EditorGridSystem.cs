@@ -313,7 +313,7 @@ public class EditorGridSystem : FSystem
 		if ((int)cell < 10000) // non-configurable cell
 		{
 			paintableGrid.grid[line, col] = cell;
-			if (cell == Cell.Wall)
+			if (cell == Cell.Wall || cell == Cell.Void)
 			{
 				// reset all layers
 				paintableGrid.floorObjects[tuplePos] = new FloorObject[3];

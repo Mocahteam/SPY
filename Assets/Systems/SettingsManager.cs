@@ -162,7 +162,7 @@ public class SettingsManager : FSystem
 		// définition de la taille de l'interface
 		float uiWidth = f_canvasScaler.Count > 0 ? (f_canvasScaler.First().transform as RectTransform).rect.width : Screen.currentResolution.width;
 		dsf.currentSizeText = settingsContent.Find("SectionGraphic/GridContainer/Grid/UISize/CurrentSize").GetComponent<TMP_Text>();
-		dsf.currentUIScale = PlayerPrefs.GetFloat("UIScale", (float)Math.Max(dsf.defaultUIScale, Math.Round(uiWidth / 1280, 2))); // do not reduce scale under defaultUIScale and multiply scale for definition higher than 1280
+		dsf.currentUIScale = PlayerPrefs.GetFloat("UIScale", (float)Math.Max(dsf.defaultUIScale, Math.Round(uiWidth / 1280, 2))*(Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 2 : 1)); // do not reduce scale under defaultUIScale and multiply scale for definition higher than 1280. Sur mobile on multiplie l'echelle par deux
 		dsf.currentSizeText.text = dsf.currentUIScale + "";
 		foreach (GameObject scalerGo in f_canvasScaler)
 			scalerGo.GetComponent<CanvasScaler>().scaleFactor = dsf.currentUIScale;

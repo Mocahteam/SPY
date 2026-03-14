@@ -3,7 +3,7 @@ using FYFY;
 
 public class TilePopupSystem_wrapper : BaseWrapper
 {
-	public UnityEngine.Transform objectPanelContent;
+	public UnityEngine.Transform toolboxPanelContent;
 	public UnityEngine.GameObject tileSettingsPrefab;
 	public UnityEngine.Transform tileSettingsParent;
 	public PaintableGrid paintableGrid;
@@ -11,7 +11,7 @@ public class TilePopupSystem_wrapper : BaseWrapper
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
-		MainLoop.initAppropriateSystemField (system, "objectPanelContent", objectPanelContent);
+		MainLoop.initAppropriateSystemField (system, "toolboxPanelContent", toolboxPanelContent);
 		MainLoop.initAppropriateSystemField (system, "tileSettingsPrefab", tileSettingsPrefab);
 		MainLoop.initAppropriateSystemField (system, "tileSettingsParent", tileSettingsParent);
 		MainLoop.initAppropriateSystemField (system, "paintableGrid", paintableGrid);

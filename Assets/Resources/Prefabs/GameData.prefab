@@ -60,7 +60,7 @@ MonoBehaviour:
   gameSpeed_current: 1
   startStepTime: 0
   dragDropEnabled: 1
-  sendStatementEnabled: 1
+  sendStatementEnabled: 0
   hideExit: 0
   fogEnabled: 0
   rawReferentials:
@@ -139,6 +139,7 @@ MonoBehaviour:
   - Mo
   - "La position #0# n'est pas valide.<br>Un objet ne peut \xEAtre plac\xE9 que sur
     une tuile de sol."
+  - Aucun blocs disponibles dans l'inventaire.
 --- !u!114 &2951319979171891393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,6 +187,20 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: 'localization.Array.data[49]'
+    - rid: 338702663521927273
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 349756304329531392
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: 'localization.Array.data[50]'
     - rid: 7469272039258587253
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
@@ -269,6 +284,7 @@ MonoBehaviour:
           - rid: 7873247016763261064
           - rid: 7469272039258587253
           - rid: 338702615390453888
+          - rid: 338702663521927273
         m_UpdateType: 1
         m_Changed:
           m_PersistentCalls:

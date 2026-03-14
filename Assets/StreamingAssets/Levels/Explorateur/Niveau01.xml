@@ -1,21 +1,58 @@
 <?xml version="1.0"?>
 <level>
-  <map>
-    <line><cell value="-1" /><cell value="-1"/><cell value="-1"/><cell value="-1"/><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value="0" /><cell value="3" /><cell value="0" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value="0" /><cell value="2" /><cell value="0" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value="-1"/><cell value="-1"/><cell value="-1"/><cell value="-1" /></line>
-  </map>
-  <dialogs>
-	<dialog text="[fr]Ramasse toutes les pièces.[/fr][en]Collect all the coins.[/en]" />
-  </dialogs>
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="1" />
-  </blockLimits>
-  <coin posY="2" posX="2" />
-  <robot inputLine="Erty" posY="3" posX="2" direction="0" />
-  <script outputLine="Erty" editMode="0" />
-  <score twoStars="0" threeStars="15500"/>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="3" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="2" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="[fr]Ramasse toutes les pièces.[/fr][en]Collect all the coins.[/en]" enableInteraction="0" briefingType="0" />
+	</dialogs>
+	<score twoStars="0" threeStars="15500"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="1" />
+		<blockLimit blockType="TurnLeft" limit="0" />
+		<blockLimit blockType="TurnRight" limit="0" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="0" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<coin posX="2" posY="2" />
+
+	<robot inputLine="Erty" posX="2" posY="3" direction="0" skin="0" />
+
+	<script outputLine="Erty" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Sol_Erty" editMode="2" type="4">
+		<action type="Forward"/>
+	</script>
+
 </level>

@@ -3,9 +3,9 @@ using UnityEngine.EventSystems;
 
 public class DragDropSystemBridge : MonoBehaviour
 {
-    public void checkDoubleClick(BaseEventData e)
+    public void checkSpecialClick(BaseEventData e)
     {
-        DragDropSystem.instance.checkDoubleClick(e);
+        DragDropSystem.instance.checkSpecialClick(e);
     }
     public void checkRightClickForDelete(BaseEventData e)
     {
@@ -24,11 +24,6 @@ public class DragDropSystemBridge : MonoBehaviour
     }
 
     public void beginDragElement(BaseEventData e)
-    {
-        DragDropSystem.instance.beginDragElementFromEditableScript(e);
-    }
-
-    public void beginDragElementFromEditableScript(BaseEventData e)
     {
         DragDropSystem.instance.beginDragElementFromEditableScript(e);
     }
