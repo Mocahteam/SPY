@@ -1,31 +1,86 @@
 <?xml version="1.0"?>
 <level>
-  <map>
-	<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "3" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
-	<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-  </map>
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="-1" />
-    <blockLimit blockType="TurnLeft" limit="-1" />
-    <blockLimit blockType="TurnRight" limit="-1" />
-    <blockLimit blockType="Wait" limit="-1" />
-    <blockLimit blockType="ForLoop" limit="-1" />
-  </blockLimits>
-  <coin posY="3" posX="5" />
-  <robot inputLine="Erty" posY="5" posX="3" direction="0" skin="1" />
-  <script outputLine="Erty" editMode="0" />
-  <guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posY="2" posX="2" direction="2" range="1" selfRange="False" typeRange="0" />
-  <script outputLine="[fr]Garde[/fr][en]Guard[/en]">
-      <forever>
-        <action type="Forward"/>
-        <action type="Forward"/>
-        <action type="TurnRight"/>
-      </forever>
-  </script>
-  <score twoStars="9357" threeStars="9468"/>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="3" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="2" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<score twoStars="9357" threeStars="9468"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="-1" />
+		<blockLimit blockType="TurnLeft" limit="-1" />
+		<blockLimit blockType="TurnRight" limit="-1" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="-1" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="-1" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posX="2" posY="2" direction="2" range="1" selfRange="False" typeRange="0" />
+
+	<coin posX="5" posY="3" />
+
+	<robot inputLine="Erty" posX="3" posY="5" direction="0" skin="1" />
+
+	<script outputLine="Erty" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Guard" editMode="0" type="3">
+		<forever>
+			<action type="Forward"/>
+			<action type="Forward"/>
+			<action type="TurnRight"/>
+		</forever>
+	</script>
+
+	<script outputLine="Erty_Sol1" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="TurnLeft"/>
+		<for nbFor="3">
+			<action type="Forward"/>
+			<action type="TurnRight"/>
+			<action type="Forward"/>
+		</for>
+		<action type="TurnLeft"/>
+		<action type="Forward"/>
+	</script>
+
+	<script outputLine="Erty_Sol2" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+		<action type="Wait"/>
+		<action type="Wait"/>
+		<action type="Forward"/>
+		<action type="TurnLeft"/>
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+		<action type="Forward"/>
+	</script>
+
 </level>

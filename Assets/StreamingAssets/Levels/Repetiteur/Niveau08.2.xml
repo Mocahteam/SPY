@@ -1,41 +1,75 @@
 <?xml version="1.0"?>
 <level>
 	<map>
-		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-		<line><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value=" 0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value=" 0" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "2" /><cell value= "0" /><cell value= "1" /><cell value="-1" /><cell value="-1" /></line>
-		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /><cell value="-1" /></line>
-		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="3" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="2" /><cell value="0" /><cell value="1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
 	</map>
+
 	<dialogs>
-		<dialog text="[fr]Cette pièce est bien gardée, peut être que la porte pourrait permettre de se débarrasser des sentinelles ?[/fr][en]This room is well guarded, perhaps the door could be used to destroy the guards?[/en]" />
+		<dialog text="[fr]Cette pièce est bien gardée, peut être que la porte pourrait permettre de se débarrasser des sentinelles ?[/fr][en]This room is well guarded, perhaps the door could be used to destroy the guards?[/en]" enableInteraction="0" briefingType="0" />
 	</dialogs>
+	<score twoStars="7704" threeStars="8796"/>
+
 	<blockLimits>
 		<blockLimit blockType="Forward" limit="-1" />
 		<blockLimit blockType="TurnLeft" limit="-1" />
 		<blockLimit blockType="TurnRight" limit="-1" />
-		<blockLimit blockType="Wait" limit="-1" />
-		<blockLimit blockType="Activate" limit="-1" />
 		<blockLimit blockType="TurnBack" limit="-1" />
+		<blockLimit blockType="Activate" limit="-1" />
+		<blockLimit blockType="Wait" limit="-1" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
 		<blockLimit blockType="ForLoop" limit="-1" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
 	</blockLimits>
-	<console posY="7" posX="4" direction="2">
+
+	<coin posX="5" posY="1" />
+
+	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posX="4" posY="2" direction="2" range="2" selfRange="True" typeRange="0" />
+
+	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posX="7" posY="2" direction="1" range="2" selfRange="True" typeRange="0" />
+
+	<door posX="4" posY="3" slotId="0" direction="0" state="1" />
+
+	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posX="4" posY="5" direction="0" range="2" selfRange="True" typeRange="0" />
+
+	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posX="7" posY="5" direction="3" range="2" selfRange="True" typeRange="0" />
+
+	<robot inputLine="Erty" posX="4" posY="7" direction="2" skin="1" />
+
+	<console posX="5" posY="7" direction="2">
 		<slot slotId="0" />
 	</console>
-	<door posY="3" posX="3" slotId="0" direction="0" state="1" />
-	<coin posY="1" posX="4" />
-	<robot inputLine="Erty" posY="7" posX="3" direction="2" skin="1" />
-	<script outputLine="Erty" editMode="0" />
-	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posY="2" posX="3" direction="2" range="2" selfRange="True" typeRange="0" />
-	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posY="5" posX="6" direction="3" range="2" selfRange="True" typeRange="0" />
-	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posY="2" posX="6" direction="1" range="2" selfRange="True" typeRange="0" />
-	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posY="5" posX="3" direction="0" range="2" selfRange="True" typeRange="0" />
-	<script outputLine="[fr]Garde[/fr][en]Guard[/en]">
+
+	<script outputLine="Erty" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Guard" editMode="0" type="3">
 		<forever>
 			<action type="Forward"/>
 			<action type="Forward"/>
@@ -43,5 +77,26 @@
 			<action type="TurnRight"/>
 		</forever>
 	</script>
-	<score twoStars="7704" threeStars="8796"/>
+
+	<script outputLine="Erty_Sol" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="Activate"/>
+		<action type="TurnLeft"/>
+		<action type="Forward"/>
+		<for nbFor="6">
+			<action type="Wait"/>
+		</for>
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+		<for nbFor="2">
+			<action type="Forward"/>
+			<action type="Forward"/>
+			<action type="TurnLeft"/>
+			<action type="Forward"/>
+		</for>
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+		<action type="Forward"/>
+	</script>
+
 </level>

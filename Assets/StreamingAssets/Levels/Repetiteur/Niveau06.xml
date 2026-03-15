@@ -2,31 +2,73 @@
 <level>
 	<map>
 		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-		<line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
-		<line><cell value="-1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value="-1" /></line>
-		<line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="3" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="2" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
 		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
 	</map>
+
 	<dialogs>
-		<dialog text="[fr]Sélectionne un garde pour voir/cacher son programme. Ceci devrait te donner de précieuses informations pour comprendre son comportement.[/fr][en]Select a guard to view/hide its program. This should give you valuable information for understanding its behavior.[/en]" />
-		<dialog text="[fr]Tu disposes maintenant de la nouvelle action 'Attendre'. Elle permet d'ordonner au robot de faire une pose avant de passer à l'action suivante.[/fr][en]You now have the new 'Wait' action. It allows you to order the robot to make a pose before moving on to the next action.[/en]" img="WaitIcon.png" imgHeight="45" />
+		<dialog text="[fr]Sélectionne un garde pour voir/cacher son programme. Ceci devrait te donner de précieuses informations pour comprendre son comportement.[/fr][en]Select a guard to view/hide its program. This should give you valuable information for understanding its behavior.[/en]" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Tu disposes maintenant de la nouvelle action 'Attendre'. Elle permet d'ordonner au robot de faire une pose avant de passer à l'action suivante.[/fr][en]You now have the new 'Wait' action. It allows you to order the robot to make a pose before moving on to the next action.[/en]" img="WaitIcon.png" imgDesc="[fr]Illustration du bloc 'Attendre' disponible dans l'inventaire.[/fr][en]Illustration of the ‘Wait’ block available in the inventory.[/en]" imgHeight="45" enableInteraction="0" briefingType="0" />
 	</dialogs>
 	<executionLimit amount="1" />
+
+	<score twoStars="10384" threeStars="10416"/>
+
 	<blockLimits>
 		<blockLimit blockType="Forward" limit="2" />
+		<blockLimit blockType="TurnLeft" limit="0" />
+		<blockLimit blockType="TurnRight" limit="0" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
 		<blockLimit blockType="Wait" limit="-1" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
 		<blockLimit blockType="ForLoop" limit="1" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
 	</blockLimits>
-    <coin posY="1" posX="3" />
-	<robot inputLine="Erty" posY="3" posX="4" direction="0" skin="1" />
-	<script outputLine="Erty" editMode="0" />
-	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posY="2" posX="7" direction="3" range="3" selfRange="True" typeRange="0" />
-	<script outputLine="[fr]Garde[/fr][en]Guard[/en]" editMode="0" >
+
+	<coin posX="4" posY="1" />
+
+	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posX="7" posY="2" direction="3" range="3" selfRange="True" typeRange="0" />
+
+	<robot inputLine="Erty" posX="4" posY="3" direction="0" skin="1" />
+
+	<script outputLine="Erty" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Guard" editMode="0" type="3">
 		<for nbFor="6">
 			<action type="Forward"/>
 			<action type="Wait"/>
 			<action type="Wait"/>
 		</for>
 	</script>
-	<score twoStars="10384" threeStars="10416"/>
+
+	<script outputLine="Erty_Sol" editMode="2" type="4">
+		<for nbFor="9">
+			<action type="Wait"/>
+		</for>
+		<action type="Forward"/>
+		<action type="Forward"/>
+	</script>
+
 </level>

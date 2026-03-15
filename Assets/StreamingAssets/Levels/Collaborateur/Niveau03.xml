@@ -1,27 +1,86 @@
 <?xml version="1.0"?>
 <level>
-  <map>
-    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "2" /><cell value= "2" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
-	<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-	<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /></line>
-	<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /></line>
-	<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-	<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-  </map>
-  <dialogs>
-	<dialog text="[fr]Tu peux maintenant utiliser la nouvelle action 'Attendre'. Elle permet de demander au robot de faire une pause avant de passer à l'action suivante.[/fr][en]You can now use the new 'Wait' action. It allows you to command the robot to make a pause before moving on to the next action.[/en]" img="WaitIcon.png" imgDesc="[fr]Illustration du bloc 'Attendre' disponible dans l'inventaire.[/fr][en]Illustration of the ‘Wait’ block available in the inventory.[/en]" imgHeight="45" />
-	<dialog text="[fr]Attention aux collisions, deux robots ne peuvent se déplacer sur la même case ![/fr][en]Watch out for collisions! Two robots cannot move on the same square.[/en]"/>
-  </dialogs>
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="-1" />
-    <blockLimit blockType="TurnLeft" limit="-1" />
-    <blockLimit blockType="TurnRight" limit="-1" />
-    <blockLimit blockType="Wait" limit="-1" />
-  </blockLimits>
-  <robot inputLine="Plok" posY="1" posX="1" direction="2" />
-  <robot inputLine="Dest" posY="1" posX="2" direction="2" skin="2" />
-  <script outputLine="Plok" editMode="0" />
-  <script outputLine="Dest" editMode="0" />
-  <score twoStars="2930" threeStars="3930"/>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="2" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="1" /><cell value="3" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="1" /><cell value="3" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="[fr]Tu peux maintenant utiliser la nouvelle action 'Attendre'. Elle permet de demander au robot de faire une pause avant de passer à l'action suivante.[/fr][en]You can now use the new 'Wait' action. It allows you to command the robot to make a pause before moving on to the next action.[/en]" img="WaitIcon.png" imgDesc="[fr]Illustration du bloc 'Attendre' disponible dans l'inventaire.[/fr][en]Illustration of the ‘Wait’ block available in the inventory.[/en]" imgHeight="45" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Attention aux collisions, deux robots ne peuvent se déplacer sur la même case ![/fr][en]Watch out for collisions! Two robots cannot move on the same square.[/en]" enableInteraction="0" briefingType="0" />
+	</dialogs>
+	<score twoStars="2930" threeStars="3930"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="-1" />
+		<blockLimit blockType="TurnLeft" limit="-1" />
+		<blockLimit blockType="TurnRight" limit="-1" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="-1" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="0" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<robot inputLine="Plok" posX="2" posY="2" direction="2" skin="0" />
+
+	<robot inputLine="Dest" posX="3" posY="2" direction="2" skin="2" />
+
+	<script outputLine="Plok" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Dest" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Plok_Sol" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Wait"/>
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+	</script>
+
+	<script outputLine="Dest_Sol" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+	</script>
+
 </level>

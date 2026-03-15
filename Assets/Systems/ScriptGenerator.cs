@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Xml;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Read XML Scripts
@@ -159,7 +160,7 @@ public class ScriptGenerator : FSystem {
 				break;
 		}
 
-		if (!gameData.dragDropEnabled)
+		if (!gameData.dragDropEnabled && SceneManager.GetActiveScene().name != "MissionEditor")
 		{
 			Selectable sel = obj.GetComponent<Selectable>();
 			sel.interactable = false;
@@ -313,7 +314,7 @@ public class ScriptGenerator : FSystem {
 				break;
 		}
 
-		if (!gameData.dragDropEnabled)
+		if (!gameData.dragDropEnabled && SceneManager.GetActiveScene().name != "MissionEditor")
 		{
 			Selectable sel = obj.GetComponent<Selectable>();
 			sel.interactable = false;
