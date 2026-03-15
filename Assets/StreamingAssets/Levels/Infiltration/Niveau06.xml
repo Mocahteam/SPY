@@ -1,25 +1,70 @@
 <?xml version="1.0"?>
 <level>
-  <map>
-	<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-  </map>
-  <dialogs>
-	<dialog text="[fr]J'ai oubié de te donner une astuce, tu peux double-cliquer sur les blocs de l'inventaire pour les ajouter automatiquement au programme.[/fr][en]I forgot to give you a tip: you can double-click on the blocks in the inventory to automatically add them to the program.[/en]" />
-  </dialogs>
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="-1" />
-    <blockLimit blockType="TurnLeft" limit="-1" />
-    <blockLimit blockType="TurnRight" limit="-1" />
-  </blockLimits>
-  <decoration name="Modern Furniture/Prefabs/Round Table" posY="2" posX="1" direction="0" /> 
-  <decoration name="Modern Furniture/Prefabs/Single Frame chair" posY="3" posX="1" direction="0" /> 
-  <door posY="2" posX="4" direction="0" slotId="0" state="0" />
-  <robot inputLine="Erty" posY="4" posX="4" direction="0" skin="1" />
-  <script outputLine="Erty" editMode="0" />
-  <score twoStars="3666" threeStars="4666"/>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="3" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="2" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="[fr]J'ai oubié de te donner une astuce, tu peux double-cliquer sur les blocs de l'inventaire pour les ajouter automatiquement au programme.[/fr][en]I forgot to give you a tip: you can double-click on the blocks in the inventory to automatically add them to the program.[/en]" enableInteraction="0" briefingType="0" />
+	</dialogs>
+	<score twoStars="3666" threeStars="4666"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="-1" />
+		<blockLimit blockType="TurnLeft" limit="-1" />
+		<blockLimit blockType="TurnRight" limit="-1" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="0" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<decoration name="Modern Furniture/Prefabs/Round Table" posX="2" posY="3" direction="0" />
+
+	<door posX="5" posY="3" slotId="0" direction="0" state="0" />
+
+	<decoration name="Modern Furniture/Prefabs/Single Frame chair" posX="2" posY="4" direction="0" />
+
+	<robot inputLine="Erty" posX="5" posY="5" direction="0" skin="1" />
+
+	<script outputLine="Erty" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Erty_Sol" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="TurnLeft"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+	</script>
+
 </level>

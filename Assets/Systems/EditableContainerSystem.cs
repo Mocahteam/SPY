@@ -263,7 +263,7 @@ public class EditableContainerSystem : FSystem
 			GameObjectManager.bind(cloneContainer);
 
 			// if drag&drop disabled => hide all replacement slots that are not BaseCondition
-			if (!gameData.dragDropEnabled)
+			if (!gameData.dragDropEnabled && !isEditorContext)
 				foreach (ReplacementSlot slot in cloneContainer.GetComponentsInChildren<ReplacementSlot>(true))
 					if (slot.slotType != ReplacementSlot.SlotType.BaseCondition)
 						GameObjectManager.setGameObjectState(slot.gameObject, false);

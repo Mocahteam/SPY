@@ -1,30 +1,72 @@
 <?xml version="1.0"?>
 <level>
 	<map>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="0" /><cell value="0" /><cell value="3" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="3" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
 	</map>
+
 	<dialogs>
-		<dialog text="[fr]Tu disposes maintenant de 3 capteurs qui indiquent vrai si un passage se trouve devant le robot, à gauche ou à droite.[/fr][en]You now have 3 sensors that indicate whether a passageway lies in front of the robot, to the left or to the right.[/en]" img="pathCaptors.png" imgHeight="45" />
+		<dialog text="[fr]Tu disposes maintenant de 3 capteurs qui indiquent vrai si un passage se trouve devant le robot, à gauche ou à droite.[/fr][en]You now have 3 sensors that indicate whether a passageway lies in front of the robot, to the left or to the right.[/en]" img="pathCaptors.png" imgDesc="[fr]Illustration des blocs de détection de passage disponibles dans l'inventaire.[/fr][en]Illustration of path detection blocks available in the inventory.[/en]" imgHeight="45" enableInteraction="0" briefingType="0" />
 	</dialogs>
 	<executionLimit amount="1" />
+
+	<score twoStars="0" threeStars="4960"/>
+
 	<blockLimits>
 		<blockLimit blockType="Forward" limit="1" />
 		<blockLimit blockType="TurnLeft" limit="1" />
 		<blockLimit blockType="TurnRight" limit="1" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
 		<blockLimit blockType="IfThen" limit="1" />
+		<blockLimit blockType="IfElse" limit="0" />
 		<blockLimit blockType="ForLoop" limit="1" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
 		<blockLimit blockType="PathFront" limit="1" />
 		<blockLimit blockType="PathLeft" limit="1" />
 		<blockLimit blockType="PathRight" limit="1" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
 	</blockLimits>
-	<robot inputLine="Plok" posY="2" posX="1" direction="2" />
-	<script outputLine="Plok" editMode="0" />
-	<score twoStars="0" threeStars="4960"/>
+
+	<robot inputLine="Plok" posX="2" posY="3" direction="2" skin="0" />
+
+	<script outputLine="Plok" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Plok_Sol" editMode="2" type="4">
+		<for nbFor="12">
+			<action type="Forward"/>
+			<if>
+				<condition>
+					<captor type="PathRight"/>
+				</condition>
+				<container>
+					<action type="TurnRight"/>
+				</container>
+			</if>
+		</for>
+	</script>
+
 </level>

@@ -1,24 +1,67 @@
 <?xml version="1.0"?>
 <level>
-  <map>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "0" /><cell value= "3" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "2" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
-  </map>
-  <dialogs>
-	<dialog text="[fr]Bien... Plok vient de se téléporter dans le bâtiment juste devant les portes d'entrée. Il faut continuer à progresser, pour l'instant tout semble calme.[/fr][en]Well... Plok has just teleported into the building just near to the entrance doors. We've got to keep moving, so far all seems quiet.[/en]" />
-	<dialog text="[fr]La connexion avec le robot étant de bonne qualité, tu peux envoyer plusieurs ordres en même temps. Il suffit de les mettres les uns sous les autres dans la zone de programme.[/fr][en]As the connection with the robot is of good quality, you can send several orders at the same time. Just place them one under the other in the editing area.[/en]" img="[fr]stackActions.png[/fr][en]stackActions_en.png[/en]" imgHeight="250"/>
-  </dialogs>
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="3" />
-  </blockLimits>
-  <door posY="5" posX="1" direction="0" slotId="0" state="0" />
-  <door posY="5" posX="2" direction="0" slotId="0" state="0" />
-  <door posY="5" posX="3" direction="0" slotId="0" state="0" />
-  <robot inputLine="Plok" posY="4" posX="2" direction="0" />
-  <script outputLine="Plok" editMode="0" />
-  <score twoStars="5750" threeStars="6750"/>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="0" /><cell value="3" /><cell value="1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="2" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="[fr]Bien... Plok vient de se téléporter dans le bâtiment juste devant les portes d'entrée. Il faut continuer à progresser, pour l'instant tout semble calme.[/fr][en]Well... Plok has just teleported into the building just near to the entrance doors. We've got to keep moving, so far all seems quiet.[/en]" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]La connexion avec le robot étant de bonne qualité, tu peux envoyer plusieurs ordres en même temps. Il suffit de les mettres les uns sous les autres dans la zone d'édition.[/fr][en]As the connection with the robot is of good quality, you can send several orders at the same time. Just place them one under the other in the editing area.[/en]" img="[fr]stackActions.png[/fr][en]stackActions_en.png[/en]" imgDesc="[fr]Illustration montrant deux blocs 'Avancer' dans la zone d'édition.[/fr][en]Illustration showing two 'Move forward' blocks in the editing area.[/en]" imgHeight="250" enableInteraction="0" briefingType="0" />
+	</dialogs>
+	<score twoStars="5750" threeStars="6750"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="3" />
+		<blockLimit blockType="TurnLeft" limit="0" />
+		<blockLimit blockType="TurnRight" limit="0" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="0" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<robot inputLine="Plok" posX="3" posY="5" direction="0" skin="0" />
+
+	<door posX="2" posY="6" slotId="0" direction="0" state="0" />
+
+	<door posX="3" posY="6" slotId="0" direction="0" state="0" />
+
+	<door posX="4" posY="6" slotId="0" direction="0" state="0" />
+
+	<script outputLine="Plok" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Plok_Sol" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+	</script>
+
 </level>

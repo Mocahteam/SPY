@@ -1,32 +1,86 @@
 <?xml version="1.0"?>
 <level>
 	<map>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="3" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="3" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
 	</map>
+
 	<dialogs>
-		<dialog text="[fr]Contrairement à la boucle 'Répéter' pour laquelle tu dois indiquer le nombre de répétitions, la boucle 'Tant que' répète les actions tant que la condition est vraie. Tu peux donc utiliser les capteurs dans une boucle 'Tant que'[/fr][en]Unlike the 'Repeat' loop, for which you must specify the number of repetitions, the 'While' loop repeats actions as long as the condition is true. You can therefore use sensors in a 'While' loop.[/en]" img="[fr]whileWall.png[/fr][en]whileWall_en.png[/en]" imgHeight="200" />
-		<dialog text="[fr]Tu disposes aussi d'un nouveau capteur qui te permet de tester si le robot se trouve sur la case du téléporteur.[/fr][en]You also have a new sensor to test whether the robot is on the teleporter square.[/en]" img="exit.png" imgHeight="45" />
-		<dialog text="[fr]Tu disposes aussi du bloc 'Non' qui permet de savoir si une condition est fausse.[/fr][en]You also have a 'Not' block, which lets you know if a condition is false.[/en]" img="notOperator.png" imgHeight="100" />
+		<dialog text="[fr]Contrairement à la boucle 'Répéter' pour laquelle tu dois indiquer le nombre de répétitions, la boucle 'Tant que' répète les actions tant que la condition est vraie. Tu peux donc utiliser les capteurs dans une boucle 'Tant que'[/fr][en]Unlike the 'Repeat' loop, for which you must specify the number of repetitions, the 'While' loop repeats actions as long as the condition is true. You can therefore use sensors in a 'While' loop.[/en]" img="[fr]whileWall.png[/fr][en]whileWall_en.png[/en]" imgDesc="[fr]Illustration d'un bloc 'Tant que' dans lequel un capteur est inséré.[/fr][en]Illustration of a 'While' block with a sensor inserted into it.[/en]" imgHeight="200" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Tu disposes aussi d'un nouveau capteur qui te permet de tester si le robot se trouve sur la case du téléporteur.[/fr][en]You also have a new sensor to test whether the robot is on the teleporter square.[/en]" img="exit.png" imgDesc="[fr]Illustration du bloc 'Sortie détectée sur ma position' disponible dans l'inventaire.[/fr][en]Illustration of an 'Exit detected on my position' block available in the inventory.[/en]" imgHeight="45" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Tu disposes aussi du bloc 'Non' qui permet de savoir si une condition est fausse.[/fr][en]You also have a 'Not' block, which lets you know if a condition is false.[/en]" img="notOperator.png" imgDesc="[fr]Illustration du bloc 'Non' disponible dans l'inventaire.[/fr][en]Illustration of a 'Not' block available in the inventory.[/en]" imgHeight="100" enableInteraction="0" briefingType="0" />
 	</dialogs>
+	<score twoStars="3033" threeStars="4109"/>
+
 	<blockLimits>
 		<blockLimit blockType="Forward" limit="4" />
 		<blockLimit blockType="TurnLeft" limit="-1" />
 		<blockLimit blockType="TurnRight" limit="-1" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
 		<blockLimit blockType="IfThen" limit="-1" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="0" />
 		<blockLimit blockType="While" limit="-1" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
 		<blockLimit blockType="NotOperator" limit="-1" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
 		<blockLimit blockType="PathFront" limit="-1" />
 		<blockLimit blockType="PathLeft" limit="-1" />
 		<blockLimit blockType="PathRight" limit="-1" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
 		<blockLimit blockType="Exit" limit="-1" />
 	</blockLimits>
-	<robot inputLine="Plok" posY="5" posX="1" direction="2" />
-	<script outputLine="Plok" editMode="0" />
-	<score twoStars="3033" threeStars="4109"/>
+
+	<robot inputLine="Plok" posX="2" posY="6" direction="2" skin="0" />
+
+	<script outputLine="Plok" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Plok_Sol" editMode="2" type="4">
+		<while>
+			<condition>
+				<not>
+					<captor type="Exit"/>
+				</not>
+			</condition>
+			<container>
+				<action type="Forward"/>
+				<if>
+					<condition>
+						<captor type="PathLeft"/>
+					</condition>
+					<container>
+						<action type="TurnLeft"/>
+					</container>
+				</if>
+				<if>
+					<condition>
+						<captor type="PathRight"/>
+					</condition>
+					<container>
+						<action type="TurnRight"/>
+					</container>
+				</if>
+			</container>
+		</while>
+	</script>
+
 </level>

@@ -128,6 +128,10 @@ public class DragDropSystem : FSystem
 
 		insertRef = null;
 		dragDropState = DragDropState.Idle;
+
+		// Dans l'éditeur de mission toujours autoriser le Drag&Drop
+		if (SceneManager.GetActiveScene().name == "MissionEditor")
+			gameData.dragDropEnabled = true;
 	}
 
 	private void cancelDragging()

@@ -1,22 +1,62 @@
 <?xml version="1.0"?>
 <level>
 	<map>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="3" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="3" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
 	</map>
+
+	<score twoStars="4166" threeStars="5166"/>
+
 	<blockLimits>
 		<blockLimit blockType="Forward" limit="3" />
 		<blockLimit blockType="TurnLeft" limit="-1" />
 		<blockLimit blockType="TurnRight" limit="-1" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
 		<blockLimit blockType="ForLoop" limit="-1" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
 	</blockLimits>
-	<robot inputLine="Plok" posY="6" posX="1" direction="2" />
-	<script outputLine="Plok" editMode="0" />
-	<score twoStars="4166" threeStars="5166"/>
+
+	<robot inputLine="Plok" posX="2" posY="7" direction="2" skin="0" />
+
+	<script outputLine="Plok" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Plok_Sol" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="TurnLeft"/>
+		<for nbFor="5">
+			<action type="Forward"/>
+		</for>
+	</script>
+
 </level>

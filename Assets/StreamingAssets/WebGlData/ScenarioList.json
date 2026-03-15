@@ -67,7 +67,7 @@
 					"src": "Levels/BlocklyMaze/Niveau06.xml",
 					"name": "Mission01",
 					"overridedDialogs": [
-						{"text": "[fr]Un bloc 'Si' va exécuter ce qu'il contient seulement si la condition est vraie. Essaye de tourner à gauche s'il y a un chemin vers la gauche.[/fr][en]An 'If' block will execute what it contains only if the condition is true. Try turning left if there's a path to the left.[/en]", "img": "[fr]ifPathLeft.png[/fr][en]ifPathLeft_en.png[/en]", "imgHeight": 200, "enableInteraction": false}
+						{"text": "[fr]Un bloc 'Si' va exécuter ce qu'il contient seulement si la condition est vraie. Essaye de tourner à gauche s'il y a un chemin vers la gauche.[/fr][en]An 'If' block will execute what it contains only if the condition is true. Try turning left if there's a path to the left.[/en]", "img": "[fr]ifPathLeft.png[/fr][en]ifPathLeft_en.png[/en]", "imgDesc":"[fr]Illustration d'un bloc 'Si' dans lequel un capteur 'Passage à gauche' est inséré.[/fr][en]Illustration of an 'If' block with a 'Path on the left' sensor inserted into it.[/en]", "imgHeight": 200, "enableInteraction": false}
 					]
 				},
 				{
@@ -75,7 +75,7 @@
 					"name": "Mission02", 
 					"overridedDialogs": [
 						{"text": "[fr]Tiens la visibilité est réduite ici...[/fr][en]Look at the reduced visibility here...[/en]", "enableInteraction": false},
-						{"text": "[fr]Le bloc 'Si' devrait à nouveau t'être utile...[/fr][en]The 'If' block should come in handy again...[/en]", "img": "[fr]ifWall.png[/fr][en]ifWall_en.png[/en]", "imgHeight": 200, "enableInteraction": false},
+						{"text": "[fr]Le bloc 'Si' devrait à nouveau t'être utile...[/fr][en]The 'If' block should come in handy again...[/en]", "img": "[fr]ifWall.png[/fr][en]ifWall_en.png[/en]", "imgDesc":"[fr]Illustration d'un bloc 'Si' dans lequel un capteur 'Mur détecté en face' est inséré.[/fr][en]Illustration of an 'If' block with a 'Wall detected in front' sensor inserted into it.[/en]", "imgHeight": 200, "enableInteraction": false},
 						{"text": "[fr]Une indication... le robot doit avancer de 11 cases et tourner à droite à chaque fois qu'il rencontrera un mur sur son passage.[/fr][en]A hint... the robot must move 11 squares forward and turn right every time it encounters a wall in its path.[/en]", "enableInteraction": true}
 					]
 				},
@@ -83,23 +83,23 @@
 					"src": "Levels/Infiltration/Niveau15.xml",
 					"name": "Mission03",
 					"overridedDialogs": [
-						{"text": "[fr]Contrairement à la boucle 'Répéter' pour laquelle tu dois indiquer le nombre de répétitions, la boucle 'Tant que' répète les actions tant que la condition est vraie. Tu peux donc utiliser les capteurs dans une boucle 'Tant que'[/fr][en]Unlike the 'Repeat' loop, for which you have to specify the number of repetitions, the 'While' loop repeats actions as long as the condition is true. So you can use sensors in a 'While' loop.[/en]", "img": "[fr]whileWall.png[/fr][en]whileWall_en.png[/en]", "imgHeight": 200, "enableInteraction": false},
-						{"text": "[fr]Tu disposes aussi d'un nouveau capteur qui te permet de tester si le robot se trouve sur la case du téléporteur.[/fr][en]You also have a new sensor to test whether the robot is on the teleporter square.[/en]", "img": "https://spy.lip6.fr/StreamingAssets/Levels/BlocklyMaze/Images/exit.png", "imgHeight": 50, "enableInteraction": false},
-						{"text": "[fr]Tu disposes aussi du bloc 'Non' qui permet de savoir si une condition est fausse.[/fr][en]You also have the 'No' block, which lets you know if a condition is false.[/en]", "img": "https://spy.lip6.fr/StreamingAssets/Levels/BlocklyMaze/Images/notOperator.png", "imgHeight": 75, "enableInteraction": false}
+						{"text": "[fr]Contrairement à la boucle 'Répéter' pour laquelle tu dois indiquer le nombre de répétitions, la boucle 'Tant que' répète les actions tant que la condition est vraie. Tu peux donc utiliser les capteurs dans une boucle 'Tant que'[/fr][en]Unlike the 'Repeat' loop, for which you have to specify the number of repetitions, the 'While' loop repeats actions as long as the condition is true. So you can use sensors in a 'While' loop.[/en]", "img": "[fr]whileWall.png[/fr][en]whileWall_en.png[/en]", "imgDesc":"[fr]Illustration d'un bloc 'Tant que' dans lequel un capteur 'Mur détecté en face' est inséré.[/fr][en]Illustration of a 'While' block with a 'Wall detected in front' sensor inserted into it.[/en]", "imgHeight": 200, "enableInteraction": false},
+						{"text": "[fr]Tu disposes aussi d'un nouveau capteur qui te permet de tester si le robot se trouve sur la case du téléporteur.[/fr][en]You also have a new sensor to test whether the robot is on the teleporter square.[/en]", "img": "https://spy.lip6.fr/StreamingAssets/Levels/BlocklyMaze/Images/exit.png", "imgDesc":"[fr]Illustration du bloc 'Sortie détectée sur ma position' disponible dans l'inventaire.[/fr][en]Illustration of an 'Exit detected on my position' block available in the inventory.[/en]", "imgHeight": 50, "enableInteraction": false},
+						{"text": "[fr]Tu disposes aussi du bloc 'Non' qui permet de savoir si une condition est fausse.[/fr][en]You also have the 'No' block, which lets you know if a condition is false.[/en]", "img": "https://spy.lip6.fr/StreamingAssets/Levels/BlocklyMaze/Images/notOperator.png", "imgDesc":"[fr]Illustration du bloc 'Non' disponible dans l'inventaire.[/fr][en]Illustration of a 'Not' block available in the inventory.[/en]", "imgHeight": 75, "enableInteraction": false}
 					]
 				},
 				{
 					"src": "Levels/BlocklyMaze/Niveau07.xml",
 					"name": "Mission04",
 					"overridedDialogs": [
-						{"text": "[fr]Tu disposes maintenant de 3 capteurs qui indiquent vrai si un passage se trouve devant le robot, à gauche ou à droite.[/fr][en]You now have 3 sensors that indicate whether a path lies in front of the robot, to the left or to the right.[/en]", "img": "pathCaptors.png", "imgHeight": 45, "enableInteraction": false}
+						{"text": "[fr]Tu disposes maintenant de 3 capteurs qui indiquent vrai si un passage se trouve devant le robot, à gauche ou à droite.[/fr][en]You now have 3 sensors that indicate whether a path lies in front of the robot, to the left or to the right.[/en]", "imgDesc":"[fr]Illustration des blocs de détection de passage disponibles dans l'inventaire.[/fr][en]Illustration of path detection blocks available in the inventory.[/en]", "img": "pathCaptors.png", "imgHeight": 45, "enableInteraction": false}
 					]
 				},
 				{
 					"src": "Levels/BlocklyMaze/Niveau08.xml",
 					"name": "Mission05",
 					"overridedDialogs": [
-						{"text": "[fr]Observe l'algorigramme ci-dessous, il devrait t'aider à trouver la solution.[/fr][en]Look at the flow chart below, it should help you find the solution.[/en]", "img": "[fr]https://spy.lip6.fr/StreamingAssets/Levels/Selectionneur/Images/algorigrammeBM8.png[/fr][en]https://spy.lip6.fr/StreamingAssets/Levels/Selectionneur/Images/algorigrammeBM8_en.png[/en]", "imgHeight": 400, "enableInteraction": true}
+						{"text": "[fr]Observe l'algorigramme ci-dessous, il devrait t'aider à trouver la solution.[/fr][en]Look at the flow chart below, it should help you find the solution.[/en]", "img": "[fr]https://spy.lip6.fr/StreamingAssets/Levels/Selectionneur/Images/algorigrammeBM8.png[/fr][en]https://spy.lip6.fr/StreamingAssets/Levels/Selectionneur/Images/algorigrammeBM8_en.png[/en]", "imgDesc":"[fr]L'image contient un algorigramme qui présente le processus suivant: Début, si arrivée atteinte alors fin sinon avancer puis si passage à droite alors pivoter à droite puis si passage à gauche pivoter à gauche puis revenir au début.[/fr][en]The image contains a flowchart that illustrates the following process: Start, if the goal is reached then End, otherwise, go to next then, if path on the right then turn right, then, if path on the left, turn left, then return to Start.[/en]", "imgHeight": 400, "enableInteraction": true}
 					]
 				},
 				{

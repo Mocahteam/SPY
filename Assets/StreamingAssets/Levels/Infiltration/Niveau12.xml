@@ -1,41 +1,97 @@
 <?xml version="1.0"?>
 <level>
-  <dialogs>
-	<dialog text="[fr]Nous voilà arrivé au carrefour mais finalement nous n'avons pas le choix il faut continuer à avancer...[/fr][en]Here we are at the crossroads, but in the end we have no choice but to keep going...[/en]"/>
-	<dialog text="[fr]Nous approchons de notre objectif mais la prochaine salle semble être bien gardée!&#xA;Pas d'inquiétude, Erty contient une technologie permettant de voir le programme des gardes (sélectionne un garde pour voir/cacher son programme). Ceci devrait te donner de précieuses informations pour l'éviter.[/fr][en]We're nearing our objective, but the next room seems to be well guarded!&#xA;Don't worry, Erty contains a technology that allows you to see the guard's program (select a guard to see/hide his program). This should give you valuable information on how to avoid him.[/en]" camY="2" camX="2" />
-	<dialog text="[fr]Tu disposes maintenant de la nouvelle action 'Attendre'. Elle permet d'ordonner au robot de faire une pose avant de passer à l'action suivante.[/fr][en]The new 'Wait' action is now available. It allows you to order the robot to make a pose before moving on to the next action.[/en]" img="WaitIcon.png" imgHeight="45" camY="6" camX="3"/>
-  </dialogs>
-  <map>
-	<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "3" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "0" /><cell value= "0" /><cell value= "2" /><cell value= "0" /><cell value= "0" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
-	<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-  </map>
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="-1" />
-    <blockLimit blockType="TurnLeft" limit="-1" />
-    <blockLimit blockType="TurnRight" limit="-1" />
-    <blockLimit blockType="Wait" limit="-1" />
-    <blockLimit blockType="Activate" limit="-1" />
-    <blockLimit blockType="TurnBack" limit="-1" />
-    <blockLimit blockType="ForLoop" limit="-1" />
-  </blockLimits>
-  <door posY="6" posX="1" direction="2" slotId="0" state="0" />
-  <door posY="6" posX="5" direction="2" slotId="1" state="0" />
-  <robot inputLine="Erty" posY="6" posX="3" direction="0" skin="1" />
-  <script outputLine="Erty" editMode="0" />
-  <guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posY="2" posX="2" direction="2" range="1" selfRange="False" typeRange="0" />
-  <script outputLine="[fr]Garde[/fr][en]Guard[/en]">
-      <forever>
-        <action type="Forward"/>
-        <action type="Forward"/>
-        <action type="TurnRight"/>
-      </forever>
-  </script>
-  <score twoStars="4266" threeStars="4333"/>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="3" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="0" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="[fr]Nous voilà arrivé au carrefour mais finalement nous n'avons pas le choix il faut continuer à avancer...[/fr][en]Here we are at the crossroads, but in the end we have no choice but to keep going...[/en]" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Nous approchons de notre objectif mais la prochaine salle semble être bien gardée!
+Pas d'inquiétude, Erty contient une technologie permettant de voir le programme des gardes (sélectionne un garde pour voir/cacher son programme). Ceci devrait te donner de précieuses informations pour l'éviter.[/fr][en]We're nearing our objective, but the next room seems to be well guarded!
+Don't worry, Erty contains a technology that allows you to see the guard's program (select a guard to see/hide his program). This should give you valuable information on how to avoid him.[/en]" camX="2" camY="2" enableInteraction="0" briefingType="0" />
+	</dialogs>
+	<score twoStars="4266" threeStars="4333"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="-1" />
+		<blockLimit blockType="TurnLeft" limit="-1" />
+		<blockLimit blockType="TurnRight" limit="-1" />
+		<blockLimit blockType="TurnBack" limit="-1" />
+		<blockLimit blockType="Activate" limit="-1" />
+		<blockLimit blockType="Wait" limit="-1" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="-1" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<guard inputLine="[fr]Garde[/fr][en]Guard[/en]" posX="2" posY="2" direction="2" range="1" selfRange="False" typeRange="0" />
+
+	<door posX="1" posY="6" slotId="0" direction="2" state="0" />
+
+	<robot inputLine="Erty" posX="3" posY="6" direction="0" skin="1" />
+
+	<door posX="5" posY="6" slotId="1" direction="2" state="0" />
+
+	<script outputLine="Erty" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Garde" editMode="0" type="3">
+		<forever>
+			<action type="Forward"/>
+			<action type="Forward"/>
+			<action type="TurnRight"/>
+		</forever>
+	</script>
+
+	<script outputLine="Erty_Sol1" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="TurnLeft"/>
+		<for nbFor="3">
+			<action type="Forward"/>
+			<action type="TurnRight"/>
+			<action type="Forward"/>
+		</for>
+		<action type="TurnLeft"/>
+		<action type="Forward"/>
+	</script>
+
+	<script outputLine="Erty_Sol2" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+		<action type="Wait"/>
+		<action type="Forward"/>
+		<action type="TurnLeft"/>
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+		<action type="Forward"/>
+	</script>
+
 </level>

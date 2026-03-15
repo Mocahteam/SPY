@@ -1,20 +1,60 @@
 <?xml version="1.0"?>
 <level>
 	<map>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="3" /><cell value="1" /></line>
-		<line><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="3" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
 	</map>
+
 	<dialogs>
-		<dialog text="[fr]Tu peux déplacer la caméra à l'aide du menu situé en bas à droite de la fenêtre.[/fr][en]You can move the camera using the menu at the bottom right of the window.[/en]" img="../../Tutoriel/Images/cameraControl.png" imgHeight="110" />
-		<dialog text="[fr]Utilise seulement deux blocs pour atteindre le but. Utilise le bloc 'Répéter' pour exécuter un bloc plus d'une fois.[/fr][en]Use only two blocks to reach the goal. Use the 'Repeat' block to execute a block more than once.[/en]" img="ForBlock.png" imgHeight="45"/>
+		<dialog text="[fr]Tu peux déplacer la caméra à l'aide du menu situé en bas à droite de la fenêtre.[/fr][en]You can move the camera using the menu at the bottom right of the window.[/en]" img="../../Tutoriel/Images/cameraControl.png" imgDesc="[fr]Le panneau de contrôle de la caméra se trouve en bas à droite de la fenêtre du jeu. Consulte la page web d'accessibilité du jeu pour connaître les raccourcis claviers disponibles.[/fr][en]The camera control panel is located at the bottom right of the game window. Check the game's accessibility webpage for available keyboard shortcuts.[/en]" imgHeight="110" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Utilise seulement deux blocs pour atteindre le but. Utilise le bloc 'Répéter' pour exécuter un bloc plus d'une fois.[/fr][en]Use only two blocks to reach the goal. Use the 'Repeat' block to execute a block more than once.[/en]" img="ForBlock.png" imgDesc="[fr]Illustration du bloc 'Répéter plusieurs fois' disponible dans l'inventaire.[/fr][en]Illustration of the ‘Repeat several times’ block available in the inventory.[/en]" imgHeight="45" enableInteraction="0" briefingType="0" />
 	</dialogs>
 	<executionLimit amount="1" />
+
+	<score twoStars="0" threeStars="7047"/>
+
 	<blockLimits>
 		<blockLimit blockType="Forward" limit="1" />
+		<blockLimit blockType="TurnLeft" limit="0" />
+		<blockLimit blockType="TurnRight" limit="0" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
 		<blockLimit blockType="ForLoop" limit="1" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
 	</blockLimits>
-	<robot inputLine="Plok" posY="1" posX="1" direction="2" />
-	<script outputLine="Plok" editMode="0" />
-	<score twoStars="0" threeStars="7047"/>
+
+	<robot inputLine="Plok" posX="2" posY="2" direction="2" skin="0" />
+
+	<script outputLine="Plok" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Plok_Sol" editMode="2" type="4">
+		<for nbFor="5">
+			<action type="Forward"/>
+		</for>
+	</script>
+
 </level>

@@ -1,30 +1,37 @@
 <?xml version="1.0"?>
 <level>
 	<map>
-		<line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value= "0" /><cell value= "3" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /></line>
-		<line><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "0" /><cell value= "1" /></line>
-		<line><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value= "2" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
-		<line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="3" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
 	</map>
-	
+
 	<dialogs>
-		<dialog text="[fr]La sortie est cachée mais elle se trouve devant l'une de ces portes. Suis les instructions suivantes pour la trouver : Tant que tu n'es pas arrivé devant une porte tourne à gauche devant chaque obstacle.[/fr][en]The exit is hidden, but it's in front of one of these doors. Follow these instructions to find it: until you reach a door, turn left in front of each obstacle.[/en]" enableInteraction="1"/>
+		<dialog text="[fr]La sortie est cachée mais elle se trouve devant l'une de ces portes. Suis les instructions suivantes pour la trouver : Tant que tu n'es pas arrivé devant une porte tourne à gauche devant chaque obstacle.[/fr][en]The exit is hidden, but it's in front of one of these doors. Follow these instructions to find it: until you reach a door, turn left in front of each obstacle.[/en]" enableInteraction="1" briefingType="0" />
 	</dialogs>
-	
 	<hideExits />
-	
+
+	<score twoStars="4500" threeStars="4544"/>
+
 	<blockLimits>
 		<blockLimit blockType="Forward" limit="-1" />
 		<blockLimit blockType="TurnLeft" limit="-1" />
 		<blockLimit blockType="TurnRight" limit="-1" />
 		<blockLimit blockType="TurnBack" limit="-1" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
 		<blockLimit blockType="IfThen" limit="-1" />
 		<blockLimit blockType="IfElse" limit="-1" />
+		<blockLimit blockType="ForLoop" limit="0" />
 		<blockLimit blockType="While" limit="-1" />
+		<blockLimit blockType="Forever" limit="0" />
 		<blockLimit blockType="AndOperator" limit="-1" />
 		<blockLimit blockType="OrOperator" limit="-1" />
 		<blockLimit blockType="NotOperator" limit="-1" />
@@ -34,13 +41,49 @@
 		<blockLimit blockType="PathFront" limit="-1" />
 		<blockLimit blockType="PathLeft" limit="-1" />
 		<blockLimit blockType="PathRight" limit="-1" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
 		<blockLimit blockType="FieldGate" limit="-1" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
 	</blockLimits>
-	<door posY="0" posX="2" slotId="0" direction="0" state="0" />
-	<door posY="3" posX="8" slotId="0" direction="2" state="0" />
-	<door posY="5" posX="0" slotId="0" direction="2" state="0" />
-	<door posY="7" posX="6" slotId="0" direction="0" state="0" />
-	<robot inputLine="Dest" posY="6" posX="4" direction="0" skin="2" />
-	<script outputLine="Dest" editMode="0" />
-	<score twoStars="4500" threeStars="4544"/>
+
+	<door posX="3" posY="1" slotId="0" direction="0" state="0" />
+
+	<door posX="9" posY="4" slotId="0" direction="2" state="0" />
+
+	<door posX="1" posY="6" slotId="0" direction="2" state="0" />
+
+	<robot inputLine="Dest" posX="5" posY="7" direction="0" skin="2" />
+
+	<door posX="7" posY="8" slotId="0" direction="0" state="0" />
+
+	<script outputLine="Dest" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Dest_Sol" editMode="2" type="4">
+		<while>
+			<condition>
+				<not>
+					<captor type="FieldGate"/>
+				</not>
+			</condition>
+			<container>
+				<ifElse>
+					<condition>
+						<captor type="WallFront"/>
+					</condition>
+					<thenContainer>
+						<action type="TurnLeft"/>
+					</thenContainer>
+					<elseContainer>
+						<action type="Forward"/>
+					</elseContainer>
+				</ifElse>
+			</container>
+		</while>
+	</script>
+
 </level>

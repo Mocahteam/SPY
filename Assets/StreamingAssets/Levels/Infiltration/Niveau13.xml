@@ -1,24 +1,71 @@
 <?xml version="1.0"?>
 <level>
-  <dialogs>
-	<dialog text="[fr]Erty semble avoir un problème pour pivoter, un circuit défectueux dans sa jambe...&#xA;Le problème devrait se résoudre tout seul mais pour l'instant tu ne peux utiliser que deux actions 'pivoter à gauche'.[/fr][en]Erty seems to have a problem swiveling, a faulty circuit in his leg...&#xA;The problem should resolve itself, but for the moment you can only use two 'Rotate left' actions.[/en]"/>
-	<dialog text="[fr]Même si les blocs sont limités ici, nous avons pu t'envoyer une boucle qui s'arrête lorsqu'un capteur n'est plus valide.[/fr][en]Even though blocks are limited here, we've been able to send you a loop that stops when a sensor is no longer valid.[/en]" img="[fr]while.png[/fr][en]while_en.png[/en]" imgHeight="200" />
-	<dialog text="Tu disposes donc de cette boucle ainsi que d'un capteur qui t'indique si un mur se trouve sur la case juste devant le robot. Tu peux glisser un capteur dans la zone grise de la même forme." img="[fr]whileWall.png[/fr][en]whileWall_en.png[/en]" imgHeight="200" />
-  </dialogs>
-  <map>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "0" /><cell value= "2" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "3" /><cell value= "0" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
-  </map>
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="-1" />
-    <blockLimit blockType="TurnLeft" limit="2" />
-    <blockLimit blockType="While" limit="1" />
-    <blockLimit blockType="WallFront" limit="1" />
-  </blockLimits>
-  <robot inputLine="Erty" posY="1" posX="2" direction="2" skin="1" />
-  <script outputLine="Erty" editMode="0" />
-  <score twoStars="4261" threeStars="5261"/>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="2" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="3" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="[fr]Erty semble avoir un problème pour pivoter, un circuit défectueux dans sa jambe...
+Le problème devrait se résoudre tout seul mais pour l'instant tu ne peux utiliser que deux actions 'pivoter à gauche'.[/fr][en]Erty seems to have a problem swiveling, a faulty circuit in his leg...
+The problem should resolve itself, but for the moment you can only use two 'Rotate left' actions.[/en]" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Même si les blocs sont limités ici, nous avons pu t'envoyer une boucle qui s'arrête lorsqu'un capteur n'est plus valide.[/fr][en]Even though blocks are limited here, we've been able to send you a loop that stops when a sensor is no longer valid.[/en]" img="[fr]while.png[/fr][en]while_en.png[/en]" imgDesc="[fr]Illustration du bloc 'Tant que' disponible dans l'inventaire.[/fr][en]Illustration of the ‘While’ block available in the inventory.[/en]" imgHeight="200" enableInteraction="0" briefingType="0" />
+		<dialog text="Tu disposes donc de cette boucle ainsi que d'un capteur qui t'indique si un mur se trouve sur la case juste devant le robot. Tu peux glisser un capteur dans la zone grise de la même forme." img="[fr]whileWall.png[/fr][en]whileWall_en.png[/en]" imgDesc="[fr]Illustration montrant l'ajout d'un bloc 'Mur détecté en face' dans le 'Tant que'.[/fr][en]Illustration showing how to add a 'Wall detected in front' block to the 'While' section.[/en]" imgHeight="200" enableInteraction="0" briefingType="0" />
+	</dialogs>
+	<score twoStars="4261" threeStars="5261"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="-1" />
+		<blockLimit blockType="TurnLeft" limit="2" />
+		<blockLimit blockType="TurnRight" limit="0" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="0" />
+		<blockLimit blockType="While" limit="1" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="1" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<robot inputLine="Erty" posX="2" posY="2" direction="2" skin="1" />
+
+	<script outputLine="Erty" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Erty_Sol" editMode="2" type="4">
+		<while>
+			<condition>
+				<captor type="WallFront"/>
+			</condition>
+			<container>
+				<action type="TurnLeft"/>
+			</container>
+		</while>
+		<action type="TurnLeft"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+	</script>
+
 </level>

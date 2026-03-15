@@ -1,28 +1,69 @@
 <?xml version="1.0"?>
 <level>
-  <map>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-    <line><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "3" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value= "1" /><cell value= "1" /></line>
-    <line><cell value= "1" /><cell value= "2" /><cell value= "1" /><cell value="-1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
-  </map>
-  <dialogs>
-	<dialog text="[fr]Tu peux maintenant utiliser des actions pour tourner à gauche et tourner à droite. A toi de compléter le programme.[/fr][en]Now you can use actions to rotate left and right. It's up to you to complete the program.[/en]" img="turnleftright.png" imgHeight="45" />
-	<dialog text="[fr]Attention !&#xA;Quand le robot tourne, il reste sur place.[/fr][en]Careful!&#xA;When the robot rotates, it remains where it is.[/en]" />
-	<dialog text="[fr]Tu peux aussi exécuter un programme en cours de construction pour voir où se retrouve Erty et poursuivre la programmation à partir de là.[/fr][en]You can also run a program under construction to see where Erty ends up and continue programming from there.[/en]" />
-  </dialogs>
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="-1" />
-    <blockLimit blockType="TurnLeft" limit="-1" />
-    <blockLimit blockType="TurnRight" limit="-1" />
-  </blockLimits>
-  <robot inputLine="Erty" posY="4" posX="1" direction="0" skin="1" />
-  <script outputLine="Erty" editMode="0" type="2">
-    <action type="Forward"/>
-    <action type="Forward"/>
-	<action type="TurnRight"/>
-  </script>
-  <score twoStars="3875" threeStars="4875"/>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="3" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="2" /><cell value="1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="[fr]Tu peux maintenant utiliser des actions pour tourner à gauche et tourner à droite. A toi de compléter le programme.[/fr][en]Now you can use actions to rotate left and right. It's up to you to complete the program.[/en]" img="turnleftright.png" imgDesc="[fr]Illustration des blocs 'Pivoter' disponibles dans l'inventaire.[/fr][en]Illustration of the 'Turn' blocks available in the inventory.[/en]" imgHeight="45" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Attention !
+Quand le robot tourne, il reste sur place.[/fr][en]Careful!
+When the robot rotates, it remains where it is.[/en]" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Tu peux aussi exécuter un programme en cours de construction pour voir où se retrouve Erty et poursuivre la programmation à partir de là.[/fr][en]You can also run a program under construction to see where Erty ends up and continue programming from there.[/en]" enableInteraction="0" briefingType="0" />
+	</dialogs>
+	<score twoStars="3875" threeStars="4875"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="-1" />
+		<blockLimit blockType="TurnLeft" limit="-1" />
+		<blockLimit blockType="TurnRight" limit="-1" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="IfThen" limit="0" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="0" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="0" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<robot inputLine="Erty" posX="2" posY="4" direction="0" skin="1" />
+
+	<script outputLine="Erty" editMode="0" type="2">
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+	</script>
+
+	<script outputLine="Erty_Sol" editMode="2" type="4">
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="TurnLeft"/>
+		<action type="Forward"/>
+	</script>
+
 </level>

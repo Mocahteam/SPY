@@ -1,39 +1,82 @@
 <?xml version="1.0"?>
 <level>
-  <map>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "0" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "2" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "0" /><cell value= "1" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "0" /><cell value= "3" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value= "0" /><cell value="-1" /></line>
-    <line><cell value="-1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value= "1" /><cell value="-1" /></line>
-  </map>
-   <dialogs>
-	<dialog text="[fr]Que se passe-t-il ici ?[/fr][en]What's going on here?[/en]" />
-	<dialog text="[fr]Visiblement un nouveau système de sécurité bloque la vue de notre drone d'observation... Il va falloir avancer à l'aveugle.[/fr][en]Apparently a new security system is blocking the view of our observation drone... We'll have to go in blind.[/en]" />
-	<dialog text="[fr]Nous recevons des informations...[/fr][en]We receive information...[/en]" />
-	<dialog text="..." />
-	<dialog text="[fr]Tu disposes maintenant d'un bloc 'Si' qui te permet d'exécuter des actions si un capteur est valide. Il devrait t'être utiles.[/fr][en]You now have an 'If' block that lets you execute actions if a sensor is valid. It should come in handy.[/en]" img="[fr]ifWall.png[/fr][en]ifWall_en.png[/en]" imgHeight="200" />
-	<dialog text="[fr]Notre service de renseignement nous indique que le robot doit avancer de 11 cases et tourner à droite à chaque fois qu'il rencontrera un mur sur son passage.[/fr][en]Our intelligence service tells us that the robot must advance 11 squares and turn right every time it encounters a wall in its path.[/en]" />
-  </dialogs>
-  <executionLimit amount="1" />
-  <fog />
-  <blockLimits>
-    <blockLimit blockType="Forward" limit="1" />
-    <blockLimit blockType="TurnLeft" limit="1" />
-    <blockLimit blockType="TurnRight" limit="1" />
-    <blockLimit blockType="Wait" limit="-1" />
-    <blockLimit blockType="Activate" limit="-1" />
-    <blockLimit blockType="TurnBack" limit="-1" />
-    <blockLimit blockType="IfThen" limit="-1" />
-    <blockLimit blockType="ForLoop" limit="-1" />
-    <blockLimit blockType="WallFront" limit="-1" />
-  </blockLimits>
-  <door posY="7" posX="8" direction="2" slotId="0" state="0" />
-  <robot inputLine="Erty" posY="4" posX="4" direction="2" skin="1" />
-  <script outputLine="Erty" editMode="0" />
-  <score twoStars="4583" threeStars="4999"/>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="2" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="0" /><cell value="3" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="[fr]Que se passe-t-il ici ?[/fr][en]What's going on here?[/en]" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Visiblement un nouveau système de sécurité bloque la vue de notre drone d'observation... Il va falloir avancer à l'aveugle.[/fr][en]Apparently a new security system is blocking the view of our observation drone... We'll have to go in blind.[/en]" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Nous recevons des informations...[/fr][en]We receive information...[/en]" enableInteraction="0" briefingType="0" />
+		<dialog text="..." enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Tu disposes maintenant d'un bloc 'Si' qui te permet d'exécuter des actions si un capteur est valide. Il devrait t'être utiles.[/fr][en]You now have an 'If' block that lets you execute actions if a sensor is valid. It should come in handy.[/en]" img="[fr]ifWall.png[/fr][en]ifWall_en.png[/en]" imgDesc="[fr]Illustration montrant l'ajout d'un bloc 'Mur détecté en face' dans un bloc 'Si'.[/fr][en]Illustration showing how to add a 'Wall detected in front' block to an 'If' block." imgHeight="200" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Notre service de renseignement nous indique que le robot doit avancer de 11 cases et tourner à droite à chaque fois qu'il rencontrera un mur sur son passage.[/fr][en]Our intelligence service tells us that the robot must advance 11 squares and turn right every time it encounters a wall in its path.[/en]" enableInteraction="0" briefingType="0" />
+	</dialogs>
+	<executionLimit amount="1" />
+
+	<fog />
+
+	<score twoStars="4583" threeStars="4999"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="1" />
+		<blockLimit blockType="TurnLeft" limit="1" />
+		<blockLimit blockType="TurnRight" limit="1" />
+		<blockLimit blockType="TurnBack" limit="-1" />
+		<blockLimit blockType="Activate" limit="-1" />
+		<blockLimit blockType="Wait" limit="-1" />
+		<blockLimit blockType="IfThen" limit="-1" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="-1" />
+		<blockLimit blockType="While" limit="0" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="0" />
+		<blockLimit blockType="WallFront" limit="-1" />
+		<blockLimit blockType="WallLeft" limit="0" />
+		<blockLimit blockType="WallRight" limit="0" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="0" />
+	</blockLimits>
+
+	<robot inputLine="Erty" posX="4" posY="5" direction="2" skin="1" />
+
+	<door posX="8" posY="8" slotId="0" direction="2" state="0" />
+
+	<script outputLine="Erty" editMode="0" type="3">
+	</script>
+
+	<script outputLine="Erty_Sol" editMode="2" type="4">
+		<for nbFor="11">
+			<action type="Forward"/>
+			<if>
+				<condition>
+					<captor type="WallFront"/>
+				</condition>
+				<container>
+					<action type="TurnRight"/>
+				</container>
+			</if>
+		</for>
+	</script>
+
 </level>
