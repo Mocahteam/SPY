@@ -374,7 +374,7 @@ public class DialogSystem : FSystem
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			Debug.Log(www.error);
+			Debug.Log(path+" "+www.error);
 			yield return new WaitForSeconds(0.5f);
 			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, path, dialog));
 		}
@@ -403,7 +403,7 @@ public class DialogSystem : FSystem
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			Debug.Log(www.error);
+			Debug.Log(path+" "+www.error);
 			yield return new WaitForSeconds(0.5f);
 			MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, path));
 		}

@@ -109,7 +109,7 @@ public static class Utility
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			Debug.Log(www.error);
+			Debug.Log(miniViewUri+" "+www.error);
 			setTexture(null, target);
 		}
 		else

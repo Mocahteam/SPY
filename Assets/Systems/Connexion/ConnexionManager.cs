@@ -156,6 +156,7 @@ public class ConnexionManager : FSystem
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
+			Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + uri);
 			yield return new WaitForSeconds(1f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
 			{
@@ -167,6 +168,7 @@ public class ConnexionManager : FSystem
 		else
 		{
 			webGL_fileLoaded++;
+			logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n" + logs.text;
 			string scenarioJson = www.downloadHandler.text;
 			WebGlScenarioList scenarioListRaw = JsonConvert.DeserializeObject<WebGlScenarioList>(scenarioJson);
 			foreach (WebGlScenario scenarioRaw in scenarioListRaw.scenarios)
@@ -189,6 +191,7 @@ public class ConnexionManager : FSystem
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
+			Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + uri);
 			yield return new WaitForSeconds(1f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
 			{
@@ -200,6 +203,7 @@ public class ConnexionManager : FSystem
 		else
 		{
 			webGL_fileLoaded++;
+			logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n" + logs.text;
 			string levelsJson = www.downloadHandler.text;
 			WebGlScenario levelsListRaw = JsonUtility.FromJson<WebGlScenario>(levelsJson);
 			webGL_fileToLoad += levelsListRaw.levels.Count;
@@ -236,6 +240,7 @@ public class ConnexionManager : FSystem
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
+			Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + uri);
 			yield return new WaitForSeconds(1f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
 			{
@@ -269,6 +274,7 @@ public class ConnexionManager : FSystem
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath + "</color>\n" + logs.text;
+			Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath);
 			yield return new WaitForSeconds(1f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
 			{
@@ -290,6 +296,7 @@ public class ConnexionManager : FSystem
 			catch (Exception e)
 			{
 				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath + " => " + Utility.getFormatedText(loc.localization[7], e.Message) + "</color>\n" + logs.text;
+				Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath);
 			}
 		}
 	}
@@ -315,6 +322,7 @@ public class ConnexionManager : FSystem
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[0], formatedString) + "</color>\n" + logs.text;
+			Debug.Log(Utility.getFormatedText(logs.GetComponent<Localization>().localization[0], formatedString));
 			yield return new WaitForSeconds(2f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
 			{
@@ -410,6 +418,7 @@ public class ConnexionManager : FSystem
 		{
 			Debug.Log(www.result+" "+www.error);
 			logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession) + "</color>\n" + logs.text;
+			Debug.Log(Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession));
 			yield return new WaitForSeconds(1f);
 			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
 			{
