@@ -439,7 +439,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1000446060150347598, guid: bae527ae87f763c4eaf4bfcc24112fd8,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7011983211112056274}
+      addedObject: {fileID: 8897186841902819326}
   m_SourcePrefab: {fileID: 100100000, guid: bae527ae87f763c4eaf4bfcc24112fd8, type: 3}
 --- !u!1 &270550964968291194 stripped
 GameObject:
@@ -447,7 +447,7 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1018795171105582132}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7011983211112056274
+--- !u!114 &8897186841902819326
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -456,37 +456,37 @@ MonoBehaviour:
   m_GameObject: {fileID: 270550964968291194}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 0
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 293126874517987328
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 9156600933849201487}
+        m_TargetAssemblyTypeName: TMPro.TextMeshProUGUI, Unity.TextMeshPro
+        m_MethodName: set_text
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
   references:
     version: 2
-    RefIds:
-    - rid: 0
-      type: {class: TrackedUGuiGraphic, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
-        asm: Unity.Localization}
-      data:
-        m_Target: {fileID: 9156600933849201487}
-        m_TrackedProperties:
-          items:
-          - rid: 1
-        m_UpdateType: 0
-    - rid: 1
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 5697463177216
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: m_text
+    RefIds: []
 --- !u!224 &3837317188018568130 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4279439347389388790, guid: bae527ae87f763c4eaf4bfcc24112fd8,
@@ -528,12 +528,12 @@ PrefabInstance:
     - target: {fileID: 466570473040901358, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 466570473040901358, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 466570473040901358, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
@@ -553,7 +553,7 @@ PrefabInstance:
     - target: {fileID: 1726966708658993948, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2598129547128785489, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
@@ -568,7 +568,7 @@ PrefabInstance:
     - target: {fileID: 2748145543566130030, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2847899282829580067, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
@@ -693,12 +693,12 @@ PrefabInstance:
     - target: {fileID: 4807071282568456770, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4807071282568456770, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5921419491436476213, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}

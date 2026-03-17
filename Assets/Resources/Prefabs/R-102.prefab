@@ -2246,9 +2246,9 @@ GameObject:
   - component: {fileID: 4897352608783327641}
   - component: {fileID: 2399010307266841798}
   - component: {fileID: 1991632729334438255}
-  - component: {fileID: 4817999030681682613}
   - component: {fileID: 6845019092806348108}
   - component: {fileID: 3345899171738290983}
+  - component: {fileID: 4499791923452253589}
   m_Layer: 7
   m_Name: R-102
   m_TagString: Player
@@ -2458,49 +2458,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   associatedScriptName: "N\xB01"
---- !u!114 &4817999030681682613
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8019827225535369381}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 4110108078380679233
-  references:
-    version: 2
-    RefIds:
-    - rid: 4110108078380679233
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
-        asm: Unity.Localization}
-      data:
-        m_Target: {fileID: 2399010307266841798}
-        m_TrackedProperties:
-          items:
-          - rid: 4110108078380679234
-        m_UpdateType: 0
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 4110108078380679234
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 288330329704620032
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: text
 --- !u!82 &6845019092806348108
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2611,6 +2568,46 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TriggerCollisionSound
   audioSource: {fileID: 781034790152853074}
+--- !u!114 &4499791923452253589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8019827225535369381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 26103297396736
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2399010307266841798}
+        m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
+        m_MethodName: setText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &8032877713273357275
 GameObject:
   m_ObjectHideFlags: 0

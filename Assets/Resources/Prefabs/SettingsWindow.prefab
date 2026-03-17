@@ -4813,7 +4813,7 @@ MonoBehaviour:
           m_TableReference:
             m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
           m_TableEntryReference:
-            m_KeyId: 295740317179830272
+            m_KeyId: 295739503279333376
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0
@@ -4827,7 +4827,7 @@ MonoBehaviour:
           m_TableReference:
             m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
           m_TableEntryReference:
-            m_KeyId: 295740370715926528
+            m_KeyId: 295739526373171200
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0
@@ -4841,7 +4841,7 @@ MonoBehaviour:
           m_TableReference:
             m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
           m_TableEntryReference:
-            m_KeyId: 295740391628726272
+            m_KeyId: 295739544295432192
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0
@@ -7283,7 +7283,7 @@ MonoBehaviour:
           m_TableReference:
             m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
           m_TableEntryReference:
-            m_KeyId: 315360088979136512
+            m_KeyId: 296095510337675264
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0
@@ -7297,7 +7297,7 @@ MonoBehaviour:
           m_TableReference:
             m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
           m_TableEntryReference:
-            m_KeyId: 315360118179880960
+            m_KeyId: 296095532810756096
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0
@@ -7875,6 +7875,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5612822637831499186, guid: 4214b57e615806c448ba9d993d629531,
+        type: 3}
+      propertyPath: m_Padding.w
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5612822637831499186, guid: 4214b57e615806c448ba9d993d629531,
+        type: 3}
+      propertyPath: m_Padding.x
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5612822637831499186, guid: 4214b57e615806c448ba9d993d629531,
+        type: 3}
+      propertyPath: m_Padding.y
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5612822637831499186, guid: 4214b57e615806c448ba9d993d629531,
+        type: 3}
+      propertyPath: m_Padding.z
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 6856314137737944748, guid: 4214b57e615806c448ba9d993d629531,
         type: 3}
@@ -23684,7 +23704,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1848616423792054055, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2476143387864325727}
+      addedObject: {fileID: 241141702391441402}
   m_SourcePrefab: {fileID: 100100000, guid: 4fdcd5065fbff574d8a0a77b388b5583, type: 3}
 --- !u!114 &4132535657278443309 stripped
 MonoBehaviour:
@@ -23722,7 +23742,7 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 5005965310065155013}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2476143387864325727
+--- !u!114 &241141702391441402
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -23731,37 +23751,37 @@ MonoBehaviour:
   m_GameObject: {fileID: 6692164579881424098}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 3150268227592388670
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 313870206617509888
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4132535657278443309}
+        m_TargetAssemblyTypeName: TMPro.TextMeshProUGUI, Unity.TextMeshPro
+        m_MethodName: set_text
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   references:
     version: 2
-    RefIds:
-    - rid: 3150268227592388670
-      type: {class: TrackedUGuiGraphic, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
-        asm: Unity.Localization}
-      data:
-        m_Target: {fileID: 4132535657278443309}
-        m_TrackedProperties:
-          items:
-          - rid: 3150268227592388671
-        m_UpdateType: 0
-    - rid: 3150268227592388671
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 294646571264630784
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: m_text
+    RefIds: []
 --- !u!1001 &5204977005845785308
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31574,7 +31594,7 @@ MonoBehaviour:
           m_TableReference:
             m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
           m_TableEntryReference:
-            m_KeyId: 329095053287088128
+            m_KeyId: 296095510337675264
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0
@@ -31588,7 +31608,7 @@ MonoBehaviour:
           m_TableReference:
             m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
           m_TableEntryReference:
-            m_KeyId: 329095075898580992
+            m_KeyId: 296095532810756096
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0

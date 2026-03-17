@@ -52,37 +52,31 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1946396446720
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/Scroll View Available
-      Levels/Title
+    m_Key: AvailableMissions
     m_Metadata:
       m_Items: []
   - m_Id: 2193810051072
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/RightPanel/ButtonAddToScenario
+    m_Key: AddMissionToScenario
     m_Metadata:
       m_Items: []
   - m_Id: 2309518315520
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/RightPanel/Scroll
-      View Levels Selected/Title
+    m_Key: Scenario
     m_Metadata:
       m_Items: []
   - m_Id: 2391043002368
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/RightPanel/Scroll
-      View Levels Selected/AbstractTitle
+    m_Key: 'Abstract:'
     m_Metadata:
       m_Items: []
   - m_Id: 2534509170688
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/RightPanel/Scroll
-      View Levels Selected/AbstractContent/Text Area/Placeholder
+    m_Key: EnterScenarioSummary
     m_Metadata:
       m_Items: []
   - m_Id: 2716013481984
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/Footer/Left/CompetenciesFilter/Text
-      (TMP)
+    m_Key: FilterBySkill
     m_Metadata:
       m_Items: []
   - m_Id: 2801967353856
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/Footer/Left/ShowAllLevels/Text
-      (TMP)
+    m_Key: CancelFilters
     m_Metadata:
       m_Items: []
   - m_Id: 2862256279552
@@ -101,20 +95,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 3216184233984
-    m_Key: TitleScreen/Canvas/OverrideBriefing/Header
+    m_Key: ChangeMissionBriefing
     m_Metadata:
       m_Items: []
   - m_Id: 3373751652352
-    m_Key: TitleScreen/Canvas/OverrideBriefing/Scroll View/Viewport/Content/MissionPathPanel/MissionPathHeader
+    m_Key: MissionPath
     m_Metadata:
       m_Items: []
   - m_Id: 3446535409664
-    m_Key: TitleScreen/Canvas/OverrideBriefing/Scroll View/Viewport/Content/MissionPathPanel/MissionPathContent/Text
-      Area/Placeholder
+    m_Key: Path...
     m_Metadata:
       m_Items: []
   - m_Id: 3519503716352
-    m_Key: TitleScreen/Canvas/OverrideBriefing/Scroll View/Viewport/Content/NamePanel/NameHeader
+    m_Key: MissionNameInScenario
     m_Metadata:
       m_Items: []
   - m_Id: 3558674321408
@@ -123,7 +116,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 3650747682816
-    m_Key: TitleScreen/Canvas/OverrideBriefing/Scroll View/Viewport/Content/AddNewBriefing/Button
+    m_Key: AddNewElement
     m_Metadata:
       m_Items: []
   - m_Id: 3776245452800
@@ -131,7 +124,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 3905736200192
-    m_Key: TitleScreen/Canvas/ParamCompPanel/TitlePanel
+    m_Key: ChoiceOfSkillsToWorkOn
     m_Metadata:
       m_Items: []
   - m_Id: 3973138665472
@@ -139,7 +132,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 5258407628800
-    m_Key: TitleScreen/Canvas/ParamCompPanel/ButtonShowLevels/Text (TMP)
+    m_Key: ApplyFilters
     m_Metadata:
       m_Items: []
   - m_Id: 5278125051904
@@ -147,7 +140,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 5399780839424
-    m_Key: TitleScreen/Canvas/SavingPanel/Panel/Message
+    m_Key: EnterSavingName
     m_Metadata:
       m_Items: []
   - m_Id: 5453769920512
@@ -159,11 +152,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 5622460633088
-    m_Key: TitleScreen/Canvas/LoadingPanel/Panel/Message
+    m_Key: SelectFileToLoad
     m_Metadata:
       m_Items: []
   - m_Id: 5663946493952
-    m_Key: TitleScreen/Canvas/LoadingPanel/Panel/Buttons/LoadButton/Text (TMP)
+    m_Key: Load
     m_Metadata:
       m_Items: []
   - m_Id: 5697463177216
@@ -267,23 +260,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 10341073604608
-    m_Key: MainScene/MainCanvas/MenuPanel/ExecuteButton
+    m_Key: StartExecution
     m_Metadata:
       m_Items: []
   - m_Id: 10678513750016
-    m_Key: MainScene/MainCanvas/MenuPanel/NextStepButton
+    m_Key: NextStep
     m_Metadata:
       m_Items: []
   - m_Id: 10830947340288
-    m_Key: MainScene/MainCanvas/MenuPanel/ContinueButton
+    m_Key: ResumeExecution
     m_Metadata:
       m_Items: []
   - m_Id: 11345672327168
-    m_Key: MainScene/MainCanvas/MenuPanel/SpeedButton
+    m_Key: SpeedUp
     m_Metadata:
       m_Items: []
   - m_Id: 11511670296576
-    m_Key: MainScene/MainCanvas/MenuPanel/StopButton
+    m_Key: StopExecution
     m_Metadata:
       m_Items: []
   - m_Id: 11636727664640
@@ -291,41 +284,35 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11853489295360
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel/Buttons/ReloadLevel
+    m_Key: RelaunchMission
     m_Metadata:
       m_Items: []
   - m_Id: 11944417611776
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel/Buttons/ReloadLevel/Text
-      (TMP)
+    m_Key: TryAgain
     m_Metadata:
       m_Items: []
   - m_Id: 12100609298432
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel/Buttons/ReloadState
+    m_Key: ReturnMission
     m_Metadata:
       m_Items: []
   - m_Id: 12178812096512
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel/Buttons/ReloadState/Text
-      (TMP)
+    m_Key: CancelLastExecution
     m_Metadata:
       m_Items: []
   - m_Id: 12271191642112
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel/Buttons/MainMenu/Text
-      (TMP)
+    m_Key: MainMenu
     m_Metadata:
       m_Items: []
   - m_Id: 12467518623744
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel/Buttons/NextLevel/Text
-      (TMP)
+    m_Key: NextMission
     m_Metadata:
       m_Items: []
   - m_Id: 13000996343808
-    m_Key: MainScene/MainCanvas/LeftPanel/LibraryScrollView/Viewport/LibraryPanel/Text
-      (TMP)
+    m_Key: Inventory
     m_Metadata:
       m_Items: []
   - m_Id: 13057879494656
-    m_Key: MainScene/MainCanvas/LeftPanel/LibraryScrollView/Viewport/LibraryPanel/BlocAction/ActionPanelName/Text
-      (TMP)
+    m_Key: Action
     m_Metadata:
       m_Items: []
   - m_Id: 13648018067456
@@ -333,18 +320,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 13879958884352
-    m_Key: MainScene/MainCanvas/LeftPanel/LibraryScrollView/Viewport/LibraryPanel/BlocControl/ActionPanelName/Text
-      (TMP)
+    m_Key: Control
     m_Metadata:
       m_Items: []
   - m_Id: 14181156048896
-    m_Key: MainScene/MainCanvas/LeftPanel/LibraryScrollView/Viewport/LibraryPanel/BlocOperator/OperatorPanelName/Text
-      (TMP)
+    m_Key: Operator
     m_Metadata:
       m_Items: []
   - m_Id: 14572153262080
-    m_Key: MainScene/MainCanvas/LeftPanel/LibraryScrollView/Viewport/LibraryPanel/BlocCaptor/CaptorPanelName/Text
-      (TMP)
+    m_Key: Sensor
     m_Metadata:
       m_Items: []
   - m_Id: 15507453693952
@@ -364,7 +348,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 16256510251008
-    m_Key: MainScene/MainCanvas/ExecutableCanvas/Panel/CameraControls/RotateRight
+    m_Key: RotateCameraRight
     m_Metadata:
       m_Items: []
   - m_Id: 16297266302976
@@ -372,44 +356,43 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 16356917694464
-    m_Key: MainScene/MainCanvas/ExecutableCanvas/Panel/CameraControls/FocusOn
+    m_Key: CenterCameraOn
     m_Metadata:
       m_Items: []
   - m_Id: 16399242416128
-    m_Key: MainScene/MainCanvas/ExecutableCanvas/Panel/CameraControls/Right
+    m_Key: MoveCameraRight
     m_Metadata:
       m_Items: []
   - m_Id: 16440837328896
-    m_Key: MainScene/MainCanvas/ExecutableCanvas/Panel/CameraControls/ZoomIn
+    m_Key: ZoomIn
     m_Metadata:
       m_Items: []
   - m_Id: 16481354305536
-    m_Key: MainScene/MainCanvas/ExecutableCanvas/Panel/CameraControls/Down
+    m_Key: MoveCameraBackwards
     m_Metadata:
       m_Items: []
   - m_Id: 16522613673984
-    m_Key: MainScene/MainCanvas/ExecutableCanvas/Panel/CameraControls/ZoomOut
+    m_Key: ZoomOut
     m_Metadata:
       m_Items: []
   - m_Id: 16648862224384
-    m_Key: MainScene/MainCanvas/ExecutableCanvas/Panel/CameraControls/SwitchView
+    m_Key: SwitchView
     m_Metadata:
       m_Items: []
   - m_Id: 16697788780544
-    m_Key: MainScene/MainCanvas/ExecutableCanvas/Panel/CameraControls/SwitchView/Text
-      (TMP)
+    m_Key: ChangeView
     m_Metadata:
       m_Items: []
   - m_Id: 16831830347776
-    m_Key: MainScene/MainCanvas/ButtonsCanvas/ButtonPanel/ClosePanelButton/Text (TMP)
+    m_Key: BackToGame
     m_Metadata:
       m_Items: []
   - m_Id: 16875987980288
-    m_Key: MainScene/MainCanvas/ButtonsCanvas/ButtonPanel/Briefing/Text (TMP)
+    m_Key: ReviewBriefing
     m_Metadata:
       m_Items: []
   - m_Id: 16978471604224
-    m_Key: MainScene/MainCanvas/ButtonsCanvas/ButtonPanel/RestartLevel/Text (TMP)
+    m_Key: RestartMission
     m_Metadata:
       m_Items: []
   - m_Id: 17002156838912
@@ -417,20 +400,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 17038471122944
-    m_Key: MainScene/MainCanvas/ButtonsCanvas/ButtonPanel/TitleScreen/Text (TMP)
+    m_Key: Quit
     m_Metadata:
       m_Items: []
   - m_Id: 17237952221184
-    m_Key: MainScene/MainCanvas/DialogPanelBackground/DialogPanel/Video Player/PlayVideo
+    m_Key: PlayVideo
     m_Metadata:
       m_Items: []
   - m_Id: 17335880830976
-    m_Key: MainScene/MainCanvas/DialogPanelBackground/DialogPanel/Video Player/PauseVideo
+    m_Key: PauseVideo
     m_Metadata:
       m_Items: []
   - m_Id: 17493574078464
-    m_Key: MainScene/MainCanvas/DialogPanelBackground/DialogPanel/Buttons/PrevButton/Text
-      (TMP)
+    m_Key: Previous
     m_Metadata:
       m_Items: []
   - m_Id: 17521407479808
@@ -439,38 +421,35 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22918692392960
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/TextPanel/TextHeader
+    m_Key: BriefingText
     m_Metadata:
       m_Items: []
   - m_Id: 23180039475200
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/TextPanel/TextContent/Text_input/Text
-      Area/Placeholder
+    m_Key: EnterText...
     m_Metadata:
       m_Items: []
   - m_Id: 23332913467392
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/ImgPanel/ImgHeader/ImgHeader
+    m_Key: 'Image:'
     m_Metadata:
       m_Items: []
   - m_Id: 23448588177408
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/ImgPanel/ImgSizePanel/Text
-      (TMP)
+    m_Key: MaxHeight
     m_Metadata:
       m_Items: []
   - m_Id: 23516384907264
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/ImgPanel/ImgSizePanel/ImgSize_input/Text
-      Area/Placeholder
+    m_Key: Height...
     m_Metadata:
       m_Items: []
   - m_Id: 23570181050368
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/CamPanel/CamHeader
+    m_Key: 'Camera:'
     m_Metadata:
       m_Items: []
   - m_Id: 23646219587584
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/SoundPanel/SoundHeader
+    m_Key: 'Sound:'
     m_Metadata:
       m_Items: []
   - m_Id: 23701571817472
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/VideoPanel/VideoHeader
+    m_Key: 'Video:'
     m_Metadata:
       m_Items: []
   - m_Id: 24348975222784
@@ -478,19 +457,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 24749925519360
-    m_Key: deletableElement/Canvas (Environment)/deletableElement/Panel/Edit
+    m_Key: EditMissionBriefing
     m_Metadata:
       m_Items: []
   - m_Id: 24788399869952
-    m_Key: deletableElement/Canvas (Environment)/deletableElement/Panel/MoveUp
+    m_Key: MoveUp
     m_Metadata:
       m_Items: []
   - m_Id: 24802924744704
-    m_Key: deletableElement/Canvas (Environment)/deletableElement/Panel/MoveDown
+    m_Key: MoveDown
     m_Metadata:
       m_Items: []
   - m_Id: 24877365252096
-    m_Key: deletableElement/Canvas (Environment)/deletableElement/Panel/Remove
+    m_Key: RemoveMissionFromScenario
     m_Metadata:
       m_Items: []
   - m_Id: 25040024555520
@@ -502,11 +481,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 25410771668992
-    m_Key: ExecutablePanel/Canvas (Environment)/ExecutablePanel/Header/locateButton
+    m_Key: LocateMe
     m_Metadata:
       m_Items: []
   - m_Id: 25462458077184
-    m_Key: ExecutablePanel/Canvas (Environment)/ExecutablePanel/Header/TextAgentNamePresentation
+    m_Key: MemoryOf
     m_Metadata:
       m_Items: []
   - m_Id: 25546419654656
@@ -522,19 +501,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 26103297396736
-    m_Key: Robot Kyle/Robot Kyle
+    m_Key: PlayerClickToSeeMyMemory
     m_Metadata:
       m_Items: []
   - m_Id: 26381211979776
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/Header/ResetButton
+    m_Key: ClearEditingArea
     m_Metadata:
       m_Items: []
   - m_Id: 26428905410560
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/Header/RemoveButton
+    m_Key: DestroyEditingArea
     m_Metadata:
       m_Items: []
   - m_Id: 26482798022656
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/Header/SendToText
+    m_Key: IsCalledBy
     m_Metadata:
       m_Items: []
   - m_Id: 26529824559104
@@ -543,7 +522,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 26590130262016
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/Header/ProgramText
+    m_Key: EditingArea
     m_Metadata:
       m_Items: []
   - m_Id: 27144231374848
@@ -563,11 +542,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 27630720307200
-    m_Key: EmptySlot/Canvas (Environment)/EmptySlot
+    m_Key: AreaForActionControl
     m_Metadata:
       m_Items: []
   - m_Id: 33770803875840
-    m_Key: EmptyContidionalSlot/Canvas (Environment)/EmptyConditionalSlot
+    m_Key: AreaForOperatorSensor
     m_Metadata:
       m_Items: []
   - m_Id: 711780750118912
@@ -585,8 +564,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1070366151987200
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/RightPanel/Scroll
-      View Levels Selected/AbstractContent (1)/Text Area/Placeholder
+    m_Key: EnterScenarioName
     m_Metadata:
       m_Items: []
   - m_Id: 2129540151562240
@@ -632,35 +610,35 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 15908815441838080
-    m_Key: EditorScene/GlobalCanvas/Menus/MapEditor/Text (TMP)
+    m_Key: MapEditor
     m_Metadata:
       m_Items: []
   - m_Id: 15909299489685504
-    m_Key: EditorScene/GlobalCanvas/Menus/ScriptEditor/Text (TMP)
+    m_Key: ScriptsEditor
     m_Metadata:
       m_Items: []
   - m_Id: 15909635105308672
-    m_Key: EditorScene/GlobalCanvas/Menus/GlobalParameters/Text (TMP)
+    m_Key: GlobalParameters
     m_Metadata:
       m_Items: []
   - m_Id: 15910002069159936
-    m_Key: EditorScene/GlobalCanvas/Menus/TestLevel/Text (TMP)
+    m_Key: TestMission
     m_Metadata:
       m_Items: []
   - m_Id: 15910245879857152
-    m_Key: EditorScene/GlobalCanvas/MenuCanvas/MenuPanel/ClosePanelButton/Text (TMP)
+    m_Key: BackToEditor
     m_Metadata:
       m_Items: []
   - m_Id: 15910282206724096
-    m_Key: EditorScene/GlobalCanvas/MenuCanvas/MenuPanel/New/Text (TMP)
+    m_Key: New
     m_Metadata:
       m_Items: []
   - m_Id: 15910449861443584
-    m_Key: EditorScene/GlobalCanvas/MenuCanvas/MenuPanel/Load/Text (TMP)
+    m_Key: Open...
     m_Metadata:
       m_Items: []
   - m_Id: 15910473668313088
-    m_Key: EditorScene/GlobalCanvas/MenuCanvas/MenuPanel/Save/Text (TMP)
+    m_Key: Save...
     m_Metadata:
       m_Items: []
   - m_Id: 15910516383105024
@@ -668,104 +646,103 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 15914307035676672
-    m_Key: EditorScene/MapEditorCanvas/ToolboxPanel/Void
+    m_Key: ClearFloor
     m_Metadata:
       m_Items: []
   - m_Id: 15914500141432832
-    m_Key: EditorScene/MapEditorCanvas/ToolboxPanel/Floor
+    m_Key: CreateFloor
     m_Metadata:
       m_Items: []
   - m_Id: 15914582588866560
-    m_Key: EditorScene/MapEditorCanvas/ToolboxPanel/Wall
+    m_Key: CreateWalls
     m_Metadata:
       m_Items: []
   - m_Id: 15915472716644352
-    m_Key: EditorScene/MapEditorCanvas/ToolboxPanel/Spawn
+    m_Key: AddStartingPoint
     m_Metadata:
       m_Items: []
   - m_Id: 15915506363351040
-    m_Key: EditorScene/MapEditorCanvas/ToolboxPanel/Tele
+    m_Key: AddExit
     m_Metadata:
       m_Items: []
   - m_Id: 15915532208652288
-    m_Key: EditorScene/MapEditorCanvas/ObjectPanel/Select
+    m_Key: SelectObject
     m_Metadata:
       m_Items: []
   - m_Id: 15915569626038272
-    m_Key: EditorScene/MapEditorCanvas/ObjectPanel/AllyRobot
+    m_Key: CreateRobot
     m_Metadata:
       m_Items: []
   - m_Id: 15915715109666816
-    m_Key: EditorScene/MapEditorCanvas/ObjectPanel/EnemyRobot
+    m_Key: CreateEnemy
     m_Metadata:
       m_Items: []
   - m_Id: 15915744687898624
-    m_Key: EditorScene/MapEditorCanvas/ObjectPanel/Door
+    m_Key: CreateDoor
     m_Metadata:
       m_Items: []
   - m_Id: 15915769711116288
-    m_Key: EditorScene/MapEditorCanvas/ObjectPanel/Console
+    m_Key: CreateTerminal
     m_Metadata:
       m_Items: []
   - m_Id: 15915799532617728
-    m_Key: EditorScene/MapEditorCanvas/ObjectPanel/Coin
+    m_Key: CreateCoin
     m_Metadata:
       m_Items: []
   - m_Id: 15915864850513920
-    m_Key: EditorScene/MapEditorCanvas/ObjectPanel/Deco
+    m_Key: AddDecoration
     m_Metadata:
       m_Items: []
   - m_Id: 15921194930094080
-    m_Key: EditorScene/MapEditorCanvas/Popups/OrientationPopup/Up
+    m_Key: OrientNorth
     m_Metadata:
       m_Items: []
   - m_Id: 15921218892152832
-    m_Key: EditorScene/MapEditorCanvas/Popups/OrientationPopup/Right
+    m_Key: OrientEast
     m_Metadata:
       m_Items: []
   - m_Id: 15921279487262720
-    m_Key: EditorScene/MapEditorCanvas/Popups/OrientationPopup/Down
+    m_Key: OrientSouth
     m_Metadata:
       m_Items: []
   - m_Id: 15921305856851968
-    m_Key: EditorScene/MapEditorCanvas/Popups/OrientationPopup/Left
+    m_Key: OrientWest
     m_Metadata:
       m_Items: []
   - m_Id: 15921422227816448
-    m_Key: EditorScene/MapEditorCanvas/Popups/InputLinePopup
+    m_Key: CommunicationSection
     m_Metadata:
       m_Items: []
   - m_Id: 15921491865845760
-    m_Key: EditorScene/MapEditorCanvas/Popups/InputLinePopup/Text
+    m_Key: Inputline
     m_Metadata:
       m_Items: []
   - m_Id: 15921534706466816
-    m_Key: EditorScene/MapEditorCanvas/Popups/InputLinePopup/InputField (TMP)/Text
-      Area/Placeholder
+    m_Key: Name...
     m_Metadata:
       m_Items: []
   - m_Id: 15921693158883328
-    m_Key: EditorScene/MapEditorCanvas/Popups/rangePopup
+    m_Key: EnemyLineOfSight
     m_Metadata:
       m_Items: []
   - m_Id: 15921804249219072
-    m_Key: EditorScene/MapEditorCanvas/Popups/rangePopup/Text
+    m_Key: RangeOfView
     m_Metadata:
       m_Items: []
   - m_Id: 15921835853299712
-    m_Key: EditorScene/MapEditorCanvas/Popups/rangePopup/InputField (TMP)/Text Area/Placeholder
+    m_Key: Range...
     m_Metadata:
       m_Items: []
   - m_Id: 15921956246601728
-    m_Key: EditorScene/MapEditorCanvas/Popups/rangePopup/Toggle
+    m_Key: MonitorSelfPosition
     m_Metadata:
       m_Items: []
   - m_Id: 15922150610649088
-    m_Key: EditorScene/MapEditorCanvas/Popups/rangePopup/Toggle/Label
+    m_Key: IgnorePos
     m_Metadata:
       m_Items: []
   - m_Id: 15922289140121600
-    m_Key: EditorScene/MapEditorCanvas/Popups/rangePopup/Dropdown
+    m_Key: LineView
     m_Metadata:
       m_Items: []
   - m_Id: 15922307695722496
@@ -773,103 +750,91 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 15922479473442816
-    m_Key: EditorScene/MapEditorCanvas/Popups/consoleSlotsPopup
+    m_Key: SlotList
     m_Metadata:
       m_Items: []
   - m_Id: 15922676974829568
-    m_Key: EditorScene/MapEditorCanvas/Popups/consoleSlotsPopup/Text
+    m_Key: ListOfSlots
     m_Metadata:
       m_Items: []
   - m_Id: 15922779785609216
-    m_Key: EditorScene/MapEditorCanvas/Popups/consoleSlotsPopup/Toggle
+    m_Key: IsOpenInfo
     m_Metadata:
       m_Items: []
   - m_Id: 15922802455822336
-    m_Key: EditorScene/MapEditorCanvas/Popups/consoleSlotsPopup/Toggle/Label
+    m_Key: IsOpen
     m_Metadata:
       m_Items: []
   - m_Id: 15922945045381120
-    m_Key: EditorScene/MapEditorCanvas/Popups/doorSlotPopup
+    m_Key: DoorSlot
     m_Metadata:
       m_Items: []
   - m_Id: 15923559041155072
-    m_Key: EditorScene/MapEditorCanvas/Popups/doorSlotPopup/Text
+    m_Key: ControlSlot
     m_Metadata:
       m_Items: []
   - m_Id: 15923681313505280
-    m_Key: EditorScene/MapEditorCanvas/Popups/furniturePopup
+    m_Key: FurnitureInfo
     m_Metadata:
       m_Items: []
   - m_Id: 15923983643131904
-    m_Key: EditorScene/MapEditorCanvas/Popups/furniturePopup/Text
+    m_Key: FurnitureChoice
     m_Metadata:
       m_Items: []
   - m_Id: 15924783589179392
-    m_Key: editorBlockPrefab/Prefab Mode in Context/editorBlockPrefab/LimitToggle/Label
+    m_Key: Unlimited
     m_Metadata:
       m_Items: []
   - m_Id: 15924801637269504
-    m_Key: editorBlockPrefab/Prefab Mode in Context/editorBlockPrefab/HideToggle/Label
+    m_Key: Hide
     m_Metadata:
       m_Items: []
   - m_Id: 15926540629262336
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Text
-      (TMP)
+    m_Key: 'GlobalParameters:'
     m_Metadata:
       m_Items: []
   - m_Id: 15926636754321408
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/dragDropToggle
+    m_Key: ToggleEditingInfo
     m_Metadata:
       m_Items: []
   - m_Id: 15926664084406272
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/dragDropToggle/Label
+    m_Key: MoveBlocks
     m_Metadata:
       m_Items: []
   - m_Id: 15926763283890176
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/executionLimit
+    m_Key: ExecutionLimitationInfo
     m_Metadata:
       m_Items: []
   - m_Id: 15926855608909824
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/executionLimit/executionLimitToggle/Label
+    m_Key: LimitExecutionNumberInfo
     m_Metadata:
       m_Items: []
   - m_Id: 15927121561337856
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/executionLimit/InputField (TMP)/Text Area/Placeholder
+    m_Key: Limit...
     m_Metadata:
       m_Items: []
   - m_Id: 15927228172156928
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/fogToggle
+    m_Key: ToggleFogInfo
     m_Metadata:
       m_Items: []
   - m_Id: 15927426491432960
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/fogToggle/Label
+    m_Key: Fog
     m_Metadata:
       m_Items: []
   - m_Id: 15927571975061504
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/hideExitToggle
+    m_Key: ToggleHideExitInfo
     m_Metadata:
       m_Items: []
   - m_Id: 15927673250725888
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/hideExitToggle/Label
+    m_Key: HideExits
     m_Metadata:
       m_Items: []
   - m_Id: 15927784601108480
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/score2Stars/Text (TMP)
+    m_Key: MinimumScoreForTwoStars
     m_Metadata:
       m_Items: []
   - m_Id: 15927820416270336
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/score3Stars/Text (TMP) (1)
+    m_Key: MinimumScoreForThreeStars
     m_Metadata:
       m_Items: []
   - m_Id: 15928388878680064
@@ -888,49 +853,47 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 15933182984929280
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/score2Stars
+    m_Key: TwoStarsThresholdsInfo
     m_Metadata:
       m_Items: []
   - m_Id: 15933196595445760
-    m_Key: EditorScene/MetadataCanvas/Scroll View/Viewport/Content/Container/Scroll
-      View/Viewport/Content/score3Stars
+    m_Key: ThreeStarsThresholdsInfo
     m_Metadata:
       m_Items: []
   - m_Id: 18072752069361664
-    m_Key: EditorScene/MapEditorCanvas/ToolboxPanel/Void/Text (TMP)
+    m_Key: Void
     m_Metadata:
       m_Items: []
   - m_Id: 18072795828535296
-    m_Key: EditorScene/MapEditorCanvas/ToolboxPanel/Wall/Text (TMP) (1)
+    m_Key: Wall
     m_Metadata:
       m_Items: []
   - m_Id: 18072811502649344
-    m_Key: EditorScene/MapEditorCanvas/ToolboxPanel/Spawn/Text (TMP) (1)
+    m_Key: Start
     m_Metadata:
       m_Items: []
   - m_Id: 18072830238605312
-    m_Key: EditorScene/MapEditorCanvas/ToolboxPanel/Tele/Text (TMP) (2)
+    m_Key: Exit
     m_Metadata:
       m_Items: []
   - m_Id: 18085165023969280
-    m_Key: EditorScene/MapEditorCanvas/ObjectPanel/Select/Text (TMP)
+    m_Key: Select
     m_Metadata:
       m_Items: []
   - m_Id: 18085207671652352
-    m_Key: EditorScene/MapEditorCanvas/ObjectPanel/Door/Text (TMP) (2)
+    m_Key: Door
     m_Metadata:
       m_Items: []
   - m_Id: 18085240219451392
-    m_Key: EditorScene/MapEditorCanvas/ObjectPanel/Coin/Text (TMP) (4)
+    m_Key: Coin
     m_Metadata:
       m_Items: []
   - m_Id: 18085266488377344
-    m_Key: EditorScene/MapEditorCanvas/ObjectPanel/Deco/Text (TMP) (5)
+    m_Key: Deco.
     m_Metadata:
       m_Items: []
   - m_Id: 18103855845031936
-    m_Key: EditorScene/MapEditorCanvas/ToolboxPanel/Floor/Text (TMP) 1
+    m_Key: Floor
     m_Metadata:
       m_Items: []
   - m_Id: 32593305279590400
@@ -942,7 +905,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 32854783702265856
-    m_Key: LoadingPanel/Prefab Mode in Context/LoadingPanel/Panel/Filter/Text Area/Placeholder
+    m_Key: FilterByName
     m_Metadata:
       m_Items: []
   - m_Id: 36485089030238208
@@ -950,11 +913,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 102514642604978176
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel/Feedback
+    m_Key: HowToGetMoreStars
     m_Metadata:
       m_Items: []
   - m_Id: 102555448128761856
-    m_Key: TitleScreen/Canvas/SPYMenu/CreditPanel/Credit Content/Viewport/Text (TMP)
+    m_Key: AGameFrom
     m_Metadata:
       m_Items: []
   - m_Id: 102570046559023104
@@ -985,7 +948,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 164237708125315072
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/CamPanel/Text (TMP)
+    m_Key: ReduceImageSize
     m_Metadata:
       m_Items: []
   - m_Id: 164237731441451008
@@ -1059,7 +1022,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 254277681330511872
-    m_Key: MainScene/MainCanvas/ShowDialogsButton
+    m_Key: ShowDialogShortcut
     m_Metadata:
       m_Items: []
   - m_Id: 254280259472711680
@@ -1067,16 +1030,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 254280701426524160
-    m_Key: MainScene/MainCanvas/ExecutionControlPanel/PauseButton
+    m_Key: Pause
     m_Metadata:
       m_Items: []
   - m_Id: 254288756369252352
-    m_Key: EditorScene/GlobalCanvas/Menus/MenuEscape
+    m_Key: MenuEscape
     m_Metadata:
       m_Items: []
   - m_Id: 255067209884491776
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/ImgPanel/ImgDescPanel/Text
-      (TMP)
+    m_Key: ReplacementTextInfo
     m_Metadata:
       m_Items: []
   - m_Id: 255067307209121792
@@ -1098,15 +1060,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 258245164706029568
-    m_Key: MainScene/MainCanvas/MenuCanvas/MenuPanel/Briefing
+    m_Key: Shortcut
     m_Metadata:
       m_Items: []
   - m_Id: 258246124920627200
-    m_Key: MainScene/MainCanvas/MenuCanvas/MenuPanel/MapDesc/Text (TMP)
+    m_Key: ViewTextMap
     m_Metadata:
       m_Items: []
   - m_Id: 258252421338488832
-    m_Key: MainScene/MainCanvas/MenuCanvas/MenuPanel/MapDesc
+    m_Key: MapShortcut
     m_Metadata:
       m_Items: []
   - m_Id: 258362280285298688
@@ -1126,159 +1088,159 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 258362280310464514
-    m_Key: GameData/GameData 76
+    m_Key: Broken
     m_Metadata:
       m_Items: []
   - m_Id: 258362280314658816
-    m_Key: GameData/GameData 77
+    m_Key: RepositoryListBroken
     m_Metadata:
       m_Items: []
   - m_Id: 258362280314658817
-    m_Key: GameData/GameData 78
+    m_Key: RepositoryNumberNotDefined
     m_Metadata:
       m_Items: []
   - m_Id: 258362280314658818
-    m_Key: GameData/GameData 79
+    m_Key: NotDesignedForSmartphone
     m_Metadata:
       m_Items: []
   - m_Id: 258362280318853120
-    m_Key: GameData/GameData 80
+    m_Key: NoLevelCompatible
     m_Metadata:
       m_Items: []
   - m_Id: 258362280318853121
-    m_Key: GameData/GameData 81
+    m_Key: LevelNotPresent
     m_Metadata:
       m_Items: []
   - m_Id: 258362280318853122
-    m_Key: GameData/GameData 82
+    m_Key: NameInvalid
     m_Metadata:
       m_Items: []
   - m_Id: 258362280318853123
-    m_Key: GameData/GameData 83
+    m_Key: FileNameAlreadyExists
     m_Metadata:
       m_Items: []
   - m_Id: 258362280318853124
-    m_Key: GameData/GameData 84
+    m_Key: FileSaved
     m_Metadata:
       m_Items: []
   - m_Id: 258362280323047424
-    m_Key: GameData/GameData 85
+    m_Key: FileNotSaved
     m_Metadata:
       m_Items: []
   - m_Id: 258362280323047425
-    m_Key: GameData/GameData 86
+    m_Key: UnableRetrieveProgressData
     m_Metadata:
       m_Items: []
   - m_Id: 258362280323047426
-    m_Key: GameData/GameData 87
+    m_Key: SessionCorrupted
     m_Metadata:
       m_Items: []
   - m_Id: 258362280327241728
-    m_Key: GameData/GameData 88
+    m_Key: FocusOn
     m_Metadata:
       m_Items: []
   - m_Id: 258362280327241729
-    m_Key: GameData/GameData 89
+    m_Key: FilesLoaded
     m_Metadata:
       m_Items: []
   - m_Id: 258362280327241730
-    m_Key: GameData/GameData 90
+    m_Key: ErrorLoadingFile
     m_Metadata:
       m_Items: []
   - m_Id: 258362280331436032
-    m_Key: GameData/GameData 91
+    m_Key: XmlNotValid
     m_Metadata:
       m_Items: []
   - m_Id: 258362280331436033
-    m_Key: GameData/GameData 92
+    m_Key: Button
     m_Metadata:
       m_Items: []
   - m_Id: 258362280331436034
-    m_Key: GameData/GameData 93
+    m_Key: Inputfield
     m_Metadata:
       m_Items: []
   - m_Id: 258362280331436035
-    m_Key: GameData/GameData 94
+    m_Key: Dropdown
     m_Metadata:
       m_Items: []
   - m_Id: 258362280335630336
-    m_Key: GameData/GameData 95
+    m_Key: Toggle
     m_Metadata:
       m_Items: []
   - m_Id: 258362280339824640
-    m_Key: GameData/GameData 96
+    m_Key: Checked
     m_Metadata:
       m_Items: []
   - m_Id: 258362280339824641
-    m_Key: GameData/GameData 97
+    m_Key: Unchecked
     m_Metadata:
       m_Items: []
   - m_Id: 258362280339824642
-    m_Key: GameData/GameData 98
+    m_Key: ScrollbarValue
     m_Metadata:
       m_Items: []
   - m_Id: 258362280344018944
-    m_Key: GameData/GameData 99
+    m_Key: CurrentAction
     m_Metadata:
       m_Items: []
   - m_Id: 258362280344018945
-    m_Key: GameData/GameData 100
+    m_Key: Disabled
     m_Metadata:
       m_Items: []
   - m_Id: 258362280344018946
-    m_Key: GameData/GameData 101
+    m_Key: Does
     m_Metadata:
       m_Items: []
   - m_Id: 258362280344018947
-    m_Key: GameData/GameData 102
+    m_Key: Selected
     m_Metadata:
       m_Items: []
   - m_Id: 258362280344018948
-    m_Key: GameData/GameData 103
+    m_Key: Image
     m_Metadata:
       m_Items: []
   - m_Id: 258362280344018949
-    m_Key: GameData/GameData 104
+    m_Key: ReplacementText
     m_Metadata:
       m_Items: []
   - m_Id: 258362280348213248
-    m_Key: GameData/GameData 105
+    m_Key: GroundCode
     m_Metadata:
       m_Items: []
   - m_Id: 258362280348213249
-    m_Key: GameData/GameData 106
+    m_Key: WallCode
     m_Metadata:
       m_Items: []
   - m_Id: 258362280348213250
-    m_Key: GameData/GameData 107
+    m_Key: RobotCode
     m_Metadata:
       m_Items: []
   - m_Id: 258362280352407552
-    m_Key: GameData/GameData 108
+    m_Key: ObservedCode
     m_Metadata:
       m_Items: []
   - m_Id: 258362280352407553
-    m_Key: GameData/GameData 109
+    m_Key: DoorCode
     m_Metadata:
       m_Items: []
   - m_Id: 258362280352407554
-    m_Key: GameData/GameData 110
+    m_Key: Closed
     m_Metadata:
       m_Items: []
   - m_Id: 258362280356601856
-    m_Key: GameData/GameData 111
+    m_Key: Opened
     m_Metadata:
       m_Items: []
   - m_Id: 258362280356601857
-    m_Key: GameData/GameData 112
+    m_Key: TerminalCode
     m_Metadata:
       m_Items: []
   - m_Id: 258362280356601858
-    m_Key: GameData/GameData 113
+    m_Key: MapSize
     m_Metadata:
       m_Items: []
   - m_Id: 258362280360796160
-    m_Key: GameData/GameData 114
+    m_Key: Line
     m_Metadata:
       m_Items: []
   - m_Id: 258362280360796161
@@ -1402,11 +1364,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 258366326417121280
-    m_Key: LeftPanel/Prefab Mode in Context/LeftPanel
+    m_Key: NotUsed
     m_Metadata:
       m_Items: []
   - m_Id: 258366508881928192
-    m_Key: LeftPanel/Prefab Mode in Context/LeftPanel 1
+    m_Key: CannotAddedAfterStarting
     m_Metadata:
       m_Items: []
   - m_Id: 258367388507168768
@@ -1418,35 +1380,35 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 258376688596148224
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel
+    m_Key: YouHaveBeenSpotted
     m_Metadata:
       m_Items: []
   - m_Id: 258377367339393024
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel 1
+    m_Key: CongratulationsScenario
     m_Metadata:
       m_Items: []
   - m_Id: 258377890398461952
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel 2
+    m_Key: CongratulationMission
     m_Metadata:
       m_Items: []
   - m_Id: 258378291931766784
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel 3
+    m_Key: ConditionIncorrect
     m_Metadata:
       m_Items: []
   - m_Id: 258378633595576320
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel 4
+    m_Key: TeleporterNotReached
     m_Metadata:
       m_Items: []
   - m_Id: 258378979617267712
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel 5
+    m_Key: NoActionExecuted
     m_Metadata:
       m_Items: []
   - m_Id: 258379374758453248
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel 6
+    m_Key: WarningInfiniteLoop
     m_Metadata:
       m_Items: []
   - m_Id: 258379713226203136
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel 7
+    m_Key: ErrorLoadingMission
     m_Metadata:
       m_Items: []
   - m_Id: 258400191307309056
@@ -1474,28 +1436,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 258409516994125824
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/Scroll View Level
-      Info/ViewPortInfo/InfoContent/levelTextInfo
+    m_Key: BriefingTexts
     m_Metadata:
       m_Items: []
   - m_Id: 258410186627342336
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/Scroll View Level
-      Info/ViewPortInfo/InfoContent/levelTextInfo 1
+    m_Key: Default
     m_Metadata:
       m_Items: []
   - m_Id: 258410645433868288
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/Scroll View Level
-      Info/ViewPortInfo/InfoContent/levelTextInfo 2
+    m_Key: Personalized
     m_Metadata:
       m_Items: []
   - m_Id: 258410880465887232
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/Scroll View Level
-      Info/ViewPortInfo/InfoContent/levelTextInfo 3
+    m_Key: NoTextDefined
     m_Metadata:
       m_Items: []
   - m_Id: 258411339826061312
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/Scroll View Level
-      Info/ViewPortInfo/InfoContent/levelTextInfo 4
+    m_Key: SkillsInvolved
     m_Metadata:
       m_Items: []
   - m_Id: 258411577001369600
@@ -1504,26 +1461,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 258411970544525312
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/Scroll View Level
-      Info/ViewPortInfo/InfoContent/levelTextInfo 6
+    m_Key: NoInformationOnThisMission
     m_Metadata:
       m_Items: []
   - m_Id: 258412115449339904
-    m_Key: GameData/GameData 145
+    m_Key: ExitCode
     m_Metadata:
       m_Items: []
   - m_Id: 258412162962415616
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/Scroll View Level
-      Info/ViewPortInfo/InfoContent/levelTextInfo 7
+    m_Key: PAGE
     m_Metadata:
       m_Items: []
   - m_Id: 258412673971249152
-    m_Key: GameData/GameData 146
+    m_Key: CoinCode
     m_Metadata:
       m_Items: []
   - m_Id: 258413693531054080
-    m_Key: TitleScreen/Canvas/CompatibleLevelsPanel/ScrollPanels/Scroll View Level
-      Info/ViewPortInfo/InfoContent/levelTextInfo 8
+    m_Key: SOUND
     m_Metadata:
       m_Items: []
   - m_Id: 258416411666538496
@@ -1544,11 +1498,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 260863719914070016
-    m_Key: LeftPanel/Canvas (Environment)/LeftPanel 1
+    m_Key: EnterTheNameOfRobot
     m_Metadata:
       m_Items: []
   - m_Id: 260863778193924096
-    m_Key: LeftPanel/Canvas (Environment)/LeftPanel 2
+    m_Key: CalledBy
     m_Metadata:
       m_Items: []
   - m_Id: 261254904612642816
@@ -1560,23 +1514,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 276020132806123520
-    m_Key: MainScene/MainCanvas/MapDescription/MapDescriptionScrollView/Viewport/Panel/Legend
+    m_Key: MapLegend
     m_Metadata:
       m_Items: []
   - m_Id: 276021815388921856
-    m_Key: GameData/GameData
+    m_Key: GuardCode
     m_Metadata:
       m_Items: []
   - m_Id: 276022234068541440
-    m_Key: MainScene/MainCanvas/MapDescription/MapDescriptionScrollView/Viewport/Panel/StartDesc
+    m_Key: StartMapDescription
     m_Metadata:
       m_Items: []
   - m_Id: 276022268633800704
-    m_Key: MainScene/MainCanvas/MapDescription/MapDescriptionScrollView/Viewport/Panel/EndDesc
+    m_Key: EndMapDescription
     m_Metadata:
       m_Items: []
   - m_Id: 285822480533413888
-    m_Key: ActivableConsole/ActivableConsole/Terminal
+    m_Key: ActiveMe
     m_Metadata:
       m_Items: []
   - m_Id: 285830751029813248
@@ -1587,65 +1541,52 @@ MonoBehaviour:
     m_Key: Door/Door/Porte_LP 1
     m_Metadata:
       m_Items: []
-  - m_Id: 288329287994695680
-    m_Key: Destiny/Destiny
-    m_Metadata:
-      m_Items: []
-  - m_Id: 288330329704620032
-    m_Key: R-102/R-102
-    m_Metadata:
-      m_Items: []
   - m_Id: 288372246081429504
-    m_Key: MissionEditor/MapEditorCanvas/Popups/Viewport/Content/skinPopup/Text
+    m_Key: RobotSkin
     m_Metadata:
       m_Items: []
   - m_Id: 288372777696878592
-    m_Key: MissionEditor/MapEditorCanvas/Popups/Viewport/Content/skinPopup
+    m_Key: RobotSkinInfo
     m_Metadata:
       m_Items: []
   - m_Id: 289486388704043008
-    m_Key: ConnexionScene/Canvas/Panel/RightPanel/Header/LangSelector/LangFR
+    m_Key: French
     m_Metadata:
       m_Items: []
   - m_Id: 289486437332803584
-    m_Key: ConnexionScene/Canvas/Panel/RightPanel/Header/LangSelector/LangEN
+    m_Key: English
     m_Metadata:
       m_Items: []
   - m_Id: 293123087594151936
-    m_Key: ConnexionScene/Canvas/LoadingScreen/Text (TMP)
+    m_Key: Loading
     m_Metadata:
       m_Items: []
   - m_Id: 293125312529817600
-    m_Key: ConnexionScene/Canvas/LoadingScreen/Scroll View/Viewport/Content/Logs
+    m_Key: FailedToCheckSessionCode
     m_Metadata:
       m_Items: []
   - m_Id: 293125358834933760
-    m_Key: ConnexionScene/Canvas/LoadingScreen/Scroll View/Viewport/Content/Logs
-      1
+    m_Key: RetryToCheckSessionCode
     m_Metadata:
       m_Items: []
   - m_Id: 293125383715545088
-    m_Key: ConnexionScene/Canvas/LoadingScreen/Scroll View/Viewport/Content/Logs
-      2
+    m_Key: FailedToRetrieveSessionData
     m_Metadata:
       m_Items: []
   - m_Id: 293125408533241856
-    m_Key: ConnexionScene/Canvas/LoadingScreen/Scroll View/Viewport/Content/Logs
-      3
+    m_Key: NewAttemptToReceiveSessionData
     m_Metadata:
       m_Items: []
   - m_Id: 293125435636834304
-    m_Key: ConnexionScene/Canvas/LoadingScreen/Scroll View/Viewport/Content/Logs
-      4
+    m_Key: Fail
     m_Metadata:
       m_Items: []
   - m_Id: 293125461599576064
-    m_Key: ConnexionScene/Canvas/LoadingScreen/Scroll View/Viewport/Content/Logs
-      5
+    m_Key: NewAttempt
     m_Metadata:
       m_Items: []
   - m_Id: 293126874517987328
-    m_Key: ConnexionScene/Canvas/LoadingScreen/ForceLaunch/Text (TMP)
+    m_Key: Cancel
     m_Metadata:
       m_Items: []
   - m_Id: 294287317416534016
@@ -1661,25 +1602,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 295739331904266240
-    m_Key: ConnexionScene/Canvas/SettingsWindow/BackgroundPanel/Content/Quality/Label
+    m_Key: Settings/Quality
     m_Metadata:
       m_Items: []
   - m_Id: 295739503279333376
-    m_Key: ConnexionScene/Canvas/SettingsWindow/BackgroundPanel/Content/Quality/Selector
+    m_Key: Low
     m_Metadata:
       m_Items: []
   - m_Id: 295739526373171200
-    m_Key: ConnexionScene/Canvas/SettingsWindow/BackgroundPanel/Content/Quality/Selector
-      1
+    m_Key: Medium
     m_Metadata:
       m_Items: []
   - m_Id: 295739544295432192
-    m_Key: ConnexionScene/Canvas/SettingsWindow/BackgroundPanel/Content/Quality/Selector
-      2
+    m_Key: High
     m_Metadata:
       m_Items: []
   - m_Id: 295740236372369408
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Content/Quality/Label
+    m_Key: Settings/GraphicQuality
     m_Metadata:
       m_Items: []
   - m_Id: 295740317179830272
@@ -1697,19 +1636,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 295741119067840512
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Content/InteractionMode/Label
+    m_Key: Settings/InteractionMode
     m_Metadata:
       m_Items: []
   - m_Id: 295741197320970240
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Content/InteractionMode/Selector
+    m_Key: Controller
     m_Metadata:
       m_Items: []
   - m_Id: 295743099131650048
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Content/LangSelector/Label
+    m_Key: Settings/LangSelector
     m_Metadata:
       m_Items: []
   - m_Id: 295745323975041024
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Content/UISize/Label
+    m_Key: Settings/UISize
     m_Metadata:
       m_Items: []
   - m_Id: 295748565001822208
@@ -1721,16 +1660,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 296095350773768192
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Content/WallTransparency/Label
+    m_Key: Settings/WallTransparency
     m_Metadata:
       m_Items: []
   - m_Id: 296095510337675264
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Content/WallTransparency/Selector
+    m_Key: No
     m_Metadata:
       m_Items: []
   - m_Id: 296095532810756096
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Content/WallTransparency/Selector
-      1
+    m_Key: Yes
     m_Metadata:
       m_Items: []
   - m_Id: 297971825089175552
@@ -1739,8 +1677,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 298205682103214080
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/ResetSettings/Text
-      (TMP)
+    m_Key: ResetSettings
     m_Metadata:
       m_Items: []
   - m_Id: 298996295903993856
@@ -1749,63 +1686,51 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 298998248704827392
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/GameView/Label
+    m_Key: Settings/GameView
     m_Metadata:
       m_Items: []
   - m_Id: 299349920509583360
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/Color_Text/Label 1
+    m_Key: Settings/ColorTextNormal
     m_Metadata:
       m_Items: []
   - m_Id: 299566515302162432
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorTextHighlighted/Label
+    m_Key: Settings/ColorHighlighted
     m_Metadata:
       m_Items: []
   - m_Id: 299888198019178496
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorTextSelected/Label
+    m_Key: Settings/ColorTextSelected
     m_Metadata:
       m_Items: []
   - m_Id: 299941796224688128
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorButtonNormal/Label
+    m_Key: Settings/ColorButtonNormal
     m_Metadata:
       m_Items: []
   - m_Id: 299967749000781824
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorButtonIconNormal/Label
+    m_Key: SettingsColorIcon
     m_Metadata:
       m_Items: []
   - m_Id: 300099758096375808
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorPressed/Label
+    m_Key: Settings/ColorPressed
     m_Metadata:
       m_Items: []
   - m_Id: 300318705307607040
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorSelected/Label
+    m_Key: Settings/ColorSelected
     m_Metadata:
       m_Items: []
   - m_Id: 300324699228069888
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorDisabled/Label
+    m_Key: Settings/ColorDisabled
     m_Metadata:
       m_Items: []
   - m_Id: 300396693273436160
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorPanel/Label
+    m_Key: Settings/ColorPanel1
     m_Metadata:
       m_Items: []
   - m_Id: 300555218045886464
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorPanelTexture/Label
+    m_Key: SettingsColorPanelTexture
     m_Metadata:
       m_Items: []
   - m_Id: 300555408974798848
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorBorder/Label
+    m_Key: Settings/ColorBorder
     m_Metadata:
       m_Items: []
   - m_Id: 300769067428732928
@@ -1814,143 +1739,115 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 300770441117818880
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ThicknessBorder/Label
+    m_Key: SettingsThicknessBorder
     m_Metadata:
       m_Items: []
   - m_Id: 301105784060895232
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorDropdownNormal/Label
+    m_Key: Settings/ColorDropdownNormal
     m_Metadata:
       m_Items: []
   - m_Id: 301883422425735168
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorInputfieldNormal/Label
+    m_Key: Settings/ColorInputfieldNormal
     m_Metadata:
       m_Items: []
   - m_Id: 301883578940383232
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorInputfieldSelected/Label
+    m_Key: Settings/ColorInputfieldSelected
     m_Metadata:
       m_Items: []
   - m_Id: 302136756030136320
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorScrollbarNormal/Label
+    m_Key: Settings/ColorScrollbarNormal
     m_Metadata:
       m_Items: []
   - m_Id: 302137235397140480
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorScrollbarBackground/Label
+    m_Key: Settings/ColorScrollbarBackground
     m_Metadata:
       m_Items: []
   - m_Id: 302785774401871872
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorScrollview/Label
+    m_Key: Settings/ColorScrollview
     m_Metadata:
       m_Items: []
   - m_Id: 303722579917791232
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorToggleNormal/Label
+    m_Key: Settings/ColorToggleNormal
     m_Metadata:
       m_Items: []
   - m_Id: 304081847074414592
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/ColorTooltip/Label
+    m_Key: Settings/ColorTooltip
     m_Metadata:
       m_Items: []
   - m_Id: 304305719270957056
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/FontDropdown/Label
+    m_Key: Settings/FontDropdown
     m_Metadata:
       m_Items: []
   - m_Id: 304453872913735680
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/Section2/Title
+    m_Key: GraphicOptions
     m_Metadata:
       m_Items: []
   - m_Id: 304455972632649728
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/Section4/Title
+    m_Key: TextOptions
     m_Metadata:
       m_Items: []
   - m_Id: 304456464267993088
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/Section5/Title
+    m_Key: InterfaceColors
     m_Metadata:
       m_Items: []
   - m_Id: 304688077195173888
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionText/ColorPlaceholder/Label
+    m_Key: Settings/ColorPlaceholder
     m_Metadata:
       m_Items: []
   - m_Id: 304804407596539904
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionColor/ColorInputfieldSelection/Label
+    m_Key: Settings/ColorInputfieldSelection
     m_Metadata:
       m_Items: []
   - m_Id: 305178040248557568
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionColor/ColorInputfieldCaret/Label
+    m_Key: Settings/ColorInputfieldCaret
     m_Metadata:
       m_Items: []
   - m_Id: 305529348189052928
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionText/CaretWidth/Label
+    m_Key: Settings/CaretWidth
     m_Metadata:
       m_Items: []
   - m_Id: 306580686356340736
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionText/CaretHeight/Label
+    m_Key: Settings/CareHeight
     m_Metadata:
       m_Items: []
   - m_Id: 307656851309453312
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionText/CharSpacing/Label
+    m_Key: Settings/CharSpacing
     m_Metadata:
       m_Items: []
   - m_Id: 307659584305356800
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionText/WordSpacing/Label
+    m_Key: Settings/WordSpacing
     m_Metadata:
       m_Items: []
   - m_Id: 307659845350449152
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionText/LineSpacing/Label
+    m_Key: Settings/LineSpacing
     m_Metadata:
       m_Items: []
   - m_Id: 307660166286008320
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionText/ParagraphSpacing/Label
+    m_Key: Settings/ParagraphSpacing
     m_Metadata:
       m_Items: []
   - m_Id: 308436737187897344
-    m_Key: ConnexionScene/Canvas/MainPanel/LeftPanel/ConnexionPanel/MiddleBegin/EnterCode
-      (TMP)
+    m_Key: EnterYourCode
     m_Metadata:
       m_Items: []
   - m_Id: 308436867840466944
-    m_Key: ConnexionScene/Canvas/MainPanel/LeftPanel/ConnexionPanel/MiddleBegin/InputField
-      (TMP)/Text Area/Placeholder
+    m_Key: MyCode
     m_Metadata:
       m_Items: []
   - m_Id: 308437005010984960
-    m_Key: ConnexionScene/Canvas/MainPanel/LeftPanel/ConnexionPanel/MiddleBegin/ButtonConnexion/Text
-      (TMP)
+    m_Key: Continue
     m_Metadata:
       m_Items: []
   - m_Id: 308437049218949120
-    m_Key: ConnexionScene/Canvas/MainPanel/LeftPanel/ConnexionPanel/MiddleBegin/ButtonNewGame/Text
-      (TMP)
+    m_Key: NewGame
     m_Metadata:
       m_Items: []
   - m_Id: 308437661797048320
-    m_Key: ConnexionScene/Canvas/MainPanel/LeftPanel/ConnexionPanel/MiddleSetClass/AskClass
-      (TMP)
+    m_Key: WhatIsYourGrade
     m_Metadata:
       m_Items: []
   - m_Id: 308437758291206144
-    m_Key: ConnexionScene/Canvas/MainPanel/LeftPanel/ConnexionPanel/MiddleSetClass/InputField
-      (TMP)/Text Area/Placeholder
+    m_Key: MyGrade
     m_Metadata:
       m_Items: []
   - m_Id: 308437916672319488
@@ -1958,18 +1855,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 308438240480976896
-    m_Key: ConnexionScene/Canvas/MainPanel/LeftPanel/ConnexionPanel/MiddleSetClass/Buttons/ButtonNext/Text
-      (TMP)
+    m_Key: Next
     m_Metadata:
       m_Items: []
   - m_Id: 308438288283459584
-    m_Key: ConnexionScene/Canvas/MainPanel/LeftPanel/ConnexionPanel/MiddleSetClass/Buttons/ButtonBack/Text
-      (TMP)
+    m_Key: Bac
     m_Metadata:
       m_Items: []
   - m_Id: 308438568995643392
-    m_Key: ConnexionScene/Canvas/MainPanel/LeftPanel/ConnexionPanel/MiddleSelectAvatar/SelectAvatar
-      (TMP)
+    m_Key: ChooseYourCaracter
     m_Metadata:
       m_Items: []
   - m_Id: 308438888836489216
@@ -1983,8 +1877,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 308439571153281024
-    m_Key: ConnexionScene/Canvas/MainPanel/LeftPanel/ConnexionPanel/MiddleGetSessionId/ThisIsYourCode
-      (TMP)
+    m_Key: HereIsYourCode
     m_Metadata:
       m_Items: []
   - m_Id: 308439690934214656
@@ -1992,13 +1885,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 308440053477269504
-    m_Key: ConnexionScene/Canvas/MainPanel/LeftPanel/ConnexionPanel/MiddleGetSessionId/NoteYourCode
-      (TMP)
+    m_Key: SaveToContinueSession
     m_Metadata:
       m_Items: []
   - m_Id: 308440191901884416
-    m_Key: ConnexionScene/Canvas/MainPanel/LeftPanel/ConnexionPanel/MiddleGetSessionId/Buttons/ButtonOkNoted/Text
-      (TMP)
+    m_Key: OkNoted
     m_Metadata:
       m_Items: []
   - m_Id: 308440231055712256
@@ -2007,28 +1898,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 309747454126055424
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionColor/ColorPanel2/Label
+    m_Key: Settings/ColorPanel2
     m_Metadata:
       m_Items: []
   - m_Id: 309747484308267008
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionColor/ColorPanel3/Label
+    m_Key: Settings/ColorPanel3
     m_Metadata:
       m_Items: []
   - m_Id: 309749113090727936
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionColor/ColorPanel1/ButtonWithBorder
+    m_Key: Settings/ColorPanel1/Tooltip
     m_Metadata:
       m_Items: []
   - m_Id: 309750324959371264
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionColor/ColorPanel2/ButtonWithBorder
+    m_Key: Settings/ColorPanel2/Tooltip
     m_Metadata:
       m_Items: []
   - m_Id: 309750730712145920
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionColor/ColorPanel3/ButtonWithBorder
+    m_Key: Settings/ColorPanel3/Tooltip
     m_Metadata:
       m_Items: []
   - m_Id: 309759736453259264
@@ -2036,19 +1922,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 313870206617509888
-    m_Key: TitleScreen/canvas/MainPanel/LeftPanel/SPYMenu/Header/ButtonParameters
+    m_Key: Settings
     m_Metadata:
       m_Items: []
   - m_Id: 313870362138107904
-    m_Key: TitleScreen/canvas/ScenarioMissionSelector/Details/ShowCompetencies
+    m_Key: SeeCompetenciesInvolved
     m_Metadata:
       m_Items: []
   - m_Id: 313871230317092864
-    m_Key: TitleScreen/canvas/ScenarioMissionSelector/Header/Back
+    m_Key: Back
     m_Metadata:
       m_Items: []
   - m_Id: 313871429630418944
-    m_Key: TitleScreen/canvas/ScenarioMissionSelector/CompetencyPanel/CompetencyPopup/Close
+    m_Key: Close
     m_Metadata:
       m_Items: []
   - m_Id: 315188272000131072
@@ -2072,36 +1958,35 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 315305973402034176
-    m_Key: TileMission/Canvas (Environment)/TileMission 5
+    m_Key: YouDidNotWinStar
     m_Metadata:
       m_Items: []
   - m_Id: 315305973464948736
-    m_Key: TileMission/Canvas (Environment)/TileMission 6
+    m_Key: YouWonOneStar
     m_Metadata:
       m_Items: []
   - m_Id: 315305973464948737
-    m_Key: TileMission/Canvas (Environment)/TileMission 7
+    m_Key: YouWonTwoStars
     m_Metadata:
       m_Items: []
   - m_Id: 315305973473337344
-    m_Key: TileMission/Canvas (Environment)/TileMission 8
+    m_Key: YouWonThreeStars
     m_Metadata:
       m_Items: []
   - m_Id: 315305973473337345
-    m_Key: TileMission/Canvas (Environment)/TileMission 9
+    m_Key: MissionLocked
     m_Metadata:
       m_Items: []
   - m_Id: 315306386322874368
-    m_Key: TileScenario/Canvas (Environment)/TileScenario
+    m_Key: 'Progression:'
     m_Metadata:
       m_Items: []
   - m_Id: 315306422943342592
-    m_Key: TileScenario/Canvas (Environment)/TileScenario 1
+    m_Key: StarsCount
     m_Metadata:
       m_Items: []
   - m_Id: 315358925642784768
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionGraphic/Tooltip/Label
+    m_Key: Settings/Tooltip
     m_Metadata:
       m_Items: []
   - m_Id: 315360088979136512
@@ -2119,33 +2004,27 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 315745513318375424
-    m_Key: TitleScreen/canvas/MainPanel/LeftPanel/SPYMenu/Body/Scroll View/Viewport/Content/Continue/Text
-      (TMP)
+    m_Key: ContinueProgression
     m_Metadata:
       m_Items: []
   - m_Id: 315745642377109504
-    m_Key: TitleScreen/canvas/MainPanel/LeftPanel/SPYMenu/Body/Scroll View/Viewport/Content/Play/Text
-      (TMP)
+    m_Key: PlayScenario
     m_Metadata:
       m_Items: []
   - m_Id: 315745704649940992
-    m_Key: TitleScreen/canvas/MainPanel/LeftPanel/SPYMenu/Body/Scroll View/Viewport/Content/CreateLevel/Text
-      (TMP)
+    m_Key: CreateMission
     m_Metadata:
       m_Items: []
   - m_Id: 315745778125758464
-    m_Key: TitleScreen/canvas/MainPanel/LeftPanel/SPYMenu/Body/Scroll View/Viewport/Content/CreateScenario/Text
-      (TMP)
+    m_Key: CreateScenario
     m_Metadata:
       m_Items: []
   - m_Id: 315745839530369024
-    m_Key: TitleScreen/canvas/MainPanel/LeftPanel/SPYMenu/Body/Scroll View/Viewport/Content/Credit/Text
-      (TMP)
+    m_Key: Credits
     m_Metadata:
       m_Items: []
   - m_Id: 315745965099442176
-    m_Key: TitleScreen/canvas/MainPanel/LeftPanel/SPYMenu/Body/Scroll View/Viewport/Content/CangeAccount/Text
-      (TMP)
+    m_Key: SwitchAccount
     m_Metadata:
       m_Items: []
   - m_Id: 315746551433781248
@@ -2159,7 +2038,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 316047737642803200
-    m_Key: TitleScreen/canvas/GameSelector/CompetencyPanel/CompetencyPopup/DropdownReferential/Label
+    m_Key: CompetencyChoice
     m_Metadata:
       m_Items: []
   - m_Id: 320318718725054464
@@ -2167,48 +2046,43 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 320319330258771968
-    m_Key: ConnexionScene/Canvas/MainPanel/RightPanel/ConnexionPanel/MiddleGetSessionId/SessionId/ButtonCopy
+    m_Key: Copy
     m_Metadata:
       m_Items: []
   - m_Id: 320320032213295104
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionGraphic/GridContainer/Grid/UISize/IncreaseUI
+    m_Key: Settings/IncreaseUI
     m_Metadata:
       m_Items: []
   - m_Id: 320320357338963968
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionGraphic/GridContainer/Grid/UISize/DecreaseUI
+    m_Key: Settings/DecreaseUI
     m_Metadata:
       m_Items: []
   - m_Id: 320329838403772416
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/PlayerColors/GridContainer/Grid/ColorPlayButton/Label
+    m_Key: Settings/ColorPlayButton
     m_Metadata:
       m_Items: []
   - m_Id: 320329887032532992
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/PlayerColors/GridContainer/Grid/ColorPauseButton/Label
+    m_Key: Settings/ColorPauseButton
     m_Metadata:
       m_Items: []
   - m_Id: 320329944637104128
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/PlayerColors/GridContainer/Grid/ColorStopButton/Label
+    m_Key: Settings/ColorStopButton
     m_Metadata:
       m_Items: []
   - m_Id: 320593352087298048
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel/StarsCanvas
+    m_Key: ZeroStar
     m_Metadata:
       m_Items: []
   - m_Id: 320593352309596160
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel/StarsCanvas 1
+    m_Key: OneStar
     m_Metadata:
       m_Items: []
   - m_Id: 320593352309596161
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel/StarsCanvas 2
+    m_Key: TwoStars
     m_Metadata:
       m_Items: []
   - m_Id: 320593352322179072
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel/StarsCanvas 3
+    m_Key: ThreeStars
     m_Metadata:
       m_Items: []
   - m_Id: 320744018407579648
@@ -2252,7 +2126,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 320752556475408384
-    m_Key: InfiniteLoop
+    m_Key: Forever
     m_Metadata:
       m_Items: []
   - m_Id: 320753088522870784
@@ -2312,27 +2186,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 321851010253578240
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/PlayerColors/GridContainer/Grid/ColorAction/Label
+    m_Key: Settings/ColorActionBlock
     m_Metadata:
       m_Items: []
   - m_Id: 321851248276135936
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/PlayerColors/GridContainer/Grid/ColorControl/Label
+    m_Key: Settings/ColorControlBlock
     m_Metadata:
       m_Items: []
   - m_Id: 321851907192905728
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/PlayerColors/GridContainer/Grid/ColorOperatorBlock/Label
+    m_Key: Settings/ColorOperatorBlock
     m_Metadata:
       m_Items: []
   - m_Id: 321852609311006720
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/PlayerColors/GridContainer/Grid/ColorCaptorBlock/Label
+    m_Key: Settings/ColorCaptorBlock
     m_Metadata:
       m_Items: []
   - m_Id: 322067244135997440
-    m_Key: MainScene/MainCanvas/LeftPanel/EditableScrollView/AddContainerPanel/AddContainerButton
+    m_Key: AddEditingArea
     m_Metadata:
       m_Items: []
   - m_Id: 322067420854607872
@@ -2340,70 +2210,63 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 324994473940475904
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/PlayerColors/GridContainer/Grid/ColorDropZone/Label
+    m_Key: Settings/ColorDropArea
     m_Metadata:
       m_Items: []
   - m_Id: 325830297029697536
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/PlayerColors/GridContainer/Grid/ColorHighlight/Label
+    m_Key: Settings/ColorHighlighting
     m_Metadata:
       m_Items: []
   - m_Id: 326065118079344640
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/PlayerColors/GridContainer/Grid/ColorCaptorTrue/Label
+    m_Key: Settings/ColorCaptorTrue
     m_Metadata:
       m_Items: []
   - m_Id: 326070423051821056
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/PlayerColors/GridContainer/Grid/ColorCaptorFalse/Label
+    m_Key: Settings/ColorCaptorFalse
     m_Metadata:
       m_Items: []
   - m_Id: 326097218169987072
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/LevelEditorPanel/EditMode_Dropdown/Label
+    m_Key: 'Name:'
     m_Metadata:
       m_Items: []
   - m_Id: 326148217496657920
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/LevelEditorPanel/EditMode_Dropdown/Selector
+    m_Key: Locked
     m_Metadata:
       m_Items: []
   - m_Id: 326148217517629440
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/LevelEditorPanel/EditMode_Dropdown/Selector
-      1
+    m_Key: Synchronized
     m_Metadata:
       m_Items: []
   - m_Id: 326148660691984384
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/LevelEditorPanel/EditMode_Dropdown
-      6
+    m_Key: EditModeInfo
     m_Metadata:
       m_Items: []
   - m_Id: 326151485178241024
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/LevelEditorPanel/ProgType_Dropdown/Label
+    m_Key: 'Solution:'
     m_Metadata:
       m_Items: []
   - m_Id: 326166766629937152
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/LevelEditorPanel/ProgType_Dropdown/Selector
+    m_Key: Bugged
     m_Metadata:
       m_Items: []
   - m_Id: 326166766638325760
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/LevelEditorPanel/ProgType_Dropdown/Selector
-      1
+    m_Key: Undefine
     m_Metadata:
       m_Items: []
   - m_Id: 326166952563433472
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/LevelEditorPanel/ProgType_Dropdown
+    m_Key: ProgTypeInfo
     m_Metadata:
       m_Items: []
   - m_Id: 326183549764100096
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/Header/ContainerName
+    m_Key: EnterRobotNameHere
     m_Metadata:
       m_Items: []
   - m_Id: 326514225839333376
-    m_Key: MainScene/MainCanvas/MapDescription/Title
+    m_Key: TextualMapDesc
     m_Metadata:
       m_Items: []
   - m_Id: 326762520574681088
-    m_Key: ExecutablePanel/Canvas (Environment)/ExecutablePanel/Scroll View/Viewport/ScriptContainer/Header
+    m_Key: 'Program:'
     m_Metadata:
       m_Items: []
   - m_Id: 326768520438472704
@@ -2411,7 +2274,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 329055625244041216
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel 8
+    m_Key: NamingError
     m_Metadata:
       m_Items: []
   - m_Id: 329095053287088128
@@ -2426,8 +2289,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 329095689265209344
-    m_Key: SettingsWindow/Canvas (Environment)/SettingsWindow/BackgroundPanel/Scroll
-      View/Viewport/Content/SectionGraphic/GridContainer/Grid/CameraTracking/Label
+    m_Key: Settings/CameraTracking
     m_Metadata:
       m_Items: []
   - m_Id: 329096285774929920
@@ -2437,11 +2299,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 329749063849467904
-    m_Key: MainScene/MainCanvas/EndPanelBackground/EndPanel 9
+    m_Key: WatchOutForCollision
     m_Metadata:
       m_Items: []
   - m_Id: 330871793944616960
-    m_Key: GameData/GameData 1
+    m_Key: FurnitureCode
     m_Metadata:
       m_Items: []
   - m_Id: 338214439264444416
@@ -2469,7 +2331,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 338736807514726400
-    m_Key: TitleScreen/canvas/GameSelector
+    m_Key: NoSkillsIdentified
     m_Metadata:
       m_Items: []
   - m_Id: 338737208196587520
@@ -2485,7 +2347,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 338922702859657216
-    m_Key: ScenarioEditor/Canvas/Menu/DropDown/Label
+    m_Key: ChoiceOfRepository
     m_Metadata:
       m_Items: []
   - m_Id: 339451134106992640
@@ -2494,7 +2356,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 339515669748711424
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/BriefingTypePanel/BriefingTypeHeader
+    m_Key: BriefingTypeHeader
     m_Metadata:
       m_Items: []
   - m_Id: 339515927421583360
@@ -2503,12 +2365,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 339516357752979456
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/BriefingTypePanel/Selector
+    m_Key: DebriefingVictory
     m_Metadata:
       m_Items: []
   - m_Id: 339516387989716992
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/BriefingTypePanel/Selector
-      1
+    m_Key: DebriefingDefeat
     m_Metadata:
       m_Items: []
   - m_Id: 339521958537134080
@@ -2520,15 +2381,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 339523084313493504
-    m_Key: BriefingItem/Canvas (Environment)/BriefingItem/DellButton
+    m_Key: Delete
     m_Metadata:
       m_Items: []
   - m_Id: 339561746262720512
-    m_Key: CompetencyToggle/Canvas (Environment)/CompetencyToggle/Header/ButtonHide/Button
+    m_Key: HideSubSkills
     m_Metadata:
       m_Items: []
   - m_Id: 339562233343049728
-    m_Key: CompetencyToggle/Canvas (Environment)/CompetencyToggle/Header/ButtonShow/ButtonIcon
+    m_Key: ShowSubSkills
     m_Metadata:
       m_Items: []
   - m_Id: 339939252413202432
@@ -2537,7 +2398,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 340241949347012608
-    m_Key: MissionEditor/MetadataCanvas/Scroll View/Viewport/Content/BlocksConfiguration/Title
+    m_Key: BlocksLibraryConfiguration
     m_Metadata:
       m_Items: []
   - m_Id: 340260521993560064
@@ -2556,21 +2417,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 345722519653515264
-    m_Key: ViewportScriptContainer/Canvas (Environment)/ViewportScriptContainer/ScriptContainer/LevelEditorPanel/ProgType_Dropdown/Selector
-      2
+    m_Key: Hidden
     m_Metadata:
       m_Items: []
   - m_Id: 346077742335066112
-    m_Key: MissionEditor/MetadataCanvas/Scroll View/Viewport/Content/GlobalParameters/EditBriefing/Text
-      (TMP)
+    m_Key: EditBriefings
     m_Metadata:
       m_Items: []
   - m_Id: 349065188475133952
-    m_Key: GameData/GameData 2
+    m_Key: PositionNotValid
     m_Metadata:
       m_Items: []
   - m_Id: 349756304329531392
-    m_Key: GameData/GameData 3
+    m_Key: NoBlocksAvailableInInventory
     m_Metadata:
       m_Items: []
   m_Metadata:

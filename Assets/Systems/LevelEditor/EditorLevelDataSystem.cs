@@ -191,7 +191,7 @@ public class EditorLevelDataSystem : FSystem {
 						Solution: we add ScriptToLoad component to the MainLoop immediately, we init each of its attributes and we ask to refresh the MainLoop to update families*/
 						ScriptToLoad stl = MainLoop.instance.gameObject.AddComponent<ScriptToLoad>();
 						stl.scriptNode = child;
-						stl.scriptName = Utility.extractLocale(name.Value);
+						stl.scriptName = name.Value;
 						stl.editMode = editModeByUser;
 						stl.type = typeByUser;
 						MainLoop.instance.StartCoroutine(delayRefreshMainLoop());
