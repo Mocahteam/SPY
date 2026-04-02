@@ -4,11 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
-using UnityEngine.UI;
 
 public class EditorGridSystem : FSystem
 {
@@ -76,6 +74,7 @@ public class EditorGridSystem : FSystem
 		if (f_mapCanvasEnabled.Count == 0 || f_UIfocused.Count > 0)
 		{
 			Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+			tooltip.HideTooltip();
 			return;
 		}
 
@@ -365,7 +364,7 @@ public class EditorGridSystem : FSystem
 	{
 		if (canBePlaced(floorObject.type, newY, newX))
 		{
-			Tuple<int, int> tuplePos = new Tuple<int, int>(newY, newX);
+			Tuple<int, int> tuplePos = new Tuple<int, int>(newX, newY);
 			// si la position de destination est déjà occupée
 			if (paintableGrid.floorObjects.ContainsKey(tuplePos))
 				// on vérifie si on n'a pas un conflit de layer
@@ -430,12 +429,12 @@ public class EditorGridSystem : FSystem
 		};
 	}
 
-	private bool canBePlaced(Cell cell, int l, int c)
+	private bool canBePlaced(Cell newCell, int l, int c)
 	{
 		if (l >= 0 && l < _gridSize.x && c >= 0 && c < _gridSize.y)
 		{
 			Cell pointedCell = paintableGrid.grid[l, c];
-			return (int)cell < 10000 || ((int)pointedCell < 10000 && pointedCell != Cell.Void);
+			return (int)newCell < 10000 || pointedCell == Cell.Ground || pointedCell == Cell.Spawn || pointedCell == Cell.Teleport;
 		}
 		else
 			return false;

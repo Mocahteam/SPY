@@ -115,7 +115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Cette section permet de d\xE9finir<br>la ligne de communication utilis\xE9e
+  text: "Cette section permet de d\xE9finir la ligne<br>de communication utilis\xE9e
     par ce robot"
 --- !u!114 &4011172374408318953
 MonoBehaviour:
@@ -292,7 +292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Cette section permet de d\xE9finir l'apparence du robot"
+  text: "Cette section permet de d\xE9finir l'apparence du robot."
 --- !u!114 &2945998483567878668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -561,9 +561,7 @@ GameObject:
   - component: {fileID: 4214360998053386761}
   - component: {fileID: 1072008886976572608}
   - component: {fileID: 8160048241921845080}
-  - component: {fileID: 7166471328630940150}
   - component: {fileID: 3398370129730087610}
-  - component: {fileID: 988292608529025329}
   m_Layer: 5
   m_Name: TileSettings
   m_TagString: Untagged
@@ -599,7 +597,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 0}
+  m_SizeDelta: {x: 160, y: 590}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1072008886976572608
 MonoBehaviour:
@@ -639,18 +637,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40b463769558ca942af0cae3ce5d8ba1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Popup
---- !u!114 &7166471328630940150
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4530227531594751382}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -53623643, guid: e160884b7e39b8e479dc90c5b7dcec1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: PointerManager.dll::FYFY_plugins.PointerManager.PointerSensitive
 --- !u!114 &3398370129730087610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -663,20 +649,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d754b9cecfcbe734796a4eb4253edd15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TilePopupSystemBridge
---- !u!114 &988292608529025329
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4530227531594751382}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
-  m_HorizontalFit: 0
-  m_VerticalFit: 2
 --- !u!1 &5584289239183148691
 GameObject:
   m_ObjectHideFlags: 0
@@ -923,8 +895,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Cette section vous permet de d\xE9finir la liste<br>des slots contr\xF4l\xE9s
-    par ce terminal<br>(Chaque num\xE9ro de slot doit \xEAtre s\xE9par\xE9 par une
+  text: "Cette section vous permet de d\xE9finir la liste des<br>slots contr\xF4l\xE9s
+    par ce terminal (Chaque num\xE9ro<br>de slot doit \xEAtre s\xE9par\xE9 par une
     virgule)"
 --- !u!114 &7319070276129366295
 MonoBehaviour:
@@ -1195,7 +1167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   text: "Cette section permet de d\xE9finir le slot de contr\xF4le<br>de la porte.
     Pour qu'une porte puisse \xEAtre active,<br>le num\xE9ro de slot indiqu\xE9 ici
-    doit \xEAtre pr\xE9sent<br>dans la liste des slots contr\xF4l\xE9s par au moins
+    doit \xEAtre pr\xE9sent dans<br>la liste des slots contr\xF4l\xE9s par au moins
     un terminal"
 --- !u!114 &2307793439882882910
 MonoBehaviour:
@@ -2230,7 +2202,7 @@ PrefabInstance:
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
       propertyPath: m_text
-      value: "Choix du d\xE9cor"
+      value: Choix de l'apparence
       objectReference: {fileID: 0}
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
@@ -2727,7 +2699,7 @@ PrefabInstance:
     - target: {fileID: 2137846418784801783, guid: 56dc7a3bdc09fc74682ddd513bcc1ed8,
         type: 3}
       propertyPath: m_Options.m_Options.Array.data[1].m_Text
-      value: Vue en croix
+      value: No translation found for '' in StringLocalization
       objectReference: {fileID: 0}
     - target: {fileID: 2137846418784801783, guid: 56dc7a3bdc09fc74682ddd513bcc1ed8,
         type: 3}
@@ -7970,7 +7942,7 @@ PrefabInstance:
     - target: {fileID: 2048032330889015344, guid: 88903c9240318f34e94bc725deb4a76b,
         type: 3}
       propertyPath: m_text
-      value: est actif ?
+      value: est ouverte ?
       objectReference: {fileID: 0}
     - target: {fileID: 2048032330889015344, guid: 88903c9240318f34e94bc725deb4a76b,
         type: 3}
@@ -8213,7 +8185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Si activ\xE9 les portes li\xE9es sont maintenues ferm\xE9es"
+  text: "Si activ\xE9, la porte sera ouverte par d\xE9faut, sinon elle sera ferm\xE9e"
 --- !u!114 &2903569249607216510
 MonoBehaviour:
   m_ObjectHideFlags: 0

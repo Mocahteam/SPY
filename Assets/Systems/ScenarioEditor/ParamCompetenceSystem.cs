@@ -60,20 +60,22 @@ public class ParamCompetenceSystem : FSystem
 	{
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
+		{
 			gameData = go.GetComponent<GameData>();
 
-		f_askToTestLevel.addEntryCallback(delegate (GameObject go)
-		{
-			foreach (AskToTestLevel test in go.GetComponents<AskToTestLevel>())
-				GameObjectManager.removeComponent(test);
-			testLevelPath(go.GetComponent<AskToTestLevel>().url);
-		});
+			f_askToTestLevel.addEntryCallback(delegate (GameObject go)
+			{
+				foreach (AskToTestLevel test in go.GetComponents<AskToTestLevel>())
+					GameObjectManager.removeComponent(test);
+				testLevelPath(go.GetComponent<AskToTestLevel>().url);
+			});
 
-		selectedScenarioGO = null;
+			selectedScenarioGO = null;
 
-		competenciesLoadedAndReady = false;
-		createCompetencies(); // important le système "ReferentialLoader" doit être positionner AVANT ce système pour que les DropDown utilisé dans cette fonction soient correctement renseignés
-		MainLoop.instance.StartCoroutine(delayshowCompatibleLevels());
+			competenciesLoadedAndReady = false;
+			createCompetencies(); // important le système "ReferentialLoader" doit être positionner AVANT ce système pour que les DropDown utilisé dans cette fonction soient correctement renseignés
+			MainLoop.instance.StartCoroutine(delayshowCompatibleLevels());
+		}
 
 		Pause = true;
 	}

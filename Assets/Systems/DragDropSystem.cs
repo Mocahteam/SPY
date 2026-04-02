@@ -86,52 +86,56 @@ public class DragDropSystem : FSystem
 	{
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
+		{
 			gameData = go.GetComponent<GameData>();
+			
+			eventSystem = EventSystem.current;
+			navigateAction = InputSystem.actions.FindAction("Navigate");
+			exitWebGL = InputSystem.actions.FindAction("ExitWebGL");
+			cancel = InputSystem.actions.FindAction("Cancel");
+			submit = InputSystem.actions.FindAction("Submit");
+			deleteKeyboard = InputSystem.actions.FindAction("Delete");
+			insert = InputSystem.actions.FindAction("Insert");
+			click = InputSystem.actions.FindAction("Click");
+			doubleClick = InputSystem.actions.FindAction("DoubleClick");
+			longClick = InputSystem.actions.FindAction("LongClick");
 
-		eventSystem = EventSystem.current;
-		navigateAction = InputSystem.actions.FindAction("Navigate");
-		exitWebGL = InputSystem.actions.FindAction("ExitWebGL");
-		cancel = InputSystem.actions.FindAction("Cancel");
-		submit = InputSystem.actions.FindAction("Submit");
-		deleteKeyboard = InputSystem.actions.FindAction("Delete");
-		insert = InputSystem.actions.FindAction("Insert");
-		click = InputSystem.actions.FindAction("Click");
-		doubleClick = InputSystem.actions.FindAction("DoubleClick");
-		longClick = InputSystem.actions.FindAction("LongClick");
+			f_elementToDelete.addEntryCallback(deleteElement);
+			f_defaultDropZone.addEntryCallback(selectNewDefaultDropZone);
+			f_playMode.addEntryCallback(delegate {
+				Pause = true;
+				string scriptsContent = "";
+				foreach (Transform viewportScriptContainer in editableContainers)
+					scriptsContent += exportEditableScriptToString(viewportScriptContainer.Find("ScriptContainer"), null);
 
-		f_elementToDelete.addEntryCallback(deleteElement);
-		f_defaultDropZone.addEntryCallback(selectNewDefaultDropZone);
-		f_playMode.addEntryCallback(delegate {
-			Pause = true;
-			string scriptsContent = "";
-			foreach (Transform viewportScriptContainer in editableContainers)
-				scriptsContent += exportEditableScriptToString(viewportScriptContainer.Find("ScriptContainer"), null);
-
-			// générer une trace seulement sur la scene principale
-			if (SceneManager.GetActiveScene().name == "MainScene")
-				GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
-				{
-					verb = "executed",
-					objectType = "program",
-					activityExtensions = new Dictionary<string, string>() {
+				// générer une trace seulement sur la scene principale
+				if (SceneManager.GetActiveScene().name == "MainScene")
+					GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+					{
+						verb = "executed",
+						objectType = "program",
+						activityExtensions = new Dictionary<string, string>() {
 					{ "content", scriptsContent }
 				}
-				});
-		});
-		f_editMode.addEntryCallback(delegate {
-			if (f_newEnd.Count == 0)
-				Pause = false;
-		});
+					});
+			});
+			f_editMode.addEntryCallback(delegate {
+				if (f_newEnd.Count == 0)
+					Pause = false;
+			});
 
-		f_newEnd.addEntryCallback(delegate { levelFinished(true); });
-		f_newEnd.addExitCallback(delegate { levelFinished(false); });
+			f_newEnd.addEntryCallback(delegate { levelFinished(true); });
+			f_newEnd.addExitCallback(delegate { levelFinished(false); });
 
-		insertRef = null;
-		dragDropState = DragDropState.Idle;
+			insertRef = null;
+			dragDropState = DragDropState.Idle;
 
-		// Dans l'éditeur de mission toujours autoriser le Drag&Drop
-		if (SceneManager.GetActiveScene().name == "MissionEditor")
-			gameData.dragDropEnabled = true;
+			// Dans l'éditeur de mission toujours autoriser le Drag&Drop
+			if (SceneManager.GetActiveScene().name == "MissionEditor")
+				gameData.dragDropEnabled = true;
+		}
+		else
+			Pause = true; // if no GameData we lock this system
 	}
 
 	private void cancelDragging()

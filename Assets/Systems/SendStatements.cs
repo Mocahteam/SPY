@@ -29,6 +29,8 @@ public class SendStatements : FSystem {
             gameData = gd.GetComponent<GameData>();
             userData = gd.GetComponent<UserData>();
         }
+        else
+            Pause = true; // if no GameData we lock this system
 
         GameObject GBLXAPI = GameObject.Find("GBLXAPI");
         if (GBLXAPI != null)

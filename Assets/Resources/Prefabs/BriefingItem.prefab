@@ -1912,7 +1912,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Contenu du texte \xE0 afficher"
+  text: No translation found for '' in StringLocalization
 --- !u!114 &5236983419102792242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3176,8 +3176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Permet de d\xE9finir o\xF9 positionner la\\ncam\xE9ra lors de l'affichage
-    de ce briefing"
+  text: No translation found for '' in StringLocalization
 --- !u!114 &4431966581793313836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3459,7 +3458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Image \xE0 afficher sous le texte de briefing"
+  text: No translation found for '' in StringLocalization
 --- !u!114 &7927920039314807913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5014,7 +5013,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Son \xE0 jouer lors de l'affichage du briefing"
+  text: No translation found for '' in StringLocalization
 --- !u!114 &3497422332812169985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5534,8 +5533,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Permet de r\xE9duire la taille de l'image si elle prend\\ntrop de place
-    dans la fen\xEAtre de briefing"
+  text: No translation found for '' in StringLocalization
 --- !u!114 &7965469484582910327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5744,7 +5742,12 @@ PrefabInstance:
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
       propertyPath: m_text
-      value: 'Hauteur max. :'
+      value: texte de remplacement
+      objectReference: {fileID: 0}
+    - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
+        type: 3}
+      propertyPath: m_overflowMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
@@ -5768,6 +5771,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 7961678033033152978}
+    - targetCorrespondingSourceObject: {fileID: 1848616423792054055, guid: 4fdcd5065fbff574d8a0a77b388b5583,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3536303547975221957}
   m_SourcePrefab: {fileID: 100100000, guid: 4fdcd5065fbff574d8a0a77b388b5583, type: 3}
 --- !u!114 &1941640651699624336 stripped
 MonoBehaviour:
@@ -5817,8 +5824,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Permet de r\xE9duire la taille de l'image si elle prend\\ntrop de place
-    dans la fen\xEAtre de briefing"
+  text: "Permet de d\xE9finir un texte de remplacement \xE0 l'image"
 --- !u!114 &7961678033033152978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5833,7 +5839,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TrackedObjects:
   - rid: 4397702892499238924
-  - rid: 4397702892499238926
   references:
     version: 2
     RefIds:
@@ -5863,29 +5868,46 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: text
-    - rid: 4397702892499238926
-      type: {class: TrackedUGuiGraphic, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
-        asm: Unity.Localization}
-      data:
-        m_Target: {fileID: 2146866324399520035}
-        m_TrackedProperties:
-          items:
-          - rid: 4397702892499238927
-        m_UpdateType: 0
-    - rid: 4397702892499238927
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 255067307209121792
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: m_text
+--- !u!114 &3536303547975221957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8668827848584979180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 258362280344018949
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2146866324399520035}
+        m_TargetAssemblyTypeName: TMPro.TextMeshProUGUI, Unity.TextMeshPro
+        m_MethodName: set_text
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+  references:
+    version: 2
+    RefIds: []
 --- !u!1001 &7823501174292304198
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6224,9 +6246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Briefing : affiche le message en d\xE9but de mission\\nD\xE9briefing (Victoire)
-    : affiche un message en fin de mission en cas de victoire\\nD\xE9briefing (D\xE9faite)
-    : affiche un message en fin de mission en cas de d\xE9faite"
+  text: No translation found for '' in StringLocalization
 --- !u!114 &4811959056022509910
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6570,7 +6590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Vid\xE9o \xE0 jouer lors de l'affichage du briefing"
+  text: No translation found for '' in StringLocalization
 --- !u!114 &4615801663406554793
 MonoBehaviour:
   m_ObjectHideFlags: 0

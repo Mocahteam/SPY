@@ -51,6 +51,8 @@ public class TTSSystem : FSystem
         GameObject go = GameObject.Find("GameData");
         if (go != null)
             gameData = go.GetComponent<GameData>();
+        else
+            Pause = true; // if no GameData we lock this system
 
         foreach (GameObject selectable in f_selectableElements)
             onNewSelectable(selectable);
@@ -141,6 +143,9 @@ public class TTSSystem : FSystem
     private void defTTS(GameObject focused)
     {
         Selectable select = focused.GetComponent<Selectable>();
+
+        if (gameData == null)
+            return;
 
         string suffix = "";
         string content = "";

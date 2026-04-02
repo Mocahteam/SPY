@@ -14,7 +14,6 @@ public class TilePopupSystem : FSystem
 {
 	private Family f_popups = FamilyManager.getFamily(new AllOfComponents(typeof(Popup)));
 	private Family f_activePopups = FamilyManager.getFamily(new AllOfComponents(typeof(Popup)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-	private Family f_focusedPopups = FamilyManager.getFamily(new AllOfComponents(typeof(Popup), typeof(PointerOver)));
 
 	public static TilePopupSystem instance;
 	public Transform toolboxPanelContent;
@@ -74,15 +73,15 @@ public class TilePopupSystem : FSystem
 		Vector2Int pos = UtilityEditor.mousePosToGridPos(paintableGrid.GetComponent<Tilemap>());
 		Tuple<int, int> posTuple = new Tuple<int, int>(pos.y, pos.x);
 
-		// sur un clic droit ou un Echap, on déselectionne la tile
+		// Condition de déselection
 		if (isContentOnLayer(selectedObjects) && (
 			rightClick.WasPressedThisFrame() || // on déselectionne sur un clic droit
-			click.WasPressedThisFrame() && (!paintableGrid.floorObjects.ContainsKey(posTuple) || !isContentOnLayer(paintableGrid.floorObjects[posTuple])) && f_focusedPopups.Count == 0)) // on déselectionne sur un clic gauche dans le vide qui n'est pas sur une popup sinon quand on intéragit avec la popup, ça déselectionne automatiquement
+			click.WasPressedThisFrame() && (!paintableGrid.floorObjects.ContainsKey(posTuple) || !isContentOnLayer(paintableGrid.floorObjects[posTuple])) && tileSettingsParent.GetComponentInParent<PointerOver>() == null)) // on déselectionne sur un clic gauche dans le vide (qui n'est pas sur le container des popups sinon quand on intéragit avec la popup, ça déselectionne automatiquement)
 		{
 			selectedObjects = new FloorObject[3];
 		}
 		// sur un clic gauche qui pointe des objets, on les sélectionne
-		if (click.WasPressedThisFrame() && paintableGrid.floorObjects.ContainsKey(posTuple) && f_focusedPopups.Count == 0)
+		if (click.WasPressedThisFrame() && paintableGrid.floorObjects.ContainsKey(posTuple) && tileSettingsParent.GetComponentInParent<PointerOver>() == null)
 			selectedObjects = paintableGrid.floorObjects[posTuple];
 
 		// si des popup sont affichées et qu'aucun objet n'est sélectionné, on les supprime
@@ -90,7 +89,7 @@ public class TilePopupSystem : FSystem
 			destroyAllPopups();
 
 		// sur la frame ou le clic a eu lieu, on crée les nouvelles popups
-		if (click.WasPressedThisFrame() && isContentOnLayer(selectedObjects) && f_focusedPopups.Count == 0)
+		if (click.WasPressedThisFrame() && isContentOnLayer(selectedObjects) && tileSettingsParent.GetComponentInParent<PointerOver>() == null)
 			refreshPopups(pos.x, pos.y, false);
 
 		if (isContentOnLayer(selectedObjects))
@@ -207,7 +206,6 @@ public class TilePopupSystem : FSystem
 
 	private void destroyAllPopups()
 	{
-		Debug.Log("destroyAllPopups !!!!!!!!!!!!!");
 		foreach (GameObject popup in f_popups)
 		{
 			GameObjectManager.unbind(popup);

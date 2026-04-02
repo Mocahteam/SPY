@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.Localization.Components;
+using UnityEngine.Localization.SmartFormat.PersistentVariables;
 
 /// <summary>
 /// This system manages main camera (movement, rotation, focus on/follow agent...)
@@ -67,12 +68,16 @@ public class CameraSystem : FSystem {
 		middleClick = InputSystem.actions.FindAction("MiddleClick");
 		rightClick = InputSystem.actions.FindAction("RightClick");
 
-		// synchronise le contenu des tooltip en fonction du clavier utilisé (azerty vs qwerty'
+		// synchronise le contenu des tooltip en fonction du clavier utilisé (azerty vs qwerty)
 		lseTurnLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0) } };
+		//lseTurnLeft.StringReference.Arguments[0]["shortcut"] as StringVariable = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0);
+		(lseTurnLeft.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0);
 		lseTurnLeft.RefreshString();
-		lseMoveUp.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveUp").GetBindingDisplayString(0) } };
+		//lseMoveUp.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveUp").GetBindingDisplayString(0) } };
+		(lseMoveUp.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraMoveUp").GetBindingDisplayString(0);
 		lseMoveUp.RefreshString();
-		lseMoveLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveLeft").GetBindingDisplayString(0) } };
+		//lseMoveLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveLeft").GetBindingDisplayString(0) } };
+		(lseMoveLeft.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraMoveLeft").GetBindingDisplayString(0);
 		lseMoveLeft.RefreshString();
 
 		mainCamera = Camera.main;
