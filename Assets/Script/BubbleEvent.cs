@@ -34,4 +34,10 @@ public class BubbleEvent : MonoBehaviour
     {
         ExecuteEvents.ExecuteHierarchy(gameObject.transform.parent.gameObject, ev, ExecuteEvents.pointerUpHandler);
     }
+
+    // Fait remonter l'évènement de PointerDown sur le parent
+    public void bubblePointerDown(BaseEventData ev)
+    {
+        ExecuteEvents.ExecuteHierarchy(gameObject.transform.parent.gameObject, ev, ExecuteEvents.pointerDownHandler);
+    }
 }
