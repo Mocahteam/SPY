@@ -935,7 +935,10 @@ public class SettingsManager : FSystem
 		{
 			go.GetComponent<Highlightable>().highlightedColor = dsf.currentHighlightingColor;
 			if (go.CompareTag("Player") || go.CompareTag("Drone"))
+			{
 				go.transform.Find("HaloSelection").GetComponent<Renderer>().material.color = dsf.currentHighlightingColor;
+				go.transform.Find("HaloSelection/ArrowPivot/Arrow").GetComponent<Renderer>().material.color = dsf.currentHighlightingColor;
+			}
 		}
 		else
 			go.GetComponent<BasicAction>().highlightedColor = dsf.currentHighlightingColor;

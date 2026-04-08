@@ -4,6 +4,8 @@ using FYFY_plugins.PointerManager;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.Localization.Components;
+using UnityEngine.InputSystem.EnhancedTouch;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 /// <summary>
 /// This system manages main camera in editor (movement, zoom)
@@ -13,6 +15,7 @@ public class EditorCameraSystem : FSystem
 
 	// Contains current UI focused
 	private Family f_UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver)));
+	private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
 
 	public Camera mainCamera;
 
@@ -49,6 +52,8 @@ public class EditorCameraSystem : FSystem
 		lseMoveUp.RefreshString();
 		lseMoveLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveLeft").GetBindingDisplayString(0) } };
 		lseMoveLeft.RefreshString();
+
+		EnhancedTouchSupport.Enable();
 	}
 
 	// Use to process your families.
@@ -83,6 +88,49 @@ public class EditorCameraSystem : FSystem
 				zoomIn(-UI_zoomValue);
 			else
 				zoomIn(1);
+		}
+
+		// Gestion du déplacement de la camera au tactile
+		if (f_UIfocused.Count == 0 && f_dragging.Count == 0)
+		{
+			var touches = Touch.activeTouches;
+
+			if (touches.Count == 2)
+			{
+				// Distance actuelle et précédente
+				float currentDistance = Vector2.Distance(touches[0].screenPosition, touches[1].screenPosition);
+				float previousDistance = Vector2.Distance(
+					touches[0].screenPosition - touches[0].delta,
+					touches[1].screenPosition - touches[1].delta
+				);
+
+				float distanceDelta = currentDistance - previousDistance;
+
+				// Zoom (pincement)
+				if (Mathf.Abs(distanceDelta) > 0.01f)
+				{
+					if (distanceDelta > 0)
+					{
+						zoomIn(distanceDelta / 32);
+					}
+					else
+					{
+						zoomOut(-distanceDelta / 32);
+					}
+				}
+
+				// Pan (déplacement à deux doigts)
+				Vector2 move1 = touches[0].delta;
+				Vector2 move2 = touches[1].delta;
+
+				// Vérifie que les doigts bougent dans une direction similaire
+				if (Vector2.Dot(move1.normalized, move2.normalized) > 0.7f)
+				{
+					Vector2 averageMove = (move1 + move2) / 2f;
+					moveFrontBack(-averageMove.y / 4);
+					moveLeftRight(-averageMove.x / 4);
+				}
+			}
 		}
 	}
 	

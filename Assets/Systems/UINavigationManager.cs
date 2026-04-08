@@ -1,16 +1,22 @@
 using FYFY;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.InputSystem.Utilities;
 using UnityEngine.UI;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 public class UINavigationManager : FSystem
 {
 	private Family f_textsUnselectable = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new NoneOfComponents(typeof(Selectable)));
 	private Family f_draggedItems = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
 	private Family f_dynamicNavigation = FamilyManager.getFamily(new AllOfComponents(typeof(DynamicNavigation)));
+	private Family f_InputFields = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
 
 	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
@@ -21,6 +27,12 @@ public class UINavigationManager : FSystem
 	private InputAction navigateAction;
 	private InputAction rightClick;
 	private InputAction middleClick;
+
+	[DllImport("__Internal")]
+	private static extern void ExitFullScreen(); // call javascript
+
+	[DllImport("__Internal")]
+	private static extern void ResetFullScreen(); // call javascript
 
 	protected override void onStart()
     {
@@ -33,6 +45,13 @@ public class UINavigationManager : FSystem
 		navigateAction = InputSystem.actions.FindAction("Navigate");
 		rightClick = InputSystem.actions.FindAction("RightClick");
 		middleClick = InputSystem.actions.FindAction("MiddleClick");
+
+		EnhancedTouchSupport.Enable();
+
+		// Add callback in all inputField
+		foreach (GameObject go in f_InputFields)
+			onNewInputField(go);
+		f_InputFields.addEntryCallback(onNewInputField);
 	}
 
     protected override void onProcess(int familiesUpdateCount)
@@ -135,6 +154,24 @@ public class UINavigationManager : FSystem
 			}
 		}
 
+		// En tactile un bouton peut ne pas recevoir de onExit, dans ce cas, le bouton est toujours considéré comme le bouton actif et si on clique ailleurs l'évènement est envoyé à ce GameObject au lieu du nouveau. Pour contrer ça, si une nouvelle phase de touch commence (Began) et que l'objet actif n'est pas celui sous le doigt, on déselectionne l'objet
+		ReadOnlyArray<Touch> activeTouches = Touch.activeTouches;
+		for (int i = 0; i < activeTouches.Count; i++)
+		{
+			if (activeTouches[i].phase == TouchPhase.Began)
+			{
+				int fingerId = activeTouches[i].finger.index;
+				if (EventSystem.current.currentSelectedGameObject != null)
+				{
+					if (!EventSystem.current.IsPointerOverGameObject(fingerId))
+					{
+						EventSystem.current.SetSelectedGameObject(null);
+						selected = null;
+					}
+				}
+			}
+		}
+
 		lastSelected = selected;
 	}
 
@@ -142,5 +179,20 @@ public class UINavigationManager : FSystem
     {
 		if (text.transform.parent && !text.transform.parent.GetComponentInParent<ElementToDrag>(true) && !text.transform.parent.GetComponentInParent<Tooltip>(true) && !text.transform.parent.GetComponentInParent<Selectable>(true))
 			GameObjectManager.addComponent<Selectable>(text);
+	}
+
+	private void onNewInputField(GameObject go)
+	{
+		// Pour le tactile si on est en mode plein écran on force la sortie du plein écran quand on entre dans un InputField et on le restaure quand on en ressort
+		go.GetComponent<TMP_InputField>().onSelect.AddListener(delegate (string content)
+		{
+			//if (Touch.activeTouches.Count > 0)
+				ExitFullScreen();
+		});
+
+		go.GetComponent<TMP_InputField>().onEndEdit.AddListener(delegate (string content)
+		{
+			ResetFullScreen();
+		});
 	}
 }

@@ -102,5 +102,13 @@ mergeInto(LibraryManager.library, {
 	
 	TryToPaste: function(){
 		document.tryToPaste();
+	},
+	
+	ExitFullScreen: function (){
+		document.exitFullScreen();
+	},
+	
+	ResetFullScreen: function (){
+		document.resetFullScreen();
 	}
 });

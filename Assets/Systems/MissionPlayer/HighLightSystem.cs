@@ -98,7 +98,10 @@ public class HighLightSystem : FSystem {
 			foreach (Material material in go.GetComponentInChildren<Renderer>(true).materials)
 				material.color = go.GetComponent<Highlightable>().highlightedColor;
 			if (go.CompareTag("Player") || go.CompareTag("Drone"))
+			{
 				go.transform.Find("HaloSelection").GetComponent<Renderer>().material.color = go.GetComponent<Highlightable>().highlightedColor;
+				go.transform.Find("HaloSelection/ArrowPivot/Arrow").GetComponent<Renderer>().material.color = go.GetComponent<Highlightable>().highlightedColor;
+			}
 			if (go.GetComponent<ScriptRef>())
 			{
 				Image img = go.GetComponent<ScriptRef>().executablePanel.transform.Find("Scroll View").GetComponent<Image>();

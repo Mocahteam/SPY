@@ -161,6 +161,8 @@ public class MoveSystem : FSystem {
 		foreach (GameObject go in f_movable)
 			if (go.GetComponent<Animator>() && go.GetComponent<ScriptRef>() && !go.GetComponent<ScriptRef>().isBroken)
 			{
+				go.GetComponent<Animator>().SetFloat("Walk", -1f);
+				go.GetComponent<Animator>().SetFloat("Run", -1f);
 				go.GetComponent<Animator>().SetTrigger("Idle");
 				go.GetComponent<Collider>().enabled = true;
 			}

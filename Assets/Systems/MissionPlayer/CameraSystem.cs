@@ -5,8 +5,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.Localization.Components;
 using UnityEngine.Localization.SmartFormat.PersistentVariables;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
+using UnityEngine.InputSystem.Utilities;
 
 /// <summary>
 /// This system manages main camera (movement, rotation, focus on/follow agent...)
@@ -18,6 +21,7 @@ public class CameraSystem : FSystem {
 	private Family f_UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver)));
 	private Family f_focusOn = FamilyManager.getFamily(new AllOfComponents(typeof(FocusCamOn)));
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
 
 	private Transform targetAgent; // if defined camera follow this target
 	private Transform lastAgentFocused = null;
@@ -102,6 +106,8 @@ public class CameraSystem : FSystem {
 			else
 				unfocusAgent();
 		});
+
+		EnhancedTouchSupport.Enable();
 	}
 
 	// Use to process your families.
@@ -135,14 +141,14 @@ public class CameraSystem : FSystem {
 			if (UI_zoomValue > 0)
 				zoomOut(UI_zoomValue);
 			else
-				zoomOut(1);
+				zoomOut(2);
 		}
 		else if ((Mouse.current.scroll.y.value > 0 && f_UIfocused.Count == 0) || UI_zoomValue < 0) // Zoom in
 		{
 			if (UI_zoomValue < 0)
 				zoomIn(-UI_zoomValue);
 			else
-				zoomIn(1);
+				zoomIn(2);
 		}
 
 		// Orbit rotation
@@ -150,11 +156,63 @@ public class CameraSystem : FSystem {
 		{
 			Cursor.visible = false;
 			DeltaControl delta = Pointer.current.delta;
-			rotateCamera(delta.x.value, !mainCamera.orthographic ? delta.y.value : 0);
+			rotateCamera(delta.x.value/2, !mainCamera.orthographic ? delta.y.value/2 : 0);
 		}
 
 		if (middleClick.WasReleasedThisFrame() || rightClick.WasReleasedThisFrame())
 			Cursor.visible = true;
+
+		// Gestion du déplacement de la camera au tactile
+		if (f_UIfocused.Count == 0 && f_dragging.Count == 0)
+		{
+			ReadOnlyArray<Touch> touches = Touch.activeTouches;
+
+			if (touches.Count == 1)
+			{
+				// Rotation
+				if (touches[0].phase == UnityEngine.InputSystem.TouchPhase.Moved)
+				{
+					Vector2 delta = touches[0].delta;
+					rotateCamera(delta.x / 4, !mainCamera.orthographic ? delta.y / 4 : 0);
+				}
+			}
+			else if (touches.Count == 2)
+			{
+				// Distance actuelle et précédente
+				float currentDistance = Vector2.Distance(touches[0].screenPosition, touches[1].screenPosition);
+				float previousDistance = Vector2.Distance(
+					touches[0].screenPosition - touches[0].delta,
+					touches[1].screenPosition - touches[1].delta
+				);
+
+				float distanceDelta = currentDistance - previousDistance;
+
+				// Zoom (pincement)
+				if (Mathf.Abs(distanceDelta) > 0.01f)
+				{
+					if (distanceDelta > 0)
+					{
+						zoomIn(distanceDelta / 32);
+					}
+					else
+					{
+						zoomOut(-distanceDelta / 32);
+					}
+				}
+
+				// Pan (déplacement à deux doigts)
+				Vector2 move1 = touches[0].delta;
+				Vector2 move2 = touches[1].delta;
+
+				// Vérifie que les doigts bougent dans une direction similaire
+				if (Vector2.Dot(move1.normalized, move2.normalized) > 0.7f)
+				{
+					Vector2 averageMove = (move1 + move2) / 2f;
+					moveFrontBack(-averageMove.y / 4 * dragSpeed);
+					moveLeftRight(-averageMove.x / 4 * dragSpeed);
+				}
+			}
+		}
 	}
 	
 	private void moveFrontBack(float value)

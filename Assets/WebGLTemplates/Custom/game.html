@@ -2,12 +2,12 @@
 <html lang="en-us">
 	<head>
 		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>SPY</title>
 		<link rel="shortcut icon" href="TemplateData/favicon.ico">
-	
+		<link rel="stylesheet" href="TemplateData/styleGame.css">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-		<link rel="stylesheet" href="TemplateData/styleGame.css">
 		<!-- Pour activer le PWA -->
 		<!--<link rel="manifest" href="manifest.webmanifest">-->
 	</head>
@@ -98,6 +98,8 @@
 		document.tryToCopy = tryToCopy;
 		document.tryToPaste = tryToPaste;
 		document.sendToScreenReader = sendToScreenReader;
+		document.exitFullScreen = exitFullScreen;
+		document.resetFullScreen = resetFullScreen;
 		
 		document.updateLang(lang);
 
@@ -182,7 +184,7 @@
         observer.observe(targetNode, configObserver);
 		// End TTS section
 
-		var version = "{{{ PRODUCT_VERSION }}}";
+		var version = {{{ JSON.stringify(PRODUCT_VERSION) }}};
 
 		// choose the data file based on whether there's support for the ASTC texture compression format
 		// default use DXT
@@ -216,10 +218,18 @@
 		var config = {
 			dataUrl: buildUrl + dataFile,
 			frameworkUrl: buildUrl + "/WebGL_Desktop(DXT)"+version+".framework.js.unityweb",
+#if USE_THREADS
+			workerUrl: buildUrl + "/{{{ WORKER_FILENAME }}}",
+#endif
+#if USE_WASM
 			codeUrl: buildUrl + "/WebGL_Desktop(DXT)"+version+".wasm.unityweb",
+#endif
+#if SYMBOLS_FILENAME
+			symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+#endif
 			streamingAssetsUrl: version + "/StreamingAssets",
-			companyName: "{{{ COMPANY_NAME }}}",
-			productName: "{{{ PRODUCT_NAME }}}",
+			companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+			productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
 			productVersion: version,
 			showBanner: unityShowBanner,
 		};
@@ -238,6 +248,11 @@
 			meta.name = 'viewport';
 			meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
 			document.getElementsByTagName('head')[0].appendChild(meta);
+			
+			// To lower canvas resolution on mobile devices to gain some
+			// performance, uncomment the following line:
+			// config.devicePixelRatio = 1;
+			
 		}
 
 		loadingBar.style.display = "block";
@@ -253,6 +268,7 @@
 				progressBarFull.style.width = 100 * progress + "%";
 			}).then((instance) => {
 				unityInstance = instance;
+
 				loadingBar.style.display = "none";
 
 				fullscreenButton.onclick = () => {
@@ -287,7 +303,7 @@
 					unityInstance.SendMessage('Main_Loop', 'enableSendStatement');
 				
 			}).catch((message) => {
-				var msg = lang == "fr" ? "Une erreur s'est produite lors du chargement du jeu" : "Error occurs on loading";
+				var msg = lang == "fr" ? "Une erreur s'est produite lors du chargement du jeu (voir la console pour plus de détails)." : "Error occurs on loading (see console for details).";
 				var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 				if (isSafari)
 					msg += lang == "fr" ? "\nEssayer d'utiliser le navigateur Chrome ou Firefox" : "\nTry to use Chrome or Fiferox";
@@ -300,33 +316,18 @@
 			});
 		};
 		
-		fullscreenButton.addEventListener("click", () => {
-			if (!container.classList.contains("fullscreenTag")){
-				container.className = "fullscreenTag";
-				canvas.style.width = "";
-				var rect = canvas.getBoundingClientRect();
-				canvas.style.height = (window.innerHeight-rect.top-4)+"px";
-			}
-			else{
-				var rect = canvas.getBoundingClientRect();
-				canvas.style.height = (window.innerHeight-rect.top-4)+"px";
-			}
-		});
-		
-		if (document.addEventListener)
-		{
-			document.addEventListener('fullscreenchange', exitHandler, false);
-			document.addEventListener('mozfullscreenchange', exitHandler, false);
-			document.addEventListener('MSFullscreenChange', exitHandler, false);
-			document.addEventListener('webkitfullscreenchange', exitHandler, false);
+		var isPreviouslyInFullscreen = false;
+		function exitFullScreen(){
+			if (!!document.fullscreenElement || !!document.webkitIsFullScreen){
+				isPreviouslyInFullscreen = true;
+				unityInstance.SetFullscreen(0);
+			}else
+				isPreviouslyInFullscreen = false;
 		}
-
-		function exitHandler()
-		{
-			if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement)
-			{
-				var rect = canvas.getBoundingClientRect();
-				canvas.style.height = (window.innerHeight-rect.top-4)+"px";
+		function resetFullScreen(){
+			if (isPreviouslyInFullscreen){
+				unityInstance.SetFullscreen(1);
+				isPreviouslyInFullscreen = false;
 			}
 		}
 		

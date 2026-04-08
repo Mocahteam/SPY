@@ -13039,8 +13039,6 @@ GameObject:
   - component: {fileID: 1645587997}
   - component: {fileID: 1645588000}
   - component: {fileID: 1645588001}
-  - component: {fileID: 1645588002}
-  - component: {fileID: 1645588003}
   - component: {fileID: 1645588004}
   m_Layer: 0
   m_Name: Main_Loop
@@ -13112,10 +13110,6 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     _typeFullName: CompetenciesLoader
     _pause: 1
-  - _typeAssemblyQualifiedName: MainMenuToggler, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: MainMenuToggler
-    _pause: 1
   - _typeAssemblyQualifiedName: PopupManager, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     _typeFullName: PopupManager
@@ -13143,10 +13137,6 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: UINavigationManager, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: UINavigationManager
-    _pause: 0
-  - _typeAssemblyQualifiedName: HotkeySystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-    _typeFullName: HotkeySystem
     _pause: 0
   - _typeAssemblyQualifiedName: LobbyAnimation, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -13324,58 +13314,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0724079655737984eb0fbd196ed0bf92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReferentialLoader_wrapper
---- !u!114 &1645588002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1645587984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e31008f442f122049a5acd80b67cfca6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HotkeySystem_wrapper
-  mainMenu: {fileID: 0}
-  closeMainMenu: {fileID: 0}
-  buttonExecute: {fileID: 0}
-  buttonPause: {fileID: 0}
-  buttonNextStep: {fileID: 0}
-  buttonContinue: {fileID: 0}
-  buttonSpeed: {fileID: 0}
-  buttonStop: {fileID: 0}
-  cameraSwitchView: {fileID: 0}
-  cameraRotateLeft: {fileID: 0}
-  cameraRotateRight: {fileID: 0}
-  cameraTop: {fileID: 0}
-  cameraDown: {fileID: 0}
-  cameraLeft: {fileID: 0}
-  cameraRight: {fileID: 0}
-  cameraFocusOn: {fileID: 0}
-  cameraZoomIn: {fileID: 0}
-  cameraZoomOut: {fileID: 0}
-  showBriefing: {fileID: 0}
-  showMapDesc: {fileID: 0}
-  closeMapDesc: {fileID: 0}
-  inventory: {fileID: 0}
-  buttonCopyCode: {fileID: 0}
-  AddContainerButton: {fileID: 0}
-  cancelNextEscape: 0
---- !u!114 &1645588003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1645587984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d801b74f3adb2ba458dc868422e293bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MainMenuToggler_wrapper
-  menuCanvas: {fileID: 0}
-  canvasGroups:
-  - {fileID: 7119233257524364233}
 --- !u!114 &1645588004
 MonoBehaviour:
   m_ObjectHideFlags: 0

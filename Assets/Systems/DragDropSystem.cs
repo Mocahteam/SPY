@@ -98,7 +98,7 @@ public class DragDropSystem : FSystem
 			insert = InputSystem.actions.FindAction("Insert");
 			click = InputSystem.actions.FindAction("Click");
 			doubleClick = InputSystem.actions.FindAction("DoubleClick");
-			longClick = InputSystem.actions.FindAction("LongClick");
+			longClick = InputSystem.actions.FindAction("ClickHold");
 
 			f_elementToDelete.addEntryCallback(deleteElement);
 			f_defaultDropZone.addEntryCallback(selectNewDefaultDropZone);

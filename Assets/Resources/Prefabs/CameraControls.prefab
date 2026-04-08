@@ -3202,7 +3202,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 290022576584790879, guid: de1b1c1244db23443976132372d087a8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8634025601863702519}
   m_SourcePrefab: {fileID: 100100000, guid: de1b1c1244db23443976132372d087a8, type: 3}
 --- !u!224 &4939877064086092396 stripped
 RectTransform:
@@ -3210,3 +3214,21 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 8597306839231995611}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8307339188233801092 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 290022576584790879, guid: de1b1c1244db23443976132372d087a8,
+    type: 3}
+  m_PrefabInstance: {fileID: 8597306839231995611}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8634025601863702519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8307339188233801092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -53623643, guid: e160884b7e39b8e479dc90c5b7dcec1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PointerManager.dll::FYFY_plugins.PointerManager.PointerSensitive

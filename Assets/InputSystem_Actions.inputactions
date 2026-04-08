@@ -8,18 +8,18 @@
             "actions": [
                 {
                     "name": "Navigate",
-                    "type": "PassThrough",
+                    "type": "Value",
                     "id": "e4ea685b-e563-43d3-82be-c963616c8ecb",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Submit",
                     "type": "Button",
                     "id": "dc95ac03-c347-4910-b91e-f4d809b5bd0e",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -44,66 +44,57 @@
                 },
                 {
                     "name": "Click",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "b0a4e137-bcd8-4fbc-88f4-d0fb0a3c7b4b",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "LongClick",
-                    "type": "PassThrough",
-                    "id": "baa8aa28-68de-4484-817e-42039e9e716c",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Hold",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "DoubleClick",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "9527aeff-8ffd-433a-bd66-066e8929c1e1",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "MultiTap",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "ClickHold",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "aaea70ba-9436-49e9-b102-61d2a3e3fda0",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "Hold",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "RightClick",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "7ccbd77d-1508-4ac3-acac-7adc38953dca",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
                     "name": "MiddleClick",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "151b02db-8f1f-4a1b-be31-f706a3680104",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
                     "name": "ScrollWheel",
-                    "type": "PassThrough",
+                    "type": "Value",
                     "id": "f4e28d60-15c6-43ef-b97c-5c7bbe3067e9",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "TrackedDevicePosition",
@@ -599,7 +590,7 @@
                 {
                     "name": "",
                     "id": "fda3e220-422c-4883-bc97-b1b3c396b19a",
-                    "path": "<Touchscreen>/touch*/position",
+                    "path": "<Touchscreen>/position",
                     "interactions": "",
                     "processors": "",
                     "groups": "Touch",
@@ -632,7 +623,7 @@
                 {
                     "name": "",
                     "id": "4f5ae2a4-6223-40e7-b32f-c160135b8e4c",
-                    "path": "<Touchscreen>/touch*/press",
+                    "path": "<Touchscreen>/Press",
                     "interactions": "",
                     "processors": "",
                     "groups": "Touch",
@@ -648,50 +639,6 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "Click",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "6129d43d-1f46-4110-8406-cb614a1e9667",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "LongClick",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "485cc179-4de1-4b97-a952-a37923516271",
-                    "path": "<Pen>/tip",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "LongClick",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "3bf1ae81-965f-474d-87e6-dc3bd238349f",
-                    "path": "<Touchscreen>/touch*/press",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Touch",
-                    "action": "LongClick",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "3e958188-ee81-427e-9eba-53a4e6a12514",
-                    "path": "<XRController>/trigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "XR",
-                    "action": "LongClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -720,7 +667,7 @@
                 {
                     "name": "",
                     "id": "5f3a670c-4982-40be-9977-6f6ed4b35bff",
-                    "path": "<Touchscreen>/touch*/press",
+                    "path": "<Touchscreen>/Press",
                     "interactions": "",
                     "processors": "",
                     "groups": "Touch",
@@ -764,7 +711,7 @@
                 {
                     "name": "",
                     "id": "b563cb87-0dfc-48e2-8f14-040dcb7e91cc",
-                    "path": "<Touchscreen>/touch*/press",
+                    "path": "<Touchscreen>/Press",
                     "interactions": "",
                     "processors": "",
                     "groups": "Touch",
