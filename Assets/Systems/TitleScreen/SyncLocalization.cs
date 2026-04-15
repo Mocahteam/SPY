@@ -13,10 +13,7 @@ public class SyncLocalization : FSystem {
 
     private Family f_langOptions = FamilyManager.getFamily(new AllOfComponents(typeof(LangOption), typeof(Button)));
 
-    /// <summary>
-    /// The current language selected
-    /// </summary>
-    private int currentLangSelected;
+    public CurrentSettingsValues currentSettingsValues;
 
     [DllImport("__Internal")]
     private static extern string GetBrowserLanguage(); // call javascript
@@ -42,19 +39,20 @@ public class SyncLocalization : FSystem {
         // wait for the Localization initialization operation to complete.
         yield return LocalizationSettings.InitializationOperation;
         // Now, we can switch to appropriate language
-        currentLangSelected = 0;
         if (PlayerPrefs.HasKey("localization"))
-            currentLangSelected = PlayerPrefs.GetInt("localization");
+            currentSettingsValues.currentLanguage = PlayerPrefs.GetInt("localization");
         else if (Application.platform == RuntimePlatform.WebGLPlayer)
         {
             string locale = GetBrowserLanguage();
             if (locale == "fr")
-                currentLangSelected = 0;
+                currentSettingsValues.currentLanguage = 0;
             else
-                currentLangSelected = 1;
+                currentSettingsValues.currentLanguage = 1;
         }
+        else
+            currentSettingsValues.currentLanguage = currentSettingsValues.GetComponent<DefaultSettingsValues>().defaultLanguage;
         syncLocale();
-        PlayerPrefs.SetInt("localization", currentLangSelected);
+        PlayerPrefs.SetInt("localization", currentSettingsValues.currentLanguage);
         PlayerPrefs.Save();
 
         GameObjectManager.addComponent<LocalizationLoaded>(MainLoop.instance.gameObject);
@@ -66,22 +64,22 @@ public class SyncLocalization : FSystem {
         {
             ColorBlock colors = option.GetComponent<Button>().colors;
             LangOption langOpt = option.GetComponent<LangOption>();
-            if ((int)langOpt.lang == currentLangSelected)
+            if ((int)langOpt.lang == currentSettingsValues.currentLanguage)
                 colors.normalColor = langOpt.on;
             else
                 colors.normalColor = langOpt.off;
             option.GetComponent<Button>().colors = colors;
         }
-        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[currentLangSelected];
+        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[currentSettingsValues.currentLanguage];
         if (Application.platform == RuntimePlatform.WebGLPlayer)
-            UpdateHTMLLanguage(currentLangSelected == 0 ? "fr" : "en");
+            UpdateHTMLLanguage(currentSettingsValues.currentLanguage == 0 ? "fr" : "en");
     }
 
     public void changeLang(LangOption.LangType lang)
     {
-        currentLangSelected = (int)lang;
+        currentSettingsValues.currentLanguage = (int)lang;
         syncLocale();
-        PlayerPrefs.SetInt("localization", currentLangSelected);
+        PlayerPrefs.SetInt("localization", currentSettingsValues.currentLanguage);
         PlayerPrefs.Save();
     }
 }

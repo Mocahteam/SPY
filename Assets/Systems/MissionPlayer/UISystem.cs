@@ -40,6 +40,7 @@ public class UISystem : FSystem {
 	public GameObject buttonStop;
 	public GameObject canvas;
 	public GameObject libraryPanel;
+	public CurrentSettingsValues currentSettingsValues;
 
 	public static UISystem instance;
 
@@ -104,7 +105,7 @@ public class UISystem : FSystem {
 				touchUp = 0;
 			else
 				touchUp += Time.deltaTime;
-			if (PlayerPrefs.GetInt("interaction") == 1 // 0 means mouse/keyboard; 1 means touch-sensitive
+			if (currentSettingsValues.currentInteractionMode == 1 // 0 means mouse/keyboard; 1 means touch-sensitive
 				&& touchUp > 0.25f)
 			{
 				foreach (GameObject pointed in f_pointerOver)

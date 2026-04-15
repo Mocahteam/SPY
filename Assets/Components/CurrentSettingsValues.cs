@@ -1,0 +1,56 @@
+using UnityEngine;
+
+public class CurrentSettingsValues : MonoBehaviour
+{
+	public int currentLanguage;
+	public int currentQuality;
+	public int currentInteractionMode;
+	public float currentUIScale;
+	public int currentWallTransparency;
+	public int currentCameraTracking;
+	public int currentGameView;
+	public int currentTooltipView;
+	public int currentFont;
+	public int currentCaretWidth;
+	public int currentCaretHeight;
+	public int currentCharSpacing;
+	public int currentWordSpacing;
+	public int currentLineSpacing;
+	public int currentParagraphSpacing;
+	public Color currentNormalColor_Text;
+	public Color currentSelectedColor_Text;
+	public Color currentPlaceholderColor;
+	public Color currentNormalColor_Dropdown;
+	public Color currentNormalColor_Inputfield;
+	public Color currentSelectedColor_Inputfield;
+	public Color currentSelectionColor_Inputfield;
+	public Color currentCaretColor_Inputfield;
+	public Color currentNormalColor_Button;
+	public Color currentHighlightedColor;
+	public Color currentPressedColor;
+	public Color currentSelectedColor;
+	public Color currentDisabledColor;
+	public Color currentColor_Icon;
+	public Color currentColor_Panel1;
+	public Color currentColor_Panel2;
+	public Color currentColor_Panel3;
+	public Color currentColor_PanelTexture;
+	public Color currentColor_Border;
+	public int currentBorderThickness;
+	public Color currentNormalColor_Scrollbar;
+	public Color currentBackgroundColor_Scrollbar;
+	public Color currentBackgroundColor_Scrollview;
+	public Color currentNormalColor_Toggle;
+	public Color currentColor_Tooltip;
+	public Color currentPlayButtonColor;
+	public Color currentPauseButtonColor;
+	public Color currentStopButtonColor;
+	public Color currentActionBlockColor;
+	public Color currentControlBlockColor;
+	public Color currentOperatorBlockColor;
+	public Color currentCaptorBlockColor;
+	public Color currentDropAreaColor;
+	public Color currentHighlightingColor;
+	public Color currentCaptorTrueColor;
+	public Color currentCaptorFalseColor;
+}

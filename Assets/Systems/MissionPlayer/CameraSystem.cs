@@ -58,7 +58,7 @@ public class CameraSystem : FSystem {
 	public LocalizeStringEvent lseMoveUp;
 	public LocalizeStringEvent lseMoveLeft;
 
-	public DefaultSettingsValues settings;
+	public CurrentSettingsValues currentSettingsValues;
 
 	public static CameraSystem instance;
 
@@ -85,7 +85,7 @@ public class CameraSystem : FSystem {
 		lseMoveLeft.RefreshString();
 
 		mainCamera = Camera.main;
-		if (PlayerPrefs.GetInt("orthographicView", 0) == 1)
+		if (currentSettingsValues.currentGameView == 1)
 			ToggleOrthographicPerspective();
 
 		// set current camera target (the first player)
@@ -101,7 +101,7 @@ public class CameraSystem : FSystem {
 		});
 
 		f_playingMode.addEntryCallback(delegate (GameObject go) {
-			if (settings.currentCameraTracking == 1)
+			if (currentSettingsValues.currentCameraTracking == 1)
 				focusOnNearestAgent();
 			else
 				unfocusAgent();
@@ -285,8 +285,7 @@ public class CameraSystem : FSystem {
 			mainCamera.transform.parent.rotation = new Quaternion(0, 0, 0, 0);
 			if (mainCamera.orthographic)
 				mainCamera.transform.parent.Rotate(Vector3.back, -27); // -27 is a magic constant to put camera in direction of ground
-			PlayerPrefs.SetInt("orthographicView", mainCamera.orthographic ? 1 : 0);
-			PlayerPrefs.Save();
+			currentSettingsValues.currentGameView = mainCamera.orthographic ? 1 : 0;
 		}
 	}
 

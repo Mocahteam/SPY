@@ -80,14 +80,14 @@ public class EditorCameraSystem : FSystem
 			if (UI_zoomValue > 0)
 				zoomOut(UI_zoomValue);
 			else
-				zoomOut(1);
+				zoomOut(0.5f) ;
 		}
 		else if ((Mouse.current.scroll.y.value > 0 && f_UIfocused.Count == 0) || UI_zoomValue < 0) // Zoom in
 		{
 			if (UI_zoomValue < 0)
 				zoomIn(-UI_zoomValue);
 			else
-				zoomIn(1);
+				zoomIn(0.5f);
 		}
 
 		// Gestion du déplacement de la camera au tactile

@@ -15,12 +15,12 @@ mergeInto(LibraryManager.library, {
 	
 	ShowHtmlButtons: function () {
 		var element = document.getElementById("proxyLoadFiles");
-		element.style.visibility = 'visible';
+		element.classList.remove("visually-hidden");
 	},
 	
 	HideHtmlButtons: function () {
 		var element = document.getElementById("proxyLoadFiles");
-		element.style.visibility = 'hidden';
+		element.classList.add("visually-hidden");
 	},
   
 	IsMobileBrowser: function () {

@@ -12,7 +12,7 @@ public class CameraSystem_wrapper : BaseWrapper
 	public UnityEngine.Localization.Components.LocalizeStringEvent lseTurnLeft;
 	public UnityEngine.Localization.Components.LocalizeStringEvent lseMoveUp;
 	public UnityEngine.Localization.Components.LocalizeStringEvent lseMoveLeft;
-	public DefaultSettingsValues settings;
+	public CurrentSettingsValues currentSettingsValues;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -25,7 +25,7 @@ public class CameraSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "lseTurnLeft", lseTurnLeft);
 		MainLoop.initAppropriateSystemField (system, "lseMoveUp", lseMoveUp);
 		MainLoop.initAppropriateSystemField (system, "lseMoveLeft", lseMoveLeft);
-		MainLoop.initAppropriateSystemField (system, "settings", settings);
+		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
 	}
 
 	public void ToggleOrthographicPerspective()

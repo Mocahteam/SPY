@@ -45,6 +45,7 @@ public class ParamCompetenceSystem : FSystem
 	public GameObject mainCanvas;
 	public TMP_InputField levelFilterByName;
 	public Button closeBriefing;
+	public CurrentSettingsValues currentSettingsValues;
 
 	[DllImport("__Internal")]
 	private static extern void Save(string content, string defaultName); // call javascript
@@ -428,7 +429,7 @@ public class ParamCompetenceSystem : FSystem
 			Image miniView = contentInfoCompatibleLevel.transform.Find("LevelMiniView").GetComponent<Image>();
 			GameObjectManager.setGameObjectState(miniView.gameObject, false);
 			// Display miniView
-			string imgPath = new Uri(mainPath + "/" + path.Replace(".xml", PlayerPrefs.GetInt("localization") == 1 ? "_en.png" : ".png")).AbsoluteUri;
+			string imgPath = new Uri(mainPath + "/" + path.Replace(".xml", currentSettingsValues.currentLanguage == 1 ? "_en.png" : ".png")).AbsoluteUri;
 
 			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(imgPath, miniView));
 			XmlNode levelSelected = gameData.levels[absolutePath];

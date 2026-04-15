@@ -26,6 +26,7 @@ public class TitleScreenSystem : FSystem {
 	public GameObject TileMissionPrefab;
 	public GameObject quitButton;
 	public TMP_Text SPYVersion;
+	public CurrentSettingsValues currentSettingsValues;
 
 	private Transform gameList;
 	private Transform gameDetails;
@@ -165,7 +166,7 @@ public class TitleScreenSystem : FSystem {
 			foreach (DataLevel dl in gameData.scenarios[key].levels)
 			{
 				string highScoreKey = Utility.extractFileName(dl.filePath);
-				totalStars += (userData.highScore != null ? (userData.highScore.ContainsKey(highScoreKey) ? userData.highScore[highScoreKey] : 0) : PlayerPrefs.GetInt(highScoreKey + gameData.scoreKey, 0)); //0 star by default
+				totalStars += (userData.highScore == null || !userData.highScore.ContainsKey(highScoreKey)) ? 0 : userData.highScore[highScoreKey]; //0 star by default
 			}
 			scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text = totalStars + "/" + (gameData.scenarios[key].levels.Count * 3);
 
@@ -267,7 +268,7 @@ public class TitleScreenSystem : FSystem {
 			DataLevel levelData = gameData.scenarios[scenarioKey].levels[i];
 			//scores
 			string highScoreKey = Utility.extractFileName(levelData.filePath);
-			int scoredStars = (userData.highScore != null ? (userData.highScore.ContainsKey(highScoreKey) ? userData.highScore[highScoreKey] : 0) : PlayerPrefs.GetInt(highScoreKey + gameData.scoreKey, 0)); //0 star by default
+			int scoredStars = userData.highScore == null || !userData.highScore.ContainsKey(highScoreKey) ? 0 : userData.highScore[highScoreKey]; //0 star by default
 
 			Image star1 = missionTile.transform.Find("Star1").GetComponent<Image>();
 			Image star2 = missionTile.transform.Find("Star2").GetComponent<Image>();
@@ -280,7 +281,7 @@ public class TitleScreenSystem : FSystem {
 
 			int tooltipText = scoredStars;
 			// lock/unlock levels
-			if ((userData.progression != null && userData.progression.ContainsKey(scenarioKey) && userData.progression[scenarioKey] >= i) || (userData.progression == null && PlayerPrefs.GetInt(scenarioKey, 0) >= i) || i == 0) //by default first level of directory is the only unlocked level of directory
+			if ((userData.progression != null && userData.progression.ContainsKey(scenarioKey) && userData.progression[scenarioKey] >= i) || i == 0) //by default first level of directory is the only unlocked level of directory
 			{
 				missionButton.interactable = true;
 
@@ -392,7 +393,7 @@ public class TitleScreenSystem : FSystem {
 			gameDescription.GetComponentInChildren<TMP_Text>(true).text = "";
 			GameObjectManager.setGameObjectState(miniView.gameObject, true);
 			// try to load mini view
-			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].filePath.Replace(".xml", PlayerPrefs.GetInt("localization") == 1 ? "_en.png" : ".png"), miniView));
+			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].filePath.Replace(".xml", currentSettingsValues.currentLanguage == 1 ? "_en.png" : ".png"), miniView));
 		}
 		// Else locked mission
         else

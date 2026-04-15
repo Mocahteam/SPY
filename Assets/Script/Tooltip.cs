@@ -13,6 +13,7 @@ public class Tooltip : MonoBehaviour
     private InputAction navigateAction;
     private InputAction pointActionUI;
     private CanvasScaler canvasScaler;
+    private CurrentSettingsValues csv;
 
     private void Awake()
     {
@@ -22,11 +23,12 @@ public class Tooltip : MonoBehaviour
         navigateAction = InputSystem.actions.FindAction("Navigate");
         pointActionUI = EventSystem.current.GetComponent<InputSystemUIInputModule>().point.action;
         canvasScaler = GetComponentInParent<CanvasScaler>(true);
+        csv = canvasScaler.GetComponentInChildren<CurrentSettingsValues>(true);
     }
 
     public void ShowTooltip(string tooltipString)
     {
-        if (PlayerPrefs.GetInt("tooltipView") == 1)
+        if (csv.currentTooltipView == 1)
         {
             state = true;
             tooltipText.text = tooltipString;

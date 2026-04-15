@@ -186,7 +186,7 @@ public class UINavigationManager : FSystem
 		// Pour le tactile si on est en mode plein écran on force la sortie du plein écran quand on entre dans un InputField et on le restaure quand on en ressort
 		go.GetComponent<TMP_InputField>().onSelect.AddListener(delegate (string content)
 		{
-			//if (Touch.activeTouches.Count > 0)
+			if (Touch.activeTouches.Count > 0)
 				ExitFullScreen();
 		});
 

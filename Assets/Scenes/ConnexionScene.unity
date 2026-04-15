@@ -7409,6 +7409,10 @@ MonoBehaviour:
       PublicKeyToken=null
     _typeFullName: FadeSystem
     _pause: 1
+  - _typeAssemblyQualifiedName: SettingsManager, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: SettingsManager
+    _pause: 1
   - _typeAssemblyQualifiedName: SyncLocalization, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: SyncLocalization
@@ -7416,10 +7420,6 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: ConnexionManager, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: ConnexionManager
-    _pause: 1
-  - _typeAssemblyQualifiedName: SettingsManager, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: SettingsManager
     _pause: 1
   - _typeAssemblyQualifiedName: SendStatements, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -7520,6 +7520,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfaf62cfdbf311b4eaed1e362f47e99c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentSettingsValues: {fileID: 1946075104420157474}
 --- !u!114 &1645587996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16214,6 +16215,18 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!114 &1946075104420157474 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2018966005754547839, guid: 3320765803d90cb49a7b33d18ba49e3c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1946075104420157471}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229117187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91e6f28cb1037fa48a3a34942bef5d66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurrentSettingsValues
 --- !u!1 &1962508193414803499
 GameObject:
   m_ObjectHideFlags: 0
@@ -17416,8 +17429,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
+      propertyPath: m_ContentType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_KeyboardType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_CharacterLimit
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
       propertyPath: m_Navigation.m_Mode
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_CharacterValidation
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
@@ -17439,6 +17472,11 @@ PrefabInstance:
       propertyPath: m_Navigation.m_SelectOnRight
       value: 
       objectReference: {fileID: 1946340718}
+    - target: {fileID: 8766086984630181173, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_text
+      value: "\u200B"
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -21063,7 +21101,7 @@ GameObject:
   - component: {fileID: 8449305137141246620}
   - component: {fileID: 6016184646602801909}
   m_Layer: 5
-  m_Name: MiddleSetClass
+  m_Name: MiddleSetYear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23326,7 +23364,7 @@ PrefabInstance:
     - target: {fileID: 1848616423792054055, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
       propertyPath: m_Name
-      value: AskClass (TMP)
+      value: AskYear (TMP)
       objectReference: {fileID: 0}
     - target: {fileID: 8869929397520200795, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}

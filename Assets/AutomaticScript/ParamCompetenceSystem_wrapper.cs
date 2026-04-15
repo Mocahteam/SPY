@@ -24,6 +24,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject mainCanvas;
 	public TMPro.TMP_InputField levelFilterByName;
 	public UnityEngine.UI.Button closeBriefing;
+	public CurrentSettingsValues currentSettingsValues;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -48,6 +49,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
 		MainLoop.initAppropriateSystemField (system, "levelFilterByName", levelFilterByName);
 		MainLoop.initAppropriateSystemField (system, "closeBriefing", closeBriefing);
+		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
 	}
 
 	public void selectCompetencies(System.Int32 referentialId)

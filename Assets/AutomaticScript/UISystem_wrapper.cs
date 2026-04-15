@@ -12,6 +12,7 @@ public class UISystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject buttonStop;
 	public UnityEngine.GameObject canvas;
 	public UnityEngine.GameObject libraryPanel;
+	public CurrentSettingsValues currentSettingsValues;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -24,6 +25,7 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "buttonStop", buttonStop);
 		MainLoop.initAppropriateSystemField (system, "canvas", canvas);
 		MainLoop.initAppropriateSystemField (system, "libraryPanel", libraryPanel);
+		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
 	}
 
 	public void setExecutionView(System.Boolean value)

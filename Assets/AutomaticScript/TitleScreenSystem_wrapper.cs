@@ -10,6 +10,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject TileMissionPrefab;
 	public UnityEngine.GameObject quitButton;
 	public TMPro.TMP_Text SPYVersion;
+	public CurrentSettingsValues currentSettingsValues;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -20,6 +21,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "TileMissionPrefab", TileMissionPrefab);
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
 		MainLoop.initAppropriateSystemField (system, "SPYVersion", SPYVersion);
+		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
 	}
 
 	public void importLevelOrScenario(System.String content)

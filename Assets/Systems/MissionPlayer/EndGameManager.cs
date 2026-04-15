@@ -188,10 +188,6 @@ public class EndGameManager : FSystem {
 			if (ud.progression != null && (!ud.progression.ContainsKey(gameData.selectedScenario) || ud.progression[gameData.selectedScenario] < gameData.levelToLoad + 1))
 				ud.progression[gameData.selectedScenario] = gameData.levelToLoad + 1;
 
-			if (PlayerPrefs.GetInt(gameData.selectedScenario, 0) < gameData.levelToLoad + 1)
-				PlayerPrefs.SetInt(gameData.selectedScenario, gameData.levelToLoad + 1);
-			PlayerPrefs.Save();
-
 			//Check if next level exists in campaign
 			if (gameData.levelToLoad >= gameData.scenarios[gameData.selectedScenario].levels.Count - 1)
 			{
@@ -424,14 +420,10 @@ public class EndGameManager : FSystem {
 		UserData ud = gameData.GetComponent<UserData>();
 		DataLevel levelToLoad = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad];
 		string highScoreKey = Utility.extractFileName(levelToLoad.filePath);
-		int savedScore = ud.highScore != null ? (ud.highScore.ContainsKey(highScoreKey) ? ud.highScore[highScoreKey] : 0) : PlayerPrefs.GetInt(highScoreKey + gameData.scoreKey, 0);
+		int savedScore = ud.highScore == null || !ud.highScore.ContainsKey(highScoreKey) ? 0 : ud.highScore[highScoreKey];
 		
-		if (savedScore < scoredStars)
-		{
-			PlayerPrefs.SetInt(highScoreKey + gameData.scoreKey, scoredStars);
-			if (ud.highScore != null)
-				ud.highScore[highScoreKey] = scoredStars;
-		}
+		if (savedScore < scoredStars && ud.highScore != null)
+			ud.highScore[highScoreKey] = scoredStars;
 	}
 
 	// Cancel End (see ReloadState button in editor)

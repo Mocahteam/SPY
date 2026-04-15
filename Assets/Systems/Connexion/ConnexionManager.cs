@@ -395,13 +395,13 @@ public class ConnexionManager : FSystem
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });
 	}
 
-	private void askToSendUserData(string schoolClass, bool isTeacher)
+	private void askToSendUserData(string birthYear, bool isTeacher)
 	{
 		if (userData.progression == null)
 			userData.progression = new Dictionary<string, int>();
 		if (userData.highScore == null)
 			userData.highScore = new Dictionary<string, int>();
-		userData.schoolClass = schoolClass;
+		userData.birthYear = birthYear;
 		userData.isTeacher = isTeacher;
 		GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
 
@@ -461,7 +461,7 @@ public class ConnexionManager : FSystem
 					int levelToContinue;
 					Int32.TryParse(tokens[3], out levelToContinue);
 					userData.levelToContinue = levelToContinue;
-					userData.schoolClass = tokens[4];
+					userData.birthYear = tokens[4];
 					userData.isTeacher = tokens[5] == "1";
 					GBL_Interface.playerName = idSession;
 					GBL_Interface.userUUID = idSession;
