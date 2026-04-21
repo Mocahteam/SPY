@@ -175,7 +175,6 @@ public class MoveSystem : FSystem {
 		yield return null;
 		yield return null;
 		yield return null;
-		Debug.Log("Stop animations");
 		anim.SetFloat("Walk", -1f);
 		anim.SetFloat("Run", -1f);
 	}

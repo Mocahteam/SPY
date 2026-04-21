@@ -47,7 +47,7 @@ public class BriefingEditor : FSystem
 			overridedBriefing = dataLevel;
 			// remove all old briefing items
 			Transform viewportContent = editBriefingPanel.Find("Scroll View").GetChild(0).GetChild(0);
-			while (viewportContent.childCount > 3)
+			while (viewportContent.childCount > 0)
 			{
 				Transform child = viewportContent.GetChild(viewportContent.childCount - 1);
 				GameObjectManager.unbind(child.gameObject);

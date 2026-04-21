@@ -12,6 +12,7 @@ using DIG.GBLXAPI;
 using System.Xml;
 using Newtonsoft.Json;
 using System.IO;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// This manager manages connexion data requests
@@ -26,6 +27,7 @@ public class ConnexionManager : FSystem
 	public TMP_Text logs;
 	public TMP_Text progress;
 	public TMP_Text SPYVersion;
+	public CurrentSettingsValues currentSettingsValues;
 
 	private int webGL_fileLoaded = 0;
 	private int webGL_fileToLoad = 0;
@@ -35,6 +37,9 @@ public class ConnexionManager : FSystem
 	private bool webGL_askToEnableSendSystem = false;
 
 	private string loadLevelWithURL = "";
+
+	[DllImport("__Internal")]
+	private static extern void ShowHtmlImportSettings(); // call javascript
 
 	[Serializable]
 	public class WebGlScenarioList
@@ -74,8 +79,17 @@ public class ConnexionManager : FSystem
 				GBLXAPI.Init(GBL_Interface.lrsAddresses);
 			GBLXAPI.debugMode = false;
 		}
+        else
+        {
+			// reset account
+			GBL_Interface.playerName = "";
+			GBL_Interface.userUUID = "";
+		}
 
 		MainLoop.instance.StartCoroutine(waitLocalizationLoaded());
+
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+			ShowHtmlImportSettings();
 
 		Pause = true;
 	}
@@ -416,7 +430,6 @@ public class ConnexionManager : FSystem
 		Localization loc = gameData.GetComponent<Localization>();
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			Debug.Log(www.result+" "+www.error);
 			logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession) + "</color>\n" + logs.text;
 			Debug.Log(Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession));
 			yield return new WaitForSeconds(1f);
@@ -440,11 +453,9 @@ public class ConnexionManager : FSystem
 			{
 				string[] stringSeparators = new string[] { "#SEP#" };
 				string[] tokens = www.downloadHandler.text.Split(stringSeparators, StringSplitOptions.None);
-				Debug.Log(www.downloadHandler.text);
-				if (tokens.Length != 6)
+				if (tokens.Length != 7)
 				{
 					// Session corrupted, ask to enter a new session code.
-					Debug.LogWarning(www.error);
 					localCallback = null;
 					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[17], OkButton = loc.localization[5], CancelButton = loc.localization[0], call = localCallback });
 				}
@@ -463,6 +474,11 @@ public class ConnexionManager : FSystem
 					userData.levelToContinue = levelToContinue;
 					userData.birthYear = tokens[4];
 					userData.isTeacher = tokens[5] == "1";
+					// Si le joueur n'a pas touché aux paramètres (pas d'import de settings et pas de modification via l'UI) on charge le jeu de paramètre de son profil, sinon on saute cette étape pour garder ces choix immédiats
+					if (tokens[6] != "{}" && !SettingsManager.instance.settingsUpdated)
+					{
+						SettingsManager.instance.importSettings(tokens[6]); // => permet de mettre à jour les PlayerPrefs à partir des nouvelles valeurs de manière à ce qu'au chargement de la scène, les bons settings soient pris en compte
+					}
 					GBL_Interface.playerName = idSession;
 					GBL_Interface.userUUID = idSession;
 					GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });

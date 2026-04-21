@@ -1,6 +1,13 @@
+using System;
 using UnityEngine;
 
 public class CurrentSettingsValues : MonoBehaviour
+{
+	public RawSettingsValues values;
+}
+
+[Serializable]
+public class RawSettingsValues
 {
 	public int currentLanguage;
 	public int currentQuality;

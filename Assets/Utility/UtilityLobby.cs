@@ -46,7 +46,17 @@ public static class UtilityLobby
 			{
 				DataLevel dl = new DataLevel();
 				// get src
-				dl.filePath = new Uri(Application.streamingAssetsPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsoluteUri;
+				if (Application.platform == RuntimePlatform.WebGLPlayer)
+					dl.filePath = new Uri(Application.streamingAssetsPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsoluteUri;
+                else
+                {
+					if (File.Exists(new Uri(Application.persistentDataPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsolutePath))
+						dl.filePath = new Uri(Application.persistentDataPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsoluteUri;
+					else if (File.Exists(new Uri(Application.streamingAssetsPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsolutePath))
+						dl.filePath = new Uri(Application.streamingAssetsPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsoluteUri;
+					else
+						continue;
+				}
 
 				// get name
 				if (child.Attributes.GetNamedItem("name") != null)

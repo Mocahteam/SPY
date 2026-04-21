@@ -1992,6 +1992,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7006035028273490571, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006035028273490571, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
       propertyPath: m_fontSize
       value: 12
       objectReference: {fileID: 0}
@@ -2004,6 +2009,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_enableKerning
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_Text
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
@@ -2062,6 +2072,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8766086984630181173, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
+      propertyPath: m_text
+      value: "0\u200B"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766086984630181173, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
       propertyPath: m_fontSize
       value: 12
       objectReference: {fileID: 0}
@@ -2078,8 +2093,78 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2233003424919181792, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2126413382361835984}
+    - targetCorrespondingSourceObject: {fileID: 2233003424919181792, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3136424979099635364}
   m_SourcePrefab: {fileID: 100100000, guid: 3917c69ad87079e4f9ed10b40955fced, type: 3}
+--- !u!1 &1404180331304093360 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2233003424919181792, guid: 3917c69ad87079e4f9ed10b40955fced,
+    type: 3}
+  m_PrefabInstance: {fileID: 973233107688841040}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2126413382361835984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1404180331304093360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TooltipContent
+  text: "Indique ici le num\xE9ro des portes contr\xF4l\xE9es par ce terminal"
+--- !u!114 &3136424979099635364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1404180331304093360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.PropertyVariants.GameObjectLocalizer
+  m_TrackedObjects:
+  - rid: 2254590743753261189
+  references:
+    version: 2
+    RefIds:
+    - rid: 2254590743753261189
+      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+        asm: Unity.Localization}
+      data:
+        m_Target: {fileID: 2126413382361835984}
+        m_TrackedProperties:
+          items:
+          - rid: 2254590743753261190
+        m_UpdateType: 0
+        m_Changed:
+          m_PersistentCalls:
+            m_Calls: []
+    - rid: 2254590743753261190
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 362109540386463744
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: text
 --- !u!224 &4190721099205924807 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4011001891186411671, guid: 3917c69ad87079e4f9ed10b40955fced,
@@ -2895,7 +2980,7 @@ MonoBehaviour:
         m_TrackedProperties:
           items:
           - rid: 1
-          - rid: 2
+          - rid: 2254590743753261188
         m_UpdateType: 1
     - rid: 1
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
@@ -2911,7 +2996,7 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: m_Options.m_Options.Array.data[0].m_Text
-    - rid: 2
+    - rid: 2254590743753261188
       type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
         asm: Unity.Localization}
       data:
@@ -2919,7 +3004,7 @@ MonoBehaviour:
           m_TableReference:
             m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
           m_TableEntryReference:
-            m_KeyId: 15922307695722496
+            m_KeyId: 362108419148341248
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0
@@ -7049,6 +7134,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7006035028273490571, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006035028273490571, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
       propertyPath: m_fontSize
       value: 12
       objectReference: {fileID: 0}
@@ -7061,6 +7151,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_enableKerning
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_Text
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
@@ -7131,6 +7226,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766086984630181173, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_text
+      value: "0\u200B"
       objectReference: {fileID: 0}
     - target: {fileID: 8766086984630181173, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}

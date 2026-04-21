@@ -13,14 +13,19 @@ mergeInto(LibraryManager.library, {
 		document.body.removeChild(element);
 	},
 	
-	ShowHtmlButtons: function () {
-		var element = document.getElementById("proxyLoadFiles");
+	ShowHtmlLoadMissions: function () {
+		var element = document.getElementById("proxyLoadMissions");
 		element.classList.remove("visually-hidden");
 	},
 	
-	HideHtmlButtons: function () {
-		var element = document.getElementById("proxyLoadFiles");
+	HideHtmlLoadMissions: function () {
+		var element = document.getElementById("proxyLoadMissions");
 		element.classList.add("visually-hidden");
+	},
+	
+	ShowHtmlImportSettings: function () {
+		var element = document.getElementById("proxyLoadSettings");
+		element.classList.remove("visually-hidden");
 	},
   
 	IsMobileBrowser: function () {

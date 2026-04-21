@@ -5,16 +5,38 @@ public class SettingsManager_wrapper : BaseWrapper
 {
 	public UnityEngine.Transform settingsWindow;
 	public UnityEngine.UI.Selectable LoadingLogs;
+	public System.Boolean settingsUpdated;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "settingsWindow", settingsWindow);
 		MainLoop.initAppropriateSystemField (system, "LoadingLogs", LoadingLogs);
+		MainLoop.initAppropriateSystemField (system, "settingsUpdated", settingsUpdated);
 	}
 
 	public void saveParameters()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "saveParameters", null);
+	}
+
+	public void sendUserData()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "sendUserData", null);
+	}
+
+	public void exportSettings()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "exportSettings", null);
+	}
+
+	public void importSettingsFromJS(System.String content)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "importSettingsFromJS", content);
+	}
+
+	public void importSettings(System.String content)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "importSettings", content);
 	}
 
 	public void resetParameters()
@@ -45,6 +67,11 @@ public class SettingsManager_wrapper : BaseWrapper
 	public void decreaseUISize()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "decreaseUISize", null);
+	}
+
+	public void syncCanvasScaler()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "syncCanvasScaler", null);
 	}
 
 	public void setWallTransparency(System.Int32 value)
@@ -105,6 +132,11 @@ public class SettingsManager_wrapper : BaseWrapper
 	public void setParagraphSpacing(System.Int32 value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setParagraphSpacing", value);
+	}
+
+	public void selectAvatar(UnityEngine.UI.Image src)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "selectAvatar", src);
 	}
 
 }

@@ -85,7 +85,7 @@ public class CameraSystem : FSystem {
 		lseMoveLeft.RefreshString();
 
 		mainCamera = Camera.main;
-		if (currentSettingsValues.currentGameView == 1)
+		if (currentSettingsValues.values.currentGameView == 1)
 			ToggleOrthographicPerspective();
 
 		// set current camera target (the first player)
@@ -101,7 +101,7 @@ public class CameraSystem : FSystem {
 		});
 
 		f_playingMode.addEntryCallback(delegate (GameObject go) {
-			if (currentSettingsValues.currentCameraTracking == 1)
+			if (currentSettingsValues.values.currentCameraTracking == 1)
 				focusOnNearestAgent();
 			else
 				unfocusAgent();
@@ -285,7 +285,7 @@ public class CameraSystem : FSystem {
 			mainCamera.transform.parent.rotation = new Quaternion(0, 0, 0, 0);
 			if (mainCamera.orthographic)
 				mainCamera.transform.parent.Rotate(Vector3.back, -27); // -27 is a magic constant to put camera in direction of ground
-			currentSettingsValues.currentGameView = mainCamera.orthographic ? 1 : 0;
+			currentSettingsValues.values.currentGameView = mainCamera.orthographic ? 1 : 0;
 		}
 	}
 
@@ -366,7 +366,6 @@ public class CameraSystem : FSystem {
 			float localDistance = Vector3.Distance(cameraTarget.position, agent.transform.position);
 			if (localDistance < minDistance && agent.CompareTag("Player"))
 			{
-				Debug.Log(agent.name);
 				agentCandidate = agent;
 				minDistance = localDistance;
 			}

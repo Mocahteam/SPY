@@ -28,7 +28,7 @@ public class Tooltip : MonoBehaviour
 
     public void ShowTooltip(string tooltipString)
     {
-        if (csv.currentTooltipView == 1)
+        if (csv.values.currentTooltipView == 1)
         {
             state = true;
             tooltipText.text = tooltipString;

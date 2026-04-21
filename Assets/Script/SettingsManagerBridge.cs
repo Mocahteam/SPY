@@ -13,6 +13,16 @@ public class SettingsManagerBridge : MonoBehaviour
 		SettingsManager.instance.saveParameters();
 	}
 
+	public void sendUserData()
+	{
+		SettingsManager.instance.sendUserData();
+	}
+
+	public void exportSettings()
+    {
+		SettingsManager.instance.exportSettings();
+    }
+
 	public void setQualitySetting(int value)
     {
         SettingsManager.instance.setQualitySetting(value);

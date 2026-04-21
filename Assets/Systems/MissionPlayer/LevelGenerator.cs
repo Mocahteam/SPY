@@ -38,7 +38,7 @@ public class LevelGenerator : FSystem {
 	public GameObject[] skinPrefabs;
 
 	[DllImport("__Internal")]
-	private static extern void HideHtmlButtons(); // call javascript
+	private static extern void HideHtmlLoadMissions(); // call javascript
 
 	public LevelGenerator()
 	{
@@ -61,7 +61,7 @@ public class LevelGenerator : FSystem {
 			scenarioName.text = Utility.extractLocale(gameData.selectedScenario);
 			levelName.text = Utility.extractLocale(levelToLoad.missionName);
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
-				HideHtmlButtons();
+				HideHtmlLoadMissions();
 			f_executionPanels.addEntryCallback(computeExecutionPanelWidth);
             GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 			{

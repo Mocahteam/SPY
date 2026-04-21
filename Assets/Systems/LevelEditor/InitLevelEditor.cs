@@ -20,7 +20,7 @@ public class InitLevelEditor : FSystem
 	private static extern bool IsMobileBrowser(); // call javascript
 
 	[DllImport("__Internal")]
-	private static extern void HideHtmlButtons(); // call javascript
+	private static extern void HideHtmlLoadMissions(); // call javascript
 
 	// Use to init system before the first onProcess call
 	protected override void onStart()
@@ -42,7 +42,7 @@ public class InitLevelEditor : FSystem
 			GameObjectManager.setGameObjectState(paramContent, false);
 
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
-				HideHtmlButtons();
+				HideHtmlLoadMissions();
 
 			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
 			{

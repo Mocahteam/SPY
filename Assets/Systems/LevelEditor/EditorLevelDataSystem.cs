@@ -66,18 +66,27 @@ public class EditorLevelDataSystem : FSystem {
 		foreach (Transform viewportForEditableContainer in editableContainers)
 			GameObjectManager.addComponent<ForceRemoveContainer>(viewportForEditableContainer.gameObject);
 
+		if (unlockAll)
+			this.unlockAll();
+		else
+			hideAll();
+	}
+
+	// See UnlimitedEverything button in MissionEditor
+	public void unlockAll()
+    {
 		foreach (GameObject go in f_editorblocks)
-        {
-			if (unlockAll)
-			{
-				go.transform.Find("HideToggle").GetComponent<Toggle>().isOn = false;
-				go.transform.Find("LimitToggle").GetComponent<Toggle>().isOn = true;
-			}
-			else
-            {
-				go.transform.Find("HideToggle").GetComponent<Toggle>().isOn = true;
-			}
+		{
+			go.transform.Find("HideToggle").GetComponent<Toggle>().isOn = false;
+			go.transform.Find("LimitToggle").GetComponent<Toggle>().isOn = true;
 		}
+	}
+
+	// See HideAll button in MissionEditor
+	public void hideAll()
+	{
+		foreach (GameObject go in f_editorblocks)
+			go.transform.Find("HideToggle").GetComponent<Toggle>().isOn = true;
 	}
 
 	private void loadLevel(GameObject go)

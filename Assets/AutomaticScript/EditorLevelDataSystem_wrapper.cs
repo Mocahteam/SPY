@@ -35,6 +35,16 @@ public class EditorLevelDataSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "resetMetaData", unlockAll);
 	}
 
+	public void unlockAll()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "unlockAll", null);
+	}
+
+	public void hideAll()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "hideAll", null);
+	}
+
 	public void preventMinusSign(TMPro.TMP_InputField input)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "preventMinusSign", input);

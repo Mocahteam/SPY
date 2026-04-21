@@ -61,7 +61,8 @@ public class EndGameManager : FSystem {
 	private IEnumerator delayDisableEndPanel()
     {
 		yield return null;
-		GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
+		if (f_requireEndPanel.Count == 0)
+			 GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
 	}
 
 	private IEnumerator delayCheckEnd()

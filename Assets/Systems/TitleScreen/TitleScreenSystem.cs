@@ -39,7 +39,7 @@ public class TitleScreenSystem : FSystem {
 	private UnityAction localCallback;
 
 	[DllImport("__Internal")]
-	private static extern void ShowHtmlButtons(); // call javascript
+	private static extern void ShowHtmlLoadMissions(); // call javascript
 
 	// L'instance
 	public static TitleScreenSystem instance;
@@ -95,7 +95,7 @@ public class TitleScreenSystem : FSystem {
 
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 			{
-				ShowHtmlButtons();
+				ShowHtmlLoadMissions();
 				GameObjectManager.setGameObjectState(quitButton, false);
 			}
 		}
@@ -103,17 +103,11 @@ public class TitleScreenSystem : FSystem {
 		Pause = true;
 	}
 
-	private class JavaScriptData
-	{
-		public string name;
-		public string content;
-	}
-
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
 	public void importLevelOrScenario(string content)
 	{
 		Localization loc = gameData.GetComponent<Localization>();
-		JavaScriptData jsd = JsonUtility.FromJson<JavaScriptData>(content);
+		Utility.JavaScriptData jsd = JsonUtility.FromJson<Utility.JavaScriptData>(content);
 		try
 		{
 			string fakeUri = Application.streamingAssetsPath + "/Levels/LocalFiles/" + jsd.name; 
@@ -393,7 +387,7 @@ public class TitleScreenSystem : FSystem {
 			gameDescription.GetComponentInChildren<TMP_Text>(true).text = "";
 			GameObjectManager.setGameObjectState(miniView.gameObject, true);
 			// try to load mini view
-			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].filePath.Replace(".xml", currentSettingsValues.currentLanguage == 1 ? "_en.png" : ".png"), miniView));
+			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].filePath.Replace(".xml", currentSettingsValues.values.currentLanguage == 1 ? "_en.png" : ".png"), miniView));
 		}
 		// Else locked mission
         else

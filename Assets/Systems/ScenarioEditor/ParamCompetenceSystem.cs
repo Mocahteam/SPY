@@ -170,7 +170,7 @@ public class ParamCompetenceSystem : FSystem
 
 		MainLoop.instance.StartCoroutine(delayRefreshLevelInfo());
 
-		if (Application.platform == RuntimePlatform.WindowsEditor)
+		if (Application.platform != RuntimePlatform.WebGLPlayer)
 			DebugLogLevelsCompetencies();
 
 		competenciesLoadedAndReady = true;
@@ -413,8 +413,10 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	private void showLevelInfo(string path, DataLevel overridedData = null) { 
+		// try to find file in persistent directory
 		string absolutePath = new Uri(Application.persistentDataPath + "/" + path).AbsoluteUri;
 		string mainPath = Application.persistentDataPath;
+		// if not found try to use streaming assets
 		if (!gameData.levels.ContainsKey(absolutePath))
 		{
 			absolutePath = new Uri(Application.streamingAssetsPath + "/" + path).AbsoluteUri;
@@ -429,7 +431,7 @@ public class ParamCompetenceSystem : FSystem
 			Image miniView = contentInfoCompatibleLevel.transform.Find("LevelMiniView").GetComponent<Image>();
 			GameObjectManager.setGameObjectState(miniView.gameObject, false);
 			// Display miniView
-			string imgPath = new Uri(mainPath + "/" + path.Replace(".xml", currentSettingsValues.currentLanguage == 1 ? "_en.png" : ".png")).AbsoluteUri;
+			string imgPath = new Uri(mainPath + "/" + path.Replace(".xml", currentSettingsValues.values.currentLanguage == 1 ? "_en.png" : ".png")).AbsoluteUri;
 
 			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(imgPath, miniView));
 			XmlNode levelSelected = gameData.levels[absolutePath];
@@ -664,7 +666,9 @@ public class ParamCompetenceSystem : FSystem
 	private void testLevelPath(string levelToLoad)
 	{
 		DataLevel dl = new DataLevel();
-		dl.filePath = new Uri(Application.streamingAssetsPath + "/" + levelToLoad).AbsoluteUri;
+		dl.filePath = new Uri(Application.persistentDataPath + "/" + levelToLoad).AbsoluteUri;
+		if (!gameData.levels.ContainsKey(dl.filePath))
+			dl.filePath = new Uri(Application.streamingAssetsPath + "/" + levelToLoad).AbsoluteUri;
 		dl.missionName = Path.GetFileNameWithoutExtension(dl.filePath);
 		testLevel(dl, UtilityLobby.testFromUrl);
 	}

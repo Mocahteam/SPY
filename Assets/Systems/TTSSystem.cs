@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class TTSSystem : FSystem
@@ -96,8 +97,8 @@ public class TTSSystem : FSystem
             defTTS(previousSelectedGO);
         }
 
-        // send statement if TTS state change
-        if (Application.platform == RuntimePlatform.WebGLPlayer && gameData.newTTS_state != gameData.oldTTS_state)
+        // send statement if TTS state change in all scenes except ConnexionScene because we don't know the user id
+        if (Application.platform == RuntimePlatform.WebGLPlayer && gameData.newTTS_state != gameData.oldTTS_state && SceneManager.GetActiveScene().name != "ConnexionScene")
         {
             gameData.oldTTS_state = gameData.newTTS_state;
             GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new

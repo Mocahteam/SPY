@@ -12,6 +12,12 @@ using UnityEngine.UI;
 
 public static class Utility
 {
+	public class JavaScriptData
+	{
+		public string name;
+		public string content;
+	}
+
 	public static void removeComments(XmlNode node)
 	{
 		for (int i = node.ChildNodes.Count - 1; i >= 0; i--)

@@ -275,7 +275,6 @@ public class SaveFileSystem : FSystem
 						levelExport += "\t<door posX=\"" + (d.col + 1 - minCol) + "\" posY=\"" + (d.line + 1 - minLine) + "\" slotId=\"" + d.slot + "\" direction=\"" + (int)d.orientation + "\" state=\"" + (d.state ? "1" : "0") + "\" />\n\n";
 						break;
 					case PlayerRobot pr:
-						Debug.Log(pr.orientation);
 						levelExport += "\t<robot inputLine=\"" + pr.inputLine + "\" posX=\"" + (pr.col + 1 - minCol) + "\" posY=\"" + (pr.line + 1 - minLine) + "\" direction=\"" + (int)pr.orientation + "\" skin=\"" + UtilityEditor.SkinToInt(pr.type) + "\" />\n\n";
 						break;
 					case EnemyRobot er:

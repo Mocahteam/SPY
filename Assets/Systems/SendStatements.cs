@@ -12,6 +12,8 @@ public class SendStatements : FSystem {
 
     public static SendStatements instance;
 
+    public CurrentSettingsValues currentSettingsValues;
+
     private LrsRemoteQueue statementQueue;
     private GameData gameData;
     private UserData userData;
@@ -43,7 +45,7 @@ public class SendStatements : FSystem {
 
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
-        if (gameData.sendStatementEnabled)
+        if (gameData.sendStatementEnabled && GBL_Interface.playerName != "")
         {
             // Do not use callbacks because in case in the same frame actions are removed on a GO and another component is added in another system, family will not trigger again callback because component will not be processed
             foreach (GameObject go in f_actionForLRS)
@@ -89,9 +91,9 @@ public class SendStatements : FSystem {
 
     private void saveUserData (GameObject go)
     {
-        if (gameData.sendStatementEnabled)
+        if (gameData.sendStatementEnabled && GBL_Interface.playerName != "") // save only if we know the player
         {
-            MainLoop.instance.StartCoroutine(PostUserData(GBL_Interface.playerName, userData.birthYear, userData.isTeacher, JsonConvert.SerializeObject(userData.progression), JsonConvert.SerializeObject(userData.highScore), userData.currentScenario, userData.levelToContinue));
+            MainLoop.instance.StartCoroutine(PostUserData(GBL_Interface.playerName, userData.birthYear, userData.isTeacher, JsonConvert.SerializeObject(userData.progression), JsonConvert.SerializeObject(userData.highScore), userData.currentScenario, userData.levelToContinue, JsonUtility.ToJson(currentSettingsValues.values)));
             foreach (SendUserData sp in go.GetComponents<SendUserData>())
                 GameObjectManager.removeComponent(sp);
             if (statementQueue != null)
@@ -99,16 +101,16 @@ public class SendStatements : FSystem {
         }
     }
 
-    private IEnumerator PostUserData(string idSession, string year, bool isTeacher, string progression, string highScore, string currentScenario, int levelToContinue)
+    private IEnumerator PostUserData(string idSession, string year, bool isTeacher, string progression, string highScore, string currentScenario, int levelToContinue, string settings)
     {
         progression = progression == "null" ? "{}" : progression;
         highScore = highScore == "null" ? "{}" : highScore;
-        Debug.Log(idSession + "_"+ year + "_"+progression + "_" + highScore + "_" + currentScenario);
-        UnityWebRequest www = UnityWebRequest.PostWwwForm("https://spy.lip6.fr/ServerREST_LIP6/index_new.php", "{\"idSession\":\"" + idSession + "\",\"birthYear\":\"" + year + "\",\"isTeacher\":\""+(isTeacher ? 1 : 0)+"\",\"progression\":" + progression + ",\"highScore\":" + highScore + ",\"currentScenario\":\"" + currentScenario + "\",\"levelToContinue\":" + levelToContinue + "}");
+        //Debug.Log("{\"idSession\":\"" + idSession + "\",\"birthYear\":\"" + year + "\",\"isTeacher\":"+(isTeacher ? 1 : 0)+",\"progression\":" + progression + ",\"highScore\":" + highScore + ",\"currentScenario\":\"" + currentScenario + "\",\"levelToContinue\":" + levelToContinue + ",\"settings\":"+settings+"}");
+        UnityWebRequest www = UnityWebRequest.PostWwwForm("https://spy.lip6.fr/ServerREST_LIP6/index_new.php", "{\"idSession\":\"" + idSession + "\",\"birthYear\":\"" + year + "\",\"isTeacher\":"+(isTeacher ? 1 : 0)+",\"progression\":" + progression + ",\"highScore\":" + highScore + ",\"currentScenario\":\"" + currentScenario + "\",\"levelToContinue\":" + levelToContinue + ",\"settings\":"+settings+"}");
 
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
-            Debug.LogWarning(www.error);
+            Debug.LogWarning(www.error + " "+ www.downloadHandler.text);
     }
 }
