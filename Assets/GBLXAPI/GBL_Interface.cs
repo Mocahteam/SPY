@@ -12,6 +12,8 @@ using System.Collections.Generic;
 
 using DIG.GBLXAPI.Builders;
 using UnityEngine;
+using System.Runtime.Versioning;
+using System.Linq;
 
 // --------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------
@@ -27,13 +29,18 @@ public static class GBL_Interface {
 
     // Fill in these fields for GBLxAPI setup.
     //Statements will be sent to all addresses in this list
-    public static List<GBLConfig> lrsAddresses = new List<GBLConfig>() {
-        // Root statement to Dev store in editor and Prod store else
-        Application.isEditor ? new GBLConfig("https://lrsels.lip6.fr/data/xAPI", "e6efcf3eac5c03e121af621dae0df3a50c8733f0", "ffda037ebf1368a89e5b8b59d30a1b77beebc27e") : new GBLConfig("https://lrsels.lip6.fr/data/xAPI", "dce1d359061aea8be2ca295cf8aa7825cd042137", "7d6370cd19fff1bedd79b919072622b0339365d0")
-    };
+    public static List<GBLConfig> gblConfigs = GetLrsConfigs().Select(config => new GBLConfig(config)).ToList();
 	public static string userUUID = ""; // Muratet : overrided in TitleScreenSystem system
     public static string playerName = ""; // Muratet : overrided in TitleScreenSystem system
 
+    private static List<LrsConfig> GetLrsConfigs()
+    {
+        LrsSettings settings = LrsSettings.GetOrCreate();
+        var lrsList = settings.lrsBasicConfigs.Cast<LrsConfig>().Concat(settings.lrsOAuth2Configs.Cast<LrsConfig>()).ToList();
+        Debug.LogWarning("Here is a list:");
+        Debug.LogWarning(lrsList);
+        return lrsList;
+    }
     // ------------------------------------------------------------------------
     // Sample Gameplay GBLxAPI Triggers
     // ------------------------------------------------------------------------
