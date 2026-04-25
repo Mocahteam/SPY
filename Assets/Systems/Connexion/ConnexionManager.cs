@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using FYFY;
 using System.Collections;
-using UnityEngine.UI;
 using TMPro;
 using System;
 using System.Linq;
@@ -66,6 +65,16 @@ public class ConnexionManager : FSystem
 		}
 		gameData = go.GetComponent<GameData>();
 		userData = go.GetComponent<UserData>();
+		// Reset user data
+		userData.birthYear = "undef";
+		userData.isTeacher = false;
+		userData.progression = null;
+		userData.highScore = null;
+		userData.currentScenario = "";
+		userData.levelToContinue = -1;
+		userData.unlockedAvatars = new List<int>();
+		userData.avatarSelected = 2; // Le troixième (robot de genre neutre) est celui par défaut
+
 		if (webGL_askToEnableSendSystem)
 			gameData.sendStatementEnabled = true;
 		GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
@@ -354,16 +363,11 @@ public class ConnexionManager : FSystem
 				GBL_Interface.playerName = formatedString;
 				GBL_Interface.userUUID = formatedString;
 
-				userData.progression = null;
-				userData.highScore = null;
-				userData.currentScenario = "";
-				userData.levelToContinue = -1;
-
 				foreach (GameObject sID in f_sessionId)
 					sID.GetComponent<TMP_Text>().text = string.Join(" ", formatedString.ToCharArray());
 
 				// enregistrer cet ID dans la BD pour éviter les collisions
-				askToSendUserData("undef", false);
+				GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
 			}
 			else
 			{
@@ -396,9 +400,9 @@ public class ConnexionManager : FSystem
 	}
 
 	// See ButtonOkNoted button in ConnexionPanel panel in ConnexionScene scene
-	public void synchUserData(GameObject go)
+	public void synchUserData()
 	{
-		askToSendUserData(go.GetComponentInChildren<TMP_InputField>().text, go.GetComponentInChildren<Toggle>().isOn);
+		GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
 		MainLoop.instance.StartCoroutine(delayLoadingTitleScreen());
 	}
 
@@ -409,21 +413,9 @@ public class ConnexionManager : FSystem
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });
 	}
 
-	private void askToSendUserData(string birthYear, bool isTeacher)
-	{
-		if (userData.progression == null)
-			userData.progression = new Dictionary<string, int>();
-		if (userData.highScore == null)
-			userData.highScore = new Dictionary<string, int>();
-		userData.birthYear = birthYear;
-		userData.isTeacher = isTeacher;
-		GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
-
-	}
-
 	private IEnumerator GetProgressionWebRequest(string idSession)
 	{
-		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/index_new.php?idSession=" + idSession);
+		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php?idSession=" + idSession);
 		logs.text = "";
 		progress.text = "0%";
 		yield return www.SendWebRequest();
@@ -453,7 +445,7 @@ public class ConnexionManager : FSystem
 			{
 				string[] stringSeparators = new string[] { "#SEP#" };
 				string[] tokens = www.downloadHandler.text.Split(stringSeparators, StringSplitOptions.None);
-				if (tokens.Length != 7)
+				if (tokens.Length != 9)
 				{
 					// Session corrupted, ask to enter a new session code.
 					localCallback = null;
@@ -470,7 +462,8 @@ public class ConnexionManager : FSystem
 						userData.highScore = new Dictionary<string, int>();
 					userData.currentScenario = tokens[2];
 					int levelToContinue;
-					Int32.TryParse(tokens[3], out levelToContinue);
+					if (!Int32.TryParse(tokens[3], out levelToContinue))
+						levelToContinue = -1;
 					userData.levelToContinue = levelToContinue;
 					userData.birthYear = tokens[4];
 					userData.isTeacher = tokens[5] == "1";
@@ -479,6 +472,13 @@ public class ConnexionManager : FSystem
 					{
 						SettingsManager.instance.importSettings(tokens[6]); // => permet de mettre à jour les PlayerPrefs à partir des nouvelles valeurs de manière à ce qu'au chargement de la scène, les bons settings soient pris en compte
 					}
+					userData.unlockedAvatars = JsonConvert.DeserializeObject<List<int>>(tokens[7]);
+					if (userData.unlockedAvatars == null)
+						userData.unlockedAvatars = new List<int>();
+					int avatarSelected;
+					if (!Int32.TryParse(tokens[8], out avatarSelected))
+						avatarSelected = 2; // Le troisième est le robot non genré
+					userData.avatarSelected = avatarSelected;
 					GBL_Interface.playerName = idSession;
 					GBL_Interface.userUUID = idSession;
 					GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });

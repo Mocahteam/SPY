@@ -139,4 +139,14 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "selectAvatar", src);
 	}
 
+	public void setBirthYear(System.String year)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setBirthYear", year);
+	}
+
+	public void setIsTeacher(System.Boolean state)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setIsTeacher", state);
+	}
+
 }

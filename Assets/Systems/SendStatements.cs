@@ -93,7 +93,7 @@ public class SendStatements : FSystem {
     {
         if (gameData.sendStatementEnabled && GBL_Interface.playerName != "") // save only if we know the player
         {
-            MainLoop.instance.StartCoroutine(PostUserData(GBL_Interface.playerName, userData.birthYear, userData.isTeacher, JsonConvert.SerializeObject(userData.progression), JsonConvert.SerializeObject(userData.highScore), userData.currentScenario, userData.levelToContinue, JsonUtility.ToJson(currentSettingsValues.values)));
+            MainLoop.instance.StartCoroutine(PostUserData(GBL_Interface.playerName, userData.birthYear, userData.isTeacher, JsonConvert.SerializeObject(userData.progression), JsonConvert.SerializeObject(userData.highScore), userData.currentScenario, userData.levelToContinue, JsonUtility.ToJson(currentSettingsValues.values), JsonConvert.SerializeObject(userData.unlockedAvatars), userData.avatarSelected));
             foreach (SendUserData sp in go.GetComponents<SendUserData>())
                 GameObjectManager.removeComponent(sp);
             if (statementQueue != null)
@@ -101,12 +101,13 @@ public class SendStatements : FSystem {
         }
     }
 
-    private IEnumerator PostUserData(string idSession, string year, bool isTeacher, string progression, string highScore, string currentScenario, int levelToContinue, string settings)
+    private IEnumerator PostUserData(string idSession, string year, bool isTeacher, string progression, string highScore, string currentScenario, int levelToContinue, string settings, string unlockedAvatars, int avatarSelected)
     {
         progression = progression == "null" ? "{}" : progression;
         highScore = highScore == "null" ? "{}" : highScore;
+        unlockedAvatars = unlockedAvatars == "null" ? "[]" : unlockedAvatars;
         //Debug.Log("{\"idSession\":\"" + idSession + "\",\"birthYear\":\"" + year + "\",\"isTeacher\":"+(isTeacher ? 1 : 0)+",\"progression\":" + progression + ",\"highScore\":" + highScore + ",\"currentScenario\":\"" + currentScenario + "\",\"levelToContinue\":" + levelToContinue + ",\"settings\":"+settings+"}");
-        UnityWebRequest www = UnityWebRequest.PostWwwForm("https://spy.lip6.fr/ServerREST_LIP6/index_new.php", "{\"idSession\":\"" + idSession + "\",\"birthYear\":\"" + year + "\",\"isTeacher\":"+(isTeacher ? 1 : 0)+",\"progression\":" + progression + ",\"highScore\":" + highScore + ",\"currentScenario\":\"" + currentScenario + "\",\"levelToContinue\":" + levelToContinue + ",\"settings\":"+settings+"}");
+        UnityWebRequest www = UnityWebRequest.PostWwwForm("https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php", "{\"idSession\":\"" + idSession + "\",\"birthYear\":\"" + year + "\",\"isTeacher\":"+(isTeacher ? 1 : 0)+",\"progression\":" + progression + ",\"highScore\":" + highScore + ",\"currentScenario\":\"" + currentScenario + "\",\"levelToContinue\":" + levelToContinue + ",\"settings\":"+settings+",\"unlockedAvatars\":"+unlockedAvatars+",\"avatarSelected\":"+avatarSelected+"}");
 
         yield return www.SendWebRequest();
 

@@ -11,6 +11,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject quitButton;
 	public TMPro.TMP_Text SPYVersion;
 	public CurrentSettingsValues currentSettingsValues;
+	public UnityEngine.Transform avatarsLibrary;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -22,6 +23,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
 		MainLoop.initAppropriateSystemField (system, "SPYVersion", SPYVersion);
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
+		MainLoop.initAppropriateSystemField (system, "avatarsLibrary", avatarsLibrary);
 	}
 
 	public void importLevelOrScenario(System.String content)
@@ -82,6 +84,11 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public void quitGame()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "quitGame", null);
+	}
+
+	public void sendUserData()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "sendUserData", null);
 	}
 
 }

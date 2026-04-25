@@ -16,6 +16,7 @@ public class TitleScreenSystem : FSystem {
 	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
 	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
 	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
+	private Family f_avatarTarget = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_AvatarTarget"));
 
 	private GameData gameData;
 	private UserData userData;
@@ -27,6 +28,7 @@ public class TitleScreenSystem : FSystem {
 	public GameObject quitButton;
 	public TMP_Text SPYVersion;
 	public CurrentSettingsValues currentSettingsValues;
+	public Transform avatarsLibrary;
 
 	private Transform gameList;
 	private Transform gameDetails;
@@ -67,6 +69,17 @@ public class TitleScreenSystem : FSystem {
 
 			foreach (GameObject sID in f_sessionId)
 				sID.GetComponent<TMP_Text>().text = string.Join(" ", GBL_Interface.playerName.ToCharArray());
+
+			// Affichage du bon avatar come icône de profil
+			foreach (GameObject go in f_avatarTarget)
+				go.GetComponent<Image>().sprite = avatarsLibrary.GetChild(userData.avatarSelected).Find("Photo").GetComponent<Image>().sprite;
+			// Dévérouiller les bons avatars dans la bibliothèque des avatars
+			foreach (int avatarId in userData.unlockedAvatars)
+			{
+				Transform avatar = avatarsLibrary.GetChild(avatarId);
+				avatar.GetComponent<Toggle>().interactable = true;
+				GameObjectManager.setGameObjectState(avatar.Find("Locked").gameObject, false);
+			}
 
 			// gestion du bouton continue
 			GameObjectManager.setGameObjectState(continueButton.gameObject, gameData.scenarios.ContainsKey(userData.currentScenario) && userData.levelToContinue != -1 && userData.levelToContinue < gameData.scenarios[userData.currentScenario].levels.Count);
@@ -486,5 +499,11 @@ public class TitleScreenSystem : FSystem {
 	// See Quitter button in editor
 	public void quitGame(){
 		Application.Quit();
+	}
+
+	// See OkButton in ProfilPanel in ConnexionScene scene
+	public void sendUserData()
+	{
+		GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
 	}
 }

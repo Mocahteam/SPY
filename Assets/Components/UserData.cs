@@ -13,6 +13,8 @@ public class UserData : MonoBehaviour {
 	public Dictionary<string, int> highScore; // store for each level its star number
 	public string currentScenario;
 	public int levelToContinue;
+	public List<int> unlockedAvatars;
+	public int avatarSelected;
 
 	private long lastFocusOut = -1;
 

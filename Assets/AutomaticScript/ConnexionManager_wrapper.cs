@@ -35,9 +35,9 @@ public class ConnexionManager_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "newGame", null);
 	}
 
-	public void synchUserData(UnityEngine.GameObject go)
+	public void synchUserData()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "synchUserData", go);
+		MainLoop.callAppropriateSystemMethod (system, "synchUserData", null);
 	}
 
 	public void askToLoadLevel(System.String levelToLoad)

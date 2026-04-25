@@ -9,7 +9,6 @@ using System;
 using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using System.Collections;
-using UnityEngine.EventSystems;
 
 public class ParamCompetenceSystem : FSystem
 {

@@ -63,6 +63,8 @@ public class SettingsManager : FSystem
 	public Selectable LoadingLogs;
 	public bool settingsUpdated = false;
 
+	private UserData userData;
+
 	public SettingsManager()
 	{
 		instance = this;
@@ -70,6 +72,10 @@ public class SettingsManager : FSystem
 
 	protected override void onStart()
 	{
+		GameObject go = GameObject.Find("GameData");
+		if (go != null)
+			userData = go.GetComponent<UserData>();
+
 		settingsContent = settingsWindow.Find("BackgroundPanel/Scroll View/Viewport/Content");
 		flexibleColorPicker = settingsWindow.GetComponentInChildren<FlexibleColorPicker>(true);
 		ds = settingsWindow.GetComponent<DefaultSettingsValues>();
@@ -1048,11 +1054,23 @@ public class SettingsManager : FSystem
 			syncGraphicColor(go, cs.values.currentCaptorFalseColor);
 	}
 
+	// See avatar selector in ConnexionScene and TitleScreen
 	public void selectAvatar(Image src)
     {
 		foreach (GameObject go in f_avatarTarget)
-        {
 			go.GetComponent<Image>().sprite = src.sprite;
-        }
+		userData.avatarSelected = src.transform.parent.GetSiblingIndex();
+	}
+
+	// see InputField in MiddleSetYear un ConnexionScene
+	public void setBirthYear(string year)
+    {
+		userData.birthYear = year;
+    }
+
+	// see Toggle in MiddleSetYear un ConnexionScene
+	public void setIsTeacher(bool state)
+	{
+		userData.isTeacher = state;
 	}
 }
