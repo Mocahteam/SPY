@@ -4824,7 +4824,7 @@ PrefabInstance:
     - target: {fileID: 7355655436889386015, guid: 56dc7a3bdc09fc74682ddd513bcc1ed8,
         type: 3}
       propertyPath: m_text
-      value: High
+      value: Haute
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5179,7 +5179,7 @@ PrefabInstance:
     - target: {fileID: 7355655436889386015, guid: 56dc7a3bdc09fc74682ddd513bcc1ed8,
         type: 3}
       propertyPath: m_text
-      value: Controller
+      value: "Contr\xF4leur"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7295,7 +7295,7 @@ PrefabInstance:
     - target: {fileID: 7355655436889386015, guid: 56dc7a3bdc09fc74682ddd513bcc1ed8,
         type: 3}
       propertyPath: m_text
-      value: Yes
+      value: Oui
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -23991,6 +23991,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3142548422372638867, guid: 6b97f5c163e9a6e449758a902d9345d0,
+        type: 3}
+      propertyPath: replacementText
+      value: "Emplacement du bouton d'activation de la synth\xE8se vocale"
+      objectReference: {fileID: 0}
     - target: {fileID: 3619346315125313311, guid: 6b97f5c163e9a6e449758a902d9345d0,
         type: 3}
       propertyPath: m_Navigation.m_SelectOnUp
@@ -24014,7 +24019,7 @@ PrefabInstance:
     - target: {fileID: 7401282732632388680, guid: 6b97f5c163e9a6e449758a902d9345d0,
         type: 3}
       propertyPath: m_text
-      value: Location of the text-to-speech activation button
+      value: "Emplacement du bouton d'activation de la synth\xE8se vocale"
       objectReference: {fileID: 0}
     - target: {fileID: 7401282732632388680, guid: 6b97f5c163e9a6e449758a902d9345d0,
         type: 3}
@@ -24122,7 +24127,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 229767268755976071, guid: 6b97f5c163e9a6e449758a902d9345d0, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 366411865638732498, guid: 6b97f5c163e9a6e449758a902d9345d0,
@@ -24150,18 +24156,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
---- !u!114 &2408614608964806132 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7401282732632388680, guid: 6b97f5c163e9a6e449758a902d9345d0,
-    type: 3}
-  m_PrefabInstance: {fileID: 5177940378906579388}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &2928686748022464754 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8034268094092620110, guid: 6b97f5c163e9a6e449758a902d9345d0,
@@ -24262,9 +24256,9 @@ MonoBehaviour:
   m_UpdateString:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2408614608964806132}
-        m_TargetAssemblyTypeName: TMPro.TextMeshProUGUI, Unity.TextMeshPro
-        m_MethodName: SetText
+      - m_Target: {fileID: 7802255958886617391}
+        m_TargetAssemblyTypeName: ImgReplacementText, Assembly-CSharp
+        m_MethodName: setReplacementText
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -24277,6 +24271,18 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!114 &7802255958886617391 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3142548422372638867, guid: 6b97f5c163e9a6e449758a902d9345d0,
+    type: 3}
+  m_PrefabInstance: {fileID: 5177940378906579388}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4813922429388870510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 192574f1333c5d44682932c673898966, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImgReplacementText
 --- !u!114 &8494137558652493475 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3619346315125313311, guid: 6b97f5c163e9a6e449758a902d9345d0,
@@ -30703,7 +30709,7 @@ PrefabInstance:
     - target: {fileID: 7355655436889386015, guid: 56dc7a3bdc09fc74682ddd513bcc1ed8,
         type: 3}
       propertyPath: m_text
-      value: Yes
+      value: Oui
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -32984,7 +32990,7 @@ PrefabInstance:
     - target: {fileID: 7355655436889386015, guid: 56dc7a3bdc09fc74682ddd513bcc1ed8,
         type: 3}
       propertyPath: m_text
-      value: Yes
+      value: Oui
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

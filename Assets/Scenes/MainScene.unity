@@ -4206,6 +4206,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settingsWindow: {fileID: 1873516074}
   LoadingLogs: {fileID: 0}
+  settingsUpdated: 0
 --- !u!114 &361349244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20256,6 +20257,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1873516077}
+    - targetCorrespondingSourceObject: {fileID: 4813922429388870510, guid: 3320765803d90cb49a7b33d18ba49e3c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1873516079}
   m_SourcePrefab: {fileID: 100100000, guid: 3320765803d90cb49a7b33d18ba49e3c, type: 3}
 --- !u!224 &1873516074 stripped
 RectTransform:
@@ -20321,6 +20326,25 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!1 &1873516078 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4813922429388870510, guid: 3320765803d90cb49a7b33d18ba49e3c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1873516073}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1873516079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1873516078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 192574f1333c5d44682932c673898966, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImgReplacementText
+  replacementText: 
 --- !u!114 &1873516088 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2018966005754547839, guid: 3320765803d90cb49a7b33d18ba49e3c,

@@ -160,10 +160,10 @@ public class TTSSystem : FSystem
         }
 
         if (focused.GetComponent<Button>())
-            suffix = ", "+ loc.localization[22]; // "Boutton" : "Button";
+            suffix = ", "+ loc.localization[22]; // "Boutton" : "Button"
         else if (focused.GetComponent<TMP_InputField>())
         {
-            suffix = ", "+ loc.localization[23]; // "Champ de saisie" : "Input field";
+            suffix = ", "+ loc.localization[23]; // "Champ de saisie" : "Input field"
             TMP_InputField inputfield = focused.GetComponent<TMP_InputField>();
             // S'il y a quelque chose dans le inputfield, utiliser cette valeur
             if (inputfield.text != "")
@@ -172,42 +172,37 @@ public class TTSSystem : FSystem
                 content = inputfield.GetComponentInChildren<TMP_Text>(true).text;
         }
         else if (focused.GetComponent<TMP_Dropdown>())
-            suffix = ", "+ loc.localization[24]; // "Liste déroulante" : "Dropdown";
+            suffix = ", "+ loc.localization[24]; // "Liste déroulante" : "Dropdown"
         else if (focused.GetComponent<Toggle>())
         {
-            suffix = ", " + loc.localization[25]; // "Case à cocher" : "Toggle";
+            suffix = ", " + loc.localization[25]; // "Case à cocher" : "Toggle"
             Toggle toggle = focused.GetComponent<Toggle>();
             if (toggle.isOn)
-                suffix += ", "+ loc.localization[26]; // "cochée" : "checked";
+                suffix += ", "+ loc.localization[26]; // "cochée" : "checked"
             else
-                suffix += ", "+ loc.localization[27]; // "non cochée" : "unchecked";
+                suffix += ", "+ loc.localization[27]; // "non cochée" : "unchecked"
         }
         else if (focused.GetComponent<Scrollbar>())
         {
             Scrollbar scrollbar = focused.GetComponent<Scrollbar>();
-            content = loc.localization[28] + scrollbar.value; // "Barre de défilement, valeur : " : "Scrollbar, value: ";
+            content = loc.localization[28] + scrollbar.value; // "Barre de défilement, valeur : " : "Scrollbar, value: "
         }
         else if (focused.GetComponent<CurrentAction>())
         {
-            suffix = ", " + loc.localization[29]; // "Action courrante" : "Current action";
+            suffix = ", " + loc.localization[29]; // "Action courrante" : "Current action"
         }
         else if (focused.GetComponent<Image>())
         {
-            // cas du texte de remplacement pour les images du briefing
-            Transform replacementText = focused.transform.Find("ImgDesc");
-            if (replacementText != null)
-            {
-                content = loc.localization[33]; // "Image" : "Image"
-                TMP_Text text = replacementText.GetComponent<TMP_Text>();
-                if (text != null && text.text != "")
-                    content += ", " + loc.localization[34] + ", " + text.text; // "texte de remplacement" : "replacement text"
-            }
+            content = loc.localization[33]; // "Image" : "Image"
         }
 
         if (select && !select.IsInteractable())
             suffix += ", " + loc.localization[30]; // "désactivée" : "disabled";
 
-
+        // cas du texte de remplacement
+        ImgReplacementText replacementText = focused.GetComponentInChildren<ImgReplacementText>();
+        if (replacementText != null && replacementText.replacementText != "")
+            suffix += ", " + loc.localization[34] + " " + replacementText.replacementText; // "texte de remplacement :" : "replacement text:"
 
         // Try to get tooltip to complete description
         TooltipContent tooltip = focused.GetComponentInChildren<TooltipContent>();
