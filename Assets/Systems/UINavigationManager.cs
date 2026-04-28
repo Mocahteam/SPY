@@ -65,24 +65,25 @@ public class UINavigationManager : FSystem
 		// Par défaut un clic-droit ou un clic-molette déclenche un PointerDown. A chaque PointerDown l'EventSystem regarde s'il doit sélectionner un objet, sur un clic droit il considère que non et donc rend le currentSelectedGameObject à null. Comme on utilise le clic-droit pour supprimer des blocs, si le currentSelectedGameObject devient null à chaque suppression, le UINavigationManager sélectionne alors automatiquement le prochain gameObject ce qui nous fait sortir de la zone d'édition. On annule donc se comportement en maintenant le currentSelectedGameObject au précédent connu.
 		if (selected == null && lastSelected != null && (rightClick.WasPressedThisFrame() || middleClick.WasPressedThisFrame()))
 		{
+			Debug.Log("A");
 			selected = lastSelected;
 			eventSystem.SetSelectedGameObject(selected);
 		}
 
-		// On va chercher à donner le focus si on n'a pas d'objet sélectionné ou qu'il n'est pas actif dans la hierarchie ou qu'il n'est pas Selectable ou qu'il est Selectable mais inactif (pour les objets Selectable et inactifs on gère quand même les cas des actions inactives dans une zone de programme et les tiles de sélection dans TitleScreen, dans ces cas on leur laisse le focus dessus, se sont les seuls objets inactif que l'on va autoriser à sélectionner)
-		if (selected == null || !selected.activeInHierarchy || selected.GetComponent<Selectable>() == null || (!selected.GetComponent<Selectable>().IsInteractable() && selected.GetComponentInParent<UIRootContainer>() == null && selected.GetComponentInParent<UIRootExecutor>() == null && selected.transform.parent.name != "GameList"))
+		// On va chercher à donner le focus à notre liste de priorité si on n'a pas d'objet sélectionné ou qu'il n'est pas réellement interactif et qu'il ne s'agit pas de cas particuliers (pour les objets Selectable et inactifs on accepte les cas des actions inactives dans une zone de programme et les tiles de sélection dans TitleScreen, dans ces cas on leur laisse le focus dessus, se sont les seuls objets inactif que l'on va autoriser à sélectionner)
+		if (selected == null || (!IsReallyInteractable(selected) && (selected.GetComponentInParent<UIRootContainer>() == null && selected.GetComponentInParent<UIRootExecutor>() == null && selected.transform.parent.name != "GameList")))
 		{
 			// Try to give focus on one of the priority list
 			bool focused = false;
 			if (autoFocusPrority != null)
 				foreach (GameObject target in autoFocusPrority)
-					if (target.activeInHierarchy)
+					if (IsReallyInteractable(target))
 					{
 						eventSystem.SetSelectedGameObject(target);
 						focused = true;
 						break;
 					}
-			// if we can't give focus to the last button available
+			// if we can't, give focus to the last button available
 			if (!focused)
 				eventSystem.SetSelectedGameObject(f_buttons.getAt(f_buttons.Count - 1));
 		}
@@ -173,6 +174,34 @@ public class UINavigationManager : FSystem
 		}
 
 		lastSelected = selected;
+	}
+
+	private bool IsReallyInteractable(GameObject obj)
+	{
+		if (!obj.activeInHierarchy)
+			return false;
+
+		// Button
+		Selectable sel = obj.GetComponent<Selectable>();
+		if (sel != null && !sel.IsInteractable())
+			return false;
+
+		// CanvasGroup
+		CanvasGroup[] groups = obj.GetComponentsInParent<CanvasGroup>();
+		foreach (CanvasGroup g in groups)
+		{
+			if (!g.interactable || !g.blocksRaycasts)
+				return false;
+			if (g.ignoreParentGroups)
+				break;
+		}
+
+		// Graphic
+		var graphic = obj.GetComponent<Graphic>();
+		if (graphic != null && !graphic.raycastTarget)
+			return false;
+
+		return true;
 	}
 
 	private void onNewUnselectableText(GameObject text)

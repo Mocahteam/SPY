@@ -12,6 +12,7 @@ using System.Xml;
 using Newtonsoft.Json;
 using System.IO;
 using System.Runtime.InteropServices;
+using UnityEngine.UI;
 
 /// <summary>
 /// This manager manages connexion data requests
@@ -74,6 +75,7 @@ public class ConnexionManager : FSystem
 		userData.levelToContinue = -1;
 		userData.unlockedAvatars = new List<int>();
 		userData.avatarSelected = 2; // Le troixième (robot de genre neutre) est celui par défaut
+		userData.newAvatarAvailable = -1;
 
 		if (webGL_askToEnableSendSystem)
 			gameData.sendStatementEnabled = true;
@@ -142,11 +144,11 @@ public class ConnexionManager : FSystem
 		// Disable Loading screen
 		GameObjectManager.setGameObjectState(loadingScreen, false);
 
-		/*if (Application.isEditor)
+		if (Application.isEditor)
 		{
 			SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
 			SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
-		}*/
+		}
 	}
 
 	private void GetScenariosAndLevels()
@@ -479,6 +481,7 @@ public class ConnexionManager : FSystem
 					if (!Int32.TryParse(tokens[8], out avatarSelected))
 						avatarSelected = 2; // Le troisième est le robot non genré
 					userData.avatarSelected = avatarSelected;
+					userData.newAvatarAvailable = -1;
 					GBL_Interface.playerName = idSession;
 					GBL_Interface.userUUID = idSession;
 					GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });

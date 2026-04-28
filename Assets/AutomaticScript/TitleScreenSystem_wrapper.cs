@@ -12,6 +12,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public TMPro.TMP_Text SPYVersion;
 	public CurrentSettingsValues currentSettingsValues;
 	public UnityEngine.Transform avatarsLibrary;
+	public UnityEngine.GameObject newAvatarPanel;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -24,6 +25,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "SPYVersion", SPYVersion);
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
 		MainLoop.initAppropriateSystemField (system, "avatarsLibrary", avatarsLibrary);
+		MainLoop.initAppropriateSystemField (system, "newAvatarPanel", newAvatarPanel);
 	}
 
 	public void importLevelOrScenario(System.String content)

@@ -15,6 +15,7 @@ public class UserData : MonoBehaviour {
 	public int levelToContinue;
 	public List<int> unlockedAvatars;
 	public int avatarSelected;
+	public int newAvatarAvailable;
 
 	private long lastFocusOut = -1;
 

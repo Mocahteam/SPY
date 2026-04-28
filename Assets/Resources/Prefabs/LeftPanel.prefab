@@ -230,6 +230,7 @@ GameObject:
   - component: {fileID: 6893585099499308693}
   - component: {fileID: 7564084815675672504}
   - component: {fileID: 318271398560702236}
+  - component: {fileID: 4217109475799488635}
   m_Layer: 5
   m_Name: LeftPanel
   m_TagString: Untagged
@@ -297,10 +298,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localization:
-  - Reste #0#
-  - "Ajout impossible apr\xE8s avoir<br>commenc\xE9 \xE0 r\xE9soudre la mission"
-  - "Indique ici le nom du robot<br>qui ex\xE9cutera ce programme."
-  - "Ce programme sera envoy\xE9 \xE0 #0#.<br><i>Tu ne peux pas changer ce nom</i>."
+  - '[[Not used]]'
+  - Cannot be added after starting<br>to solve the mission
+  - Enter the name of the robot<br>that will execute this program.
+  - This program will be called by #0#.<br><i>You cannot change this name</i>.
 --- !u!114 &7564084815675672504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -401,6 +402,18 @@ MonoBehaviour:
   m_Script: {fileID: -53623643, guid: e160884b7e39b8e479dc90c5b7dcec1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PointerManager.dll::FYFY_plugins.PointerManager.PointerSensitive
+--- !u!225 &4217109475799488635
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8507923394507219351}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &8507923394598325163
 GameObject:
   m_ObjectHideFlags: 0
@@ -1638,7 +1651,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: "Porte d\xE9tect\xE9e en face"
+      value: Terminal on my position
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -2138,7 +2151,7 @@ PrefabInstance:
     - target: {fileID: 8974433823153072469, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_Size
-      value: 0.99029124
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8974433823153072469, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
@@ -2741,7 +2754,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Wall on the left
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -3066,7 +3079,7 @@ PrefabInstance:
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
       propertyPath: m_text
-      value: 'Action :'
+      value: 'Action:'
       objectReference: {fileID: 0}
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
@@ -3331,7 +3344,7 @@ PrefabInstance:
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
       propertyPath: m_text
-      value: 'Capteur :'
+      value: 'Sensor:'
       objectReference: {fileID: 0}
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
@@ -3666,7 +3679,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Or
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -3739,7 +3752,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 6bd94b98cec08eb40908aac2de1a3663,
+      objectReference: {fileID: 21300000, guid: 5eedf9f2959225249ac7139080b653a0,
         type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4088,7 +4101,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Enemy in front
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -4403,7 +4416,7 @@ PrefabInstance:
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
       propertyPath: m_text
-      value: 'Inventaire :'
+      value: Inventory
       objectReference: {fileID: 0}
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
@@ -4678,7 +4691,7 @@ PrefabInstance:
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
       propertyPath: m_text
-      value: 'Operateur :'
+      value: 'Operator:'
       objectReference: {fileID: 0}
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
@@ -5006,7 +5019,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Path on the left
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -5346,7 +5359,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Rotate right
+      value: If/Else
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -5670,7 +5683,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Not
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -5986,7 +5999,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: "Pivoter \xE0 droite"
+      value: Rotate right
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -6861,7 +6874,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Rotate right
+      value: While
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -7134,7 +7147,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Rotate right
+      value: Activate
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -7381,6 +7394,11 @@ PrefabInstance:
       propertyPath: m_Navigation.m_Mode
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 8818066224008417391, guid: 3bf66f52ea5454f47a94c0566f05503b,
+        type: 3}
+      propertyPath: text
+      value: Add an editing area
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7624,7 +7642,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: "Porte d\xE9tect\xE9e en face"
+      value: Exit on my position
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -7964,7 +7982,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Forever
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -8278,7 +8296,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Robot in front
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -8654,7 +8672,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: And
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -8727,7 +8745,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 6bd94b98cec08eb40908aac2de1a3663,
+      objectReference: {fileID: 21300000, guid: a54a71f0902b9ba43abdcecdc1fc6abc,
         type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9049,7 +9067,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Rotate right
+      value: Repeat several times
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -9322,7 +9340,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: "Pivoter \xE0 gauche"
+      value: Rotate left
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -9592,7 +9610,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Avancer d'une case
+      value: Move forward
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9864,7 +9882,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Rotate right
+      value: If
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -10136,7 +10154,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Rotate right
+      value: Look back
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -10447,7 +10465,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Wall in front
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -10761,7 +10779,7 @@ PrefabInstance:
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
       propertyPath: m_text
-      value: "Contr\xF4le :"
+      value: 'Control:'
       objectReference: {fileID: 0}
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
@@ -11087,7 +11105,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Path on the right
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -12045,7 +12063,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Furniture in front
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -12416,7 +12434,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Path in front
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -12782,7 +12800,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Guarded area in front
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -13148,7 +13166,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: "Porte d\xE9tect\xE9e en face"
+      value: Closed door in front
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -13473,7 +13491,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Rotate right
+      value: Wait
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
@@ -13774,7 +13792,7 @@ PrefabInstance:
     - target: {fileID: 3426755410131463893, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}
       propertyPath: text
-      value: Tant que
+      value: Wall on the right
       objectReference: {fileID: 0}
     - target: {fileID: 3426755410131463894, guid: b228e8bc8bafd524b913ea5c97de6505,
         type: 3}

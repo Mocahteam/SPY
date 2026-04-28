@@ -198,6 +198,23 @@ public class EndGameManager : FSystem {
 				{
 					ud.currentScenario = "";
 					ud.levelToContinue = -1;
+					if (gameData.selectedScenario == "0 - Tutoriel" && !ud.unlockedAvatars.Contains(3))
+						ud.newAvatarAvailable = 3;
+					else if (gameData.selectedScenario == "1 - Explorateur" && !ud.unlockedAvatars.Contains(4))
+						ud.newAvatarAvailable = 4;
+					else if (gameData.selectedScenario == "2 - Collaborateur" && !ud.unlockedAvatars.Contains(5))
+						ud.newAvatarAvailable = 5;
+					else if (gameData.selectedScenario == "3 - Repetiteur" && !ud.unlockedAvatars.Contains(6))
+						ud.newAvatarAvailable = 6;
+					else if (gameData.selectedScenario == "4 - Selectionneur" && !ud.unlockedAvatars.Contains(7))
+						ud.newAvatarAvailable = 7;
+					else if (gameData.selectedScenario == "Infiltration" && !ud.unlockedAvatars.Contains(8))
+						ud.newAvatarAvailable = 8;
+					else if (gameData.selectedScenario == "BlocklyMaze" && !ud.unlockedAvatars.Contains(9))
+						ud.newAvatarAvailable = 9;
+
+					if (ud.newAvatarAvailable > 2)
+						ud.unlockedAvatars.Add(ud.newAvatarAvailable);
 				}
 			}
 			else

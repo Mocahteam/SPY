@@ -18,6 +18,7 @@ public class DialogSystem : FSystem
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 	private Family f_ends = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
 
 	public GameObject LevelGO;
 	private GameData gameData;
@@ -82,7 +83,7 @@ public class DialogSystem : FSystem
 	{
 		//Activate DialogPanel if there is a message
 		if (gameData != null && !dialogPanel.transform.parent.gameObject.activeSelf && (
-				(f_ends.Count == 0 && overridedBriefingDialogs != null && nBriefingDialog < overridedBriefingDialogs.Count) ||
+				(f_ends.Count == 0 && overridedBriefingDialogs != null && nBriefingDialog < overridedBriefingDialogs.Count && f_fadeOutEnd.Count == 1) ||
 				(f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && overridedDebriefingWinDialogs != null && nDebriefingWinDialog < overridedDebriefingWinDialogs.Count) ||
 				(f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && overridedDebriefingDefeatDialogs != null && nDebriefingDefeatDialog < overridedDebriefingDefeatDialogs.Count)))
 			showDialogPanel();
@@ -92,7 +93,7 @@ public class DialogSystem : FSystem
 	}
 
 
-	// Affiche le panneau de dialoge au début de niveau (si besoin)
+	// Affiche le panneau de dialogue
 	public void showDialogPanel()
 	{
 		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
@@ -432,8 +433,8 @@ public class DialogSystem : FSystem
 		Rect currentContentRect = (dialogPanel.transform.Find("Scroll View/Viewport/Content") as RectTransform).rect;
 
 		rect.height = currentContentRect.height + currentButtonsRect.height + 40; // +40 pour les marges
-		if (rect.height > currentWindowRect.height - 20)
-			rect.height = currentWindowRect.height - 20;
+		if (rect.height > currentWindowRect.height - 60)
+			rect.height = currentWindowRect.height - 60;
 
 		(dialogPanel.transform as RectTransform).sizeDelta = new Vector2(rect.width, rect.height);
 

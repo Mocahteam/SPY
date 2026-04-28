@@ -3883,7 +3883,7 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: FadeSystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     _typeFullName: FadeSystem
-    _pause: 1
+    _pause: 0
   - _typeAssemblyQualifiedName: SettingsManager, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     _typeFullName: SettingsManager
@@ -10476,6 +10476,7 @@ GameObject:
   - component: {fileID: 1139441808}
   - component: {fileID: 1139441807}
   - component: {fileID: 1139441809}
+  - component: {fileID: 1139441810}
   m_Layer: 5
   m_Name: EndPanelBackground
   m_TagString: Untagged
@@ -10553,6 +10554,23 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 1
+--- !u!111 &1139441810
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139441805}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Animation: {fileID: 7400000, guid: 09e48e6c799a90e40b505a7c214dc378, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 09e48e6c799a90e40b505a7c214dc378, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_UpdateMode: 0
+  m_CullingType: 0
 --- !u!1 &1169720427 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000446060150347598, guid: bae527ae87f763c4eaf4bfcc24112fd8,
@@ -22413,7 +22431,7 @@ PrefabInstance:
     - target: {fileID: 2598129547128785489, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -187.55
+      value: -187.55002
       objectReference: {fileID: 0}
     - target: {fileID: 2847899282829580067, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
@@ -23123,7 +23141,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 5}
+  m_AnchoredPosition: {x: 0, y: 40}
   m_SizeDelta: {x: 475.21, y: 440.1}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!82 &2103625731
@@ -25478,12 +25496,7 @@ PrefabInstance:
     - target: {fileID: 5277814621210407110, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: m_Name
-      value: LibraryCanvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 5277814621210407110, guid: 3dce7a0df7989214ea5dbb548f234c1c,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
+      value: LibraryPanel
       objectReference: {fileID: 0}
     - target: {fileID: 5316262099389103102, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
@@ -28118,7 +28131,7 @@ PrefabInstance:
     - target: {fileID: 8892498116304447365, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: m_Size
-      value: 0.9994396
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8892498116304447365, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}

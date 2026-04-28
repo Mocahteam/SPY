@@ -8,6 +8,9 @@ using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using UnityEngine.EventSystems;
 using System.Collections;
+using UnityEngine.Localization.Settings;
+using UnityEngine.Localization.PropertyVariants;
+using UnityEngine.Localization.Components;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -17,6 +20,8 @@ public class TitleScreenSystem : FSystem {
 	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
 	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
 	private Family f_avatarTarget = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_AvatarTarget"));
+	private Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
+	private Family f_canvasGroup = FamilyManager.getFamily(new AllOfComponents(typeof(Canvas), typeof(CanvasGroup)));
 
 	private GameData gameData;
 	private UserData userData;
@@ -29,6 +34,7 @@ public class TitleScreenSystem : FSystem {
 	public TMP_Text SPYVersion;
 	public CurrentSettingsValues currentSettingsValues;
 	public Transform avatarsLibrary;
+	public GameObject newAvatarPanel;
 
 	private Transform gameList;
 	private Transform gameDetails;
@@ -62,6 +68,24 @@ public class TitleScreenSystem : FSystem {
 
 			gameData = gameDataGO.GetComponent<GameData>();
 			userData = gameDataGO.GetComponent<UserData>();
+
+			// après la fin de transition de l'animation du chargement de scène, afficher le panneau d'un nouvel avatar si un nouveau est disponible
+			f_fadeOutEnd.addEntryCallback(delegate
+			{
+				if (userData.newAvatarAvailable > 2) // > 2 car les trois premiers sont les avatars accessibles par défaut
+				{
+					foreach (GameObject canvas in f_canvasGroup)
+						canvas.GetComponent<CanvasGroup>().interactable = false;
+					newAvatarPanel.SetActive(true);
+					Transform avatarSrc = avatarsLibrary.GetChild(userData.newAvatarAvailable).Find("Photo");
+					Transform avatarTarget = newAvatarPanel.transform.Find("Panel/AvatarIcon");
+					EventSystem.current.SetSelectedGameObject(newAvatarPanel.transform.Find("Panel/Message").gameObject); // parce qu'on attend le fadeOut avant d'activer cette popup, on met à la main le focus sur son texte
+					avatarTarget.GetComponent<Image>().sprite = avatarSrc.GetComponent<Image>().sprite;
+					avatarTarget.GetComponent<ImgReplacementText>().replacementText = avatarSrc.GetComponent<LocalizeStringEvent>().StringReference.GetLocalizedString();
+					userData.newAvatarAvailable = -1;
+				}
+			});
+			
 
 			gameList = gameSelector.transform.Find("GamePanel/Viewport/GameList");
 			gameDetails = gameSelector.transform.Find("GameDetails");
