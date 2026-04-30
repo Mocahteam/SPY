@@ -11,7 +11,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject quitButton;
 	public TMPro.TMP_Text SPYVersion;
 	public CurrentSettingsValues currentSettingsValues;
-	public UnityEngine.Transform avatarsLibrary;
+	public UnityEngine.Transform profilPanel;
 	public UnityEngine.GameObject newAvatarPanel;
 	private void Start()
 	{
@@ -24,8 +24,13 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
 		MainLoop.initAppropriateSystemField (system, "SPYVersion", SPYVersion);
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
-		MainLoop.initAppropriateSystemField (system, "avatarsLibrary", avatarsLibrary);
+		MainLoop.initAppropriateSystemField (system, "profilPanel", profilPanel);
 		MainLoop.initAppropriateSystemField (system, "newAvatarPanel", newAvatarPanel);
+	}
+
+	public void updatePlayerProfile()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "updatePlayerProfile", null);
 	}
 
 	public void importLevelOrScenario(System.String content)

@@ -70,6 +70,7 @@ public class DragDropSystem : FSystem
 
 	private enum DragDropState { Idle, DragPointer, DragKeyboard, InsertKeyboard, LongClick};
 	private DragDropState dragDropState;
+	private bool cancelNextSubmit = false;
 
 	private EventSystem eventSystem;
 	private UnityAction localCallback;
@@ -143,12 +144,13 @@ public class DragDropSystem : FSystem
 		setDropZoneState(false);
 		if (itemDragged != null)
 		{
+			// remettre le focus sur la référence dans l'inventaire
+			eventSystem.SetSelectedGameObject(itemDragged.GetComponent<LibraryItemRef>().linkedTo);
 			// Suppression des familles de FYFY
 			GameObjectManager.unbind(itemDragged);
 			// Déstruction du bloc
 			GameObject.Destroy(itemDragged, 0.1f); // L'objet est réellement supprimé à la fin de l'update par Unity donc si l'appel est fait dans la phase de gestion des inputs c'est ok (itemDragged sera toujours vivant lors de la mise à jour de Fyfy avant la phase d'update et les éventuelles action empilées dans le GameObjectManager pourront être dépilées). Mais si l'appel est fait dans l'update alors à la fin de cette phase l'objet est réellement détruit donc à la prochaine mise à jour de Fyfy (au LateUpdate) les éventuelles actions empilées ne pourront pas être exécutées. Donc ont ajoute un délai à la suppression du gameobject.
 			itemDragged = null;
-			eventSystem.SetSelectedGameObject(eventSystem.firstSelectedGameObject);
 		}
 		insertRef = null;
 		// be sure all replacement outline are disabled
@@ -222,34 +224,40 @@ public class DragDropSystem : FSystem
 			// gestion de la modalité insertion au clavier
 			if (insert.WasPressedThisFrame() && dragDropState == DragDropState.Idle && eventSystem.currentSelectedGameObject != null && (eventSystem.currentSelectedGameObject.GetComponent<LibraryItemRef>() || eventSystem.currentSelectedGameObject.GetComponent<ReplacementSlot>()) && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>())
 			{
-				if (f_inventory.Count > 0)
+				insertRef = eventSystem.currentSelectedGameObject.GetComponent<ReplacementSlot>() ? eventSystem.currentSelectedGameObject : eventSystem.currentSelectedGameObject.GetComponentInChildren<DropZone>(true).gameObject;
+				if (insertRef.GetComponent<ReplacementSlot>())
 				{
-					insertRef = eventSystem.currentSelectedGameObject.GetComponent<ReplacementSlot>() ? eventSystem.currentSelectedGameObject : eventSystem.currentSelectedGameObject.GetComponentInChildren<DropZone>(true).gameObject;
-					if (insertRef.GetComponent<ReplacementSlot>())
-					{
-						insertRef.GetComponentInChildren<Outline>().enabled = true;
-					}
-					else
-					{
-						insertRef.gameObject.SetActive(true);
-						insertRef.transform.Find("PositionBar").gameObject.SetActive(true);
-					}
-					eventSystem.SetSelectedGameObject(f_inventory.First());
-					dragDropState = DragDropState.InsertKeyboard;
+					insertRef.GetComponentInChildren<Outline>().enabled = true;
 				}
 				else
 				{
+					insertRef.gameObject.SetActive(true);
+					insertRef.transform.Find("PositionBar").gameObject.SetActive(true);
+				}
+				dragDropState = DragDropState.InsertKeyboard;
+				if (f_inventory.Count > 0)
+					eventSystem.SetSelectedGameObject(f_inventory.First());
+				else
+				{
+					GameObject backupCurrentSelection = eventSystem.currentSelectedGameObject;
 					localCallback = null;
+					localCallback += delegate {
+						eventSystem.SetSelectedGameObject(backupCurrentSelection); // en fermant la fenêtre on remet le focus sur le bloc depuis lequel on a initié l'insertion
+						if (submit.WasPressedThisFrame())
+							cancelNextSubmit = true;
+					};
 					Localization loc = gameData.GetComponent<Localization>();
-					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[50], OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[50], OkButton = loc.localization[1], CancelButton = loc.localization[0], call = localCallback });
 				}
 			}
-			if (submit.WasPressedThisFrame() && dragDropState == DragDropState.InsertKeyboard)
+			if (submit.WasPressedThisFrame() && !cancelNextSubmit && dragDropState == DragDropState.InsertKeyboard)
 			{
 				initDraggedBlock();
 				// On a besoin de temporiser la fin du drag pour attendre les mises à jour Fyfy dû à l'init
 				MainLoop.instance.StartCoroutine(delayEndDrag());
 			}
+			else
+				cancelNextSubmit = false;
 						
 			// Gestion de l'action de suppression au clavier
 			if (deleteKeyboard.WasPressedThisFrame() && dragDropState == DragDropState.Idle && eventSystem.currentSelectedGameObject.GetComponentInParent<LibraryItemRef>() && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() && Utility.inputFieldNotSelected())
@@ -426,9 +434,9 @@ public class DragDropSystem : FSystem
 		setDropZoneState(true);
 		// On crée le bloc action associé à l'élément
 		itemDragged = UtilityGame.createEditableBlockFromLibrary(model, mainCanvas);
+		itemDragged.AddComponent<Dragging>();
 		// On l'ajoute aux familles de FYFY
 		GameObjectManager.bind(itemDragged);
-		GameObjectManager.addComponent<Dragging>(itemDragged);
 		// exclude all UI elements that can disturb the drag from the EventSystem
 		foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
 			child.GetComponent<Image>().raycastTarget = false;
@@ -450,7 +458,9 @@ public class DragDropSystem : FSystem
 	private void initBlockFromEditableScript(GameObject model)
     {
 		itemDragged = model;
-		GameObjectManager.addComponent<Dragging>(itemDragged);
+		itemDragged.AddComponent<Dragging>();
+		GameObjectManager.refresh(itemDragged);
+		//GameObjectManager.addComponent<Dragging>(itemDragged);
 
 		string content = UtilityGame.exportBlockToString(itemDragged.GetComponent<Highlightable>());
 
@@ -590,8 +600,6 @@ public class DragDropSystem : FSystem
 					MainLoop.instance.StartCoroutine(UtilityGame.pulseItem(itemDragged));
 					eventSystem.SetSelectedGameObject(itemDragged);
 				}
-				else
-					eventSystem.SetSelectedGameObject(eventSystem.firstSelectedGameObject);
 				
 				if (itemDragged.GetComponent<Dragging>())
 					GameObjectManager.removeComponent<Dragging>(itemDragged);

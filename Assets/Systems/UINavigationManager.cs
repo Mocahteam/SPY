@@ -15,7 +15,6 @@ public class UINavigationManager : FSystem
 {
 	private Family f_textsUnselectable = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new NoneOfComponents(typeof(Selectable)));
 	private Family f_draggedItems = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
-	private Family f_dynamicNavigation = FamilyManager.getFamily(new AllOfComponents(typeof(DynamicNavigation)));
 	private Family f_InputFields = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
 
 	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
@@ -65,13 +64,12 @@ public class UINavigationManager : FSystem
 		// Par défaut un clic-droit ou un clic-molette déclenche un PointerDown. A chaque PointerDown l'EventSystem regarde s'il doit sélectionner un objet, sur un clic droit il considère que non et donc rend le currentSelectedGameObject à null. Comme on utilise le clic-droit pour supprimer des blocs, si le currentSelectedGameObject devient null à chaque suppression, le UINavigationManager sélectionne alors automatiquement le prochain gameObject ce qui nous fait sortir de la zone d'édition. On annule donc se comportement en maintenant le currentSelectedGameObject au précédent connu.
 		if (selected == null && lastSelected != null && (rightClick.WasPressedThisFrame() || middleClick.WasPressedThisFrame()))
 		{
-			Debug.Log("A");
 			selected = lastSelected;
 			eventSystem.SetSelectedGameObject(selected);
 		}
 
-		// On va chercher à donner le focus à notre liste de priorité si on n'a pas d'objet sélectionné ou qu'il n'est pas réellement interactif et qu'il ne s'agit pas de cas particuliers (pour les objets Selectable et inactifs on accepte les cas des actions inactives dans une zone de programme et les tiles de sélection dans TitleScreen, dans ces cas on leur laisse le focus dessus, se sont les seuls objets inactif que l'on va autoriser à sélectionner)
-		if (selected == null || (!IsReallyInteractable(selected) && (selected.GetComponentInParent<UIRootContainer>() == null && selected.GetComponentInParent<UIRootExecutor>() == null && selected.transform.parent.name != "GameList")))
+		// On va chercher à donner le focus à notre liste de priorité si on n'a pas d'objet sélectionné ou qu'il n'est pas réellement interactif et qu'il ne s'agit pas de cas particuliers (on tolère les objets non interactable comme l'objets dragged, les objets dans une zone de programme, les tiles de sélection dans TitleScreen et les vignettes d'avatars bloquées, dans ces cas on leur laisse le focus dessus, se sont les seuls objets inactif que l'on va autoriser à sélectionner)
+		if (selected == null || (!IsReallyInteractable(selected) && selected.GetComponent<Dragging>() == null && selected.GetComponentInParent<UIRootContainer>() == null && selected.GetComponentInParent<UIRootExecutor>() == null && selected.transform.parent.name != "GameList" && !selected.CompareTag("UI_Avatar")))
 		{
 			// Try to give focus on one of the priority list
 			bool focused = false;
@@ -85,7 +83,9 @@ public class UINavigationManager : FSystem
 					}
 			// if we can't, give focus to the last button available
 			if (!focused)
+			{
 				eventSystem.SetSelectedGameObject(f_buttons.getAt(f_buttons.Count - 1));
+			}
 		}
 
 		// ---- Manage keyboard navigation in script ----
@@ -128,24 +128,34 @@ public class UINavigationManager : FSystem
 		}
 		// ---- end ----
 
-		// define next GameObject to focus for dynamic navigation
-		foreach (GameObject navGO in f_dynamicNavigation)
+		if (selected != null)
 		{
-			DynamicNavigation nav = navGO.GetComponent<DynamicNavigation>();
-			if (selected == navGO && selected == lastSelected)
+			// define next GameObject to focus for sibling navigation
+			SiblingNavigation sibNav = selected.GetComponent<SiblingNavigation>();
+			if (sibNav != null && selected == lastSelected)
 			{
-				if (nav.UpLeft.Length > 0 && (navigateAction.WasPressedThisFrame() && (navigateValue.y > 0 || navigateValue.x < 0)))
+				if (navigateAction.WasPressedThisFrame() && (navigateValue.y > 0 || navigateValue.x < 0) && selected.transform.GetSiblingIndex() - 1 >= 0)
+					EventSystem.current.SetSelectedGameObject(selected.transform.parent.GetChild(selected.transform.GetSiblingIndex() - 1).gameObject);
+				else if (navigateAction.WasPressedThisFrame() && (navigateValue.y < 0 || navigateValue.x > 0) && selected.transform.GetSiblingIndex() + 1 < selected.transform.parent.childCount)
+					EventSystem.current.SetSelectedGameObject(selected.transform.parent.GetChild(selected.transform.GetSiblingIndex() + 1).gameObject);
+			}
+
+			// define next GameObject to focus for dynamic navigation
+			DynamicNavigation dynNav = selected.GetComponent<DynamicNavigation>();
+			if (dynNav != null && selected == lastSelected)
+			{
+				if (dynNav.UpLeft.Length > 0 && (navigateAction.WasPressedThisFrame() && (navigateValue.y > 0 || navigateValue.x < 0)))
 				{
-					foreach (Selectable sel in nav.UpLeft)
+					foreach (Selectable sel in dynNav.UpLeft)
 						if (sel != null && sel.gameObject.activeInHierarchy && sel.interactable)
 						{
 							EventSystem.current.SetSelectedGameObject(sel.gameObject);
 							break;
 						}
 				}
-				else if (nav.DownRight.Length > 0 && (navigateAction.WasPressedThisFrame() && (navigateValue.y < 0 || navigateValue.x > 0)))
+				else if (dynNav.DownRight.Length > 0 && (navigateAction.WasPressedThisFrame() && (navigateValue.y < 0 || navigateValue.x > 0)))
 				{
-					foreach (Selectable sel in nav.DownRight)
+					foreach (Selectable sel in dynNav.DownRight)
 						if (sel != null && sel.gameObject.activeInHierarchy && sel.interactable)
 						{
 							EventSystem.current.SetSelectedGameObject(sel.gameObject);

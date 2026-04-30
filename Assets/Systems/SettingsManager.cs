@@ -42,6 +42,7 @@ public class SettingsManager : FSystem
 	private Family f_conditionNotif = FamilyManager.getFamily(new AnyOfComponents(typeof(Image)), new AnyOfTags("ConditionNotif"));
 	private Family f_canvasScaler = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasScaler)));
 	private Family f_avatarTarget = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_AvatarTarget"));
+	private Family f_animationsUI = FamilyManager.getFamily(new AllOfComponents(typeof(Animation), typeof(CanvasGroup)));
 
 
 	public static SettingsManager instance;
@@ -93,14 +94,24 @@ public class SettingsManager : FSystem
 		f_modifiableFonts.addEntryCallback(syncFont);
 		f_fixedFonts.addEntryCallback(fixFont);
 		f_dropdown.addEntryCallback(delegate (GameObject go) { syncColor_Dropdown(go); });
-		f_inputfield.addEntryCallback(delegate (GameObject go) { sync_Inputfield(go); });
+		f_inputfield.addEntryCallback(delegate (GameObject go) {
+			sync_Inputfield(go); // gère le normal, selected, placeholder, selection et carret
+			syncHighlightedColor(go);
+			syncPressedColor(go);
+			syncDisabledColor(go);
+		});
 		f_inputfieldCaret.addEntryCallback(sync_CaretHeight);
 		f_buttons.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentNormalColor_Button); });
 		f_icons.addEntryCallback(delegate (GameObject go) { syncIconColor(go, cs.values.currentColor_Icon); });
 		f_buttonsPlay.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentPlayButtonColor); });
 		f_buttonsPause.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentPauseButtonColor); });
 		f_buttonsStop.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentStopButtonColor); });
-		f_selectable.addEntryCallback(delegate (GameObject go) { syncHighlightedColor(go); });
+		f_selectable.addEntryCallback(delegate (GameObject go) {
+			syncHighlightedColor(go);
+			syncPressedColor(go);
+			syncSelectedColor(go);
+			syncDisabledColor(go);
+		});
 		f_SyncSelectedColor.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentSelectedColor); });
 		f_panels1.addEntryCallback(delegate (GameObject go) { syncColor_Panel(go); });
 		f_panels2.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentColor_Panel2); });
@@ -137,6 +148,7 @@ public class SettingsManager : FSystem
 		syncCanvasScaler();
 		setWallTransparency(cs.values.currentWallTransparency);
 		setGameView(cs.values.currentGameView);
+		setAnimation(cs.values.currentAnimation);
 		syncFonts(cs.values.currentFont);
 		setCaretWidth(cs.values.currentCaretWidth);
 		setCaretHeight(cs.values.currentCaretHeight);
@@ -152,12 +164,18 @@ public class SettingsManager : FSystem
 		SyncLocalization.instance.syncLocale(); // because it change colors
 		syncColor(f_dropdown, syncColor_Dropdown);
 		syncColor(f_inputfield, sync_Inputfield);
+		syncColor(f_inputfield, syncHighlightedColor);
+		syncColor(f_inputfield, syncPressedColor);
+		syncColor(f_inputfield, syncDisabledColor);
 		syncColor(f_buttons, syncNormalColor, cs.values.currentNormalColor_Button);
 		syncColor(f_icons, syncIconColor, cs.values.currentColor_Icon);
 		syncColor(f_buttonsPlay, syncNormalColor, cs.values.currentPlayButtonColor);
 		syncColor(f_buttonsPause, syncNormalColor, cs.values.currentPauseButtonColor);
 		syncColor(f_buttonsStop, syncNormalColor, cs.values.currentStopButtonColor);
 		syncColor(f_selectable, syncHighlightedColor);
+		syncColor(f_selectable, syncPressedColor);
+		syncColor(f_selectable, syncSelectedColor);
+		syncColor(f_selectable, syncDisabledColor);
 		syncColor(f_SyncSelectedColor, syncGraphicColor, cs.values.currentSelectedColor);
 		syncColor(f_panels1, syncColor_Panel);
 		syncColor(f_panels2, syncGraphicColor, cs.values.currentColor_Panel2);
@@ -188,6 +206,7 @@ public class SettingsManager : FSystem
 			scalerGo.GetComponent<CanvasScaler>().scaleFactor = cs.values.currentUIScale;
 		cs.values.currentWallTransparency = PlayerPrefs.GetInt("wallTransparency", ds.defaultWallTransparency);
 		cs.values.currentCameraTracking = PlayerPrefs.GetInt("cameraTracking", ds.defaultCameraTracking);
+		cs.values.currentAnimation = PlayerPrefs.GetInt("animation", ds.defaultAnimation);
 		cs.values.currentGameView = PlayerPrefs.GetInt("orthographicView", ds.defaultGameView);
 		cs.values.currentTooltipView = PlayerPrefs.GetInt("tooltipView", ds.defaultTooltipView);
 
@@ -250,7 +269,8 @@ public class SettingsManager : FSystem
 		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("DropAreaColor", ColorUtility.ToHtmlStringRGBA(ds.defaultDropAreaColor)), out cs.values.currentDropAreaColor);
 		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("HighlightingColor", ColorUtility.ToHtmlStringRGBA(ds.defaultHighlightingColor)), out cs.values.currentHighlightingColor);
 		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("CaptorTrueColor", ColorUtility.ToHtmlStringRGBA(ds.defaultCaptorTrueColor)), out cs.values.currentCaptorTrueColor);
-		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("CaptorFalseColor", ColorUtility.ToHtmlStringRGBA(ds.defaultCaptorFalseColor)), out cs.values.currentCaptorFalseColor);
+		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("CaptorFalseColor", ColorUtility.ToHtmlStringRGBA(ds.defaultCaptorFalseColor)), out cs.values.currentCaptorFalseColor); 
+		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("WrongAssociation", ColorUtility.ToHtmlStringRGBA(ds.defaultWrongAssociationColor)), out cs.values.currentWrongAssociationColor);
 	}
 
 	// initialise l'UI des settings à partir des currentSettingsValues
@@ -263,6 +283,7 @@ public class SettingsManager : FSystem
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/WallTransparency").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentWallTransparency;
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/CameraTracking").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentCameraTracking;
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/GameView").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentGameView;
+		settingsContent.Find("SectionGraphic/GridContainer/Grid/Animation").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentAnimation;
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/Tooltip").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentTooltipView;
 
 		settingsContent.Find("SectionText/GridContainer/Grid/FontDropdown").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentFont;
@@ -324,7 +345,8 @@ public class SettingsManager : FSystem
 		settingsContent.Find("PlayerColors/GridContainer/Grid/ColorDropArea/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentDropAreaColor;
 		settingsContent.Find("PlayerColors/GridContainer/Grid/ColorHighlighting/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentHighlightingColor;
 		settingsContent.Find("PlayerColors/GridContainer/Grid/ColorCaptorTrue/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentCaptorTrueColor;
-		settingsContent.Find("PlayerColors/GridContainer/Grid/ColorCaptorFalse/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentCaptorFalseColor;
+		settingsContent.Find("PlayerColors/GridContainer/Grid/ColorCaptorFalse/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentCaptorFalseColor; 
+		settingsContent.Find("PlayerColors/GridContainer/Grid/ColorWrongAssociation/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentWrongAssociationColor;
 	}
 
 	// See CloseSettings button in SettingsWindows prefab
@@ -336,6 +358,7 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetFloat("UIScale", cs.values.currentUIScale);
 		PlayerPrefs.SetInt("wallTransparency", cs.values.currentWallTransparency);
 		PlayerPrefs.SetInt("cameraTracking", cs.values.currentCameraTracking);
+		PlayerPrefs.SetInt("animation", cs.values.currentAnimation);
 		PlayerPrefs.SetInt("orthographicView", cs.values.currentGameView);
 		PlayerPrefs.SetInt("tooltipView", cs.values.currentTooltipView);
 		PlayerPrefs.SetInt("font", cs.values.currentFont);
@@ -380,7 +403,8 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetString("DropAreaColor", ColorUtility.ToHtmlStringRGBA(cs.values.currentDropAreaColor));
 		PlayerPrefs.SetString("HighlightingColor", ColorUtility.ToHtmlStringRGBA(cs.values.currentHighlightingColor));
 		PlayerPrefs.SetString("CaptorTrueColor", ColorUtility.ToHtmlStringRGBA(cs.values.currentCaptorTrueColor));
-		PlayerPrefs.SetString("CaptorFalseColor", ColorUtility.ToHtmlStringRGBA(cs.values.currentCaptorFalseColor));
+		PlayerPrefs.SetString("CaptorFalseColor", ColorUtility.ToHtmlStringRGBA(cs.values.currentCaptorFalseColor)); 
+		PlayerPrefs.SetString("WrongAssociation", ColorUtility.ToHtmlStringRGBA(cs.values.currentWrongAssociationColor));
 		PlayerPrefs.Save();
 	}
 
@@ -430,6 +454,7 @@ public class SettingsManager : FSystem
 		cs.values.currentWallTransparency = ds.defaultWallTransparency;
 		cs.values.currentCameraTracking = ds.defaultCameraTracking;
 		cs.values.currentGameView = ds.defaultGameView;
+		cs.values.currentAnimation = ds.defaultAnimation;
 		cs.values.currentTooltipView = ds.defaultTooltipView;
 		cs.values.currentFont = ds.defaultFont;
 		cs.values.currentCaretWidth = ds.defaultCaretWidth;
@@ -473,7 +498,8 @@ public class SettingsManager : FSystem
 		cs.values.currentDropAreaColor = ds.defaultDropAreaColor;
 		cs.values.currentHighlightingColor = ds.defaultHighlightingColor;
 		cs.values.currentCaptorTrueColor = ds.defaultCaptorTrueColor;
-		cs.values.currentCaptorFalseColor = ds.defaultCaptorFalseColor;
+		cs.values.currentCaptorFalseColor = ds.defaultCaptorFalseColor; 
+		cs.values.currentWrongAssociationColor = ds.defaultWrongAssociationColor;
 
 		saveParameters();
 		syncSettingsUI(); // synchronise les menus des settings avec les bons paramètres
@@ -545,18 +571,20 @@ public class SettingsManager : FSystem
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentHighlightedColor = c;
 					syncColor(f_selectable, syncHighlightedColor);
+					syncColor(f_inputfield, syncHighlightedColor);
 				});
 				break;
 			case "PressedColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentPressedColor = c;
-					syncColor(f_selectable, syncHighlightedColor);
+					syncColor(f_selectable, syncPressedColor);
+					syncColor(f_inputfield, syncPressedColor);
 				});
 				break;
 			case "SelectedColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentSelectedColor = c;
-					syncColor(f_selectable, syncHighlightedColor);
+					syncColor(f_selectable, syncSelectedColor);
 					syncColor(f_SyncSelectedColor, syncGraphicColor, cs.values.currentSelectedColor);
 				});
 				break;
@@ -564,7 +592,8 @@ public class SettingsManager : FSystem
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentDisabledColor = c;
 					syncColor(f_allTexts, syncColor_Text);
-					syncColor(f_selectable, syncHighlightedColor);
+					syncColor(f_selectable, syncDisabledColor);
+					syncColor(f_inputfield, syncDisabledColor);
 				});
 				break;
 			case "IconColor":
@@ -693,11 +722,18 @@ public class SettingsManager : FSystem
 					cs.values.currentCaptorTrueColor = c;
 					syncColor(f_conditionNotif, syncConditionNotif);
 				});
-				break;
+				break; 
 			case "CaptorFalseColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentCaptorFalseColor = c;
 					syncColor(f_conditionNotif, syncConditionNotif);
+				});
+				break;
+			case "WrongAssociation":
+				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
+					cs.values.currentWrongAssociationColor = c;
+					if (MainLoop.instance.gameObject.GetComponent<CheckLinkName>() == null)
+						GameObjectManager.addComponent<CheckLinkName>(MainLoop.instance.gameObject);
 				});
 				break;
 		}
@@ -759,6 +795,19 @@ public class SettingsManager : FSystem
 		if (CameraSystem.instance != null)
 			CameraSystem.instance.setOrthographicView(value == 1);
 		cs.values.currentGameView = value;
+	}
+
+	public void setAnimation(int value)
+	{
+		// (Dés)Activer les animations des panneaux UI
+		foreach (GameObject go in f_animationsUI)
+		{
+			go.GetComponent<Animation>().enabled = value == 1;
+			// si on désactive les animations, s'assurer que l'alpha des CanvasGroup est bien visible
+			if (value == 0)
+				go.GetComponent<CanvasGroup>().alpha = 1;
+		}
+		cs.values.currentAnimation = value;
 	}
 
 	public void setTooltipView(int value)
@@ -896,8 +945,9 @@ public class SettingsManager : FSystem
 		TMP_InputField input = go.GetComponent<TMP_InputField>();
 		ColorBlock currentColor = input.colors;
 		currentColor.normalColor = cs.values.currentNormalColor_Inputfield;
-		currentColor.pressedColor = cs.values.currentSelectedColor_Inputfield;
+		currentColor.selectedColor = cs.values.currentSelectedColor_Inputfield;
 		input.colors = currentColor;
+
 		input.placeholder.color = cs.values.currentPlaceholderColor;
 		input.selectionColor = cs.values.currentSelectionColor_Inputfield;
 		input.caretColor = cs.values.currentCaretColor_Inputfield;
@@ -922,8 +972,29 @@ public class SettingsManager : FSystem
 		Selectable select = go.GetComponent<Selectable>();
 		ColorBlock currentColor = select.colors;
 		currentColor.highlightedColor = cs.values.currentHighlightedColor;
+		select.colors = currentColor;
+	}
+
+	private void syncPressedColor(GameObject go, Color? unused = null)
+	{
+		Selectable select = go.GetComponent<Selectable>();
+		ColorBlock currentColor = select.colors;
 		currentColor.pressedColor = cs.values.currentPressedColor;
+		select.colors = currentColor;
+	}
+
+	private void syncSelectedColor(GameObject go, Color? unused = null)
+	{
+		Selectable select = go.GetComponent<Selectable>();
+		ColorBlock currentColor = select.colors;
 		currentColor.selectedColor = cs.values.currentSelectedColor;
+		select.colors = currentColor;
+	}
+
+	private void syncDisabledColor(GameObject go, Color? unused = null)
+	{
+		Selectable select = go.GetComponent<Selectable>();
+		ColorBlock currentColor = select.colors;
 		currentColor.disabledColor = cs.values.currentDisabledColor;
 		select.colors = currentColor;
 	}

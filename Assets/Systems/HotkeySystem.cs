@@ -39,6 +39,7 @@ public class HotkeySystem : FSystem
 	public Button closeMapDesc;
 	public GameObject inventory;
 	public Button buttonCopyCode;
+	public Button showSettings;
 
 	public Button AddContainerButton;
 	
@@ -73,6 +74,7 @@ public class HotkeySystem : FSystem
 	private InputAction paste_act;
 	private InputAction focusOnNextProgrammingArea_act;
 	private InputAction focusOnInventory_act;
+	private InputAction tuneSettings_act;
 
 	// L'instance
 	public static HotkeySystem instance;
@@ -105,6 +107,7 @@ public class HotkeySystem : FSystem
 		paste_act = InputSystem.actions.FindAction("Paste");
 		focusOnNextProgrammingArea_act = InputSystem.actions.FindAction("SelectNextProgrammingArea");
 		focusOnInventory_act = InputSystem.actions.FindAction("SelectInventory");
+		tuneSettings_act = InputSystem.actions.FindAction("TuneSettings");
 
 		cancelNextEscape = false;
         foreach (GameObject go in f_InputFields)
@@ -263,6 +266,15 @@ public class HotkeySystem : FSystem
 			// Select inventory
 			if (inventory != null && inventory.activeInHierarchy && focusOnInventory_act.WasPressedThisFrame())
 				eventSystem.SetSelectedGameObject(inventory);
+
+			// Tune Settings
+			if (showSettings != null && tuneSettings_act.WasPressedThisFrame())
+			{
+				// Si le bouton d'affichage des settings n'est pas visible mais qu'on a un MainMenu, c'est qu'on est dans une scène où le bouton pour afficher les settings est dans le menu principal, on simule l'appel à l'affichage du menu principal avant d'invoquer l'affichage des settings qui refermera automatiquement le menu principal, sinon l'affichage des settings toggle le menu principal est l'affiche 
+				if (mainMenu != null && !showSettings.gameObject.activeInHierarchy)
+					mainMenu.onClick.Invoke();
+				showSettings.onClick.Invoke();
+			}
 		}
 		/* Gestion du copier-coller dans les InputField (visiblement les versions des navigateurs au moment de ce test et la version d'Unity 6.3 rendent le copier_coller fonctionnel en natif) 
 		else if (eventSystem.currentSelectedGameObject != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused && Application.platform == RuntimePlatform.WebGLPlayer)

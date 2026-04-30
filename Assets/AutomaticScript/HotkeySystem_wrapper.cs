@@ -26,6 +26,7 @@ public class HotkeySystem_wrapper : BaseWrapper
 	public UnityEngine.UI.Button closeMapDesc;
 	public UnityEngine.GameObject inventory;
 	public UnityEngine.UI.Button buttonCopyCode;
+	public UnityEngine.UI.Button showSettings;
 	public UnityEngine.UI.Button AddContainerButton;
 	public System.Boolean cancelNextEscape;
 	private void Start()
@@ -54,6 +55,7 @@ public class HotkeySystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "closeMapDesc", closeMapDesc);
 		MainLoop.initAppropriateSystemField (system, "inventory", inventory);
 		MainLoop.initAppropriateSystemField (system, "buttonCopyCode", buttonCopyCode);
+		MainLoop.initAppropriateSystemField (system, "showSettings", showSettings);
 		MainLoop.initAppropriateSystemField (system, "AddContainerButton", AddContainerButton);
 		MainLoop.initAppropriateSystemField (system, "cancelNextEscape", cancelNextEscape);
 	}

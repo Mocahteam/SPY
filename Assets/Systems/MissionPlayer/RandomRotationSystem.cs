@@ -1,7 +1,4 @@
 ﻿using FYFY;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -10,6 +7,15 @@ using UnityEngine;
 public class RandomRotationSystem : FSystem {
 
     private Family f_rotationGOs = FamilyManager.getFamily(new AllOfComponents(typeof(RandomRotation)));
+
+    public CurrentSettingsValues currentSettingsValues;
+
+    public static RandomRotationSystem instance;
+
+    public RandomRotationSystem()
+    {
+        instance = this;
+    }
 
     protected override void onStart()
     {
@@ -28,17 +34,23 @@ public class RandomRotationSystem : FSystem {
 
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
+        if (currentSettingsValues.values.currentAnimation == 0 && f_rotationGOs.First().transform.parent.gameObject.activeInHierarchy)
+            GameObjectManager.setGameObjectState(f_rotationGOs.First().transform.parent.gameObject, false);
+        if (currentSettingsValues.values.currentAnimation == 1 && !f_rotationGOs.First().transform.parent.gameObject.activeInHierarchy)
+            GameObjectManager.setGameObjectState(f_rotationGOs.First().transform.parent.gameObject, true);
 
-        foreach (GameObject go in f_rotationGOs)
+        if (f_rotationGOs.First().transform.parent.gameObject.activeInHierarchy)
         {
-            RandomRotation rr = go.GetComponent<RandomRotation>();
-            go.transform.Rotate(rr.axes.x * rr.speed, rr.axes.y * rr.speed, rr.axes.z * rr.speed);
+            foreach (GameObject go in f_rotationGOs)
+            {
+                RandomRotation rr = go.GetComponent<RandomRotation>();
+                go.transform.Rotate(rr.axes.x * rr.speed, rr.axes.y * rr.speed, rr.axes.z * rr.speed);
+            }
+            if (f_rotationGOs.First() != null)
+            {
+                Transform decoration = f_rotationGOs.First().transform.parent;
+                decoration.Rotate(Time.deltaTime * 2, 0, 0);
+            }
         }
-        if (f_rotationGOs.First() != null)
-        {
-            Transform decoration = f_rotationGOs.First().transform.parent;
-            decoration.Rotate(Time.deltaTime * 2, 0, 0);
-        }
-
     }
 }

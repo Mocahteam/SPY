@@ -16,6 +16,7 @@ public class RawSettingsValues
 	public int currentWallTransparency;
 	public int currentCameraTracking;
 	public int currentGameView;
+	public int currentAnimation;
 	public int currentTooltipView;
 	public int currentFont;
 	public int currentCaretWidth;
@@ -60,4 +61,5 @@ public class RawSettingsValues
 	public Color currentHighlightingColor;
 	public Color currentCaptorTrueColor;
 	public Color currentCaptorFalseColor;
+	public Color currentWrongAssociationColor;
 }

@@ -37,7 +37,8 @@ public class EditableContainerSystem : FSystem
 	private Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
 	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
 	private Family f_forceRemoveContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ForceRemoveContainer)));
-	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd))); 
+	private Family f_checkLinkName = FamilyManager.getFamily(new AllOfComponents(typeof(CheckLinkName)));
 
 	// Les variables
 	private UIRootContainer containerSelected; // Le container selectionné
@@ -45,6 +46,8 @@ public class EditableContainerSystem : FSystem
 	public GameObject prefabViewportScriptContainer;
 	public Button addContainerButton;
 	public int maxWidth;
+
+	public CurrentSettingsValues currentSettingsValues;
 
 	private bool isEditorContext;
 	private bool newScriptContainer = false;
@@ -115,6 +118,11 @@ public class EditableContainerSystem : FSystem
 
 					if (gameData.actionsHistory == null && gameData.dragDropEnabled)
 						addContainerButton.interactable = true;
+				});
+				f_checkLinkName.addEntryCallback(delegate (GameObject go){
+					MainLoop.instance.StartCoroutine(tcheckLinkName());
+					foreach(CheckLinkName cln in go.GetComponents<CheckLinkName>())
+						GameObjectManager.removeComponent(cln);
 				});
 			}
 		}
@@ -428,11 +436,14 @@ public class EditableContainerSystem : FSystem
 				if (container.GetComponent<UIRootContainer>().scriptName.ToLower() == agent.GetComponent<AgentEdit>().associatedScriptName.ToLower())
 					nameSame = true;
 
-			// Si même nom trouvé on met l'arriére plan blanc
+			TMP_InputField input = container.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>();
+			ColorBlock inputColor = input.colors;
+			// Si même nom trouvé on met la couleur par défaut
 			if (nameSame)
-				container.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().image.color = Color.white;
-			else // sinon rouge 
-				container.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().image.color = new Color(1f, 0.4f, 0.28f, 1f);
+				inputColor.normalColor = currentSettingsValues.values.currentNormalColor_Inputfield;
+			else // sinon la couleur de mauvaise association 
+				inputColor.normalColor = currentSettingsValues.values.currentWrongAssociationColor;
+			input.colors = inputColor;
 		}
 
 		// On fait la même chose pour les agents
@@ -443,11 +454,13 @@ public class EditableContainerSystem : FSystem
 				if (container.GetComponent<UIRootContainer>().scriptName.ToLower() == agent.GetComponent<AgentEdit>().associatedScriptName.ToLower())
 					nameSame = true;
 
-			// Si même nom trouvé on met l'arriére transparent
+			Selectable agentName = agent.GetComponent<ScriptRef>().executablePanel.transform.Find("Header/agentName").GetComponent<Selectable>();
+			ColorBlock nameColors = agentName.colors;
+			// Si même nom trouvé on met la couleur par défaut
 			if (nameSame)
-				agent.GetComponent<ScriptRef>().executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().color = new Color(1f, 1f, 1f, 1f);
-			else // sinon rouge 
-				agent.GetComponent<ScriptRef>().executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().color = new Color(1f, 0.4f, 0.28f, 1f);
+				nameColors.normalColor = currentSettingsValues.values.currentNormalColor_Text;
+			else // sinon la couleur de mauvaise association 
+				nameColors.normalColor = currentSettingsValues.values.currentWrongAssociationColor;
 		}
 	}
 }

@@ -89,6 +89,11 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "setGameView", value);
 	}
 
+	public void setAnimation(System.Int32 value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setAnimation", value);
+	}
+
 	public void setTooltipView(System.Int32 value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setTooltipView", value);

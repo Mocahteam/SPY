@@ -14,6 +14,7 @@ public class DefaultSettingsValues : MonoBehaviour
 	public int defaultWallTransparency = 1;
 	public int defaultCameraTracking = 1;
 	public int defaultGameView = 0;
+	public int defaultAnimation = 1;
 	public int defaultTooltipView = 1;
 	public int defaultFont = 6;
 	public int defaultCaretWidth = 0;
@@ -27,7 +28,7 @@ public class DefaultSettingsValues : MonoBehaviour
 	public Color defaultPlaceholderColor = new Color(50f / 255f, 50f / 255f, 50f / 255f, 128f / 255f); // grey dark transparent
 	public Color defaultNormalColor_Dropdown = Color.white;
 	public Color defaultNormalColor_Inputfield = Color.white;
-	public Color defaultSelectedColor_Inputfield = new Color(200f / 255f, 200f / 255f, 200f / 255f, 1f); // grey light
+	public Color defaultSelectedColor_Inputfield = new Color(1f, 1f, 1f, 1f); // white
 	public Color defaultSelectionColor_Inputfield = new Color(168f / 255f, 206f / 255f, 1f, 192f / 255f); // blue light transparent
 	public Color defaultCaretColor_Inputfield = new Color(50f / 255f, 50f / 255f, 50f / 255f, 1f); // frey dark
 	public Color defaultNormalColor_Button = new Color(1f, 1f, 1f, 0f); // transparent
@@ -58,4 +59,5 @@ public class DefaultSettingsValues : MonoBehaviour
 	public Color defaultHighlightingColor = new Color(1f, 1f, 0f, 1f); // yellow
 	public Color defaultCaptorTrueColor = new Color(0f, 1f, 12f / 255f, 1f); // green
 	public Color defaultCaptorFalseColor = new Color(1f, 0f, 5f / 255f, 1f); // red
+	public Color defaultWrongAssociationColor = new Color(1f, 0.28f, 0.4f / 255f, 1f); // redish
 }

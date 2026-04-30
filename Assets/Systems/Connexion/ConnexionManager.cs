@@ -65,6 +65,8 @@ public class ConnexionManager : FSystem
 			go.name = "GameData";
 		}
 		gameData = go.GetComponent<GameData>();
+		gameData.selectedScenario = "";
+		gameData.levelToLoad = -1;
 		userData = go.GetComponent<UserData>();
 		// Reset user data
 		userData.birthYear = "undef";

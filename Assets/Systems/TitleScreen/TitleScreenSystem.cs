@@ -33,7 +33,7 @@ public class TitleScreenSystem : FSystem {
 	public GameObject quitButton;
 	public TMP_Text SPYVersion;
 	public CurrentSettingsValues currentSettingsValues;
-	public Transform avatarsLibrary;
+	public Transform profilPanel;
 	public GameObject newAvatarPanel;
 
 	private Transform gameList;
@@ -77,7 +77,7 @@ public class TitleScreenSystem : FSystem {
 					foreach (GameObject canvas in f_canvasGroup)
 						canvas.GetComponent<CanvasGroup>().interactable = false;
 					newAvatarPanel.SetActive(true);
-					Transform avatarSrc = avatarsLibrary.GetChild(userData.newAvatarAvailable).Find("Photo");
+					Transform avatarSrc = profilPanel.Find("Scroll View/Viewport/Content").GetChild(userData.newAvatarAvailable).Find("Photo");
 					Transform avatarTarget = newAvatarPanel.transform.Find("Panel/AvatarIcon");
 					EventSystem.current.SetSelectedGameObject(newAvatarPanel.transform.Find("Panel/Message").gameObject); // parce qu'on attend le fadeOut avant d'activer cette popup, on met à la main le focus sur son texte
 					avatarTarget.GetComponent<Image>().sprite = avatarSrc.GetComponent<Image>().sprite;
@@ -94,16 +94,8 @@ public class TitleScreenSystem : FSystem {
 			foreach (GameObject sID in f_sessionId)
 				sID.GetComponent<TMP_Text>().text = string.Join(" ", GBL_Interface.playerName.ToCharArray());
 
-			// Affichage du bon avatar come icône de profil
-			foreach (GameObject go in f_avatarTarget)
-				go.GetComponent<Image>().sprite = avatarsLibrary.GetChild(userData.avatarSelected).Find("Photo").GetComponent<Image>().sprite;
-			// Dévérouiller les bons avatars dans la bibliothèque des avatars
-			foreach (int avatarId in userData.unlockedAvatars)
-			{
-				Transform avatar = avatarsLibrary.GetChild(avatarId);
-				avatar.GetComponent<Toggle>().interactable = true;
-				GameObjectManager.setGameObjectState(avatar.Find("Locked").gameObject, false);
-			}
+			// Mise à jour du profil du joueur
+			updatePlayerProfile();
 
 			// gestion du bouton continue
 			GameObjectManager.setGameObjectState(continueButton.gameObject, gameData.scenarios.ContainsKey(userData.currentScenario) && userData.levelToContinue != -1 && userData.levelToContinue < gameData.scenarios[userData.currentScenario].levels.Count);
@@ -138,6 +130,62 @@ public class TitleScreenSystem : FSystem {
 		}
 
 		Pause = true;
+	}
+
+	public void updatePlayerProfile()
+	{
+		// Affichage du bon avatar come icône de profil
+		foreach (GameObject go in f_avatarTarget)
+			go.GetComponent<Image>().sprite = profilPanel.Find("Scroll View/Viewport/Content").GetChild(userData.avatarSelected).Find("Photo").GetComponent<Image>().sprite;
+
+		// Calcul du pourcentage de progression et du nombre d'étoiles obtenues
+		int nbMissions = 0;
+		int acquiredStars = 0;
+		int progression = 0;
+		foreach (string key in gameData.scenarios.Keys)
+		{
+			foreach (DataLevel dl in gameData.scenarios[key].levels)
+			{
+				string highScoreKey = Utility.extractFileName(dl.filePath);
+				acquiredStars += (userData.highScore == null || !userData.highScore.ContainsKey(highScoreKey)) ? 0 : userData.highScore[highScoreKey]; //0 star by default
+			}
+			nbMissions += gameData.scenarios[key].levels.Count;
+			progression += userData.progression.ContainsKey(key) ? userData.progression[key] : 0;
+		}
+		int progress = 100 * progression / nbMissions;
+		// affichage de la progression numérique
+		profilPanel.Find("ProgressValue").GetComponent<TMP_Text>().text = progress + "%";
+		// ajustement de la barre de progression
+		RectTransform progressBar = profilPanel.Find("ProgressBar") as RectTransform;
+		RectTransform bar = profilPanel.Find("ProgressBar/Bar") as RectTransform;
+		bar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, progressBar.rect.width * ((float)progress / 100));
+		// affichage du nombre d'étoiles
+		profilPanel.Find("StarsWon/EarnedStars").GetComponent<TMP_Text>().text = "" + acquiredStars;
+		profilPanel.Find("StarsWon/StarsCount").GetComponent<TMP_Text>().text = "" + (nbMissions*3);
+
+		int newAvatarAvailable = 0;
+		if (acquiredStars >= 60 && !userData.unlockedAvatars.Contains(10))
+			newAvatarAvailable = 10;
+		else if (acquiredStars >= 120 && !userData.unlockedAvatars.Contains(11))
+			newAvatarAvailable = 11;
+		else if (acquiredStars >= 186 && !userData.unlockedAvatars.Contains(12))
+			newAvatarAvailable = 12;
+
+		if (newAvatarAvailable != 0)
+        {
+			userData.newAvatarAvailable = newAvatarAvailable;
+			userData.unlockedAvatars.Add(newAvatarAvailable);
+			sendUserData();
+		}
+
+
+		// Dévérouiller les bons avatars dans la bibliothèque des avatars
+		foreach (int avatarId in userData.unlockedAvatars)
+		{
+			Transform avatar = profilPanel.Find("Scroll View/Viewport/Content").GetChild(avatarId);
+			avatar.GetComponent<Toggle>().interactable = true;
+			GameObjectManager.setGameObjectState(avatar.Find("Locked").gameObject, false);
+		}
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
