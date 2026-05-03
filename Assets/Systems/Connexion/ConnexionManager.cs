@@ -71,8 +71,8 @@ public class ConnexionManager : FSystem
 		// Reset user data
 		userData.birthYear = "undef";
 		userData.isTeacher = false;
-		userData.progression = null;
-		userData.highScore = null;
+		userData.progression = new Dictionary<string, int>();
+		userData.highScore = new Dictionary<string, int>();
 		userData.currentScenario = "";
 		userData.levelToContinue = -1;
 		userData.unlockedAvatars = new List<int>();
@@ -146,11 +146,11 @@ public class ConnexionManager : FSystem
 		// Disable Loading screen
 		GameObjectManager.setGameObjectState(loadingScreen, false);
 
-		if (Application.isEditor)
+		/*if (Application.isEditor)
 		{
 			SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
 			SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
-		}
+		}*/
 	}
 
 	private void GetScenariosAndLevels()

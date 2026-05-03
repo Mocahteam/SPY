@@ -186,7 +186,7 @@ public class EndGameManager : FSystem {
 
 			// Sauvegarde de l'état d'avancement des niveaux dans le scénario
 			UserData ud = gameData.GetComponent<UserData>();
-			if (ud.progression != null && (!ud.progression.ContainsKey(gameData.selectedScenario) || ud.progression[gameData.selectedScenario] < gameData.levelToLoad + 1))
+			if (!ud.progression.ContainsKey(gameData.selectedScenario) || ud.progression[gameData.selectedScenario] < gameData.levelToLoad + 1)
 				ud.progression[gameData.selectedScenario] = gameData.levelToLoad + 1;
 
 			//Check if next level exists in campaign
@@ -438,9 +438,9 @@ public class EndGameManager : FSystem {
 		UserData ud = gameData.GetComponent<UserData>();
 		DataLevel levelToLoad = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad];
 		string highScoreKey = Utility.extractFileName(levelToLoad.filePath);
-		int savedScore = ud.highScore == null || !ud.highScore.ContainsKey(highScoreKey) ? 0 : ud.highScore[highScoreKey];
+		int savedScore = !ud.highScore.ContainsKey(highScoreKey) ? 0 : ud.highScore[highScoreKey];
 		
-		if (savedScore < scoredStars && ud.highScore != null)
+		if (savedScore < scoredStars)
 			ud.highScore[highScoreKey] = scoredStars;
 	}
 

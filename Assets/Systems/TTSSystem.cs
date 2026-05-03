@@ -221,7 +221,7 @@ public class TTSSystem : FSystem
 
         if (Application.platform == RuntimePlatform.WebGLPlayer)
         {
-            if (!InstructionOnly() || focused.transform.parent.gameObject.name == "DialogPanel")
+            if (!InstructionOnly() || focused.GetComponentInParent<DialogPanel>() != null)
                 CallTTS(content + suffix);
             SendToScreenReader(content + suffix);
         }

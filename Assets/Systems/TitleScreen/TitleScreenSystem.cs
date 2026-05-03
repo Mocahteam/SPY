@@ -147,7 +147,7 @@ public class TitleScreenSystem : FSystem {
 			foreach (DataLevel dl in gameData.scenarios[key].levels)
 			{
 				string highScoreKey = Utility.extractFileName(dl.filePath);
-				acquiredStars += (userData.highScore == null || !userData.highScore.ContainsKey(highScoreKey)) ? 0 : userData.highScore[highScoreKey]; //0 star by default
+				acquiredStars += !userData.highScore.ContainsKey(highScoreKey) ? 0 : userData.highScore[highScoreKey]; //0 star by default
 			}
 			nbMissions += gameData.scenarios[key].levels.Count;
 			progression += userData.progression.ContainsKey(key) ? userData.progression[key] : 0;
@@ -239,17 +239,17 @@ public class TitleScreenSystem : FSystem {
 		{
 			GameObject scenarioTile = GameObject.Instantiate<GameObject>(TileScenarioPrefab, gameList);
 
-			scenarioTile.transform.Find("Finished").gameObject.SetActive(userData.progression != null && userData.progression.ContainsKey(key) && userData.progression[key] == gameData.scenarios[key].levels.Count);
+			scenarioTile.transform.Find("Finished").gameObject.SetActive(userData.progression.ContainsKey(key) && userData.progression[key] == gameData.scenarios[key].levels.Count);
 			
 			int totalStars = 0;
 			foreach (DataLevel dl in gameData.scenarios[key].levels)
 			{
 				string highScoreKey = Utility.extractFileName(dl.filePath);
-				totalStars += (userData.highScore == null || !userData.highScore.ContainsKey(highScoreKey)) ? 0 : userData.highScore[highScoreKey]; //0 star by default
+				totalStars += !userData.highScore.ContainsKey(highScoreKey) ? 0 : userData.highScore[highScoreKey]; //0 star by default
 			}
 			scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text = totalStars + "/" + (gameData.scenarios[key].levels.Count * 3);
 
-			if (userData.progression != null && userData.progression.ContainsKey(key))
+			if (userData.progression.ContainsKey(key))
 				scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text = (100*userData.progression[key]/ gameData.scenarios[key].levels.Count) +"%";
 			else
 				scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text = "0%";
@@ -347,7 +347,7 @@ public class TitleScreenSystem : FSystem {
 			DataLevel levelData = gameData.scenarios[scenarioKey].levels[i];
 			//scores
 			string highScoreKey = Utility.extractFileName(levelData.filePath);
-			int scoredStars = userData.highScore == null || !userData.highScore.ContainsKey(highScoreKey) ? 0 : userData.highScore[highScoreKey]; //0 star by default
+			int scoredStars = !userData.highScore.ContainsKey(highScoreKey) ? 0 : userData.highScore[highScoreKey]; //0 star by default
 
 			Image star1 = missionTile.transform.Find("Star1").GetComponent<Image>();
 			Image star2 = missionTile.transform.Find("Star2").GetComponent<Image>();
@@ -360,7 +360,7 @@ public class TitleScreenSystem : FSystem {
 
 			int tooltipText = scoredStars;
 			// lock/unlock levels
-			if ((userData.progression != null && userData.progression.ContainsKey(scenarioKey) && userData.progression[scenarioKey] >= i) || i == 0) //by default first level of directory is the only unlocked level of directory
+			if ((userData.progression.ContainsKey(scenarioKey) && userData.progression[scenarioKey] >= i) || i == 0) //by default first level of directory is the only unlocked level of directory
 			{
 				missionButton.interactable = true;
 
