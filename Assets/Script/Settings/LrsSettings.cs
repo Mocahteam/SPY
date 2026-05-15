@@ -29,6 +29,7 @@ class LrsSettings : ScriptableObject
         return settings;
     }
 
+    #if UNITY_EDITOR
     internal static SerializedObject GetSerializedObject() => new(GetOrCreate());
 
 
@@ -50,4 +51,5 @@ class LrsSettings : ScriptableObject
             keywords = new HashSet<string>(new[] { "LRS", "Learning Record Store", "xAPI", "TinCan" })
         };
     }
+    #endif
 }

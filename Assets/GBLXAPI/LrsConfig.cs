@@ -109,8 +109,7 @@ class LrsOAuth2Config : LrsConfig
                 return null;
             }
             var res = JsonUtility.FromJson<OAuthTokenResponse>(tokenRequest.downloadHandler.text);
-            Debug.LogWarning(string.Format("Got token: {0}, expires at {1}", res.access_token, DateTime.Now.AddSeconds(res.expires_in)));
-            Debug.LogWarning(string.Format("It is currently {0}", DateTime.Now));
+            Debug.Log(string.Format("Got token: {0}, expires at {1}", res.access_token, DateTime.Now.AddSeconds(res.expires_in)));
             m_CachedToken= res.access_token;
             m_CachedTokenExpiry = DateTime.Now.AddSeconds(res.expires_in);
         }
