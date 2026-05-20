@@ -36,7 +36,8 @@ public static class GBL_Interface {
     private static List<LrsConfig> GetLrsConfigs()
     {
         LrsSettings settings = LrsSettings.GetOrCreate();
-        var lrsList = settings.lrsBasicConfigs.Cast<LrsConfig>().Concat(settings.lrsOAuth2Configs.Cast<LrsConfig>()).ToList();
+        var lrsConfigs = settings.GetConfigs();
+        var lrsList = lrsConfigs.lrsBasicConfigs.Cast<LrsConfig>().Concat(lrsConfigs.lrsOAuth2Configs.Cast<LrsConfig>()).ToList();
         return lrsList;
     }
     // ------------------------------------------------------------------------
