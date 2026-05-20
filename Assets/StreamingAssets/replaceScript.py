@@ -24,10 +24,10 @@ def multi_replace(search, replace, path):
             if "xml" in filename:
                 print('process '+dirpath+'/'+filename)
                 # replace contents
-                indata = open(os.path.join(dirpath, filename)).read()
+                indata = open(os.path.join(dirpath, filename), encoding='utf-8').read()
                 if search in indata:
                     new = indata.replace(search, replace)
-                    output = open(os.path.join(dirpath, filename), "w")
+                    output = open(os.path.join(dirpath, filename), "w", encoding='utf-8')
                     output.write(new)
                     counter_contents +=1
                     alteredFiles.append(dirpath+'/'+filename)
@@ -37,4 +37,4 @@ def multi_replace(search, replace, path):
         print(x)
     return True
 
-multi_replace("script name", "script outputLine", ".")
+multi_replace("editMode=\"2\"", "editMode=\"1\"", ".")

@@ -58,11 +58,6 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "showDetails", keys);
 	}
 
-	public void refreshCompetencies()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "refreshCompetencies", null);
-	}
-
 	public void continueScenario()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "continueScenario", null);

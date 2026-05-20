@@ -146,11 +146,11 @@ public class ConnexionManager : FSystem
 		// Disable Loading screen
 		GameObjectManager.setGameObjectState(loadingScreen, false);
 
-		/*if (Application.isEditor)
+		if (Application.isEditor)
 		{
 			SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
 			SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
-		}*/
+		}
 	}
 
 	private void GetScenariosAndLevels()
@@ -317,7 +317,6 @@ public class ConnexionManager : FSystem
 			logs.text = "<color=\"green\">(" + loc.localization[1] + ") " + referentialsPath + "</color>\n" + logs.text;
 			try
 			{
-				gameData.lastReferentialSelected = 0;
 				gameData.rawReferentials = JsonUtility.FromJson<RawListReferential>(www.downloadHandler.text);
 			}
 			catch (Exception e)

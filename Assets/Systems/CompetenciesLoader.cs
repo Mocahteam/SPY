@@ -27,18 +27,20 @@ public class CompetenciesLoader : FSystem
 			if (hiddenCompetencies != null && prefabComp != null)
 			{
 				// parse all referentials
-				foreach (RawListComp referential in gameData.rawReferentials.referentials)
+				List<RawListComp> referentials = gameData.rawReferentials.referentials;
+                for (int referentialId = 0; referentialId < referentials.Count; referentialId++)
 				{
 					// create all competencies
-					foreach (RawComp rawComp in referential.list)
+					foreach (RawComp rawComp in referentials[referentialId].list)
 					{
 						// On instancie la compétence
 						GameObject competency = UnityEngine.Object.Instantiate(prefabComp);
 						competency.SetActive(false);
 						competency.name = rawComp.key;
 						Competency comp = competency.GetComponent<Competency>();
-						comp.referential = referential.name;
-						comp.parentKey = rawComp.parentKey;
+						comp.referentialName = referentials[referentialId].name;
+						comp.referentialId = referentialId;
+                        comp.parentKey = rawComp.parentKey;
 						comp.id = rawComp.name;
 						comp.description = Utility.extractLocale(rawComp.description);
 						comp.filters = rawComp.filters;

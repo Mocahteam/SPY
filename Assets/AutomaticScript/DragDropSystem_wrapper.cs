@@ -54,4 +54,9 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "checkSpecialClick", element);
 	}
 
+	public void setDefaultDropZone(UnityEngine.GameObject refObject)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setDefaultDropZone", refObject);
+	}
+
 }

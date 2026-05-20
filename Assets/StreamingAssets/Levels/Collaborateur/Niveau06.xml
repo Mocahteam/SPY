@@ -67,7 +67,7 @@
 
 	<robot inputLine="Plok" posX="8" posY="6" direction="3" skin="0" />
 
-	<script outputLine="Script1" editMode="2" type="0">
+	<script outputLine="Script1" editMode="1" type="0">
 		<action type="Activate"/>
 		<action type="Forward"/>
 		<action type="Forward"/>
@@ -80,21 +80,7 @@
 		<action type="Wait"/>
 	</script>
 
-	<script outputLine="Script2" editMode="2" type="2">
-		<action type="Forward"/>
-		<action type="Activate"/>
-		<action type="TurnRight"/>
-		<action type="Forward"/>
-		<action type="TurnLeft"/>
-		<action type="Forward"/>
-		<action type="Forward"/>
-		<action type="Forward"/>
-		<action type="Forward"/>
-		<action type="Wait"/>
-	</script>
-
-	<script outputLine="Script3" editMode="2" type="0">
-		<action type="Wait"/>
+	<script outputLine="Script2" editMode="1" type="2">
 		<action type="Forward"/>
 		<action type="Activate"/>
 		<action type="TurnRight"/>
@@ -104,9 +90,23 @@
 		<action type="Forward"/>
 		<action type="Forward"/>
 		<action type="Forward"/>
+		<action type="Wait"/>
 	</script>
 
-	<script outputLine="Plok_Sol" editMode="2" type="4">
+	<script outputLine="Script3" editMode="1" type="0">
+		<action type="Wait"/>
+		<action type="Forward"/>
+		<action type="Activate"/>
+		<action type="TurnRight"/>
+		<action type="Forward"/>
+		<action type="TurnLeft"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+	</script>
+
+	<script outputLine="Plok_Sol" editMode="0" type="4">
 		<action type="Activate"/>
 		<action type="Forward"/>
 		<action type="Forward"/>
@@ -119,7 +119,7 @@
 		<action type="Wait"/>
 	</script>
 
-	<script outputLine="Dest_Sol" editMode="2" type="4">
+	<script outputLine="Dest_Sol" editMode="0" type="4">
 		<action type="Wait"/>
 		<action type="Forward"/>
 		<action type="Activate"/>

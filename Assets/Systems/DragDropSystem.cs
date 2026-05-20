@@ -767,6 +767,19 @@ public class DragDropSystem : FSystem
 		}
 	}
 
+	public void setDefaultDropZone(GameObject refObject)
+	{
+		if (!Pause && gameData.dragDropEnabled)
+		{
+			if (refObject.GetComponentInChildren<DropZone>(true) != null)
+				selectNewDefaultDropZone(refObject.GetComponentInChildren<DropZone>(true).gameObject);
+			else if (refObject.GetComponent<ReplacementSlot>() != null)
+				selectNewDefaultDropZone(refObject.GetComponent<ReplacementSlot>().gameObject);
+			else
+				Debug.Log("No drop zone found for this object: "+ refObject.name);
+        }
+    }
+
 	// see inputFiels in ForBloc prefab in inspector
 	public void onlyPositiveInteger(GameObject forBlock, string newValue)
 	{

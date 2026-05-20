@@ -23,7 +23,12 @@ public class SettingsManagerBridge : MonoBehaviour
 		SettingsManager.instance.exportSettings();
     }
 
-	public void setQualitySetting(int value)
+    public void setSkillsRepository(int value)
+    {
+        SettingsManager.instance.setSkillsRepository(value);
+    }
+
+    public void setQualitySetting(int value)
     {
         SettingsManager.instance.setQualitySetting(value);
 	}

@@ -1,10 +1,11 @@
-﻿using UnityEngine;
-using FYFY;
-using TMPro;
-using System.Runtime.InteropServices;
-using UnityEngine.UI;
+﻿using FYFY;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// This system manage the settings window
@@ -64,9 +65,14 @@ public class SettingsManager : FSystem
 	public Selectable LoadingLogs;
 	public bool settingsUpdated = false;
 
-	private UserData userData;
+	private GameData gameData;
+    private UserData userData;
 
-	public SettingsManager()
+
+    private int lastWidth;
+    private int lastHeight;
+
+    public SettingsManager()
 	{
 		instance = this;
 	}
@@ -75,76 +81,140 @@ public class SettingsManager : FSystem
 	{
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
+		{
+			gameData = go.GetComponent<GameData>();
 			userData = go.GetComponent<UserData>();
 
-		settingsContent = settingsWindow.Find("BackgroundPanel/Scroll View/Viewport/Content");
-		flexibleColorPicker = settingsWindow.GetComponentInChildren<FlexibleColorPicker>(true);
-		ds = settingsWindow.GetComponent<DefaultSettingsValues>();
-		cs = settingsWindow.GetComponent<CurrentSettingsValues>();
+			settingsContent = settingsWindow.Find("BackgroundPanel/Scroll View/Viewport/Content");
+			flexibleColorPicker = settingsWindow.GetComponentInChildren<FlexibleColorPicker>(true);
+			ds = settingsWindow.GetComponent<DefaultSettingsValues>();
+			cs = settingsWindow.GetComponent<CurrentSettingsValues>();
 
-		if (Application.platform == RuntimePlatform.WebGLPlayer && ClearPlayerPrefs())
-			PlayerPrefs.DeleteAll();
+            initSkillsRepositories();
 
-		loadPlayerPrefs();
-		saveParameters(); // in case no PlayerPrefs exists, loadPlayerPrefs init currentValues with defaultValues, then we ensure to save currentValues to PlayerPrefs
+			if (Application.platform == RuntimePlatform.WebGLPlayer && ClearPlayerPrefs())
+				PlayerPrefs.DeleteAll();
 
-		f_allTexts.addEntryCallback(delegate (GameObject go) { syncColor_Text(go); });
-		f_allTexts.addEntryCallback(syncSpacing_Text);
-		f_textsSelectable.addEntryCallback(delegate (GameObject go) { syncColor_Text(go); });
-		f_modifiableFonts.addEntryCallback(syncFont);
-		f_fixedFonts.addEntryCallback(fixFont);
-		f_dropdown.addEntryCallback(delegate (GameObject go) { syncColor_Dropdown(go); });
-		f_inputfield.addEntryCallback(delegate (GameObject go) {
-			sync_Inputfield(go); // gère le normal, selected, placeholder, selection et carret
-			syncHighlightedColor(go);
-			syncPressedColor(go);
-			syncDisabledColor(go);
-		});
-		f_inputfieldCaret.addEntryCallback(sync_CaretHeight);
-		f_buttons.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentNormalColor_Button); });
-		f_icons.addEntryCallback(delegate (GameObject go) { syncIconColor(go, cs.values.currentColor_Icon); });
-		f_buttonsPlay.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentPlayButtonColor); });
-		f_buttonsPause.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentPauseButtonColor); });
-		f_buttonsStop.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentStopButtonColor); });
-		f_selectable.addEntryCallback(delegate (GameObject go) {
-			syncHighlightedColor(go);
-			syncPressedColor(go);
-			syncSelectedColor(go);
-			syncDisabledColor(go);
-		});
-		f_SyncSelectedColor.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentSelectedColor); });
-		f_panels1.addEntryCallback(delegate (GameObject go) { syncColor_Panel(go); });
-		f_panels2.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentColor_Panel2); });
-		f_panels3.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentColor_Panel3); });
-		f_borders.addEntryCallback(delegate (GameObject go) { syncBorderProperties(go); });
-		f_scrollbar.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentNormalColor_Scrollbar); });
-		f_scrollbar.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentBackgroundColor_Scrollbar); });
-		f_scrollview.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentBackgroundColor_Scrollview); });
-		f_toggle.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentNormalColor_Toggle); });
-		f_tooltip.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentColor_Tooltip); });
-		f_blocks.addEntryCallback(delegate (GameObject go) { syncBlockColor(go); });
-		f_dropArea.addEntryCallback(delegate (GameObject go) { syncDropAreaColor(go); });
-		f_highlightable.addEntryCallback(delegate (GameObject go) { setHighlightingColor(go); });
-		f_tileSelection.addEntryCallback(delegate (GameObject go) { syncTileColor(go); });
-		f_conditionNotif.addEntryCallback(delegate (GameObject go) { syncConditionNotif(go); });
+            lastWidth = Screen.width;
+            lastHeight = Screen.height;
 
-		f_settingsOpened.addEntryCallback(delegate (GameObject unused) { syncSettingsUI(); });
+            loadPlayerPrefs();
+			saveParameters();
 
-		MainLoop.instance.StartCoroutine(waitLocalizationLoaded());
+            f_allTexts.addEntryCallback(delegate (GameObject go) { syncColor_Text(go); });
+			f_allTexts.addEntryCallback(syncSpacing_Text);
+			f_textsSelectable.addEntryCallback(delegate (GameObject go) { syncColor_Text(go); });
+			f_modifiableFonts.addEntryCallback(syncFont);
+			f_fixedFonts.addEntryCallback(fixFont);
+			f_dropdown.addEntryCallback(delegate (GameObject go) { syncColor_Dropdown(go); });
+			f_inputfield.addEntryCallback(delegate (GameObject go) {
+				sync_Inputfield(go); // gère le normal, selected, placeholder, selection et carret
+				syncHighlightedColor(go);
+				syncPressedColor(go);
+				syncDisabledColor(go);
+			});
+			f_inputfieldCaret.addEntryCallback(sync_CaretHeight);
+			f_buttons.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentNormalColor_Button); });
+			f_icons.addEntryCallback(delegate (GameObject go) { syncIconColor(go, cs.values.currentColor_Icon); });
+			f_buttonsPlay.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentPlayButtonColor); });
+			f_buttonsPause.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentPauseButtonColor); });
+			f_buttonsStop.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentStopButtonColor); });
+			f_selectable.addEntryCallback(delegate (GameObject go) {
+				syncHighlightedColor(go);
+				syncPressedColor(go);
+				syncSelectedColor(go);
+				syncDisabledColor(go);
+			});
+			f_SyncSelectedColor.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentSelectedColor); });
+			f_panels1.addEntryCallback(delegate (GameObject go) { syncColor_Panel(go); });
+			f_panels2.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentColor_Panel2); });
+			f_panels3.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentColor_Panel3); });
+			f_borders.addEntryCallback(delegate (GameObject go) { syncBorderProperties(go); });
+			f_scrollbar.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentNormalColor_Scrollbar); });
+			f_scrollbar.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentBackgroundColor_Scrollbar); });
+			f_scrollview.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentBackgroundColor_Scrollview); });
+			f_toggle.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentNormalColor_Toggle); });
+			f_tooltip.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentColor_Tooltip); });
+			f_blocks.addEntryCallback(delegate (GameObject go) { syncBlockColor(go); });
+			f_dropArea.addEntryCallback(delegate (GameObject go) { syncDropAreaColor(go); });
+			f_highlightable.addEntryCallback(delegate (GameObject go) { setHighlightingColor(go); });
+			f_tileSelection.addEntryCallback(delegate (GameObject go) { syncTileColor(go); });
+			f_conditionNotif.addEntryCallback(delegate (GameObject go) { syncConditionNotif(go); });
 
-		Pause = true;
+			f_settingsOpened.addEntryCallback(delegate (GameObject unused) { syncSettingsUI(); });
+
+			MainLoop.instance.StartCoroutine(waitLocalizationLoaded());
+		}
 	}
-	private IEnumerator waitLocalizationLoaded()
+
+	protected override void onProcess(int familiesUpdateCount)
+	{
+        if (Screen.width != lastWidth || Screen.height != lastHeight)
+        {
+            lastWidth = Screen.width;
+            lastHeight = Screen.height;
+            UpdateSafeArea();
+        }
+    }
+
+    // Positionnement du safe area (très utile pour le mobile pour ne pas que la zone du jeu soit positionnée sur des zones difficiles d'accès => coin arrondi du smartphone ou sous la caméra...)
+    private void UpdateSafeArea()
+    {
+        foreach (GameObject scalerGo in f_canvasScaler)
+		{
+			RectTransform safeArea = scalerGo.transform.Find("SafeArea") as RectTransform;
+			if (safeArea != null)
+			{
+				safeArea.offsetMin = new Vector2(Screen.safeArea.x, Screen.safeArea.y) / cs.values.currentUIScale;
+				safeArea.offsetMax = new Vector2(-Screen.width + Screen.safeArea.x + Screen.safeArea.width, -Screen.height + Screen.safeArea.y + Screen.safeArea.height) / cs.values.currentUIScale;
+			}
+            RectTransform maskUp = scalerGo.transform.Find("MaskUp") as RectTransform;
+			if (maskUp != null)
+				maskUp.sizeDelta = new Vector2(maskUp.sizeDelta.x, (Screen.height - Screen.safeArea.y - Screen.safeArea.height) / cs.values.currentUIScale);
+            RectTransform maskDown = scalerGo.transform.Find("MaskDown") as RectTransform;
+            if (maskDown != null)
+                maskDown.sizeDelta = new Vector2(maskDown.sizeDelta.x, Screen.safeArea.y / cs.values.currentUIScale);
+            RectTransform maskLeft = scalerGo.transform.Find("MaskLeft") as RectTransform;
+            if (maskLeft != null)
+                maskLeft.sizeDelta = new Vector2(Screen.safeArea.x / cs.values.currentUIScale, maskLeft.sizeDelta.y);
+            RectTransform maskRight = scalerGo.transform.Find("MaskRight") as RectTransform;
+            if (maskRight != null)
+                maskRight.sizeDelta = new Vector2((Screen.width - Screen.safeArea.x - Screen.safeArea.width) / cs.values.currentUIScale, maskRight.sizeDelta.y);
+        }
+    }
+
+    private IEnumerator waitLocalizationLoaded()
 	{
 		while (f_localizationLoaded.Count == 0)
 			yield return null;
 		applySettings();
 	}
 
-	private void applySettings()
+	private void initSkillsRepositories()
+	{
+		Transform skillsRepoDropdown = settingsContent.Find("SectionLang/GridContainer/Grid/SkillsDropdown");
+		if (skillsRepoDropdown != null)
+		{
+			TMP_Dropdown dropdown = skillsRepoDropdown.GetComponentInChildren<TMP_Dropdown>(true);
+			dropdown.ClearOptions();
+            // add referential to dropdown
+            List<TMP_Dropdown.OptionData> referentials = new List<TMP_Dropdown.OptionData>();
+            foreach (RawListComp rlc in gameData.rawReferentials.referentials)
+                referentials.Add(new TMP_Dropdown.OptionData(rlc.name));
+
+            if (referentials.Count > 0)
+            {
+                dropdown.AddOptions(referentials);
+                dropdown.value = cs.values.currentSkillsRepository;
+            }
+		}
+    }
+
+    private void applySettings()
     {
 		syncColors();
-		setQualitySetting(cs.values.currentQuality);
+        setSkillsRepository(cs.values.currentSkillsRepository);
+        setQualitySetting(cs.values.currentQuality);
 		syncCanvasScaler();
 		setWallTransparency(cs.values.currentWallTransparency);
 		setGameView(cs.values.currentGameView);
@@ -193,17 +263,21 @@ public class SettingsManager : FSystem
 		syncColor(f_conditionNotif, syncConditionNotif);
 	}
 
+	private float computeUIScale()
+	{
+        return (float)Math.Max(ds.defaultUIScale, Math.Round((float)Screen.width / 1280, 2)) * (Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 2 : 1); // do not reduce scale under defaultUIScale and multiply scale for definition higher than 1280. Sur mobile on multiplie l'echelle par deux
+    }
+
 	// lit les PlayerPrefs et initialise les currentSettingsValues
 	private void loadPlayerPrefs()
 	{
 		// Voir SyncLocalization pour la gestion de la langue
-		cs.values.currentQuality = PlayerPrefs.GetInt("quality", ds.defaultQuality);
+		cs.values.currentSkillsRepository = PlayerPrefs.GetInt("skillsRepository", ds.defaultSkillsRepository);
+        cs.values.currentQuality = PlayerPrefs.GetInt("quality", ds.defaultQuality);
 		cs.values.currentInteractionMode = PlayerPrefs.GetInt("interaction", Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 1 : ds.defaultInteractionMode);
 		// définition de la taille de l'interface
-		float uiWidth = f_canvasScaler.Count > 0 ? (f_canvasScaler.First().transform as RectTransform).rect.width : Screen.currentResolution.width;
-		cs.values.currentUIScale = PlayerPrefs.GetFloat("UIScale", (float)Math.Max(ds.defaultUIScale, Math.Round(uiWidth / 1280, 2))*(Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 2 : 1)); // do not reduce scale under defaultUIScale and multiply scale for definition higher than 1280. Sur mobile on multiplie l'echelle par deux
-		foreach (GameObject scalerGo in f_canvasScaler)
-			scalerGo.GetComponent<CanvasScaler>().scaleFactor = cs.values.currentUIScale;
+		cs.values.currentUIScale = PlayerPrefs.GetFloat("UIScale", computeUIScale());
+		syncCanvasScaler();
 		cs.values.currentWallTransparency = PlayerPrefs.GetInt("wallTransparency", ds.defaultWallTransparency);
 		cs.values.currentCameraTracking = PlayerPrefs.GetInt("cameraTracking", ds.defaultCameraTracking);
 		cs.values.currentAnimation = PlayerPrefs.GetInt("animation", ds.defaultAnimation);
@@ -277,7 +351,8 @@ public class SettingsManager : FSystem
 	private void syncSettingsUI()
 	{
 		// Voir SyncLocalization pour la gestion de la langue
-		settingsContent.Find("SectionGraphic/GridContainer/Grid/Quality").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentQuality;
+		settingsContent.Find("SectionLang/GridContainer/Grid/SkillsDropdown").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentSkillsRepository;
+        settingsContent.Find("SectionGraphic/GridContainer/Grid/Quality").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentQuality;
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/InteractionMode").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentInteractionMode;
 		ds.UIScale.text = cs.values.currentUIScale + "";
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/WallTransparency").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentWallTransparency;
@@ -353,7 +428,8 @@ public class SettingsManager : FSystem
 	public void saveParameters()
 	{
 		// Voir SyncLocalization pour la gestion de la langue
-		PlayerPrefs.SetInt("quality", cs.values.currentQuality);
+		PlayerPrefs.SetInt("skillsRepository", cs.values.currentSkillsRepository);
+        PlayerPrefs.SetInt("quality", cs.values.currentQuality);
 		PlayerPrefs.SetInt("interaction", cs.values.currentInteractionMode);
 		PlayerPrefs.SetFloat("UIScale", cs.values.currentUIScale);
 		PlayerPrefs.SetInt("wallTransparency", cs.values.currentWallTransparency);
@@ -447,10 +523,10 @@ public class SettingsManager : FSystem
 	public void resetParameters()
 	{
 		// Volontairement on ne reset pas la langue
-		cs.values.currentQuality = ds.defaultQuality;
+		cs.values.currentSkillsRepository = ds.defaultSkillsRepository;
+        cs.values.currentQuality = ds.defaultQuality;
 		cs.values.currentInteractionMode = ds.defaultInteractionMode;
-		float uiWidth = f_canvasScaler.Count > 0 ? (f_canvasScaler.First().transform as RectTransform).rect.width : Screen.currentResolution.width;
-		cs.values.currentUIScale = (float)Math.Max(ds.defaultUIScale, Math.Round(uiWidth / 1280, 2));
+        cs.values.currentUIScale = computeUIScale();
 		cs.values.currentWallTransparency = ds.defaultWallTransparency;
 		cs.values.currentCameraTracking = ds.defaultCameraTracking;
 		cs.values.currentGameView = ds.defaultGameView;
@@ -747,7 +823,12 @@ public class SettingsManager : FSystem
 		}
 	}
 
-	public void setQualitySetting(int value)
+	public void setSkillsRepository(int value)
+	{
+		cs.values.currentSkillsRepository = value;
+    }
+
+    public void setQualitySetting(int value)
 	{
 		QualitySettings.SetQualityLevel(value);
 		cs.values.currentQuality = value;
@@ -773,10 +854,11 @@ public class SettingsManager : FSystem
 	}
 	
 	public void syncCanvasScaler()
-	{
-		foreach (GameObject scalerGo in f_canvasScaler)
+    {
+        foreach (GameObject scalerGo in f_canvasScaler)
 			scalerGo.GetComponent<CanvasScaler>().scaleFactor = cs.values.currentUIScale;
-	}
+        UpdateSafeArea();
+    }
 
 	public void setWallTransparency(int value)
 	{

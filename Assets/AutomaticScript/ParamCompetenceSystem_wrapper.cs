@@ -52,14 +52,9 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
 	}
 
-	public void selectCompetencies(System.Int32 referentialId)
+	public void updateCompetencies()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "selectCompetencies", referentialId);
-	}
-
-	public void createCompetencies()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "createCompetencies", null);
+		MainLoop.callAppropriateSystemMethod (system, "updateCompetencies", null);
 	}
 
 	public void resetFilters()

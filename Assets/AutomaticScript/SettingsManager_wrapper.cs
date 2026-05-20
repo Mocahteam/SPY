@@ -49,6 +49,11 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "hookListener", key);
 	}
 
+	public void setSkillsRepository(System.Int32 value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setSkillsRepository", value);
+	}
+
 	public void setQualitySetting(System.Int32 value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "setQualitySetting", value);

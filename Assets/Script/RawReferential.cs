@@ -9,6 +9,7 @@ public class RawConstraint
 	public string value;
 	public string tag2;
 	public string attribute2;
+    public string value2;
 }
 
 [Serializable]

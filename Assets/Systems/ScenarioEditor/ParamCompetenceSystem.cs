@@ -9,6 +9,7 @@ using System;
 using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class ParamCompetenceSystem : FSystem
 {
@@ -16,7 +17,6 @@ public class ParamCompetenceSystem : FSystem
 
 	// Familles
 	private Family f_UI_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency)), new AnyOfProperties(PropertyMatcher.PROPERTY.HAS_CHILD)); // Les compétences qui ont des enfants, donc les éléments d'UI pour le référentiel sélectionné
-	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
 	private Family f_askToTestLevel = FamilyManager.getFamily(new AllOfComponents(typeof(AskToTestLevel)));
 	private UnityAction localCallback;
 	private GameObject selectedScenarioGO;
@@ -46,12 +46,12 @@ public class ParamCompetenceSystem : FSystem
 	public Button closeBriefing;
 	public CurrentSettingsValues currentSettingsValues;
 
-	[DllImport("__Internal")]
+    [DllImport("__Internal")]
 	private static extern void Save(string content, string defaultName); // call javascript
 
 	private GameData gameData;
 
-	public ParamCompetenceSystem()
+    public ParamCompetenceSystem()
 	{
 		instance = this;
 	}
@@ -63,7 +63,7 @@ public class ParamCompetenceSystem : FSystem
 		{
 			gameData = go.GetComponent<GameData>();
 
-			f_askToTestLevel.addEntryCallback(delegate (GameObject go)
+            f_askToTestLevel.addEntryCallback(delegate (GameObject go)
 			{
 				foreach (AskToTestLevel test in go.GetComponents<AskToTestLevel>())
 					GameObjectManager.removeComponent(test);
@@ -73,33 +73,22 @@ public class ParamCompetenceSystem : FSystem
 			selectedScenarioGO = null;
 
 			competenciesLoadedAndReady = false;
-			createCompetencies(); // important le système "ReferentialLoader" doit être positionner AVANT ce système pour que les DropDown utilisé dans cette fonction soient correctement renseignés
+			updateCompetencies();
 			MainLoop.instance.StartCoroutine(delayshowCompatibleLevels());
 		}
 
 		Pause = true;
 	}
 
-	// used in DropdownReferential dropdown 
-	public void selectCompetencies(int referentialId)
+	// see CompetenciesFilter and SkillsDropdown in the settingsWindows of the ScenarioEditor scene
+	public void updateCompetencies()
 	{
-		if (gameData != null && gameData.lastReferentialSelected != referentialId)
-			createCompetencies();
-	}
-
-	// see CompetenciesFilter
-	public void createCompetencies()
-	{
-		int referentialId = f_compSelector.First().GetComponent<TMP_Dropdown>().value;
+		int referentialId = currentSettingsValues.values.currentSkillsRepository;
 		// save previous competencies selected
 		List<string> competenciesEnabled = new List<string>();
 		foreach (GameObject comp in f_UI_competencies)
 			if (comp.GetComponentInChildren<Toggle>().isOn)
 				competenciesEnabled.Add(comp.GetComponent<Competency>().id);
-
-		// set all competency selectors with the same value
-		foreach (GameObject selector in f_compSelector)
-			selector.GetComponent<TMP_Dropdown>().value = referentialId;
 
 		// remove all old competencies
 		for (int i = ContentCompMenu.transform.childCount - 1; i >= 0; i--)
@@ -119,15 +108,17 @@ public class ParamCompetenceSystem : FSystem
 		}
 
 		// create all competencies
-		foreach (RawComp rawComp in gameData.rawReferentials.referentials[referentialId].list)
+		List<RawListComp> referentials = gameData.rawReferentials.referentials;
+        foreach (RawComp rawComp in referentials[referentialId].list)
 		{
 			// On instancie la compétence
 			GameObject competency = UnityEngine.Object.Instantiate(CompetencyToggle);
 			competency.SetActive(false);
 			competency.name = rawComp.key;
 			Competency comp = competency.GetComponent<Competency>();
-			comp.referential = gameData.rawReferentials.referentials[referentialId].name;
-			comp.parentKey = rawComp.parentKey;
+			comp.referentialName = referentials[referentialId].name;
+			comp.referentialId = referentialId;
+            comp.parentKey = rawComp.parentKey;
 			comp.id = rawComp.name;
 			comp.description = Utility.extractLocale(rawComp.description);
 			comp.filters = rawComp.filters;
@@ -169,9 +160,6 @@ public class ParamCompetenceSystem : FSystem
 
 		MainLoop.instance.StartCoroutine(delayRefreshLevelInfo());
 
-		if (Application.platform != RuntimePlatform.WebGLPlayer)
-			DebugLogLevelsCompetencies();
-
 		competenciesLoadedAndReady = true;
 	}
 
@@ -180,8 +168,14 @@ public class ParamCompetenceSystem : FSystem
 		while (!competenciesLoadedAndReady)
 			yield return null;
 
-		filterCompatibleLevels(false);
-	}
+        yield return null; // Il faut attendre la frame suivante pour être sûr que la famille contenant les Competency soit à jour
+
+        filterCompatibleLevels(false);
+
+		Debug.Log(f_UI_competencies.Count);
+        if (Application.platform != RuntimePlatform.WebGLPlayer)
+            DebugLogLevelsCompetencies();
+    }
 
 	// see ShowAllLevels GameObject
 	public void resetFilters()
@@ -224,16 +218,14 @@ public class ParamCompetenceSystem : FSystem
 			}
 		}
 
-		TMP_Dropdown selectComp = f_compSelector.First().GetComponent<TMP_Dropdown>();
-
-		if (!nameFiltering)
+		if (!nameFiltering && competenciesSelected != "")
 		{
-			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+            GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
 			{
 				verb = "filtered",
 				objectType = "competencies",
 				activityExtensions = new Dictionary<string, string>() {
-						{ "context", selectComp.options[selectComp.value].text },
+						{ "context", f_UI_competencies.First().GetComponent<Competency>().referentialName },
 						{ "content", competenciesSelected }
 					}
 			});
@@ -310,14 +302,14 @@ public class ParamCompetenceSystem : FSystem
 	public void displayLoadingPanel(string filter)
 	{
 		// sync filter with the content of the input field (in the case of input field is not empty and loading panel is called from the menu)
-		TMP_InputField input = mainCanvas.transform.Find("LoadingPanel").GetComponentInChildren<TMP_InputField>();
+		TMP_InputField input = mainCanvas.transform.Find("SafeArea/LoadingPanel").GetComponentInChildren<TMP_InputField>();
 		if (input.text != filter) { 
 			input.text = filter;
 			return;
 		}
 
 		selectedScenarioGO = null;
-		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("LoadingPanel").gameObject, true);
+		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("SafeArea/LoadingPanel").gameObject, true);
 		// remove all old scenario
 		for (int i = loadingScenarioContent.transform.childCount - 1; i >= 0; i--)
 		{
@@ -636,9 +628,10 @@ public class ParamCompetenceSystem : FSystem
 			savingPanel.GetComponentInChildren<TMP_InputField>(true).text = scenarName.text;
 	}
 
-	public void showBriefingOverride()
-    {
-		GameObjectManager.setGameObjectState(compatibleLevelsPanel, false);
+    // See pen in hookedMission prefab
+    public void showBriefingOverride()
+	{ 
+        GameObjectManager.setGameObjectState(compatibleLevelsPanel, false);
 		GameObjectManager.setGameObjectState(editBriefingPanel, true);
     }
 
@@ -697,6 +690,7 @@ public class ParamCompetenceSystem : FSystem
 			}
 			csvExport += "\n";
 		}
-		File.WriteAllText("exportAssociationMissions"+ f_compSelector.First().GetComponent<TMP_Dropdown>().options[f_compSelector.First().GetComponent<TMP_Dropdown>().value].text+"Ref.txt", csvExport);
+		if (csvExport != "")
+			File.WriteAllText("exportAssociationMissions"+ f_UI_competencies.First().GetComponent<Competency>().referentialName+"Ref.txt", csvExport);
 	}
 }

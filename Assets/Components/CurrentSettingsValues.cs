@@ -10,7 +10,8 @@ public class CurrentSettingsValues : MonoBehaviour
 public class RawSettingsValues
 {
 	public int currentLanguage;
-	public int currentQuality;
+	public int currentSkillsRepository;
+    public int currentQuality;
 	public int currentInteractionMode;
 	public float currentUIScale;
 	public int currentWallTransparency;

@@ -4,6 +4,7 @@ using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class BriefingEditor : FSystem
@@ -121,7 +122,7 @@ public class BriefingEditor : FSystem
 			// save briefing items
 			overridedBriefing.data.overridedDialogs = new List<Dialog>();
 			Transform viewportContent = editBriefingPanel.Find("Scroll View").GetChild(0).GetChild(0);
-			for (int i = 3; i < viewportContent.childCount; i++)
+			for (int i = 0; i < viewportContent.childCount; i++)
 			{
 				Transform child = viewportContent.GetChild(i);
 				Dialog dialog = new Dialog();
@@ -153,7 +154,11 @@ public class BriefingEditor : FSystem
 
 			// remettre le focus sur le bouton qui a appelé la fenêtre
 			if (currentBriefingEdit != null)
+			{
 				EventSystem.current.SetSelectedGameObject(currentBriefingEdit);
+				if (SceneManager.GetActiveScene().name == "ScenarioEditor")
+                    currentBriefingEdit.transform.parent.parent.Find("MissionButton").GetComponent<Button>().onClick.Invoke(); // Dans l'éditeur de scénario, après avoir édité un briefing on simule un clic sur le bouton de la mission pour que les changements soient pris en compte et affichés dans le panneau central
+            }
 			currentBriefingEdit = null;
 		}
 	}

@@ -66,31 +66,18 @@ Our engineers suggest three solutions, but which is the most effective?[/en]" ca
 
 	<robot inputLine="Dest" posX="3" posY="5" direction="0" skin="2" />
 
-	<script outputLine="Script1" editMode="2" type="2">
+	<script outputLine="Script1" editMode="1" type="2">
 		<action type="Forward"/>
 		<action type="Forward"/>
 		<action type="Forward"/>
 		<action type="Forward"/>
 	</script>
 
-	<script outputLine="Script2" editMode="2" type="2">
+	<script outputLine="Script2" editMode="1" type="2">
 		<action type="Forward"/>
 		<action type="TurnRight"/>
 		<action type="Forward"/>
 		<action type="TurnLeft"/>
-		<action type="Forward"/>
-		<action type="Forward"/>
-		<action type="TurnRight"/>
-		<action type="Forward"/>
-		<action type="TurnLeft"/>
-		<action type="Forward"/>
-	</script>
-
-	<script outputLine="Script3" editMode="2" type="0">
-		<action type="Forward"/>
-		<action type="TurnLeft"/>
-		<action type="Forward"/>
-		<action type="TurnRight"/>
 		<action type="Forward"/>
 		<action type="Forward"/>
 		<action type="TurnRight"/>
@@ -99,7 +86,20 @@ Our engineers suggest three solutions, but which is the most effective?[/en]" ca
 		<action type="Forward"/>
 	</script>
 
-	<script outputLine="Dest_Sol" editMode="2" type="4">
+	<script outputLine="Script3" editMode="1" type="0">
+		<action type="Forward"/>
+		<action type="TurnLeft"/>
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+		<action type="Forward"/>
+		<action type="Forward"/>
+		<action type="TurnRight"/>
+		<action type="Forward"/>
+		<action type="TurnLeft"/>
+		<action type="Forward"/>
+	</script>
+
+	<script outputLine="Dest_Sol" editMode="0" type="4">
 		<action type="Forward"/>
 		<action type="TurnLeft"/>
 		<action type="Forward"/>

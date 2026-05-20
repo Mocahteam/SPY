@@ -8,6 +8,7 @@ public class DefaultSettingsValues : MonoBehaviour
 
 	[Header("Default Values")]
 	public int defaultLanguage = 0;
+	public int defaultSkillsRepository = 1;
 	public int defaultQuality = 2;
 	public int defaultInteractionMode = 0;
 	public float defaultUIScale = 1;

@@ -82,14 +82,14 @@ public static class UtilityLobby
 	public static bool isCompetencyMatchWithLevel(Competency competency, XmlDocument level)
 	{
 		// check all filters of the competency
-		Dictionary<string, List<XmlNode>> filtersState = new Dictionary<string, List<XmlNode>>();
+		Dictionary<string, (List<XmlNode>, int)> filtersState = new Dictionary<string, (List<XmlNode>, int)>();
 		foreach (RawFilter filter in competency.filters)
 		{
 
 			if (filtersState.ContainsKey(filter.label))
 			{
 				// if a filter with this label is defined and no XmlNode identified, useless to check this new one
-				if (filtersState[filter.label].Count == 0)
+				if (filtersState[filter.label].Item1.Count == 0)
 					continue;
 			}
 			else
@@ -98,11 +98,11 @@ public static class UtilityLobby
 				List<XmlNode> tagList = new List<XmlNode>();
 				foreach (XmlNode tag in level.GetElementsByTagName(filter.tag))
 					tagList.Add(tag);
-				filtersState.Add(filter.label, tagList);
+				filtersState.Add(filter.label, (tagList, -2)); // -2 means use tagList length
 			}
 
 			// check if this filter is true
-			List<XmlNode> tags = filtersState[filter.label];
+			List<XmlNode> tags = filtersState[filter.label].Item1;
 			foreach (RawConstraint constraint in filter.constraints)
 			{
 				int levelAttrValue;
@@ -234,24 +234,142 @@ public static class UtilityLobby
 							}
 						}
 						break;
-					// Check if a tag contains at least one child
-					case "hasChild":
+                    // Check if the value of an attribute of a tag is different from the value of an attribute of all other tags
+                    case "differentFrom":
+                        for (int t = tags.Count - 1; t >= 0; t--)
+                        {
+                            if (tags[t].Attributes.GetNamedItem(constraint.attribute) == null)
+                                tags.RemoveAt(t);
+                            else
+                            {
+                                bool found = false;
+                                foreach (XmlNode node in tags[t].OwnerDocument.GetElementsByTagName(constraint.tag2))
+                                {
+                                    if (node != tags[t] && node.Attributes.GetNamedItem(constraint.attribute2) != null && node.Attributes.GetNamedItem(constraint.attribute2).Value == tags[t].Attributes.GetNamedItem(constraint.attribute).Value)
+                                    {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (found)
+                                    tags.RemoveAt(t);
+                            }
+                        }
+                        break;
+                    // Check if a tag contains at least one child
+                    case "hasChild":
 						for (int t = tags.Count - 1; t >= 0; t--)
 						{
 							if (!tags[t].HasChildNodes)
 								tags.RemoveAt(t);
 						}
 						break;
-				}
+                    // Somme les valeurs d'un attribut donné
+                    case "sum":
+                        // Sur une contrainte sum on change la règle de comptage, plutôt que de compter le nombre de balise respectant toutes les contraintes, on somme la propriété définit dans la contrainte sum pour toutes les balises restantes.
+						// On initialise la somme à 0 (second item du couple)
+                        int sum = 0;
+
+                        for (int t = tags.Count - 1; t >= 0; t--)
+						{
+                            if (tags[t].Attributes.GetNamedItem(constraint.attribute) == null)
+                                tags.RemoveAt(t);
+							else
+							{
+                                try
+                                {
+                                    levelAttrValue = int.Parse(tags[t].Attributes.GetNamedItem(constraint.attribute).Value);
+									if (levelAttrValue == -1)
+                                        levelAttrValue = 999; // means infinite
+									sum += levelAttrValue;
+                                }
+                                catch
+                                {
+                                    tags.RemoveAt(t);
+                                }
+                            }
+                        }
+
+                        filtersState[filter.label] = (filtersState[filter.label].Item1, sum);
+                        break;
+					// Compte le bombre d'enfants correspondant à la liste de tags donnés
+					case "countChilds":
+                        // Sur une contrainte countChilds on change la règle de comptage, plutôt que de compter le nombre de balise respectant toutes les contraintes, on compte le nombre d'enfants correspondant au critère donné (tag2, attribut2, value2).
+                        // On initialise la somme à 0 (second item du couple)
+                        int count = 0;
+                        for (int t = tags.Count - 1; t >= 0; t--)
+                        {
+							foreach (string tagName in constraint.tag2.Split('|'))
+							{ 
+								if (tagName == "")
+									continue;
+								XmlNodeList targets = tags[t].SelectNodes(".//" + tagName); // Recherche récursive du tag à partir du noeud courant
+
+                                // Si le filtrage ne porte pas sur un attribut de ce tag, on compte simplement le nombre de tag trouvé, sinon on vérifie cherche l'attribut dans les cibles
+                                if (constraint.attribute2 == null)
+                                    count += targets.Count;
+                                else
+								{
+                                    // On parcours les tags trouvés et on cherche l'attribut ciblé
+                                    foreach (XmlNode target in targets)
+										if (target.Attributes.GetNamedItem(constraint.attribute2) != null) {
+											// Si aucune valeur n'est précisée pour la contrainte, alors on compte simplement la présence de l'attribut, sinon on vérifie que sa valeur correspond
+											if (constraint.value2 == null)
+												count++;
+											else if (target.Attributes.GetNamedItem(constraint.attribute2).Value == constraint.value2)
+												count++;
+										}
+								}
+										
+							}
+                        }
+                        filtersState[filter.label] = (filtersState[filter.label].Item1, count);
+                        break;
+					// Compte le nombre de doublon => élimination des doublons pour ne conserver qu'un seul exemplaire
+					case "countDuplicateOnce":
+                        for (int t = 0; t < tags.Count ; t++)
+                        {
+							if (tags[t].Attributes.GetNamedItem(constraint.attribute) == null)
+							{
+								tags.RemoveAt(t);
+								t--;
+							}
+							else
+							{
+								bool found = false;
+								for (int t2 = t + 1; t2 < tags.Count; t2++)
+								{
+									if (tags[t2].Attributes.GetNamedItem(constraint.attribute) != null && tags[t2].Attributes.GetNamedItem(constraint.attribute).Value == tags[t].Attributes.GetNamedItem(constraint.attribute).Value)
+									{
+										found = true;
+                                        tags.RemoveAt(t2);
+										t2--;
+                                    }
+								}
+								if (!found)
+								{
+									tags.RemoveAt(t);
+									t--;
+								}
+							}
+                        }
+                        break;
+
+                }
 			}
 		}
 		// check the rule (combination of filters)
 		string rule = competency.rule;
-		foreach (string key in filtersState.Keys)
-		{
-			rule = rule.Replace(key, "" + filtersState[key].Count);
-		}
-		DataTable dt = new DataTable();
+        foreach (string key in filtersState.Keys)
+        {
+			int count = 0;
+			if (filtersState[key].Item2 == -2)
+				count = filtersState[key].Item1.Count;
+			else
+				count = filtersState[key].Item2;
+            rule = rule.Replace(key, "" + count);
+        }
+        DataTable dt = new DataTable();
 		if (rule != "")
 			return (bool)dt.Compute(rule, "");
 		else

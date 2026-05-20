@@ -181,8 +181,7 @@
 			outputLine (mandatory): the id of this script. This outputLine has to be unique. Robot tags and guard tags that have a "inputLine" (see robot and guard tags) equal to this, will be controlled by this script
 			editMode (optional):
 				0 -> Locked: the player can't rename the script
-				1 -> Synch:  if the player renames the script it will automatically renames associated robot tags
-				2 -> Editable (default): if the player renames the script it will not automatically renames associated robot tags
+				1 -> Editable (default): if the player renames the script it will not automatically renames associated robot tags
 			type (optional):
 				0 -> Optimal: the given script is the optimal solution for the mission
 				1 -> NonOptimal: the given script resolve the mission but it can be optimized
@@ -244,7 +243,7 @@
 			Three condition tags exists: condition, thenCondition, elseCondition. The three follow the same rules.
 			Condition tags can contain only one child that can be a captor or an operator among the following tags:
 				captor: this tag contains one attribute:
-					type (mandatory): the name of the captor in {"WallFront", "WallLeft", "WallRight", "Enemy", "RedArea", "FieldGate", "Terminal", "Exit"}.
+					type (mandatory): the name of the captor in {"WallFront", "WallLeft", "WallRight", "PathFront", "PathLeft", "PathRight", "Enemy", "RedArea", "Player", "Furniture", "FieldGate", "Terminal", "Exit"}.
 				Exemple: <captor type="Terminal" />
 				
 				and: this tag has no attributes, it is composed by two mandatory tags: conditionLeft and conditionRight (see Condition description).

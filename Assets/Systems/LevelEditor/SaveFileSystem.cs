@@ -165,7 +165,7 @@ public class SaveFileSystem : FSystem
 		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, false);
 	}
 
-	private string buildLevelContent()
+	public string buildLevelContent()
 	{
 		string levelExport = "<?xml version=\"1.0\"?>\n";
 		levelExport += "<level>\n";

@@ -104,7 +104,7 @@
 								{
 									"attribute": "editMode",
 									"constraint": "=",
-									"value": "2"
+									"value": "1"
 								}
 							]
 						}
@@ -126,6 +126,12 @@
 									"constraint": "sameValue",
 									"tag2": "robot",
 									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "script",
+									"attribute2": "outputLine"
 								}
 							]
 						}
@@ -139,35 +145,58 @@
 					"description": "[fr]Etre capable de repérer qu'il manque une zone de programmation pour programmer chaque robot.[/fr][en]Be able to identify that a programming area is missing for programming each robot.[/en]",
 					"filters": [
 						{
-							"label": "ControledRobot",
+							"label": "LinkedScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "sameValue",
+									"tag2": "robot",
+									"attribute2": "inputLine"
+								}
+							]
+						},
+						{
+							"label": "RobotCount",
+							"tag": "robot",
+							"constraints": []
+						},
+						{
+							"label": "RobotWithSameName",
 							"tag": "robot",
 							"constraints": [
 								{
 									"attribute": "inputLine",
 									"constraint": "sameValue",
-									"tag2": "script",
-									"attribute2": "outputLine"
+									"tag2": "robot",
+									"attribute2": "inputLine"
 								}
 							]
 						},
 						{
-							"label": "NumRobot",
+							"label": "RobotDuplicateCountOnce", 
 							"tag": "robot",
-							"constraints": []
-						},
-						{
-							"label": "ScriptEditable",
-							"tag": "script",
 							"constraints": [
 								{
-									"attribute": "editMode",
+									"attribute": "inputLine",
+									"constraint": "countDuplicateOnce"
+								}
+							]
+						},
+						{
+							"label": "ExitCount",
+							"tag": "cell",
+							"constraints": [
+								{
+									"attribute": "value",
 									"constraint": "=",
-									"value": "2"
+									"value": "3"
 								}
 							]
 						}
 					],
-					"rule": "(ControledRobot + ScriptEditable) < NumRobot"
+					"comment": "On considère que ça sera le cas si on a moins de zone de programmation que de robot et de sortie (pour les robots on prend en compte que plusieurs robots peuvent avoir le même nom et ne comptent alors que pour 1).",
+					"rule": "LinkedScript < (RobotCount - RobotWithSameName + RobotDuplicateCountOnce) and LinkedScript < ExitCount"
 				},
 				{
 					"key": "SPY_SelectRightScript",
@@ -181,34 +210,60 @@
 							"constraints": []
 						},
 						{
+							"label": "CorrectScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "0"
+								},
+								{
+									"constraint": "hasChild"
+								}
+							]
+						},
+						{
 							"label": "ScriptEditable",
 							"tag": "script",
 							"constraints": [
 								{
 									"attribute": "editMode",
 									"constraint": "=",
-									"value": "2"
+									"value": "1"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
 								}
 							]
 						},
 						{
-							"label": "AllScript",
-							"tag": "script",
-							"constraints": []
-						},
-						{
-							"label": "CorrectScript",
+							"label": "AllVisibleScript",
 							"tag": "script",
 							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "isIncludedIn",
-									"value": "0|1"
+									"constraint": "<>",
+									"value": "4"
+								}
+							]
+						},
+						{
+							"label": "EnemyScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "sameValue",
+									"tag2": "guard",
+									"attribute2": "inputLine"
 								}
 							]
 						}
 					],
-					"rule": "CorrectScript >= 1 and DragDropDisabled >= 1 and ScriptEditable = AllScript and AllScript >= 2"
+					"rule": "DragDropDisabled >= 1 and CorrectScript >= 1 and ScriptEditable = (AllVisibleScript - EnemyScript)"
 				},
 				{
 					"key": "SPY_CorrectBuggedScript",
@@ -222,9 +277,21 @@
 							"constraints": []
 						},
 						{
-							"label": "AllScript",
+							"label": "AllPlayerScript",
 							"tag": "script",
-							"constraints": []
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								}
+							]
 						},
 						{
 							"label": "BuggedScript",
@@ -238,7 +305,7 @@
 							]
 						}
 					],
-					"rule": "BuggedScript >= 1 and DragDropDisabled = 0 and BuggedScript = AllScript"
+					"rule": "DragDropDisabled = 0 and AllPlayerScript = BuggedScript and BuggedScript > 0"
 				},
 				{
 					"key": "SPY_GuardInGame",
@@ -247,7 +314,7 @@
 					"description": "[fr]Être capable d'anticiper les actions d'un guarde afin d'adapter sa solution en conséquence.[/fr][en]Be able to anticipate a guard's actions and adapt your solution accordingly.[/en]",
 					"filters": [
 						{
-							"label": "ScriptWithContent",
+							"label": "ScriptToEnemyWithContent",
 							"tag": "script",
 							"constraints": [
 								{
@@ -262,7 +329,7 @@
 							]
 						}
 					],
-					"rule": "ScriptWithContent > 0"
+					"rule": "ScriptToEnemyWithContent > 0"
 				},
 				{
 					"key": "SPY_RobotsInSameLine",
@@ -388,18 +455,30 @@
 							]
 						},
 						{
-							"label": "moveInScript",
-							"tag": "action",
+							"label": "moveInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "Forward"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "Forward"
 								}
 							]
 						}
 					],
-					"rule": "moveInLib >= 1 or moveInScript >= 1"
+					"rule": "moveInLib >= 1 or moveInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Action_TurnLeft",
@@ -424,18 +503,30 @@
 							]
 						},
 						{
-							"label": "leftInScript",
-							"tag": "action",
+							"label": "leftInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "TurnLeft"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "TurnLeft"
 								}
 							]
 						}
 					],
-					"rule": "leftInLib >= 1 or leftInScript >= 1"
+					"rule": "leftInLib >= 1 or leftInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Action_TurnRight",
@@ -460,18 +551,30 @@
 							]
 						},
 						{
-							"label": "rightInScript",
-							"tag": "action",
+							"label": "rightInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "TurnRight"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "TurnRight"
 								}
 							]
 						}
 					],
-					"rule": "rightInLib >= 1 or rightInScript >= 1"
+					"rule": "rightInLib >= 1 or rightInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Action_Wait",
@@ -496,18 +599,30 @@
 							]
 						},
 						{
-							"label": "waitInScript",
-							"tag": "action",
+							"label": "waitInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "Wait"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "Wait"
 								}
 							]
 						}
 					],
-					"rule": "waitInLib >= 1 or waitInScript >= 1"
+					"rule": "waitInLib >= 1 or waitInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Action_Activate",
@@ -532,18 +647,30 @@
 							]
 						},
 						{
-							"label": "activateInScript",
-							"tag": "action",
+							"label": "activateInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "Activate"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "Activate"
 								}
 							]
 						}
 					],
-					"rule": "activateInLib >= 1 or activateInScript >= 1"
+					"rule": "activateInLib >= 1 or activateInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Action_TurnBack",
@@ -568,18 +695,30 @@
 							]
 						},
 						{
-							"label": "turnBackInScript",
-							"tag": "action",
+							"label": "turnBackInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "TurnBack"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "TurnBack"
 								}
 							]
 						}
 					],
-					"rule": "turnBackInLib >= 1 or turnBackInScript >= 1"
+					"rule": "turnBackInLib >= 1 or turnBackInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Controls",
@@ -612,12 +751,28 @@
 							]
 						},
 						{
-							"label": "ifThenInScript",
-							"tag": "if",
-							"constraints": []
+							"label": "ifThenInPlayerScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "if"
+								}
+							]
 						}
 					],
-					"rule": "ifThenInLib >= 1 or ifThenInScript >= 1"
+					"rule": "ifThenInLib >= 1 or ifThenInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Control_IfElse",
@@ -642,12 +797,28 @@
 							]
 						},
 						{
-							"label": "ifElseInScript",
-							"tag": "ifElse",
-							"constraints": []
+							"label": "ifElseInPlayerScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "ifElse"
+								}
+							]
 						}
 					],
-					"rule": "ifElseInLib >= 1 or ifElseInScript >= 1"
+					"rule": "ifElseInLib >= 1 or ifElseInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Control_ForLoop",
@@ -672,12 +843,28 @@
 							]
 						},
 						{
-							"label": "forLoopInScript",
-							"tag": "for",
-							"constraints": []
+							"label": "forLoopInPlayerScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "for"
+								}
+							]
 						}
 					],
-					"rule": "forLoopInLib >= 1 or forLoopInScript >= 1"
+					"rule": "forLoopInLib >= 1 or forLoopInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Control_While",
@@ -702,12 +889,28 @@
 							]
 						},
 						{
-							"label": "whileInScript",
-							"tag": "while",
-							"constraints": []
+							"label": "whileInPlayerScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "while"
+								}
+							]
 						}
 					],
-					"rule": "whileInLib >= 1 or whileInScript >= 1"
+					"rule": "whileInLib >= 1 or whileInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Control_Forever",
@@ -732,12 +935,28 @@
 							]
 						},
 						{
-							"label": "foreverInScript",
-							"tag": "forever",
-							"constraints": []
+							"label": "foreverInPlayerScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "forever"
+								}
+							]
 						}
 					],
-					"rule": "foreverInLib >= 1 or foreverInScript >= 1"
+					"rule": "foreverInLib >= 1 or foreverInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Operators",
@@ -770,12 +989,28 @@
 							]
 						},
 						{
-							"label": "andInScript",
-							"tag": "and",
-							"constraints": []
+							"label": "andInPlayerScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "and"
+								}
+							]
 						}
 					],
-					"rule": "andInLib >= 1 or andInScript >= 1"
+					"rule": "andInLib >= 1 or andInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Operator_Or",
@@ -800,12 +1035,28 @@
 							]
 						},
 						{
-							"label": "orInScript",
-							"tag": "or",
-							"constraints": []
+							"label": "orInPlayerScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "or"
+								}
+							]
 						}
 					],
-					"rule": "orInLib >= 1 or orInScript >= 1"
+					"rule": "orInLib >= 1 or orInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Operator_Not",
@@ -830,12 +1081,28 @@
 							]
 						},
 						{
-							"label": "notInScript",
-							"tag": "not",
-							"constraints": []
+							"label": "notInPlayerScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "not"
+								}
+							]
 						}
 					],
-					"rule": "notInLib >= 1 or notInScript >= 1"
+					"rule": "notInLib >= 1 or notInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captors",
@@ -868,18 +1135,30 @@
 							]
 						},
 						{
-							"label": "wallFrontInScript",
-							"tag": "action",
+							"label": "wallFrontInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "WallFront"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "WallFront"
 								}
 							]
 						}
 					],
-					"rule": "wallFrontInLib >= 1 or wallFrontInScript >= 1"
+					"rule": "wallFrontInLib >= 1 or wallFrontInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captor_WallLeft",
@@ -904,18 +1183,30 @@
 							]
 						},
 						{
-							"label": "wallLeftInScript",
-							"tag": "action",
+							"label": "wallLeftInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "WallLeft"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "WallLeft"
 								}
 							]
 						}
 					],
-					"rule": "wallLeftInLib >= 1 or wallLeftInScript >= 1"
+					"rule": "wallLeftInLib >= 1 or wallLeftInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captor_WallRight",
@@ -940,18 +1231,30 @@
 							]
 						},
 						{
-							"label": "wallRightInScript",
-							"tag": "action",
+							"label": "wallRightInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "WallRight"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "WallRight"
 								}
 							]
 						}
 					],
-					"rule": "wallRightInLib >= 1 or wallRightInScript >= 1"
+					"rule": "wallRightInLib >= 1 or wallRightInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captor_PathFront",
@@ -976,18 +1279,30 @@
 							]
 						},
 						{
-							"label": "pathFrontInScript",
-							"tag": "action",
+							"label": "pathFrontInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "PathFront"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "PathFront"
 								}
 							]
 						}
 					],
-					"rule": "pathFrontInLib >= 1 or pathFrontInScript >= 1"
+					"rule": "pathFrontInLib >= 1 or pathFrontInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captor_PathLeft",
@@ -1012,18 +1327,30 @@
 							]
 						},
 						{
-							"label": "pathLeftInScript",
-							"tag": "action",
+							"label": "pathLeftInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "PathLeft"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "PathLeft"
 								}
 							]
 						}
 					],
-					"rule": "pathLeftInLib >= 1 or pathLeftInScript >= 1"
+					"rule": "pathLeftInLib >= 1 or pathLeftInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captor_PathRight",
@@ -1048,18 +1375,30 @@
 							]
 						},
 						{
-							"label": "pathRightInScript",
-							"tag": "action",
+							"label": "pathRightInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "PathRight"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "PathRight"
 								}
 							]
 						}
 					],
-					"rule": "pathRightInLib >= 1 or pathRightInScript >= 1"
+					"rule": "pathRightInLib >= 1 or pathRightInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captor_Enemy",
@@ -1084,18 +1423,30 @@
 							]
 						},
 						{
-							"label": "enemyInScript",
-							"tag": "action",
+							"label": "enemyInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "Enemy"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "Enemy"
 								}
 							]
 						}
 					],
-					"rule": "enemyInLib >= 1 or enemyInScript >= 1"
+					"rule": "enemyInLib >= 1 or enemyInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captor_RedArea",
@@ -1120,18 +1471,30 @@
 							]
 						},
 						{
-							"label": "redAreaInScript",
-							"tag": "action",
+							"label": "redAreaInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "RedArea"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "RedArea"
 								}
 							]
 						}
 					],
-					"rule": "redAreaInLib >= 1 or redAreaInScript >= 1"
+					"rule": "redAreaInLib >= 1 or redAreaInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captor_FieldGate",
@@ -1156,18 +1519,30 @@
 							]
 						},
 						{
-							"label": "fieldGateInScript",
-							"tag": "action",
+							"label": "fieldGateInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "FieldGate"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "FieldGate"
 								}
 							]
 						}
 					],
-					"rule": "fieldGateInLib >= 1 or fieldGateInScript >= 1"
+					"rule": "fieldGateInLib >= 1 or fieldGateInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captor_Terminal",
@@ -1192,18 +1567,30 @@
 							]
 						},
 						{
-							"label": "terminalInScript",
-							"tag": "action",
+							"label": "terminalInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "Terminal"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "Terminal"
 								}
 							]
 						}
 					],
-					"rule": "terminalInLib >= 1 or terminalInScript >= 1"
+					"rule": "terminalInLib >= 1 or terminalInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captor_Exit",
@@ -1228,18 +1615,30 @@
 							]
 						},
 						{
-							"label": "exitInScript",
-							"tag": "action",
+							"label": "exitInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "Exit"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "Exit"
 								}
 							]
 						}
 					],
-					"rule": "exitInLib >= 1 or exitInScript >= 1"
+					"rule": "exitInLib >= 1 or exitInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captor_Player",
@@ -1264,18 +1663,30 @@
 							]
 						},
 						{
-							"label": "playerInScript",
-							"tag": "action",
+							"label": "playerInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "Player"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "Player"
 								}
 							]
 						}
 					],
-					"rule": "playerInLib >= 1 or playerInScript >= 1"
+					"rule": "playerInLib >= 1 or playerInPlayerScript >= 1"
 				},
 				{
 					"key": "SPY_Captor_Furniture",
@@ -1300,18 +1711,30 @@
 							]
 						},
 						{
-							"label": "furnitureInScript",
-							"tag": "action",
+							"label": "furnitureInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "=",
-									"value": "Furniture"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "Furniture"
 								}
 							]
 						}
 					],
-					"rule": "furnitureInLib >= 1 or furnitureInScript >= 1"
+					"rule": "furnitureInLib >= 1 or furnitureInPlayerScript >= 1"
 				}
 			]
 		},
@@ -1330,7 +1753,7 @@
 					"key": "C1.1",
 					"parentKey": "C1",
 					"name": "[fr]C1.1 Nommer des objets et séquence d'actions[/fr][en]C1.1 Name objects and sequence of actions[/en]",
-					"description": "[fr]Être capable de donner des noms à des objets, des actions et des séquences d'actions.[/fr][en]Being able to give names to objects, actions and sequences of actions.[/en]",
+					"description": "[fr]Être capable de donner des noms à des objets, des actions et des séquences d'actions.<br><br>Dans SPY :<br> - Au moins une zone de programmation dont le nom peut être modifié<br> - Ou au moins deux zones de programmation associées à des robots (le joueur doit déterminer dans quelle zone de programmation déposer ses blocs pour programmer le bon robot)<br> - Ou le joueur doit créer et nommer au moins une zone de programme[/fr][en]Being able to give names to objects, actions and sequences of actions.<br><br>In SPY:<br> - At least one programming area whose name can be changed<br> - Or at least two programming areas associated with robots (the player must determine which programming area to place their blocks in to program the correct robot)<br> - Or the player must create and name at least one programming area[/en]",
 					"filters": [
 						{
 							"label": "ScriptEditable",
@@ -1339,7 +1762,7 @@
 								{
 									"attribute": "editMode",
 									"constraint": "=",
-									"value": "2"
+									"value": "1"
 								}
 							]
 						},
@@ -1356,144 +1779,65 @@
 							]
 						},
 						{
-							"label": "ControledRobot",
+							"label": "LinkedScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "sameValue",
+									"tag2": "robot",
+									"attribute2": "inputLine"
+								}
+							]
+						},
+						{
+							"label": "RobotCount",
+							"tag": "robot",
+							"constraints": []
+						},
+						{
+							"label": "RobotWithSameName",
 							"tag": "robot",
 							"constraints": [
 								{
 									"attribute": "inputLine",
 									"constraint": "sameValue",
-									"tag2": "script",
-									"attribute2": "outputLine"
+									"tag2": "robot",
+									"attribute2": "inputLine"
 								}
 							]
 						},
 						{
-							"label": "NumRobot",
+							"label": "RobotDuplicateCountOnce", 
 							"tag": "robot",
-							"constraints": []
+							"constraints": [
+								{
+									"attribute": "inputLine",
+									"constraint": "countDuplicateOnce"
+								}
+							]
+						},
+						{
+							"label": "ExitCount",
+							"tag": "cell",
+							"constraints": [
+								{
+									"attribute": "value",
+									"constraint": "=",
+									"value": "3"
+								}
+							]
 						}
 					],
-					"rule": "ScriptEditable > 0 or SeveralProgrammingArea >= 2 or (ControledRobot + ScriptEditable) < NumRobot"
+					"comment": "Pour le dernier cas (Necessite de créer et nommer une zone de programme), on considère que ça sera le cas si on a moins de zone de programmation que de robot et de sortie (pour les robots on prend en compte que plusieurs robots peuvent avoir le même nom et ne comptent alors que pour 1).",
+					"rule": "ScriptEditable > 0 or SeveralProgrammingArea >= 2 or (LinkedScript < (RobotCount - RobotWithSameName + RobotDuplicateCountOnce) and LinkedScript < ExitCount)"
 				},
 				{
 					"key": "C1.2",
 					"parentKey": "C1",
 					"name": "[fr]C1.2 Différencier objet et action, et actions atomiques et non-atomiques[/fr][en]C1.2 Differentiate object and action, and atomic actions and non-atomic actions[/en]",
-					"description": "[fr]Être capable de dire si quelque chose (image, expression, phrase) fait référence à un objet, à une action, ou bien à une séquence d'actions.[/fr][en]Being able to tell whether something (picture, sentence) refers to an object, an action, or else a sequence of actions.[/en]",
+					"description": "[fr]Être capable de dire si quelque chose (image, expression, phrase) fait référence à un objet, à une action, ou bien à une séquence d'actions.<br><br>Dans SPY :<br> - Au moins un bloc 'Se Retourner' est disponible ainsi que deux blocs 'Pivoter à gauche' ou deux blocs 'Pivoter à droite' (Un bloc 'Se Retourner' est une action non-atomique dans la mesure où elle peut être décomposée en actions plus simples)<br> - Ou des actions et des capteurs sont disponibles (Le joueur doit savoir différencier les blocs faisant références à des instructions (actions) des blocs faisant référence à des expressions (capteurs))[/fr][en]Being able to tell whether something (picture, sentence) refers to an object, an action, or else a sequence of actions.<br><br>In SPY:<br> - At least one 'Look Back' block is available, as well as two 'Rotate Left' blocks or two Rotate Right' blocks (A 'Look Back' block is a non-atomic action in that it can be broken down into simpler actions)<br> - Or actions and sensors are available (The player must be able to distinguish between blocks referring to instructions (actions) and blocks referring to expressions (sensors))[/en]",
 					"filters": [
-						{
-							"label": "ActionInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
-						{
-							"label": "ActionInScript",
-							"tag": "action",
-							"constraints": [
-								{
-									"attribute": "type",
-									"constraint": "isIncludedIn",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
-								}
-							]
-						},
-						{
-							"label": "TurnLeftInLib_x1",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "=",
-									"value": "TurnLeft"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">=",
-									"value": "1"
-								}
-							]
-						},
-						{
-							"label": "TurnRightInLib_x1",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "=",
-									"value": "TurnRight"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">=",
-									"value": "1"
-								}
-							]
-						},
-						{
-							"label": "TurnLeftInLib_x2",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "=",
-									"value": "TurnLeft"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">=",
-									"value": "2"
-								}
-							]
-						},
-						{
-							"label": "TurnRightInLib_x2",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "=",
-									"value": "TurnRight"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">=",
-									"value": "2"
-								}
-							]
-						},
-						{
-							"label": "TurnLeftInScript",
-							"tag": "action",
-							"constraints": [
-								{
-									"attribute": "type",
-									"constraint": "=",
-									"value": "TurnLeft"
-								}
-							]
-						},
-						{
-							"label": "TurnRightInScript",
-							"tag": "action",
-							"constraints": [
-								{
-									"attribute": "type",
-									"constraint": "=",
-									"value": "TurnRight"
-								}
-							]
-						},
 						{
 							"label": "TurnBackInLib",
 							"tag": "blockLimit",
@@ -1511,13 +1855,48 @@
 							]
 						},
 						{
-							"label": "TurnBackInScript",
-							"tag": "action",
+							"label": "TurnLeftInLibCounter",
+							"tag": "blockLimit",
 							"constraints": [
 								{
-									"attribute": "type",
+									"attribute": "blockType",
 									"constraint": "=",
-									"value": "TurnBack"
+									"value": "TurnLeft"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "sum"
+								}
+							]
+						},
+						{
+							"label": "TurnRightInLibCounter",
+							"tag": "blockLimit",
+							"constraints": [
+								{
+									"attribute": "blockType",
+									"constraint": "=",
+									"value": "TurnRight"
+								},
+								{
+									"attribute": "limit",
+									"constraint": "sum"
+								}
+							]
+						},
+						{
+							"label": "ActionInLib",
+							"tag": "blockLimit",
+							"constraints": [
+								{
+									"attribute": "blockType",
+									"constraint": "isIncludedIn",
+									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
+								},
+								{
+									"attribute": "limit",
+									"constraint": ">",
+									"value": "0"
 								}
 							]
 						},
@@ -1536,26 +1915,15 @@
 									"value": "0"
 								}
 							]
-						},
-						{
-							"label": "CaptorInScript",
-							"tag": "action",
-							"constraints": [
-								{
-									"attribute": "type",
-									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
-								}
-							]
 						}
 					],
-					"rule": "((TurnBackInLib + TurnBackInScript) >= 1 and (TurnLeftInLib_x2 >= 1 or (TurnLeftInLib_x1 + TurnLeftInScript) >= 2 or TurnRightInLib_x2 >= 1 or (TurnRightInLib_x1 + TurnRightInScript) >= 2 )) or ((ActionInLib >= 1 or ActionInScript >= 1) and (CaptorInLib >= 1 or CaptorInScript >= 1))"
+					"rule": "(TurnBackInLib >= 1 and (TurnLeftInLibCounter >= 2 or TurnRightInLibCounter >= 2)) or (ActionInLib >= 1 and CaptorInLib >= 1)"
 				},
 				{
 					"key": "C1.3",
 					"parentKey": "C1",
 					"name": "[fr]C1.3 Identifier les paramètres d'entrée d'une séquence d'actions[/fr][en]C1.3 Identify the input parameters of a sequence of actions[/en]",
-					"description": "[fr]Être capable de dire ce qui est requis (objet ou séquence d'actions) pour effectuer une séquence d'actions.[/fr][en]Being able to tell what is required (objects or sequences of actions) in order to perform a sequence of actions.[/en]",
+					"description": "[fr]Être capable de dire ce qui est requis (objet ou séquence d'actions) pour effectuer une séquence d'actions.<br><br>Aucune mécanique de jeu ne permet de travailler cette compétence dans SPY.[/fr][en]Being able to tell what is required (objects or sequences of actions) in order to perform a sequence of actions.<br><br>There are no game mechanics in SPY that allow you to develop this skill.[/en]",
 					"filters": [],
 					"rule": ""
 				},
@@ -1563,7 +1931,7 @@
 					"key": "C1.4",
 					"parentKey": "C1",
 					"name": "[fr]C1.4 Décrire le résultat d'une séquence d'actions[/fr][en]C1.4 Describe the outcome of a sequence of actions[/en]",
-					"description": "[fr]Après avoir exécuté une séquence d'actions (qu'il s'agisse d'une séquence informelle, d'un algorithme, ou d'un programme), être capable de décrire cette séquence. L'apprenant doit décrire la situation finale (quels objets ont éventuellement été modifiés / créés / supprimés, ou quelle solution à un problème a été trouvée).[/fr][en]After executing a sequence of actions (informal, algorithm, program), being able to tell what happened. The learner should describe the final situation (which objects have been modified / created / suppressed, or what solution to a problem has been found).[/en]",
+					"description": "[fr]Après avoir exécuté une séquence d'actions (qu'il s'agisse d'une séquence informelle, d'un algorithme, ou d'un programme), être capable de décrire cette séquence. L'apprenant doit décrire la situation finale (quels objets ont éventuellement été modifiés / créés / supprimés, ou quelle solution à un problème a été trouvée).<br><br>Aucune mécanique de jeu ne permet de travailler cette compétence dans SPY.[/fr][en]After executing a sequence of actions (informal, algorithm, program), being able to tell what happened. The learner should describe the final situation (which objects have been modified / created / suppressed, or what solution to a problem has been found).<br><br>There are no game mechanics in SPY that allow you to develop this skill.[/en]",
 					"filters": [],
 					"rule": ""
 				},
@@ -1571,7 +1939,7 @@
 					"key": "C1.5",
 					"parentKey": "C1",
 					"name": "[fr]C1.5 Prédire le résultat d'une séquence d'actions[/fr][en]C1.5 Predict the outcome of a sequence of actions[/en]",
-					"description": "[fr]Être capable de dire, à partir d'une séquence d'actions, ce qui se passera si elle est exécutée. Contrairement à la compétence 1.4, cette compétence consiste à fournir une prédiction sans exécuter réellement la séquence d'actions.[/fr][en]Being able to tell, from a sequence of actions, what will happen if it is executed. In contrast to competency 1.4, this competency is about providing a prediction without actually executing the sequence of actions.[/en]",
+					"description": "[fr]Être capable de dire, à partir d'une séquence d'actions, ce qui se passera si elle est exécutée. Contrairement à la compétence 1.4, cette compétence consiste à fournir une prédiction sans exécuter réellement la séquence d'actions.<br><br>Dans SPY :<br> - Présence d'un ennemi avec un programme associé (le joueur doit lire et comprendre le comportement d'un ennemi pour anticiper ces déplacements et proposer une solution en conséquence).[/fr][en]Being able to tell, from a sequence of actions, what will happen if it is executed. In contrast to competency 1.4, this competency is about providing a prediction without actually executing the sequence of actions.<br><br>In SPY:<br> - Presence of an enemy with an associated program (the player must read and understand the behavior of an enemy to anticipate their movements and propose a solution accordingly).[/en]",
 					"filters": [
 						{
 							"label": "ScriptToEnemyWithContent",
@@ -1595,134 +1963,54 @@
 					"key": "C1.6",
 					"parentKey": "C1",
 					"name": "[fr]C1.6 Utiliser des objets dont la valeur peut changer[/fr][en]C1.6 Using objects whose value can change[/en]",
-					"description": "[fr]Être capable de manipuler des valeurs qui peuvent varier en fonction du contexte, en utilisant des abstractions nommées (appelées également des identificateurs ou encore identifiants).[/fr][en]Being able to handle values which may vary depending on the context, and refer to them using named abstractions (also known as identifiers).[/en]",
+					"description": "[fr]Être capable de manipuler des valeurs qui peuvent varier en fonction du contexte, en utilisant des abstractions nommées (appelées également des identificateurs ou encore identifiants).<br><br>Dans SPY :<br> - Présence dans la solution attendue d'au moins un capteur (la valeur d'un capteur change au fil de l'exécution du programme).<br> - Ou présence dans la solution attendue d'au moins un bloc 'Activer' (l'activation d'une porte change son état au cours de la simulation).[/fr][en]Being able to handle values which may vary depending on the context, and refer to them using named abstractions (also known as identifiers).<br><br>In SPY:<br> - Use of variables in scripts (the player must understand how the values of variables change over the course of program execution).<br><br>In SPY:<br> - The expected solution must contain at least one captor (the value of a captor changes as the program runs).<br> - Or the expected solution must contain at least one ‘Activate’ block (activating a door changes its state during the simulation).[/en]",
 					"filters": [
 						{
-							"label": "CaptorInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
-						{
-							"label": "CaptorInScript",
-							"tag": "action",
-							"constraints": [
-								{
-									"attribute": "type",
-									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
-								}
-							]
-						},
-						{
-							"label": "ControlInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "While|IfThen|IfElse"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
-						{
-							"label": "IfInScript",
-							"tag": "if",
-							"constraints": []
-						},
-						{
-							"label": "IfElseInScript",
-							"tag": "ifElse",
-							"constraints": []
-						},
-						{
-							"label": "WhileInScript",
-							"tag": "while",
-							"constraints": []
-						},
-						{
-							"label": "ActivateInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "=",
-									"value": "Activate"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">=",
-									"value": "1"
-								}
-							]
-						},
-						{
-							"label": "ActivateInScript",
-							"tag": "action",
+							"label": "CaptorInSolution",
+							"tag": "script",
 							"constraints": [
 								{
 									"attribute": "type",
 									"constraint": "=",
-									"value": "Activate"
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "captor"
 								}
 							]
 						},
 						{
-							"label": "DoorWithSlotConnected",
-							"tag": "door",
+							"label": "ActivateInSolution",
+							"tag": "script",
 							"constraints": [
 								{
-									"attribute": "slotId",
-									"constraint": "sameValue",
-									"tag2": "slot",
-									"attribute2": "slotId"
+									"attribute": "type",
+									"constraint": "=",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action",
+									"attribute2": "type",
+									"value2": "Activate"
 								}
 							]
 						}
 						
 					],
-					"rule": "((CaptorInLib + CaptorInScript) >= 1 and (ControlInLib + IfInScript + IfElseInScript + WhileInScript) >= 1) or ((ActivateInLib + ActivateInScript) >= 1 and DoorWithSlotConnected >= 1)"
+					"comment": "Tester si on a au moins un capteur ou un bloc 'Activer' dans la solution attendue suffit, en effet il n'est pas utile de vérifier qu'on a une porte reliée à une console (on fait confiance à la solution et au fait que si l'expert utilise l'action Activer c'est qu'il y a une porte connectée à un terminal). Idem pour le capteur, il n'est pas utile de vérifier qu'on aussi un If ou un While en effet avoir un capteur dans la solution implique l'utilisation d'une structure de contrôle conditionnelle.",
+					"rule": "CaptorInSolution > 0 or ActivateInSolution > 0"
 				},
 				{
 					"key": "C1.7",
 					"parentKey": "C1",
 					"name": "[fr]C1.7 Reconnaître, parmi des objets et séquences d’actions connus, lesquels peuvent être utilisés pour atteindre un nouvel objectif[/fr][en]C1.7 Recognize existing objects and (sequences of) actions that can be used to reach a similar goal[/en]",
-					"description": "[fr]Étant donné un nouveau problème (c'est-à-dire que la solution est a priori inconnue), être capable de réaliser qu'il est similaire à un problème connu dont il est possible de réutiliser tout ou partie de la solution pour résoudre ce nouveau problème.[/fr][en]Given a new problem (that is, a problem whose solution is not yet known), being able to realise that it is similar to an already known problem, and that an already known solution to this problem can be partly or fully reused to solve the new problem.[/en]",
+					"description": "[fr]Étant donné un nouveau problème (c'est-à-dire que la solution est a priori inconnue), être capable de réaliser qu'il est similaire à un problème connu dont il est possible de réutiliser tout ou partie de la solution pour résoudre ce nouveau problème.<br><br>Dans SPY :<br> - Drag&Drop désactivé, toutes les zones de programmation sont renomables et au moins l'une d'entre elles donne la bonne solution.[/fr][en]Given a new problem (that is, a problem whose solution is not yet known), being able to realise that it is similar to an already known problem, and that an already known solution to this problem can be partly or fully reused to solve the new problem.<br><br>In SPY:<br> - Drag&Drop disabled, all programming areas are renamable and at least one of them gives the correct solution.[/en]",
 					"filters": [
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
-							"constraints": []
-						},
-						{
-							"label": "ScriptEditable",
-							"tag": "script",
-							"constraints": [
-								{
-									"attribute": "editMode",
-									"constraint": "=",
-									"value": "2"
-								}
-							]
-						},
-						{
-							"label": "AllScript",
-							"tag": "script",
 							"constraints": []
 						},
 						{
@@ -1738,9 +2026,48 @@
 									"constraint": "hasChild"
 								}
 							]
+						},
+						{
+							"label": "ScriptEditable",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "editMode",
+									"constraint": "=",
+									"value": "1"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								}
+							]
+						},
+						{
+							"label": "AllVisibleScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								}
+							]
+						},
+						{
+							"label": "EnemyScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "sameValue",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								}
+							]
 						}
 					],
-					"rule": "CorrectScript >= 1 and DragDropDisabled >= 1 and ScriptEditable = AllScript"
+					"rule": "DragDropDisabled >= 1 and CorrectScript >= 1 and ScriptEditable = (AllVisibleScript - EnemyScript)"
 				},
 				{
 					"key": "C2",
@@ -1754,32 +2081,51 @@
 					"key": "C2.1",
 					"parentKey": "C2",
 					"name": "[fr]C2.1 Ordonner une séquence d'actions pour atteindre un objectif[/fr][en]C2.1 Order a sequence of actions to reach a goal[/en]",
-					"description": "[fr]Étant donné une liste non ordonnée d'actions et un but, être capable de combiner ces actions dans un ordre valide pour construire une séquence qui permet d'atteindre ce but.[/fr][en]Given an unordered list of actions and a goal, being able to combine these actions in a valid order to build a sequence that achieves the goal.[/en]",
+					"description": "[fr]Étant donné une liste non ordonnée d'actions et un but, être capable de combiner ces actions dans un ordre valide pour construire une séquence qui permet d'atteindre ce but.<br><br>Dans SPY :<br> - tous les blocs disponibles dans l'inventaire sont utilisés dans la solution attendue.[/fr][en]Given an unordered list of actions and a goal, being able to combine these actions in a valid order to build a sequence that achieves the goal.<br><br>In SPY:<br> - all available blocks in the inventory are used in the expected solution.[/en]",
 					"filters": [
 						{
-							"label": "AvailableActionInLib",
+							"label": "AvailableBlocksInLib",
 							"tag": "blockLimit",
 							"constraints": [
 								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
-								},
-								{
 									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
+									"constraint": "sum"
 								}
 							]
 						},
 						{
-							"label": "UnlimitedActionInLib",
-							"tag": "blockLimit",
+							"label": "AvailableBlocksInPlayerScript",
+							"tag": "script",
 							"constraints": [
 								{
-									"attribute": "limit",
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action|captor|if|ifElse|for|while|forever|and|or|not"
+								}
+							]
+						},
+						{
+							"label": "SolutionsLength",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
 									"constraint": "=",
-									"value": "-1"
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action|captor|if|ifElse|for|while|forever|and|or|not"
 								}
 							]
 						},
@@ -1789,19 +2135,15 @@
 							"constraints": []
 						}
 					],
-					"rule": "UnlimitedActionInLib = 0 and DragDropDisabled = 0 and AvailableActionInLib >= 1"
+					"comment": "La règle ci-dessous permet d'identifier cette compétence uniquement pour les mission ne contenant qu'une seule solution. En effet pour les missions contenant plusieurs solutions la longueur des solutions est bien plus importante que le nombre de blocs disponible. Il faudrait s'assurer que le nombre de bloc disponible est égal à au moins l'une des solutions, mais c'est complexe car si on a aussi plusieurs robots il faudrait prendre en compte plusieurs solutions et on n'a pas de possibilité d'identifier celles qu'il faudrait vérifier. Donc plutôt que de prendre le risque d'identifier la compétence par erreur on préfère ne pas l'identifier pour les missions à solution multiples, d'où la règle actuelle qui est plus restrictive mais qui a le mérite de ne pas poser de problème d'identification incorrecte.",
+					"rule": "AvailableBlocksInLib + AvailableBlocksInPlayerScript = SolutionsLength and DragDropDisabled = 0"
 				},
 				{
 					"key": "C2.2",
 					"parentKey": "C2",
 					"name": "[fr]C2.2 Compléter une séquence d'actions pour atteindre un objectif simple[/fr][en]C2.2 Complete a sequence of actions to reach a simple goal[/en]",
-					"description": "[fr]Étant donné une séquence d'actions limitée et un objectif simple (c'est-à-dire ne s'appuyant pas sur des concepts avancés comme les conditions et les boucles), être capable d'ajouter les actions manquantes à la séquence pour atteindre l'objectif.[/fr][en]Given a limited sequence of actions and a simple goal (not relying on concepts such as conditions and loops), being able to complete the sequence of actions (by adding missing actions) to reach the goal.[/en]",
+					"description": "[fr]Étant donné une séquence d'actions limitée et un objectif simple (c'est-à-dire ne s'appuyant pas sur des concepts avancés comme les conditions et les boucles), être capable d'ajouter les actions manquantes à la séquence pour atteindre l'objectif.<br><br>Dans SPY :<br> - présence d'une zone de programmation contenant des blocs prépositionnés que le joueur doit compléter ou corriger sans avoir à utiliser de structures de contrôle.[/fr][en]Given a limited sequence of actions and a simple goal (not relying on concepts such as conditions and loops), being able to complete the sequence of actions (by adding missing actions) to reach the goal.<br><br>In SPY:<br> - presence of a programming area containing pre-positioned blocks that the player must complete or correct without having to use control structures.[/en]",
 					"filters": [
-						{
-							"label": "AllScript",
-							"tag": "script",
-							"constraints": []
-						},
 						{
 							"label": "DragDropDisabled",
 							"tag": "dragdropDisabled",
@@ -1838,55 +2180,30 @@
 							]
 						},
 						{
-							"label": "ControlInLib",
-							"tag": "blockLimit",
+							"label": "ControlInScript",
+							"tag": "script",
 							"constraints": [
 								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "ForLoop|Forever|While|IfThen|IfElse"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
+									"constraint": "countChilds",
+									"tag2": "if|ifElse|for|while|forever"
 								}
 							]
-						},
-						{
-							"label": "IfInScript",
-							"tag": "if",
-							"constraints": []
-						},
-						{
-							"label": "IfElseInScript",
-							"tag": "ifElse",
-							"constraints": []
-						},
-						{
-							"label": "ForInScript",
-							"tag": "for",
-							"constraints": []
-						},
-						{
-							"label": "WhileInScript",
-							"tag": "while",
-							"constraints": []
-						},
-						{
-							"label": "ForeverInScript",
-							"tag": "forever",
-							"constraints": []
 						}
 					],
-					"rule": "DragDropDisabled = 0 and BuggedScript = AllScript and BuggedScript >= 1 and AvailableActionInLib >=1 and ControlInLib = 0 and IfInScript = 0 and IfElseInScript = 0 and ForInScript = 0 and WhileInScript = 0 and ForeverInScript = 0"
+					"comment": "Pour cette règle on se contente de vérifier qu'il n'y a pas de structure de contrôle dans les scripts (incluant les solutions). Qu'il y en ait ou pas dans l'inventaire n'est pas un problème, en effet si il y en a dans l'inventaire mais pas dans les scripts c'est que le joueur n'en a pas besoin et donc qu'il peut compléter la séquence d'action sans utiliser de structure de contrôle, ce qui correspond à la compétence.",
+					"rule": "DragDropDisabled = 0 and BuggedScript >= 1 and AvailableActionInLib >=1 and ControlInScript = 0"
 				},
 				{
 					"key": "C2.3",
 					"parentKey": "C2",
 					"name": "[fr]C2.3 Créer une séquence d'actions pour atteindre un objectif simple[/fr][en]C2.3 Create a sequence of actions to reach a simple goal[/en]",
-					"description": "[fr]Étant donné un objectif simple (c'est-à-dire ne s'appuyant pas sur des concepts avancés comme les conditions et les boucles), être capable d'identifier toutes les actions nécessaires et les mettre dans le bon ordre.[/fr][en]Given a simple goal (not relying on concepts such as conditions and loops), being able to identify all the necessary actions and put them in the right order.[/en]",
+					"description": "[fr]Étant donné un objectif simple (c'est-à-dire ne s'appuyant pas sur des concepts avancés comme les conditions et les boucles), être capable d'identifier toutes les actions nécessaires et les mettre dans le bon ordre.<br><br>Dans SPY :<br> - Le joueur doit créer un programme depuis le début (sans avoir de blocs prépositionnés). La solution attendue est composée uniquement de blocs actions (pas d'utilisation de structure de contrôle).[/fr][en]Given a simple goal (not relying on concepts such as conditions and loops), being able to identify all the necessary actions and put them in the right order.<br><br>In SPY: <br> - The player must create a program from scratch (without any pre-placed blocks). The expected solution contains only action blocks (no control structures allowed).[/en]",
 					"filters": [
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"constraints": []
+						},
 						{
 							"label": "AvailableActionInLib",
 							"tag": "blockLimit",
@@ -1904,71 +2221,49 @@
 							]
 						},
 						{
-							"label": "ActionInScript",
-							"tag": "action",
+							"label": "PlayerScriptContainsBlocks",
+							"tag": "script",
 							"constraints": [
 								{
-									"attribute": "type",
-									"constraint": "isIncludedIn",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
-								}
-							]
-						},
-						{
-							"label": "DragDropDisabled",
-							"tag": "dragdropDisabled",
-							"constraints": []
-						},
-						{
-							"label": "ControlInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "ForLoop|Forever|While|IfThen|IfElse"
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
 								},
 								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "hasChild"
 								}
 							]
 						},
 						{
-							"label": "IfInScript",
-							"tag": "if",
-							"constraints": []
-						},
-						{
-							"label": "IfElseInScript",
-							"tag": "ifElse",
-							"constraints": []
-						},
-						{
-							"label": "ForInScript",
-							"tag": "for",
-							"constraints": []
-						},
-						{
-							"label": "WhileInScript",
-							"tag": "while",
-							"constraints": []
-						},
-						{
-							"label": "ForeverInScript",
-							"tag": "forever",
-							"constraints": []
+							"label": "ControlInScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"constraint": "countChilds",
+									"tag2": "if|ifElse|for|while|forever"
+								}
+							]
 						}
 					],
-					"rule": "DragDropDisabled = 0 and (AvailableActionInLib >= 1 or ActionInScript >= 1) and ControlInLib = 0 and IfInScript = 0 and IfElseInScript = 0 and ForInScript = 0 and WhileInScript = 0 and ForeverInScript = 0"
+					"rule": "DragDropDisabled = 0 and AvailableActionInLib >= 1 and PlayerScriptContainsBlocks = 0 and ControlInScript = 0"
 				},
 				{
 					"key": "C2.4",
 					"parentKey": "C2",
 					"name": "[fr]C2.4 Créer une séquence d'actions pour atteindre un objectif complexe[/fr][en]C2.4 Create a sequence of actions to reach a complex goal[/en]",
-					"description": "[fr]Étant donné un objectif complexe (c'est-à-dire un objectif exigeant des conditions simples ou complexes ou des boucles), être capable de définir une séquence d'actions permettant de réaliser cet objectif (i.e., identifier et combiner correctement les actions nécessaires).[/fr][en]Being able to identify and combine actions to reach a complex goal (goal requiring simple or complex conditions, loops, etc.).[/en]",
+					"description": "[fr]Étant donné un objectif complexe (c'est-à-dire un objectif exigeant des conditions simples ou complexes ou des boucles), être capable de définir une séquence d'actions permettant de réaliser cet objectif (i.e., identifier et combiner correctement les actions nécessaires).<br><br>Dans SPY :<br> - Le joueur doit créer un programme depuis le début (sans avoir de blocs prépositionnés). La solution attendue contient des structures de contôle et des structures de contôle sont disponibles dans l'inventaire.[/fr][en]Being able to identify and combine actions to reach a complex goal (goal requiring simple or complex conditions, loops, etc.).<br><br>In SPY :<br> - The player must create a program from scratch (without having pre-positioned blocks). The expected solution contains control structures and control structures are available in the inventory.[/en]",
 					"filters": [
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"constraints": []
+						},
 						{
 							"label": "AvailableActionInLib",
 							"tag": "blockLimit",
@@ -1986,20 +2281,39 @@
 							]
 						},
 						{
-							"label": "ActionInScript",
-							"tag": "action",
+							"label": "PlayerScriptContainsBlocks",
+							"tag": "script",
 							"constraints": [
 								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
 									"attribute": "type",
-									"constraint": "isIncludedIn",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "hasChild"
 								}
 							]
 						},
 						{
-							"label": "DragDropDisabled",
-							"tag": "dragdropDisabled",
-							"constraints": []
+							"label": "ControlInSolution",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "if|ifElse|for|while|forever"
+								}
+							]
 						},
 						{
 							"label": "ControlInLib",
@@ -2016,40 +2330,15 @@
 									"value": "0"
 								}
 							]
-						},
-						{
-							"label": "IfInScript",
-							"tag": "if",
-							"constraints": []
-						},
-						{
-							"label": "IfElseInScript",
-							"tag": "ifElse",
-							"constraints": []
-						},
-						{
-							"label": "ForInScript",
-							"tag": "for",
-							"constraints": []
-						},
-						{
-							"label": "WhileInScript",
-							"tag": "while",
-							"constraints": []
-						},
-						{
-							"label": "ForeverInScript",
-							"tag": "forever",
-							"constraints": []
 						}
 					],
-					"rule": "DragDropDisabled = 0 and (AvailableActionInLib >= 1 or ActionInScript >= 1) and (ControlInLib >= 1 or IfInScript >= 1 or IfElseInScript >= 1 or ForInScript >= 1 or WhileInScript >= 1 or ForeverInScript >= 1)"
+					"rule": "DragDropDisabled = 0 and AvailableActionInLib >= 1 and PlayerScriptContainsBlocks = 0 and ControlInSolution >= 1 and ControlInLib >= 1"
 				},
 				{
 					"key": "C2.5",
 					"parentKey": "C2",
 					"name": "[fr]C2.5 Combiner des séquences d'actions pour atteindre un objectif[/fr][en]C2.5 Combine sequences of actions to reach a goal[/en]",
-					"description": "[fr]Étant donné des séquences d'actions permettant de réaliser certains objectifs, être capable de dire si celles-ci sont pertinentes pour un nouvel objectif, et si oui de les combiner (ordonner) pour réaliser celui-ci.[/fr][en]Given already known sequences of actions achieving known goals, being able (i) to tell, in a given context (new goal to achieve), relevant from irrelevant sequences, and (ii) to connect them together in a valid order (that is, which allows to reach the new goal).[/en]",
+					"description": "[fr]Étant donné des séquences d'actions permettant de réaliser certains objectifs, être capable de dire si celles-ci sont pertinentes pour un nouvel objectif, et si oui de les combiner (ordonner) pour réaliser celui-ci.<br><br>Aucune mécanique de jeu ne permet de travailler cette compétence dans SPY.[/fr][en]Given already known sequences of actions achieving known goals, being able (i) to tell, in a given context (new goal to achieve), relevant from irrelevant sequences, and (ii) to connect them together in a valid order (that is, which allows to reach the new goal).<br><br>No game mechanic allows working on this competency in SPY.[/en]",
 					"filters": [],
 					"rule": ""
 				},
@@ -2057,7 +2346,7 @@
 					"key": "C2.6",
 					"parentKey": "C2",
 					"name": "[fr]C2.6 Décomposer des objectifs en sous-objectifs plus simples[/fr][en]C2.6 Decompose goals into simpler subgoals[/en]",
-					"description": "[fr]Être capable de diviser un objectif complexe en plusieurs sous-objectifs qui peuvent être atteints plus facilement. Ceux-ci peuvent alors être réalisés par différentes personnes.[/fr][en]Given a complex goal, being able to split it into several subgoals, which can be achieved more easily. The subgoals can then be tackled by different people.[/en]",
+					"description": "[fr]Être capable de diviser un objectif complexe en plusieurs sous-objectifs qui peuvent être atteints plus facilement. Ceux-ci peuvent alors être réalisés par différentes personnes.<br><br>Dans SPY :<br> - Le nombre d'exécution n'est pas limité, le joueur peut donc converger vers la solution en plusieurs itérations.[/fr][en]Given a complex goal, being able to split it into several subgoals, which can be achieved more easily. The subgoals can then be tackled by different people.<br><br>In SPY :<br> - The number of executions is not limited, so the player can converge towards the solution in several iterations.[/en]",
 					"filters": [
 						{
 							"label": "ExecutionLimit",
@@ -2085,7 +2374,7 @@
 					"key": "C3.1",
 					"parentKey": "C3",
 					"name": "[fr]C3.1 Répéter une séquence d'actions un nombre donné de fois[/fr][en]C3.1 Repeat a sequence of actions a given number of times[/en]",
-					"description": "[fr]Être capable d'utiliser de manière appropriée les répétitions d'actions (ou de séquences d'actions) un certain nombre de fois, afin d'atteindre un objectif.[/fr][en]Being able to appropriately use repetitions of (sequences of) actions a given number of times in order to reach a goal.[/en]",
+					"description": "[fr]Être capable d'utiliser de manière appropriée les répétitions d'actions (ou de séquences d'actions) un certain nombre de fois, afin d'atteindre un objectif.<br><br>Dans SPY :<br> - La solution doit contenir au moins un bloc de type 'Répéter n fois'.[/fr][en]Being able to appropriately use repetitions of (sequences of) actions a given number of times in order to reach a goal.<br><br>In SPY :<br> - The solution must contain at least one block of type 'Repeat n times'.[/en]",
 					"filters": [
 						{
 							"label": "DragDropDisabled",
@@ -2093,34 +2382,28 @@
 							"constraints": []
 						},
 						{
-							"label": "ForInLib",
-							"tag": "blockLimit",
+							"label": "ForInSolution",
+							"tag": "script",
 							"constraints": [
 								{
-									"attribute": "blockType",
+									"attribute": "type",
 									"constraint": "=",
-									"value": "ForLoop"
+									"value": "4"
 								},
 								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
+									"constraint": "countChilds",
+									"tag2": "for"
 								}
 							]
-						},
-						{
-							"label": "ForInScript",
-							"tag": "for",
-							"constraints": []
 						}
 					],
-					"rule": "DragDropDisabled = 0 and (ForInLib >= 1 or ForInScript >= 1)"
+					"rule": "DragDropDisabled = 0 and ForInSolution >= 1"
 				},
 				{
 					"key": "C3.2",
 					"parentKey": "C3",
 					"name": "[fr]C3.2 Répéter une séquence d'actions jusqu'à ce qu'un objectif soit atteint[/fr][en]C3.2 Repeat a sequence of actions until a goal has been reached[/en]",
-					"description": "[fr]Être capable de contrôler les répétitions d'actions (ou de séquences d'actions) jusqu'à ce qu'une condition soit remplie, afin d'atteindre un objectif.[/fr][en]Being able to control repetitions of (sequences of) actions until a condition is met, in order to reach a goal.[/en]",
+					"description": "[fr]Être capable de contrôler les répétitions d'actions (ou de séquences d'actions) jusqu'à ce qu'une condition soit remplie, afin d'atteindre un objectif.<br><br>Dans SPY :<br> - La solution doit contenir au moins un bloc de type 'Tant que'.[/fr][en]Being able to control repetitions of (sequences of) actions until a condition is met, in order to reach a goal.<br><br>In SPY :<br> - The solution must contain at least one block of type 'While'.[/en]",
 					"filters": [
 						{
 							"label": "DragDropDisabled",
@@ -2128,92 +2411,28 @@
 							"constraints": []
 						},
 						{
-							"label": "WhileInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "=",
-									"value": "While"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
-						{
-							"label": "WhileInScript",
-							"tag": "while",
-							"constraints": []
-						},
-						{
-							"label": "CaptorInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
-						{
-							"label": "CaptorInScript",
-							"tag": "action",
+							"label": "WhileInSolution",
+							"tag": "script",
 							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
-								}
-							]
-						},
-						{
-							"label": "OperatorInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "AndOperator|OrOperator|NotOperator"
+									"constraint": "=",
+									"value": "4"
 								},
 								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
+									"constraint": "countChilds",
+									"tag2": "while"
 								}
 							]
-						},
-						{
-							"label": "AndInScript",
-							"tag": "and",
-							"constraints": []
-						},
-						{
-							"label": "OrInScript",
-							"tag": "or",
-							"constraints": []
-						},
-						{
-							"label": "NotInScript",
-							"tag": "not",
-							"constraints": []
 						}
 					],
-					"rule": "DragDropDisabled = 0 and (WhileInLib >= 1 or WhileInScript >= 1) and (CaptorInLib >= 1 or CaptorInScript >= 1) and OperatorInLib = 0 and AndInScript = 0 and OrInScript = 0 and NotInScript = 0"
+					"rule": "DragDropDisabled = 0 and WhileInSolution >= 1"
 				},
 				{
 					"key": "C3.3",
 					"parentKey": "C3",
 					"name": "[fr]C3.3 Intégrer une condition simple dans une séquence d'actions[/fr][en]C3.3 Integrate a simple condition into a sequence of actions[/en]",
-					"description": "[fr]Être capable d'utiliser des conditions simples (reposant sur un critère) pour permettre (ou interdire) certaines séquences d'actions.[/fr][en]Being able to use simple conditions (a simple condition can be expressed using a single criterion) to allow (or disallow) some (sequences of) actions.[/en]",
+					"description": "[fr]Être capable d'utiliser des conditions simples (reposant sur un critère) pour permettre (ou interdire) certaines séquences d'actions.<br><br>Dans SPY :<br> - La solution doit contenir au moins un bloc de type 'Si' ou 'Si/Sinon'.[/fr][en]Being able to use simple conditions (a simple condition can be expressed using a single criterion) to allow (or disallow) some (sequences of) actions.<br><br>In SPY :<br> - The solution must contain at least one block of type 'If' or 'If/Else'.[/en]",
 					"filters": [
 						{
 							"label": "DragDropDisabled",
@@ -2221,91 +2440,22 @@
 							"constraints": []
 						},
 						{
-							"label": "IfOrIfElseInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "IfThen|IfElse"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
-						{
-							"label": "IfInScript",
-							"tag": "if",
-							"constraints": []
-						},
-						{
-							"label": "IfElseInScript",
-							"tag": "ifElse",
-							"constraints": []
-						},
-						{
-							"label": "CaptorInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
-						{
-							"label": "CaptorInScript",
-							"tag": "action",
+							"label": "IfOrIfElseInSolution",
+							"tag": "script",
 							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
-								}
-							]
-						},
-						{
-							"label": "OperatorInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "AndOperator|OrOperator|NotOperator"
+									"constraint": "=",
+									"value": "4"
 								},
 								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
+									"constraint": "countChilds",
+									"tag2": "if|ifElse"
 								}
 							]
-						},
-						{
-							"label": "AndInScript",
-							"tag": "and",
-							"constraints": []
-						},
-						{
-							"label": "OrInScript",
-							"tag": "or",
-							"constraints": []
-						},
-						{
-							"label": "NotInScript",
-							"tag": "not",
-							"constraints": []
 						}
 					],
-					"rule": "DragDropDisabled = 0 and (IfOrIfElseInLib >= 1 or IfInScript >= 1 or IfElseInScript >= 1) and (CaptorInLib >= 1 or CaptorInScript >= 1) and OperatorInLib = 0 and AndInScript = 0 and OrInScript = 0 and NotInScript = 0"
+					"rule": "DragDropDisabled = 0 and IfOrIfElseInSolution >= 1"
 				},
 				{
 					"key": "C3.4",
@@ -2319,96 +2469,22 @@
 							"constraints": []
 						},
 						{
-							"label": "ControlInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "IfThen|IfElse|While"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
-						{
-							"label": "IfInScript",
-							"tag": "if",
-							"constraints": []
-						},
-						{
-							"label": "IfElseInScript",
-							"tag": "ifElse",
-							"constraints": []
-						},
-						{
-							"label": "WhileInScript",
-							"tag": "while",
-							"constraints": []
-						},
-						{
-							"label": "CaptorInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
-						{
-							"label": "CaptorInScript",
-							"tag": "action",
+							"label": "OperatorInSolution",
+							"tag": "script",
 							"constraints": [
 								{
 									"attribute": "type",
-									"constraint": "isIncludedIn",
-									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
-								}
-							]
-						},
-						{
-							"label": "OperatorInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "AndOperator|OrOperator|NotOperator"
+									"constraint": "=",
+									"value": "4"
 								},
 								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
+									"constraint": "countChilds",
+									"tag2": "and|or|not"
 								}
 							]
-						},
-						{
-							"label": "AndInScript",
-							"tag": "and",
-							"constraints": []
-						},
-						{
-							"label": "OrInScript",
-							"tag": "or",
-							"constraints": []
-						},
-						{
-							"label": "NotInScript",
-							"tag": "not",
-							"constraints": []
 						}
 					],
-					"rule": "DragDropDisabled = 0 and (ControlInLib >= 1 or IfInScript >= 1 or IfElseInScript >= 1 or WhileInScript >= 1) and (CaptorInLib >= 1 or CaptorInScript >= 1) and (OperatorInLib >= 1 or AndInScript >= 1 or OrInScript >= 1 or NotInScript >= 1)"
+					"rule": "DragDropDisabled = 0 and OperatorInSolution >= 1"
 				},
 				{
 					"key": "C4",
@@ -2422,7 +2498,7 @@
 					"key": "C4.1",
 					"parentKey": "C4",
 					"name": "[fr]C4.1 Comparer deux objets selon un critère donné[/fr][en]C4.1 Compare two objects according to a given criterion[/en]",
-					"description": "[fr]Étant donné deux objets et un critère de comparaison, être capable de comparer ces objets par rapport au critère.[/fr][en]Given two objects, and a comparison criterion, being able to compare these objects with respect to the criterion.[/en]",
+					"description": "[fr]Étant donné deux objets et un critère de comparaison, être capable de comparer ces objets par rapport au critère.<br><br>Aucune mécanique de jeu ne permet de travailler cette compétence dans SPY.[/fr][en]Given two objects, and a comparison criterion, being able to compare these objects with respect to the criterion.<br><br>No game mechanic allows working on this competency in SPY.[/en]",
 					"filters": [],
 					"rule": ""
 				},
@@ -2430,7 +2506,7 @@
 					"key": "C4.2",
 					"parentKey": "C4",
 					"name": "[fr]C4.2 Comparer deux séquences d'actions selon un critère donné[/fr][en]C4.2 Compare two sequences of actions according to a given criterion[/en]",
-					"description": "[fr]Être capable de comparer des séquences d'actions selon divers critères : en termes de lisibilité, de nombre de lignes, de temps d'exécution ou autre.[/fr][en]Being able to compare two sequences of actions with respect to several criteria: readability, number of lines, execution time, or other criteria.[/en]",
+					"description": "[fr]Être capable de comparer des séquences d'actions selon divers critères : en termes de lisibilité, de nombre de lignes, de temps d'exécution ou autre.<br><br>Dans SPY:<br> - Drag&Drop désactivé, le joueur doit sélectionner, parmi plusieurs propositions, celle qui est la plus optimale.[/fr][en]Being able to compare two sequences of actions with respect to several criteria: readability, number of lines, execution time, or other criteria.<br><br>In SPY:<br> - Drag&Drop disabled, the player must select, among several propositions, the one that is the most optimal.[/en]",
 					"filters": [
 						{
 							"label": "DragDropDisabled",
@@ -2438,9 +2514,21 @@
 							"constraints": []
 						},
 						{
-							"label": "AllScript",
+							"label": "AllPlayerScript",
 							"tag": "script",
-							"constraints": []
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								}
+							]
 						},
 						{
 							"label": "ScriptEditable",
@@ -2449,7 +2537,7 @@
 								{
 									"attribute": "editMode",
 									"constraint": "=",
-									"value": "2"
+									"value": "1"
 								}
 							]
 						},
@@ -2476,13 +2564,13 @@
 							]
 						}
 					],
-					"rule": "DragDropDisabled >= 1 and AllScript = ScriptEditable and (CorrectScript + NonOptimalScript) = AllScript and CorrectScript > 0"
+					"rule": "DragDropDisabled >= 1 and AllPlayerScript = ScriptEditable and (CorrectScript + NonOptimalScript) = AllPlayerScript and CorrectScript > 0"
 				},
 				{
 					"key": "C4.3",
 					"parentKey": "C4",
 					"name": "[fr]C4.3 Améliorer une séquence d'actions par rapport à un critère donné[/fr][en]C4.3 Improve a sequence of actions according to a given criterion[/en]",
-					"description": "[fr]Être capable de réfléchir à la possibilité d'améliorer une séquence d'actions par rapport à un critère et modifier cette séquence d'actions en conséquence.[/fr][en]Being able to think about the possibility to improve a sequence of actions with respect to a criterion and modify it accordingly.[/en]",
+					"description": "[fr]Être capable de réfléchir à la possibilité d'améliorer une séquence d'actions par rapport à un critère et modifier cette séquence d'actions en conséquence.<br><br>Dans SPY :<br> - Toutes les zones de programmations proposées au joueur ne sont pas optimales, le joueur doit les corriger.[/fr][en]Being able to think about the possibility to improve a sequence of actions with respect to a criterion and modify it accordingly.<br><br>In SPY:<br> - All programming areas proposed to the player are not optimal, the player must correct them.[/en]",
 					"filters": [
 						{
 							"label": "DragDropDisabled",
@@ -2490,9 +2578,21 @@
 							"constraints": []
 						},
 						{
-							"label": "AllScript",
+							"label": "AllPlayerScript",
 							"tag": "script",
-							"constraints": []
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								}
+							]
 						},
 						{
 							"label": "NonOptimalScript",
@@ -2506,7 +2606,7 @@
 							]
 						}
 					],
-					"rule": "DragDropDisabled = 0 and AllScript = NonOptimalScript and NonOptimalScript > 0"
+					"rule": "DragDropDisabled = 0 and AllPlayerScript = NonOptimalScript and NonOptimalScript > 0"
 				},
 				{
 					"key": "C5",
@@ -2520,7 +2620,7 @@
 					"key": "C5.1",
 					"parentKey": "C5",
 					"name": "[fr]C5.1 Représenter des objets ou séquences d'actions au moyen d'une représentation formelle[/fr][en]C5.1 Represent objects or sequences of actions through one formal representation[/en]",
-					"description": "[fr]Être capable de représenter un objet ou une action en utilisant un mode de représentation défini avec précision (non ambigu).[/fr][en]Being able to represent an object or an action by using a precisely defined (i.e. non-ambiguous) representation mode.[/en]",
+					"description": "[fr]Être capable de représenter un objet ou une action en utilisant un mode de représentation défini avec précision (non ambigu).<br><br>Dans SPY :<br> - Les blocs de l'inventaire sont représentés de manière formelle, le joueur doit les comprendre pour pouvoir les utiliser de manière appropriée.[/fr][en]Being able to represent an object or an action by using a precisely defined (i.e. non-ambiguous) representation mode.<br><br>In SPY:<br> - The inventory blocks are represented formally, the player must understand them to be able to use them appropriately.[/en]",
 					"filters": [
 						{
 							"label": "DragDropDisabled",
@@ -2528,13 +2628,13 @@
 							"constraints": []
 						},
 						{
-							"label": "AvailableActionInLib",
+							"label": "AvailableBlocksInLib",
 							"tag": "blockLimit",
 							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "isIncludedIn",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
+									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack|ForLoop|Forever|While|IfThen|IfElse|And|Or|Not"
 								},
 								{
 									"attribute": "limit",
@@ -2544,13 +2644,13 @@
 							]
 						}
 					],
-					"rule": "DragDropDisabled = 0 and AvailableActionInLib >= 1"
+					"rule": "DragDropDisabled = 0 and AvailableBlocksInLib >= 1"
 				},
 				{
 					"key": "C5.2",
 					"parentKey": "C5",
 					"name": "[fr]C5.2 Traduire des objets ou séquences d'actions entre représentations formelles[/fr][en]C5.2 Translate objects or sequences of actions between formal representations[/en]",
-					"description": "[fr]Être capable d'utiliser un autre langage / code formel pour représenter des objets ou séquences d'actions formellement définis.[/fr][en]Being able to use another formal language / code to represent a formally described object or sequence of actions.[/en]",
+					"description": "[fr]Être capable d'utiliser un autre langage / code formel pour représenter des objets ou séquences d'actions formellement définis.<br><br>Dans SPY :<br> - Si la sortie est cachée, le joueur doit s'appuyer sur les informations données dans la consigne pour traduire la solution à l'aide du langage formel du jeu.[/fr][en]Being able to use another formal language / code to represent a formally described object or sequence of actions.<br><br>In SPY:<br> - If the output is hidden, the player must rely on the information provided in the instruction to translate the solution using the game's formal language.[/en]",
 					"filters": [
 						{
 							"label": "Fog",
@@ -2577,7 +2677,7 @@
 					"key": "C6.1",
 					"parentKey": "C6",
 					"name": "[fr]C6.1 Vérifier si une séquence d'actions atteint un objectif donné[/fr][en]C6.1 Verify if a sequence of actions reaches a given goal[/en]",
-					"description": "[fr]Être capable de vérifier si une séquence d'actions donnée produit ou non le résultat escompté.[/fr][en]Being able to verify whether a given sequence of actions produces the expected outcome or not.[/en]",
+					"description": "[fr]Être capable de vérifier si une séquence d'actions donnée produit ou non le résultat escompté.<br><br>Dans SPY :<br> - En exécutant un programme, le joueur peut vérifier si sa solution permet d'atteindre l'objectif.[/fr][en]Being able to verify whether a given sequence of actions produces the expected outcome or not.<br><br>In SPY:<br> - When executing a program, the player can verify if their solution allows them to reach the goal.[/en]",
 					"filters": [
 						{
 							"label": "containsRobot",
@@ -2591,7 +2691,7 @@
 					"key": "C6.2",
 					"parentKey": "C6",
 					"name": "[fr]C6.2 Repérer des erreurs dans une séquence d'actions[/fr][en]C6.2 Notice errors in a sequence of actions[/en]",
-					"description": "[fr]En cas de séquence d'actions erronée, être capable de localiser la ou les erreurs.[/fr][en]In case of having a faulty sequence of actions, being capable of identifying the error(s)[/en]",
+					"description": "[fr]En cas de séquence d'actions erronée, être capable de localiser la ou les erreurs.<br><br>Aucune mécanique de jeu ne permet de travailler cette compétence dans SPY.[/fr][en]In case of having a faulty sequence of actions, being capable of identifying the error(s).<br><br>No game mechanic allows working on this competency in SPY.[/en]",
 					"filters": [],
 					"rule": ""
 				},
@@ -2599,7 +2699,7 @@
 					"key": "C6.3",
 					"parentKey": "C6",
 					"name": "[fr]C6.3 Corriger une séquence d'actions pour atteindre un objectif donné[/fr][en]C6.3 Fix a sequence of actions for reaching a given goal[/en]",
-					"description": "[fr]A partir d'une séquence d'actions donnée, qui ne permet pas d'atteindre un but donné, être capable de modifier cette séquence d'actions pour atteindre le but.[/fr][en]From a given sequence of actions which fails to reach a given goal, being able to modify it so that it does.[/en]",
+					"description": "[fr]A partir d'une séquence d'actions donnée, qui ne permet pas d'atteindre un but donné, être capable de modifier cette séquence d'actions pour atteindre le but.<br><br>Dans SPY :<br> - Le joueur dispose de programmes pré-construit bogués et il doit les corriger.[/fr][en]From a given sequence of actions which fails to reach a given goal, being able to modify it so that it does.<br><br>In SPY:<br> - The player has access to pre-built buggy programs and must correct them.[/en]",
 					"filters": [
 						{
 							"label": "DragDropDisabled",
@@ -2607,9 +2707,21 @@
 							"constraints": []
 						},
 						{
-							"label": "AllScript",
+							"label": "AllPlayerScript",
 							"tag": "script",
-							"constraints": []
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								}
+							]
 						},
 						{
 							"label": "BuggedScript",
@@ -2623,13 +2735,13 @@
 							]
 						}
 					],
-					"rule": "DragDropDisabled = 0 and AllScript = BuggedScript and BuggedScript > 0"
+					"rule": "DragDropDisabled = 0 and AllPlayerScript = BuggedScript and BuggedScript > 0"
 				},
 				{
 					"key": "C6.4",
 					"parentKey": "C6",
 					"name": "[fr]C6.4 Étendre ou modifier une séquence d'actions pour atteindre un nouvel objectif[/fr][en]C6.4 Extend or modify a sequence of actions to reach a new goal[/en]",
-					"description": "[fr]A partir d'une séquence d'actions donnée dont le résultat est connu (la séquence est complète par rapport à un objectif précédent), pouvoir la réutiliser et l'adapter pour atteindre un autre (nouvel) objectif.[/fr][en]From a given sequence of actions whose outcome is known (the sequence is complete with respect to a previous goal), being able to reuse and update it to reach another (new) goal.[/en]",
+					"description": "[fr]A partir d'une séquence d'actions donnée dont le résultat est connu (la séquence est complète par rapport à un objectif précédent), pouvoir la réutiliser et l'adapter pour atteindre un autre (nouvel) objectif.<br><br>Dans SPY :<br> - Le joueur dispose de zones de programmation pré-complétées et doit les terminer.[/fr][en]From a given sequence of actions whose outcome is known (the sequence is complete with respect to a previous goal), being able to reuse and update it to reach another (new) goal.<br><br>In SPY:<br> - The player has access to pre-completed programming zones and must complete them.[/en]",
 					"filters": [
 						{
 							"label": "DragDropDisabled",
@@ -2649,13 +2761,13 @@
 							]
 						},
 						{
-							"label": "ActionInLib",
+							"label": "BlockInLib",
 							"tag": "blockLimit",
 							"constraints": [
 								{
 									"attribute": "blockType",
 									"constraint": "isIncludedIn",
-									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
+									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack|ForLoop|Forever|While|IfThen|IfElse|And|Or|Not"
 								},
 								{
 									"attribute": "limit",
@@ -2665,7 +2777,7 @@
 							]
 						}
 					],
-					"rule": "DragDropDisabled = 0 and RobotsInSameLine >= 2 and ActionInLib >= 1"
+					"rule": "DragDropDisabled = 0 and RobotsInSameLine >= 2 and BlockInLib >= 1"
 				}
 			]
 		},
@@ -2722,32 +2834,17 @@
 							]
 						},
 						{
-							"label": "IfInScript",
-							"tag": "if",
-							"constraints": []
-						},
-						{
-							"label": "IfElseInScript",
-							"tag": "ifElse",
-							"constraints": []
-						},
-						{
-							"label": "ForInScript",
-							"tag": "for",
-							"constraints": []
-						},
-						{
-							"label": "WhileInScript",
-							"tag": "while",
-							"constraints": []
-						},
-						{
-							"label": "ForeverInScript",
-							"tag": "forever",
-							"constraints": []
+							"label": "ControlInScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"constraint": "countChilds",
+									"tag2": "if|ifElse|for|while|forever"
+								}
+							]
 						}
 					],
-					"rule": "AvailableControlInLib = 0 and UnlimitedBlockInLib = 0 and IfInScript = 0 and IfElseInScript = 0 and ForInScript = 0 and WhileInScript = 0 and ForeverInScript = 0"
+					"rule": "AvailableControlInLib = 0 and UnlimitedBlockInLib = 0 and ControlInScript = 0"
 				},
 				{
 					"key": "N2",
@@ -2783,32 +2880,17 @@
 							]
 						},
 						{
-							"label": "IfInScript",
-							"tag": "if",
-							"constraints": []
-						},
-						{
-							"label": "IfElseInScript",
-							"tag": "ifElse",
-							"constraints": []
-						},
-						{
-							"label": "ForInScript",
-							"tag": "for",
-							"constraints": []
-						},
-						{
-							"label": "WhileInScript",
-							"tag": "while",
-							"constraints": []
-						},
-						{
-							"label": "ForeverInScript",
-							"tag": "forever",
-							"constraints": []
+							"label": "ControlInScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"constraint": "countChilds",
+									"tag2": "if|ifElse|for|while|forever"
+								}
+							]
 						}
 					],
-					"rule": "AvailableControlInLib = 0 and UnlimitedBlockInLib >= 1 and IfInScript = 0 and IfElseInScript = 0 and ForInScript = 0 and WhileInScript = 0 and ForeverInScript = 0"
+					"rule": "AvailableControlInLib = 0 and UnlimitedBlockInLib >= 1 and ControlInScript = 0"
 				},
 				{
 					"key": "N3",
@@ -2816,22 +2898,6 @@
 					"name": "[fr]Niveau 3[/fr][en]Level 3[/en]",
 					"description": "[fr]* Développer un programme pour répondre à un problème à partir d'instructions simples d'un langage de programmation<br>* Modifier un algorithme simple en faisant évoluer ses éléments de programmation<br>* Mettre au point et exécuter un programme simple commandant un système réel ou un système numérique<br><br>Application à SPY : Niveaux qui contiennent des blocs d'action et des structures de contôle à l'exception des structures de contrôle conditionnelles.[/fr][en]* Develop a program to solve a problem from simple instructions in a programming language<br>* Modify a simple algorithm by changing its programming elements<br>* Develop and execute a simple program controlling a real system or a digital system.<br><br>Application to SPY: Levels that contain action blocks and control structures except conditional control structures.[/en]",
 					"filters": [
-						{
-							"label": "AvailableLoopControlInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "ForLoop|Forever"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
 						{
 							"label": "AvailableConditionalControlInLib",
 							"tag": "blockLimit",
@@ -2849,32 +2915,69 @@
 							]
 						},
 						{
-							"label": "IfInScript",
-							"tag": "if",
-							"constraints": []
+							"label": "ConditionalControlInScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"constraint": "countChilds",
+									"tag2": "if|ifElse|while"
+								}
+							]
 						},
 						{
-							"label": "IfElseInScript",
-							"tag": "ifElse",
-							"constraints": []
+							"label": "AvailableLoopControlInLib",
+							"tag": "blockLimit",
+							"constraints": [
+								{
+									"attribute": "blockType",
+									"constraint": "isIncludedIn",
+									"value": "ForLoop|Forever"
+								},
+								{
+									"attribute": "limit",
+									"constraint": ">",
+									"value": "0"
+								}
+							]
 						},
 						{
-							"label": "WhileInScript",
-							"tag": "while",
-							"constraints": []
+							"label": "LoopControlInPlayerScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "for|forever"
+								}
+							]
 						},
 						{
-							"label": "ForInScript",
-							"tag": "for",
-							"constraints": []
-						},
-						{
-							"label": "ForeverInScript",
-							"tag": "forever",
-							"constraints": []
+							"label": "LoopControlInSolution",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "for|forever"
+								}
+							]
 						}
 					],
-					"rule": "AvailableConditionalControlInLib = 0 and IfInScript = 0 and IfElseInScript = 0 and WhileInScript = 0 and (AvailableLoopControlInLib >= 1 or ForInScript >= 1 or ForeverInScript >= 1)"
+					"rule": "AvailableConditionalControlInLib = 0 and ConditionalControlInScript = 0 and (AvailableLoopControlInLib >= 1 or LoopControlInPlayerScript >= 1) and LoopControlInSolution >= 1"
 				},
 				{
 					"key": "N4",
@@ -2883,22 +2986,6 @@
 					"description": "[fr]* Inscrire l'écriture et le développement des programmes dans un travail collaboratif et constructif<br>* Modifier le comportement d'un objet régi par un programme simple<br><br>Application à SPY : Niveaux qui contiennent des blocs d'action et des structures de contrôle conditionnelles (sans les operateurs logiques).[/fr][en]* Include the writing and development of programs in collaborative and constructive work<br>* Change the behavior of an object governed by a simple program<br><br>Application to SPY: Levels that contain action blocks and conditional control structures (without logical operators).[/en]",
 					"filters": [
 						{
-							"label": "AvailableConditionalInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "While|IfThen|IfElse"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
-						{
 							"label": "AvailableOperatorInLib",
 							"tag": "blockLimit",
 							"constraints": [
@@ -2915,37 +3002,69 @@
 							]
 						},
 						{
-							"label": "IfInScript",
-							"tag": "if",
-							"constraints": []
+							"label": "OperatorInScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"constraint": "countChilds",
+									"tag2": "and|or|not"
+								}
+							]
 						},
 						{
-							"label": "IfElseInScript",
-							"tag": "ifElse",
-							"constraints": []
+							"label": "AvailableConditionalInLib",
+							"tag": "blockLimit",
+							"constraints": [
+								{
+									"attribute": "blockType",
+									"constraint": "isIncludedIn",
+									"value": "While|IfThen|IfElse"
+								},
+								{
+									"attribute": "limit",
+									"constraint": ">",
+									"value": "0"
+								}
+							]
 						},
 						{
-							"label": "WhileInScript",
-							"tag": "while",
-							"constraints": []
+							"label": "ConditionalInPlayerScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "if|ifElse|while"
+								}
+							]
 						},
 						{
-							"label": "NotInScript",
-							"tag": "not",
-							"constraints": []
-						},
-						{
-							"label": "AndInScript",
-							"tag": "and",
-							"constraints": []
-						},
-						{
-							"label": "OrInScript",
-							"tag": "or",
-							"constraints": []
+							"label": "ConditionalInSolution",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "if|ifElse|while"
+								}
+							]
 						}
 					],
-					"rule": "AvailableOperatorInLib = 0 and NotInScript = 0 and AndInScript = 0 and OrInScript = 0 and (AvailableConditionalInLib >= 1 or IfInScript >= 1 or IfElseInScript >= 1 or WhileInScript >= 1)"
+					"rule": "AvailableOperatorInLib = 0 and OperatorInScript = 0 and (AvailableConditionalInLib >= 1 or ConditionalInPlayerScript >= 1) and ConditionalInSolution >= 1"
 				},
 				{
 					"key": "N5",
@@ -2954,69 +3073,23 @@
 					"description": "[fr]* Créer un programme animant un objet graphique ou réel<br>* Écrire et développer des programmes pour répondre à des problèmes et modéliser des phénomènes physiques, économiques et sociaux<br><br>Application à SPY : Niveaux qui contiennent des blocs d'action et des structures de contrôle incluant des operateurs logiques.[/fr][en]* Create a program animating a graphic or real object<br>* Write and develop programs to answer problems and model physical, economic and social phenomena<br><br>Application to SPY: Levels that contain action blocks and control structures including logical operators.[/en]",
 					"filters": [
 						{
-							"label": "AvailableConditionalInLib",
-							"tag": "blockLimit",
+							"label": "OperatorInSolution",
+							"tag": "script",
 							"constraints": [
 								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "While|IfThen|IfElse"
+									"attribute": "type",
+									"constraint": "=",
+									"value": "4"
 								},
 								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
+									"constraint": "countChilds",
+									"tag2": "and|or|not"
 								}
 							]
-						},
-						{
-							"label": "AvailableOperatorInLib",
-							"tag": "blockLimit",
-							"constraints": [
-								{
-									"attribute": "blockType",
-									"constraint": "isIncludedIn",
-									"value": "AndOperator|OrOperator|NotOperator"
-								},
-								{
-									"attribute": "limit",
-									"constraint": ">",
-									"value": "0"
-								}
-							]
-						},
-						{
-							"label": "IfInScript",
-							"tag": "if",
-							"constraints": []
-						},
-						{
-							"label": "IfElseInScript",
-							"tag": "ifElse",
-							"constraints": []
-						},
-						{
-							"label": "WhileInScript",
-							"tag": "while",
-							"constraints": []
-						},
-						{
-							"label": "NotInScript",
-							"tag": "not",
-							"constraints": []
-						},
-						{
-							"label": "AndInScript",
-							"tag": "and",
-							"constraints": []
-						},
-						{
-							"label": "OrInScript",
-							"tag": "or",
-							"constraints": []
 						}
 					],
-					"rule": "(AvailableOperatorInLib >= 1 or NotInScript >= 1 or AndInScript >= 1 or OrInScript >= 1) and (AvailableConditionalInLib >= 1 or IfInScript >= 1 or IfElseInScript >= 1 or WhileInScript >= 1)"
+					"comment": "Pas besoin de tester plus que la présence d'opérateurs dans la solution qui ne peuvent exister sans avoir aussi des structures de contrôle conditionnelles.",
+					"rule": "OperatorInSolution >= 1"
 				}
 			]
 		}

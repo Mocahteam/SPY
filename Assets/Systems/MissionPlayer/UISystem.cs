@@ -135,7 +135,7 @@ public class UISystem : FSystem {
 	// On affiche ou non la partie librairie/programmation sequence en fonction de la valeur reçue
 	public void setExecutionView(bool value){
 		// Toggle library and editable panel
-		GameObjectManager.setGameObjectState(canvas.transform.Find("LeftPanel").gameObject, !value);
+		GameObjectManager.setGameObjectState(canvas.transform.Find("SafeArea/LeftPanel").gameObject, !value);
 		// Show sentinel panels and toggle player panels
 		foreach (GameObject agent in f_agents)
 			if (agent.GetComponent<DetectRange>())

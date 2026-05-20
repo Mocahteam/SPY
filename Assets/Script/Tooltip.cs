@@ -63,7 +63,13 @@ public class Tooltip : MonoBehaviour
             if (pointActionUI.enabled || currentSelectedGO == null)
                 tooltipPos = new Vector2(Pointer.current.position.x.value, Pointer.current.position.y.value) / canvasScaler.scaleFactor;
             else
-                tooltipPos = new Vector2(currentSelectedGO.transform.position.x, currentSelectedGO.transform.position.y) / canvasScaler.scaleFactor;
+            {
+                Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(
+                    canvasScaler.GetComponent<Canvas>().renderMode == RenderMode.ScreenSpaceCamera ? canvasScaler.GetComponent<Canvas>().worldCamera : null,
+                    currentSelectedGO.transform.position
+                );
+                tooltipPos = new Vector2(screenPos.x, screenPos.y) / canvasScaler.scaleFactor;
+            }
             // recaller la position du tooltip pour qu'il soit dirigé vers le centre de l'écran
             if (tooltipPos.x > (canvasScaler.transform as RectTransform).rect.width / 2)
                 tooltipPos.x -= (20 / canvasScaler.scaleFactor + rectTransform.rect.width / 2);

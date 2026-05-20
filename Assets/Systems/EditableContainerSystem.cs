@@ -370,17 +370,6 @@ public class EditableContainerSystem : FSystem
 			// Si le nom n'est pas utilisé et que le mode n'est pas locked (ignorer ça si on est dans l'éditeur de mission)
 			if (!nameContainerUsed(newName) && (containerSelected.editState != UIRootContainer.EditMode.Locked || isEditorContext))
 			{
-				// Si le container est en mode synch, rechercher le ou les agents associés (uniquement dans le player)
-				if (containerSelected.editState == UIRootContainer.EditMode.Synch && SceneManager.GetActiveScene().name == "MainScene")
-				{
-					// On met à jour le nom de tous les agents qui auraient le même nom pour garder l'association avec le container editable
-					foreach (GameObject agent in f_agent)
-						if (agent.GetComponent<AgentEdit>().associatedScriptName.ToLower() == oldName.ToLower())
-						{
-							agent.GetComponent<AgentEdit>().associatedScriptName = newName;
-							agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<TMP_InputField>().text = newName;
-						}
-				}
 				// On change pour son nouveau nom
 				containerSelected.scriptName = newName;
 				containerSelected.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text = newName;

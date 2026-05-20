@@ -8,8 +8,6 @@ using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using UnityEngine.EventSystems;
 using System.Collections;
-using UnityEngine.Localization.Settings;
-using UnityEngine.Localization.PropertyVariants;
 using UnityEngine.Localization.Components;
 
 /// <summary>
@@ -18,7 +16,6 @@ using UnityEngine.Localization.Components;
 public class TitleScreenSystem : FSystem {
 	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
 	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
-	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
 	private Family f_avatarTarget = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_AvatarTarget"));
 	private Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
 	private Family f_canvasGroup = FamilyManager.getFamily(new AllOfComponents(typeof(Canvas), typeof(CanvasGroup)));
@@ -38,7 +35,6 @@ public class TitleScreenSystem : FSystem {
 
 	private Transform gameList;
 	private Transform gameDetails;
-	private Transform competencyPanel;
 	private string lastScenarioSelected = "";
 	private int lastMissionSelected = -1;
 
@@ -89,7 +85,6 @@ public class TitleScreenSystem : FSystem {
 
 			gameList = gameSelector.transform.Find("GamePanel/Viewport/GameList");
 			gameDetails = gameSelector.transform.Find("GameDetails");
-			competencyPanel = gameSelector.transform.Find("CompetencyPanel");
 
 			foreach (GameObject sID in f_sessionId)
 				sID.GetComponent<TMP_Text>().text = string.Join(" ", GBL_Interface.playerName.ToCharArray());
@@ -448,31 +443,29 @@ public class TitleScreenSystem : FSystem {
 		titleNav.selectOnUp = curTile;
 		titleSel.navigation = titleNav;
 
-		detailsTitle.text = detailsTitle.GetComponentInParent<Localization>().localization[1]; // default show "Mission locked"
+		Localization loc = gameDetails.GetComponentInParent<Localization>(true);
+        detailsTitle.text = loc.localization[1]; // default show "Mission locked"
 		GameObject gameDescription = gameDetails.Find("Scroll View").gameObject;
 		Image miniView = gameDetails.Find("MiniView").GetComponent<Image>();
 
-		GameKeys comp_gk = competencyPanel.GetComponent<GameKeys>();
-		comp_gk.scenarioKey = keys.scenarioKey;
-		comp_gk.missionNumber = keys.missionNumber;
-
-		// If the keys refer a scenario without a mission defined => show scenario data
-		if (keys.scenarioKey != "" && keys.missionNumber == -1 && gameData.scenarios.ContainsKey(keys.scenarioKey))
+		TMP_Text descDetails = gameDescription.GetComponentInChildren<TMP_Text>(true);
+        // If the keys refer a scenario without a mission defined => show scenario data
+        if (keys.scenarioKey != "" && keys.missionNumber == -1 && gameData.scenarios.ContainsKey(keys.scenarioKey))
 		{
 			detailsTitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].name);
-			GameObjectManager.setGameObjectState(gameDescription, true);
-			gameDescription.GetComponentInChildren<TMP_Text>(true).text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].description);
+            descDetails.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].description);
 			GameObjectManager.setGameObjectState(miniView.gameObject, false);
-		}
+            GameObjectManager.setGameObjectState(gameDescription, true);
+        }
 		// If the keys refer a scenario and a mission => show mission data
 		else if (keys.scenarioKey != "" && keys.missionNumber != -1 && gameData.scenarios.ContainsKey(keys.scenarioKey) && gameData.scenarios[keys.scenarioKey].levels.Count > keys.missionNumber)
         {
 			detailsTitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].missionName);
-			GameObjectManager.setGameObjectState(gameDescription, false);
-			gameDescription.GetComponentInChildren<TMP_Text>(true).text = "";
+            descDetails.text = "";
 			GameObjectManager.setGameObjectState(miniView.gameObject, true);
-			// try to load mini view
-			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].filePath.Replace(".xml", currentSettingsValues.values.currentLanguage == 1 ? "_en.png" : ".png"), miniView));
+            GameObjectManager.setGameObjectState(gameDescription, true);
+            // try to load mini view
+            MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].filePath.Replace(".xml", currentSettingsValues.values.currentLanguage == 1 ? "_en.png" : ".png"), miniView));
 		}
 		// Else locked mission
         else
@@ -480,57 +473,37 @@ public class TitleScreenSystem : FSystem {
 			GameObjectManager.setGameObjectState(gameDescription, false);
 			GameObjectManager.setGameObjectState(miniView.gameObject, false);
 		}
-	}
 
-	// See competency selector in CompetencyPanel
-	public void refreshCompetencies()
-	{
-		GameKeys comp_gk = competencyPanel.GetComponent<GameKeys>();
+		// Show skills
+		if (descDetails.text != "")
+            descDetails.text += "\n\n";
+        descDetails.text += "<b>"+loc.localization[3]+"</b>\n";
+        if (gameData.scenarios.ContainsKey(keys.scenarioKey))
+        {
+            // Display competencies
+            string txt = "";
 
-		// Set title
-		TextMeshProUGUI title = competencyPanel.Find("Title").GetComponentInChildren<TextMeshProUGUI>(true);
-		title.text = "";
-		if (comp_gk.scenarioKey != "" && gameData.scenarios.ContainsKey(comp_gk.scenarioKey))
-		{
-			WebGlScenario scenar = gameData.scenarios[comp_gk.scenarioKey];
-			title.text = Utility.extractLocale(scenar.name);
-			if (comp_gk.missionNumber != -1 && scenar.levels.Count > comp_gk.missionNumber)
-				title.text += " / " + Utility.extractLocale(scenar.levels[comp_gk.missionNumber].missionName);
-			title.text += title.GetComponentInParent<Localization>().localization[2];
-		}
-		title.text += title.GetComponentInParent<Localization>().localization[3];
+            List<DataLevel> levelKeys = new List<DataLevel>();
+            if (keys.missionNumber == -1 || keys.missionNumber >= gameData.scenarios[keys.scenarioKey].levels.Count)
+                levelKeys = gameData.scenarios[keys.scenarioKey].levels;
+            else
+                levelKeys.Add(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber]);
 
-		TextMeshProUGUI details = competencyPanel.Find("Scroll View").GetComponentInChildren<TextMeshProUGUI>(true);
-		details.text = "";
-		if (gameData.scenarios.ContainsKey(comp_gk.scenarioKey))
-		{
-			// Get current referentiel selected
-			TMP_Dropdown compSelector = f_compSelector.First().GetComponent<TMP_Dropdown>();
-			string referentialName = compSelector.options[compSelector.value].text;
-			// Display competencies
-			string txt = "";
+            foreach (GameObject comp in f_competencies)
+                if (comp.GetComponent<Competency>().referentialId == currentSettingsValues.values.currentSkillsRepository)
+                    foreach (DataLevel levelKey in levelKeys)
+                        if (gameData.levels.ContainsKey(levelKey.filePath) && UtilityLobby.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.filePath].OwnerDocument))
+                        {
+                            txt += "\t - "+Utility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
+                            break;
+                        }
 
-			List<DataLevel> levelKeys = new List<DataLevel>();
-			if (comp_gk.missionNumber == -1 || comp_gk.missionNumber >= gameData.scenarios[comp_gk.scenarioKey].levels.Count)
-				levelKeys = gameData.scenarios[comp_gk.scenarioKey].levels;
-			else
-				levelKeys.Add(gameData.scenarios[comp_gk.scenarioKey].levels[comp_gk.missionNumber]);
-
-			foreach (GameObject comp in f_competencies)
-				if (comp.GetComponent<Competency>().referential == referentialName)
-					foreach (DataLevel levelKey in levelKeys)
-						if (gameData.levels.ContainsKey(levelKey.filePath) && UtilityLobby.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.filePath].OwnerDocument))
-						{
-							txt += Utility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
-							break;
-						}
-            
-			if (txt != "")
-				details.text += txt;
-			else
-				details.text += competencyPanel.GetComponentInParent<Localization>().localization[0];
-		}
-	}
+            if (txt != "")
+                descDetails.text += txt;
+            else
+                descDetails.text += "\t - "+loc.localization[0];
+        }
+    }
 
 	public void continueScenario()
     {

@@ -24,7 +24,6 @@ public class GameData : MonoBehaviour {
 	public bool hideExit = false;
 	public bool fogEnabled = false;
 	public RawListReferential rawReferentials;
-	public int lastReferentialSelected;
 	public bool oldTTS_state = false;
 	public bool newTTS_state = false;
 }
