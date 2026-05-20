@@ -5,7 +5,11 @@ using System.IO;
 
 class LrsSettings : ScriptableObject
 {
-    private const string ResourcePath = "Settings/LrsSettings";
+    #if UNITY_EDITOR
+        private const string ResourcePath = "Settings/LrsSettings.staging";
+    #else
+        private const string ResourcePath = "Settings/LrsSettings.prod";
+    #endif
     private const string AssetPath = "Assets/Resources/"+ResourcePath+".asset";
     public List<LrsBasicAuthConfig> lrsBasicConfigs = new();
     public List<LrsOAuth2Config> lrsOAuth2Configs = new();
