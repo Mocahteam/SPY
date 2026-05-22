@@ -52,7 +52,7 @@ public class CompetenciesChecker : FSystem
         foreach (GameObject comp in f_competencies)
         {
             Competency competency = comp.GetComponent<Competency>();
-            if (competency.referentialId == cs.values.currentSkillsRepository)
+            if (competency.referentialId == cs.values.currentSkillsRepository && competency.rule != "")
             {
                 // build mission xml for analysis
                 string exportXML = SaveFileSystem.instance.buildLevelContent();
@@ -66,7 +66,7 @@ public class CompetenciesChecker : FSystem
                 skill.GetComponent<TMP_Text>().text = Utility.extractLocale(competency.id);
                 skill.GetComponent<TooltipContent>().text = Utility.extractLocale(competency.description);
                 // Ajout de la compétence à la bonne liste
-                if (!UtilityLobby.isCompetencyMatchWithLevel(competency, doc))
+                if (UtilityLobby.isCompetencyMatchWithLevel(competency, doc))
                     skill.transform.SetParent(skillsInvolvedContent);
                 else
                     skill.transform.SetParent(skillsIgnoredContent);
@@ -80,7 +80,9 @@ public class CompetenciesChecker : FSystem
             // On instancie une competence fake
             GameObject skill = UnityEngine.Object.Instantiate(SkillPrefab, skillsInvolvedContent);
             skill.name = "NoSkills";
+            Object.Destroy(skill.GetComponent<TooltipContent>());
             skill.GetComponent<TMP_Text>().text = LocalizationSettings.StringDatabase.GetLocalizedString("StringLocalization", "NoSkillsIdentified");
+            GameObjectManager.bind(skill);
         }
     }
 }

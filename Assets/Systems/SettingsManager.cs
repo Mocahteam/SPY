@@ -90,8 +90,6 @@ public class SettingsManager : FSystem
 			ds = settingsWindow.GetComponent<DefaultSettingsValues>();
 			cs = settingsWindow.GetComponent<CurrentSettingsValues>();
 
-            initSkillsRepositories();
-
 			if (Application.platform == RuntimePlatform.WebGLPlayer && ClearPlayerPrefs())
 				PlayerPrefs.DeleteAll();
 
@@ -351,7 +349,8 @@ public class SettingsManager : FSystem
 	private void syncSettingsUI()
 	{
 		// Voir SyncLocalization pour la gestion de la langue
-		settingsContent.Find("SectionLang/GridContainer/Grid/SkillsDropdown").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentSkillsRepository;
+		initSkillsRepositories();
+        settingsContent.Find("SectionLang/GridContainer/Grid/SkillsDropdown").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentSkillsRepository;
         settingsContent.Find("SectionGraphic/GridContainer/Grid/Quality").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentQuality;
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/InteractionMode").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentInteractionMode;
 		ds.UIScale.text = cs.values.currentUIScale + "";

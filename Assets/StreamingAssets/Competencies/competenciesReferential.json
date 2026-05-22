@@ -2136,7 +2136,7 @@
 						}
 					],
 					"comment": "La règle ci-dessous permet d'identifier cette compétence uniquement pour les mission ne contenant qu'une seule solution. En effet pour les missions contenant plusieurs solutions la longueur des solutions est bien plus importante que le nombre de blocs disponible. Il faudrait s'assurer que le nombre de bloc disponible est égal à au moins l'une des solutions, mais c'est complexe car si on a aussi plusieurs robots il faudrait prendre en compte plusieurs solutions et on n'a pas de possibilité d'identifier celles qu'il faudrait vérifier. Donc plutôt que de prendre le risque d'identifier la compétence par erreur on préfère ne pas l'identifier pour les missions à solution multiples, d'où la règle actuelle qui est plus restrictive mais qui a le mérite de ne pas poser de problème d'identification incorrecte.",
-					"rule": "AvailableBlocksInLib + AvailableBlocksInPlayerScript = SolutionsLength and DragDropDisabled = 0"
+					"rule": "AvailableBlocksInLib + AvailableBlocksInPlayerScript = SolutionsLength and AvailableBlocksInLib > 0 and DragDropDisabled = 0"
 				},
 				{
 					"key": "C2.2",
@@ -2249,9 +2249,23 @@
 									"tag2": "if|ifElse|for|while|forever"
 								}
 							]
+						},
+						{
+							"label": "SolutionContainsBlocks",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "4"
+								},
+								{
+									"constraint": "hasChild"
+								}
+							]
 						}
 					],
-					"rule": "DragDropDisabled = 0 and AvailableActionInLib >= 1 and PlayerScriptContainsBlocks = 0 and ControlInScript = 0"
+					"rule": "DragDropDisabled = 0 and AvailableActionInLib >= 1 and PlayerScriptContainsBlocks = 0 and ControlInScript = 0 and SolutionContainsBlocks > 0"
 				},
 				{
 					"key": "C2.4",
