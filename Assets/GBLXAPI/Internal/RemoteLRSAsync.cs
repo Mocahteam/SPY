@@ -10,11 +10,13 @@
 // There is a desktop/mobile version that uses threading and the full RemoteLRS to make async.
 // -------------------------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using TinCan;
+using TinCan.LRSResponses;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace DIG.GBLXAPI.Internal
@@ -22,46 +24,25 @@ namespace DIG.GBLXAPI.Internal
     public class RemoteLRSAsync
 	{
 		// config
-		public string endpoint { get; set; }
 		public TCAPIVersion version { get; set; }
-		public string auth { get; set; }
+		private readonly LrsConfig m_Config;
 
-        public class State
+		public string xApiEndpoint { get { return m_Config.GetEndpoint(); } }
+
+
+		public RemoteLRSAsync(LrsConfig config)
         {
-            public bool complete = false;
-            public bool success = false;
-            public string response = "";
-        }
-
-        public List<State> states;
-
-		public RemoteLRSAsync(string endpoint, string username, string password)
-        {
-			this.endpoint = endpoint;
-
-			// endpoint should have trailing /
-			if (this.endpoint[this.endpoint.Length - 1] != '/')
-			{
-				this.endpoint += "/";
-			}
-
+			m_Config = config;
 			this.version = TCAPIVersion.latest();
-			this.auth = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(username + ":" + password));
-
-            states = new List<State>();
 		}
 
 		// ------------------------------------------------------------------------
 		// ------------------------------------------------------------------------
-		public int PostStatements(List<Statement> statements)
+		public async Awaitable<StatementLRSResponse> PostStatements(List<Statement> statements)
 		{
-            // reinit state
-            State state = new State();
-            states.Add(state);
-            int idState = states.Count - 1;
-
 			// https://learninglocker.dig-itgames.com/data/xAPI/statements?statementId=58098b7c-3353-4f9c-b812-1bddb08876fd
-			string queryURL = endpoint + "statements";
+			string queryURL = this.xApiEndpoint + "/statements";
+			AuthenticationHeaderValue auth = await m_Config.GetAuthHeader();
 
             string jsonData = "";
             if (statements.Count > 1)
@@ -73,41 +54,34 @@ namespace DIG.GBLXAPI.Internal
             }
             if (statements.Count > 1)
                 jsonData += "]";
-			
-			if (jsonData != "")
+			if (jsonData == "")
 			{
-				byte[] formBytes = Encoding.UTF8.GetBytes(jsonData);
+                return new StatementLRSResponse()
+                {
+                    success = true
+                };
+			}
+			
+			byte[] formBytes = Encoding.UTF8.GetBytes(jsonData);
 
-				UnityWebRequest request = new UnityWebRequest(queryURL, "POST", new DownloadHandlerBuffer(), new UploadHandlerRaw(formBytes));
-
+			using (UnityWebRequest request = new UnityWebRequest(queryURL, "POST", new DownloadHandlerBuffer(), new UploadHandlerRaw(formBytes)))
+			{
 				request.SetRequestHeader("Content-Type", "application/json");
 				request.SetRequestHeader("X-Experience-API-Version", version.ToString());
-				request.SetRequestHeader("Authorization", auth);
+				request.SetRequestHeader("Authorization", auth.ToString());
 
-				var requestOperation = request.SendWebRequest();
-				requestOperation.completed += (operation) =>
+				await request.SendWebRequest();
+				if (request.result != UnityWebRequest.Result.Success)
 				{
-					state.success = request.result == UnityWebRequest.Result.Success;
-
-					if (state.success)
+					return new StatementLRSResponse()
 					{
-						JArray ids = JArray.Parse(request.downloadHandler.text);
-						state.response = ids[0].ToString();
-					}
-					else
-					{
-						state.response = request.error;
-					}
-
-					state.complete = true;
-				};
+						success = false,
+						errMsg = request.error
+					};
+				}
+				JArray ids = JArray.Parse(request.downloadHandler.text);
+				return new StatementLRSResponse() {success = true };
 			}
-            else
-            {
-				state.success = true;
-				state.complete = true;
-            }
-            return idState;
 
         }
 	}

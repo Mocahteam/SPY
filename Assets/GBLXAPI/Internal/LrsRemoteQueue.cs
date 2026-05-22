@@ -2,7 +2,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TinCan;
+using TinCan.LRSResponses;
 using UnityEngine;
 
 namespace DIG.GBLXAPI.Internal
@@ -49,7 +51,7 @@ namespace DIG.GBLXAPI.Internal
 		{
             _lrsEndpoints = new List<RemoteLRSAsync>();
             foreach (GBLConfig config in configs)
-                _lrsEndpoints.Add(new RemoteLRSAsync(config.lrsURL, config.lrsUser, config.lrsPassword));
+                _lrsEndpoints.Add(new RemoteLRSAsync(config.lrsConfig));
 			_statementQueue = new RingBuffer<QueuedStatement>(queueDepth);
 		}
 
@@ -104,9 +106,14 @@ namespace DIG.GBLXAPI.Internal
 					foreach (RemoteLRSAsync endPoint in _lrsEndpoints)
 					{
 						if (waitComplete)
+						{
 							StartCoroutine(SendStatementCoroutine(endPoint, batchStatements));
+						}
 						else
-							SendStatementsImmediate(endPoint, batchStatements);
+						{
+							Task _ = SendStatements(endPoint, batchStatements);
+						}
+
 					}
 				}
 			}
@@ -146,15 +153,12 @@ namespace DIG.GBLXAPI.Internal
 			}
 		}
 
-        //return idState of posted statements
-        private int SendStatementsImmediate(RemoteLRSAsync endPoint, List<QueuedStatement> queuedStatements)
+        private async Task<StatementLRSResponse> SendStatements(RemoteLRSAsync endPoint, List<QueuedStatement> queuedStatements)
         {
             List<Statement> statements = new List<Statement>();
             foreach (QueuedStatement qs in queuedStatements)
                 statements.Add(qs.statement);
-			int idState = endPoint.PostStatements(statements);
-			Debug.Log(statements.Count+" statements with new idState "+idState+" sent. ");
-			return idState;
+			return await endPoint.PostStatements(statements);
         }
 
         // ------------------------------------------------------------------------
@@ -162,23 +166,28 @@ namespace DIG.GBLXAPI.Internal
         // ------------------------------------------------------------------------
         private IEnumerator SendStatementCoroutine(RemoteLRSAsync endPoint, List<QueuedStatement> queuedStatements)
 		{
-			int idState = SendStatementsImmediate(endPoint, queuedStatements);
+			var sendTask = SendStatements(endPoint, queuedStatements);
 			// Wait answer
-			while (!endPoint.states[idState].complete) { yield return null; }
+			yield return new WaitUntil(() => sendTask.IsCompleted);
 
-			if (endPoint.states[idState].success)
-				Debug.Log("Statements with idState " + idState + " sent with success");
+			bool success = sendTask.Status == TaskStatus.RanToCompletion && sendTask.Result.success;
+			var errMessage = sendTask.Status == TaskStatus.RanToCompletion ? sendTask.Result.errMsg : "Operation not completed";
+
+			if (sendTask.Status == TaskStatus.RanToCompletion && sendTask.Result.success) {
+				Debug.Log("Statements successfully sent");
+			}
 			else
 			{
-				Debug.LogWarning("Statements with idState " + idState + " failed with error: " + endPoint.states[idState].response);
+				Debug.LogWarning("Statements failed with error: " + errMessage);
 				Debug.LogWarning("Try again...");
 				yield return new WaitForSeconds(0.5f);
 				StartCoroutine(SendStatementCoroutine(endPoint, queuedStatements));
 			}
 
 			// Client callback with result
-			foreach (QueuedStatement qs in queuedStatements)
-                qs.callback?.Invoke(endPoint.endpoint, endPoint.states[idState].success, endPoint.states[idState].response);
+			foreach (QueuedStatement qs in queuedStatements) {
+                qs.callback?.Invoke(endPoint.xApiEndpoint, success, errMessage);
+			}
 		}
 
 		private void StatementDefaultCallback(string endpoint, bool result, string resultText)

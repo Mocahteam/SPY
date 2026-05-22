@@ -3,18 +3,11 @@
     public class GBLConfig
     {
         public const string StandardsUserPath = "data/GBLxAPI_Vocab_User";
+        public readonly LrsConfig lrsConfig;
 
-        public string lrsURL;
-
-        // Fill in these fields for GBLxAPI setup.
-        public string lrsUser;
-        public string lrsPassword;
-
-        public GBLConfig(string lrsURL, string lrsUser, string lrsPassword)
+        public GBLConfig(LrsConfig lrsConfig)
         {
-            this.lrsURL = lrsURL;
-            this.lrsUser = lrsUser;
-            this.lrsPassword = lrsPassword;
+            this.lrsConfig = lrsConfig;
         }
     }
 }

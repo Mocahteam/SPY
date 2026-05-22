@@ -89,7 +89,7 @@ public class ConnexionManager : FSystem
 		if (!GameObject.Find("GBLXAPI"))
 		{
 			if (!GBLXAPI.IsInit)
-				GBLXAPI.Init(GBL_Interface.lrsAddresses);
+				GBLXAPI.Init(GBL_Interface.gblConfigs);
 			GBLXAPI.debugMode = false;
 		}
         else
