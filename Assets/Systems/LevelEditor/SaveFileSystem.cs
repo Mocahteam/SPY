@@ -20,6 +20,7 @@ public class SaveFileSystem : FSystem
 	public Toggle Fog;
 	public Toggle ExecutionLimit;
 	public Toggle HideExits;
+	public Toggle OmniscientView;
 	public TMP_InputField score2;
 	public TMP_InputField score3;
 
@@ -246,7 +247,10 @@ public class SaveFileSystem : FSystem
 		if (HideExits.isOn)
 			levelExport += "\t<hideExits />\n\n";
 
-		levelExport += "\t<score twoStars=\""+(score2.text == "" ? "0" : score2.text)+"\" threeStars=\""+ (score3.text == "" ? "0" : score3.text) + "\"/>\n\n";
+        if (OmniscientView.isOn)
+            levelExport += "\t<omniscientView />\n\n";
+
+        levelExport += "\t<score twoStars=\""+(score2.text == "" ? "0" : score2.text)+"\" threeStars=\""+ (score3.text == "" ? "0" : score3.text) + "\"/>\n\n";
 
 		levelExport += "\t<blockLimits>\n";
 		foreach (GameObject blockLimit in f_editorblocks)

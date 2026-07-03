@@ -1905,6 +1905,12 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!1 &200943578 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2226104817421565153, guid: 700275ead100c4841adbe940b8a6aead,
+    type: 3}
+  m_PrefabInstance: {fileID: 2226104816467939728}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &209245519 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000446060150347598, guid: bae527ae87f763c4eaf4bfcc24112fd8,
@@ -3878,6 +3884,9 @@ MonoBehaviour:
   lseMoveUp: {fileID: 7500572885513006123}
   lseMoveLeft: {fileID: 7500572885513006122}
   currentSettingsValues: {fileID: 1873516088}
+  dialogPanel: {fileID: 2103625724}
+  LeftPanel: {fileID: 1173253400}
+  ExecutableCanvas: {fileID: 1273315147}
 --- !u!114 &361349224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9744,6 +9753,50 @@ Camera:
     type: 3}
   m_PrefabInstance: {fileID: 2226104816467939728}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &963194231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200943578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &964474079 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5196850367999502198, guid: 26bc23b5216990641ac165a0942ed4cc,
@@ -15088,7 +15141,7 @@ PrefabInstance:
     - target: {fileID: 1062678143815114987, guid: 82a19256246efb347a34a95f18dddc89,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 60
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 1254099249046922825, guid: 82a19256246efb347a34a95f18dddc89,
         type: 3}
@@ -15108,7 +15161,7 @@ PrefabInstance:
     - target: {fileID: 1254099249046922825, guid: 82a19256246efb347a34a95f18dddc89,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 300
+      value: 330
       objectReference: {fileID: 0}
     - target: {fileID: 1983672437650437161, guid: 82a19256246efb347a34a95f18dddc89,
         type: 3}
@@ -15138,7 +15191,7 @@ PrefabInstance:
     - target: {fileID: 7369373642859654546, guid: 82a19256246efb347a34a95f18dddc89,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: -266.7
+      value: -226.70001
       objectReference: {fileID: 0}
     - target: {fileID: 7597218264142043222, guid: 82a19256246efb347a34a95f18dddc89,
         type: 3}
@@ -24465,10 +24518,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2226104816940717249, guid: 700275ead100c4841adbe940b8a6aead,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2226104816940717249, guid: 700275ead100c4841adbe940b8a6aead,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2226104816940717249, guid: 700275ead100c4841adbe940b8a6aead,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2226104817421565153, guid: 700275ead100c4841adbe940b8a6aead,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 963194231}
   m_SourcePrefab: {fileID: 100100000, guid: 700275ead100c4841adbe940b8a6aead, type: 3}
 --- !u!114 &2755900853841246072
 MonoBehaviour:
@@ -25368,7 +25440,7 @@ PrefabInstance:
     - target: {fileID: 310931074808684282, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: m_PreferredHeight
-      value: 105
+      value: 285
       objectReference: {fileID: 0}
     - target: {fileID: 354609213008774270, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
@@ -26503,7 +26575,7 @@ PrefabInstance:
     - target: {fileID: 6924971643744040324, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: m_PreferredHeight
-      value: 60
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 6940161819368283958, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
@@ -26608,7 +26680,7 @@ PrefabInstance:
     - target: {fileID: 7714256566619436419, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: m_PreferredHeight
-      value: 105
+      value: 240
       objectReference: {fileID: 0}
     - target: {fileID: 7987622831815105003, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
@@ -26683,7 +26755,7 @@ PrefabInstance:
     - target: {fileID: 8268129264944467816, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: m_PreferredHeight
-      value: 240
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 8507923394125747690, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
@@ -27063,7 +27135,7 @@ PrefabInstance:
     - target: {fileID: 8507923394507219352, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 270.91
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8507923394507219352, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}

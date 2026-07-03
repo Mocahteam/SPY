@@ -13,6 +13,9 @@ public class CameraSystem_wrapper : BaseWrapper
 	public UnityEngine.Localization.Components.LocalizeStringEvent lseMoveUp;
 	public UnityEngine.Localization.Components.LocalizeStringEvent lseMoveLeft;
 	public CurrentSettingsValues currentSettingsValues;
+	public UnityEngine.GameObject dialogPanel;
+	public UnityEngine.RectTransform LeftPanel;
+	public UnityEngine.RectTransform ExecutableCanvas;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -26,6 +29,9 @@ public class CameraSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "lseMoveUp", lseMoveUp);
 		MainLoop.initAppropriateSystemField (system, "lseMoveLeft", lseMoveLeft);
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
+		MainLoop.initAppropriateSystemField (system, "dialogPanel", dialogPanel);
+		MainLoop.initAppropriateSystemField (system, "LeftPanel", LeftPanel);
+		MainLoop.initAppropriateSystemField (system, "ExecutableCanvas", ExecutableCanvas);
 	}
 
 	public void ToggleOrthographicPerspective()

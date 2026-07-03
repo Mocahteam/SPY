@@ -224,8 +224,9 @@ public class LevelGenerator : FSystem {
 		}
 		eraseMap();
 		gameData.hideExit = doc.GetElementsByTagName("hideExits").Count > 0;
-		// On n'affiche pas les Exits si le fog est activé
-		generateMap(gameData.hideExit || gameData.fogEnabled);
+		gameData.omniscientView = doc.GetElementsByTagName("omniscientView").Count > 0;
+        // On n'affiche pas les Exits si le fog est activé
+        generateMap(gameData.hideExit || gameData.fogEnabled);
 		MainLoop.instance.StartCoroutine(delayGameLoaded());
 	}
 

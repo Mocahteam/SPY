@@ -1735,6 +1735,20 @@
 						}
 					],
 					"rule": "furnitureInLib >= 1 or furnitureInPlayerScript >= 1"
+				},
+				{
+					"key": "SPY_LocalView",
+					"parentKey": "",
+					"name": "[fr]F40 Comprendre la nature du problème avant de commencer à programmer[/fr][en]F40 Understand the nature of the problem before starting programming[/en]",
+					"description": "[fr]La caméra reste à sa position initiale sans chercher à donner un point de vue global de toute la scène au joueur. Le joueur doit alors manipuler la caméra afin de comprendre la scène avant de commencer à programmer.[/fr][en]The camera remains in its initial position without attempting to provide the player with an overall view of the entire scene. The player must then manipulate the camera to understand the scene before beginning to program.[/en]",
+					"filters": [
+						{
+							"label": "OmniscientView",
+							"tag": "omniscientView",
+							"constraints": []
+						}
+					],
+					"rule": "OmniscientView = 0"
 				}
 			]
 		},
@@ -1923,9 +1937,15 @@
 					"key": "C1.3",
 					"parentKey": "C1",
 					"name": "[fr]C1.3 Identifier les paramètres d'entrée d'une séquence d'actions[/fr][en]C1.3 Identify the input parameters of a sequence of actions[/en]",
-					"description": "[fr]Être capable de dire ce qui est requis (objet ou séquence d'actions) pour effectuer une séquence d'actions.<br><br>Aucune mécanique de jeu ne permet de travailler cette compétence dans SPY.[/fr][en]Being able to tell what is required (objects or sequences of actions) in order to perform a sequence of actions.<br><br>There are no game mechanics in SPY that allow you to develop this skill.[/en]",
-					"filters": [],
-					"rule": ""
+					"description": "[fr]Être capable de dire ce qui est requis (objet ou séquence d'actions) pour effectuer une séquence d'actions.<br><br>Dans SPY cette compétence est en partie mobilisée pour les missions ne présentant au joueur qu'une partie de la scène. Le joueur doit alors manipuler la caméra pour mieux comprendre la situation et identifier les paramètres du problème avant de chercher à programmer.[/fr][en]Being able to tell what is required (objects or sequences of actions) in order to perform a sequence of actions.<br><br>In SPY, this skill is partially used for missions that show the player only part of the scene. The player must then manipulate the camera to better understand the situation and identify the parameters of the problem before attempting to program.[/en]",
+					"filters": [
+						{
+							"label": "OmniscientView",
+							"tag": "omniscientView",
+							"constraints": []
+						}
+					],
+					"rule": "OmniscientView = 0"
 				},
 				{
 					"key": "C1.4",

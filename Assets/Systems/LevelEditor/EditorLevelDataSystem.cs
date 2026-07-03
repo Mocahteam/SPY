@@ -16,7 +16,8 @@ public class EditorLevelDataSystem : FSystem {
 	public Toggle dragAndDropToggle;
 	public Toggle fogToggle;
 	public Toggle hideExitsToggle;
-	public TMP_InputField score2Input;
+    public Toggle omniscientViewToggle;
+    public TMP_InputField score2Input;
 	public TMP_InputField score3Input;
 	public Transform editableContainers;
 	public DataLevelBehaviour dataLevel;
@@ -59,7 +60,9 @@ public class EditorLevelDataSystem : FSystem {
 		dragAndDropToggle.isOn = true;
 		fogToggle.isOn = false;
 		hideExitsToggle.isOn = false;
-		score2Input.text = "";
+        omniscientViewToggle.isOn = false;
+
+        score2Input.text = "";
 		score3Input.text = "";
 
 		// Remove all existing editable area
@@ -104,8 +107,10 @@ public class EditorLevelDataSystem : FSystem {
 		dragAndDropToggle.isOn = doc.GetElementsByTagName("dragdropDisabled").Count == 0;
 		fogToggle.isOn = doc.GetElementsByTagName("fog").Count > 0;
 		hideExitsToggle.isOn = doc.GetElementsByTagName("hideExits").Count > 0;
+        omniscientViewToggle.isOn = doc.GetElementsByTagName("omniscientView").Count > 0;
 
-		foreach (XmlNode child in root.ChildNodes)
+
+        foreach (XmlNode child in root.ChildNodes)
 		{
 			switch (child.Name)
 			{

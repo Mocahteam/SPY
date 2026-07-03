@@ -59,6 +59,9 @@
 
 	<!-- hideExits (optional): this tag enables to hide exists (teleports, ie cells with value 3 in map description). The exits are still in position but not visible for the player.  -->
 	<hideExits />
+
+	<!-- omniscientView (optional): this tag enables to enable omniscient view. In omniscient view, the camera is automatically positioned to give the player an overview of the scene. If this tag is absent, the player must interact with the camera to understand the scene before beginning to program. -->
+	<omniscientView />
   
 	<!-- blockLimits (optional): this tag enables to limit the amount of programming blocks available. It is composed by a set of blockLimit -->
 	<blockLimits>

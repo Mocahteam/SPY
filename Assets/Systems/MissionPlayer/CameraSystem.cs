@@ -2,6 +2,7 @@
 using FYFY_plugins.PointerManager;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -24,6 +25,8 @@ public class CameraSystem : FSystem {
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
 	private Family f_billboard = FamilyManager.getFamily(new AllOfComponents(typeof(BillboardOrientation)));
+    private Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
+    private Family f_omniscientFocus = FamilyManager.getFamily(new AnyOfTags("Player", "Drone", "Exit", "Door", "Terminal"));
 
     private Transform targetAgent; // if defined camera follow this target
 	private Transform lastAgentFocused = null;
@@ -61,6 +64,10 @@ public class CameraSystem : FSystem {
 	public LocalizeStringEvent lseMoveLeft;
 
 	public CurrentSettingsValues currentSettingsValues;
+
+	public GameObject dialogPanel;
+	public RectTransform LeftPanel;
+	public RectTransform ExecutableCanvas;
 
 	public static CameraSystem instance;
 
@@ -110,12 +117,68 @@ public class CameraSystem : FSystem {
 		});
 
 		EnhancedTouchSupport.Enable();
-	}
 
-	// Use to process your families.
-	protected override void onProcess(int familiesUpdateCount) {
-		// move camera front/back depending on Vertical axis
-		if (UI_frontBackValue != 0)
+		// Activer ou pas la vue omnisciente
+        GameObject go = GameObject.Find("GameData");
+		if (go != null)
+		{
+			GameData gameData = go.GetComponent<GameData>();
+			if (gameData != null && gameData.omniscientView)
+				MainLoop.instance.StartCoroutine(waitDialogAppearsToEnableOmniscientView());
+		}
+    }
+
+	private IEnumerator waitDialogAppearsToEnableOmniscientView()
+	{
+		// On attend que l'animation d'arrivée dans le jeu soit terminée
+		while (f_fadeOutEnd.Count == 0)
+            yield return null;
+        // On attend 2 frames pour que le dialogue de début de niveau soit affiché s'il devait y en avoir un
+        yield return null;
+        yield return null;
+        // Attendre que le dialogue soit fermé avant de mettre la vue omnisciente
+        while (dialogPanel.activeInHierarchy)
+            yield return null;
+		
+        unfocusAgent();
+        // calculer le barycentre des agents pour centrer la caméra
+		float sumX = 0;
+		float sumY = 0;
+        foreach (GameObject obj in f_omniscientFocus)
+		{
+			Position pos = obj.GetComponent<Position>();
+			sumX += pos.x;
+			sumY += pos.y;
+        }
+        targetPos = new Vector3(sumX / f_omniscientFocus.Count * 3, 3.5f, -sumY / f_omniscientFocus.Count * 3);
+        yield return travelingOnPos();
+		// Dézoomer la caméra jusqu'à ce que tous les agents soient visibles
+		while (!allImportantObjectsInview()) { 
+			zoomOut(0.1f);
+            yield return null;
+        }
+    }
+
+	private bool allImportantObjectsInview()
+	{
+		bool visible = true;
+        float leftPanelRatio = (LeftPanel.rect.width+25) / Screen.width * currentSettingsValues.values.currentUIScale;
+        float rightPanelRatio = (ExecutableCanvas.rect.width+25) / Screen.width * currentSettingsValues.values.currentUIScale;
+
+		//Debug.Log(LeftPanel.rect.width+" "+(LeftPanel.rect.width / Screen.width) + " " + leftPanelRatio);
+
+        foreach (GameObject obj in f_omniscientFocus)
+		{
+            Vector3 viewportPos = mainCamera.WorldToViewportPoint(obj.transform.position);
+            visible = visible && viewportPos.z > 0 && viewportPos.x >= leftPanelRatio && viewportPos.x <= 1f-rightPanelRatio && viewportPos.y >= 0.1 && viewportPos.y <= 0.9;
+        }
+		return visible;
+    }
+
+    // Use to process your families.
+    protected override void onProcess(int familiesUpdateCount) {
+        // move camera front/back depending on Vertical axis
+        if (UI_frontBackValue != 0)
 			moveFrontBack(UI_frontBackValue);
 
 		// move camera left/right de pending on Horizontal axis
@@ -363,7 +426,8 @@ public class CameraSystem : FSystem {
 		float angle = 90f * cameraRotationSpeed * Time.deltaTime;
 		mainCamera.transform.parent.parent.Rotate(Vector3.up, angle * x );
 		mainCamera.transform.parent.Rotate(Vector3.back, angle * y );
-		if (mainCamera.transform.position.y < 8f || mainCamera.transform.position.y > 17f)
+		float verticalAngle = Mathf.DeltaAngle(0f, mainCamera.transform.parent.eulerAngles.z)+60; // +60 pour compenser l'angle par défaut de la caméra
+        if (verticalAngle < 0f || verticalAngle > 90f)
 			// cancel previous y rotation
 			mainCamera.transform.parent.Rotate(Vector3.back, angle * -y );
 		
