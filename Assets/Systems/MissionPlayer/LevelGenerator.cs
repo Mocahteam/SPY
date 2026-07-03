@@ -54,7 +54,7 @@ public class LevelGenerator : FSystem {
 		{
 			gameData = gameDataGO.GetComponent<GameData>();
 			DataLevel levelToLoad = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad];
-			if (gameData.levels.ContainsKey(levelToLoad.filePath))
+            if (gameData.levels.ContainsKey(levelToLoad.filePath))
 				XmlToLevel(gameData.levels[levelToLoad.filePath].OwnerDocument);
 			else
 				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Error });
@@ -331,7 +331,8 @@ public class LevelGenerator : FSystem {
 			// Affichage du nom de l'agent
 			executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().text = agentEdit.associatedScriptName;
 			executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName = agentEdit.associatedScriptName;
-		}
+            entity.GetComponentInChildren<TextMeshProUGUI>(true).text = agentEdit.associatedScriptName;
+        }
 		else if (type == "guard" || type == "enemy")
 		{
 			nbDroneCreate++;
@@ -340,7 +341,8 @@ public class LevelGenerator : FSystem {
 				nameAgent = "Drone "+nbDroneCreate;
 			executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().text = nameAgent;
 			executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName = nameAgent;
-		}
+            entity.GetComponentInChildren<TextMeshProUGUI>(true).text = nameAgent;
+        }
 
 		AgentColor ac = MainLoop.instance.GetComponent<AgentColor>();
 		scriptref.executablePanel.transform.Find("Scroll View").GetComponent<Image>().color = ((type == "robot" || type == "player") ? ac.playerBackground : ac.droneBackground);

@@ -24,25 +24,20 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         pointActionUI = EventSystem.current.GetComponent<InputSystemUIInputModule>().point.action;
     }
 
-    private void formatContent()
+    private void showTooltip()
     {
         if (tooltip != null)
-        {
-            string formatedContent = text;
-            if (text.Contains("#agentName"))
-                formatedContent = text.Replace("#agentName", GetComponent<AgentEdit>().associatedScriptName);
-            tooltip.ShowTooltip(formatedContent);
-        }
+            tooltip.ShowTooltip(text);
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (pointActionUI.enabled)
-            formatContent();
+            showTooltip();
     }
     public void OnSelect(BaseEventData eventData)
     {
         pointActionUI.Disable(); // Pour ne pas que l'objet sélectionné par code ait son tooltip qui continue à suivre le curseur de la souris
-        formatContent();
+        showTooltip();
     }
     
     private void hideTooltip()

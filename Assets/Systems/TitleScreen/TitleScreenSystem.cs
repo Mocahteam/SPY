@@ -103,7 +103,11 @@ public class TitleScreenSystem : FSystem {
 			{
 				launchLevelEditor();
 			}
-			else if (gameData.selectedScenario != "" && gameData.selectedScenario != UtilityLobby.testFromUrl)
+			else if (gameData.selectedScenario == UtilityLobby.testFromUrl) // go to connexion scene
+            {
+                launchConnexionScene();
+            }
+            else if (gameData.selectedScenario != "")
 			{
 				// Show scenario list
 				lastScenarioSelected = gameData.selectedScenario;

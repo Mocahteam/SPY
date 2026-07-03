@@ -1,17 +1,17 @@
-﻿using UnityEngine;
+﻿using DIG.GBLXAPI;
 using FYFY;
-using System.Collections;
-using TMPro;
-using System;
-using System.Linq;
-using UnityEngine.Networking;
-using UnityEngine.Events;
-using System.Collections.Generic;
-using DIG.GBLXAPI;
-using System.Xml;
 using Newtonsoft.Json;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Xml;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 /// <summary>
@@ -140,17 +140,38 @@ public class ConnexionManager : FSystem
 		while (webGL_fileLoaded < webGL_fileToLoad)
 			yield return null;
 
-		// and, if require, we can load requested level by URL
-		if (loadLevelWithURL != "")
-			GameObjectManager.addComponent<AskToTestLevel>(MainLoop.instance.gameObject, new { url = loadLevelWithURL });
-		// Disable Loading screen
-		GameObjectManager.setGameObjectState(loadingScreen, false);
+        // and, if require, we can load requested level by URL
+        if (loadLevelWithURL != "")
+		{
+            DataLevel dl = new DataLevel();
+			if (loadLevelWithURL.StartsWith("http"))
+				dl.filePath = loadLevelWithURL;
+			else
+			{
+				dl.filePath = new Uri(Application.persistentDataPath + "/" + loadLevelWithURL).AbsoluteUri;
+				if (!gameData.levels.ContainsKey(dl.filePath))
+					dl.filePath = new Uri(Application.streamingAssetsPath + "/" + loadLevelWithURL).AbsoluteUri;
+			}
+            dl.missionName = Path.GetFileNameWithoutExtension(dl.filePath);
 
-		/*if (Application.isEditor)
+            gameData.selectedScenario = UtilityLobby.testFromUrl;
+            WebGlScenario test = new WebGlScenario();
+            test.levels = new List<DataLevel> { dl };
+            gameData.scenarios[UtilityLobby.testFromUrl] = test;
+            gameData.levelToLoad = 0;
+            GBL_Interface.playerName = UtilityLobby.testFromUrl;
+            GBL_Interface.userUUID = UtilityLobby.testFromUrl;
+            GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
+		}
+		else
+			// Disable Loading screen
+			GameObjectManager.setGameObjectState(loadingScreen, false);
+
+		if (Application.isEditor)
 		{
 			SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
 			SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
-		}*/
+		}
 	}
 
 	private void GetScenariosAndLevels()
@@ -457,6 +478,7 @@ public class ConnexionManager : FSystem
 				else
 				{
 					// Session successfully loaded
+					Debug.Log(www.downloadHandler.text);
 					userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[0]);
 					if (userData.progression == null)
 						userData.progression = new Dictionary<string, int>();

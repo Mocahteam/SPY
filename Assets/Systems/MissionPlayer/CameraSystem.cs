@@ -1,15 +1,16 @@
-﻿using UnityEngine;
-using FYFY;
+﻿using FYFY;
 using FYFY_plugins.PointerManager;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Localization.Components;
 using UnityEngine.Localization.SmartFormat.PersistentVariables;
+using UnityEngine.UIElements;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
-using UnityEngine.InputSystem.Utilities;
 
 /// <summary>
 /// This system manages main camera (movement, rotation, focus on/follow agent...)
@@ -22,8 +23,9 @@ public class CameraSystem : FSystem {
 	private Family f_focusOn = FamilyManager.getFamily(new AllOfComponents(typeof(FocusCamOn)));
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
+	private Family f_billboard = FamilyManager.getFamily(new AllOfComponents(typeof(BillboardOrientation)));
 
-	private Transform targetAgent; // if defined camera follow this target
+    private Transform targetAgent; // if defined camera follow this target
 	private Transform lastAgentFocused = null;
 	private Vector3 targetPos; // if defined camera focus in this position (grid definition)
 	private Vector3 offset = new Vector3(0, 2f, 0);
@@ -127,7 +129,7 @@ public class CameraSystem : FSystem {
 		// Move camera with wheel click
 		if (middleClick.IsPressed())
 		{
-			Cursor.visible = false;
+			UnityEngine.Cursor.visible = false;
 
 			DeltaControl delta = Pointer.current.delta;
 
@@ -154,13 +156,13 @@ public class CameraSystem : FSystem {
 		// Orbit rotation
 		else if (rightClick.IsPressed())
 		{
-			Cursor.visible = false;
+            UnityEngine.Cursor.visible = false;
 			DeltaControl delta = Pointer.current.delta;
 			rotateCamera(delta.x.value/2, !mainCamera.orthographic ? delta.y.value/2 : 0);
 		}
 
 		if (middleClick.WasReleasedThisFrame() || rightClick.WasReleasedThisFrame())
-			Cursor.visible = true;
+            UnityEngine.Cursor.visible = true;
 
 		// Gestion du déplacement de la camera au tactile
 		if (f_UIfocused.Count == 0 && f_dragging.Count == 0)
@@ -213,9 +215,34 @@ public class CameraSystem : FSystem {
 				}
 			}
 		}
-	}
-	
-	private void moveFrontBack(float value)
+
+        // positionnement des billboards en fonction de la position de la caméra
+        foreach (GameObject go in f_billboard)
+		{
+			if (currentSettingsValues.values.currentGameView == 0)
+			{
+				// Rotation Y du parent
+				Vector3 dir = mainCamera.transform.position - go.transform.position;
+				dir.y = 0f;
+
+				if (dir.sqrMagnitude > 0.001f)
+					go.transform.rotation = Quaternion.LookRotation(-dir);
+			}
+			else
+			{
+                go.transform.rotation = Quaternion.Euler(0f, mainCamera.transform.eulerAngles.y-180f, 0f);
+            }
+
+            // Rotation X de l'enfant
+            float pitch = mainCamera.transform.eulerAngles.x;
+            if (pitch > 180f)
+                pitch -= 360f;
+
+            go.transform.GetChild(0).localRotation = Quaternion.Euler(pitch, 0f, 0f);
+        }
+    }
+
+    private void moveFrontBack(float value)
     {
 		Transform cameraTarget = mainCamera.transform.parent.parent;
 		cameraTarget.Translate(-value * Time.deltaTime * cameraMovingSpeed, 0, 0);
@@ -336,11 +363,11 @@ public class CameraSystem : FSystem {
 		float angle = 90f * cameraRotationSpeed * Time.deltaTime;
 		mainCamera.transform.parent.parent.Rotate(Vector3.up, angle * x );
 		mainCamera.transform.parent.Rotate(Vector3.back, angle * y );
-		if (mainCamera.transform.position.y < 8f)
+		if (mainCamera.transform.position.y < 8f || mainCamera.transform.position.y > 17f)
 			// cancel previous y rotation
 			mainCamera.transform.parent.Rotate(Vector3.back, angle * -y );
-		else
-			camera_logging("rotateCamera", angle.ToString());
+		
+		camera_logging("rotateCamera", angle.ToString());
 	}
 
 	public void focusOnAgent(GameObject agent)

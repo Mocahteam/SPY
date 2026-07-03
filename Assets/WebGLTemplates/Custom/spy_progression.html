@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPY – Progress Tracking</title>
+	
+	<!-- Favicons -->
+	<link rel="icon" type="image/png" href="TemplateData/favicon.png">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="TemplateData/styleGame.css" />
+  <style>
+    :root {
+      --spy-cyan: #00FFFF;
+      --spy-dark: #1a1a2e;
+      --spy-panel: rgba(20, 20, 40, 0.88);
+      --spy-border: #00FFFF;
+      --spy-accent: #4CAF50;
+      --spy-yellow: #FFD700;
+      --spy-red: #FF4444;
+      --spy-text: #e0eaff;
+      --spy-muted: #7a8aaa;
+      --star-on: #FFD700;
+      --star-off: #2a2a4a;
+    }
+
+    html, body {
+      min-height: 100vh;
+      font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+      color: var(--spy-text);
+    }
+
+    body {
+      background-image: url("TemplateData/background/Front_Tex.png") top center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+    }
+
+    .overlay {
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* ── HEADER ── */
+    .spy-logo-bar {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .spy-logo {
+      height: 54px;
+      filter: drop-shadow(0 0 8px var(--spy-cyan));
+    }
+    .spy-title {
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: var(--spy-cyan);
+      text-shadow: 0 0 12px var(--spy-cyan);
+      margin: 0;
+    }
+    .spy-subtitle {
+      color: var(--spy-muted);
+      font-size: .9rem;
+      margin: 0;
+    }
+
+    /* ── INPUT CARD ── */
+    .spy-card {
+      background: var(--spy-panel);
+      border: 1px solid var(--spy-border);
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,255,255,0.10);
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .spy-card label {
+      color: var(--spy-cyan);
+      font-weight: 600;
+      font-size: .95rem;
+      letter-spacing: .04em;
+      margin-bottom: .5rem;
+      display: block;
+    }
+    #sessionInput {
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(0,255,255,0.35);
+      color: var(--spy-text);
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: .92rem;
+      resize: vertical;
+      min-height: 90px;
+      transition: border-color .2s;
+    }
+    #sessionInput:focus {
+      outline: none;
+      border-color: var(--spy-cyan);
+      box-shadow: 0 0 8px rgba(0,255,255,0.3);
+      background: rgba(0,0,0,0.55);
+      color: var(--spy-text);
+    }
+    #sessionInput::placeholder { color: var(--spy-muted); }
+
+    .btn-spy {
+      background: transparent;
+      border: 2px solid var(--spy-cyan);
+      color: var(--spy-cyan);
+      font-weight: 700;
+      letter-spacing: .07em;
+      padding: .55rem 1.8rem;
+      border-radius: 6px;
+      text-transform: uppercase;
+      font-size: .9rem;
+      transition: background .18s, color .18s, box-shadow .18s;
+    }
+    .btn-spy:hover, .btn-spy:focus {
+      background: var(--spy-cyan);
+      color: #0a0a1a;
+      box-shadow: 0 0 16px rgba(0,255,255,0.4);
+    }
+    .btn-spy-sm {
+      padding: .25rem .8rem;
+      font-size: .8rem;
+      border-radius: 4px;
+    }
+    .btn-clear {
+      background: transparent;
+      border: 1px solid var(--spy-red);
+      color: var(--spy-red);
+      font-size: .8rem;
+      border-radius: 4px;
+      padding: .25rem .8rem;
+      transition: background .18s, color .18s;
+    }
+    .btn-clear:hover { background: var(--spy-red); color: #fff; }
+
+    /* ── STATUS BAR ── */
+    #statusBar {
+      font-size: .88rem;
+      color: var(--spy-muted);
+      padding: .4rem 0;
+      min-height: 24px;
+    }
+    #statusBar .ok { color: var(--spy-accent); }
+    #statusBar .err { color: var(--spy-red); }
+
+    /* ── RESULTS ── */
+    #results { margin-top: .5rem; }
+
+    .session-block {
+      background: var(--spy-panel);
+      border: 1px solid rgba(0,255,255,0.25);
+      border-radius: 10px;
+      margin-bottom: 1.2rem;
+      overflow: hidden;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+    }
+    .session-header {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      padding: .75rem 1.2rem;
+      background: rgba(0,255,255,0.07);
+      border-bottom: 1px solid rgba(0,255,255,0.18);
+      cursor: pointer;
+      user-select: none;
+      flex-wrap: wrap;
+    }
+    .session-header:hover { background: rgba(0,255,255,0.12); }
+    .session-id-badge {
+      font-family: 'Courier New', monospace;
+      font-size: .85rem;
+      background: rgba(0,255,255,0.12);
+      border: 1px solid rgba(0,255,255,0.3);
+      color: var(--spy-cyan);
+      border-radius: 4px;
+      padding: .12rem .6rem;
+      letter-spacing: .04em;
+    }
+    .session-overall {
+      font-size: .85rem;
+      color: var(--spy-muted);
+      margin-left: auto;
+    }
+    .chevron {
+      color: var(--spy-cyan);
+      font-size: 1.1rem;
+      transition: transform .22s;
+      flex-shrink: 0;
+    }
+    .chevron.open { transform: rotate(90deg); }
+
+    .session-body {
+      padding: 1rem 1.2rem;
+    }
+
+    /* ── SCENARIO ROW ── */
+    .scenario-row {
+      margin-bottom: .85rem;
+      border: 1px solid rgba(0,255,255,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .scenario-header {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      padding: .6rem .9rem;
+      background: rgba(0,0,0,0.3);
+      cursor: pointer;
+      user-select: none;
+      flex-wrap: wrap;
+    }
+    .scenario-header:hover { background: rgba(0,0,0,0.45); }
+    .scenario-name {
+      font-weight: 600;
+      font-size: .95rem;
+      color: var(--spy-text);
+      flex: 1;
+    }
+    .progress-label {
+      font-size: .82rem;
+      color: var(--spy-muted);
+      white-space: nowrap;
+    }
+    .progress-label .done { color: var(--spy-accent); font-weight: 700; }
+    .scenario-chevron {
+      color: var(--spy-muted);
+      font-size: .9rem;
+      transition: transform .2s;
+      flex-shrink: 0;
+    }
+    .scenario-chevron.open { transform: rotate(90deg); }
+
+    /* progress bar */
+    .spy-progress {
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(0,255,255,0.1);
+      overflow: hidden;
+      margin: 0 .9rem .55rem;
+    }
+    .spy-progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--spy-accent), var(--spy-cyan));
+      transition: width .5s ease;
+    }
+
+    /* ── MISSIONS TABLE ── */
+    .missions-panel {
+      padding: .5rem .9rem .8rem;
+      background: rgba(0,0,0,0.2);
+    }
+    .missions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: .5rem;
+    }
+    .mission-item {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 5px;
+      padding: .35rem .6rem;
+      font-size: .82rem;
+    }
+    .mission-name {
+      flex: 1;
+      color: var(--spy-muted);
+      font-size: .8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mission-name.played { color: var(--spy-text); }
+    .stars {
+      display: flex;
+      gap: 1px;
+      flex-shrink: 0;
+    }
+    .star {
+      font-size: .85rem;
+      color: var(--star-off);
+    }
+    .star.on { color: var(--star-on); }
+
+    /* ── ERROR SESSION ── */
+    .session-error {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      background: rgba(255,50,50,0.08);
+      border: 1px solid rgba(255,50,50,0.3);
+      border-radius: 8px;
+      padding: .65rem 1rem;
+      margin-bottom: .8rem;
+      font-size: .88rem;
+      color: var(--spy-red);
+    }
+
+    /* ── LOADING SPINNER ── */
+    .spinner-spy {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(0,255,255,0.2);
+      border-top-color: var(--spy-cyan);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── SUMMARY BADGES ── */
+    .summary-row {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      margin-top: .3rem;
+    }
+    .badge-spy {
+      font-size: .75rem;
+      padding: .2rem .55rem;
+      border-radius: 20px;
+      border: 1px solid;
+      font-weight: 600;
+    }
+    .badge-ok {
+      background: rgba(76,175,80,0.15);
+      border-color: var(--spy-accent);
+      color: var(--spy-accent);
+    }
+    .badge-warn {
+      background: rgba(255,215,0,0.1);
+      border-color: var(--spy-yellow);
+      color: var(--spy-yellow);
+    }
+    .badge-zero {
+      background: rgba(100,100,120,0.15);
+      border-color: #444;
+      color: var(--spy-muted);
+    }
+
+    /* ── GLOBAL HEADER UNITY ── */
+    #unity-header {
+      background: rgba(30,30,60,0.9);
+      border-color: var(--spy-cyan);
+      display: flex;
+      align-items: center;
+    }
+
+    /* collapsible default hidden */
+    .collapse-missions { display: none; }
+    .collapse-missions.show { display: block; }
+    .collapse-session { display: none; }
+    .collapse-session.show { display: block; }
+  </style>
+</head>
+<body>
+<div class="overlay">
+  <div class="container-fluid" style="max-width: 1100px;">
+
+    <!-- HEADER -->
+    <div class="spy-logo-bar">
+      <a href="index.html"><img src="TemplateData/LogoSPY.png" alt="SPY" class="spy-logo" onerror="this.style.display='none'" /></a>
+      <div>
+        <h1 class="spy-title">Progress Tracking</h1>
+        <p class="spy-subtitle">Teacher Dashboard · SPY Serious Game</p>
+      </div>
+    </div>
+
+    <!-- INPUT CARD -->
+    <div class="spy-card">
+      <label for="sessionInput">Session Codes</label>
+      <p style="font-size:.82rem;color:var(--spy-muted);margin-bottom:.6rem;">
+        Paste your students' session codes (separated by commas, tabs, or line breaks).
+      </p>
+      <textarea id="sessionInput" class="form-control mb-3"
+        placeholder="e.g.: ABC123, DEF456&#10;GHI789"></textarea>
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <button class="btn-spy" onclick="loadSessions()">
+          <span id="loadIcon">⟳</span> Load Progress
+        </button>
+        <button class="btn-clear" onclick="clearAll()">✕ Clear</button>
+        <div id="statusBar"></div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="results"></div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+var SCENARIO_LIST;
+
+fetchScenarioList()
+    .then(scenarioList => {
+        SCENARIO_LIST = scenarioList;
+        console.log(SCENARIO_LIST);
+    })
+    .catch(err => {
+        console.error(err);
+    });
+
+// ─── HELPERS ───────────────────────────────────────────────────────────────
+
+function parseName(raw) {
+  const m = raw.match(/\[en\](.*?)\[\/en\]/);
+  return m ? m[1] : raw;
+}
+
+// Normalise filePath: remove "Levels/" prefix and trailing ".xml"
+function normalizePath(fp) {
+  return fp.replace(/^Levels\//, '').replace(/\.xml$/, '').toLowerCase();
+}
+
+function normalizeStarKey(raw) {
+  // keys from API look like "Levels\/Explorateur\/Niveau01.xml"
+  return raw.replace(/\\\//g, '/').replace(/^Levels\//, '').replace(/\.xml$/, '').toLowerCase();
+}
+
+function starsHTML(count) {
+  let h = '<div class="stars">';
+  for (let i = 0; i < 3; i++) {
+    h += `<span class="star ${i < count ? 'on' : ''}">★</span>`;
+  }
+  h += '</div>';
+  return h;
+}
+
+function badgeFor(done, total) {
+  if (total === 0) return '';
+  const pct = done / total;
+  const cls = pct >= 1 ? 'badge-ok' : pct > 0 ? 'badge-warn' : 'badge-zero';
+  return `<span class="badge-spy ${cls}">${done}/${total} missions</span>`;
+}
+
+// ─── FETCH SCENARIOLIST ─────────────────────────────────────────────────────
+
+async function fetchScenarioList() {
+  const url = `https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php?scenarioList`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const text = await res.text();
+  let scenarioList
+  try { scenarioList = JSON.parse(text); } catch { throw new Error('Invalid scenario list JSON'); }
+  return scenarioList
+}
+
+// ─── FETCH SESSION ──────────────────────────────────────────────────────────
+
+async function fetchSession(id) {
+  const url = `https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php?idSession=${encodeURIComponent(id)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const text = await res.text();
+  if (!text || text.trim() === '' || text.trim() === '{}') throw new Error('Invalid or empty session');
+  const parts = text.split('#SEP#');
+  if (parts.length < 2) throw new Error('Unexpected response format');
+  let scenarioProgress, missionStars;
+  try { scenarioProgress = JSON.parse(parts[0]); } catch { throw new Error('Invalid scenarios JSON'); }
+  try { missionStars = JSON.parse(parts[1]); } catch { missionStars = {}; }
+  return { scenarioProgress, missionStars };
+}
+
+// ─── RENDER SESSION ─────────────────────────────────────────────────────────
+
+function renderSession(sessionId, data, idx) {
+  const { scenarioProgress, missionStars } = data;
+
+  // Normalize star keys
+  const starsMap = {};
+  for (const [k, v] of Object.entries(missionStars)) {
+    starsMap[normalizeStarKey(k)] = v;
+  }
+
+  // Build scenario cards
+  let scenariosHTML = '';
+  let totalDone = 0, totalMissions = 0;
+
+  for (const sc of SCENARIO_LIST.scenarios) {
+    const scKey = sc.key;
+    const totalLevels = sc.levels.length;
+    const doneLevels = scenarioProgress[scKey] ?? 0;
+    totalDone += doneLevels;
+    totalMissions += totalLevels;
+
+    const pct = totalLevels > 0 ? Math.round((doneLevels / totalLevels) * 100) : 0;
+    const scId = `sc-${idx}-${scKey.replace(/[^a-z0-9]/gi, '_')}`;
+
+    // Build missions grid
+    let missionsHTML = '';
+    for (let m = 0; m < sc.levels.length; m++) {
+      const lv = sc.levels[m];
+      const normKey = normalizePath(lv.filePath);
+      const stars = starsMap[normKey] ?? 0;
+      const played = stars > 0 || m < doneLevels;
+      const mName = parseName(lv.missionName);
+      missionsHTML += `
+        <div class="mission-item">
+          <span class="mission-name ${played ? 'played' : ''}" title="${lv.filePath}">${mName}</span>
+          ${starsHTML(Math.min(stars, 3))}
+        </div>`;
+    }
+
+    const badgeCls = doneLevels >= totalLevels ? 'badge-ok' : doneLevels > 0 ? 'badge-warn' : 'badge-zero';
+    scenariosHTML += `
+      <div class="scenario-row">
+        <div class="scenario-header" onclick="toggleSection('${scId}')">
+          <span class="scenario-name">${parseName(sc.name)}</span>
+          <span class="progress-label"><span class="done">${doneLevels}</span> / ${totalLevels}</span>
+          <span class="badge-spy ${badgeCls}" style="font-size:.72rem;">${pct}%</span>
+          <span class="scenario-chevron" id="chev-${scId}">▶</span>
+        </div>
+        <div class="spy-progress">
+          <div class="spy-progress-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="collapse-missions" id="${scId}">
+          <div class="missions-panel">
+            <div class="missions-grid">${missionsHTML}</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  const sessionBodyId = `body-${idx}`;
+  const globalPct = totalMissions > 0 ? Math.round((totalDone / totalMissions) * 100) : 0;
+
+  return `
+    <div class="session-block">
+      <div class="session-header" onclick="toggleSession('${sessionBodyId}')">
+        <span class="chevron" id="sessChev-${sessionBodyId}">▶</span>
+        <span class="session-id-badge">${escapeHtml(sessionId)}</span>
+        <div class="summary-row">
+          ${badgeFor(totalDone, totalMissions)}
+        </div>
+        <span class="session-overall">${globalPct}% completed</span>
+      </div>
+      <div class="collapse-session" id="${sessionBodyId}">
+        <div class="session-body">${scenariosHTML}</div>
+      </div>
+    </div>`;
+}
+
+function renderError(sessionId, msg) {
+  return `
+    <div class="session-error">
+      <span>⚠</span>
+      <span><strong>${escapeHtml(sessionId)}</strong> — ${escapeHtml(msg)}</span>
+    </div>`;
+}
+
+// ─── TOGGLE ─────────────────────────────────────────────────────────────────
+
+function toggleSection(id) {
+  const el = document.getElementById(id);
+  const chev = document.getElementById('chev-' + id);
+  if (!el) return;
+  const open = el.classList.toggle('show');
+  if (chev) chev.classList.toggle('open', open);
+}
+function toggleSession(id) {
+  const el = document.getElementById(id);
+  const chev = document.getElementById('sessChev-' + id);
+  if (!el) return;
+  const open = el.classList.toggle('show');
+  if (chev) chev.classList.toggle('open', open);
+}
+
+// ─── MAIN ────────────────────────────────────────────────────────────────────
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function loadSessions() {
+  const raw = document.getElementById('sessionInput').value.trim();
+  if (!raw) return;
+
+  const codes = raw.split(/[\s,;\t\n]+/).map(s => s.trim()).filter(Boolean);
+  const unique = [...new Set(codes)];
+
+  const resultsEl = document.getElementById('results');
+  const statusEl = document.getElementById('statusBar');
+  resultsEl.innerHTML = '';
+  statusEl.innerHTML = `<span class="spinner-spy"></span> Loading  ${unique.length} session(s)…`;
+
+  let ok = 0, err = 0;
+  const fragments = [];
+
+  await Promise.allSettled(unique.map(async (id, idx) => {
+    try {
+      const data = await fetchSession(id);
+      fragments[idx] = { type: 'ok', html: renderSession(id, data, idx) };
+      ok++;
+    } catch (e) {
+      fragments[idx] = { type: 'err', html: renderError(id, e.message) };
+      err++;
+    }
+  }));
+
+  resultsEl.innerHTML = fragments.map(f => f.html).join('');
+
+  const parts = [];
+  if (ok) parts.push(`<span class="ok">✔ ${ok} session(s) loaded</span>`);
+  if (err) parts.push(`<span class="err">✘ ${err} invalid</span>`);
+  statusEl.innerHTML = parts.join(' &nbsp;·&nbsp; ');
+}
+
+function clearAll() {
+  document.getElementById('sessionInput').value = '';
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('statusBar').innerHTML = '';
+}
+
+// Allow Enter in textarea to not prevent submit (natural behaviour kept)
+document.getElementById('sessionInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.ctrlKey) loadSessions();
+});
+</script>
+</body>
+</html>

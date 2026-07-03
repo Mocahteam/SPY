@@ -207,12 +207,7 @@ public class TTSSystem : FSystem
         // Try to get tooltip to complete description
         TooltipContent tooltip = focused.GetComponentInChildren<TooltipContent>();
         if (tooltip != null && tooltip.text != "")
-        {
-            if (tooltip.text.Contains("#agentName"))
-                content += (content != "" ? ", " : "") + tooltip.text.Replace("#agentName", tooltip.GetComponent<AgentEdit>().associatedScriptName);
-            else
-                content += (content != "" ? ", " : "") + tooltip.text;
-        }
+            content += (content != "" ? ", " : "") + tooltip.text;
 
         if (content == "")
             content = focused.name;

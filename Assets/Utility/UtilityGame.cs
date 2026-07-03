@@ -117,7 +117,8 @@ public static class UtilityGame
 	// elementToDelete will be deleted then manage empty zone accordingly
 	public static void manageEmptyZone(GameObject elementToDelete)
 	{
-		if (elementToDelete.GetComponent<BaseCondition>())
+        // Si suppression d'une condition, on active la zone vide du container pour pouvoir en mettre une autre à la place
+        if (elementToDelete.GetComponent<BaseCondition>())
 			// enable the next last child of the container
 			GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.GetSiblingIndex() + 1).gameObject, true);
 	}

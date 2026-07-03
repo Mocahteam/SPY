@@ -17,7 +17,6 @@ public class ParamCompetenceSystem : FSystem
 
 	// Familles
 	private Family f_UI_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency)), new AnyOfProperties(PropertyMatcher.PROPERTY.HAS_CHILD)); // Les compétences qui ont des enfants, donc les éléments d'UI pour le référentiel sélectionné
-	private Family f_askToTestLevel = FamilyManager.getFamily(new AllOfComponents(typeof(AskToTestLevel)));
 	private UnityAction localCallback;
 	private GameObject selectedScenarioGO;
 	private bool competenciesLoadedAndReady;
@@ -62,13 +61,6 @@ public class ParamCompetenceSystem : FSystem
 		if (go != null)
 		{
 			gameData = go.GetComponent<GameData>();
-
-            f_askToTestLevel.addEntryCallback(delegate (GameObject go)
-			{
-				foreach (AskToTestLevel test in go.GetComponents<AskToTestLevel>())
-					GameObjectManager.removeComponent(test);
-				testLevelPath(go.GetComponent<AskToTestLevel>().url);
-			});
 
 			selectedScenarioGO = null;
 
@@ -648,21 +640,10 @@ public class ParamCompetenceSystem : FSystem
     {
 		gameData.selectedScenario = context;
 		WebGlScenario test = new WebGlScenario();
-		test.levels = new List<DataLevel>();
-		test.levels.Add(dl);
+        test.levels = new List<DataLevel>{dl};
 		gameData.scenarios[context] = test;
 		gameData.levelToLoad = 0;
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
-	}
-
-	private void testLevelPath(string levelToLoad)
-	{
-		DataLevel dl = new DataLevel();
-		dl.filePath = new Uri(Application.persistentDataPath + "/" + levelToLoad).AbsoluteUri;
-		if (!gameData.levels.ContainsKey(dl.filePath))
-			dl.filePath = new Uri(Application.streamingAssetsPath + "/" + levelToLoad).AbsoluteUri;
-		dl.missionName = Path.GetFileNameWithoutExtension(dl.filePath);
-		testLevel(dl, UtilityLobby.testFromUrl);
 	}
 
 	private void DebugLogLevelsCompetencies()

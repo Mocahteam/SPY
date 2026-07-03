@@ -161,7 +161,7 @@ public class DragDropSystem : FSystem
 		MainLoop.instance.StartCoroutine(delayIdleState());
 	}
 
-	protected override void onProcess(int familiesUpdateCount)
+    protected override void onProcess(int familiesUpdateCount)
 	{
 		if (f_editMode.Count > 0 && gameData.dragDropEnabled)
 		{
@@ -723,7 +723,10 @@ public class DragDropSystem : FSystem
 			}
 
 			eventSystem.SetSelectedGameObject(nextBrother.gameObject);
-		}
+            // Si le frère suivant l'objet supprimé contient une dropzone ou un replacementSlot de type BaseElement, on le définit comme la dropzone par défaut pour le double click
+            if (nextBrother.GetComponentInChildren<DropZone>(true) || (nextBrother.GetComponent<ReplacementSlot>() && nextBrother.GetComponent<ReplacementSlot>().slotType == ReplacementSlot.SlotType.BaseElement))
+                setDefaultDropZone(nextBrother.gameObject);
+        }
 	}
 
 	private void selectNewDefaultDropZone(GameObject newDropZone)
@@ -745,9 +748,17 @@ public class DragDropSystem : FSystem
 			{
 				// if no drop zone used, try to get the last
 				if (lastDropZoneUsed == null)
-					lastDropZoneUsed = f_dropArea.getAt(f_dropArea.Count - 1);
-				// be sure the lastDropZone is defined
-				if (lastDropZoneUsed != null)
+                {
+                    // Rechercher une zone de drop valide à savoir un replacementSlot qui n'est pas un BaseElement (exemple un ReplacementSlot de type BaseCondition) car dans ce cas on ne peut pas ajouter un bloc d'action dessus avec un double clicks
+                    foreach (GameObject dropZone in f_dropArea)
+						if (dropZone.GetComponent<DropZone>() || (dropZone.GetComponent<ReplacementSlot>() && dropZone.GetComponent<ReplacementSlot>().slotType == ReplacementSlot.SlotType.BaseElement))
+						{
+							lastDropZoneUsed = dropZone;
+							break;
+						}
+				}
+                // be sure the lastDropZone is defined
+                if (lastDropZoneUsed != null)
 				{
 					// On crée le bloc action
 					itemDragged = UtilityGame.createEditableBlockFromLibrary(pointerData.pointerPress, mainCanvas);
