@@ -38,7 +38,8 @@ public class CameraSystem : FSystem {
 	private float UI_frontBackValue = 0;
 	private float UI_leftRightValue = 0;
 	private float UI_rotateValue = 0;
-	private float UI_zoomValue = 0;
+    private float UI_pitchingValue = 0; // tangage
+    private float UI_zoomValue = 0;
 
 	private float last_action_time = Time.time;
 	private float logging_padding = 1f;
@@ -59,11 +60,12 @@ public class CameraSystem : FSystem {
 	// Déplacement avec la molette
 	public float dragSpeed;
 
-	public LocalizeStringEvent lseTurnLeft;
 	public LocalizeStringEvent lseMoveUp;
 	public LocalizeStringEvent lseMoveLeft;
+    public LocalizeStringEvent lseTurnUp;
+    public LocalizeStringEvent lseTurnLeft;
 
-	public CurrentSettingsValues currentSettingsValues;
+    public CurrentSettingsValues currentSettingsValues;
 
 	public GameObject dialogPanel;
 	public RectTransform LeftPanel;
@@ -82,18 +84,16 @@ public class CameraSystem : FSystem {
 		rightClick = InputSystem.actions.FindAction("RightClick");
 
 		// synchronise le contenu des tooltip en fonction du clavier utilisé (azerty vs qwerty)
-		lseTurnLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0) } };
-		//lseTurnLeft.StringReference.Arguments[0]["shortcut"] as StringVariable = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0);
-		(lseTurnLeft.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0);
-		lseTurnLeft.RefreshString();
-		//lseMoveUp.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveUp").GetBindingDisplayString(0) } };
 		(lseMoveUp.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraMoveUp").GetBindingDisplayString(0);
 		lseMoveUp.RefreshString();
-		//lseMoveLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveLeft").GetBindingDisplayString(0) } };
 		(lseMoveLeft.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraMoveLeft").GetBindingDisplayString(0);
 		lseMoveLeft.RefreshString();
+        (lseTurnUp.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraRotateUp").GetBindingDisplayString(0);
+        lseTurnUp.RefreshString();
+        (lseTurnLeft.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0);
+        lseTurnLeft.RefreshString();
 
-		mainCamera = Camera.main;
+        mainCamera = Camera.main;
 		if (currentSettingsValues.values.currentGameView == 1)
 			ToggleOrthographicPerspective();
 
@@ -181,16 +181,20 @@ public class CameraSystem : FSystem {
         if (UI_frontBackValue != 0)
 			moveFrontBack(UI_frontBackValue);
 
-		// move camera left/right de pending on Horizontal axis
+		// move camera left/right depending on Horizontal axis
 		if (UI_leftRightValue != 0)
 			moveLeftRight(UI_leftRightValue);
 
-		// rotate camera
+		// rotate camera (right/left)
 		if (UI_rotateValue != 0)
 			rotateCamera(UI_rotateValue, 0);
 
-		// Move camera with wheel click
-		if (middleClick.IsPressed())
+        // rotate camera (up/down) if not in orthographic mode
+        if (UI_pitchingValue != 0 && !mainCamera.orthographic)
+            rotateCamera(0, UI_pitchingValue);
+
+        // Move camera with wheel click
+        if (middleClick.IsPressed())
 		{
 			UnityEngine.Cursor.visible = false;
 
@@ -392,9 +396,14 @@ public class CameraSystem : FSystem {
 	public void set_UIRotate(float value)
 	{
 		UI_rotateValue = value;
-	}
+    }
 
-	public void set_UIZoom(float value)
+    public void set_UIPitching(float value)
+    {
+        UI_pitchingValue = value;
+    }
+
+    public void set_UIZoom(float value)
 	{
 		UI_zoomValue = value;
 	}
@@ -402,8 +411,14 @@ public class CameraSystem : FSystem {
 	public void submitRotate(float value)
     {
 		rotateCamera(value, 0);
-	}
-	public void submitFrontBack(float value)
+    }
+
+    public void submitPitching(float value)
+    {
+        rotateCamera(0, value);
+    }
+
+    public void submitFrontBack(float value)
 	{
 		moveFrontBack(value);
 	}

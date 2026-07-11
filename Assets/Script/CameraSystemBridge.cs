@@ -48,9 +48,15 @@ public class CameraSystemBridge : MonoBehaviour
 	{
 		if (CameraSystem.instance != null) // is null in level editor
 			CameraSystem.instance.set_UIRotate(value);
-	}
+    }
 
-	public void set_UIZoom(float value)
+    public void set_UIPitching(float value)
+    {
+        if (CameraSystem.instance != null) // is null in level editor
+            CameraSystem.instance.set_UIPitching(value);
+    }
+
+    public void set_UIZoom(float value)
 	{
 		if (CameraSystem.instance != null) // is null in level editor
 			CameraSystem.instance.set_UIZoom(value);
@@ -62,8 +68,15 @@ public class CameraSystemBridge : MonoBehaviour
 	{
 		if (CameraSystem.instance != null) // is null in level editor
 			CameraSystem.instance.submitRotate(value);
-	}
-	public void submitFrontBack(float value)
+    }
+
+    public void submitPitching(float value)
+    {
+        if (CameraSystem.instance != null) // is null in level editor
+            CameraSystem.instance.submitPitching(value);
+    }
+
+    public void submitFrontBack(float value)
 	{
 		if (CameraSystem.instance != null) // is null in level editor
 			CameraSystem.instance.submitFrontBack(value);

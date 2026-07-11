@@ -24,9 +24,11 @@ public class HotkeySystem : FSystem
 	public Button buttonStop;
 
 	public Button cameraSwitchView;
-	public EventTrigger cameraRotateLeft;
+    public EventTrigger cameraRotateTop;
+    public EventTrigger cameraRotateDown;
+    public EventTrigger cameraRotateLeft;
 	public EventTrigger cameraRotateRight;
-	public EventTrigger cameraTop;
+    public EventTrigger cameraTop;
 	public EventTrigger cameraDown;
 	public EventTrigger cameraLeft;
 	public EventTrigger cameraRight;
@@ -58,7 +60,9 @@ public class HotkeySystem : FSystem
 	private InputAction nextStep_act;
 	private InputAction stop_act;
 	private InputAction playPause_act;
-	private InputAction rotateLeft_act;
+    private InputAction rotateUp_act;
+    private InputAction rotateDown_act;
+    private InputAction rotateLeft_act;
 	private InputAction rotateRight_act;
 	private InputAction moveUp_act;
 	private InputAction moveDown_act;
@@ -91,7 +95,9 @@ public class HotkeySystem : FSystem
 		nextStep_act = InputSystem.actions.FindAction("NextStep");
 		stop_act = InputSystem.actions.FindAction("Stop");
 		playPause_act = InputSystem.actions.FindAction("PlayPause");
-		rotateLeft_act = InputSystem.actions.FindAction("CameraRotateLeft");
+        rotateUp_act = InputSystem.actions.FindAction("CameraRotateUp");
+        rotateDown_act = InputSystem.actions.FindAction("CameraRotateDown");
+        rotateLeft_act = InputSystem.actions.FindAction("CameraRotateLeft");
 		rotateRight_act = InputSystem.actions.FindAction("CameraRotateRight");
 		moveUp_act = InputSystem.actions.FindAction("CameraMoveUp");
 		moveDown_act = InputSystem.actions.FindAction("CameraMoveDown");
@@ -154,9 +160,19 @@ public class HotkeySystem : FSystem
 			else if (buttonExecute != null && buttonExecute.gameObject.activeInHierarchy && buttonExecute.interactable && playPause_act.WasPressedThisFrame())
 				buttonExecute.onClick.Invoke();
 
-			// Gestions des actions du contrôle de la caméra
-			// Rotation Gauche
-			if (cameraRotateLeft != null && cameraRotateLeft.gameObject.activeInHierarchy && rotateLeft_act.WasPressedThisFrame())
+            // Gestions des actions du contrôle de la caméra
+            // Rotation Up
+            if (cameraRotateTop != null && cameraRotateTop.gameObject.activeInHierarchy && rotateUp_act.WasPressedThisFrame())
+                callEntry(cameraRotateTop, EventTriggerType.PointerDown);
+            if (cameraRotateTop != null && cameraRotateTop.gameObject.activeInHierarchy && rotateUp_act.WasReleasedThisFrame())
+                callEntry(cameraRotateTop, EventTriggerType.PointerUp);
+            // Rotation Down
+            if (cameraRotateDown != null && cameraRotateDown.gameObject.activeInHierarchy && rotateDown_act.WasPressedThisFrame())
+                callEntry(cameraRotateDown, EventTriggerType.PointerDown);
+            if (cameraRotateDown != null && cameraRotateDown.gameObject.activeInHierarchy && rotateDown_act.WasReleasedThisFrame())
+                callEntry(cameraRotateDown, EventTriggerType.PointerUp);
+            // Rotation Gauche
+            if (cameraRotateLeft != null && cameraRotateLeft.gameObject.activeInHierarchy && rotateLeft_act.WasPressedThisFrame())
 				callEntry(cameraRotateLeft, EventTriggerType.PointerDown);
 			if (cameraRotateLeft != null && cameraRotateLeft.gameObject.activeInHierarchy && rotateLeft_act.WasReleasedThisFrame())
 				callEntry(cameraRotateLeft, EventTriggerType.PointerUp);
@@ -166,22 +182,22 @@ public class HotkeySystem : FSystem
 			if (cameraRotateRight != null && cameraRotateRight.gameObject.activeInHierarchy && rotateRight_act.WasReleasedThisFrame())
 				callEntry(cameraRotateRight, EventTriggerType.PointerUp);
 			// Move Up
-			if (cameraTop != null && cameraTop.gameObject.activeInHierarchy && moveUp_act.WasPressedThisFrame())
+			if (cameraTop != null && cameraTop.gameObject.activeInHierarchy && moveUp_act.WasPressedThisFrame() && !Keyboard.current.shiftKey.isPressed)
 				callEntry(cameraTop, EventTriggerType.PointerDown);
 			if (cameraTop != null && cameraTop.gameObject.activeInHierarchy && moveUp_act.WasReleasedThisFrame())
 				callEntry(cameraTop, EventTriggerType.PointerUp);
 			// Move Down
-			if (cameraDown != null && cameraDown.gameObject.activeInHierarchy && moveDown_act.WasPressedThisFrame())
+			if (cameraDown != null && cameraDown.gameObject.activeInHierarchy && moveDown_act.WasPressedThisFrame() && !Keyboard.current.shiftKey.isPressed)
 				callEntry(cameraDown, EventTriggerType.PointerDown);
 			if (cameraDown != null && cameraDown.gameObject.activeInHierarchy && moveDown_act.WasReleasedThisFrame())
 				callEntry(cameraDown, EventTriggerType.PointerUp);
 			// Move Left
-			if (cameraLeft != null && cameraLeft.gameObject.activeInHierarchy && moveLeft_act.WasPressedThisFrame())
+			if (cameraLeft != null && cameraLeft.gameObject.activeInHierarchy && moveLeft_act.WasPressedThisFrame() && !Keyboard.current.shiftKey.isPressed)
 				callEntry(cameraLeft, EventTriggerType.PointerDown);
 			if (cameraLeft != null && cameraLeft.gameObject.activeInHierarchy && moveLeft_act.WasReleasedThisFrame())
 				callEntry(cameraLeft, EventTriggerType.PointerUp);
 			// Move Right
-			if (cameraRight != null && cameraRight.gameObject.activeInHierarchy && moveRight_act.WasPressedThisFrame())
+			if (cameraRight != null && cameraRight.gameObject.activeInHierarchy && moveRight_act.WasPressedThisFrame() && !Keyboard.current.shiftKey.isPressed)
 				callEntry(cameraRight, EventTriggerType.PointerDown);
 			if (cameraRight != null && cameraRight.gameObject.activeInHierarchy && moveRight_act.WasReleasedThisFrame())
 				callEntry(cameraRight, EventTriggerType.PointerUp);

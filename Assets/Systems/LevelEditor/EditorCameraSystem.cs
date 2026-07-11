@@ -30,7 +30,6 @@ public class EditorCameraSystem : FSystem
 	// Distance maximale de zoom
 	public float cameraZoomMax;
 
-	public LocalizeStringEvent lseTurnLeft;
 	public LocalizeStringEvent lseMoveUp;
 	public LocalizeStringEvent lseMoveLeft;
 
@@ -46,8 +45,6 @@ public class EditorCameraSystem : FSystem
 		middleClick = InputSystem.actions.FindAction("MiddleClick");
 
 		// synchronise le contenu des tooltip en fonction du clavier utilisé (azerty vs qwerty'
-		lseTurnLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0) } };
-		lseTurnLeft.RefreshString();
 		lseMoveUp.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveUp").GetBindingDisplayString(0) } };
 		lseMoveUp.RefreshString();
 		lseMoveLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveLeft").GetBindingDisplayString(0) } };
