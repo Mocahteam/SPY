@@ -58,7 +58,7 @@ public class LevelGenerator : FSystem {
 				XmlToLevel(gameData.levels[levelToLoad.filePath].OwnerDocument);
 			else
 				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Error });
-			scenarioName.text = Utility.extractLocale(gameData.selectedScenario);
+			scenarioName.text = Utility.extractLocale(gameData.scenarios[gameData.selectedScenario].name);
 			levelName.text = Utility.extractLocale(levelToLoad.missionName);
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlLoadMissions();

@@ -96,11 +96,6 @@ public class CameraSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "submitZoom", value);
 	}
 
-	public void focusOnAgent(UnityEngine.GameObject agent)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "focusOnAgent", agent);
-	}
-
 	public void focusNextAgent()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "focusNextAgent", null);

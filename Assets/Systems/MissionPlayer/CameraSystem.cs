@@ -41,10 +41,11 @@ public class CameraSystem : FSystem {
     private float UI_pitchingValue = 0; // tangage
     private float UI_zoomValue = 0;
 
-	private float last_action_time = Time.time;
-	private float logging_padding = 1f;
+	private float lastTimeCameraAction = Time.time;
+	private float logging_padding = 5f;
+	private string lastActionLogged = "";
 
-	private InputAction middleClick;
+    private InputAction middleClick;
 	private InputAction rightClick;
 
 	// Déplacement aux touches du clavier
@@ -98,7 +99,7 @@ public class CameraSystem : FSystem {
 			ToggleOrthographicPerspective();
 
 		// set current camera target (the first player)
-		f_agent.addEntryCallback(delegate (GameObject go) { if (go.CompareTag("Player")) focusOnAgent(go); });
+		f_agent.addEntryCallback(delegate (GameObject go) { if (go.CompareTag("Player")) focusOnAgent(go, false); });
 
 		f_focusOn.addEntryCallback(delegate (GameObject go)
 		{
@@ -154,7 +155,7 @@ public class CameraSystem : FSystem {
         yield return travelingOnPos();
 		// Dézoomer la caméra jusqu'à ce que tous les agents soient visibles
 		while (!allImportantObjectsInview()) { 
-			zoomOut(0.1f);
+			zoomOut(0.1f, false);
             yield return null;
         }
     }
@@ -194,7 +195,7 @@ public class CameraSystem : FSystem {
             rotateCamera(0, UI_pitchingValue);
 
         // Move camera with wheel click
-        if (middleClick.IsPressed())
+        if (middleClick.IsPressed() && f_UIfocused.Count == 0)
 		{
 			UnityEngine.Cursor.visible = false;
 
@@ -221,8 +222,8 @@ public class CameraSystem : FSystem {
 		}
 
 		// Orbit rotation
-		else if (rightClick.IsPressed())
-		{
+		else if (rightClick.IsPressed() && f_UIfocused.Count == 0)
+        {
             UnityEngine.Cursor.visible = false;
 			DeltaControl delta = Pointer.current.delta;
 			rotateCamera(delta.x.value/2, !mainCamera.orthographic ? delta.y.value/2 : 0);
@@ -307,6 +308,10 @@ public class CameraSystem : FSystem {
 
             go.transform.GetChild(0).localRotation = Quaternion.Euler(pitch, 0f, 0f);
         }
+
+        // cela fait plus de 5 secondes que la dernière action de caméra a été effectuée, on réinitialise le dernier type d'action de caméra loggé pour éventuellement permettre de logger à nouveau le même type d'action si l'utilisateur recommence la même action après un certain temps
+        if ((Time.time - lastTimeCameraAction) > logging_padding && lastActionLogged != "")
+			lastActionLogged = "";
     }
 
     private void moveFrontBack(float value)
@@ -315,8 +320,12 @@ public class CameraSystem : FSystem {
 		cameraTarget.Translate(-value * Time.deltaTime * cameraMovingSpeed, 0, 0);
 		unfocusAgent();
 
-		camera_logging("moveFrontBack", value.ToString());
-	}
+		if (lastActionLogged != "moving")
+			camera_logging("moving");
+        lastActionLogged = "moving";
+
+        lastTimeCameraAction = Time.time;
+    }
 
 	private void moveLeftRight(float value)
     {
@@ -324,10 +333,14 @@ public class CameraSystem : FSystem {
 		cameraTarget.Translate(0, 0, value * Time.deltaTime * cameraMovingSpeed);
 		unfocusAgent();
 
-		camera_logging("moveLeftRight", value.ToString());
-	}
+        if (lastActionLogged != "moving")
+            camera_logging("moving");
+        lastActionLogged = "moving";
 
-	private void zoomOut(float value)
+        lastTimeCameraAction = Time.time;
+    }
+
+	private void zoomOut(float value, bool log = true)
     {
 		// compute distance between camera position and camera target
 		Vector3 relativePos = mainCamera.transform.InverseTransformPoint(mainCamera.transform.parent.parent.position);
@@ -340,8 +353,12 @@ public class CameraSystem : FSystem {
 		if (mainCamera.orthographicSize > cameraZoomMax / 2)
 			mainCamera.orthographicSize = cameraZoomMax / 2;
 
-		camera_logging("zoomOut", value.ToString());
-	}
+        if (lastActionLogged != "zooming" && log)
+            camera_logging("zooming");
+        lastActionLogged = "zooming";
+
+        lastTimeCameraAction = Time.time;
+    }
 
 	private void zoomIn(float value)
     {
@@ -361,15 +378,21 @@ public class CameraSystem : FSystem {
 		if (mainCamera.orthographicSize < cameraZoomMin / 4)
 			mainCamera.orthographicSize = cameraZoomMin / 4;
 
-		camera_logging("zoomIn", value.ToString());
-	}
+        if (lastActionLogged != "zooming")
+            camera_logging("zooming");
+        lastActionLogged = "zooming";
+
+        lastTimeCameraAction = Time.time;
+    }
 
 	public void ToggleOrthographicPerspective()
     {
 		setOrthographicView(!mainCamera.orthographic);
 
 		camera_logging("ToggleOrthographicPerspective", mainCamera.orthographic.ToString());
-	}
+
+        lastTimeCameraAction = Time.time;
+    }
 
 	public void setOrthographicView(bool state)
 	{
@@ -445,11 +468,15 @@ public class CameraSystem : FSystem {
         if (verticalAngle < 0f || verticalAngle > 90f)
 			// cancel previous y rotation
 			mainCamera.transform.parent.Rotate(Vector3.back, angle * -y );
-		
-		camera_logging("rotateCamera", angle.ToString());
-	}
 
-	public void focusOnAgent(GameObject agent)
+        if (lastActionLogged != "rotating")
+            camera_logging("rotating");
+		lastActionLogged = "rotating";
+
+        lastTimeCameraAction = Time.time;
+    }
+
+	public void focusOnAgent(GameObject agent, bool log=true)
     {
 		unfocusAgent();
 		targetAgent = agent.transform;
@@ -458,8 +485,11 @@ public class CameraSystem : FSystem {
 		GameObjectManager.setGameObjectState(targetAgent.Find("HaloSelection").gameObject, true);
 		MainLoop.instance.StartCoroutine(travelingOnAgent());
 
-		camera_logging("focusOnAgent", agent.ToString());
-	}
+		if (log)
+			camera_logging("focusOnAgent", agent.ToString());
+
+        lastTimeCameraAction = Time.time;
+    }
 
 	private void focusOnNearestAgent()
     { 
@@ -477,10 +507,7 @@ public class CameraSystem : FSystem {
 			}
 		}
 		if (agentCandidate != null)
-		{
 			focusOnAgent(agentCandidate);
-			camera_logging("focusOnNearestAgent", agentCandidate.ToString());
-		}
 	}
 
 	public void focusNextAgent()
@@ -498,13 +525,11 @@ public class CameraSystem : FSystem {
 				if (i == f_agent.Count - 1)
 				{
 					focusOnAgent(f_agent.First());
-					camera_logging("focusNextAgent", f_agent.First().ToString());
 					break;
 				}
 				else
 				{
 					focusOnAgent(f_agent.getAt(i + 1));
-					camera_logging("focusNextAgent", f_agent.getAt(i + 1).ToString());
 					break;
 				}
 			}
@@ -545,20 +570,17 @@ public class CameraSystem : FSystem {
 		}
 	}
 
-	private void camera_logging(string camera_action, string param){
-		float cur_time = Time.time;
-		if( (cur_time - last_action_time) > logging_padding ){
+	private void camera_logging(string camera_action, string param = ""){
+        Dictionary<string, string> actExt = new Dictionary<string, string>();
+		actExt["value"] = camera_action;
+		if (param != "")
+			actExt["content"] = param;
 
-			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
-			{
-				verb = "interacted",
-				objectType = "camera",
-				activityExtensions = new Dictionary<string, string>() {
-					{ "value", camera_action },
-					{ "content", param }
-				}
-			});
-			last_action_time = cur_time;
-		}
+        GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+		{
+			verb = "interacted",
+			objectType = "camera",
+			activityExtensions = actExt
+        });
 	}
 }
