@@ -262,14 +262,31 @@ public class UISystem : FSystem {
 			//copy editable script
 			GameObject editableContainer = null;
 			// On parcourt les scripts containers pour identifer celui associé au robot 
-			foreach (GameObject container in f_viewportContainer)
+			foreach (GameObject container in f_viewportContainer) { 
+
+                if (container == null) { Debug.LogError("Container is null!"); continue; }
+				if (robot == null) { Debug.LogError("Robot is null!"); continue; }
+
+				var uiRoot = container.GetComponentInChildren<UIRootContainer>();
+				if (uiRoot == null) { Debug.LogError("UIRootContainer component missing on container children!"); continue; }
+
+				var agentEdit = robot.GetComponent<AgentEdit>();
+				if (agentEdit == null) { Debug.LogError("AgentEdit component missing on robot!"); continue; }
+
+				if (uiRoot.scriptName == null || agentEdit.associatedScriptName == null)
+				{
+					Debug.LogError("One of the script names is null!");
+					return;
+				}
+
 				// Si le container comporte le même nom que le robot
 				if (container.GetComponentInChildren<UIRootContainer>().scriptName.ToLower() == robot.GetComponent<AgentEdit>().associatedScriptName.ToLower())
-					// On recupére le container qui contient le script à associer au robot
-					editableContainer = container.transform.Find("ScriptContainer").gameObject;
+						// On recupére le container qui contient le script à associer au robot
+						editableContainer = container.transform.Find("ScriptContainer").gameObject;
+            }
 
-			// Si on a bien trouvé un container associé
-			if (editableContainer != null)
+            // Si on a bien trouvé un container associé
+            if (editableContainer != null)
 			{
 				// we fill the executable container with actions of the editable container
 				UtilityGame.fillExecutablePanel(editableContainer, executableContainer, robot.tag);

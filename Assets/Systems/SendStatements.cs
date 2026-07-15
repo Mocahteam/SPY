@@ -45,7 +45,7 @@ public class SendStatements : FSystem {
 
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
-        if (gameData.sendStatementEnabled && GBL_Interface.playerName != "")
+        if (GBL_Interface.playerName != "")
         {
             // Do not use callbacks because in case in the same frame actions are removed on a GO and another component is added in another system, family will not trigger again callback because component will not be processed
             foreach (GameObject go in f_actionForLRS)
@@ -53,7 +53,7 @@ public class SendStatements : FSystem {
                 ActionPerformedForLRS[] listAP = go.GetComponents<ActionPerformedForLRS>();
                 int nb = listAP.Length;
                 ActionPerformedForLRS ap;
-                if (!this.Pause)
+                if (!this.Pause && gameData.sendStatementEnabled)
                 {
                     for (int i = 0; i < nb; i++)
                     {

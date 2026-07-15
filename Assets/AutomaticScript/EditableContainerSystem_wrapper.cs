@@ -5,6 +5,8 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.GameObject EditableCanvas;
 	public UnityEngine.GameObject prefabViewportScriptContainer;
+	public UnityEngine.GameObject prefabExempleScriptContainer;
+	public UnityEngine.GameObject ExampleScript;
 	public UnityEngine.UI.Button addContainerButton;
 	public System.Int32 maxWidth;
 	private void Start()
@@ -12,6 +14,8 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "EditableCanvas", EditableCanvas);
 		MainLoop.initAppropriateSystemField (system, "prefabViewportScriptContainer", prefabViewportScriptContainer);
+		MainLoop.initAppropriateSystemField (system, "prefabExempleScriptContainer", prefabExempleScriptContainer);
+		MainLoop.initAppropriateSystemField (system, "ExampleScript", ExampleScript);
 		MainLoop.initAppropriateSystemField (system, "addContainerButton", addContainerButton);
 		MainLoop.initAppropriateSystemField (system, "maxWidth", maxWidth);
 	}

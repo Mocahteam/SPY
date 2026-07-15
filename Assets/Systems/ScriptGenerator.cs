@@ -120,8 +120,10 @@ public class ScriptGenerator : FSystem {
 
 		if (libraryId != "Undef")
 			obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(libraryId), mainCanvas);
-		
-		switch (conditionNode.Name)
+
+		Debug.Log("Condition node : " + conditionNode.Name + " library id : " + libraryId);
+
+        switch (conditionNode.Name)
 		{
 			case "and":
 			case "or":

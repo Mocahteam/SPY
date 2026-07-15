@@ -102,8 +102,10 @@ public static class UtilityGame
 	// We create an editable block from a library item (without binded it to FYFY, depending on context the object has to be binded or not)
 	public static GameObject createEditableBlockFromLibrary(GameObject element, GameObject targetCanvas)
 	{
-		// On récupére le prefab associé à l'action de la librairie
-		GameObject prefab = element.GetComponent<ElementToDrag>().actionPrefab;
+        Debug.Log($"[Debug] element: {element}, targetCanvas: {targetCanvas}");
+
+        // On récupére le prefab associé à l'action de la librairie
+        GameObject prefab = element.GetComponent<ElementToDrag>().actionPrefab;
 		// Create a dragged GameObject
 		GameObject newItem = UnityEngine.Object.Instantiate<GameObject>(prefab, element.transform);
 		// On l'attache au canvas pour le drag ou l'on veux

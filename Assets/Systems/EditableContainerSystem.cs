@@ -43,7 +43,9 @@ public class EditableContainerSystem : FSystem
 	private UIRootContainer containerSelected; // Le container selectionné
 	public GameObject EditableCanvas;
 	public GameObject prefabViewportScriptContainer;
-	public Button addContainerButton;
+    public GameObject prefabExempleScriptContainer;
+    public GameObject ExampleScript;
+    public Button addContainerButton;
 	public int maxWidth;
 
 	private bool isEditorContext;
@@ -90,9 +92,9 @@ public class EditableContainerSystem : FSystem
 					foreach (GameObject container in f_scriptContainer)
 					{
 						Transform header = container.transform.Find("Header");
-						header.Find("ResetButton").GetComponent<Button>().interactable = false;
-						header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-						header.Find("ContainerName").GetComponent<TMP_InputField>().interactable = false;
+						//header.Find("ResetButton").GetComponent<Button>().interactable = false;
+						//header.Find("RemoveButton").GetComponent<Button>().interactable = false;
+						//header.Find("ContainerName").GetComponent<TMP_InputField>().interactable = false;
 					}
 					addContainerButton.interactable = false;
 				});
@@ -168,7 +170,85 @@ public class EditableContainerSystem : FSystem
 	// Ajouter un container à la scéne retourne son nom définitif
 	private string addSpecificContainer(string name = "", UIRootContainer.EditMode editState = UIRootContainer.EditMode.Editable, UIRootContainer.SolutionType typeState = UIRootContainer.SolutionType.Undefined, List<GameObject> script = null)
 	{
-		if (!nameContainerUsed(name))
+        if (name.StartsWith("API_HARMONY_"))
+        {
+            GameObject mainCanvas = GameObject.Find("MainCanvas/ExamplePanel");
+
+            GameObject newExempleScript = Object.Instantiate(ExampleScript);
+            newExempleScript.name = "ExempleScript";
+            newExempleScript.transform.SetParent(mainCanvas.transform, false);
+
+            GameObjectManager.bind(newExempleScript);
+
+            GameObject cloneContainer = Object.Instantiate(prefabExempleScriptContainer);
+            cloneContainer.transform.SetParent(newExempleScript.transform, false);
+            cloneContainer.transform.localScale = new Vector3(1, 1, 1);
+
+            // --- NEW LOGIC: Extract suffix and set the Header Name text ---
+            string cleanName = name.Substring("API_HARMONY_".Length);
+
+            // Find the object using the path you provided
+            TMP_Text nameFieldTransform = cloneContainer.transform.Find("ScriptContainer/Header/ContainerName/Text Area").GetComponentInChildren<TMP_Text>();
+            if (nameFieldTransform != null)
+            {
+				nameFieldTransform.text = cleanName;
+            }
+            else
+            {
+                Debug.LogWarning("Could not find the text path: ScriptContainer/Header/ContainerName/Text Area");
+            }
+            // -------------------------------------------------------------
+
+            ReplacementSlot slot = cloneContainer.GetComponentInChildren<ReplacementSlot>(true);
+            if (slot == null) return name;
+            GameObject dropArea = slot.gameObject;
+
+            foreach (Transform child in dropArea.transform)
+            {
+                GameObjectManager.unbind(child.gameObject);
+                Object.Destroy(child.gameObject);
+            }
+
+            UIRootContainer root = cloneContainer.GetComponentInChildren<UIRootContainer>();
+            root.editState = editState;
+            root.type = typeState;
+
+            if (script != null)
+            {
+                for (int k = 0; k < script.Count; k++)
+                {
+                    if (script[k] == null) continue;
+
+                    var libRef = script[k].GetComponent<LibraryItemRef>();
+                    if (libRef != null)
+                    {
+                        Object.Destroy(libRef);
+                    }
+
+                    var trigger = script[k].GetComponent<UnityEngine.EventSystems.EventTrigger>();
+                    if (trigger != null)
+                    {
+                        Object.Destroy(trigger);
+                    }
+
+                    // Now proceed with adding them to the UI
+                    UtilityGame.addItemOnDropArea(script[k], dropArea);
+
+                    gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseElement>(true).Length;
+                    gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseCondition>(true).Length;
+                }
+                GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+            }
+
+            foreach (ReplacementSlot slots in cloneContainer.GetComponentsInChildren<ReplacementSlot>(true))
+                if (slots.slotType != ReplacementSlot.SlotType.BaseCondition)
+                    GameObjectManager.setGameObjectState(slots.gameObject, false);
+
+            GameObjectManager.bind(cloneContainer);
+
+            return name;
+        }
+        else if (!nameContainerUsed(name))
 		{
 			// On clone le prefab
 			GameObject cloneContainer = Object.Instantiate(prefabViewportScriptContainer);
