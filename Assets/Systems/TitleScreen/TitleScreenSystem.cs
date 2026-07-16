@@ -153,7 +153,7 @@ public class TitleScreenSystem : FSystem {
 		}
 		int progress = 100 * progression / nbMissions;
 		// affichage de la progression numérique
-		profilPanel.Find("ProgressValue").GetComponent<TMP_Text>().text = progress + "%";
+		profilPanel.Find("ProgressBar/ProgressValue").GetComponent<TMP_Text>().text = progress + "%";
 		// ajustement de la barre de progression
 		RectTransform progressBar = profilPanel.Find("ProgressBar") as RectTransform;
 		RectTransform bar = profilPanel.Find("ProgressBar/Bar") as RectTransform;
