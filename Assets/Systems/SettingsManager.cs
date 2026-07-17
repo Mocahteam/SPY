@@ -1018,7 +1018,7 @@ public class SettingsManager : FSystem
 	private void syncColor_Dropdown(GameObject go, Color? unused = null)
 	{
 		syncNormalColor(go, cs.values.currentNormalColor_Dropdown);
-		syncGraphicColor(go.transform.Find("Template").gameObject, cs.values.currentNormalColor_Dropdown);
+        syncGraphicColor(go.GetComponent<TMP_Dropdown>().template.gameObject, cs.values.currentNormalColor_Dropdown);
 	}
 
 	private void sync_Inputfield(GameObject go, Color? unused = null)
