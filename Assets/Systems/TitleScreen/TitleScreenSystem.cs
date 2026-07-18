@@ -238,7 +238,7 @@ public class TitleScreenSystem : FSystem {
 		{
 			GameObject scenarioTile = GameObject.Instantiate<GameObject>(TileScenarioPrefab, gameList);
 
-			scenarioTile.transform.Find("Finished").gameObject.SetActive(userData.progression.ContainsKey(key) && userData.progression[key] == gameData.scenarios[key].levels.Count);
+			scenarioTile.transform.Find("Finished").gameObject.SetActive(userData.progression.ContainsKey(key) && userData.progression[key] >= gameData.scenarios[key].levels.Count);
 			
 			int totalStars = 0;
 			foreach (DataLevel dl in gameData.scenarios[key].levels)
