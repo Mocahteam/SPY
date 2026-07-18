@@ -169,6 +169,24 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "CameraRotateUp",
+                    "type": "Button",
+                    "id": "068f9080-cdc3-4be8-8990-600820fd2e4e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CameraRotateDown",
+                    "type": "Button",
+                    "id": "ee5e8a97-c1a9-4c37-8234-f8292322e71b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "CameraRotateLeft",
                     "type": "Button",
                     "id": "3cd0eeb2-83fc-416e-a2d5-6ee6e7abf702",
@@ -938,26 +956,103 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "69707b22-e65f-4c52-aecf-4d2c8db85a7b",
-                    "path": "<Keyboard>/q",
+                    "name": "One Modifier",
+                    "id": "0161c28f-96f8-4f1e-8a0c-6143a446beb2",
+                    "path": "OneModifier",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
+                    "groups": "",
                     "action": "CameraRotateLeft",
-                    "isComposite": false,
+                    "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "55c81688-0197-479b-ba18-e9dd3b2d2a52",
-                    "path": "<Keyboard>/e",
+                    "name": "modifier",
+                    "id": "fa65d7f1-802a-42bd-a879-afc03e4ba318",
+                    "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "CameraRotateRight",
+                    "groups": "",
+                    "action": "CameraRotateLeft",
                     "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "a62c5fae-bd04-4c0a-9f19-ffe7f57b391a",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotateLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "One Modifier",
+                    "id": "69365b30-84be-4a7b-bcc4-67f5d1bb0b17",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotateUp",
+                    "isComposite": true,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "7aac5f3d-e98a-4c08-ad4e-13147363dcae",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotateUp",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "1366384f-e988-456f-a8f5-dd1b1b6ab17c",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotateUp",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "One Modifier",
+                    "id": "b1f30d6d-fd3e-46ec-aa00-f7daf6fb6efe",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotateDown",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "6b798121-391d-4488-92dc-9694b894bcff",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotateDown",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "006e7f69-a7e4-45ec-81c4-02c45777ced6",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotateDown",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "",
@@ -1211,6 +1306,39 @@
                     "action": "TuneSettings",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "One Modifier",
+                    "id": "f8d10baa-ce56-40bd-be8c-3e13af7d28a7",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotateRight",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "7a588e79-9e14-413f-a305-10ac0ff341a9",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotateRight",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "7fc9215a-8e34-4875-9666-1866de3cf07d",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotateRight",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }
