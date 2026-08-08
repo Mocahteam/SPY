@@ -147,7 +147,7 @@ public class SettingsManager : FSystem
 
 	protected override void onProcess(int familiesUpdateCount)
 	{
-        if (Screen.width != lastWidth || Screen.height != lastHeight)
+        if ((Screen.width != lastWidth || Screen.height != lastHeight) && cs != null)
         {
             lastWidth = Screen.width;
             lastHeight = Screen.height;

@@ -118,6 +118,7 @@ GameObject:
   - component: {fileID: 4396976857668068602}
   - component: {fileID: 6440480064689838730}
   - component: {fileID: 8949303373812252668}
+  - component: {fileID: 73576700262509123}
   m_Layer: 5
   m_Name: Control_ForLoop
   m_TagString: UI_Control
@@ -492,6 +493,26 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!114 &73576700262509123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589826222410828797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: 0
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &816952892108595509
 GameObject:
   m_ObjectHideFlags: 0
@@ -858,6 +879,41 @@ PrefabInstance:
       propertyPath: m_Name
       value: InputField_Counter
       objectReference: {fileID: 0}
+    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_text
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_fontSizeBase
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_enableKerning
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_VertexBufferAutoSizeReduction
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4011001891186411671, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
       propertyPath: m_Pivot.x
@@ -977,41 +1033,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Padding.z
       value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
-        type: 3}
-      propertyPath: m_text
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
-        type: 3}
-      propertyPath: m_fontSize
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
-        type: 3}
-      propertyPath: m_fontSizeBase
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
-        type: 3}
-      propertyPath: m_enableKerning
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
-        type: 3}
-      propertyPath: m_HorizontalAlignment
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3437637854911773085, guid: 3917c69ad87079e4f9ed10b40955fced,
-        type: 3}
-      propertyPath: m_VertexBufferAutoSizeReduction
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}

@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static Unity.Burst.Intrinsics.X86.Avx;
 
 public class DropDownAutoWidth : MonoBehaviour
 {
@@ -24,13 +23,16 @@ public class DropDownAutoWidth : MonoBehaviour
     private void ResizeDropDown()
     {
         CanvasScaler canvasScaler = GetComponentInParent<CanvasScaler>(true);
-        // on récupère l'item texte comme modèle pour calculer la largeur maximale
-        TMP_Text itemText = dropdown.itemText;
+        // on récupère le premier item de la liste déroulante comme modèle pour calculer la largeur maximale de toutes les options
+        TMP_Text itemText = transform.GetComponentInChildren<TMP_Text>();
         if (itemText == null)
             return;
 
         float maxWidth = 0;
-
+        
+        // si l'auto sizing est activé, on le désactive temporairement pour calculer la largeur maximale des options, sinon le GetPreferredValues renverra toujours la largeur de l'option avec la taille de police maximale, ce qui n'est pas ce que nous voulons.
+        bool autoSizing = itemText.enableAutoSizing;
+        itemText.enableAutoSizing = false;
         foreach (TMP_Dropdown.OptionData option in dropdown.options)
         {
             maxWidth = Mathf.Max(
@@ -38,11 +40,16 @@ public class DropDownAutoWidth : MonoBehaviour
                 itemText.GetPreferredValues(option.text).x
             );
         }
+        // on restaure l'état de l'auto sizing
+        itemText.enableAutoSizing = autoSizing;
 
         float width = maxWidth;
 
         // prise en compte de la marge gauche
-        width += Mathf.Abs((itemText.transform as RectTransform).rect.xMin);
+        width += (itemText.transform as RectTransform).offsetMin.x;
+
+        // prise en compte de la marge droite
+        width += -(itemText.transform as RectTransform).offsetMax.x;
 
         // Largeur de la scrollbar
         if (transform.TryGetComponent(out ScrollRect scrollRect) && scrollRect.verticalScrollbar != null)

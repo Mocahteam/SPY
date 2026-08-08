@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 7917024404387264168}
   - component: {fileID: 6492128558656213362}
   - component: {fileID: 3060173846260223673}
+  - component: {fileID: 3130151299450475123}
   m_Layer: 5
   m_Name: Control_InfiniteLoop
   m_TagString: UI_Control
@@ -394,6 +395,26 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!114 &3130151299450475123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589826222410828797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: 0
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &1844801932685815915
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,7 +690,7 @@ PrefabInstance:
     - target: {fileID: 291941446599601733, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
       propertyPath: m_fontSize
-      value: 6.05
+      value: 4.55
       objectReference: {fileID: 0}
     - target: {fileID: 291941446599601733, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}

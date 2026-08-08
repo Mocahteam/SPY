@@ -67,9 +67,9 @@ public class CompetenciesChecker : FSystem
                 skill.GetComponent<TooltipContent>().text = Utility.extractLocale(competency.description);
                 // Ajout de la compétence à la bonne liste
                 if (UtilityLobby.isCompetencyMatchWithLevel(competency, doc))
-                    skill.transform.SetParent(skillsInvolvedContent);
+                    skill.transform.SetParent(skillsInvolvedContent, false);
                 else
-                    skill.transform.SetParent(skillsIgnoredContent);
+                    skill.transform.SetParent(skillsIgnoredContent, false);
 
                 GameObjectManager.bind(skill);
             }

@@ -306,7 +306,7 @@ public class TitleScreenSystem : FSystem {
 	{
 		yield return null;
 		StringList sl = scenarioTile.GetComponent<StringList>();
-		scenarioTile.GetComponent<TooltipContent>().text = scenarioTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text + "<br>" + sl.texts[0] + scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text + "<br>" + sl.texts[0]+ scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text;
+		scenarioTile.GetComponent<TooltipContent>().text = scenarioTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text + "<br>" + sl.texts[0] + scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text + "<br>" + sl.texts[1]+ scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text;
 	}
 
 	public void setDraggingState(bool newState){
@@ -498,14 +498,14 @@ public class TitleScreenSystem : FSystem {
                     foreach (DataLevel levelKey in levelKeys)
                         if (gameData.levels.ContainsKey(levelKey.filePath) && UtilityLobby.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.filePath].OwnerDocument))
                         {
-                            txt += "\t - "+Utility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
+                            txt += " - "+Utility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
                             break;
                         }
 
             if (txt != "")
                 descDetails.text += txt;
             else
-                descDetails.text += "\t - "+loc.localization[0];
+                descDetails.text += " - "+loc.localization[0];
         }
     }
 
