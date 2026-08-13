@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -19,11 +20,12 @@ public class HistoryManager : FSystem
 	private Family f_removeButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton"));
 	private Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
     private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
-    private Family f_playMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private Family f_editMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
     private Family f_undoable = FamilyManager.getFamily(new AllOfComponents(typeof(Undoable)));
 
     private GameData gameData;
     private Transform UndoRedoStack;
+    private bool keepNextUndoRedoStack = false;
     private int stackPos;
 
     public RectTransform EditableContainers;
@@ -64,16 +66,21 @@ public class HistoryManager : FSystem
             // suppression des événements Undoable qui pourraient rester dans la pile d'annulation
             removeLastsUndoable(UndoRedoStack.childCount);
             // enregistrer l'état initial des zones d'édition
-            f_gameLoaded.addEntryCallback(delegate {
-                GameObject copy = GameObject.Instantiate(EditableContainers.gameObject, UndoRedoStack, false);
-                stackPos = 0;
+            if (SceneManager.GetActiveScene().name == "MainScene")
+                // Pour la scène principale on attend que le jeu soit chargé pour empiler l'état initial des zones d'édition
+                f_gameLoaded.addEntryCallback(delegate {
+                    MainLoop.instance.StartCoroutine(delayStackEditableContainers());
+                });
+            else
+                // Pour l'éditeur de mission on empile l'état initial des zones d'édition dès le départ
+                MainLoop.instance.StartCoroutine(delayStackEditableContainers());
+            // vider la pile d'annulation si on recommence une phase d'édition
+            f_editMode.addEntryCallback(delegate {
+                if (!keepNextUndoRedoStack)
+                    MainLoop.instance.StartCoroutine(delayStackEditableContainers());
+                keepNextUndoRedoStack = false;
             });
-            // vider la pile d'annulation si on quitte le mode Play
-            f_playMode.addEntryCallback(delegate { removeLastsUndoable(UndoRedoStack.childCount); });
         }
-
-        buttonUndo.interactable = false;
-        buttonRedo.interactable = false;
     }
 
     protected override void onProcess(int familiesUpdateCount)
@@ -87,24 +94,32 @@ public class HistoryManager : FSystem
             if (stackPos < UndoRedoStack.childCount - 1)
                 removeLastsUndoable(UndoRedoStack.childCount - 1 - stackPos);
             // Stack de l'état actuel des zones d'édition
-            GameObject copy = GameObject.Instantiate(EditableContainers.gameObject, UndoRedoStack);
-
-            // Il faut un peu supprimer la copy de composants qui trainent car supprimés via le GameObjectManager, il seront réellement supprimés à la fin de la frame, donc il sont présents dans la copy, il faut donc nettoyer tout ça
-            // suppression des Undoable
-            foreach (Undoable u in copy.GetComponentsInChildren<Undoable>(true))
-                Object.Destroy(u);
-            // suppression des Dropped
-            foreach (Dropped d in copy.GetComponentsInChildren<Dropped>(true))
-                Object.Destroy(d);
-            // suppression des ActionPerformedForLRS
-            foreach (ActionPerformedForLRS a in copy.GetComponentsInChildren<ActionPerformedForLRS>(true))
-                Object.Destroy(a);
-
-            // We don't bind the history to FYFY
+            stackEditableContainers();
             stackPos++;
             buttonUndo.interactable = true;
             buttonRedo.interactable = false;
         }
+    }
+
+    // Used in StopButton and ReloadState buttons in editor
+    // Permet d'informer ce système qu'au prochain retour en mode édition, il ne faut pas vider la pile d'annulation, mais la conserver en effet quand le joueur appuit sur le bouton stop il faut qu'il puisse retrouver son histrorique d'édition pour pouvoir continuer à éditer son programme
+    public void keepUndoRedoStack()
+    {
+        keepNextUndoRedoStack = true;
+    }
+
+    private IEnumerator delayStackEditableContainers()
+    {
+        removeLastsUndoable(UndoRedoStack.childCount);
+        // pour attendre que les zones d'édition soient bien initialisées (cas par exemple d'un joueur qui recommence un niveau, son script de la tentative précédente est rechargé et il faut lui laisser le temps de finie de préremplir le script avant de sauvegarder le premier état)
+        yield return null;
+        yield return null;
+        yield return null;
+        yield return null;
+        stackEditableContainers();
+        stackPos = 0;
+        buttonUndo.interactable = false;
+        buttonRedo.interactable = false;
     }
 
     private void removeLastsUndoable(int count)
@@ -292,6 +307,22 @@ public class HistoryManager : FSystem
 		}
     }
 
+    private void stackEditableContainers()
+    {
+        GameObject copy = GameObject.Instantiate(EditableContainers.gameObject, UndoRedoStack);
+        // Il faut un peu nettoyer la copy de composants qui trainent car supprimés via le GameObjectManager, il seront réellement supprimés à la fin de la frame, donc il sont présents dans la copy, il faut donc nettoyer tout ça
+        // suppression des Undoable
+        foreach (Undoable u in copy.GetComponentsInChildren<Undoable>(true))
+            Object.Destroy(u);
+        // suppression des Dropped
+        foreach (Dropped d in copy.GetComponentsInChildren<Dropped>(true))
+            Object.Destroy(d);
+        // suppression des ActionPerformedForLRS
+        foreach (ActionPerformedForLRS a in copy.GetComponentsInChildren<ActionPerformedForLRS>(true))
+            Object.Destroy(a);
+        // We don't bind the history to FYFY
+    }
+
     private IEnumerator removeEditableContainers()
 	{
         foreach (Transform viewportForEditableContainer in EditableContainers)
@@ -348,7 +379,7 @@ public class HistoryManager : FSystem
     private IEnumerator processUndo()
     {
         stackPos--;
-        if (stackPos == 0)
+        if (stackPos <= 0)
             buttonUndo.interactable = false;
         buttonRedo.interactable = true;
 
@@ -377,7 +408,7 @@ public class HistoryManager : FSystem
     private IEnumerator processRedo()
     {
         stackPos++;
-        if (stackPos == UndoRedoStack.childCount - 1)
+        if (stackPos >= UndoRedoStack.childCount - 1)
             buttonRedo.interactable = false;
         buttonUndo.interactable = true;
 

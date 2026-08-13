@@ -194,10 +194,10 @@ public class ConnexionManager : FSystem
 	private IEnumerator GetScenarioWebRequest()
     {
         string uri = new Uri(Application.streamingAssetsPath + "/WebGlData/ScenarioList.json").AbsoluteUri;
-        UnityWebRequest www = UnityWebRequest.Get(uri);
         while (true)
-		{
-			yield return www.SendWebRequest();
+        {
+            UnityWebRequest www = UnityWebRequest.Get(uri);
+            yield return www.SendWebRequest();
 
 			if (www.result != UnityWebRequest.Result.Success)
 			{
@@ -230,10 +230,10 @@ public class ConnexionManager : FSystem
 	private IEnumerator GetLevelsWebRequest()
     {
         string uri = new Uri(Application.streamingAssetsPath + "/WebGlData/LevelsList.json").AbsoluteUri;
-        UnityWebRequest www = UnityWebRequest.Get(uri);
         while (true)
-		{
-			yield return www.SendWebRequest();
+        {
+            UnityWebRequest www = UnityWebRequest.Get(uri);
+            yield return www.SendWebRequest();
 
 			if (www.result != UnityWebRequest.Result.Success)
 			{
@@ -274,10 +274,10 @@ public class ConnexionManager : FSystem
 
 	private IEnumerator GetLevelOrScenario_WebRequest(string uri)
 	{
-		UnityWebRequest www = UnityWebRequest.Get(uri);
 		while (true)
-		{
-			yield return www.SendWebRequest();
+        {
+            UnityWebRequest www = UnityWebRequest.Get(uri);
+            yield return www.SendWebRequest();
 
 			if (www.result != UnityWebRequest.Result.Success)
 			{
@@ -309,10 +309,10 @@ public class ConnexionManager : FSystem
 
 	private IEnumerator GetCompetenciesWebRequest(string referentialsPath)
 	{
-		UnityWebRequest www = UnityWebRequest.Get(referentialsPath);
 		while (true)
-		{
-			yield return www.SendWebRequest();
+        {
+            UnityWebRequest www = UnityWebRequest.Get(referentialsPath);
+            yield return www.SendWebRequest();
 
 			if (www.result != UnityWebRequest.Result.Success)
 			{
@@ -354,13 +354,13 @@ public class ConnexionManager : FSystem
 
 		string formatedString = String.Format("{0:X}", sessionID.GetHashCode());
 
-		// Make a request to check if this sessionId is already used
-		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession=" + formatedString);
 		logs.text = "";
 		progress.text = "0%";
 		while (true)
-		{
-			yield return www.SendWebRequest();
+        {
+            // Make a request to check if this sessionId is already used
+            UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession=" + formatedString);
+            yield return www.SendWebRequest();
 
 			if (www.result != UnityWebRequest.Result.Success)
 			{
@@ -430,12 +430,12 @@ public class ConnexionManager : FSystem
 
 	private IEnumerator GetProgressionWebRequest(string idSession)
 	{
-		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php?idSession=" + idSession);
 		logs.text = "";
 		progress.text = "0%";
 		while (true)
-		{
-			yield return www.SendWebRequest();
+        {
+            UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php?idSession=" + idSession);
+            yield return www.SendWebRequest();
 			Localization loc = gameData.GetComponent<Localization>();
 			if (www.result != UnityWebRequest.Result.Success)
 			{

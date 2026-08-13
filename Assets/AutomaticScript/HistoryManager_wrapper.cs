@@ -24,6 +24,11 @@ public class HistoryManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "buttonRedo", buttonRedo);
 	}
 
+	public void keepUndoRedoStack()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "keepUndoRedoStack", null);
+	}
+
 	public void saveHistory()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "saveHistory", null);

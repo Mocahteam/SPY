@@ -369,10 +369,10 @@ public class DialogSystem : FSystem
 
 	private IEnumerator GetTextureWebRequest(Image img, string path, Dialog dialog)
 	{
-		UnityWebRequest www = UnityWebRequestTexture.GetTexture(path);
 		while (true)
-		{
-			yield return www.SendWebRequest();
+        {
+            UnityWebRequest www = UnityWebRequestTexture.GetTexture(path);
+            yield return www.SendWebRequest();
 
 			if (www.result != UnityWebRequest.Result.Success)
 			{
@@ -403,10 +403,10 @@ public class DialogSystem : FSystem
 
 	private IEnumerator GetAudioWebRequest(AudioSource audio, string path)
 	{
-		UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.MPEG);
 		while (true)
-		{
-			yield return www.SendWebRequest();
+        {
+            UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.MPEG);
+            yield return www.SendWebRequest();
 
 			if (www.result != UnityWebRequest.Result.Success)
 			{
