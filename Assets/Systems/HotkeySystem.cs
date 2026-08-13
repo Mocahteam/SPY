@@ -1,6 +1,7 @@
 using FYFY;
 using System.Runtime.InteropServices;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -44,6 +45,8 @@ public class HotkeySystem : FSystem
 	public Button showSettings;
 
 	public Button AddContainerButton;
+	public Button undo;
+	public Button redo;
 	
 	[DllImport("__Internal")]
 	private static extern void TryToCopy(string txt); // call javascript => send txt to html to copy in clipboard
@@ -79,9 +82,11 @@ public class HotkeySystem : FSystem
 	private InputAction focusOnNextProgrammingArea_act;
 	private InputAction focusOnInventory_act;
 	private InputAction tuneSettings_act;
+    private InputAction undo_act;
+    private InputAction redo_act;
 
-	// L'instance
-	public static HotkeySystem instance;
+    // L'instance
+    public static HotkeySystem instance;
 
 	public HotkeySystem()
 	{
@@ -114,8 +119,10 @@ public class HotkeySystem : FSystem
 		focusOnNextProgrammingArea_act = InputSystem.actions.FindAction("SelectNextProgrammingArea");
 		focusOnInventory_act = InputSystem.actions.FindAction("SelectInventory");
 		tuneSettings_act = InputSystem.actions.FindAction("TuneSettings");
+        undo_act = InputSystem.actions.FindAction("Undo");
+        redo_act = InputSystem.actions.FindAction("Redo");
 
-		cancelNextEscape = false;
+        cancelNextEscape = false;
         foreach (GameObject go in f_InputFields)
 			onNewInputField(go);
 		f_InputFields.addEntryCallback(onNewInputField);
@@ -182,7 +189,7 @@ public class HotkeySystem : FSystem
 			if (cameraRotateRight != null && cameraRotateRight.gameObject.activeInHierarchy && rotateRight_act.WasReleasedThisFrame())
 				callEntry(cameraRotateRight, EventTriggerType.PointerUp);
 			// Move Up
-			if (cameraTop != null && cameraTop.gameObject.activeInHierarchy && moveUp_act.WasPressedThisFrame() && !Keyboard.current.shiftKey.isPressed)
+			if (cameraTop != null && cameraTop.gameObject.activeInHierarchy && moveUp_act.WasPressedThisFrame() && !Keyboard.current.shiftKey.isPressed && !Keyboard.current.ctrlKey.isPressed)
 				callEntry(cameraTop, EventTriggerType.PointerDown);
 			if (cameraTop != null && cameraTop.gameObject.activeInHierarchy && moveUp_act.WasReleasedThisFrame())
 				callEntry(cameraTop, EventTriggerType.PointerUp);
@@ -291,7 +298,13 @@ public class HotkeySystem : FSystem
 					mainMenu.onClick.Invoke();
 				showSettings.onClick.Invoke();
 			}
-		}
+
+			// Undo/Redo
+			if (undo != null && undo.gameObject.activeInHierarchy && undo.interactable && undo_act.WasPressedThisFrame())
+				undo.onClick.Invoke();
+			else if (redo != null && redo.gameObject.activeInHierarchy && redo.interactable && redo_act.WasPressedThisFrame())
+				redo.onClick.Invoke();
+        }
 		/* Gestion du copier-coller dans les InputField (visiblement les versions des navigateurs au moment de ce test et la version d'Unity 6.3 rendent le copier_coller fonctionnel en natif) 
 		else if (eventSystem.currentSelectedGameObject != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused && Application.platform == RuntimePlatform.WebGLPlayer)
 		{

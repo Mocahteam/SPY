@@ -240,7 +240,8 @@ public class LevelGenerator : FSystem {
 	{
 		yield return null;
 		yield return null;
-		GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
+        yield return null; // Pour attendre que les scripts soient bien chargés avant de lancer l'événement GameLoaded
+        GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
 	}
 
 	private IEnumerator delayEnableFog()

@@ -130,7 +130,8 @@ public class BlocLimitationManager : FSystem
 	private void useAction(GameObject go){
 		LibraryItemRef lir = go.GetComponent<LibraryItemRef>();
 		string actionKey = lir.linkedTo.name;
-		if(actionKey != null && gameData.actionBlockLimit.ContainsKey(actionKey))
+
+        if (actionKey != null && gameData.actionBlockLimit.ContainsKey(actionKey))
 		{
 			if (gameData.actionBlockLimit[actionKey] > 0)
 				gameData.actionBlockLimit[actionKey] -= 1;

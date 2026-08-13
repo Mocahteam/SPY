@@ -166,27 +166,32 @@ namespace DIG.GBLXAPI.Internal
         // ------------------------------------------------------------------------
         private IEnumerator SendStatementCoroutine(RemoteLRSAsync endPoint, List<QueuedStatement> queuedStatements)
 		{
-			var sendTask = SendStatements(endPoint, queuedStatements);
-			// Wait answer
-			yield return new WaitUntil(() => sendTask.IsCompleted);
-
-			bool success = sendTask.Status == TaskStatus.RanToCompletion && sendTask.Result.success;
-			var errMessage = sendTask.Status == TaskStatus.RanToCompletion ? sendTask.Result.errMsg : "Operation not completed";
-
-			if (sendTask.Status == TaskStatus.RanToCompletion && sendTask.Result.success) {
-				Debug.Log("Statements successfully sent");
-			}
-			else
+			while (true)
 			{
-				Debug.LogWarning("Statements failed with error: " + errMessage);
-				Debug.LogWarning("Try again...");
-				yield return new WaitForSeconds(0.5f);
-				StartCoroutine(SendStatementCoroutine(endPoint, queuedStatements));
-			}
+				var sendTask = SendStatements(endPoint, queuedStatements);
+				// Wait answer
+				yield return new WaitUntil(() => sendTask.IsCompleted);
 
-			// Client callback with result
-			foreach (QueuedStatement qs in queuedStatements) {
-                qs.callback?.Invoke(endPoint.xApiEndpoint, success, errMessage);
+				bool success = sendTask.Status == TaskStatus.RanToCompletion && sendTask.Result.success;
+				var errMessage = sendTask.Status == TaskStatus.RanToCompletion ? sendTask.Result.errMsg : "Operation not completed";
+
+                // Client callback with result
+                foreach (QueuedStatement qs in queuedStatements)
+                {
+                    qs.callback?.Invoke(endPoint.xApiEndpoint, success, errMessage);
+                }
+
+                if (sendTask.Status == TaskStatus.RanToCompletion && sendTask.Result.success)
+				{
+					Debug.Log("Statements successfully sent");
+					break; // Exit the loop
+                }
+				else
+				{
+					Debug.LogWarning("Statements failed with error: " + errMessage);
+					Debug.LogWarning("Try again...");
+					yield return new WaitForSeconds(1f);
+				}
 			}
 		}
 

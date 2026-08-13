@@ -623,9 +623,24 @@ public static class UtilityGame
 			}
 			return export;
 		}
-	}
+    }
 
-	public static IEnumerator pulseItem(GameObject newItem)
+    public static string exportEditableScriptToString(Transform scriptContainer, GameObject focusedArea)
+    {
+        string scriptsContent = scriptContainer.Find("Header").GetComponentInChildren<TMP_InputField>().text + " {";
+        // on ignore les fils sans Highlightable
+        for (int i = 0; i < scriptContainer.childCount; i++)
+        {
+            if (scriptContainer.GetChild(i).GetComponent<Highlightable>())
+                scriptsContent += " " + exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>(), focusedArea);
+        }
+        if (scriptContainer.GetChild(scriptContainer.childCount - 1).gameObject == focusedArea)
+            scriptsContent += " ####";
+        scriptsContent += " }\n";
+        return scriptsContent;
+    }
+
+    public static IEnumerator pulseItem(GameObject newItem)
 	{
 		newItem.transform.localScale = new Vector3(1, 1, 1);
 		float initScaleX = newItem.transform.localScale.x;

@@ -164,7 +164,6 @@ public class ParamCompetenceSystem : FSystem
 
         filterCompatibleLevels(false);
 
-		Debug.Log(f_UI_competencies.Count);
         if (Application.platform != RuntimePlatform.WebGLPlayer)
             DebugLogLevelsCompetencies();
     }

@@ -40,8 +40,8 @@ public class EditableContainerSystem : FSystem
 	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd))); 
 	private Family f_checkLinkName = FamilyManager.getFamily(new AllOfComponents(typeof(CheckLinkName)));
 
-	// Les variables
-	private UIRootContainer containerSelected; // Le container selectionné
+    // Les variables
+    private UIRootContainer containerSelected; // Le container selectionné
 	public GameObject EditableCanvas;
 	public GameObject prefabViewportScriptContainer;
 	public Button addContainerButton;
@@ -171,7 +171,9 @@ public class EditableContainerSystem : FSystem
 				{ "value", newName }
 			}
 			});
-	}
+
+        GameObjectManager.addComponent<Undoable>(MainLoop.instance.gameObject);
+    }
 
 	// Ajouter un container à la scéne retourne son nom définitif
 	private string addSpecificContainer(string name = "", UIRootContainer.EditMode editState = UIRootContainer.EditMode.Editable, UIRootContainer.SolutionType typeState = UIRootContainer.SolutionType.Undefined, List<GameObject> script = null)
@@ -264,7 +266,9 @@ public class EditableContainerSystem : FSystem
 					gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseElement>(true).Length;
 					gameData.totalActionBlocUsed += script[k].GetComponentsInChildren<BaseCondition>(true).Length;
 				}
-				GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+				// Rafraichissement de l'UI uniquement sur la scene principale
+				if (SceneManager.GetActiveScene().name == "MainScene")
+					GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 			}
 
 			// On ajoute le nouveau viewport container à FYFY
@@ -309,15 +313,17 @@ public class EditableContainerSystem : FSystem
 		// générer une trace seulement sur la scene principale
 		if (SceneManager.GetActiveScene().name == "MainScene")
 			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
-			{
-				verb = "cleaned",
-				objectType = "script",
-				activityExtensions = new Dictionary<string, string>() {
-				{ "value", scriptContainer.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text }
-			}
+				{
+					verb = "cleaned",
+					objectType = "script",
+					activityExtensions = new Dictionary<string, string>() {
+					{ "value", scriptContainer.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text }
+				}
 			});
 
-		deleteContent(scriptContainer);
+        GameObjectManager.addComponent<Undoable>(MainLoop.instance.gameObject);
+
+        deleteContent(scriptContainer);
 	}
 
 	// Remove the script window
@@ -325,22 +331,25 @@ public class EditableContainerSystem : FSystem
 	public void removeContainer(GameObject container, bool silent)
 	{
 		GameObject scriptContainerPointer = container.transform.GetChild(0).gameObject;
-
-		// générer une trace seulement sur la scene principale
-		if (!silent && SceneManager.GetActiveScene().name == "MainScene")
+	
+		if (!silent)
 		{
-			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+            // générer une trace seulement sur la scene principale
+            if (SceneManager.GetActiveScene().name == "MainScene")
 			{
-				verb = "deleted",
-				objectType = "script",
-				activityExtensions = new Dictionary<string, string>() {
+				GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+				{
+					verb = "deleted",
+					objectType = "script",
+					activityExtensions = new Dictionary<string, string>() {
 					{ "value", scriptContainerPointer.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text }
 				}
-			});
+				});
+			}
 		}
 
-		deleteContent(scriptContainerPointer);
-		MainLoop.instance.StartCoroutine(realDelete(container));
+        deleteContent(scriptContainerPointer);
+		MainLoop.instance.StartCoroutine(realDelete(container, silent));
 	}
 
 	private void deleteContent (GameObject container)
@@ -351,14 +360,17 @@ public class EditableContainerSystem : FSystem
 				GameObjectManager.addComponent<NeedToDelete>(container.transform.GetChild(i).gameObject, new { silent = true });
 	}
 
-	private IEnumerator realDelete(GameObject container)
+	private IEnumerator realDelete(GameObject container, bool silent)
 	{
 		yield return null;
 		GameObjectManager.unbind(container);
+		container.transform.SetParent(null);
 		Object.Destroy(container);
 		if (f_activeScriptContainer.Count > 0)
-			MainLoop.instance.StartCoroutine(setEditableSize(true));
-	}
+			yield return setEditableSize(true);
+		if (!silent)
+            GameObjectManager.addComponent<Undoable>(MainLoop.instance.gameObject);
+    }
 
 	// Rename the script window
 	// See ContainerName in ViewportScriptContainer prefab in editor
@@ -385,7 +397,9 @@ public class EditableContainerSystem : FSystem
 						{ "value", newName }
 					}
 					});
-			}
+
+                GameObjectManager.addComponent<Undoable>(MainLoop.instance.gameObject);
+            }
 			else
 			{ // Sinon on annule le changement
 				containerSelected.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text = oldName;

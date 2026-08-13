@@ -303,7 +303,7 @@ public class DialogSystem : FSystem
 			layout.preferredHeight = videoPlayer.height;
 			layout.preferredWidth = videoPlayer.width;
 		}
-		MainLoop.instance.StartCoroutine(forceScrollBarUp());
+		yield return forceScrollBarUp();
 	}
 
 	// Active ou non le bouton Ok du panel dialogue
@@ -370,46 +370,54 @@ public class DialogSystem : FSystem
 	private IEnumerator GetTextureWebRequest(Image img, string path, Dialog dialog)
 	{
 		UnityWebRequest www = UnityWebRequestTexture.GetTexture(path);
-		yield return www.SendWebRequest();
+		while (true)
+		{
+			yield return www.SendWebRequest();
 
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			Debug.Log(path+" "+www.error);
-			yield return new WaitForSeconds(0.5f);
-			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, path, dialog));
-		}
-		else
-		{
-			Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
-			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
-			// Appliquer la bonne taille à l'image
-			LayoutElement layout = img.GetComponent<LayoutElement>();
-			if (dialog.imgHeight != -1) {
-				layout.preferredHeight = dialog.imgHeight;
-				layout.preferredWidth = tex2D.width * (dialog.imgHeight / tex2D.height);
-			} else
+			if (www.result != UnityWebRequest.Result.Success)
 			{
-				layout.preferredHeight = tex2D.height;
-				layout.preferredWidth = tex2D.width;
+				Debug.Log(path + " " + www.error);
+				yield return new WaitForSeconds(0.5f);
 			}
-			MainLoop.instance.StartCoroutine(forceScrollBarUp());
+			else
+			{
+				Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
+				img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
+				// Appliquer la bonne taille à l'image
+				LayoutElement layout = img.GetComponent<LayoutElement>();
+				if (dialog.imgHeight != -1)
+				{
+					layout.preferredHeight = dialog.imgHeight;
+					layout.preferredWidth = tex2D.width * (dialog.imgHeight / tex2D.height);
+				}
+				else
+				{
+					layout.preferredHeight = tex2D.height;
+					layout.preferredWidth = tex2D.width;
+				}
+				yield return forceScrollBarUp();
+				break; // exit the loop
+            }
 		}
 	}
 
 	private IEnumerator GetAudioWebRequest(AudioSource audio, string path)
 	{
 		UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.MPEG);
-		yield return www.SendWebRequest();
+		while (true)
+		{
+			yield return www.SendWebRequest();
 
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			Debug.Log(path+" "+www.error);
-			yield return new WaitForSeconds(0.5f);
-			MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, path));
-		}
-		else
-		{
-			audio.PlayOneShot(DownloadHandlerAudioClip.GetContent(www));
+			if (www.result != UnityWebRequest.Result.Success)
+			{
+				Debug.Log(path + " " + www.error);
+				yield return new WaitForSeconds(0.5f);
+			}
+			else
+			{
+				audio.PlayOneShot(DownloadHandlerAudioClip.GetContent(www));
+				break; // exit the loop
+            }
 		}
 	}
 

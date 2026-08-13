@@ -30,6 +30,8 @@ public class HotkeySystem_wrapper : BaseWrapper
 	public UnityEngine.UI.Button buttonCopyCode;
 	public UnityEngine.UI.Button showSettings;
 	public UnityEngine.UI.Button AddContainerButton;
+	public UnityEngine.UI.Button undo;
+	public UnityEngine.UI.Button redo;
 	public System.Boolean cancelNextEscape;
 	private void Start()
 	{
@@ -61,6 +63,8 @@ public class HotkeySystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "buttonCopyCode", buttonCopyCode);
 		MainLoop.initAppropriateSystemField (system, "showSettings", showSettings);
 		MainLoop.initAppropriateSystemField (system, "AddContainerButton", AddContainerButton);
+		MainLoop.initAppropriateSystemField (system, "undo", undo);
+		MainLoop.initAppropriateSystemField (system, "redo", redo);
 		MainLoop.initAppropriateSystemField (system, "cancelNextEscape", cancelNextEscape);
 	}
 

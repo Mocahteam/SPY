@@ -107,7 +107,7 @@ public class DragDropSystem : FSystem
 				Pause = true;
 				string scriptsContent = "";
 				foreach (Transform viewportScriptContainer in editableContainers)
-					scriptsContent += exportEditableScriptToString(viewportScriptContainer.Find("ScriptContainer"), null);
+					scriptsContent += UtilityGame.exportEditableScriptToString(viewportScriptContainer.Find("ScriptContainer"), null);
 
 				// générer une trace seulement sur la scene principale
 				if (SceneManager.GetActiveScene().name == "MainScene")
@@ -355,21 +355,6 @@ public class DragDropSystem : FSystem
         }
 	}
 
-	private string exportEditableScriptToString(Transform scriptContainer, GameObject focusedArea)
-	{
-		string scriptsContent = scriptContainer.Find("Header").GetComponentInChildren<TMP_InputField>().text + " {";
-		// on ignore les fils sans Highlightable
-		for (int i = 0; i < scriptContainer.childCount; i++)
-		{
-			if (scriptContainer.GetChild(i).GetComponent<Highlightable>())
-				scriptsContent += " " + UtilityGame.exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>(), focusedArea);
-		}
-		if (scriptContainer.GetChild(scriptContainer.childCount - 1).gameObject == focusedArea)
-			scriptsContent += " ####";
-		scriptsContent += " }\n";
-		return scriptsContent;
-	}
-
 	// used by prefabs (Captors, boolean operators and drop areas)
 	public void checkHighlightDropArea(GameObject dropArea)
     {
@@ -483,7 +468,7 @@ public class DragDropSystem : FSystem
 		GameObjectManager.refresh(itemDragged);
 
 		// compute context after removing item dragged
-		string context = exportEditableScriptToString(nextBrother.GetComponentInParent<UIRootContainer>().transform, removedFromArea);
+		string context = UtilityGame.exportEditableScriptToString(nextBrother.GetComponentInParent<UIRootContainer>().transform, removedFromArea);
 
 		// exclude all UI elements that can disturb the drag from the EventSystem
 		foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
@@ -495,11 +480,13 @@ public class DragDropSystem : FSystem
 		foreach (BaseCondition condChild in itemDragged.GetComponentsInChildren<BaseCondition>(true))
 			GameObjectManager.addComponent<AddOne>(condChild.GetComponent<LibraryItemRef>().linkedTo);
 
-		// Rend le bouton d'execution actif (ou non)
-		GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
-		// générer une trace seulement sur la scene principale
+		// seulement sur la scene principale
 		if (SceneManager.GetActiveScene().name == "MainScene")
+		{
+			// Rend le bouton d'execution actif (ou non)
+			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+			// générer une trace
 			GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
 			{
 				verb = "deleted",
@@ -509,6 +496,8 @@ public class DragDropSystem : FSystem
 						{ "context", context }
 					}
 			});
+		}
+		GameObjectManager.addComponent<Undoable>(itemDragged);
 
 		eventSystem.SetSelectedGameObject(itemDragged);
 	}
@@ -575,17 +564,19 @@ public class DragDropSystem : FSystem
 				{
 					// tracer le fait que le joueur fait une erreur de compréhension de la grammaire du langage
 					string content = UtilityGame.exportBlockToString(itemDragged.GetComponent<Highlightable>());
-					string context = exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
+					string context = UtilityGame.exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
 					cancelDragging();
-					GameObjectManager.addComponent<ActionPerformedForLRS>(dropArea, new
-					{
-						verb = "tried",
-						objectType = "block",
-						activityExtensions = new Dictionary<string, string>() {
-							{ "content", content },
-							{ "context", context }
-						}
-					});
+					// seulement sur la scene principale
+                    if (SceneManager.GetActiveScene().name == "MainScene")
+                        GameObjectManager.addComponent<ActionPerformedForLRS>(dropArea, new
+						{
+							verb = "tried",
+							objectType = "block",
+							activityExtensions = new Dictionary<string, string>() {
+								{ "content", content },
+								{ "context", context }
+							}
+						});
 					return;
 				}
 
@@ -607,8 +598,10 @@ public class DragDropSystem : FSystem
 				// le processus de drag est terminé on se remet en Idle mais on ne le fait pas immediatement pour gérer le cas du drag&drop souris qui au moment du drop déclenche forcément un longClick donc on se remet en Idle une frame plus tard pour ne pas prendre en compte le prochain longClick
 				MainLoop.instance.StartCoroutine(delayIdleState());
 			}
-			// Rafraichissement de l'UI
-			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+            // seulement sur la scene principale
+            if (SceneManager.GetActiveScene().name == "MainScene")
+                // Rafraichissement de l'UI
+                GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
 			itemDragged = null;
 		}
@@ -624,7 +617,7 @@ public class DragDropSystem : FSystem
 	private bool addDraggedItemOnDropZone (GameObject dropArea)
     {
 		string content = UtilityGame.exportBlockToString(itemDragged.GetComponent<Highlightable>());
-		string context = exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
+		string context = UtilityGame.exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
 
 		if (!UtilityGame.addItemOnDropArea(itemDragged, dropArea))
 		{
@@ -645,8 +638,6 @@ public class DragDropSystem : FSystem
 				}
 		}
 
-		GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
-
 		// update limit bloc
 		foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>(true))
 			GameObjectManager.addComponent<Dropped>(actChild.gameObject);
@@ -656,9 +647,13 @@ public class DragDropSystem : FSystem
 		// Lance le son de dépôt du block d'action
 		audioSource.PlayOneShot(Resources.Load("Sound/AddActionSound") as AudioClip);
 
-		// générer une trace seulement sur la scene principale
+		// seulement sur la scene principale
 		if (SceneManager.GetActiveScene().name == "MainScene")
-			GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
+        {
+            // Rend le bouton d'execution actif (ou non)
+            GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+            // générer une trace
+            GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
 			{
 				verb = "inserted",
 				objectType = "block",
@@ -667,8 +662,11 @@ public class DragDropSystem : FSystem
 					{ "context", context }
 				}
 			});
+		}
 
-		return true;
+        GameObjectManager.addComponent<Undoable>(itemDragged);
+
+        return true;
 	}
 
 	private IEnumerator delaySlotSelection(ReplacementSlot rs)
@@ -701,26 +699,33 @@ public class DragDropSystem : FSystem
 			elementToDelete.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 			GameObjectManager.refresh(elementToDelete);
 			// compute context after removing item dragged
-			string context = exportEditableScriptToString(nextBrother.gameObject.GetComponentInParent<UIRootContainer>(true).transform, removedFromArea);
+			string context = UtilityGame.exportEditableScriptToString(nextBrother.gameObject.GetComponentInParent<UIRootContainer>(true).transform, removedFromArea);
 
 			//On associe à l'élément le component ResetBlocLimit pour déclancher le script de destruction de l'élément
 			GameObjectManager.addComponent<ResetBlocLimit>(elementToDelete);
-			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+            // Rend le bouton d'execution actif (ou non) seulement sur la scene principale
+            if (SceneManager.GetActiveScene().name == "MainScene")
+                GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
 			NeedToDelete ntd = elementToDelete.GetComponent<NeedToDelete>();
-			// générer une trace seulement sur la scene principale
-			if ((ntd == null || !ntd.silent) && SceneManager.GetActiveScene().name == "MainScene")
-			{
-				GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+			if ((ntd == null || !ntd.silent))
+            {
+                // générer une trace seulement sur la scene principale
+                if (SceneManager.GetActiveScene().name == "MainScene")
 				{
-					verb = "deleted",
-					objectType = "block",
-					activityExtensions = new Dictionary<string, string>() {
+					GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+					{
+						verb = "deleted",
+						objectType = "block",
+						activityExtensions = new Dictionary<string, string>() {
 						{ "content", content },
 						{ "context", context }
 					}
-				});
-			}
+					});
+                }
+
+                GameObjectManager.addComponent<Undoable>(MainLoop.instance.gameObject);
+            }
 
 			eventSystem.SetSelectedGameObject(nextBrother.gameObject);
             // Si le frère suivant l'objet supprimé contient une dropzone ou un replacementSlot de type BaseElement, on le définit comme la dropzone par défaut pour le double click
@@ -770,8 +775,9 @@ public class DragDropSystem : FSystem
 					GameObjectManager.addComponent<ScrollOn>(itemDragged);
 					MainLoop.instance.StartCoroutine(UtilityGame.pulseItem(itemDragged));
 
-					// Rafraichissement de l'UI
-					GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+                    // Rafraichissement de l'UI uniquement sur la scene principale
+                    if (SceneManager.GetActiveScene().name == "MainScene")
+						GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 					itemDragged = null;
 				}
 			}
@@ -804,21 +810,26 @@ public class DragDropSystem : FSystem
 		}
 		forBlock.GetComponent<ForControl>().nbFor = res;
 		// compute context
-		string context = exportEditableScriptToString(forBlock.GetComponentInParent<UIRootContainer>().transform, forBlock);
+		string context = UtilityGame.exportEditableScriptToString(forBlock.GetComponentInParent<UIRootContainer>().transform, forBlock);
 
-		// générer une trace seulement sur la scene principale
-		if (res != oldValue && SceneManager.GetActiveScene().name == "MainScene")
-		{
-			GameObjectManager.addComponent<ActionPerformedForLRS>(forBlock, new
+		if (res != oldValue)
+        {
+            // générer une trace seulement sur la scene principale
+            if (SceneManager.GetActiveScene().name == "MainScene")
 			{
-				verb = "modified",
-				objectType = "block",
-				activityExtensions = new Dictionary<string, string>() {
-				{ "context", context },
-				{ "oldValue", oldValue.ToString()},
-				{ "value", res.ToString()}
-			}
-			});
-		}
+				GameObjectManager.addComponent<ActionPerformedForLRS>(forBlock, new
+				{
+					verb = "modified",
+					objectType = "block",
+					activityExtensions = new Dictionary<string, string>() {
+						{ "context", context },
+						{ "oldValue", oldValue.ToString()},
+						{ "value", res.ToString()}
+					}
+				});
+            }
+
+            GameObjectManager.addComponent<Undoable>(forBlock);
+        }
 	}
 }

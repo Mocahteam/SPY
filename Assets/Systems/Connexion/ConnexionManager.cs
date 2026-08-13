@@ -99,7 +99,7 @@ public class ConnexionManager : FSystem
 			GBL_Interface.userUUID = "";
 		}
 
-		MainLoop.instance.StartCoroutine(waitLocalizationLoaded());
+		MainLoop.instance.StartCoroutine(waitLocalizationLoadedAndContinue());
 
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 			ShowHtmlImportSettings();
@@ -107,7 +107,7 @@ public class ConnexionManager : FSystem
 		Pause = true;
 	}
 
-	private IEnumerator waitLocalizationLoaded()
+	private IEnumerator waitLocalizationLoadedAndContinue()
 	{
 		while (f_localizationLoaded.Count == 0)
 			yield return null;
@@ -116,17 +116,34 @@ public class ConnexionManager : FSystem
 		{
 			gameData.levels = new Dictionary<string, XmlNode>();
 			gameData.scenarios = new Dictionary<string, WebGlScenario>();
-			GetScenariosAndLevels();
-		}
+
+            logs.text = "";
+            progress.text = "0%";
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            {
+                // Load scenario and levels from server
+                webGL_fileToLoad += 2;
+                MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
+                MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
+            }
+            else
+            {
+                // Load scenario and levels from disk
+                // explore streaming asstets path
+                yield return exploreLevelsAndScenarios(Application.streamingAssetsPath);
+                // explore persistent data path
+                yield return exploreLevelsAndScenarios(Application.persistentDataPath);
+            }
+        }
 		// check if we have to load competencies (required for level analysis)
 		if (gameData.rawReferentials.referentials.Count == 0)
 		{
 			webGL_fileToLoad++;
 			string referentialsPath = new Uri(Application.streamingAssetsPath + "/Competencies/competenciesReferential.json").AbsoluteUri;
-			MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath));
+			yield return GetCompetenciesWebRequest(referentialsPath);
 		}
 		// wait level loading
-		MainLoop.instance.StartCoroutine(WaitLoadingData());
+		yield return WaitLoadingData();
 	}
 
 	private IEnumerator WaitLoadingData()
@@ -167,97 +184,78 @@ public class ConnexionManager : FSystem
 			// Disable Loading screen
 			GameObjectManager.setGameObjectState(loadingScreen, false);
 
-		/*if (Application.isEditor)
+		if (Application.isEditor)
 		{
 			SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
 			SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
-		}*/
-	}
-
-	private void GetScenariosAndLevels()
-	{
-		logs.text = "";
-		progress.text = "0%";
-		if (Application.platform == RuntimePlatform.WebGLPlayer)
-		{
-			// Load scenario and levels from server
-			webGL_fileToLoad += 2;
-			MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
-			MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
-		}
-		else
-		{
-			// Load scenario and levels from disk
-			// explore streaming asstets path
-			MainLoop.instance.StartCoroutine(exploreLevelsAndScenarios(Application.streamingAssetsPath));
-			// explore persistent data path
-			MainLoop.instance.StartCoroutine(exploreLevelsAndScenarios(Application.persistentDataPath));
 		}
 	}
 
 	private IEnumerator GetScenarioWebRequest()
-	{
-		string uri = new Uri(Application.streamingAssetsPath + "/WebGlData/ScenarioList.json").AbsoluteUri;
-		UnityWebRequest www = UnityWebRequest.Get(uri);
-		yield return www.SendWebRequest();
+    {
+        string uri = new Uri(Application.streamingAssetsPath + "/WebGlData/ScenarioList.json").AbsoluteUri;
+        UnityWebRequest www = UnityWebRequest.Get(uri);
+        while (true)
+		{
+			yield return www.SendWebRequest();
 
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
-			Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + uri);
-			yield return new WaitForSeconds(1f);
-			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
+			if (www.result != UnityWebRequest.Result.Success)
 			{
-				logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
-				MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
+				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
+				Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + uri);
+                yield return new WaitForSeconds(1f);
+                if (webGL_fileLoaded < webGL_fileToLoad)
+					logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
+				GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
 			}
-			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
-		}
-		else
-		{
-			webGL_fileLoaded++;
-			logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n" + logs.text;
-			string scenarioJson = www.downloadHandler.text;
-			WebGlScenarioList scenarioListRaw = JsonConvert.DeserializeObject<WebGlScenarioList>(scenarioJson);
-			foreach (WebGlScenario scenarioRaw in scenarioListRaw.scenarios)
+			else
 			{
-				gameData.scenarios[scenarioRaw.key] = scenarioRaw;
-				foreach (DataLevel levelPath in scenarioRaw.levels)
+				webGL_fileLoaded++;
+				logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n" + logs.text;
+				string scenarioJson = www.downloadHandler.text;
+				WebGlScenarioList scenarioListRaw = JsonConvert.DeserializeObject<WebGlScenarioList>(scenarioJson);
+				foreach (WebGlScenario scenarioRaw in scenarioListRaw.scenarios)
 				{
-					levelPath.filePath = new Uri(Application.streamingAssetsPath + "/" + levelPath.filePath).AbsoluteUri;
+					gameData.scenarios[scenarioRaw.key] = scenarioRaw;
+					foreach (DataLevel levelPath in scenarioRaw.levels)
+					{
+						levelPath.filePath = new Uri(Application.streamingAssetsPath + "/" + levelPath.filePath).AbsoluteUri;
+					}
 				}
-			}
+				break; // exit the loop
+            }
 		}
 	}
 
 	private IEnumerator GetLevelsWebRequest()
-	{
-		string uri = new Uri(Application.streamingAssetsPath + "/WebGlData/LevelsList.json").AbsoluteUri;
-		UnityWebRequest www = UnityWebRequest.Get(uri);
-		yield return www.SendWebRequest();
+    {
+        string uri = new Uri(Application.streamingAssetsPath + "/WebGlData/LevelsList.json").AbsoluteUri;
+        UnityWebRequest www = UnityWebRequest.Get(uri);
+        while (true)
+		{
+			yield return www.SendWebRequest();
 
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
-			Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + uri);
-			yield return new WaitForSeconds(1f);
-			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
+			if (www.result != UnityWebRequest.Result.Success)
 			{
-				logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
-				MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
+				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
+				Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + uri);
+				yield return new WaitForSeconds(1f);
+				if (webGL_fileLoaded < webGL_fileToLoad)
+					logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
+				GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
 			}
-			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
-		}
-		else
-		{
-			webGL_fileLoaded++;
-			logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n" + logs.text;
-			string levelsJson = www.downloadHandler.text;
-			WebGlScenario levelsListRaw = JsonUtility.FromJson<WebGlScenario>(levelsJson);
-			webGL_fileToLoad += levelsListRaw.levels.Count;
-			// try to load all levels
-			foreach (DataLevel levelRaw in levelsListRaw.levels)
-				MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(new Uri(Application.streamingAssetsPath + "/" + levelRaw.filePath).AbsoluteUri));
+			else
+			{
+				webGL_fileLoaded++;
+				logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n" + logs.text;
+				string levelsJson = www.downloadHandler.text;
+				WebGlScenario levelsListRaw = JsonUtility.FromJson<WebGlScenario>(levelsJson);
+				webGL_fileToLoad += levelsListRaw.levels.Count;
+                // try to load all levels in parallel
+                foreach (DataLevel levelRaw in levelsListRaw.levels)
+					MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(new Uri(Application.streamingAssetsPath + "/" + levelRaw.filePath).AbsoluteUri));
+				break; // exit the loop
+            }
 		}
 	}
 
@@ -267,83 +265,79 @@ public class ConnexionManager : FSystem
 		string[] files = Directory.GetFiles(path, "*.xml");
 		webGL_fileToLoad += files.Length;
 		foreach (string fileName in files)
-		{
-			yield return null;
-			MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest("file://" + fileName));
-		}
+			yield return GetLevelOrScenario_WebRequest("file://" + fileName);
 
-		// explore subdirectories
-		foreach (string directory in Directory.GetDirectories(path))
-		{
-			yield return null;
-			MainLoop.instance.StartCoroutine(exploreLevelsAndScenarios(directory));
-		}
+        // explore subdirectories
+        foreach (string directory in Directory.GetDirectories(path))
+			yield return exploreLevelsAndScenarios(directory);
 	}
 
 	private IEnumerator GetLevelOrScenario_WebRequest(string uri)
 	{
 		UnityWebRequest www = UnityWebRequest.Get(uri);
-		yield return www.SendWebRequest();
+		while (true)
+		{
+			yield return www.SendWebRequest();
 
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
-			Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + uri);
-			yield return new WaitForSeconds(1f);
-			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
+			if (www.result != UnityWebRequest.Result.Success)
 			{
-				logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
-				MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(uri));
+				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
+				Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + uri);
+				yield return new WaitForSeconds(1f);
+				if (webGL_fileLoaded < webGL_fileToLoad)
+					logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
+				GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
 			}
-			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
-		}
-		else
-		{
-			webGL_fileLoaded++;
-			progress.text = Mathf.Floor(((float)webGL_fileLoaded / webGL_fileToLoad) * 100) + "%";
-			logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n" + logs.text;
-			string xmlContent = www.downloadHandler.text;
-			try
+			else
 			{
-				UtilityLobby.LoadLevelOrScenario(gameData, uri, xmlContent);
-			}
-			catch (Exception e)
-			{
-				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + " => " + e.Message + "</color>\n" + logs.text;
-			}
+				webGL_fileLoaded++;
+				progress.text = Mathf.Floor(((float)webGL_fileLoaded / webGL_fileToLoad) * 100) + "%";
+				logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n" + logs.text;
+				string xmlContent = www.downloadHandler.text;
+				try
+				{
+					UtilityLobby.LoadLevelOrScenario(gameData, uri, xmlContent);
+				}
+				catch (Exception e)
+				{
+					logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + " => " + e.Message + "</color>\n" + logs.text;
+				}
+				break; // exit the loop
+            }
 		}
 	}
 
 	private IEnumerator GetCompetenciesWebRequest(string referentialsPath)
 	{
 		UnityWebRequest www = UnityWebRequest.Get(referentialsPath);
-		yield return www.SendWebRequest();
+		while (true)
+		{
+			yield return www.SendWebRequest();
 
-		if (www.result != UnityWebRequest.Result.Success)
-		{
-			logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath + "</color>\n" + logs.text;
-			Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath);
-			yield return new WaitForSeconds(1f);
-			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not force launching
+			if (www.result != UnityWebRequest.Result.Success)
 			{
-				logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + referentialsPath + "</color>\n" + logs.text;
-				MainLoop.instance.StartCoroutine(GetCompetenciesWebRequest(referentialsPath));
-			}
-			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
-		}
-		else
-		{
-			webGL_fileLoaded++;
-			Localization loc = gameData.GetComponent<Localization>();
-			logs.text = "<color=\"green\">(" + loc.localization[1] + ") " + referentialsPath + "</color>\n" + logs.text;
-			try
-			{
-				gameData.rawReferentials = JsonUtility.FromJson<RawListReferential>(www.downloadHandler.text);
-			}
-			catch (Exception e)
-			{
-				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath + " => " + Utility.getFormatedText(loc.localization[7], e.Message) + "</color>\n" + logs.text;
+				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath + "</color>\n" + logs.text;
 				Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath);
+				yield return new WaitForSeconds(1f);
+				if (webGL_fileLoaded < webGL_fileToLoad)
+					logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + referentialsPath + "</color>\n" + logs.text;
+				GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
+			}
+			else
+			{
+				webGL_fileLoaded++;
+				Localization loc = gameData.GetComponent<Localization>();
+				logs.text = "<color=\"green\">(" + loc.localization[1] + ") " + referentialsPath + "</color>\n" + logs.text;
+				try
+				{
+					gameData.rawReferentials = JsonUtility.FromJson<RawListReferential>(www.downloadHandler.text);
+				}
+				catch (Exception e)
+				{
+					logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath + " => " + Utility.getFormatedText(loc.localization[7], e.Message) + "</color>\n" + logs.text;
+					Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath);
+				}
+				break;
 			}
 		}
 	}
@@ -364,39 +358,36 @@ public class ConnexionManager : FSystem
 		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession=" + formatedString);
 		logs.text = "";
 		progress.text = "0%";
-		yield return www.SendWebRequest();
-
-		if (www.result != UnityWebRequest.Result.Success)
+		while (true)
 		{
-			logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[0], formatedString) + "</color>\n" + logs.text;
-			Debug.Log(Utility.getFormatedText(logs.GetComponent<Localization>().localization[0], formatedString));
-			yield return new WaitForSeconds(2f);
-			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
-			{
-				logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[1], formatedString) + "</color>\n" + logs.text;
-				MainLoop.instance.StartCoroutine(FindAvailableSessionId());
-			}
-			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
-		}
-		else
-		{
-			// If content is "", means this sessionId is available (no progression data associated to this sessionId)
-			if (www.downloadHandler.text == "")
-			{
-				webGL_fileLoaded++;
-				GBL_Interface.playerName = formatedString;
-				GBL_Interface.userUUID = formatedString;
+			yield return www.SendWebRequest();
 
-				foreach (GameObject sID in f_sessionId)
-					sID.GetComponent<TMP_Text>().text = string.Join(" ", formatedString.ToCharArray());
-
-				// enregistrer cet ID dans la BD pour éviter les collisions
-				GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
+			if (www.result != UnityWebRequest.Result.Success)
+			{
+				logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[0], formatedString) + "</color>\n" + logs.text;
+				Debug.Log(Utility.getFormatedText(logs.GetComponent<Localization>().localization[0], formatedString));
+				yield return new WaitForSeconds(2f);
+				if (webGL_fileLoaded < webGL_fileToLoad)
+					logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[1], formatedString) + "</color>\n" + logs.text;
+				GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
 			}
 			else
 			{
-				// means this sessionId is already used, try to find another
-				MainLoop.instance.StartCoroutine(FindAvailableSessionId());
+				// If content is "", means this sessionId is available (no progression data associated to this sessionId)
+				if (www.downloadHandler.text == "")
+				{
+					webGL_fileLoaded++;
+					GBL_Interface.playerName = formatedString;
+					GBL_Interface.userUUID = formatedString;
+
+					foreach (GameObject sID in f_sessionId)
+						sID.GetComponent<TMP_Text>().text = string.Join(" ", formatedString.ToCharArray());
+
+					// enregistrer cet ID dans la BD pour éviter les collisions
+					GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
+					break; // exit the loop
+                }
+				// means this sessionId is already used, try to find another in next iteration
 			}
 		}
 	}
@@ -442,74 +433,75 @@ public class ConnexionManager : FSystem
 		UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php?idSession=" + idSession);
 		logs.text = "";
 		progress.text = "0%";
-		yield return www.SendWebRequest();
-		Localization loc = gameData.GetComponent<Localization>();
-		if (www.result != UnityWebRequest.Result.Success)
+		while (true)
 		{
-			logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession) + "</color>\n" + logs.text;
-			Debug.Log(Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession));
-			yield return new WaitForSeconds(1f);
-			if (webGL_fileLoaded < webGL_fileToLoad) // recursive call while player does not cancel loading
+			yield return www.SendWebRequest();
+			Localization loc = gameData.GetComponent<Localization>();
+			if (www.result != UnityWebRequest.Result.Success)
 			{
-				logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[3], idSession) + "</color>\n" + logs.text;
-				MainLoop.instance.StartCoroutine(GetProgressionWebRequest(idSession));
-			}
-			GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
-		}
-		else
-		{
-			webGL_fileLoaded++;
-			if (www.downloadHandler.text == "")
-			{
-				// Unable to retrieve progress data
-				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[16], idSession), OkButton = loc.localization[5], CancelButton = loc.localization[0], call = localCallback });
+				logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession) + "</color>\n" + logs.text;
+				Debug.Log(Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession));
+				yield return new WaitForSeconds(1f);
+				if (webGL_fileLoaded < webGL_fileToLoad)
+					logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[3], idSession) + "</color>\n" + logs.text;
+				GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
 			}
 			else
 			{
-				string[] stringSeparators = new string[] { "#SEP#" };
-				string[] tokens = www.downloadHandler.text.Split(stringSeparators, StringSplitOptions.None);
-				if (tokens.Length != 9)
+				webGL_fileLoaded++;
+				if (www.downloadHandler.text == "")
 				{
-					// Session corrupted, ask to enter a new session code.
+					// Unable to retrieve progress data
 					localCallback = null;
-					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[17], OkButton = loc.localization[5], CancelButton = loc.localization[0], call = localCallback });
+					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[16], idSession), OkButton = loc.localization[5], CancelButton = loc.localization[0], call = localCallback });
 				}
 				else
 				{
-					// Session successfully loaded
-					Debug.Log(www.downloadHandler.text);
-					userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[0]);
-					if (userData.progression == null)
-						userData.progression = new Dictionary<string, int>();
-					userData.highScore = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[1]);
-					if (userData.highScore == null)
-						userData.highScore = new Dictionary<string, int>();
-					userData.currentScenario = tokens[2];
-					int levelToContinue;
-					if (!Int32.TryParse(tokens[3], out levelToContinue))
-						levelToContinue = -1;
-					userData.levelToContinue = levelToContinue;
-					userData.birthYear = tokens[4];
-					userData.isTeacher = tokens[5] == "1";
-					// Si le joueur n'a pas touché aux paramètres (pas d'import de settings et pas de modification via l'UI) on charge le jeu de paramètre de son profil, sinon on saute cette étape pour garder ces choix immédiats
-					if (tokens[6] != "{}" && !SettingsManager.instance.settingsUpdated)
+					string[] stringSeparators = new string[] { "#SEP#" };
+					string[] tokens = www.downloadHandler.text.Split(stringSeparators, StringSplitOptions.None);
+					if (tokens.Length != 9)
 					{
-						SettingsManager.instance.importSettings(tokens[6]); // => permet de mettre à jour les PlayerPrefs à partir des nouvelles valeurs de manière à ce qu'au chargement de la scène, les bons settings soient pris en compte
+						// Session corrupted, ask to enter a new session code.
+						localCallback = null;
+						GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[17], OkButton = loc.localization[5], CancelButton = loc.localization[0], call = localCallback });
 					}
-					userData.unlockedAvatars = JsonConvert.DeserializeObject<List<int>>(tokens[7]);
-					if (userData.unlockedAvatars == null)
-						userData.unlockedAvatars = new List<int>();
-					int avatarSelected;
-					if (!Int32.TryParse(tokens[8], out avatarSelected))
-						avatarSelected = 2; // Le troisième est le robot non genré
-					userData.avatarSelected = avatarSelected;
-					userData.newAvatarAvailable = -1;
-					GBL_Interface.playerName = idSession;
-					GBL_Interface.userUUID = idSession;
-					GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });
-				}
-			}
+					else
+					{
+						// Session successfully loaded
+						Debug.Log(www.downloadHandler.text);
+						userData.progression = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[0]);
+						if (userData.progression == null)
+							userData.progression = new Dictionary<string, int>();
+						userData.highScore = JsonConvert.DeserializeObject<Dictionary<string, int>>(tokens[1]);
+						if (userData.highScore == null)
+							userData.highScore = new Dictionary<string, int>();
+						userData.currentScenario = tokens[2];
+						int levelToContinue;
+						if (!Int32.TryParse(tokens[3], out levelToContinue))
+							levelToContinue = -1;
+						userData.levelToContinue = levelToContinue;
+						userData.birthYear = tokens[4];
+						userData.isTeacher = tokens[5] == "1";
+						// Si le joueur n'a pas touché aux paramètres (pas d'import de settings et pas de modification via l'UI) on charge le jeu de paramètre de son profil, sinon on saute cette étape pour garder ces choix immédiats
+						if (tokens[6] != "{}" && !SettingsManager.instance.settingsUpdated)
+						{
+							SettingsManager.instance.importSettings(tokens[6]); // => permet de mettre à jour les PlayerPrefs à partir des nouvelles valeurs de manière à ce qu'au chargement de la scène, les bons settings soient pris en compte
+						}
+						userData.unlockedAvatars = JsonConvert.DeserializeObject<List<int>>(tokens[7]);
+						if (userData.unlockedAvatars == null)
+							userData.unlockedAvatars = new List<int>();
+						int avatarSelected;
+						if (!Int32.TryParse(tokens[8], out avatarSelected))
+							avatarSelected = 2; // Le troisième est le robot non genré
+						userData.avatarSelected = avatarSelected;
+						userData.newAvatarAvailable = -1;
+						GBL_Interface.playerName = idSession;
+						GBL_Interface.userUUID = idSession;
+						GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });
+                    }
+                }
+                break; // exit the loop
+            }
 		}
 	}
 
