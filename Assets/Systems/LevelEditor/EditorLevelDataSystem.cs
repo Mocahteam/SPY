@@ -300,11 +300,3 @@ public class EditorLevelDataSystem : FSystem {
 			score2Input.text = newData;
 	}
 }
-
-public enum BlockCategory
-{
-	Action = 0,
-	Control = 1,
-	Operator = 2,
-	Sensor = 3
-}

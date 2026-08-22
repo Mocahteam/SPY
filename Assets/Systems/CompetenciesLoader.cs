@@ -1,6 +1,5 @@
 using FYFY;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 // Charge chaque compétence en GameObject

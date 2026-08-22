@@ -26,11 +26,6 @@ public class OpenFileSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "onLevelSelected", go);
 	}
 
-	public void resetFileData()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "resetFileData", null);
-	}
-
 	public void loadLevel()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "loadLevel", null);

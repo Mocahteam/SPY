@@ -84,14 +84,6 @@ public class OpenFileSystem : FSystem {
 		selectedLevelGO = go;
 	}
 
-	// See New GO in MenuCanvas
-	public void resetFileData()
-    {
-		dataLevel.data.missionName = "";
-		dataLevel.data.filePath = "";
-		dataLevel.data.overridedDialogs = new List<Dialog>();
-	}
-
 	// See LoadButton GameObject
 	public void loadLevel()
     {

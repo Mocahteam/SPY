@@ -9,7 +9,6 @@ public class HotkeySystem_wrapper : BaseWrapper
 	public UnityEngine.UI.Button buttonPause;
 	public UnityEngine.UI.Button buttonNextStep;
 	public UnityEngine.UI.Button buttonContinue;
-	public UnityEngine.UI.Button buttonSpeed;
 	public UnityEngine.UI.Button buttonStop;
 	public UnityEngine.UI.Button cameraSwitchView;
 	public UnityEngine.EventSystems.EventTrigger cameraRotateTop;
@@ -42,7 +41,6 @@ public class HotkeySystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "buttonPause", buttonPause);
 		MainLoop.initAppropriateSystemField (system, "buttonNextStep", buttonNextStep);
 		MainLoop.initAppropriateSystemField (system, "buttonContinue", buttonContinue);
-		MainLoop.initAppropriateSystemField (system, "buttonSpeed", buttonSpeed);
 		MainLoop.initAppropriateSystemField (system, "buttonStop", buttonStop);
 		MainLoop.initAppropriateSystemField (system, "cameraSwitchView", cameraSwitchView);
 		MainLoop.initAppropriateSystemField (system, "cameraRotateTop", cameraRotateTop);

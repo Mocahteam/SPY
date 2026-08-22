@@ -4,7 +4,6 @@ using UnityEngine.Localization.Settings;
 using System.Collections;
 using System.Runtime.InteropServices;
 using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// This system is in charge to load the correct localization

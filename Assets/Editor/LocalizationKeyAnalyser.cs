@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Localization;
-using UnityEngine.Localization.Tables;
-using UnityEngine.Localization.Settings;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

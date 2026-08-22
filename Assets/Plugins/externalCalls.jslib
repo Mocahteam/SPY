@@ -105,10 +105,6 @@ mergeInto(LibraryManager.library, {
 		document.tryToCopy(content);
 	},
 	
-	TryToPaste: function(){
-		document.tryToPaste();
-	},
-	
 	ExitFullScreen: function (){
 		document.exitFullScreen();
 	},

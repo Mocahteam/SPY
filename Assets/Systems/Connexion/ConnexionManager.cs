@@ -27,7 +27,6 @@ public class ConnexionManager : FSystem
 	public TMP_Text logs;
 	public TMP_Text progress;
 	public TMP_Text SPYVersion;
-	public CurrentSettingsValues currentSettingsValues;
 
 	private int webGL_fileLoaded = 0;
 	private int webGL_fileToLoad = 0;

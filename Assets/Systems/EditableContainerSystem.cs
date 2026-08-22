@@ -4,7 +4,6 @@ using TMPro;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 /// Ce systéme gére tous les éléments d'édition des agents par l'utilisateur.
@@ -61,6 +60,7 @@ public class EditableContainerSystem : FSystem
 	{
 		instance = this;
 	}
+
 	protected override void onStart()
 	{
 

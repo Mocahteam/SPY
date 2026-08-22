@@ -7,6 +7,7 @@ public class DragDropSystemBridge : MonoBehaviour
     {
         DragDropSystem.instance.checkSpecialClick(e);
     }
+
     public void checkRightClickForDelete(BaseEventData e)
     {
         // On verifie si c'est bien un clic-droit
@@ -55,6 +56,7 @@ public class DragDropSystemBridge : MonoBehaviour
     {
         DragDropSystem.instance.onlyPositiveInteger(gameObject, newValue);
     }
+
     public void setNextFocusedGameObject(GameObject go)
     {
         EventSystem.current.SetSelectedGameObject(go);

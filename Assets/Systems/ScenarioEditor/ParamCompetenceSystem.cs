@@ -9,7 +9,6 @@ using System;
 using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using System.Collections;
-using UnityEngine.EventSystems;
 
 public class ParamCompetenceSystem : FSystem
 {
@@ -36,7 +35,6 @@ public class ParamCompetenceSystem : FSystem
 	public Button addToScenario;
 	public GameObject savingPanel;
 	public GameObject editBriefingPanel;
-	public GameObject briefingItemPrefab;
 	public TMP_InputField scenarioAbstract;
 	public TMP_InputField scenarioName;
 	public GameObject loadingScenarioContent;

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using FYFY;
-using FYFY_plugins.CollisionManager;
 using System.Collections;
 
 /// <summary>
@@ -14,8 +13,6 @@ public class MoveSystem : FSystem {
 
 	public float turnSpeed;
 	public float moveSpeed;
-	public AudioClip footSlow;
-	public AudioClip footSpeed;
 	private GameData gameData;
 
 	public static MoveSystem instance;

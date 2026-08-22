@@ -2,7 +2,6 @@ using FYFY;
 using System.Xml;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Localization.Components;
 using UnityEngine.Localization.Settings;
 using static SaveContent;
 

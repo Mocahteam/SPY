@@ -1,7 +1,5 @@
 using UnityEngine;
 using FYFY;
-using TMPro;
-using System.Collections.Generic;
 
 /// <summary>
 /// This system enables to manage game mode: playmode vs editmode

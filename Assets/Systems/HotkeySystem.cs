@@ -1,7 +1,6 @@
 using FYFY;
 using System.Runtime.InteropServices;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -21,7 +20,6 @@ public class HotkeySystem : FSystem
 	public Button buttonPause;
 	public Button buttonNextStep;
 	public Button buttonContinue;
-	public Button buttonSpeed;
 	public Button buttonStop;
 
 	public Button cameraSwitchView;
@@ -47,12 +45,6 @@ public class HotkeySystem : FSystem
 	public Button AddContainerButton;
 	public Button undo;
 	public Button redo;
-	
-	[DllImport("__Internal")]
-	private static extern void TryToCopy(string txt); // call javascript => send txt to html to copy in clipboard
-
-	[DllImport("__Internal")]
-	private static extern string TryToPaste(); // call javascript => get txt from html clipboard
 
 	private EventSystem eventSystem;
 
@@ -305,28 +297,6 @@ public class HotkeySystem : FSystem
 			else if (redo != null && redo.gameObject.activeInHierarchy && redo.interactable && redo_act.WasPressedThisFrame())
 				redo.onClick.Invoke();
         }
-		/* Gestion du copier-coller dans les InputField (visiblement les versions des navigateurs au moment de ce test et la version d'Unity 6.3 rendent le copier_coller fonctionnel en natif) 
-		else if (eventSystem.currentSelectedGameObject != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused && Application.platform == RuntimePlatform.WebGLPlayer)
-		{
-			TMP_InputField focused_inputField = eventSystem.currentSelectedGameObject.GetComponent<TMP_InputField>();
-			int start = Mathf.Min(focused_inputField.selectionStringAnchorPosition, focused_inputField.selectionStringFocusPosition);
-			int end = Mathf.Max(focused_inputField.selectionStringAnchorPosition, focused_inputField.selectionStringFocusPosition);
-			int length = end - start;
-
-			if (copy_act.WasPressedThisFrame())
-			{
-				if (length > 0)
-				{
-					TryToCopy(focused_inputField.text.Substring(start, length));
-					// cancel internal copy
-					GUIUtility.systemCopyBuffer = "";
-				}
-			}
-			else if (paste_act.WasPressedThisFrame())
-			{
-				TryToPaste();
-			}
-		}*/
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système

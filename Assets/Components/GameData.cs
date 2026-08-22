@@ -10,7 +10,6 @@ public class GameData : MonoBehaviour {
 	public int levelToLoad; // level to load inside the selected scenario
 	public int[] levelToLoadScore; //levelToLoadScore[0] = best score (3 stars) ; levelToLoadScore[1] = medium score (2 stars)
 	public Dictionary<string, int> actionBlockLimit; //Is block available in library?
-	public string scoreKey = "score";
 	public int totalStep;
 	public int totalActionBlocUsed;
 	public int totalExecute;

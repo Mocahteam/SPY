@@ -1,16 +1,5 @@
 using UnityEngine;
 
-public class DialogPanel : MonoBehaviour
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+public class DialogPanel : MonoBehaviour{
+    // Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
 }

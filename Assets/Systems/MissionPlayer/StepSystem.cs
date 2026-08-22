@@ -39,8 +39,6 @@ public class StepSystem : FSystem {
     private bool newStepAskedByPlayer;
     private bool needPause;
 
-    public RectTransform editableContainers;
-
     protected override void onStart()
     {
         nbStep = 0;
