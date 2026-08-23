@@ -16,7 +16,9 @@ public class HighLightSystem : FSystem {
 
 	public GameObject dialogPanel;
 
-	private InputAction click;
+	public AudioClip activationSound;
+
+    private InputAction click;
 
 	protected override void onStart()
     {
@@ -37,7 +39,7 @@ public class HighLightSystem : FSystem {
 		{
 			GameObject go = highLightedItem.GetComponent<ScriptRef>().executablePanel;
 			GameObjectManager.setGameObjectState(go,!go.activeInHierarchy);
-			dialogPanel.GetComponentInParent<AudioSource>().PlayOneShot(Resources.Load("Sound/ActivationSound") as AudioClip);
+			dialogPanel.GetComponentInParent<AudioSource>().PlayOneShot(activationSound);
 		}
 	}
 

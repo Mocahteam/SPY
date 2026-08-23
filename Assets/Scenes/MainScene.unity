@@ -4214,6 +4214,7 @@ MonoBehaviour:
   mainCanvas: {fileID: 1410401867}
   audioSource: {fileID: 1410401872}
   editableContainers: {fileID: 711068116}
+  AddActionSound: {fileID: 8300000, guid: 391a07f849ae449e6a99b6995c1df457, type: 3}
 --- !u!114 &361349220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4264,6 +4265,23 @@ MonoBehaviour:
   - {fileID: 5823726797354950846, guid: 6f7658faf3e7bb749aaa90fa6db62fb8, type: 3}
   - {fileID: 8019827225535369381, guid: dd90bcab93fedb3438cb5ac2936ad712, type: 3}
   - {fileID: 7809618243991355044, guid: 17b95e905db0d6f49bb232e39c500749, type: 3}
+  dronePrefab: {fileID: 1889490105086536494, guid: 27d817d46cf73f8468ea8a4c2670fcda,
+    type: 3}
+  executablePanelPrefab: {fileID: 985497467624145033, guid: d42c745e2345fd4488c7797ccd137438,
+    type: 3}
+  doorPrefab: {fileID: 2214813453397413261, guid: c597200862495be48a0fcaf45e220594,
+    type: 3}
+  activableConsolePrefab: {fileID: 1503570291079590, guid: 297d5153b1cde19478278e5691f77cc7,
+    type: 3}
+  teleporterSpawnPrefab: {fileID: 100000, guid: 60ea8a8ee79fc564294d0a35f8b0ae4a,
+    type: 3}
+  teleporterExitPrefab: {fileID: 100000, guid: 931a75669ffc1214f93c0d969895e8a1, type: 3}
+  coinPrefab: {fileID: 8004794425240735006, guid: cfc7921064f280a449cc3672a808d229,
+    type: 3}
+  cubeGroundPrefab: {fileID: 4683334404155098945, guid: 1f4bd10575e8520439ce03fde955cbd0,
+    type: 3}
+  cubeWallPrefab: {fileID: 6061857430448218173, guid: c38542e1d28d522489a9074b62e6f7c3,
+    type: 3}
 --- !u!114 &361349221
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4338,6 +4356,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playButtonAmount: {fileID: 2143097543}
   endPanel: {fileID: 1306532945}
+  LoseSound: {fileID: 8300000, guid: a950dd5a78f174cf49cc308afcd87744, type: 3}
+  VictorySound: {fileID: 8300000, guid: 2667a0a008b044e218b63df62e2be749, type: 3}
 --- !u!114 &361349225
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4351,6 +4371,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogPanel: {fileID: 617479264}
+  activationSound: {fileID: 8300000, guid: 502f1f5e90de7411dbd9af39b59be2d5, type: 3}
 --- !u!114 &361349226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4915,6 +4936,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectorManager_wrapper
   LevelGO: {fileID: 983595703}
+  RedDetectorPrefab: {fileID: 9117754136132870976, guid: 790c4e56895f3df4f9ccf819edc7a348,
+    type: 3}
 --- !u!114 &361349258
 MonoBehaviour:
   m_ObjectHideFlags: 0

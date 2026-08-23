@@ -25,6 +25,9 @@ public class EndGameManager : FSystem {
 	public GameObject playButtonAmount;
 	public GameObject endPanel;
 
+	public AudioClip LoseSound;
+	public AudioClip VictorySound;
+
 	public EndGameManager()
 	{
 		instance = this;
@@ -128,7 +131,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
 
 			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
-			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.clip = LoseSound;
 			audio.loop = true;
 			audio.Play();
 
@@ -154,7 +157,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
 
 			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
-			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.clip = LoseSound;
 			audio.loop = true;
 			audio.Play();
 
@@ -176,7 +179,7 @@ public class EndGameManager : FSystem {
 			Debug.Log("Score: " + _score);
 			setScoreStars(_score);
 
-			endPanel.GetComponentInParent<AudioSource>().PlayOneShot(Resources.Load("Sound/VictorySound") as AudioClip);
+			endPanel.GetComponentInParent<AudioSource>().PlayOneShot(VictorySound);
 			
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
@@ -245,7 +248,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
 
 			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
-			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.clip = LoseSound;
 			audio.loop = true;
 			audio.Play();
 
@@ -269,7 +272,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
 
 			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
-			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.clip = LoseSound;
 			audio.loop = true;
 			audio.Play();
 
@@ -295,7 +298,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
 
 			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
-			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.clip = LoseSound;
 			audio.loop = true;
 			audio.Play();
 
@@ -319,7 +322,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
 
 			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
-			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.clip = LoseSound;
 			audio.loop = true;
 			audio.Play();
 
@@ -343,7 +346,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
 
 			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
-			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.clip = LoseSound;
 			audio.loop = true;
 			audio.Play();
 
@@ -367,7 +370,7 @@ public class EndGameManager : FSystem {
 			GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
 
 			AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
-			audio.clip = Resources.Load("Sound/LoseSound") as AudioClip;
+			audio.clip = LoseSound;
 			audio.loop = true;
 			audio.Play();
 

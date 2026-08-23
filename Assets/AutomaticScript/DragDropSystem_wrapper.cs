@@ -6,12 +6,14 @@ public class DragDropSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject mainCanvas;
 	public UnityEngine.AudioSource audioSource;
 	public UnityEngine.RectTransform editableContainers;
+	public UnityEngine.AudioClip AddActionSound;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
 		MainLoop.initAppropriateSystemField (system, "audioSource", audioSource);
 		MainLoop.initAppropriateSystemField (system, "editableContainers", editableContainers);
+		MainLoop.initAppropriateSystemField (system, "AddActionSound", AddActionSound);
 	}
 
 	public void checkHighlightDropArea(UnityEngine.GameObject dropArea)

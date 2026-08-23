@@ -37,7 +37,17 @@ public class LevelGenerator : FSystem {
 	public Material[] wallMaterialsFade;
 	public GameObject[] skinPrefabs;
 
-	[DllImport("__Internal")]
+	public GameObject dronePrefab;
+	public GameObject executablePanelPrefab;
+	public GameObject doorPrefab;
+    public GameObject activableConsolePrefab;
+    public GameObject teleporterSpawnPrefab;
+	public GameObject teleporterExitPrefab;
+    public GameObject coinPrefab;
+	public GameObject cubeGroundPrefab;
+	public GameObject cubeWallPrefab;
+
+    [DllImport("__Internal")]
 	private static extern void HideHtmlLoadMissions(); // call javascript
 
 	public LevelGenerator()
@@ -300,7 +310,7 @@ public class LevelGenerator : FSystem {
 				break;
 			case "guard":
 			case "enemy": // backward compatibility
-				entity = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Drone") as GameObject, LevelGO.transform.position + new Vector3(gridX*3,4.4f,-gridY*3), Quaternion.Euler(0,0,0), LevelGO.transform);
+				entity = GameObject.Instantiate<GameObject>(dronePrefab, LevelGO.transform.position + new Vector3(gridX*3,4.4f,-gridY*3), Quaternion.Euler(0,0,0), LevelGO.transform);
 				break;
 		}
 
@@ -311,7 +321,7 @@ public class LevelGenerator : FSystem {
 		
 		//add new container to entity
 		ScriptRef scriptref = entity.GetComponent<ScriptRef>();
-		GameObject executablePanel = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/ExecutablePanel") as GameObject, scriptContainer.gameObject.transform, false);
+		GameObject executablePanel = GameObject.Instantiate<GameObject>(executablePanelPrefab, scriptContainer.gameObject.transform, false);
 		// Associer à l'agent l'UI container
 		scriptref.executablePanel = executablePanel;
 		// Associer à l'agent le script container
@@ -357,7 +367,7 @@ public class LevelGenerator : FSystem {
 
 	private void createDoor(int gridX, int gridY, Direction.Dir orientation, int slotID, bool state)
 	{
-		GameObject door = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Door") as GameObject, LevelGO.transform.position + new Vector3(gridX*3,3,-gridY*3), Quaternion.Euler(0,0,0), LevelGO.transform);
+		GameObject door = GameObject.Instantiate<GameObject>(doorPrefab, LevelGO.transform.position + new Vector3(gridX*3,3,-gridY*3), Quaternion.Euler(0,0,0), LevelGO.transform);
 
 		ActivationSlot act = door.GetComponent<ActivationSlot>();
 		act.slotID = slotID;
@@ -380,7 +390,7 @@ public class LevelGenerator : FSystem {
 
 	private void createConsole(int gridX, int gridY, List<int> slotIDs, Direction.Dir orientation)
 	{
-		GameObject activable = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/ActivableConsole") as GameObject, LevelGO.transform.position + new Vector3(gridX * 3, 3, -gridY * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
+		GameObject activable = GameObject.Instantiate<GameObject>(activableConsolePrefab, LevelGO.transform.position + new Vector3(gridX * 3, 3, -gridY * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
 
 		activable.GetComponent<Activable>().slotID = slotIDs;
 		activable.GetComponent<Position>().x = gridX;
@@ -392,9 +402,9 @@ public class LevelGenerator : FSystem {
 	private void createSpawnExit(int gridX, int gridY, bool type, bool hideExit = false){
 		GameObject spawnExit;
 		if(type)
-			spawnExit = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterSpawn") as GameObject, LevelGO.transform.position + new Vector3(gridX*3,1.5f,-gridY*3), Quaternion.Euler(-90,0,0), LevelGO.transform);
+			spawnExit = GameObject.Instantiate<GameObject>(teleporterSpawnPrefab, LevelGO.transform.position + new Vector3(gridX*3,1.5f,-gridY*3), Quaternion.Euler(-90,0,0), LevelGO.transform);
 		else
-			spawnExit = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/TeleporterExit") as GameObject, LevelGO.transform.position + new Vector3(gridX*3,1.5f,-gridY*3), Quaternion.Euler(-90,0,0), LevelGO.transform);
+			spawnExit = GameObject.Instantiate<GameObject>(teleporterExitPrefab, LevelGO.transform.position + new Vector3(gridX*3,1.5f,-gridY*3), Quaternion.Euler(-90,0,0), LevelGO.transform);
 
 		if (hideExit)
         {
@@ -408,14 +418,14 @@ public class LevelGenerator : FSystem {
 	}
 
 	private void createCoin(int gridX, int gridY){
-		GameObject coin = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Coin") as GameObject, LevelGO.transform.position + new Vector3(gridX*3,3,-gridY*3), Quaternion.Euler(90,0,0), LevelGO.transform);
+		GameObject coin = GameObject.Instantiate<GameObject>(coinPrefab, LevelGO.transform.position + new Vector3(gridX*3,3,-gridY*3), Quaternion.Euler(90,0,0), LevelGO.transform);
 		coin.GetComponent<Position>().x = gridX;
 		coin.GetComponent<Position>().y = gridY;
 		GameObjectManager.bind(coin);
 	}
 
 	private void createCell(int gridX, int gridY){
-		GameObject cell = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Cube_Ground") as GameObject, LevelGO.transform.position + new Vector3(gridX*3,0,-gridY*3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
+		GameObject cell = GameObject.Instantiate<GameObject>(cubeGroundPrefab, LevelGO.transform.position + new Vector3(gridX*3,0,-gridY*3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
 		if (Random.Range(0f, 1f) > 0.9f)
 		{
 			Material[] mats = cell.GetComponent<MeshRenderer>().materials;
@@ -427,7 +437,7 @@ public class LevelGenerator : FSystem {
 	}
 
 	private void createWall(int gridX, int gridY, bool visible = true){
-		GameObject wall = GameObject.Instantiate<GameObject>(Resources.Load ("Prefabs/Cube_Wall") as GameObject, LevelGO.transform.position + new Vector3(gridX*3,3,-gridY*3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
+		GameObject wall = GameObject.Instantiate<GameObject>(cubeWallPrefab, LevelGO.transform.position + new Vector3(gridX*3,3,-gridY*3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
 		wall.GetComponent<Position>().x = gridX;
 		wall.GetComponent<Position>().y = gridY;
 		if (!visible)

@@ -7,6 +7,7 @@ public class OpenFileSystem_wrapper : BaseWrapper
 	public DataLevelBehaviour dataLevel;
 	public UnityEngine.UI.Button closeBriefing;
 	public UnityEngine.UI.Button mapEditorTab;
+	public UnityEngine.GameObject LevelAvailablePrefab;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -14,6 +15,7 @@ public class OpenFileSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "dataLevel", dataLevel);
 		MainLoop.initAppropriateSystemField (system, "closeBriefing", closeBriefing);
 		MainLoop.initAppropriateSystemField (system, "mapEditorTab", mapEditorTab);
+		MainLoop.initAppropriateSystemField (system, "LevelAvailablePrefab", LevelAvailablePrefab);
 	}
 
 	public void refreshListOfLevels(System.String filter)

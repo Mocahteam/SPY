@@ -43,6 +43,8 @@ public class ParamCompetenceSystem : FSystem
 	public Button closeBriefing;
 	public CurrentSettingsValues currentSettingsValues;
 
+	public GameObject ScenarioAvailablePrefab;
+
     [DllImport("__Internal")]
 	private static extern void Save(string content, string defaultName); // call javascript
 
@@ -318,7 +320,7 @@ public class ParamCompetenceSystem : FSystem
 		sortedScenarios.Sort();
 		foreach (string key in sortedScenarios)
 		{
-			GameObject scenarioItem = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/ScenarioEditor/ScenarioAvailable") as GameObject, loadingScenarioContent.transform);
+			GameObject scenarioItem = GameObject.Instantiate<GameObject>(ScenarioAvailablePrefab, loadingScenarioContent.transform);
 			scenarioItem.GetComponentInChildren<TextMeshProUGUI>(true).text = key;
 			GameObjectManager.bind(scenarioItem);
 		}

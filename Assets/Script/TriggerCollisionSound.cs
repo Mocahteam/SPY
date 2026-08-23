@@ -3,16 +3,18 @@ using UnityEngine;
 public class TriggerCollisionSound : MonoBehaviour
 {
     public AudioSource audioSource;
+    public AudioClip collisionSound;
+    public AudioClip destructionSound;
 
     // See Events in death animations
     public void playShock()
     {
-        audioSource.PlayOneShot(Resources.Load<AudioClip>("Sound/collision"));
+        audioSource.PlayOneShot(collisionSound);
     }
 
     // See Events in death animations
     public void playDestruction()
     {
-        audioSource.PlayOneShot(Resources.Load<AudioClip>("Sound/destruction"));
+        audioSource.PlayOneShot(destructionSound);
     }
 }

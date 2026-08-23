@@ -24,6 +24,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public TMPro.TMP_InputField levelFilterByName;
 	public UnityEngine.UI.Button closeBriefing;
 	public CurrentSettingsValues currentSettingsValues;
+	public UnityEngine.GameObject ScenarioAvailablePrefab;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -48,6 +49,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "levelFilterByName", levelFilterByName);
 		MainLoop.initAppropriateSystemField (system, "closeBriefing", closeBriefing);
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
+		MainLoop.initAppropriateSystemField (system, "ScenarioAvailablePrefab", ScenarioAvailablePrefab);
 	}
 
 	public void updateCompetencies()

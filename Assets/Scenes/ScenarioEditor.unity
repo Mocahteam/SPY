@@ -9787,7 +9787,7 @@ PrefabInstance:
     - target: {fileID: 2598129547128785489, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000015258789
+      value: -0.000030517578
       objectReference: {fileID: 0}
     - target: {fileID: 2847899282829580067, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
@@ -10249,8 +10249,6 @@ MonoBehaviour:
   addToScenario: {fileID: 498996288}
   savingPanel: {fileID: 1404453153}
   editBriefingPanel: {fileID: 1156602033}
-  briefingItemPrefab: {fileID: 1087538614073686591, guid: 62432d114179c10478929b66552c5f53,
-    type: 3}
   scenarioAbstract: {fileID: 1685947151}
   scenarioName: {fileID: 829373671}
   loadingScenarioContent: {fileID: 520658313}
@@ -10258,6 +10256,8 @@ MonoBehaviour:
   levelFilterByName: {fileID: 657295902}
   closeBriefing: {fileID: 7230369713530439807}
   currentSettingsValues: {fileID: 2101237698}
+  ScenarioAvailablePrefab: {fileID: 4139137127690704271, guid: c24f22f8fcba48a409aa2f4ea886f2e1,
+    type: 3}
 --- !u!114 &1645587990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10390,7 +10390,6 @@ MonoBehaviour:
   buttonPause: {fileID: 0}
   buttonNextStep: {fileID: 0}
   buttonContinue: {fileID: 0}
-  buttonSpeed: {fileID: 0}
   buttonStop: {fileID: 0}
   cameraSwitchView: {fileID: 0}
   cameraRotateTop: {fileID: 0}
@@ -10411,6 +10410,8 @@ MonoBehaviour:
   buttonCopyCode: {fileID: 0}
   showSettings: {fileID: 984423895}
   AddContainerButton: {fileID: 0}
+  undo: {fileID: 0}
+  redo: {fileID: 0}
   cancelNextEscape: 0
 --- !u!114 &1645588003
 MonoBehaviour:

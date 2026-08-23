@@ -75,8 +75,10 @@ public class DragDropSystem : FSystem
 	private EventSystem eventSystem;
 	private UnityAction localCallback;
 
-	// L'instance
-	public static DragDropSystem instance;
+	public AudioClip AddActionSound;
+
+    // L'instance
+    public static DragDropSystem instance;
 
 	public DragDropSystem()
     {
@@ -645,7 +647,7 @@ public class DragDropSystem : FSystem
 			GameObjectManager.addComponent<Dropped>(condChild.gameObject);
 
 		// Lance le son de dépôt du block d'action
-		audioSource.PlayOneShot(Resources.Load("Sound/AddActionSound") as AudioClip);
+		audioSource.PlayOneShot(AddActionSound);
 
 		// seulement sur la scene principale
 		if (SceneManager.GetActiveScene().name == "MainScene")
