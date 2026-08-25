@@ -1350,7 +1350,7 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
     m_TableEntryReference:
-      m_KeyId: 32854783702265856
+      m_KeyId: 15921534706466816
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -1633,6 +1633,10 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8390236102059498150, guid: bae527ae87f763c4eaf4bfcc24112fd8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8640794127493088465}
     - targetCorrespondingSourceObject: {fileID: 7902718205796122507, guid: bae527ae87f763c4eaf4bfcc24112fd8,
         type: 3}
       insertIndex: -1
@@ -1684,13 +1688,39 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!1 &1237811822531951577 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8390236102059498150, guid: bae527ae87f763c4eaf4bfcc24112fd8,
+    type: 3}
+  m_PrefabInstance: {fileID: 7304148116521984383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8640794127493088465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1237811822531951577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: 130
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!114 &1255354360659746516 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8373992847426011051, guid: bae527ae87f763c4eaf4bfcc24112fd8,
     type: 3}
   m_PrefabInstance: {fileID: 7304148116521984383}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1237811822531951577}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}

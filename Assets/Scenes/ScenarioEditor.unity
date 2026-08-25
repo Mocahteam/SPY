@@ -5292,7 +5292,7 @@ PrefabInstance:
     - target: {fileID: 1722671352924144637, guid: 9ef7830e7336b9d4180771c5994c2d2a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: toggleMainMenu
+      value: hideMainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 1722671352924144637, guid: 9ef7830e7336b9d4180771c5994c2d2a,
         type: 3}
@@ -6142,7 +6142,7 @@ PrefabInstance:
     - target: {fileID: 5983522192906292882, guid: 9ef7830e7336b9d4180771c5994c2d2a,
         type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: toggleMainMenu
+      value: hideMainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 5983522192906292882, guid: 9ef7830e7336b9d4180771c5994c2d2a,
         type: 3}
@@ -6297,7 +6297,7 @@ PrefabInstance:
     - target: {fileID: 6583804416229182171, guid: 9ef7830e7336b9d4180771c5994c2d2a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: toggleMainMenu
+      value: hideMainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 6583804416229182171, guid: 9ef7830e7336b9d4180771c5994c2d2a,
         type: 3}
@@ -6457,7 +6457,7 @@ PrefabInstance:
     - target: {fileID: 7917333257118008686, guid: 9ef7830e7336b9d4180771c5994c2d2a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: toggleMainMenu
+      value: hideMainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 7917333257118008686, guid: 9ef7830e7336b9d4180771c5994c2d2a,
         type: 3}
@@ -6542,7 +6542,7 @@ PrefabInstance:
     - target: {fileID: 8590767710201181185, guid: 9ef7830e7336b9d4180771c5994c2d2a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: toggleMainMenu
+      value: hideMainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 8590767710201181185, guid: 9ef7830e7336b9d4180771c5994c2d2a,
         type: 3}
@@ -9178,8 +9178,13 @@ PrefabInstance:
       objectReference: {fileID: 1645588005}
     - target: {fileID: 8489925308409694739, guid: 004115895be66064ca5bec69f0b1be25,
         type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489925308409694739, guid: 004115895be66064ca5bec69f0b1be25,
+        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: toggleMainMenu
+      value: showMainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 8489925308409694739, guid: 004115895be66064ca5bec69f0b1be25,
         type: 3}
@@ -10098,7 +10103,6 @@ GameObject:
   - component: {fileID: 1645587997}
   - component: {fileID: 1645588000}
   - component: {fileID: 1645588001}
-  - component: {fileID: 1645588003}
   - component: {fileID: 1645588005}
   - component: {fileID: 1645588006}
   - component: {fileID: 1645588007}
@@ -10186,10 +10190,6 @@ MonoBehaviour:
   - _typeAssemblyQualifiedName: HotkeySystem, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     _typeFullName: HotkeySystem
-    _pause: 0
-  - _typeAssemblyQualifiedName: SaveFileSystem, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    _typeFullName: SaveFileSystem
     _pause: 0
   _lateUpdateSystemDescriptions: []
   _forceUpdateInspector: 0
@@ -10412,30 +10412,8 @@ MonoBehaviour:
   AddContainerButton: {fileID: 0}
   undo: {fileID: 0}
   redo: {fileID: 0}
+  save: {fileID: 1947059453}
   cancelNextEscape: 0
---- !u!114 &1645588003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1645587984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a855e3bf5c36da47bbb5645aa212a09, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SaveFileSystem_wrapper
-  saveName: {fileID: 0}
-  DragDrop: {fileID: 0}
-  Fog: {fileID: 0}
-  ExecutionLimit: {fileID: 0}
-  HideExits: {fileID: 0}
-  OmniscientView: {fileID: 0}
-  score2: {fileID: 0}
-  score3: {fileID: 0}
-  editableContainer: {fileID: 0}
-  dataLevel: {fileID: 0}
-  paintableGrid: {fileID: 0}
 --- !u!114 &1645588005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11061,6 +11039,18 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!114 &1947059453 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6583804416229182171, guid: 9ef7830e7336b9d4180771c5994c2d2a,
+    type: 3}
+  m_PrefabInstance: {fileID: 984423890}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1981489836
 GameObject:
   m_ObjectHideFlags: 0

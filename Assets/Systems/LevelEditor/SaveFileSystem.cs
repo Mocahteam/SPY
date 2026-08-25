@@ -33,8 +33,6 @@ public class SaveFileSystem : FSystem
 	private GameData gameData;
 	private UnityAction localCallback;
 
-	private InputAction save;
-
 	[DllImport("__Internal")]
 	private static extern void Save(string content, string defaultName); // call javascript
 
@@ -50,13 +48,7 @@ public class SaveFileSystem : FSystem
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
 
-		save = InputSystem.actions.FindAction("Save");
-	}
-
-	// Use to process your families.
-	protected override void onProcess(int familiesUpdateCount) {
-		if(save.WasPressedThisFrame())
-			displaySavingPanel();
+		Pause = true;
 	}
 
 	// See TestLevel GO (Button)
@@ -135,7 +127,7 @@ public class SaveFileSystem : FSystem
 		{
 			Save(levelExport, saveName.text);
 			// Add/Replace level content in memory
-			string fakeUri = Application.streamingAssetsPath + "/Levels/LocalFiles/" + saveName.text;
+			string fakeUri = Application.streamingAssetsPath + "/Levels/" + saveName.text;
 			gameData.levels[new Uri(fakeUri).AbsoluteUri] = doc.GetElementsByTagName("level")[0];
 		}
 		else

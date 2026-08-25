@@ -194,7 +194,7 @@ public class TitleScreenSystem : FSystem {
 		Utility.JavaScriptData jsd = JsonUtility.FromJson<Utility.JavaScriptData>(content);
 		try
 		{
-			string fakeUri = Application.streamingAssetsPath + "/Levels/LocalFiles/" + jsd.name; 
+			string fakeUri = Application.streamingAssetsPath + "/Levels/" + jsd.name; 
 			UtilityLobby.LoadLevelOrScenario(gameData, fakeUri, jsd.content);
 			localCallback = null;
 			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[19], OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });

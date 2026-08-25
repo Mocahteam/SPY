@@ -23,18 +23,22 @@
   <body>
 	<nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="index.html?lang=en" aria-label="Back to home page"><img src="TemplateData/LogoSPY.png" alt="SPY logo" style="height: 40px;"></a>
+			<a class="navbar-brand" href="index.html?lang=en"><img src="TemplateData/LogoSPY.png" alt="SPY logo" style="height: 40px;"></a>
+			<!-- hamburger button -->
 			<button id="collapseButton" class="navbar-toggler m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<div class="collapse navbar-collapse m-2 justify-content-end" id="collapsibleNavbar">
-				<div class="nav-item"><a id="menu_#synthesis" class="nav-link scrollto px-3 justify-content-end" href="#synthesis">Summary</a></div>
-				<div class="nav-item"><a id="menu_#hotkeys" class="nav-link scrollto px-3 justify-content-end" href="#hotkeys">Keyboard Shortcuts</a></div>
-				<div class="nav-item"><a id="menu_#speech" class="nav-link scrollto px-3 justify-content-end" href="#speech">Speech Synthesis</a></div>
-				<div class="nav-item"><a id="menu_#DragDropOptions" class="nav-link scrollto px-3 justify-content-end" href="#DragDropOptions">Programming</a></div>
-				<div class="nav-item"><a id="menu_#screenReader" class="nav-link scrollto px-3 justify-content-end" href="#screenReader">Screen Readers</a></div>
-				<div class="nav-item"><a id="menu_#contact" class="nav-link scrollto px-3 justify-content-end" href="#contact">Contact</a></div>
-				<div class="nav-item"><a class="nav-link scrollto px-3 justify-content-end" href="accessibility_fr.html">Français</a></div>
+			<!-- main menu -->
+			<div class="collapse navbar-collapse m-2" id="collapsibleNavbar">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item ms-auto"><a class="nav-link active px-3" href="#synthesis">Summary</a></li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#hotkeys">Keyboard Shortcuts</a></li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#speech">Speech Synthesis</a></li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#DragDropOptions">Programming</a></li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#screenReader">Screen Readers</a></li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#contact">Contact</a></li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3 justify-content-end" href="accessibility_fr.html">Français</a></li>
+				</ul>
 			</div>
 		</div>
 	</nav>
@@ -55,15 +59,15 @@
 		  <p>Here is the list of accessibility features currently integrated into SPY that promote its accessibility:</p>
 		  <ul>
 			<li>Speech synthesis module to read instructions and interfaces (see <a href="#speechsynthesis">Speech Synthesis Details</a>)</li>
-			<li>Color contrast between text and backgrounds is ensured with a contrast ratio between 6.05:1 and 12.77:1</li>
-			<li>Drag-and-drop action for adding blocks to programs is optional - two other methods for adding blocks are available (see <a href="#DragDropOptions">Programming</a> section)</li>
+			<li>Color contrast between text and backgrounds is ensured with a contrast ratio between 7.01:1 and 21:1</li>
+			<li>Drag-and-drop action for adding blocks to programs is optional - four other methods for adding blocks are available (see <a href="#DragDropOptions">Programming</a> section)</li>
 			<li>Keyboard navigation</li>
 			<li>Key actions accessible with keyboard shortcuts (see <a href="#hotkeys">Keyboard Shortcuts Details</a>)</li>
 			<li>Compatible with screen readers (tested with NVDA - see <a href="#screenReader">Screen Reader Details</a>)</li>
 			<li>Map export in text format</li>
 			<li>Program execution speed is controllable with step-by-step execution mode</li>
 			<li>User interface size is adjustable</li>
-			<li>The font is sans-serif</li>
+			<li>The font is sans-serif (9 fonts are available)</li>
 			<li>User interfaces are stationary</li>
 			<li>The game is compatible with virtual keyboards</li>
 			<li>Ability to re-read instructions at any time</li>
@@ -97,10 +101,10 @@
 					<li><b>a</b> (qwerty) / <b>q</b> (azerty): Move camera left</li>
 					<li><b>d</b>: Move camera right</li>
 					<li><b>c</b>: Center camera on next agent in scene</li>
-					<li><b>Shift+w</b> (qwerty) / <b>Shift+z</b> (azerty): Rotate camera forward</li>
-					<li><b>Shift+s</b>: Rotate camera backward</li>
-					<li><b>Shift+a</b> (qwerty) / <b>Shift+q</b> (azerty): Rotate camera left</li>
-					<li><b>Shift+d</b>: Rotate camera right</li>
+					<li><b>Shift + w</b> (qwerty) / <b>Shift+z</b> (azerty): Rotate camera forward</li>
+					<li><b>Shift + s</b>: Rotate camera backward</li>
+					<li><b>Shift + a</b> (qwerty) / <b>Shift+q</b> (azerty): Rotate camera left</li>
+					<li><b>Shift + d</b>: Rotate camera right</li>
 					<li><b>r</b>: Zoom in</li>
 					<li><b>f</b>: Zoom out</li>
 				</ul>
@@ -120,6 +124,8 @@
 				<ul>
 					<li><b>Enter</b>: Grab/Release a programming block</li>
 					<li><b>Delete</b>: Delete a programming block</li>
+					<li><b>Ctrl + z</b> : Undo previous editing action</li>
+					<li><b>Ctrl + y</b> : Redo next editing action</li>
 					<li><b>Backspace</b>: Delete a programming block</li>
 					<li><b>p</b>: Select next programming area</li>
 					<li><b>i</b>: Insert a programming block</li>
@@ -159,7 +165,7 @@
 		<p>This option allows players to navigate the interface using the keyboard arrow keys to position themselves over the block to be moved. Once positioned over a programming block (whether in the inventory or already placed in a program area), press the "Enter" key to grab the block. Use the keyboard arrow keys to move the block within the interface, then press "Enter" again to release the block.</p>
 
 		<h2>Keyboard Insertion</h2>
-		<p>Unlike the previous three modes, here the player must first position themselves within a programming area at the spot where they wish to insert a new block. They then press the "i" key on the keyboard to "insert" a new block. The focus is automatically placed on the first available block in the inventory; the player can then browse the available blocks and confirm their choice with the "Enter" key. The selected block will be automatically added to the program at the spot where the "i" key was pressed.</p>
+		<p>Unlike the previous three modes, here the player must first position themselves within a programming area at the spot where they wish to insert a new block. They press the "i" key on the keyboard to "insert" a new block. The focus is automatically placed on the first available block in the inventory; the player can then browse the available blocks and confirm their choice with the "Enter" key. The selected block will be automatically added to the program at the spot where the "i" key was pressed.</p>
 		<p>This method also allows for changing the order of blocks in a program. The player must position themselves where they want to move a block, press "i", navigate to the block within the program they wish to move, and press "Enter". The selected block will be automatically moved to the spot where the "i" key was pressed.</p>
 		<p>Note that if the "i" key is pressed while on a block already integrated into a programming area, the new inserted block will be added just before the selected block.</p>
 
@@ -176,7 +182,7 @@
       <div class="container">
           <h1>Screen Reader</h1>
 		  <h2>Identifying the Game Area in the Web Page</h2>
-		  <p>To access the game canvas, navigate through the page until you reach the "Application" or "Interactive Game Zone" object. Press "Enter" to enter the game. Once in the game, you can at any time press "Shift + Enter" to exit the game canvas and return to the web page context.</p>
+		  <p>To access the game canvas, navigate through the page until you reach the "Application" or "Interactive Game Zone" object. Press "Enter" to enter the game. Once in the game, you can at any time press "Shift + Escape" to exit the game canvas and return to the web page context.</p>
 		  <p>A bit technical: When a game object gets focus, its textual description is automatically sent to the "ScreenReaderSpan" HTML tag with the "status" role. This tag is defined with the aria-live="polite" and aria-atomic=true properties so that the screen reader can be immediately informed of changes to its content and make them accessible to the player via speech synthesis or a braille display (tested with a Brailliant Bi 40X and NVDA on Chrome and Firefox).</p>
 		  <h2>Scene Description</h2>
 		  <p>The game's objective is to move a robot in a maze, so it is necessary to be able to access a description of the game scene and follow its evolution during simulation. A textual description of the scene is permanently synchronized with the game state. To consult this description select "Menu" and "View text map" or use the "m" shortcut.</p>
@@ -204,6 +210,24 @@
 	<script>
 		var contact = document.getElementById("contactName");
 		contact.innerHTML = "mathieu.muratet<span style=\"display: none;\">cache</span> (at) lip6.fr";
+			
+		document.addEventListener('DOMContentLoaded', function () {
+			const collapsibleNavbar = document.getElementById('collapsibleNavbar');
+			const bsCollapse = new bootstrap.Collapse(collapsibleNavbar, { toggle: false });
+
+			// Cible les liens de premier niveau (hors toggles de dropdown) + les items des dropdowns
+			const navLinks = collapsibleNavbar.querySelectorAll(
+				'a.nav-link:not(.dropdown-toggle), a.dropdown-item'
+			);
+
+			navLinks.forEach(function (link) {
+				link.addEventListener('click', function () {
+					if (collapsibleNavbar.classList.contains('show')) {
+						bsCollapse.hide();
+					}
+				});
+			});
+		});
 	</script>
 
 	<!--Production version-->

@@ -4866,6 +4866,7 @@ MonoBehaviour:
   AddContainerButton: {fileID: 2015004034}
   undo: {fileID: 8507923395620949126}
   redo: {fileID: 8507923395620949125}
+  save: {fileID: 0}
   cancelNextEscape: 0
 --- !u!114 &361349252
 MonoBehaviour:
@@ -10672,7 +10673,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 361349258}
           m_TargetAssemblyTypeName: MainMenuToggler_wrapper, Assembly-CSharp
-          m_MethodName: toggleMainMenu
+          m_MethodName: hideMainMenu
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -12050,7 +12051,7 @@ PrefabInstance:
     - target: {fileID: 3587892965843505043, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: toggleMainMenu
+      value: hideMainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 3587892965843505043, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
@@ -17761,7 +17762,7 @@ PrefabInstance:
     - target: {fileID: 3587892965843505043, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: toggleMainMenu
+      value: hideMainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 3587892965843505043, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
@@ -23318,7 +23319,7 @@ PrefabInstance:
     - target: {fileID: 3587892965843505043, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: toggleMainMenu
+      value: hideMainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 3587892965843505043, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
@@ -24412,7 +24413,7 @@ PrefabInstance:
     - target: {fileID: 3587892965843505043, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: toggleMainMenu
+      value: hideMainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 3587892965843505043, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
@@ -25726,8 +25727,18 @@ PrefabInstance:
       objectReference: {fileID: 1410401872}
     - target: {fileID: 8489925308409694739, guid: 004115895be66064ca5bec69f0b1be25,
         type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489925308409694739, guid: 004115895be66064ca5bec69f0b1be25,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489925308409694739, guid: 004115895be66064ca5bec69f0b1be25,
+        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: toggleMainMenu
+      value: showMainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 8489925308409694739, guid: 004115895be66064ca5bec69f0b1be25,
         type: 3}

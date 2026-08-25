@@ -1,5 +1,4 @@
 using FYFY;
-using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -45,8 +44,9 @@ public class HotkeySystem : FSystem
 	public Button AddContainerButton;
 	public Button undo;
 	public Button redo;
+    public Button save;
 
-	private EventSystem eventSystem;
+    private EventSystem eventSystem;
 
 	public bool cancelNextEscape;
 
@@ -76,6 +76,7 @@ public class HotkeySystem : FSystem
 	private InputAction tuneSettings_act;
     private InputAction undo_act;
     private InputAction redo_act;
+    private InputAction save_act;
 
     // L'instance
     public static HotkeySystem instance;
@@ -113,6 +114,7 @@ public class HotkeySystem : FSystem
 		tuneSettings_act = InputSystem.actions.FindAction("TuneSettings");
         undo_act = InputSystem.actions.FindAction("Undo");
         redo_act = InputSystem.actions.FindAction("Redo");
+        save_act = InputSystem.actions.FindAction("Save");
 
         cancelNextEscape = false;
         foreach (GameObject go in f_InputFields)
@@ -227,12 +229,7 @@ public class HotkeySystem : FSystem
 				if (closeMapDesc != null && closeMapDesc.gameObject.activeInHierarchy)
 					closeMapDesc.onClick.Invoke();
 				else if (showMapDesc != null)
-				{
-					// Si le bouton d'affichage de la map n'est pas visible, on simule l'appel à l'affichage du menu avant d'invoquer l'affichage de la carte qui refermera automatiquement le menu principal, sinon l'affichage de la carte toggle le menu principal est l'affiche 
-					if (mainMenu != null && !showMapDesc.gameObject.activeInHierarchy)
-						mainMenu.onClick.Invoke();
 					showMapDesc.onClick.Invoke();
-				}
 			}
 
 			// Copy code
@@ -284,18 +281,17 @@ public class HotkeySystem : FSystem
 
 			// Tune Settings
 			if (showSettings != null && tuneSettings_act.WasPressedThisFrame())
-			{
-				// Si le bouton d'affichage des settings n'est pas visible mais qu'on a un MainMenu, c'est qu'on est dans une scène où le bouton pour afficher les settings est dans le menu principal, on simule l'appel à l'affichage du menu principal avant d'invoquer l'affichage des settings qui refermera automatiquement le menu principal, sinon l'affichage des settings toggle le menu principal est l'affiche 
-				if (mainMenu != null && !showSettings.gameObject.activeInHierarchy)
-					mainMenu.onClick.Invoke();
 				showSettings.onClick.Invoke();
-			}
 
 			// Undo/Redo
 			if (undo != null && undo.gameObject.activeInHierarchy && undo.interactable && undo_act.WasPressedThisFrame())
 				undo.onClick.Invoke();
 			else if (redo != null && redo.gameObject.activeInHierarchy && redo.interactable && redo_act.WasPressedThisFrame())
 				redo.onClick.Invoke();
+
+			// Save
+			if (save != null && save_act.WasPressedThisFrame())
+				save.onClick.Invoke();
         }
 	}
 

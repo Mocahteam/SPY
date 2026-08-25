@@ -1,14 +1,15 @@
-using UnityEngine;
-using UnityEngine.UI;
 using FYFY;
-using TMPro;
-using System.IO;
-using System.Xml;
-using System.Collections.Generic;
 using System;
-using UnityEngine.Events;
-using System.Runtime.InteropServices;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Xml;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class ParamCompetenceSystem : FSystem
 {
@@ -43,7 +44,7 @@ public class ParamCompetenceSystem : FSystem
 	public Button closeBriefing;
 	public CurrentSettingsValues currentSettingsValues;
 
-	public GameObject ScenarioAvailablePrefab;
+    public GameObject ScenarioAvailablePrefab;
 
     [DllImport("__Internal")]
 	private static extern void Save(string content, string defaultName); // call javascript
@@ -67,13 +68,13 @@ public class ParamCompetenceSystem : FSystem
 			competenciesLoadedAndReady = false;
 			updateCompetencies();
 			MainLoop.instance.StartCoroutine(delayshowCompatibleLevels());
-		}
+        }
 
 		Pause = true;
-	}
+    }
 
-	// see CompetenciesFilter and SkillsDropdown in the settingsWindows of the ScenarioEditor scene
-	public void updateCompetencies()
+    // see CompetenciesFilter and SkillsDropdown in the settingsWindows of the ScenarioEditor scene
+    public void updateCompetencies()
 	{
 		int referentialId = currentSettingsValues.values.currentSkillsRepository;
 		// save previous competencies selected
@@ -530,10 +531,10 @@ public class ParamCompetenceSystem : FSystem
 		}
 	}
 
-	private string buildScenarioContent()
+	private string buildScenarioContent(string defaultName)
     {
 		string scenarioExport = "<?xml version=\"1.0\"?>\n";
-		scenarioExport += "<scenario name=\""+ scenarioName.text.Replace('\"', '\'') + "\" desc=\""+ scenarioAbstract.text.Replace('\"', '\'') + "\">\n";
+		scenarioExport += "<scenario name=\""+ (scenarioName.text != "" ? scenarioName.text.Replace('\"', '\'') : defaultName) + "\" desc=\""+ scenarioAbstract.text.Replace('\"', '\'') + "\">\n";
 		foreach (Transform child in contentScenario.transform)
 		{
 			DataLevel dataLevel = child.GetComponent<DataLevelBehaviour>().data;
@@ -568,7 +569,7 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	private void saveToFile(TMP_InputField scenarioName) {
-		string scenarioExport = buildScenarioContent();
+		string scenarioExport = buildScenarioContent(scenarioName.text);
 
 		// generate XML structure from string
 		XmlDocument doc = new XmlDocument();
@@ -577,9 +578,9 @@ public class ParamCompetenceSystem : FSystem
 
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-			Save(buildScenarioContent(), scenarioName.text);
+			Save(scenarioExport, scenarioName.text);
 			// Add/Replace scenario content in memory
-			string fakeUri = Application.streamingAssetsPath + "/Scenario/LocalFiles/" + scenarioName.text;
+			string fakeUri = Application.streamingAssetsPath + "/Scenario/" + scenarioName.text;
 			UtilityLobby.updateScenarioContent(gameData, new Uri(fakeUri).AbsoluteUri, doc);
 		}
 		else
@@ -631,7 +632,7 @@ public class ParamCompetenceSystem : FSystem
 	{
 		// We save the scenario currently edited
 		// We can't use GameObjectManager because the update has to be done immediately due to scene loading in testLevel function
-		UtilityLobby.LoadLevelOrScenario(gameData, UtilityLobby.editingScenario, buildScenarioContent());
+		UtilityLobby.LoadLevelOrScenario(gameData, UtilityLobby.editingScenario, buildScenarioContent(""));
 		testLevel(dlb.data, UtilityLobby.testFromScenarioEditor);
 	}
 

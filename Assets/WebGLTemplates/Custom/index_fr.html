@@ -23,20 +23,36 @@
   <body>
 	<nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#"><img src="TemplateData/LogoSPY.png" alt="Logo SPY" style="height: 40px;"></a>
+			<a class="navbar-brand" href="#"><img src="TemplateData/LogoSPY.png" alt="SPY logo" style="height: 40px;"></a>
+			<!-- hamburger button -->
 			<button id="collapseButton" class="navbar-toggler m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<div class="collapse navbar-collapse m-2 justify-content-end" id="collapsibleNavbar">
-				<div class="nav-item"><a id="menu_#hero" class="nav-link scrollto active px-3 justify-content-end" href="game.html?lang=fr">Jouer</a></div>
-				<div class="nav-item"><a id="menu_#inBrief" class="nav-link scrollto px-3 justify-content-end" href="#inBrief">En bref</a></div>
-				<div class="nav-item"><a id="menu_#carousel" class="nav-link scrollto px-3 justify-content-end" href="#carousel">Galerie</a></div>
-				<div class="nav-item"><a id="menu_#peda" class="nav-link scrollto px-3 justify-content-end" href="#peda">Enseignants</a></div>
-				<div class="nav-item"><a id="menu_#share" class="nav-link scrollto px-3 justify-content-end" href="#share">Partager</a></div>
-				<div class="nav-item"><a id="menu_#publication" class="nav-link scrollto px-3 justify-content-end" href="#publication">Publications</a></div>
-				<div class="nav-item"><a id="menu_#about" class="nav-link scrollto px-3 justify-content-end" href="#about">A propos</a></div>
-				<div class="nav-item"><a id="menu_#contact" class="nav-link scrollto px-3 justify-content-end" href="#contact">Contact</a></div>
-				<div class="nav-item"><a class="nav-link scrollto px-3 justify-content-end" href="index.html?lang=en">English</a></div>
+			<!-- main menu -->
+			<div class="collapse navbar-collapse m-2" id="collapsibleNavbar">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item ms-auto"><a class="nav-link active px-3" href="game.html?lang=fr">Jouer</a></li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#inBrief">En bref</a></li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#carousel">Galerie</a></li>
+					<li class="nav-item dropdown ms-auto">
+						<a class="nav-link dropdown-toggle px-3 text-end" href="#" id="TeachersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Enseignants</a>
+						<ul class="dropdown-menu" aria-labelledby="TeachersDropdown">
+							<li><a class="dropdown-item px-3" href="#peda">Ressources</a></li>
+							<li><a class="dropdown-item px-3" href="spy_progression_fr.html">Suivre mes élèves</a></li>
+							<li><a class="dropdown-item px-3" href="accessibility_fr.html">Accessibilité</a></li>
+						</ul>
+					</li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#share">Partager</a></li>
+					<li class="nav-item dropdown ms-auto">
+						<a class="nav-link dropdown-toggle px-3 text-end" href="#" id="AboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">A propos</a>
+						<ul class="dropdown-menu" aria-labelledby="AboutDropdown">
+							<li><a class="dropdown-item px-3" href="#publication">Publications scientifiques</a></li>
+							<li><a class="dropdown-item px-3" href="#about">Qui sommes-nous ?</a></li>
+							<li><a class="dropdown-item px-3" href="#contact">Contact</a></li>
+						</ul>
+					</li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3 justify-content-end" href="index.html?lang=en">English</a></li>
+				</ul>
 			</div>
 		</div>
 	</nav>
@@ -60,7 +76,7 @@
 			</div>
 			<div class="col-md-4">
 				<h1>Simple et Accessible</h1>
-				<p>SPY propose un langage à base de blocs facile à utiliser pour programmer les actions de robots. SPY tente de limiter les situations de handicap (voir la page sur l'<a href="accessibility_fr.html" target="_blank">accessibilité du jeu</a>).</p>
+				<p>SPY propose un langage à base de blocs facile à utiliser pour programmer les actions de robots. SPY tente de limiter les situations de handicap (voir la page sur l'<a href="accessibility_fr.html">accessibilité du jeu</a>).</p>
 			</div>
 			<div class="col-md-4">
 				<h1>Gratuit</h1>
@@ -146,6 +162,7 @@
     <section id="publication" class="about">
       <div class="container">
           <h1>Publications scientifiques</h1>
+		  <p>R. El Mouhtani, M. Muratet, G. Murgia : “Supporting Dyslexic Learners in Computational Thinking Through a Serious Game with Text-to-Speech”, GALA 2026: Games and Learning Alliance Conference, L'Aquila, Italy (2026)</p>
 		  <p>M. Muratet, N. Ait Abbou, S. Jolivet : “Initiation à la programmation avec SPY : je joue, nous collaborons, nous créons”, Didapro 11 - Didastic, Grenoble, France (2026)</p>
 		  <p>M. Muratet, S. Jolivet : “GTC un formalisme permettant l’analyse automatique des compétences de la pensée informatique dans un jeu sérieux : application au jeu SPY”, Sticef, vol.31, n°1, 2024, p.10-44, DOI: 10.23709/sticef.31.1.1 (2025)</p>
 		  <p>A. Yessad, M. Muratet, Th. Carron : “Assister les enseignants du primaire dans l’enseignement de la pensée informatique. Une approche basée sur la scénarisation et vers les teaching analytics”, chapter in Enseigner, apprendre, former à l’informatique à l'école : regards croisés, pp. 211-231, (Université Paris Cité), (ISBN: 9782744202124) (2024)</p>
@@ -189,6 +206,24 @@
 	<script>
 		var contact = document.getElementById("contactName");
 		contact.innerHTML = "mathieu.muratet<span style=\"display: none;\">cache</span> (at) lip6.fr";
+			
+		document.addEventListener('DOMContentLoaded', function () {
+			const collapsibleNavbar = document.getElementById('collapsibleNavbar');
+			const bsCollapse = new bootstrap.Collapse(collapsibleNavbar, { toggle: false });
+
+			// Cible les liens de premier niveau (hors toggles de dropdown) + les items des dropdowns
+			const navLinks = collapsibleNavbar.querySelectorAll(
+				'a.nav-link:not(.dropdown-toggle), a.dropdown-item'
+			);
+
+			navLinks.forEach(function (link) {
+				link.addEventListener('click', function () {
+					if (collapsibleNavbar.classList.contains('show')) {
+						bsCollapse.hide();
+					}
+				});
+			});
+		});
 	</script>
 
 	<!--Production version-->
