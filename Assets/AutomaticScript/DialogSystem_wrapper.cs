@@ -51,4 +51,14 @@ public class DialogSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "closeDialogPanel", null);
 	}
 
+	public void playVideo()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "playVideo", null);
+	}
+
+	public void pauseVideo()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "pauseVideo", null);
+	}
+
 }

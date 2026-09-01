@@ -8,8 +8,8 @@ using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using System.Web;
 
 public class ParamCompetenceSystem : FSystem
 {
@@ -548,13 +548,13 @@ public class ParamCompetenceSystem : FSystem
 				{
 					scenarioExport += "\t\t\t<dialog ";
 					scenarioExport += dialog.text != null && dialog.text != "" ? "text=\"" + dialog.text + "\" " : "";
-					scenarioExport += dialog.img != null && dialog.img != "" ? "img=\"" + dialog.img + "\" " : "";
+					scenarioExport += dialog.img != null && dialog.img != "" ? "img=\"" + HttpUtility.UrlEncode(dialog.img) + "\" " : "";
 					scenarioExport += dialog.imgDesc != null && dialog.imgDesc != "" ? "imgDesc=\"" + dialog.imgDesc + "\" " : "";
 					scenarioExport += dialog.imgHeight != -1 ? "imgHeight=\"" + dialog.imgHeight + "\" " : "";
 					scenarioExport += dialog.camX != -1 ? "camX=\"" + dialog.camX + "\" " : "";
 					scenarioExport += dialog.camY != -1 ? "camY=\"" + dialog.camY + "\" " : "";
-					scenarioExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + dialog.sound + "\" " : "";
-					scenarioExport += dialog.video != null && dialog.video != "" ? "video=\"" + dialog.video + "\" " : "";
+					scenarioExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + HttpUtility.UrlEncode(dialog.sound) + "\" " : "";
+					scenarioExport += dialog.video != null && dialog.video != "" ? "video=\"" + HttpUtility.UrlEncode(dialog.video) + "\" " : "";
 					scenarioExport += dialog.videoHeight != -1 ? "videoHeight=\"" + dialog.videoHeight + "\" " : "";
 					scenarioExport += "enableInteraction=\"" + (dialog.enableInteraction ? "1" : "0") + "\" ";
 					scenarioExport += "briefingType=\"" + dialog.briefingType + "\" />\n";

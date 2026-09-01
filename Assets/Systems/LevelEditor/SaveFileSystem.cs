@@ -1,14 +1,15 @@
-using System;
-using UnityEngine;
 using FYFY;
-using TMPro;
-using UnityEngine.UI;
-using UnityEngine.Events;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Web;
 using System.Xml;
-using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class SaveFileSystem : FSystem
 {
@@ -55,7 +56,7 @@ public class SaveFileSystem : FSystem
 	public void testLevel()
     {
 		string exportXML = buildLevelContent();
-		XmlDocument doc = new XmlDocument();
+        XmlDocument doc = new XmlDocument();
 		doc.LoadXml(exportXML);
 		Utility.removeComments(doc);
 		if (dataLevel.data.filePath == null || dataLevel.data.filePath == "")
@@ -210,13 +211,13 @@ public class SaveFileSystem : FSystem
             {
 				levelExport += "\t\t<dialog ";
 				levelExport += dialog.text != null && dialog.text != "" ? "text=\"" + dialog.text + "\" " : "";
-				levelExport += dialog.img != null && dialog.img != "" ? "img=\"" + dialog.img + "\" " : "";
+				levelExport += dialog.img != null && dialog.img != "" ? "img=\"" + HttpUtility.UrlEncode(dialog.img) + "\" " : "";
 				levelExport += dialog.imgDesc != null && dialog.imgDesc != "" ? "imgDesc=\"" + dialog.imgDesc + "\" " : "";
 				levelExport += dialog.imgHeight != -1 ? "imgHeight=\"" + dialog.imgHeight + "\" " : "";
 				levelExport += dialog.camX != -1 ? "camX=\"" + dialog.camX + "\" " : "";
 				levelExport += dialog.camY != -1 ? "camY=\"" + dialog.camY + "\" " : "";
-				levelExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + dialog.sound + "\" " : "";
-				levelExport += dialog.video != null && dialog.video != "" ? "video=\"" + dialog.video + "\" " : "";
+				levelExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + HttpUtility.UrlEncode(dialog.sound) + "\" " : "";
+				levelExport += dialog.video != null && dialog.video != "" ? "video=\"" + HttpUtility.UrlEncode(dialog.video) + "\" " : "";
 				levelExport += dialog.videoHeight != -1 ? "videoHeight=\"" + dialog.videoHeight + "\" " : "";
 				levelExport += "enableInteraction=\"" + (dialog.enableInteraction ? "1" : "0") + "\" ";
 				levelExport += "briefingType=\"" + dialog.briefingType + "\" />\n";

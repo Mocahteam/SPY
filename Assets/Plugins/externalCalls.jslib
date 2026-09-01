@@ -105,11 +105,49 @@ mergeInto(LibraryManager.library, {
 		document.tryToCopy(content);
 	},
 	
-	ExitFullScreen: function (){
-		document.exitFullScreen();
+	QuitFullScreen: function (){
+		document.quitFullScreen();
 	},
 	
 	ResetFullScreen: function (){
 		document.resetFullScreen();
+	},
+
+	PlaySound: function(url){
+		var content = UTF8ToString(url);
+		document.playSound(content);
+	},
+
+	StopSound: function(){
+		document.stopSound();
+	},
+
+	SetCinematic: function(url){
+		var content = UTF8ToString(url);
+		document.setCinematic(content);
+	},
+
+	PlayCinematic: function(){
+		document.playCinematic();
+	},
+
+	PauseCinematic: function(){
+		document.pauseCinematic();
+	},
+
+	StopCinematic: function(){
+		document.stopCinematic();
+	},
+
+	GetVideoWidth: function(){
+		return document.getVideoWidth();
+	},
+
+	GetVideoHeight: function(){
+		return document.getVideoHeight();
+	},
+
+	SetVideoPosition: function(viewportX, viewportY, viewportWidth, viewportHeight, videoX, videoY, videoWidth, videoHeight){
+		return document.setVideoPosition(viewportX, viewportY, viewportWidth, viewportHeight, videoX, videoY, videoWidth, videoHeight);
 	}
 });

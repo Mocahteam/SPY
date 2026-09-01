@@ -64,10 +64,10 @@ public class LevelGenerator : FSystem {
 		{
 			gameData = gameDataGO.GetComponent<GameData>();
 			DataLevel levelToLoad = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad];
-            if (gameData.levels.ContainsKey(levelToLoad.filePath))
+			if (gameData.levels.ContainsKey(levelToLoad.filePath))
 				XmlToLevel(gameData.levels[levelToLoad.filePath].OwnerDocument);
 			else
-				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Error });
+                GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Error });
 			scenarioName.text = Utility.extractLocale(gameData.scenarios[gameData.selectedScenario].name);
 			levelName.text = Utility.extractLocale(levelToLoad.missionName);
 			if (Application.platform == RuntimePlatform.WebGLPlayer)

@@ -28,7 +28,7 @@ public class UINavigationManager : FSystem
 	private InputAction middleClick;
 
 	[DllImport("__Internal")]
-	private static extern void ExitFullScreen(); // call javascript
+	private static extern void QuitFullScreen(); // call javascript
 
 	[DllImport("__Internal")]
 	private static extern void ResetFullScreen(); // call javascript
@@ -82,7 +82,7 @@ public class UINavigationManager : FSystem
 						break;
 					}
 			// if we can't, give focus to the last button available
-			if (!focused)
+			if (!focused && f_buttons.Count > 0)
 			{
 				eventSystem.SetSelectedGameObject(f_buttons.getAt(f_buttons.Count - 1));
 			}
@@ -226,7 +226,7 @@ public class UINavigationManager : FSystem
 		go.GetComponent<TMP_InputField>().onSelect.AddListener(delegate (string content)
 		{
 			if (Touch.activeTouches.Count > 0 && Application.platform == RuntimePlatform.WebGLPlayer)
-				ExitFullScreen();
+                QuitFullScreen();
 		});
 
 		go.GetComponent<TMP_InputField>().onEndEdit.AddListener(delegate (string content)

@@ -188,7 +188,7 @@ public class HotkeySystem : FSystem
 			if (cameraTop != null && cameraTop.gameObject.activeInHierarchy && moveUp_act.WasReleasedThisFrame())
 				callEntry(cameraTop, EventTriggerType.PointerUp);
 			// Move Down
-			if (cameraDown != null && cameraDown.gameObject.activeInHierarchy && moveDown_act.WasPressedThisFrame() && !Keyboard.current.shiftKey.isPressed)
+			if (cameraDown != null && cameraDown.gameObject.activeInHierarchy && moveDown_act.WasPressedThisFrame() && !Keyboard.current.shiftKey.isPressed && !Keyboard.current.ctrlKey.isPressed)
 				callEntry(cameraDown, EventTriggerType.PointerDown);
 			if (cameraDown != null && cameraDown.gameObject.activeInHierarchy && moveDown_act.WasReleasedThisFrame())
 				callEntry(cameraDown, EventTriggerType.PointerUp);

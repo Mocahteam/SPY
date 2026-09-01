@@ -91,14 +91,20 @@
 				</div>
 			</header>
 		</div>
-		<canvas id="unity-canvas" tabindex="0" aria-label="Zone interactive du jeu, appuyez sur Entrée pour entrer dans le jeu." aria-labelledby="ScreenReaderSpan" role="application"></canvas>
-		<div id="unity-loading-bar">
-			<div id="unity-logo"></div>
-			<div id="unity-progress-bar-empty">
-				<div id="unity-progress-bar-full"></div>
+		<div id="fullscreen-container" class="position-relative">
+			<canvas id="unity-canvas" tabindex="0" aria-label="Zone interactive du jeu, appuyez sur Entrée pour entrer dans le jeu." aria-labelledby="ScreenReaderSpan" role="application"></canvas>
+			<div id="unity-loading-bar">
+				<div id="unity-logo"></div>
+				<div id="unity-progress-bar-empty">
+					<div id="unity-progress-bar-full"></div>
+				</div>
+			</div>
+			<div id="unity-mobile-warning"></div>
+			<audio id="playback"></audio>
+			<div id="video-container" class="visually-hidden position-absolute overflow-hidden">
+				<video id="cinematic" controls="controls" class="position-absolute" style="object-fit:fill;"></video>
 			</div>
 		</div>
-		<div id="unity-mobile-warning"></div>
 		<span id="TextToSpeechSpan" style="visibility:hidden;" ></span>
 		<!-- Le "aria-live" permet d'indiquer au lecteur d'écran que cette balise peut changer en live et qu'il doit donc la vocaliser à chaque fois qu'elle change. Le "aria-atomic" indique que le lecteur d'écran doit relire le contenu de la balise et pas uniquement ce qui a changé. Le role "status" indique que cet élément contient des informations de statut qui sont importantes pour l'utilisateur -->
 		<span id="ScreenReaderSpan" aria-live="polite" aria-atomic="true" role="status" class="visually-hidden"></span>
@@ -136,8 +142,17 @@
 		document.tryToCopy = tryToCopy;
 		document.tryToPaste = tryToPaste;
 		document.sendToScreenReader = sendToScreenReader;
-		document.exitFullScreen = exitFullScreen;
+		document.quitFullScreen = quitFullScreen;
 		document.resetFullScreen = resetFullScreen;
+		document.playSound = playSound;
+		document.stopSound = stopSound;
+		document.setCinematic = setCinematic;
+		document.playCinematic = playCinematic;
+		document.pauseCinematic = pauseCinematic;
+		document.stopCinematic = stopCinematic;
+		document.getVideoWidth = getVideoWidth;
+		document.getVideoHeight = getVideoHeight;
+		document.setVideoPosition = setVideoPosition;
 		
 		document.updateLang(lang);
 
@@ -310,7 +325,9 @@
 				loadingBar.style.display = "none";
 
 				fullscreenButton.onclick = () => {
-					unityInstance.SetFullscreen(1);
+					//unityInstance.SetFullscreen(1);
+					var fullscreenContainer = document.getElementById("fullscreen-container");
+					fullscreenContainer.requestFullscreen();
 				};
 				
 				const fileSelectorMissions = document.getElementById('files-selector-missions');
@@ -347,9 +364,11 @@
 				const queryString = window.location.search;
 				const urlParams = new URLSearchParams(queryString);
 				const levelToLoad = urlParams.get('level');
-				if (levelToLoad != null)
+				if (levelToLoad != null){
 					// see ConnexionManager
+					console.log("Ask to Load level from URL: "+levelToLoad);
 					unityInstance.SendMessage('Main_Loop', 'askToLoadLevel', levelToLoad);
+				}
 				const silent = urlParams.get('silent');
 				if (silent == null)
 					// see ConnexionManager
@@ -370,16 +389,25 @@
 		};
 		
 		var isPreviouslyInFullscreen = false;
-		function exitFullScreen(){
-			if (!!document.fullscreenElement || !!document.webkitIsFullScreen){
+		function quitFullScreen(){
+			if (!!document.fullscreenElement || !!document.webkitFullscreenElement || !!document.mozFullScreenElement){
 				isPreviouslyInFullscreen = true;
-				unityInstance.SetFullscreen(0);
+				//unityInstance.SetFullscreen(0);
+				if (document.exitFullscreen)
+					document.exitFullscreen();
+				else if (document.webkitExitFullscreen)
+					document.webkitExitFullscreen();
+				else if (document.mozCancelFullScreen)
+					document.mozCancelFullScreen();
 			}else
 				isPreviouslyInFullscreen = false;
 		}
+		
 		function resetFullScreen(){
 			if (isPreviouslyInFullscreen){
-				unityInstance.SetFullscreen(1);
+				//unityInstance.SetFullscreen(1);
+				var fullscreenContainer = document.getElementById("fullscreen-container");
+				fullscreenContainer.requestFullscreen();
 				isPreviouslyInFullscreen = false;
 			}
 		}
@@ -483,6 +511,69 @@
 				alert("Clipboard API not available, paste cancel");
 			}
 		}
+		
+		function playSound(url){
+			var playback = document.getElementById("playback");
+			playback.src = url;
+			playback.play()
+		}
+		
+		function stopSound(){
+			var playback = document.getElementById("playback");
+			playback.src = "";
+		}
+		
+		function setCinematic(url){
+			var cinematic = document.getElementById("cinematic");
+			cinematic.src = url;
+			cinematic.load();
+			var viewport = document.getElementById("video-container");
+			viewport.classList.remove("visually-hidden");
+		}
+		
+		function playCinematic(){
+			var cinematic = document.getElementById("cinematic");
+			cinematic.play();
+			console.log("play");
+		}
+		
+		function pauseCinematic(){
+			var cinematic = document.getElementById("cinematic");
+			cinematic.pause();
+			console.log("pause");
+		}
+		
+		function stopCinematic(){
+			var cinematic = document.getElementById("cinematic");
+			cinematic.pause();
+			cinematic.src = "";
+			cinematic.load();
+			var viewport = document.getElementById("video-container");
+			viewport.classList.add("visually-hidden");
+		}
+		
+		function getVideoWidth(){
+			var cinematic = document.getElementById("cinematic");
+			return cinematic.videoWidth;
+		}
+		
+		function getVideoHeight(){
+			var cinematic = document.getElementById("cinematic");
+			return cinematic.videoHeight;
+		}
+		
+		function setVideoPosition(viewportX, viewportY, viewportWidth, viewportHeight, videoX, videoY, videoWidth, videoHeight) {
+			var viewport = document.getElementById("video-container");
+			viewport.style.left = viewportX + "px";
+			viewport.style.top = viewportY + "px";
+			viewport.style.width = viewportWidth + "px";
+			viewport.style.height = viewportHeight + "px";
+			var cinematic = document.getElementById("cinematic");
+			cinematic.style.left = videoX + "px";
+			cinematic.style.top = videoY + "px";
+			cinematic.style.width = videoWidth + "px";
+			cinematic.style.height = videoHeight + "px";
+		}
 
 		document.body.appendChild(script);
 		
@@ -503,6 +594,13 @@
 			// Rediriger le focus vers un élément HTML extérieur
 			document.getElementById("after-canvas").focus();
 		  }
+		});
+		// Désactiver le Ctrl+s côté navigateur pour ne pas proposer la page de sauvegarde de la page
+		document.addEventListener('keydown', function(event) {
+			// Vérifie si Ctrl+S est pressé (ou Cmd+S sur Mac)
+			if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+				event.preventDefault(); // Empêche le comportement par défaut du navigateur
+			}
 		});
 	</script>
 	

@@ -12,7 +12,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
-using UnityEngine.UI;
+using System.Web;
+using UnityEngine.Video;
 
 /// <summary>
 /// This manager manages connexion data requests
@@ -27,15 +28,21 @@ public class ConnexionManager : FSystem
 	public TMP_Text logs;
 	public TMP_Text progress;
 	public TMP_Text SPYVersion;
+	public GameObject RightPanel;
 
-	private int webGL_fileLoaded = 0;
+	public Transform CinematicPanel;
+
+    public CurrentSettingsValues currentSettingsValues;
+
+    private int webGL_fileLoaded = 0;
 	private int webGL_fileToLoad = 0;
 	private GameData gameData;
 	private UserData userData;
 	private UnityAction localCallback;
 	private bool webGL_askToEnableSendSystem = false;
+	private bool cinematicPlayed = false;
 
-	private string loadLevelWithURL = "";
+    private string loadLevelWithURL = "";
 
 	[DllImport("__Internal")]
 	private static extern void ShowHtmlImportSettings(); // call javascript
@@ -128,10 +135,12 @@ public class ConnexionManager : FSystem
             else
             {
                 // Load scenario and levels from disk
+				exploreDirectoryAndCount(Application.streamingAssetsPath);
+				exploreDirectoryAndCount(Application.persistentDataPath);
                 // explore streaming asstets path
-                yield return exploreLevelsAndScenarios(Application.streamingAssetsPath);
+                yield return loadLevelsAndScenarios(Application.streamingAssetsPath);
                 // explore persistent data path
-                yield return exploreLevelsAndScenarios(Application.persistentDataPath);
+                yield return loadLevelsAndScenarios(Application.persistentDataPath);
             }
         }
 		// check if we have to load competencies (required for level analysis)
@@ -143,6 +152,8 @@ public class ConnexionManager : FSystem
 		}
 		// wait level loading
 		yield return WaitLoadingData();
+		// affectation du loadingscreen au RightPanel
+		GameObjectManager.setGameObjectParent(loadingScreen, RightPanel, false);
 	}
 
 	private IEnumerator WaitLoadingData()
@@ -156,38 +167,88 @@ public class ConnexionManager : FSystem
 		while (webGL_fileLoaded < webGL_fileToLoad)
 			yield return null;
 
-        // and, if require, we can load requested level by URL
-        if (loadLevelWithURL != "")
+		// and, if require, we can load requested level by URL
+		if (loadLevelWithURL != "")
 		{
-            DataLevel dl = new DataLevel();
+			DataLevel dl = new DataLevel();
 			if (loadLevelWithURL.StartsWith("http"))
+			{
 				dl.filePath = loadLevelWithURL;
+				UnityWebRequest www;
+				if (loadLevelWithURL.ToLower().StartsWith("https://spy.lip6.fr"))
+					www = UnityWebRequest.Get(loadLevelWithURL);
+				else
+					// On passe par notre proxy pour charger une mission commençant par http qui n'est pas chez nous (spy.lip6.fr)
+					www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php?file=" + HttpUtility.UrlEncode(loadLevelWithURL));
+				yield return www.SendWebRequest();
+				if (www.result == UnityWebRequest.Result.Success)
+				{
+					try
+					{
+						UtilityLobby.LoadLevelOrScenario(gameData, loadLevelWithURL, www.downloadHandler.text);
+					}
+					catch (Exception e)
+					{
+						logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + loadLevelWithURL + " => " + e.Message + "</color>\n" + logs.text;
+						Debug.Log("Parsing error:" + www.downloadHandler.text);
+					}
+				}
+				else
+				{
+					Debug.Log(www.result + " " + www.error);
+				}
+			}
 			else
 			{
 				dl.filePath = new Uri(Application.persistentDataPath + "/" + loadLevelWithURL).AbsoluteUri;
 				if (!gameData.levels.ContainsKey(dl.filePath))
 					dl.filePath = new Uri(Application.streamingAssetsPath + "/" + loadLevelWithURL).AbsoluteUri;
 			}
-            dl.missionName = Path.GetFileNameWithoutExtension(dl.filePath);
+			dl.missionName = Path.GetFileNameWithoutExtension(dl.filePath);
 
-            gameData.selectedScenario = UtilityLobby.testFromUrl;
-            WebGlScenario test = new WebGlScenario();
-            test.levels = new List<DataLevel> { dl };
-            gameData.scenarios[UtilityLobby.testFromUrl] = test;
-            gameData.levelToLoad = 0;
-            GBL_Interface.playerName = UtilityLobby.testFromUrl;
-            GBL_Interface.userUUID = UtilityLobby.testFromUrl;
-            GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
+			gameData.selectedScenario = UtilityLobby.testFromUrl;
+			WebGlScenario test = new WebGlScenario();
+			test.levels = new List<DataLevel> { dl };
+			gameData.scenarios[UtilityLobby.testFromUrl] = test;
+			gameData.levelToLoad = 0;
+			GBL_Interface.playerName = UtilityLobby.testFromUrl;
+			GBL_Interface.userUUID = UtilityLobby.testFromUrl;
+			GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
 		}
 		else
+		{
 			// Disable Loading screen
 			GameObjectManager.setGameObjectState(loadingScreen, false);
+			// skip cinematic in editor or if already played
+			if (!cinematicPlayed)
+			{
+				cinematicPlayed = true;
+				// Enable cinematic panel
+				GameObjectManager.setGameObjectState(CinematicPanel.gameObject, true);
+				// Wait end of cinematic
+				VideoPlayer cinematicVideoPlayer = CinematicPanel.GetComponentInChildren<VideoPlayer>(true);
+				cinematicVideoPlayer.clip = Resources.Load<VideoClip>("Video/VideoIntro" + (currentSettingsValues.values.currentLanguage == 1 ? "_en" : "_fr"));
+				while (!CinematicPanel.gameObject.activeInHierarchy)
+					yield return null;
+				cinematicVideoPlayer.Prepare();
+				while (!cinematicVideoPlayer.isPrepared)
+					yield return null;
+				cinematicVideoPlayer.time = 0;
+				cinematicVideoPlayer.Play();
+				while (cinematicVideoPlayer.isPlaying)
+					yield return null;
+				// Disable cinematic panel
+				GameObjectManager.setGameObjectState(CinematicPanel.gameObject, false);
+			}
+			else
+				cinematicPlayed = true;
+        }
 
-		if (Application.isEditor)
+        /* (Application.isEditor)
 		{
 			SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
 			SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
-		}
+		}*/
 	}
 
 	private IEnumerator GetScenarioWebRequest()
@@ -258,17 +319,26 @@ public class ConnexionManager : FSystem
 		}
 	}
 
-	private IEnumerator exploreLevelsAndScenarios(string path)
+	private void exploreDirectoryAndCount(string path)
+    {
+        // try to load all child files
+        string[] files = Directory.GetFiles(path, "*.xml");
+        webGL_fileToLoad += files.Length;
+        // explore subdirectories
+        foreach (string directory in Directory.GetDirectories(path))
+            exploreDirectoryAndCount(directory);
+    }
+
+    private IEnumerator loadLevelsAndScenarios(string path)
 	{
 		// try to load all child files
 		string[] files = Directory.GetFiles(path, "*.xml");
-		webGL_fileToLoad += files.Length;
 		foreach (string fileName in files)
 			yield return GetLevelOrScenario_WebRequest("file://" + fileName);
 
         // explore subdirectories
         foreach (string directory in Directory.GetDirectories(path))
-			yield return exploreLevelsAndScenarios(directory);
+			yield return loadLevelsAndScenarios(directory);
 	}
 
 	private IEnumerator GetLevelOrScenario_WebRequest(string uri)
@@ -358,7 +428,7 @@ public class ConnexionManager : FSystem
 		while (true)
         {
             // Make a request to check if this sessionId is already used
-            UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/?idSession=" + formatedString);
+            UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php?idSession=" + formatedString);
             yield return www.SendWebRequest();
 
 			if (www.result != UnityWebRequest.Result.Success)
@@ -417,13 +487,20 @@ public class ConnexionManager : FSystem
 	public void synchUserData()
 	{
 		GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
-		MainLoop.instance.StartCoroutine(delayLoadingTitleScreen());
+		MainLoop.instance.StartCoroutine(AnimCameraAndLoadTitleScreen());
 	}
 
-	private IEnumerator delayLoadingTitleScreen()
+	private IEnumerator AnimCameraAndLoadTitleScreen()
     {
-		yield return null;
-		yield return null;
+		GameObjectManager.setGameObjectState(RightPanel, false);
+		GameObjectManager.addComponent<ForceOpenDoor>(MainLoop.instance.gameObject);
+        Animation anim = Camera.main.GetComponent<Animation>();
+		anim.Play();
+		while(!anim.isPlaying)
+            yield return null;
+        AnimationState state = anim["CameraMove"];
+		while (state.normalizedTime < 0.85f)
+            yield return null;
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });
 	}
 
@@ -496,7 +573,7 @@ public class ConnexionManager : FSystem
 						userData.newAvatarAvailable = -1;
 						GBL_Interface.playerName = idSession;
 						GBL_Interface.userUUID = idSession;
-						GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });
+						yield return AnimCameraAndLoadTitleScreen();
                     }
                 }
                 break; // exit the loop

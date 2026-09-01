@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using System.Web;
 
 public static class Utility
 {
@@ -38,7 +39,7 @@ public static class Utility
 			if (dialogXML.Attributes.GetNamedItem("text") != null)
 				dialog.text = dialogXML.Attributes.GetNamedItem("text").Value;
 			if (dialogXML.Attributes.GetNamedItem("img") != null)
-				dialog.img = dialogXML.Attributes.GetNamedItem("img").Value;
+				dialog.img = HttpUtility.UrlDecode(dialogXML.Attributes.GetNamedItem("img").Value);
 			if (dialogXML.Attributes.GetNamedItem("imgDesc") != null)
 				dialog.imgDesc = dialogXML.Attributes.GetNamedItem("imgDesc").Value;
 			if (dialogXML.Attributes.GetNamedItem("imgHeight") != null)
@@ -48,9 +49,9 @@ public static class Utility
 			if (dialogXML.Attributes.GetNamedItem("camY") != null)
 				dialog.camY = int.Parse(dialogXML.Attributes.GetNamedItem("camY").Value);
 			if (dialogXML.Attributes.GetNamedItem("sound") != null)
-				dialog.sound = dialogXML.Attributes.GetNamedItem("sound").Value;
+				dialog.sound = HttpUtility.UrlDecode(dialogXML.Attributes.GetNamedItem("sound").Value);
 			if (dialogXML.Attributes.GetNamedItem("video") != null)
-				dialog.video = dialogXML.Attributes.GetNamedItem("video").Value; 
+				dialog.video = HttpUtility.UrlDecode(dialogXML.Attributes.GetNamedItem("video").Value); 
 			if (dialogXML.Attributes.GetNamedItem("videoHeight") != null)
 				dialog.videoHeight = float.Parse(dialogXML.Attributes.GetNamedItem("videoHeight").Value);
 			if (dialogXML.Attributes.GetNamedItem("enableInteraction") != null)
