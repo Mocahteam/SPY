@@ -23,6 +23,7 @@ public class GameData : MonoBehaviour {
 	public bool hideExit = false;
 	public bool fogEnabled = false;
 	public bool omniscientView = false;
+	public bool userExecutor = false;
 	public RawListReferential rawReferentials;
 	public bool oldTTS_state = false;
 	public bool newTTS_state = false;

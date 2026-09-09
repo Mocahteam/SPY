@@ -36,7 +36,7 @@ public class SettingsManager : FSystem
 	private Family f_scrollview = FamilyManager.getFamily(new AllOfComponents(typeof(ScrollRect), typeof(Image)), new NoneOfComponents(typeof(AutoBind))); // Le Autobind permet d'exclure les scrollRect contenus dans des dropdown
 	private Family f_toggle = FamilyManager.getFamily(new AllOfComponents(typeof(Toggle)), new NoneOfTags("UI_Avatar"));
 	private Family f_tooltip = FamilyManager.getFamily(new AllOfComponents(typeof(Tooltip), typeof(Image)));
-	private Family f_blocks = FamilyManager.getFamily(new AllOfComponents(typeof(Selectable)), new AnyOfComponents(typeof(LibraryItemRef), typeof(ElementToDrag)), new AnyOfTags("UI_Action", "UI_Control", "UI_Operator", "UI_Captor"));
+	private Family f_blocks = FamilyManager.getFamily(new AnyOfComponents(typeof(Selectable), typeof(Image)), new AnyOfTags("UI_Action", "UI_Control", "UI_Operator", "UI_Captor"));
 	private Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
 	private Family f_highlightable = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(LibraryItemRef)));
 	private Family f_tileSelection = FamilyManager.getFamily(new AllOfComponents(typeof(SpriteRenderer)), new AnyOfTags("TileSelection"));
@@ -1043,10 +1043,15 @@ public class SettingsManager : FSystem
 	private void syncNormalColor(GameObject go, Color? color)
 	{
 		Selectable selectable = go.GetComponent<Selectable>();
-		ColorBlock currentColor = selectable.colors;
-		currentColor.normalColor = color ?? Color.magenta;
-		selectable.colors = currentColor;
-	}
+		if (selectable != null)
+		{
+			ColorBlock currentColor = selectable.colors;
+			currentColor.normalColor = color ?? Color.magenta;
+			selectable.colors = currentColor;
+        }
+        else
+            syncGraphicColor(go, color);
+    }
 
 	private void syncHighlightedColor(GameObject go, Color? unused = null)
 	{

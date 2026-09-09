@@ -22,6 +22,7 @@ public class SaveFileSystem : FSystem
 	public Toggle ExecutionLimit;
 	public Toggle HideExits;
 	public Toggle OmniscientView;
+	public Toggle UserExecutor;
 	public TMP_InputField score2;
 	public TMP_InputField score3;
 
@@ -242,6 +243,9 @@ public class SaveFileSystem : FSystem
 
         if (OmniscientView.isOn)
             levelExport += "\t<omniscientView />\n\n";
+
+		if (UserExecutor.isOn)
+			levelExport += "\t<userExecutor />\n\n";
 
         levelExport += "\t<score twoStars=\""+(score2.text == "" ? "0" : score2.text)+"\" threeStars=\""+ (score3.text == "" ? "0" : score3.text) + "\"/>\n\n";
 

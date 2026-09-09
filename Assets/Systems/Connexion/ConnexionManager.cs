@@ -12,6 +12,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 using System.Web;
 using UnityEngine.Video;
 
@@ -29,6 +30,7 @@ public class ConnexionManager : FSystem
 	public TMP_Text progress;
 	public TMP_Text SPYVersion;
 	public GameObject RightPanel;
+	public GameObject TouchToContinue;
 
 	public Transform CinematicPanel;
 
@@ -47,7 +49,7 @@ public class ConnexionManager : FSystem
 	[DllImport("__Internal")]
 	private static extern void ShowHtmlImportSettings(); // call javascript
 
-	[Serializable]
+    [Serializable]
 	public class WebGlScenarioList
 	{
 		public List<WebGlScenario> scenarios;
@@ -105,15 +107,28 @@ public class ConnexionManager : FSystem
 			GBL_Interface.userUUID = "";
 		}
 
-		MainLoop.instance.StartCoroutine(waitLocalizationLoadedAndContinue());
-
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 			ShowHtmlImportSettings();
 
-		Pause = true;
+        MainLoop.instance.StartCoroutine(waitLocalizationLoadedAndContinue());
+
+        // Ce mécanisme de touch est nécessaire en WebGL pour que les sons ou les vidéos puissent démarrer, sinon le navigateur bloque le son et la vidéo
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+			GameObjectManager.setGameObjectState(TouchToContinue, true);
+		else
+            // si on est pas en WebGL, on continue directement
+            continueAfterTouch();
+
+        Pause = true;
 	}
 
-	private IEnumerator waitLocalizationLoadedAndContinue()
+    // See TouchToContinue GO (TriggerEvent) in ConnexionScene scene
+    public void continueAfterTouch()
+    {
+        GameObjectManager.setGameObjectState(TouchToContinue, false);
+    }
+
+    private IEnumerator waitLocalizationLoadedAndContinue()
 	{
 		while (f_localizationLoaded.Count == 0)
 			yield return null;
@@ -219,15 +234,16 @@ public class ConnexionManager : FSystem
 		{
 			// Disable Loading screen
 			GameObjectManager.setGameObjectState(loadingScreen, false);
-			// skip cinematic in editor or if already played
-			if (!cinematicPlayed)
+			while (TouchToContinue.activeInHierarchy)
+                yield return null;
+            // skip cinematic in editor or if already played
+            if (!Application.isEditor && !cinematicPlayed)
 			{
-				cinematicPlayed = true;
 				// Enable cinematic panel
 				GameObjectManager.setGameObjectState(CinematicPanel.gameObject, true);
 				// Wait end of cinematic
 				VideoPlayer cinematicVideoPlayer = CinematicPanel.GetComponentInChildren<VideoPlayer>(true);
-				cinematicVideoPlayer.clip = Resources.Load<VideoClip>("Video/VideoIntro" + (currentSettingsValues.values.currentLanguage == 1 ? "_en" : "_fr"));
+				cinematicVideoPlayer.url = "https://spy.lip6.fr/StreamingAssets/Video/VideoIntro" + (currentSettingsValues.values.currentLanguage == 1 ? "_en" : "_fr") + ".mp4";
 				while (!CinematicPanel.gameObject.activeInHierarchy)
 					yield return null;
 				cinematicVideoPlayer.Prepare();
@@ -240,15 +256,14 @@ public class ConnexionManager : FSystem
 				// Disable cinematic panel
 				GameObjectManager.setGameObjectState(CinematicPanel.gameObject, false);
 			}
-			else
-				cinematicPlayed = true;
+            cinematicPlayed = true;
         }
 
-        /* (Application.isEditor)
+        if (Application.isEditor)
 		{
 			SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
 			SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
-		}*/
+		}
 	}
 
 	private IEnumerator GetScenarioWebRequest()

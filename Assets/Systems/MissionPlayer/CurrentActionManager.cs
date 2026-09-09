@@ -1,9 +1,10 @@
-using UnityEngine;
 using FYFY;
-using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Manage CurrentAction components, parse scripts and define first action, next actions, evaluate boolean expressions (if and while)...
@@ -11,7 +12,8 @@ using System.Data;
 public class CurrentActionManager : FSystem
 {
 	private Family f_executionReady = FamilyManager.getFamily(new AllOfComponents(typeof(ExecutablePanelReady)));
-	private Family f_ends = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+    private Family f_userExecutors = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+    private Family f_ends = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family f_newStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(LibraryItemRef), typeof(CurrentAction)));
 	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
@@ -41,8 +43,22 @@ public class CurrentActionManager : FSystem
 
 	protected override void onStart()
 	{
-		f_executionReady.addEntryCallback(initFirstsActions);
-		f_newStep.addEntryCallback(delegate { onNewStep(); });
+		f_executionReady.addEntryCallback(delegate (GameObject go){
+			// Ici on est dans le cas où le panneau d'execution est initialisé et pret. Si on n'est pas en mode traçage de code et qu'il n'y a pas de fin (possible pour les cript avec une mauvaise condition, alors on initialise le currentAction sur la première action à exécuter
+			if (f_ends.Count <= 0 && f_userExecutors.Count <= 0)
+			{
+				initFirstsActions(go);
+                GameObjectManager.removeComponent<ExecutablePanelReady>(go);
+            }
+		});
+		f_newStep.addEntryCallback(delegate {
+            // Sur un newStep si on a déjà une currentAction s'est qu'on est en train d'exécuter le script, on passe donc à l'action suivante. Si on a pas de currentAction et qu'on est en mode traçage de code c'est que jusqu'à maintenant on été en attente de la sélections des actions à exécuter par le joueur, c'est chose faite et on demande un nouveau Step donc il faut initialiser le currentAction sur la première action à exécuter (uniquement si une fin n'est pas aussi demandée bien sûr)
+            if (f_currentActions.Count > 0)
+				onNewStep();
+			else
+                if (f_ends.Count <= 0 && f_userExecutors.Count > 0)
+					initFirstsActions(null);
+		});
 		f_playingMode.addEntryCallback(delegate {
 			// reset inaction counters
 			foreach (GameObject robot in f_player)
@@ -54,49 +70,43 @@ public class CurrentActionManager : FSystem
 
 	private void initFirstsActions(GameObject go)
 	{
-		// init first action if no ends occur (possible for scripts with bad condition)
-		if (f_ends.Count <= 0)
+		// init currentAction on the first action of players
+		bool atLeastOneFirstAction = false;
+		foreach (GameObject player in f_player)
 		{
-			// init currentAction on the first action of players
-			bool atLeastOneFirstAction = false;
-			foreach (GameObject player in f_player)
-			{
-				if (addCurrentActionOnFirstAction(player) != null)
-					atLeastOneFirstAction = true;
-				if (infiniteLoopDetected)
-					break;
-			}
-			if (!atLeastOneFirstAction || infiniteLoopDetected)
-			{
-				if (infiniteLoopDetected)
-					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.InfiniteLoop });
-				else
-				{
-					if (atLeastOnePlayerAndScriptIsAssociated())
-						GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoAction });
-					else
-						GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NamingError });
-				}
-			}
+			if (addCurrentActionOnFirstAction(player) != null)
+				atLeastOneFirstAction = true;
+			if (infiniteLoopDetected)
+				break;
+		}
+		if (!atLeastOneFirstAction || infiniteLoopDetected)
+		{
+			if (infiniteLoopDetected)
+				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.InfiniteLoop });
 			else
 			{
-				// init currentAction on the first action of ennemies
-				bool forceNewStep = false;
-				foreach (GameObject drone in f_drone)
-				{
-					ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
-					if (!scriptRef.executableScript.GetComponentInChildren<CurrentAction>(true) && !scriptRef.scriptFinished && !scriptRef.isBroken)
-						addCurrentActionOnFirstAction(drone);
-					else
-						forceNewStep = true; // will move currentAction on next action
-				}
-
-				if (forceNewStep)
-					onNewStep();
+				if (atLeastOnePlayerAndScriptIsAssociated())
+					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoAction });
+				else
+					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NamingError });
 			}
 		}
+		else
+		{
+			// init currentAction on the first action of ennemies
+			bool forceNewStep = false;
+			foreach (GameObject drone in f_drone)
+			{
+				ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
+				if (!scriptRef.executableScript.GetComponentInChildren<CurrentAction>(true) && !scriptRef.scriptFinished && !scriptRef.isBroken)
+					addCurrentActionOnFirstAction(drone);
+				else
+					forceNewStep = true; // will move currentAction on next action
+			}
 
-		GameObjectManager.removeComponent<ExecutablePanelReady>(go);
+			if (forceNewStep)
+				onNewStep();
+		}
 	}
 
 	private bool atLeastOnePlayerAndScriptIsAssociated()

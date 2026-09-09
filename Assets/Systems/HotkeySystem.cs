@@ -11,9 +11,10 @@ public class HotkeySystem : FSystem
 	private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
 	private Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family f_InputFields = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
-	private Family f_programmingArea = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)));
+	private Family f_programmingArea = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+    private Family f_memoryArea = FamilyManager.getFamily(new AllOfComponents(typeof(ExecutablePanel)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
-	public Button mainMenu;
+    public Button mainMenu;
 	public Button closeMainMenu;
 	public Button buttonExecute;
 	public Button buttonPause;
@@ -35,8 +36,8 @@ public class HotkeySystem : FSystem
 	public EventTrigger cameraZoomOut;
 
 	public Button showBriefing;
-	public Button showMapDesc;
-	public Button closeMapDesc;
+	public Button showLayoutDesc;
+	public Button closeLayoutDesc;
 	public GameObject inventory;
 	public Button buttonCopyCode;
 	public Button showSettings;
@@ -68,15 +69,19 @@ public class HotkeySystem : FSystem
 	private InputAction zoomIn_act;
 	private InputAction zoomOut_act;
 	private InputAction showBriefing_act;
-	private InputAction mapDesc_act;
+	private InputAction layoutDesc_act;
 	private InputAction copy_act;
 	private InputAction paste_act;
 	private InputAction focusOnNextProgrammingArea_act;
-	private InputAction focusOnInventory_act;
-	private InputAction tuneSettings_act;
+	private InputAction focusOnPreviousProgrammingArea_act;
+    private InputAction focusOnNextMemoryArea_act;
+    private InputAction focusOnPreviousMemoryArea_act;
+    private InputAction focusOnInventory_act;
+	private InputAction settings_act;
     private InputAction undo_act;
     private InputAction redo_act;
     private InputAction save_act;
+    private InputAction tracing_act;
 
     // L'instance
     public static HotkeySystem instance;
@@ -106,15 +111,19 @@ public class HotkeySystem : FSystem
 		zoomIn_act = InputSystem.actions.FindAction("CameraZoomIn");
 		zoomOut_act = InputSystem.actions.FindAction("CameraZoomOut");
 		showBriefing_act = InputSystem.actions.FindAction("ShowBriefing");
-		mapDesc_act = InputSystem.actions.FindAction("MapDesc");
+		layoutDesc_act = InputSystem.actions.FindAction("LayoutDesc");
 		copy_act = InputSystem.actions.FindAction("Copy");
 		paste_act = InputSystem.actions.FindAction("Paste");
 		focusOnNextProgrammingArea_act = InputSystem.actions.FindAction("SelectNextProgrammingArea");
-		focusOnInventory_act = InputSystem.actions.FindAction("SelectInventory");
-		tuneSettings_act = InputSystem.actions.FindAction("TuneSettings");
+        focusOnPreviousProgrammingArea_act = InputSystem.actions.FindAction("SelectPreviousProgrammingArea");
+        focusOnNextMemoryArea_act = InputSystem.actions.FindAction("SelectNextMemoryArea");
+        focusOnPreviousMemoryArea_act = InputSystem.actions.FindAction("SelectPreviousMemoryArea");
+        focusOnInventory_act = InputSystem.actions.FindAction("SelectInventory");
+		settings_act = InputSystem.actions.FindAction("Settings");
         undo_act = InputSystem.actions.FindAction("Undo");
         redo_act = InputSystem.actions.FindAction("Redo");
         save_act = InputSystem.actions.FindAction("Save");
+        tracing_act = InputSystem.actions.FindAction("TracingAccess");
 
         cancelNextEscape = false;
         foreach (GameObject go in f_InputFields)
@@ -223,13 +232,13 @@ public class HotkeySystem : FSystem
 			if (showBriefing != null && showBriefing.gameObject.activeInHierarchy && showBriefing_act.WasPressedThisFrame())
 				showBriefing.onClick.Invoke();
 
-			// Map description
-			if (mapDesc_act.WasPressedThisFrame())
+			// Layout description
+			if (layoutDesc_act.WasPressedThisFrame())
 			{
-				if (closeMapDesc != null && closeMapDesc.gameObject.activeInHierarchy)
-					closeMapDesc.onClick.Invoke();
-				else if (showMapDesc != null)
-					showMapDesc.onClick.Invoke();
+				if (closeLayoutDesc != null && closeLayoutDesc.gameObject.activeInHierarchy)
+					closeLayoutDesc.onClick.Invoke();
+				else if (showLayoutDesc != null)
+					showLayoutDesc.onClick.Invoke();
 			}
 
 			// Copy code
@@ -237,36 +246,56 @@ public class HotkeySystem : FSystem
 				buttonCopyCode.onClick.Invoke();
 
 			// Select next programmingArea
-			if (focusOnNextProgrammingArea_act.WasPressedThisFrame())
+			if (focusOnNextProgrammingArea_act.WasPressedThisFrame() || focusOnPreviousProgrammingArea_act.WasPressedThisFrame())
             {
 				if (f_programmingArea.Count > 0)
 				{
 					// Vérifier si l'objet actuellement sélectionné est dans la hierarchie d'une zone de programmation
 					if (eventSystem.currentSelectedGameObject != null && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() != null)
 					{
-						// Sélectionner la suivante
+						// Sélectionner la suivante/précédente
 						GameObject currentProgrammingArea = eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>().gameObject;
 						for (int i = 0; i < f_programmingArea.Count; i++)
 						{
 							if (f_programmingArea.getAt(i) == currentProgrammingArea)
 							{
-								// Si il y a encore une zone de programme, on la sélectionne
-								if (i < f_programmingArea.Count - 1)
-									eventSystem.SetSelectedGameObject(f_programmingArea.getAt(i + 1).GetComponentInChildren<TMP_InputField>().gameObject);
-								// si on est sur la dernière et que le bouton '+' est actif et visible, on le sélectionne
-								else if(AddContainerButton != null && AddContainerButton.gameObject.activeInHierarchy && AddContainerButton.interactable)
-									eventSystem.SetSelectedGameObject(AddContainerButton.gameObject);
-								// sinon on revient au premier
-								else
-									eventSystem.SetSelectedGameObject(f_programmingArea.First().GetComponentInChildren<TMP_InputField>().gameObject);
+								// gestion de la sélection de la zone précédente
+								if (focusOnPreviousProgrammingArea_act.WasPressedThisFrame())
+								{
+                                    // Si une zone de programme nous précède, on la sélectionne
+                                    if (i > 0)
+                                        eventSystem.SetSelectedGameObject(f_programmingArea.getAt(i - 1).GetComponentInChildren<TMP_InputField>().gameObject);
+                                    // si on est sur la première et que le bouton '+' est actif et visible, on le sélectionne
+                                    else if (AddContainerButton != null && AddContainerButton.gameObject.activeInHierarchy && AddContainerButton.interactable)
+                                        eventSystem.SetSelectedGameObject(AddContainerButton.gameObject);
+                                    // sinon on revient à la dernière
+                                    else
+                                        eventSystem.SetSelectedGameObject(f_programmingArea.getAt(f_programmingArea.Count - 1).GetComponentInChildren<TMP_InputField>().gameObject);
+                                }
+                                else
+								{
+									// Si il y a encore une zone de programme, on la sélectionne
+									if (i < f_programmingArea.Count - 1)
+										eventSystem.SetSelectedGameObject(f_programmingArea.getAt(i + 1).GetComponentInChildren<TMP_InputField>().gameObject);
+									// si on est sur la dernière et que le bouton '+' est actif et visible, on le sélectionne
+									else if (AddContainerButton != null && AddContainerButton.gameObject.activeInHierarchy && AddContainerButton.interactable)
+										eventSystem.SetSelectedGameObject(AddContainerButton.gameObject);
+									// sinon on revient au premier
+									else
+										eventSystem.SetSelectedGameObject(f_programmingArea.First().GetComponentInChildren<TMP_InputField>().gameObject);
+								}
 							}
 
 						}
 					}
 					else
 					{
-						// Sélectionner la première
-						eventSystem.SetSelectedGameObject(f_programmingArea.First().GetComponentInChildren<TMP_InputField>().gameObject);
+						if (focusOnPreviousProgrammingArea_act.WasPressedThisFrame())
+                            // Sélectionner la dernière
+                            eventSystem.SetSelectedGameObject(f_programmingArea.getAt(f_programmingArea.Count - 1).GetComponentInChildren<TMP_InputField>().gameObject);
+                        else
+                            // Sélectionner la première
+                            eventSystem.SetSelectedGameObject(f_programmingArea.First().GetComponentInChildren<TMP_InputField>().gameObject);
 					}
 				}
 				else if (AddContainerButton != null && AddContainerButton.gameObject.activeInHierarchy && AddContainerButton.interactable)
@@ -275,12 +304,81 @@ public class HotkeySystem : FSystem
 
 			}
 
-			// Select inventory
-			if (inventory != null && inventory.activeInHierarchy && focusOnInventory_act.WasPressedThisFrame())
+            // Select next memoryArea
+            if (focusOnNextMemoryArea_act.WasPressedThisFrame() || focusOnPreviousMemoryArea_act.WasPressedThisFrame())
+            {
+				if (f_memoryArea.Count > 0)
+				{
+					// Vérifier si l'objet actuellement sélectionné est dans la hierarchie d'une zone de mémoire
+					if (eventSystem.currentSelectedGameObject != null && eventSystem.currentSelectedGameObject.GetComponentInParent<ExecutablePanel>() != null)
+					{
+						// Si on est dand une zone de traçage sélectionner son parent
+						if (eventSystem.currentSelectedGameObject.GetComponentInParent<ToggleGroup>() != null)
+							eventSystem.SetSelectedGameObject(eventSystem.currentSelectedGameObject.GetComponentInParent<ExecutablePanel>().transform.Find("Header/agentName").gameObject);
+						else
+						{
+							// Sélectionner la suivante/précédente
+							GameObject currentMemoryArea = eventSystem.currentSelectedGameObject.GetComponentInParent<ExecutablePanel>().gameObject;
+							for (int i = 0; i < f_memoryArea.Count; i++)
+							{
+								if (f_memoryArea.getAt(i) == currentMemoryArea)
+								{
+									// gestion de la sélection de la zone précédente
+									if (focusOnPreviousMemoryArea_act.WasPressedThisFrame())
+									{
+										// Si une mémoire nous précède, on la sélectionne
+										if (i > 0)
+											eventSystem.SetSelectedGameObject(f_memoryArea.getAt(i - 1).transform.Find("Header/agentName").gameObject);
+										// sinon on revient à la dernière
+										else
+											eventSystem.SetSelectedGameObject(f_memoryArea.getAt(f_memoryArea.Count - 1).transform.Find("Header/agentName").gameObject);
+									}
+									else
+									{
+										// Si il y a encore une mémoire, on la sélectionne
+										if (i < f_memoryArea.Count - 1)
+											eventSystem.SetSelectedGameObject(f_memoryArea.getAt(i + 1).transform.Find("Header/agentName").gameObject);
+										// sinon on revient à la première
+										else
+											eventSystem.SetSelectedGameObject(f_memoryArea.First().transform.Find("Header/agentName").gameObject);
+									}
+								}
+							}
+						}
+					}
+					else
+					{
+						if (focusOnPreviousMemoryArea_act.WasPressedThisFrame())
+							// Sélectionner la dernière
+							eventSystem.SetSelectedGameObject(f_memoryArea.getAt(f_memoryArea.Count - 1).transform.Find("Header/agentName").gameObject);
+						else
+							// Sélectionner la première
+							eventSystem.SetSelectedGameObject(f_memoryArea.First().transform.Find("Header/agentName").gameObject);
+					}
+				}
+            }
+
+            // Select tracing area
+            if (tracing_act.WasPressedThisFrame())
+            {
+                if (f_memoryArea.Count > 0)
+                {
+					// Vérifier si l'objet actuellement sélectionné est dans la hierarchie d'une zone de mémoire
+					if (eventSystem.currentSelectedGameObject != null && eventSystem.currentSelectedGameObject.GetComponentInParent<ExecutablePanel>() != null)
+					{
+                        ExecutablePanel currentMemoryArea = eventSystem.currentSelectedGameObject.GetComponentInParent<ExecutablePanel>();
+						if (currentMemoryArea.GetComponentInChildren<ToggleGroup>() != null)
+                            eventSystem.SetSelectedGameObject(currentMemoryArea.GetComponentInChildren<ToggleGroup>().transform.Find("Header").gameObject);
+                    }
+				}
+            }
+
+            // Select inventory
+            if (inventory != null && inventory.activeInHierarchy && focusOnInventory_act.WasPressedThisFrame())
 				eventSystem.SetSelectedGameObject(inventory);
 
 			// Tune Settings
-			if (showSettings != null && tuneSettings_act.WasPressedThisFrame())
+			if (showSettings != null && settings_act.WasPressedThisFrame())
 				showSettings.onClick.Invoke();
 
 			// Undo/Redo

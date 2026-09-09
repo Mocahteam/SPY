@@ -8,6 +8,7 @@ public class EditorLevelDataSystem_wrapper : BaseWrapper
 	public UnityEngine.UI.Toggle fogToggle;
 	public UnityEngine.UI.Toggle hideExitsToggle;
 	public UnityEngine.UI.Toggle omniscientViewToggle;
+	public UnityEngine.UI.Toggle userExecutorToggle;
 	public TMPro.TMP_InputField score2Input;
 	public TMPro.TMP_InputField score3Input;
 	public UnityEngine.Transform editableContainers;
@@ -23,6 +24,7 @@ public class EditorLevelDataSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "fogToggle", fogToggle);
 		MainLoop.initAppropriateSystemField (system, "hideExitsToggle", hideExitsToggle);
 		MainLoop.initAppropriateSystemField (system, "omniscientViewToggle", omniscientViewToggle);
+		MainLoop.initAppropriateSystemField (system, "userExecutorToggle", userExecutorToggle);
 		MainLoop.initAppropriateSystemField (system, "score2Input", score2Input);
 		MainLoop.initAppropriateSystemField (system, "score3Input", score3Input);
 		MainLoop.initAppropriateSystemField (system, "editableContainers", editableContainers);

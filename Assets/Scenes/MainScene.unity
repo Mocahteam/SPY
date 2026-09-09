@@ -4255,6 +4255,7 @@ GameObject:
   - component: {fileID: 361349258}
   - component: {fileID: 361349259}
   - component: {fileID: 361349260}
+  - component: {fileID: 361349261}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -4611,6 +4612,10 @@ MonoBehaviour:
       PublicKeyToken=null
     _typeFullName: PopupManager
     _pause: 0
+  - _typeAssemblyQualifiedName: TraceExecutionSystem, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    _typeFullName: TraceExecutionSystem
+    _pause: 1
   _lateUpdateSystemDescriptions:
   - _typeAssemblyQualifiedName: HighLightSystem, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -4945,8 +4950,8 @@ MonoBehaviour:
   cameraZoomIn: {fileID: 1981267241}
   cameraZoomOut: {fileID: 1829307631}
   showBriefing: {fileID: 1836532729}
-  showMapDesc: {fileID: 378326945}
-  closeMapDesc: {fileID: 66302931}
+  showLayoutDesc: {fileID: 378326945}
+  closeLayoutDesc: {fileID: 66302931}
   inventory: {fileID: 1670566723}
   buttonCopyCode: {fileID: 0}
   showSettings: {fileID: 2033382523}
@@ -5067,6 +5072,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PopupManager_wrapper
   panelInfoUser: {fileID: 1539807149}
+--- !u!114 &361349261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361349215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c5df219e536924d8d5789b747e3aa6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraceExecutionSystem_wrapper
 --- !u!1 &369729339
 GameObject:
   m_ObjectHideFlags: 0
@@ -13004,6 +13021,20 @@ MonoBehaviour:
           m_WaitForCompletion: 0
           m_LocalVariables: []
         m_PropertyPath: 'localization.Array.data[9]'
+    - rid: 8085997730221260884
+      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
+        asm: Unity.Localization}
+      data:
+        m_Localized:
+          m_TableReference:
+            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+          m_TableEntryReference:
+            m_KeyId: 413802270290001920
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        m_PropertyPath: 'localization.Array.data[10]'
     - rid: 8163430786238513273
       type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
         asm: Unity.Localization}
@@ -13021,6 +13052,7 @@ MonoBehaviour:
           - rid: 8163430786238513283
           - rid: 7469272014153318463
           - rid: 7469272039258587215
+          - rid: 8085997730221260884
         m_UpdateType: 1
         m_Changed:
           m_PersistentCalls:
@@ -13163,6 +13195,7 @@ MonoBehaviour:
   - "Aucun programme n'a \xE9t\xE9 charg\xE9 en m\xE9moire,<br>v\xE9rifie que tu
     as bien indiqu\xE9 le nom d'un robot pour au moins une zone de programme."
   - Attention aux collisions ! Les robots sont fragiles.
+  - "ERREUR, l'une des actions que tu as choisi n'\xE9tait pas la bonne !"
 --- !u!114 &1306532954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26670,6 +26703,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7843301350108447871, guid: 1a16c512b3cd8cd459319f4de1729f46,
         type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7843301350108447871, guid: 1a16c512b3cd8cd459319f4de1729f46,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7843301350108447871, guid: 1a16c512b3cd8cd459319f4de1729f46,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -26687,6 +26730,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7843301350108447871, guid: 1a16c512b3cd8cd459319f4de1729f46,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7843301350108447871, guid: 1a16c512b3cd8cd459319f4de1729f46,
         type: 3}
@@ -27700,6 +27748,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5758604341045955670, guid: 3dce7a0df7989214ea5dbb548f234c1c,
+        type: 3}
+      propertyPath: m_Navigation.m_Mode
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 5828785443437599484, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: m_Size
@@ -27984,6 +28037,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6780773550268163658, guid: 3dce7a0df7989214ea5dbb548f234c1c,
+        type: 3}
+      propertyPath: m_Navigation.m_Mode
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 6865887964083016674, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}

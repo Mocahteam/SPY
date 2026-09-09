@@ -9,6 +9,7 @@ public class SaveFileSystem_wrapper : BaseWrapper
 	public UnityEngine.UI.Toggle ExecutionLimit;
 	public UnityEngine.UI.Toggle HideExits;
 	public UnityEngine.UI.Toggle OmniscientView;
+	public UnityEngine.UI.Toggle UserExecutor;
 	public TMPro.TMP_InputField score2;
 	public TMPro.TMP_InputField score3;
 	public UnityEngine.GameObject editableContainer;
@@ -23,6 +24,7 @@ public class SaveFileSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "ExecutionLimit", ExecutionLimit);
 		MainLoop.initAppropriateSystemField (system, "HideExits", HideExits);
 		MainLoop.initAppropriateSystemField (system, "OmniscientView", OmniscientView);
+		MainLoop.initAppropriateSystemField (system, "UserExecutor", UserExecutor);
 		MainLoop.initAppropriateSystemField (system, "score2", score2);
 		MainLoop.initAppropriateSystemField (system, "score3", score3);
 		MainLoop.initAppropriateSystemField (system, "editableContainer", editableContainer);

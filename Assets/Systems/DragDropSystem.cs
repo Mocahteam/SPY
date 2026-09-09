@@ -118,8 +118,8 @@ public class DragDropSystem : FSystem
 						verb = "executed",
 						objectType = "program",
 						activityExtensions = new Dictionary<string, string>() {
-					{ "content", scriptsContent }
-				}
+							{ "content", scriptsContent }
+						}
 					});
 			});
 			f_editMode.addEntryCallback(delegate {

@@ -150,12 +150,17 @@ public class UISystem : FSystem {
 			}
 		// Define Menu button states
 		GameObjectManager.setGameObjectState(buttonExecute, !value);
-		GameObjectManager.setGameObjectState(buttonPause, value);
-		EventSystem.current.SetSelectedGameObject(value ? buttonPause : buttonExecute);
-		GameObjectManager.setGameObjectState(buttonNextStep, false);
-		GameObjectManager.setGameObjectState(buttonContinue, false);
-		GameObjectManager.setGameObjectState(buttonSpeed, value);
-		GameObjectManager.setGameObjectState(buttonStop, value);
+		if (!gameData.userExecutor)
+		{
+			GameObjectManager.setGameObjectState(buttonPause, value);
+			EventSystem.current.SetSelectedGameObject(value ? buttonPause : buttonExecute);
+			GameObjectManager.setGameObjectState(buttonNextStep, false);
+			GameObjectManager.setGameObjectState(buttonContinue, false);
+			GameObjectManager.setGameObjectState(buttonSpeed, value);
+		}
+        else
+            EventSystem.current.SetSelectedGameObject(value ? buttonStop : buttonExecute);
+        GameObjectManager.setGameObjectState(buttonStop, value);
 		if (gameData.actionsHistory != null)
 			foreach (GameObject trash in f_removeButton)
 				trash.GetComponent<Button>().interactable = false;

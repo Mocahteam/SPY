@@ -23,8 +23,8 @@ public class HotkeySystem_wrapper : BaseWrapper
 	public UnityEngine.EventSystems.EventTrigger cameraZoomIn;
 	public UnityEngine.EventSystems.EventTrigger cameraZoomOut;
 	public UnityEngine.UI.Button showBriefing;
-	public UnityEngine.UI.Button showMapDesc;
-	public UnityEngine.UI.Button closeMapDesc;
+	public UnityEngine.UI.Button showLayoutDesc;
+	public UnityEngine.UI.Button closeLayoutDesc;
 	public UnityEngine.GameObject inventory;
 	public UnityEngine.UI.Button buttonCopyCode;
 	public UnityEngine.UI.Button showSettings;
@@ -56,8 +56,8 @@ public class HotkeySystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "cameraZoomIn", cameraZoomIn);
 		MainLoop.initAppropriateSystemField (system, "cameraZoomOut", cameraZoomOut);
 		MainLoop.initAppropriateSystemField (system, "showBriefing", showBriefing);
-		MainLoop.initAppropriateSystemField (system, "showMapDesc", showMapDesc);
-		MainLoop.initAppropriateSystemField (system, "closeMapDesc", closeMapDesc);
+		MainLoop.initAppropriateSystemField (system, "showLayoutDesc", showLayoutDesc);
+		MainLoop.initAppropriateSystemField (system, "closeLayoutDesc", closeLayoutDesc);
 		MainLoop.initAppropriateSystemField (system, "inventory", inventory);
 		MainLoop.initAppropriateSystemField (system, "buttonCopyCode", buttonCopyCode);
 		MainLoop.initAppropriateSystemField (system, "showSettings", showSettings);

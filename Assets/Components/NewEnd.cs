@@ -11,6 +11,7 @@ public class NewEnd : MonoBehaviour {
 	public static int Error = 7;
 	public static int NamingError = 8;
 	public static int Collision = 9;
+    public static int WrongActionChosen = 10;
 
-	public int endType;
+    public int endType;
 }

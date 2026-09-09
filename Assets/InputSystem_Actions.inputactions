@@ -286,9 +286,27 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "MapDesc",
+                    "name": "LayoutDesc",
+                    "type": "Button",
+                    "id": "22c9b587-b312-4bf9-967d-363e4493f982",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SelectNextMemoryArea",
                     "type": "Button",
                     "id": "2e47b976-c092-443b-8413-42257c196883",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SelectPreviousMemoryArea",
+                    "type": "Button",
+                    "id": "4062e2c1-5662-40b7-9285-700a83b23327",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -349,6 +367,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "SelectPreviousProgrammingArea",
+                    "type": "Button",
+                    "id": "d792dbd0-88e3-47bd-8b03-fee9b9c37d23",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "SelectInventory",
                     "type": "Button",
                     "id": "45362e2a-b208-402d-9d36-f23330fbb4b8",
@@ -358,9 +385,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "TuneSettings",
+                    "name": "Settings",
                     "type": "Button",
                     "id": "5ade0ef3-c87b-442a-8e33-ef18d950a215",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "TracingAccess",
+                    "type": "Button",
+                    "id": "6d14257e-be93-454e-be01-7ad5368dd452",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -1173,12 +1209,23 @@
                 },
                 {
                     "name": "",
+                    "id": "d6406d52-9c98-41ce-819f-346b5d2d8d56",
+                    "path": "<Keyboard>/l",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "LayoutDesc",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "bb0c0fb9-65a3-409c-9b11-a1573865953b",
                     "path": "<Keyboard>/semicolon",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "MapDesc",
+                    "action": "SelectNextMemoryArea",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -1189,9 +1236,75 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "MapDesc",
+                    "action": "SelectNextMemoryArea",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "One Modifier",
+                    "id": "084b5bf2-4d65-40ff-afdf-722914e8848b",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SelectPreviousMemoryArea",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "6e528ecb-172e-4876-96df-3aa86d6f7d5a",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SelectPreviousMemoryArea",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "081b8c56-0c37-44c3-a28c-ae456bfb5ed4",
+                    "path": "<Keyboard>/semicolon",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SelectPreviousMemoryArea",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "One Modifier",
+                    "id": "dde2dac7-610f-44ea-8a3f-5eb49756ca2b",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SelectPreviousMemoryArea",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "3c9a5e51-ef8e-4b5d-a306-326c229906fc",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SelectPreviousMemoryArea",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "a8449f61-18f8-4bc2-a99b-eae6a0632c6c",
+                    "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SelectPreviousMemoryArea",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "",
@@ -1203,6 +1316,72 @@
                     "action": "SelectNextProgrammingArea",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "6b316295-ad22-4d89-87f7-6f7bd0ad8df7",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SelectNextProgrammingArea",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "2ac707d8-95b8-40b4-af5d-162727f4b127",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SelectNextProgrammingArea",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "5ce12111-9846-4002-8911-4855e1b43c75",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SelectNextProgrammingArea",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "One Modifier",
+                    "id": "46c707c3-a589-401d-ab38-2f7dd2ee8f9f",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SelectPreviousProgrammingArea",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "c2631cd3-eb78-431c-ae12-20176d0b1e6c",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SelectPreviousProgrammingArea",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "c8572339-593c-4b1f-8731-08acfe0391b6",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SelectPreviousProgrammingArea",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "",
@@ -1416,11 +1595,22 @@
                 {
                     "name": "",
                     "id": "59a7411d-6797-401d-b508-562b1563e14f",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Settings",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4e68ad12-ea28-4cfe-8aab-745728661992",
                     "path": "<Keyboard>/t",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "TuneSettings",
+                    "action": "TracingAccess",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

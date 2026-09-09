@@ -128,7 +128,9 @@ public class LevelGenerator : FSystem {
 		gameData.fogEnabled = false;
 		gameData.levelToLoadScore = new int[2] { 0, 0 };
 
-		foreach (XmlNode child in root.ChildNodes)
+		gameData.userExecutor = doc.GetElementsByTagName("userExecutor").Count > 0;
+
+        foreach (XmlNode child in root.ChildNodes)
 		{
 			switch (child.Name)
 			{
@@ -344,6 +346,11 @@ public class LevelGenerator : FSystem {
 			executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().text = agentEdit.associatedScriptName;
 			executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName = agentEdit.associatedScriptName;
             entity.GetComponentInChildren<TextMeshProUGUI>(true).text = agentEdit.associatedScriptName;
+			// Définir si on doit afficher ou pas le panneau de sélection de la prochaine action à exécuter selon si l'utilisateur est autorisé à le faire
+			if (gameData.userExecutor)
+                executablePanel.GetComponentInChildren<ToggleGroup>(true).gameObject.SetActive(true);
+			else
+                executablePanel.GetComponentInChildren<ToggleGroup>(true).gameObject.SetActive(false);
         }
 		else if (type == "guard" || type == "enemy")
 		{
@@ -354,6 +361,8 @@ public class LevelGenerator : FSystem {
 			executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().text = nameAgent;
 			executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName = nameAgent;
             entity.GetComponentInChildren<TextMeshProUGUI>(true).text = nameAgent;
+            // Pour un drone on n'affiche jamais le panneau de sélection de la prochaine actuion à exécuter
+            executablePanel.GetComponentInChildren<ToggleGroup>(true).enabled = false;
         }
 
 		AgentColor ac = MainLoop.instance.GetComponent<AgentColor>();

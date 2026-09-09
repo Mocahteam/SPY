@@ -17,6 +17,7 @@ public class EditorLevelDataSystem : FSystem {
 	public Toggle fogToggle;
 	public Toggle hideExitsToggle;
     public Toggle omniscientViewToggle;
+	public Toggle userExecutorToggle;
     public TMP_InputField score2Input;
 	public TMP_InputField score3Input;
 	public Transform editableContainers;
@@ -61,6 +62,7 @@ public class EditorLevelDataSystem : FSystem {
 		fogToggle.isOn = false;
 		hideExitsToggle.isOn = false;
         omniscientViewToggle.isOn = false;
+        userExecutorToggle.isOn = false;
 
         score2Input.text = "";
 		score3Input.text = "";
@@ -108,6 +110,7 @@ public class EditorLevelDataSystem : FSystem {
 		fogToggle.isOn = doc.GetElementsByTagName("fog").Count > 0;
 		hideExitsToggle.isOn = doc.GetElementsByTagName("hideExits").Count > 0;
         omniscientViewToggle.isOn = doc.GetElementsByTagName("omniscientView").Count > 0;
+        userExecutorToggle.isOn = doc.GetElementsByTagName("userExecutor").Count > 0;
 
 
         foreach (XmlNode child in root.ChildNodes)

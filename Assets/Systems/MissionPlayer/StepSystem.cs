@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Manage steps (automatic simulation or controled by player)
@@ -11,7 +12,7 @@ using UnityEngine;
  * Le StepSystem genère à temps constant le composant NewStep, soit la génération de ce composant à l'instant T
  * en T' (début du lateUpdate) dans le CurrentActionManager, le composant NewStep déclenche la suppression des currentActions et demande d'ajouter en T+1 des nouvelles currentActions (coroutines)
  * en T+1 (phase d'update) ajout des currentActions par les coroutines lancées par le CurrentActionManager
- * en T+1' (début du lateUpdate) le CurrentActionExecutor dépile les nouvelles CurrentActions et s'auto réveille pour corriger les déplacement en cas de prédiction de collisions
+ * en T+1' (début du lateUpdate) le CurrentActionExecutor dépile les nouvelles CurrentActions et s'auto réveille pour corriger les déplacements en cas de prédiction de collisions
  * en T+1'' (phase de lateUpdate) le CurrentActionExecutor corrige les positions à atteindre en fonction des collisions prédites et informe les systèmes dépendants que tout est ok avec le composant PositionCorrected
  *      A noter que l'exécution des actions Activate ajoutent des composant Triggered
  * en post T+2 sur l'écoute du composant PositionCorrected, les callback du MoveSystem et du DetectorManager activent leurs onProcess et le DoorAndConsoleManager dépile les Triggered et synchronise les portes => les portes sont donc à jour quand le DetectorManager va processer
@@ -33,11 +34,13 @@ public class StepSystem : FSystem {
     private Family f_executablePanels = FamilyManager.getFamily(new AnyOfTags("ScriptConstructor"), new AllOfComponents(typeof(UIRootExecutor)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
     private Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position), typeof(Animator)), new AnyOfTags("Door"));
+    private Family f_userExecutor = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
     private GameData gameData;
     private int nbStep;
     private bool newStepAskedByPlayer;
     private bool needPause;
+    private bool atLeastOneCurrentActionOccurs = false;
 
     protected override void onStart()
     {
@@ -59,12 +62,18 @@ public class StepSystem : FSystem {
             gameData.startStepTime = Time.time;
             nbStep++;
 
+            atLeastOneCurrentActionOccurs = false;
+
             Pause = false;
         });
 
         f_editingMode.addEntryCallback(delegate
         {
             Pause = true;
+        });
+
+        f_currentActions.addEntryCallback(delegate {
+            atLeastOneCurrentActionOccurs = true;
         });
 
         Pause = true;
@@ -106,14 +115,18 @@ public class StepSystem : FSystem {
                     });
                 }
                 // Si aucun robot n'a d'action suivante, revenir en mode éditeur
-                else if (!playerHasNextAction())
+                else if (!playerHasNextAction() && (atLeastOneCurrentActionOccurs || f_userExecutor.Count == 0))
                 {
                     GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
                     GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
                     needPause = false;
                     Pause = true;
                 }
-
+                // Si on est en mode traçage de code, on se remet automatiquement en pause pour que le joueur puisse choisir les prochaines actions à exécuter
+                else if (f_userExecutor.Count > 0)
+                {
+                    Pause = true;
+                }
                 // Cas général, on demande un nouveau pas de simulation
                 else
                 {
