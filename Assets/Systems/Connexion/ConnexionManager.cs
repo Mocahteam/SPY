@@ -130,8 +130,7 @@ public class ConnexionManager : FSystem
 
     private IEnumerator waitLocalizationLoadedAndContinue()
 	{
-		while (f_localizationLoaded.Count == 0)
-			yield return null;
+		yield return new WaitWhile(() => f_localizationLoaded.Count == 0);
 		// check if we have to load streaming assets
 		if (gameData.levels == null)
 		{
@@ -169,7 +168,13 @@ public class ConnexionManager : FSystem
 		yield return WaitLoadingData();
 		// affectation du loadingscreen au RightPanel
 		GameObjectManager.setGameObjectParent(loadingScreen, RightPanel, false);
-	}
+
+        if (Application.isEditor)
+        {
+            SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
+            SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
+        }
+    }
 
 	private IEnumerator WaitLoadingData()
 	{
@@ -179,8 +184,7 @@ public class ConnexionManager : FSystem
 		// Attendre une seconde pour laisser le temps à webGL_fileToLoad d'être initialisé par les différents scénarios de chargement
 		yield return new WaitForSeconds(1f);
 
-		while (webGL_fileLoaded < webGL_fileToLoad)
-			yield return null;
+		yield return new WaitWhile(() => webGL_fileLoaded < webGL_fileToLoad);
 
 		// and, if require, we can load requested level by URL
 		if (loadLevelWithURL != "")
@@ -234,8 +238,7 @@ public class ConnexionManager : FSystem
 		{
 			// Disable Loading screen
 			GameObjectManager.setGameObjectState(loadingScreen, false);
-			while (TouchToContinue.activeInHierarchy)
-                yield return null;
+			yield return new WaitWhile(() => TouchToContinue.activeInHierarchy);
             // skip cinematic in editor or if already played
             if (!Application.isEditor && !cinematicPlayed)
 			{
@@ -244,26 +247,17 @@ public class ConnexionManager : FSystem
 				// Wait end of cinematic
 				VideoPlayer cinematicVideoPlayer = CinematicPanel.GetComponentInChildren<VideoPlayer>(true);
 				cinematicVideoPlayer.url = "https://spy.lip6.fr/StreamingAssets/Video/VideoIntro" + (currentSettingsValues.values.currentLanguage == 1 ? "_en" : "_fr") + ".mp4";
-				while (!CinematicPanel.gameObject.activeInHierarchy)
-					yield return null;
+				yield return new WaitWhile(() => !CinematicPanel.gameObject.activeInHierarchy);
 				cinematicVideoPlayer.Prepare();
-				while (!cinematicVideoPlayer.isPrepared)
-					yield return null;
+				yield return new WaitWhile(() => !cinematicVideoPlayer.isPrepared);
 				cinematicVideoPlayer.time = 0;
 				cinematicVideoPlayer.Play();
-				while (cinematicVideoPlayer.isPlaying)
-					yield return null;
+				yield return new WaitWhile(() => cinematicVideoPlayer.isPlaying);
 				// Disable cinematic panel
 				GameObjectManager.setGameObjectState(CinematicPanel.gameObject, false);
 			}
             cinematicPlayed = true;
         }
-
-        if (Application.isEditor)
-		{
-			SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
-			SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
-		}
 	}
 
 	private IEnumerator GetScenarioWebRequest()
@@ -511,11 +505,9 @@ public class ConnexionManager : FSystem
 		GameObjectManager.addComponent<ForceOpenDoor>(MainLoop.instance.gameObject);
         Animation anim = Camera.main.GetComponent<Animation>();
 		anim.Play();
-		while(!anim.isPlaying)
-            yield return null;
+		yield return new WaitWhile(() => !anim.isPlaying);
         AnimationState state = anim["CameraMove"];
-		while (state.normalizedTime < 0.85f)
-            yield return null;
+		yield return new WaitWhile(() => state.normalizedTime < 0.85f);
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });
 	}
 

@@ -14,10 +14,6 @@ public class EndGameManager : FSystem {
 
 	private Family f_requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 
-	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef),typeof(Position)), new AnyOfTags("Player"));
-    private Family f_newCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
-	private Family f_exit = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
-
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	
 	private GameData gameData;
@@ -49,11 +45,6 @@ public class EndGameManager : FSystem {
 
 		f_requireEndPanel.addEntryCallback(displayEndPanel);
 
-		// each time a current action is removed, we check if the level is over
-		f_newCurrentAction.addExitCallback(delegate {
-			MainLoop.instance.StartCoroutine(delayCheckEnd());
-		});
-
 		f_playingMode.addExitCallback(delegate {
 			MainLoop.instance.StartCoroutine(delayNoMoreAttemptDetection());
 		});
@@ -66,47 +57,6 @@ public class EndGameManager : FSystem {
 		yield return null;
 		if (f_requireEndPanel.Count == 0)
 			 GameObjectManager.setGameObjectState(endPanel.transform.parent.gameObject, false);
-	}
-
-	private IEnumerator delayCheckEnd()
-	{
-		// wait 2 frames before checking if a new currentAction was produced
-		yield return null; // this frame the currentAction is removed
-		yield return null; // this frame a probably new current action is created
-		
-		// Now, families are informed if new current action was produced, we can check if no currentAction exists on players and if all players are on the end of the level
-		if (!playerHasCurrentAction())
-		{
-			int nbEnd = 0;
-			bool endDetected = false;
-			// parse all exits
-			for (int e = 0; e < f_exit.Count && !endDetected; e++)
-			{
-				GameObject exit = f_exit.getAt(e);
-				// parse all players
-				for (int p = 0; p < f_player.Count && !endDetected; p++)
-				{
-					GameObject player = f_player.getAt(p);
-					// check if positions are equals
-					if (player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().y == exit.GetComponent<Position>().y)
-						nbEnd++;
-				}
-			}
-			// if all players reached end position or all exits are filled
-			if (nbEnd >= f_exit.Count || nbEnd >= f_player.Count)
-				// trigger end
-				GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Win });
-		}
-	}
-
-	private bool playerHasCurrentAction()
-	{
-		foreach (GameObject go in f_newCurrentAction)
-		{
-			if (go.GetComponent<CurrentAction>().agent.CompareTag("Player"))
-				return true;
-		}
-		return false;
 	}
 
 	// Display panel with appropriate content depending on end
@@ -171,10 +121,34 @@ public class EndGameManager : FSystem {
 					{ "error", "Collision" }
 				}
 			}));
-		}
-		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Win)
-		{
-			int _score = (10000 / (gameData.totalActionBlocUsed + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
+        }
+        else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.WrongActionChosen)
+        {
+            GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
+            endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[10];
+            Transform buttons = endPanel.transform.Find("Buttons");
+            GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
+            GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
+            GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, false);
+            GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
+
+            AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
+            audio.clip = LoseSound;
+            audio.loop = true;
+            audio.Play();
+
+            MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+            {
+                verb = "completed",
+                objectType = "level",
+                activityExtensions = new Dictionary<string, string>() {
+                    { "error", "WrongActionChosen" }
+                }
+            }));
+        }
+        else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Win)
+        {
+            int _score = (10000 / (gameData.totalActionBlocUsed + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, true);
 			Debug.Log("Score: " + _score);
 			setScoreStars(_score);
@@ -287,7 +261,7 @@ public class EndGameManager : FSystem {
 				}
 			}));
 		}
-		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoAction)
+		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoActionAvailableForExecution)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
 			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[5];
@@ -310,8 +284,34 @@ public class EndGameManager : FSystem {
 					{ "error", "NoActionToExecute" }
 				}
 			}));
-		}
-		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NamingError)
+        }
+        else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoMoreActionAvailableInInventory)
+        {
+            GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
+            endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[11];
+            Transform buttons = endPanel.transform.Find("Buttons");
+            GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
+            GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);
+            GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, true);
+            GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
+
+            AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
+            audio.clip = LoseSound;
+            audio.loop = true;
+            audio.Play();
+
+            MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+            {
+                verb = "completed",
+                objectType = "level",
+                result = true,
+                success = -1,
+                resultExtensions = new Dictionary<string, string>() {
+                    { "error", "NoMoreActionAvailableInInventory" }
+                }
+            }));
+        }
+        else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NamingError)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
 			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[8];
@@ -358,30 +358,6 @@ public class EndGameManager : FSystem {
 					{ "error", "InfiniteLoop" }
 				}
 			}));
-        }
-        else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.WrongActionChosen)
-        {
-            GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
-            endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[10];
-            Transform buttons = endPanel.transform.Find("Buttons");
-            GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
-            GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
-            GameObjectManager.setGameObjectState(buttons.Find("MainMenu").gameObject, false);
-            GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-
-            AudioSource audio = endPanel.GetComponentInParent<AudioSource>(true);
-            audio.clip = LoseSound;
-            audio.loop = true;
-            audio.Play();
-
-            MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
-            {
-                verb = "completed",
-                objectType = "level",
-                activityExtensions = new Dictionary<string, string>() {
-                    { "error", "WrongActionChosen" }
-                }
-            }));
         }
         else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Error)
 		{

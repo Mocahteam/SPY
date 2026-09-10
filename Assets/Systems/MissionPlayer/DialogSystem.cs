@@ -462,17 +462,14 @@ public class DialogSystem : FSystem
 
     private IEnumerator waitLoadingVideo(Dialog dialog)
     {
-		while (!videoPlayer.gameObject.activeInHierarchy)
-			yield return null;
+		yield return new WaitWhile(() => !videoPlayer.gameObject.activeInHierarchy);
         videoPlayer.Prepare();
 
-        while (!videoPlayer.isPrepared)
-            yield return null;
+        yield return new WaitWhile (() => !videoPlayer.isPrepared);
 
 		// On fait un Play/Pause pour se positionner sur la première image de la cinématique
         videoPlayer.Play();
-		while (videoPlayer.frame <= 0)
-            yield return null;
+		yield return new WaitWhile (() => videoPlayer.frame <= 0);
 		videoPlayer.Pause();
 
         // show rawImage that render video

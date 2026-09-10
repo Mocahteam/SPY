@@ -28,7 +28,7 @@ public class CurrentActionExecutor : FSystem {
 			// count inaction if a robot have no CurrentAction
 			if (agent.CompareTag("Player") && agent.GetComponent<ScriptRef>().executableScript.GetComponentInChildren<CurrentAction>(true) == null)
 				agent.GetComponent<ScriptRef>().nbOfInactions++;
-			// Predict if collision will occurs between agent to adapt target ccordinates
+			// Predict if collision will occurs between agent to adapt target coordinates
 			bool predictCollision = false;
 			foreach (GameObject agent2 in f_agent) {
 				if (agent != agent2 && agent.tag == agent2.tag)

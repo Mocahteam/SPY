@@ -6,12 +6,13 @@ public class NewEnd : MonoBehaviour {
 	public static int Win = 2;
 	public static int BadCondition = 3;
 	public static int NoMoreAttempt = 4;
-	public static int NoAction = 5;
+	public static int NoActionAvailableForExecution = 5;
 	public static int InfiniteLoop = 6;
 	public static int Error = 7;
 	public static int NamingError = 8;
 	public static int Collision = 9;
     public static int WrongActionChosen = 10;
+	public static int NoMoreActionAvailableInInventory = 11;
 
     public int endType;
 }

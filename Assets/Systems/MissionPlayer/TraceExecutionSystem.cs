@@ -10,10 +10,11 @@ using UnityEngine.UI;
 /// </summary>
 public class TraceExecutionSystem : FSystem {
 
-    private Family f_userExecutor = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-    private Family f_newCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
+    private Family f_userExecutor = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)));
+    private Family f_enabledUserExecutor = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
     private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private GameData gameData;
 
     public static TraceExecutionSystem instance;
 
@@ -24,7 +25,9 @@ public class TraceExecutionSystem : FSystem {
 
     protected override void onStart()
     {
-        f_newCurrentAction.addEntryCallback(checkValidity);
+        GameObject go = GameObject.Find("GameData");
+        if (go != null)
+            gameData = go.GetComponent<GameData>();
         f_playingMode.addEntryCallback(delegate {
             setToggleState(true);
             resetTogglesNotifications();
@@ -37,24 +40,34 @@ public class TraceExecutionSystem : FSystem {
     {
         // identifier les actions sélectionnées par l'utilisateur
         List<Toggle> selectedActions = new List<Toggle>();
-        foreach (GameObject executor in f_userExecutor)
+        foreach (GameObject executor in f_enabledUserExecutor)
             foreach (Toggle action in executor.GetComponentsInChildren<Toggle>())
                 if (action.isOn)
                     selectedActions.Add(action);
         // si on a au moins une action sélectionnée pour chaque robot contrôlé par le joueur, on peut passer à l'étape suivante
-        if (selectedActions.Count >= f_userExecutor.Count && f_userExecutor.Count > 0)
+        if (selectedActions.Count >= f_enabledUserExecutor.Count && f_enabledUserExecutor.Count > 0)
         {
-            GameObjectManager.addComponent<NewStep>(f_userExecutor.First());
+            GameObjectManager.addComponent<NewStep>(f_enabledUserExecutor.First());
             MainLoop.instance.StartCoroutine(waitAndClearUI());
         }
     }
 
     private IEnumerator waitAndClearUI()
     {
+        yield return null; // Pour attendre que le NewStep soit pris en compte par le StepSystem et que le startStepTime soit mis à jour
         // désactiver les boutons d'action pour éviter que l'utilisateur ne change d'avis pendant l'exécution
         setToggleState(false);
 
-        yield return new WaitForSeconds(1f);
+        // Attendre 2 frame que les nouveau CurrentAction soient positionnés
+        yield return null;
+        yield return null;
+        // Vérifier la validité des actions sélectionnées par l'utilisateur et affichage les notifications correspondantes (true/false) sur les boutons d'action
+        checkValidity();
+
+
+        // Attendre que l'on ait atteint 90% d'un pas de simulation
+        yield return new WaitUntil(() => Time.time - gameData.startStepTime >= 0.90f / gameData.gameSpeed_current);
+
         // réinitialiser les boutons d'action pour la prochaine étape
         resetTogglesNotifications();
         // désélectionner tous les boutons d'action pour la prochaine étape
@@ -87,22 +100,22 @@ public class TraceExecutionSystem : FSystem {
                 action.isOn = false;
     }
 
-    private void checkValidity(GameObject currentAction)
+    private void checkValidity()
     {
-        // On ne traite les CurrentAction qu'en mode play et que si l'utilisateur contrôle l'execution des robots
-        if (f_playingMode.Count > 0 && f_userExecutor.Count > 0)
+        // On ne procède à la vérification qu'en mode play et que si l'utilisateur contrôle l'execution des robots
+        if (f_playingMode.Count > 0 && gameData.userExecutor)
         {
-            CurrentAction ca = currentAction.GetComponent<CurrentAction>();
-            // On ne vérifier la validité que pour les agents contrôlés par le joueur et donc pas les ennemis
-            if (ca.agent.tag == "Player")
+            foreach (GameObject executor in f_enabledUserExecutor)
             {
-                List<Toggle> toggles = ca.agent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<ToggleGroup>(true).ActiveToggles().ToList();
+                List<Toggle> toggles = executor.GetComponent<ToggleGroup>().ActiveToggles().ToList();
                 if (toggles.Count() == 1)
                 {
                     Toggle enabledToggle = toggles[0];
-                    if (ca.GetComponent<BasicAction>().actionType != enabledToggle.GetComponent<BasicAction>().actionType)
+                    // récupération de l'action courante associées à ce userExecutor
+                    CurrentAction ca = executor.transform.parent.GetComponentInChildren<CurrentAction>(true);
+                    if ((ca == null && enabledToggle.GetComponent<BasicAction>().actionType != BasicAction.ActionType.Wait) || (ca.GetComponent<BasicAction>().actionType != enabledToggle.GetComponent<BasicAction>().actionType))
                     {
-                        GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.WrongActionChosen });
+                        MainLoop.instance.StartCoroutine(delayNewEnd());
                         GameObjectManager.setGameObjectState(enabledToggle.transform.Find("true").gameObject, false);
                         GameObjectManager.setGameObjectState(enabledToggle.transform.Find("false").gameObject, true);
                     }
@@ -114,5 +127,11 @@ public class TraceExecutionSystem : FSystem {
                 }
             }
         }
+    }
+    private IEnumerator delayNewEnd()
+    {
+        // Attendre que l'on ait atteint 80% d'un pas de simulation
+        yield return new WaitUntil(() => Time.time - gameData.startStepTime >= 0.8f / gameData.gameSpeed_current);
+        GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.WrongActionChosen });
     }
 }

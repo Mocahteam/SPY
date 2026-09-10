@@ -110,7 +110,7 @@ public class HistoryManager : FSystem
     private IEnumerator delayStackEditableContainers()
     {
         removeLastsUndoable(UndoRedoStack.childCount);
-        // pour attendre que les zones d'édition soient bien initialisées (cas par exemple d'un joueur qui recommence un niveau, son script de la tentative précédente est rechargé et il faut lui laisser le temps de finie de préremplir le script avant de sauvegarder le premier état)
+        // pour attendre que les zones d'édition soient bien initialisées (cas par exemple d'un joueur qui recommence un niveau, son script de la tentative précédente est rechargé et il faut lui laisser le temps de finir de préremplir le script avant de sauvegarder le premier état)
         yield return null;
         yield return null;
         yield return null;
@@ -135,12 +135,12 @@ public class HistoryManager : FSystem
 
     // check if player win the game and if true, load history
     private void levelFinished(GameObject go)
-	{
-		// En cas de fin de niveau
-		if (go.GetComponent<NewEnd>().endType == NewEnd.Win)
+    {
+        saveHistory();
+        // En cas de fin de niveau
+        if (go.GetComponent<NewEnd>().endType == NewEnd.Win)
 		{
 			// Affichage de l'historique de l'ensemble des actions exécutées
-			saveHistory();
 			MainLoop.instance.StartCoroutine(delayLoadHistory());
 		}
 		// for other end type, nothing to do more
@@ -269,13 +269,9 @@ public class HistoryManager : FSystem
 		if (gameData != null && gameData.actionsHistory != null)
 		{
 			// Wait that AddSpecificContainer was created
-			yield return null;
-			yield return null;
-			yield return null;
-
-			// Wait that default editable canvas are created
-			while (f_addSpecificContainer.Count > 0)
-				yield return null;
+			yield return new WaitUntil(() => f_addSpecificContainer.Count > 0);
+            // Wait that AddSpecificContainer was removed (ie default editable canvas are created)
+            yield return new WaitUntil(() => f_addSpecificContainer.Count == 0);
 
             // Remove all default canvas and restore all blocs
             yield return removeEditableContainers();
@@ -327,8 +323,7 @@ public class HistoryManager : FSystem
         foreach (Transform viewportForEditableContainer in EditableContainers)
             GameObjectManager.addComponent<ForceRemoveContainer>(viewportForEditableContainer.gameObject);
 
-        while (EditableContainers.childCount > 0)
-            yield return null;
+        yield return new WaitWhile(() => EditableContainers.childCount > 0);
     }
 
     // Restore saved scripts in history inside editable script containers
@@ -347,12 +342,11 @@ public class HistoryManager : FSystem
             GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = uiRC.scriptName, editState = uiRC.editState, typeState = uiRC.type, script = script });
         }
 
-        // Wait that AddSpecificContainer are created
-        yield return null;
-        yield return null;
-        // Wait that canvas are created
-        while (f_addSpecificContainer.Count > 0)
-            yield return null;
+        // Wait that AddSpecificContainer was created
+        yield return new WaitUntil(() => f_addSpecificContainer.Count > 0);
+        // Wait that AddSpecificContainer was removed  (ie default editable canvas are created)
+        yield return new WaitUntil(() => f_addSpecificContainer.Count == 0);
+
         // Count used elements
         foreach (Transform viewportForEditableContainer in EditableContainers)
         {

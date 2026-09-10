@@ -26,7 +26,6 @@ public class StepSystem : FSystem {
 
     private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
     private Family f_newStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
-    private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
 
     private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
     private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
@@ -34,13 +33,11 @@ public class StepSystem : FSystem {
     private Family f_executablePanels = FamilyManager.getFamily(new AnyOfTags("ScriptConstructor"), new AllOfComponents(typeof(UIRootExecutor)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
     private Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position), typeof(Animator)), new AnyOfTags("Door"));
-    private Family f_userExecutor = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
     private GameData gameData;
     private int nbStep;
     private bool newStepAskedByPlayer;
     private bool needPause;
-    private bool atLeastOneCurrentActionOccurs = false;
 
     protected override void onStart()
     {
@@ -58,11 +55,14 @@ public class StepSystem : FSystem {
             gameData.totalExecute++;
             setToDefaultTimeStep();
 
-            gameData.totalStep++;
             gameData.startStepTime = Time.time;
-            nbStep++;
 
-            atLeastOneCurrentActionOccurs = false;
+            // on compte un step de simulation que si on n'est pas en mode teaçage de code. En effet en mode traçage de code la première action exécutée sera comptabilisée sur le premier NewStep.
+            if (!gameData.userExecutor)
+            {
+                gameData.totalStep++;
+                nbStep++;
+            }
 
             Pause = false;
         });
@@ -70,10 +70,6 @@ public class StepSystem : FSystem {
         f_editingMode.addEntryCallback(delegate
         {
             Pause = true;
-        });
-
-        f_currentActions.addEntryCallback(delegate {
-            atLeastOneCurrentActionOccurs = true;
         });
 
         Pause = true;
@@ -114,16 +110,8 @@ public class StepSystem : FSystem {
                         }
                     });
                 }
-                // Si aucun robot n'a d'action suivante, revenir en mode éditeur
-                else if (!playerHasNextAction() && (atLeastOneCurrentActionOccurs || f_userExecutor.Count == 0))
-                {
-                    GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
-                    GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
-                    needPause = false;
-                    Pause = true;
-                }
                 // Si on est en mode traçage de code, on se remet automatiquement en pause pour que le joueur puisse choisir les prochaines actions à exécuter
-                else if (f_userExecutor.Count > 0)
+                else if (gameData.userExecutor)
                 {
                     Pause = true;
                 }
@@ -142,17 +130,6 @@ public class StepSystem : FSystem {
                 }
             }
         }
-    }
-
-    // Check if one of the robot programmed by the player has a next action to perform
-    private bool playerHasNextAction(){
-		CurrentAction act;
-		foreach(GameObject go in f_currentActions){
-			act = go.GetComponent<CurrentAction>();
-			if(act.agent != null && act.agent.CompareTag("Player") && act.GetComponent<BaseElement>().next != null)
-				return true;
-		}
-        return false;
     }
 
     // See PauseButton, ContinueButton in editor

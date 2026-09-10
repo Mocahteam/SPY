@@ -130,14 +130,12 @@ public class CameraSystem : FSystem {
 	private IEnumerator waitDialogAppearsToEnableOmniscientView()
 	{
 		// On attend que l'animation d'arrivée dans le jeu soit terminée
-		while (f_fadeOutEnd.Count == 0)
-            yield return null;
+		yield return new WaitWhile(() => f_fadeOutEnd.Count == 0);
         // On attend 2 frames pour que le dialogue de début de niveau soit affiché s'il devait y en avoir un
         yield return null;
         yield return null;
         // Attendre que le dialogue soit fermé avant de mettre la vue omnisciente
-        while (dialogPanel.activeInHierarchy)
-            yield return null;
+        yield return new WaitWhile (() => dialogPanel.activeInHierarchy);
 		
         unfocusAgent();
         // calculer le barycentre des agents pour centrer la caméra

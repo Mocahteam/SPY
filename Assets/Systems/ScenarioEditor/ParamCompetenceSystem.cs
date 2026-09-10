@@ -158,8 +158,7 @@ public class ParamCompetenceSystem : FSystem
 
 	private IEnumerator delayshowCompatibleLevels()
 	{
-		while (!competenciesLoadedAndReady)
-			yield return null;
+		yield return new WaitWhile (() => !competenciesLoadedAndReady);
 
         yield return null; // Il faut attendre la frame suivante pour être sûr que la famille contenant les Competency soit à jour
 

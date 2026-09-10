@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 public class MapDesc : FSystem
 {
     private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
-    private Family f_onNewStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+    private Family f_newStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family f_editMode = FamilyManager.getFamily(new AnyOfComponents(typeof(EditMode)));
 
     private Family f_walls = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
@@ -43,7 +43,7 @@ public class MapDesc : FSystem
 
         f_gameLoaded.addEntryCallback(delegate { buildStaticMap(); });
         f_editMode.addEntryCallback(delegate { askToRefreshMapDesc(); });
-        f_onNewStep.addEntryCallback(delegate { askToRefreshMapDesc(); });
+        f_newStep.addEntryCallback(delegate { askToRefreshMapDesc(); });
 
         lineModel = panel.transform.Find("Model");
 

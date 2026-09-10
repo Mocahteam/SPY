@@ -183,8 +183,7 @@ public class SettingsManager : FSystem
 
     private IEnumerator waitLocalizationLoaded()
 	{
-		while (f_localizationLoaded.Count == 0)
-			yield return null;
+		yield return new WaitWhile (() => f_localizationLoaded.Count == 0);
 		applySettings();
 	}
 

@@ -369,6 +369,7 @@ public static class UtilityGame
 						else
 						{
 							GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.BadCondition });
+							GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
 						}
 					}
 					else if (bo.operatorType == BaseOperator.OperatorType.AndOperator)
@@ -385,6 +386,7 @@ public static class UtilityGame
 						else
 						{
 							GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.BadCondition });
+							GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
 						}
 					}
 					else if (bo.operatorType == BaseOperator.OperatorType.OrOperator)
@@ -401,6 +403,7 @@ public static class UtilityGame
 						else
 						{
 							GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.BadCondition });
+							GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
 						}
 					}
 				}
@@ -411,8 +414,11 @@ public static class UtilityGame
 			}
 		}
 		else
+		{
 			GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.BadCondition });
-	}
+			GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
+		}
+    }
 	
 	// link actions together => define next property
 	// Associe à chaque bloc le bloc qui sera executé aprés

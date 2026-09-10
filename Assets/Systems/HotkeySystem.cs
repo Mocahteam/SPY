@@ -312,7 +312,7 @@ public class HotkeySystem : FSystem
 					// Vérifier si l'objet actuellement sélectionné est dans la hierarchie d'une zone de mémoire
 					if (eventSystem.currentSelectedGameObject != null && eventSystem.currentSelectedGameObject.GetComponentInParent<ExecutablePanel>() != null)
 					{
-						// Si on est dand une zone de traçage sélectionner son parent
+						// Si on est dans une zone de traçage sélectionner son parent
 						if (eventSystem.currentSelectedGameObject.GetComponentInParent<ToggleGroup>() != null)
 							eventSystem.SetSelectedGameObject(eventSystem.currentSelectedGameObject.GetComponentInParent<ExecutablePanel>().transform.Find("Header/agentName").gameObject);
 						else

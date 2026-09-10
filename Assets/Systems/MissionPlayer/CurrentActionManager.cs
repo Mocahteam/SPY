@@ -12,7 +12,6 @@ using UnityEngine.UI;
 public class CurrentActionManager : FSystem
 {
 	private Family f_executionReady = FamilyManager.getFamily(new AllOfComponents(typeof(ExecutablePanelReady)));
-    private Family f_userExecutors = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
     private Family f_ends = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family f_newStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
     private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction),typeof(LibraryItemRef), typeof(CurrentAction)));
@@ -26,13 +25,16 @@ public class CurrentActionManager : FSystem
 	private Family f_redDetector = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
 	private Family f_activableConsole = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)));
 	private Family f_exit = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
+    private Family f_inventory = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); // les éléments disponibles dans l'inventaire
 
-	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 
 	private HashSet<int> exploredScripItem;
 	private bool infiniteLoopDetected;
+    private GameData gameData;
+	private Coroutine delayCheckEnd_cor;
 
-	public Transform editableContainers;
+    public Transform editableContainers;
 
 	public static CurrentActionManager instance;
 
@@ -42,10 +44,14 @@ public class CurrentActionManager : FSystem
 	}
 
 	protected override void onStart()
-	{
-		f_executionReady.addEntryCallback(delegate (GameObject go){
+    {
+        GameObject go = GameObject.Find("GameData");
+        if (go != null)
+            gameData = go.GetComponent<GameData>();
+
+        f_executionReady.addEntryCallback(delegate (GameObject go){
 			// Ici on est dans le cas où le panneau d'execution est initialisé et pret. Si on n'est pas en mode traçage de code et qu'il n'y a pas de fin (possible pour les cript avec une mauvaise condition, alors on initialise le currentAction sur la première action à exécuter
-			if (f_ends.Count <= 0 && f_userExecutors.Count <= 0)
+			if (f_ends.Count <= 0 && !gameData.userExecutor)
 			{
 				initFirstsActions(go);
                 GameObjectManager.removeComponent<ExecutablePanelReady>(go);
@@ -56,7 +62,7 @@ public class CurrentActionManager : FSystem
             if (f_currentActions.Count > 0)
 				onNewStep();
 			else
-                if (f_ends.Count <= 0 && f_userExecutors.Count > 0)
+                if (f_ends.Count <= 0 && gameData.userExecutor)
 					initFirstsActions(null);
 		});
 		f_playingMode.addEntryCallback(delegate {
@@ -65,10 +71,79 @@ public class CurrentActionManager : FSystem
 				robot.GetComponent<ScriptRef>().nbOfInactions = 0;
 		});
 
-		Pause = true;
-	}
+        // each time a current action is added, we check if the level is over after the end of animation
+        f_currentActions.addEntryCallback(delegate {
+            // on s'assure qu'une coroutine n'est pas déjà lancée avant d'en lancer une nouvelle
+            if (delayCheckEnd_cor == null) 
+                delayCheckEnd_cor = MainLoop.instance.StartCoroutine(delayCheckEnd());
+        });
 
-	private void initFirstsActions(GameObject go)
+        Pause = true;
+    }
+
+    private IEnumerator delayCheckEnd()
+    {
+        // Attendre que l'on ait atteint 90% d'un pas de simulation
+        yield return new WaitUntil(() => Time.time - gameData.startStepTime >= 0.9f / gameData.gameSpeed_current);
+
+        bool atLeastOneNextAction = false;
+        GameObject nextAction;
+        foreach (GameObject currentActionGO in f_currentActions)
+        {
+            CurrentAction currentAction = currentActionGO.GetComponent<CurrentAction>();
+            nextAction = getNextAction(currentActionGO, currentAction.agent);
+            // check if a new action is available for this currentAction
+            if (nextAction != null && currentAction.agent.CompareTag("Player"))
+            {
+                atLeastOneNextAction = true;
+                break;
+            }
+        }
+
+        if (!atLeastOneNextAction)
+        {
+			// Aucun robot contrôlé par le joueur n'aure de prochaine action à exécuter
+
+			// On vérifie si on ne serait pas dans une situation de victoire
+            int nbEnd = 0;
+            bool endDetected = false;
+            // parse all exits
+            for (int e = 0; e < f_exit.Count && !endDetected; e++)
+            {
+                GameObject exit = f_exit.getAt(e);
+                // parse all players
+                for (int p = 0; p < f_player.Count && !endDetected; p++)
+                {
+                    GameObject player = f_player.getAt(p);
+                    // check if positions are equals
+                    if (player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().y == exit.GetComponent<Position>().y)
+                        nbEnd++;
+                }
+            }
+            // if all players reached end position or all exits are filled
+            if (nbEnd >= f_exit.Count || nbEnd >= f_player.Count)
+                // trigger end
+                GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Win });
+			else
+			{
+                // on vérifie s'il reste des blocks dans l'inventaire des joueurs, si oui on redonne la main au joueur pour qu'il continue à programmer, si non on déclenche une fin de type "NoMoreActionAvailableInInventory"
+                if (f_inventory.Count > 0)
+				{
+                    // Redonner la main au joueur pour continuer à programmer
+                    GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
+                }
+				else
+				{
+                    // Déclencher une fin de type "NoMoreActionAvailableInInventory"
+                    GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoMoreActionAvailableInInventory });
+                }
+                GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
+            }
+        }
+		delayCheckEnd_cor = null;
+    }
+
+    private void initFirstsActions(GameObject go)
 	{
 		// init currentAction on the first action of players
 		bool atLeastOneFirstAction = false;
@@ -86,11 +161,12 @@ public class CurrentActionManager : FSystem
 			else
 			{
 				if (atLeastOnePlayerAndScriptIsAssociated())
-					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoAction });
+					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoActionAvailableForExecution });
 				else
 					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NamingError });
-			}
-		}
+            }
+            GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
+        }
 		else
 		{
 			// init currentAction on the first action of ennemies
@@ -555,5 +631,5 @@ public class CurrentActionManager : FSystem
 	{
 		yield return null; // we add new CurrentAction next frame otherwise families are not notified to this adding because at the begining of this frame GameObject already contains CurrentAction
 		GameObjectManager.addComponent<CurrentAction>(nextAction, new { agent = agent });
-	}
+    }
 }
