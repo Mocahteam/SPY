@@ -52,10 +52,8 @@ public class CurrentActionManager : FSystem
         f_executionReady.addEntryCallback(delegate (GameObject go){
 			// Ici on est dans le cas où le panneau d'execution est initialisé et pret. Si on n'est pas en mode traçage de code et qu'il n'y a pas de fin (possible pour les cript avec une mauvaise condition, alors on initialise le currentAction sur la première action à exécuter
 			if (f_ends.Count <= 0 && !gameData.userExecutor)
-			{
 				initFirstsActions(go);
-                GameObjectManager.removeComponent<ExecutablePanelReady>(go);
-            }
+            GameObjectManager.removeComponent<ExecutablePanelReady>(go);
 		});
 		f_newStep.addEntryCallback(delegate {
             // Sur un newStep si on a déjà une currentAction s'est qu'on est en train d'exécuter le script, on passe donc à l'action suivante. Si on a pas de currentAction et qu'on est en mode traçage de code c'est que jusqu'à maintenant on été en attente de la sélections des actions à exécuter par le joueur, c'est chose faite et on demande un nouveau Step donc il faut initialiser le currentAction sur la première action à exécuter (uniquement si une fin n'est pas aussi demandée bien sûr)
@@ -73,9 +71,10 @@ public class CurrentActionManager : FSystem
 
         // each time a current action is added, we check if the level is over after the end of animation
         f_currentActions.addEntryCallback(delegate {
-            // on s'assure qu'une coroutine n'est pas déjà lancée avant d'en lancer une nouvelle
-            if (delayCheckEnd_cor == null) 
-                delayCheckEnd_cor = MainLoop.instance.StartCoroutine(delayCheckEnd());
+			// on s'assure qu'une coroutine n'est pas déjà lancée avant d'en lancer une nouvelle
+			if (delayCheckEnd_cor != null)
+				MainLoop.instance.StopCoroutine(delayCheckEnd_cor);
+			delayCheckEnd_cor = MainLoop.instance.StartCoroutine(delayCheckEnd());
         });
 
         Pause = true;
@@ -86,60 +85,63 @@ public class CurrentActionManager : FSystem
         // Attendre que l'on ait atteint 90% d'un pas de simulation
         yield return new WaitUntil(() => Time.time - gameData.startStepTime >= 0.9f / gameData.gameSpeed_current);
 
-        bool atLeastOneNextAction = false;
-        GameObject nextAction;
-        foreach (GameObject currentActionGO in f_currentActions)
-        {
-            CurrentAction currentAction = currentActionGO.GetComponent<CurrentAction>();
-            nextAction = getNextAction(currentActionGO, currentAction.agent);
-            // check if a new action is available for this currentAction
-            if (nextAction != null && currentAction.agent.CompareTag("Player"))
-            {
-                atLeastOneNextAction = true;
-                break;
-            }
-        }
-
-        if (!atLeastOneNextAction)
-        {
-			// Aucun robot contrôlé par le joueur n'aure de prochaine action à exécuter
-
-			// On vérifie si on ne serait pas dans une situation de victoire
-            int nbEnd = 0;
-            bool endDetected = false;
-            // parse all exits
-            for (int e = 0; e < f_exit.Count && !endDetected; e++)
-            {
-                GameObject exit = f_exit.getAt(e);
-                // parse all players
-                for (int p = 0; p < f_player.Count && !endDetected; p++)
-                {
-                    GameObject player = f_player.getAt(p);
-                    // check if positions are equals
-                    if (player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().y == exit.GetComponent<Position>().y)
-                        nbEnd++;
-                }
-            }
-            // if all players reached end position or all exits are filled
-            if (nbEnd >= f_exit.Count || nbEnd >= f_player.Count)
-                // trigger end
-                GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Win });
-			else
+		if (f_ends.Count <= 0)
+		{
+			bool atLeastOneNextAction = false;
+			GameObject nextAction;
+			foreach (GameObject currentActionGO in f_currentActions)
 			{
-                // on vérifie s'il reste des blocks dans l'inventaire des joueurs, si oui on redonne la main au joueur pour qu'il continue à programmer, si non on déclenche une fin de type "NoMoreActionAvailableInInventory"
-                if (f_inventory.Count > 0)
+				CurrentAction currentAction = currentActionGO.GetComponent<CurrentAction>();
+				nextAction = getNextAction(currentActionGO, currentAction.agent);
+				// check if a new action is available for this currentAction
+				if (nextAction != null && currentAction.agent.CompareTag("Player"))
 				{
-                    // Redonner la main au joueur pour continuer à programmer
-                    GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
-                }
+					atLeastOneNextAction = true;
+					break;
+				}
+			}
+
+			if (!atLeastOneNextAction)
+			{
+				// Aucun robot contrôlé par le joueur n'aure de prochaine action à exécuter
+
+				// On vérifie si on ne serait pas dans une situation de victoire
+				int nbEnd = 0;
+				bool endDetected = false;
+				// parse all exits
+				for (int e = 0; e < f_exit.Count && !endDetected; e++)
+				{
+					GameObject exit = f_exit.getAt(e);
+					// parse all players
+					for (int p = 0; p < f_player.Count && !endDetected; p++)
+					{
+						GameObject player = f_player.getAt(p);
+						// check if positions are equals
+						if (player.GetComponent<Position>().x == exit.GetComponent<Position>().x && player.GetComponent<Position>().y == exit.GetComponent<Position>().y)
+							nbEnd++;
+					}
+				}
+				// if all players reached end position or all exits are filled
+				if (nbEnd >= f_exit.Count || nbEnd >= f_player.Count)
+					// trigger end
+					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Win });
 				else
 				{
-                    // Déclencher une fin de type "NoMoreActionAvailableInInventory"
-                    GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoMoreActionAvailableInInventory });
-                }
-                GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
-            }
-        }
+					// on vérifie s'il reste des blocks dans l'inventaire des joueurs, si oui on redonne la main au joueur pour qu'il continue à programmer, si non on déclenche une fin de type "NoMoreActionAvailableInInventory"
+					if (f_inventory.Count > 0)
+					{
+						// Redonner la main au joueur pour continuer à programmer
+						GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
+						GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
+					}
+					else
+					{
+						// Déclencher une fin de type "NoMoreActionAvailableInInventory"
+						GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NoMoreActionAvailableInInventory });
+					}
+				}
+			}
+		}
 		delayCheckEnd_cor = null;
     }
 
@@ -154,6 +156,7 @@ public class CurrentActionManager : FSystem
 			if (infiniteLoopDetected)
 				break;
 		}
+		
 		if (!atLeastOneFirstAction || infiniteLoopDetected)
 		{
 			if (infiniteLoopDetected)
@@ -165,7 +168,6 @@ public class CurrentActionManager : FSystem
 				else
 					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.NamingError });
             }
-            GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
         }
 		else
 		{

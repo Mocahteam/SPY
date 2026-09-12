@@ -38,7 +38,6 @@ public class RobotCollisionManager : FSystem
                 {
                     //end level
                     GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Detected });
-                    GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
                     agent.GetComponent<Animator>().SetTrigger("Death");
                     agent.GetComponent<Collider>().enabled = false;
                     agent.GetComponent<ScriptRef>().isBroken = true;
@@ -48,7 +47,6 @@ public class RobotCollisionManager : FSystem
                 {
                     if (agent.CompareTag("Player"))
                     {
-                        GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
                         GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Collision });
                     }
                     agent.GetComponent<Animator>().SetTrigger("Death");

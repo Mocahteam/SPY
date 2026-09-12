@@ -136,12 +136,12 @@ public class HistoryManager : FSystem
     // check if player win the game and if true, load history
     private void levelFinished(GameObject go)
     {
-        saveHistory();
         // En cas de fin de niveau
         if (go.GetComponent<NewEnd>().endType == NewEnd.Win)
-		{
-			// Affichage de l'historique de l'ensemble des actions exécutées
-			MainLoop.instance.StartCoroutine(delayLoadHistory());
+        {
+            saveHistory();
+            // Affichage de l'historique de l'ensemble des actions exécutées
+            MainLoop.instance.StartCoroutine(delayLoadHistory());
 		}
 		// for other end type, nothing to do more
 	}
