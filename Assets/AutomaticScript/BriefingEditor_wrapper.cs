@@ -4,11 +4,13 @@ using FYFY;
 public class BriefingEditor_wrapper : BaseWrapper
 {
 	public UnityEngine.Transform editBriefingPanel;
+	public UnityEngine.Transform briefingContent;
 	public UnityEngine.GameObject briefingItemPrefab;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "editBriefingPanel", editBriefingPanel);
+		MainLoop.initAppropriateSystemField (system, "briefingContent", briefingContent);
 		MainLoop.initAppropriateSystemField (system, "briefingItemPrefab", briefingItemPrefab);
 	}
 

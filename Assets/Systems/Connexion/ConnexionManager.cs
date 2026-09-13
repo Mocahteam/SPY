@@ -27,6 +27,7 @@ public class ConnexionManager : FSystem
 	public GameObject prefabGameData;
 	public GameObject loadingScreen;
 	public TMP_Text logs;
+	public GameObject forceLaunchButton;
 	public TMP_Text progress;
 	public TMP_Text SPYVersion;
 	public GameObject RightPanel;
@@ -275,7 +276,7 @@ public class ConnexionManager : FSystem
                 yield return new WaitForSeconds(1f);
                 if (webGL_fileLoaded < webGL_fileToLoad)
 					logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
-				GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
+				GameObjectManager.setGameObjectState(forceLaunchButton, true);
 			}
 			else
 			{
@@ -311,7 +312,7 @@ public class ConnexionManager : FSystem
 				yield return new WaitForSeconds(1f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
 					logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
-				GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
+				GameObjectManager.setGameObjectState(forceLaunchButton, true);
 			}
 			else
 			{
@@ -364,7 +365,7 @@ public class ConnexionManager : FSystem
 				yield return new WaitForSeconds(1f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
 					logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
-				GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
+				GameObjectManager.setGameObjectState(forceLaunchButton, true);
 			}
 			else
 			{
@@ -399,7 +400,7 @@ public class ConnexionManager : FSystem
 				yield return new WaitForSeconds(1f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
 					logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + referentialsPath + "</color>\n" + logs.text;
-				GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
+				GameObjectManager.setGameObjectState(forceLaunchButton, true);
 			}
 			else
 			{
@@ -447,7 +448,7 @@ public class ConnexionManager : FSystem
 				yield return new WaitForSeconds(2f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
 					logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[1], formatedString) + "</color>\n" + logs.text;
-				GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
+				GameObjectManager.setGameObjectState(forceLaunchButton, true);
 			}
 			else
 			{
@@ -527,7 +528,7 @@ public class ConnexionManager : FSystem
 				yield return new WaitForSeconds(1f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
 					logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[3], idSession) + "</color>\n" + logs.text;
-				GameObjectManager.setGameObjectState(loadingScreen.transform.Find("ForceLaunch").gameObject, true);
+				GameObjectManager.setGameObjectState(forceLaunchButton, true);
 			}
 			else
 			{

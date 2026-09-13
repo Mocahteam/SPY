@@ -13,7 +13,8 @@ public class BriefingEditor : FSystem
 	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	public Transform editBriefingPanel;
-	public GameObject briefingItemPrefab;
+	public Transform briefingContent;
+    public GameObject briefingItemPrefab;
 
 	private GameObject currentBriefingEdit;
 	private DataLevelBehaviour overridedBriefing;
@@ -48,10 +49,9 @@ public class BriefingEditor : FSystem
 
 			overridedBriefing = dataLevel;
 			// remove all old briefing items
-			Transform viewportContent = editBriefingPanel.Find("Scroll View").GetChild(0).GetChild(0);
-			while (viewportContent.childCount > 0)
+			while (briefingContent.childCount > 0)
 			{
-				Transform child = viewportContent.GetChild(viewportContent.childCount - 1);
+				Transform child = briefingContent.GetChild(briefingContent.childCount - 1);
 				GameObjectManager.unbind(child.gameObject);
 				child.SetParent(null);
 				GameObject.Destroy(child.gameObject);
@@ -77,7 +77,7 @@ public class BriefingEditor : FSystem
 			// add briefing items
 			foreach (Dialog dialog in dataLevel.data.overridedDialogs)
 			{
-				GameObject newItem = GameObject.Instantiate(briefingItemPrefab, viewportContent, false);
+				GameObject newItem = GameObject.Instantiate(briefingItemPrefab, briefingContent, false);
 				GameObjectManager.bind(newItem);
 				foreach (TMP_InputField input in newItem.GetComponentsInChildren<TMP_InputField>(true))
 				{
@@ -122,10 +122,9 @@ public class BriefingEditor : FSystem
 
 			// save briefing items
 			overridedBriefing.data.overridedDialogs = new List<Dialog>();
-			Transform viewportContent = editBriefingPanel.Find("Scroll View").GetChild(0).GetChild(0);
-			for (int i = 0; i < viewportContent.childCount; i++)
+			for (int i = 0; i < briefingContent.childCount; i++)
 			{
-				Transform child = viewportContent.GetChild(i);
+				Transform child = briefingContent.GetChild(i);
 				Dialog dialog = new Dialog();
 				foreach (TMP_InputField input in child.GetComponentsInChildren<TMP_InputField>(true))
 				{

@@ -92,7 +92,7 @@ public class CurrentActionManager : FSystem
 			foreach (GameObject currentActionGO in f_currentActions)
 			{
 				CurrentAction currentAction = currentActionGO.GetComponent<CurrentAction>();
-				nextAction = getNextAction(currentActionGO, currentAction.agent);
+				nextAction = getNextAction(currentActionGO, currentAction.agent, true);
 				// check if a new action is available for this currentAction
 				if (nextAction != null && currentAction.agent.CompareTag("Player"))
 				{
@@ -202,7 +202,7 @@ public class CurrentActionManager : FSystem
 		// try to get the first action
 		Transform container = agent.GetComponent<ScriptRef>().executableScript.transform;
 		if (container.childCount > 1) // > 1 to jump the first child "Header"
-			firstAction = getFirstActionOf(container.GetChild(1).gameObject, agent);
+			firstAction = getFirstActionOf(container.GetChild(1).gameObject, agent, false);
 
 		if (firstAction != null)
 		{
@@ -214,15 +214,15 @@ public class CurrentActionManager : FSystem
 	}
 
 	// get first action inside "action"
-	private GameObject getFirstActionOf(GameObject action, GameObject agent)
+	private GameObject getFirstActionOf(GameObject action, GameObject agent, bool simulation)
     {
 		exploredScripItem = new HashSet<int>();
 		infiniteLoopDetected = false;
-		return rec_getFirstActionOf(action, agent);
+		return rec_getFirstActionOf(action, agent, simulation);
 	}
 
 	// look for first action recursively, it could be control structure (if, for...)
-	private GameObject rec_getFirstActionOf(GameObject action, GameObject agent)
+	private GameObject rec_getFirstActionOf(GameObject action, GameObject agent, bool simulation)
 	{
 		infiniteLoopDetected = exploredScripItem.Contains(action.GetInstanceID());
 		if (action == null || infiniteLoopDetected)
@@ -236,15 +236,22 @@ public class CurrentActionManager : FSystem
 			if (action.GetComponent<IfControl>())
 			{
 				IfControl ifCont = action.GetComponent<IfControl>();
-				// check if this IfControl include a child and if condition is evaluated to true
-				if (ifCont.firstChild != null && ifValid(ifCont.condition, agent))
-					// get first action of its first child (could be if, for...)
-					return rec_getFirstActionOf(ifCont.firstChild, agent);
-				else if (action.GetComponent<IfElseControl>() && action.GetComponent<IfElseControl>().firstChild != null)
-					return rec_getFirstActionOf(action.GetComponent<IfElseControl>().elseFirstChild, agent);
+				// check if condition is evaluated to true
+				if (ifValid(ifCont.condition, agent))
+				{
+					// check if this IfControl includes a child
+					if (ifCont.firstChild != null)
+						// get first action of its first child (could be if, for...)
+						return rec_getFirstActionOf(ifCont.firstChild, agent, simulation);
+				}
 				else
-					// this if doesn't contain action or its condition is false => get first action of next action (could be if, for...)
-					return rec_getFirstActionOf(ifCont.next, agent);
+					// check if this If is an IfElseControl and includes a child
+					if (ifCont is IfElseControl && (ifCont as IfElseControl).elseFirstChild != null)
+                        // get first action of its else first child (could be if, for...)
+                        return rec_getFirstActionOf((ifCont as IfElseControl).elseFirstChild, agent, simulation);
+                
+				// this if doesn't contain action on the selected branch => get first action of next action (could be if, for...)
+				return rec_getFirstActionOf(ifCont.next, agent, simulation);
 			}
 			// check if action is a WhileControl
 			else if (action.GetComponent<WhileControl>())
@@ -253,10 +260,10 @@ public class CurrentActionManager : FSystem
 				// check if condition is evaluated to true
 				if (ifValid(whileCont.condition, agent))
 					// get first action of its first child (could be if, for...)
-					return rec_getFirstActionOf(whileCont.firstChild, agent);
+					return rec_getFirstActionOf(whileCont.firstChild, agent, simulation);
 				else
 					// this condition is false => get first action of next action (could be if, for...)
-					return rec_getFirstActionOf(whileCont.next, agent);
+					return rec_getFirstActionOf(whileCont.next, agent, simulation);
 			}
 			// check if action is a ForControl
 			else if (action.GetComponent<ForControl>())
@@ -268,29 +275,32 @@ public class CurrentActionManager : FSystem
 					forCont.StartCoroutine(UtilityGame.pulseItem(counter.gameObject));
 				// check if this ForControl include a child and nb iteration != 0 and end loop not reached
 				if (forCont.firstChild != null && forCont.nbFor != 0 && forCont.currentFor < forCont.nbFor)
-				{
-					forCont.currentFor++;
-					counter.text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
+                {
+					if (!simulation)
+					{
+						forCont.currentFor++;
+						counter.text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
+					}
 					// get first action of its first child (could be if, for...)
-					return rec_getFirstActionOf(forCont.firstChild, agent);
+					return rec_getFirstActionOf(forCont.firstChild, agent, simulation);
 				}
 				else
 				{
 					// this for doesn't contain action or nb iteration == 0 or end loop reached => get first action of next action (could be if, for...)
-					if (forCont.currentFor >= forCont.nbFor)
+					if (forCont.currentFor >= forCont.nbFor && !simulation)
                     {
-						// reset nb iteration to 0
-						forCont.currentFor = 0;
+                        // reset nb iteration to 0
+                        forCont.currentFor = 0;
 						counter.text = (forCont.currentFor).ToString() + " / " + forCont.nbFor.ToString();
 					}
-					return rec_getFirstActionOf(forCont.next, agent);
+					return rec_getFirstActionOf(forCont.next, agent, simulation);
 				}
 			}
 			// check if action is a ForeverControl
 			else if (action.GetComponent<ForeverControl>())
 			{
 				// always return firstchild of this ForeverControl
-				return rec_getFirstActionOf(action.GetComponent<ForeverControl>().firstChild, agent);
+				return rec_getFirstActionOf(action.GetComponent<ForeverControl>().firstChild, agent, simulation);
 			}
 		}
 		return null;
@@ -499,7 +509,7 @@ public class CurrentActionManager : FSystem
 		GameObject nextAction;
 		foreach(GameObject currentActionGO in f_currentActions){
 			CurrentAction currentAction = currentActionGO.GetComponent<CurrentAction>();
-			nextAction = getNextAction(currentActionGO, currentAction.agent);
+			nextAction = getNextAction(currentActionGO, currentAction.agent, false);
 			// check if we reach last action of a drone
 			if (nextAction == null && currentAction.agent.CompareTag("Drone"))
 				currentAction.agent.GetComponent<ScriptRef>().scriptFinished = true;
@@ -515,7 +525,7 @@ public class CurrentActionManager : FSystem
 	}
 
 	// return the next action to execute, return null if no next action available
-	private GameObject getNextAction(GameObject currentAction, GameObject agent){
+	private GameObject getNextAction(GameObject currentAction, GameObject agent, bool simulation){
 		BasicAction current_ba = currentAction.GetComponent<BasicAction>();
 		if (current_ba != null)
 		{
@@ -523,26 +533,27 @@ public class CurrentActionManager : FSystem
 			if(current_ba.next == null || current_ba.next.GetComponent<BasicAction>())
 				return current_ba.next;
 			else
-				return getFirstActionOf(current_ba.next, agent);
-		}
-		else if (currentAction.GetComponent<WhileControl>())
+				return getFirstActionOf(current_ba.next, agent, simulation);
+        }
+        // currentAction is not a BasicAction
+        // check if it is a WhileControl
+        else if (currentAction.GetComponent<WhileControl>())
         {
 			if(ifValid(currentAction.GetComponent<WhileControl>().condition, agent))
             {
 				if (currentAction.GetComponent<WhileControl>().firstChild == null || currentAction.GetComponent<WhileControl>().firstChild.GetComponent<BasicAction>())
 					return currentAction.GetComponent<WhileControl>().firstChild;
 				else
-					return getFirstActionOf(currentAction.GetComponent<WhileControl>().firstChild, agent);
+					return getFirstActionOf(currentAction.GetComponent<WhileControl>().firstChild, agent, simulation);
 			}
             else
             {
 				if (currentAction.GetComponent<WhileControl>().next == null || currentAction.GetComponent<WhileControl>().next.GetComponent<BasicAction>())
 					return currentAction.GetComponent<WhileControl>().next;
 				else
-					return getFirstActionOf(currentAction.GetComponent<WhileControl>().next, agent);
+					return getFirstActionOf(currentAction.GetComponent<WhileControl>().next, agent, simulation);
 			}
 		}
-		// currentAction is not a BasicAction
 		// check if it is a ForAction
 		else if(currentAction.GetComponent<ForControl>()){
 			ForControl forAct = currentAction.GetComponent<ForControl>();
@@ -551,40 +562,49 @@ public class CurrentActionManager : FSystem
 			forAct.StartCoroutine(UtilityGame.pulseItem(counter.gameObject));
 			// ForAction reach the number of iterations
 			if (forAct.currentFor >= forAct.nbFor){
-				// reset nb iteration to 0
-				forAct.currentFor = 0;
-				counter.text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+				if (!simulation)
+				{
+					// reset nb iteration to 0
+					forAct.currentFor = 0;
+					counter.text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+				}
 				// return next action
 				if(forAct.next == null || forAct.next.GetComponent<BasicAction>())
 					return forAct.next;
 				else
-					return getFirstActionOf(forAct.next , agent);
+					return getFirstActionOf(forAct.next , agent, simulation);
 			}
 			// iteration are available
 			else{
 				// in case ForAction has no child
 				if (forAct.firstChild == null)
 				{
-					// reset nb iteration to 0
-					forAct.currentFor = 0;
-					counter.text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+					if (!simulation)
+					{
+						// reset nb iteration to 0
+						forAct.currentFor = 0;
+						counter.text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+					}
 					// return next action
 					if (forAct.next == null || forAct.next.GetComponent<BasicAction>())
 						return forAct.next;
 					else
-						return getFirstActionOf(forAct.next, agent);
+						return getFirstActionOf(forAct.next, agent, simulation);
 				}
 				else
 				// return first child
 				{
-					// add one iteration
-					forAct.currentFor++;
-					counter.text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+					if (!simulation)
+					{
+						// add one iteration
+						forAct.currentFor++;
+						counter.text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
+					}
 					// return first child
 					if (forAct.firstChild == null || forAct.firstChild.GetComponent<BasicAction>())
 						return forAct.firstChild;
 					else
-						return getFirstActionOf(forAct.firstChild, agent);
+						return getFirstActionOf(forAct.firstChild, agent, simulation);
 				}
 			}
 		}
@@ -597,9 +617,9 @@ public class CurrentActionManager : FSystem
 				if (ifAction.firstChild != null && ifAction.firstChild.GetComponent<BasicAction>())
 					return ifAction.firstChild;
 				else if (ifAction.firstChild != null)
-					return getFirstActionOf(ifAction.firstChild, agent);
+					return getFirstActionOf(ifAction.firstChild, agent, simulation);
 				else
-					return getFirstActionOf(ifAction.next, agent);
+					return getFirstActionOf(ifAction.next, agent, simulation);
 			}
 			else if (currentAction.GetComponent<IfElseControl>()) {
 				IfElseControl ifElse = currentAction.GetComponent<IfElseControl>();
@@ -607,14 +627,14 @@ public class CurrentActionManager : FSystem
 				if (ifElse.elseFirstChild != null && ifElse.elseFirstChild.GetComponent<BasicAction>())
 					return ifElse.elseFirstChild;
 				else if (ifElse.elseFirstChild != null)
-					return getFirstActionOf(ifElse.elseFirstChild, agent);
+					return getFirstActionOf(ifElse.elseFirstChild, agent, simulation);
 				else
-					return getFirstActionOf(ifAction.next, agent);
+					return getFirstActionOf(ifAction.next, agent, simulation);
 			}
 			else
 			{
 				// return next action
-				getFirstActionOf(ifAction.next, agent);
+				getFirstActionOf(ifAction.next, agent, simulation);
 			}
 		}
 		// check if it is a ForeverAction
@@ -623,7 +643,7 @@ public class CurrentActionManager : FSystem
 			if (foreverAction.firstChild == null || foreverAction.firstChild.GetComponent<BasicAction>())
 				return foreverAction.firstChild;
 			else
-				return getFirstActionOf(foreverAction.firstChild, agent);
+				return getFirstActionOf(foreverAction.firstChild, agent, simulation);
 		}
 
 		return null;

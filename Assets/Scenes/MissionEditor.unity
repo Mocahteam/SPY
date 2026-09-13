@@ -5434,6 +5434,12 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 461436186}
   m_PrefabAsset: {fileID: 0}
+--- !u!224 &461436188 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5946414439320962020, guid: 7bbbe97cc022e164ea5b61e59011f321,
+    type: 3}
+  m_PrefabInstance: {fileID: 461436186}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &461436189 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7057631425160811892, guid: 7bbbe97cc022e164ea5b61e59011f321,
@@ -12123,7 +12129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TooltipContent
-  text: Tester la mission
+  text: Test the mission
 --- !u!1001 &918115601
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29639,8 +29645,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TooltipContent
-  text: "Cet onglet permet de pr\xE9d\xE9finir des zones de\nprogramme pour les agents
-    plac\xE9s sur la carte"
+  text: 'This tab allows you to predefine program zones
+
+    for agents placed on
+    the map'
 --- !u!1 &1585260962 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2905032670452502451, guid: 26bc23b5216990641ac165a0942ed4cc,
@@ -32446,8 +32454,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TooltipContent
-  text: "Cet onglet permet de dessiner une carte en\npla\xE7ant du sol, des murs,
-    des robots..."
+  text: 'This tab lets you draw a map by
+
+    placing floors, walls, robots, and
+    more...'
 --- !u!1001 &1864966934
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32733,8 +32743,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TooltipContent
-  text: "Cet onglet permet de visualiser l'analyse automatique\ndes comp\xE9tences
-    mobilis\xE9es par la mission en cours de\nconstruction"
+  text: 'This tab displays the automatic analysis
+
+    of the skills required for
+    the project currently
+
+    under construction'
 --- !u!1 &1910195089
 GameObject:
   m_ObjectHideFlags: 0
@@ -35015,8 +35029,8 @@ MonoBehaviour:
   cameraZoomIn: {fileID: 1278112258}
   cameraZoomOut: {fileID: 1278112257}
   showBriefing: {fileID: 0}
-  showMapDesc: {fileID: 0}
-  closeMapDesc: {fileID: 0}
+  showLayoutDesc: {fileID: 0}
+  closeLayoutDesc: {fileID: 0}
   inventory: {fileID: 0}
   buttonCopyCode: {fileID: 0}
   showSettings: {fileID: 8141043333071998327}
@@ -35097,6 +35111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BriefingEditor_wrapper
   editBriefingPanel: {fileID: 461436187}
+  briefingContent: {fileID: 461436188}
   briefingItemPrefab: {fileID: 1087538614073686591, guid: 62432d114179c10478929b66552c5f53,
     type: 3}
 --- !u!114 &2049420971
@@ -35929,7 +35944,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TooltipContent
-  text: "Cet onglet permet de d\xE9finir les blocs disponibles\nau joueur, les consignes..."
+  text: 'This tab lets you set the blocks available
+
+    to the player, the instructions...'
 --- !u!1 &2124988047
 GameObject:
   m_ObjectHideFlags: 0

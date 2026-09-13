@@ -6,6 +6,7 @@ public class ConnexionManager_wrapper : BaseWrapper
 	public UnityEngine.GameObject prefabGameData;
 	public UnityEngine.GameObject loadingScreen;
 	public TMPro.TMP_Text logs;
+	public UnityEngine.GameObject forceLaunchButton;
 	public TMPro.TMP_Text progress;
 	public TMPro.TMP_Text SPYVersion;
 	public UnityEngine.GameObject RightPanel;
@@ -18,6 +19,7 @@ public class ConnexionManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "prefabGameData", prefabGameData);
 		MainLoop.initAppropriateSystemField (system, "loadingScreen", loadingScreen);
 		MainLoop.initAppropriateSystemField (system, "logs", logs);
+		MainLoop.initAppropriateSystemField (system, "forceLaunchButton", forceLaunchButton);
 		MainLoop.initAppropriateSystemField (system, "progress", progress);
 		MainLoop.initAppropriateSystemField (system, "SPYVersion", SPYVersion);
 		MainLoop.initAppropriateSystemField (system, "RightPanel", RightPanel);

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,16 +39,16 @@ public class TraceExecutionSystem : FSystem {
             foreach (GameObject exec_go in f_executablePanels)
             {
                 // Définir si on doit afficher ou pas le panneau de sélection de la prochaine action à exécuter selon si l'utilisateur est autorisé à le faire et si l'agent est un robot contrôlé par le joueur ou un drone (ennemi)
-                if (gameData.userExecutor && exec_go.GetComponent<LinkedWith>().target.tag == "Player")
-                    exec_go.GetComponentInChildren<ToggleGroup>(true).gameObject.SetActive(true);
+                if (gameData.userExecutor && exec_go.GetComponentInChildren<LinkedWith>(true).target.tag == "Player")
+                    GameObjectManager.setGameObjectState(exec_go.GetComponentInChildren<ToggleGroup>(true).gameObject, true);
                 else
-                    exec_go.GetComponentInChildren<ToggleGroup>(true).gameObject.SetActive(false);
+                    GameObjectManager.setGameObjectState(exec_go.GetComponentInChildren<ToggleGroup>(true).gameObject, false);
             }
         });
         f_editMode.addEntryCallback(delegate {
             // en mode Edit, toujours cacher les panneau de sélection de la prochaine action à exécuter
             foreach (GameObject exec_go in f_executablePanels)
-                exec_go.GetComponentInChildren<ToggleGroup>(true).gameObject.SetActive(false);
+                GameObjectManager.setGameObjectState(exec_go.GetComponentInChildren<ToggleGroup>(true).gameObject, false);
         });
         Pause = true;
     }

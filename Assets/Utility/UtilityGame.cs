@@ -191,7 +191,7 @@ public static class UtilityGame
 		foreach (ForControl forAct in copyGO.GetComponentsInChildren<ForControl>(true))
 		{
 			// Si activé, on note le nombre de tour de boucle à faire
-			if (!isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
+			if (!isInteractable)
 			{
 				TMP_InputField counter = forAct.GetComponentInChildren<TMP_InputField>(true);
 				try
@@ -202,41 +202,28 @@ public static class UtilityGame
 				}
 				counter.text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 			}// Sinon on met tout à 0
-			else if (isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
+			else if (isInteractable)
 			{
 				forAct.currentFor = 0;
 				forAct.GetComponentInChildren<TMP_InputField>(true).text = forAct.nbFor.ToString();
 			}
-			else if (forAct is WhileControl)
-			{
-				// On traduit la condition en string
-				((WhileControl)forAct).condition = new List<ConditionItem>();
-				conditionToStrings(forAct.transform.Find("ConditionContainer").GetChild(0).gameObject, ((WhileControl)forAct).condition);
 
-			}
-			// On parcourt les éléments présent dans le block action
-			foreach (BaseElement act in forAct.GetComponentsInChildren<BaseElement>(true))
-			{
-				// Si ce n'est pas un bloc action alors on le note comme premier élément puis on arrête le parcourt des éléments
-				if (!act.Equals(forAct))
-				{
-					forAct.firstChild = act.gameObject;
-					break;
-				}
-			}
-		}
-		// Pour chaque block de boucle infini
-		foreach (ForeverControl loopAct in copyGO.GetComponentsInChildren<ForeverControl>(true))
+			initFirstChildInLoop(forAct);
+        }
+		// Pour chaque bloc while
+		foreach (WhileControl whileAct in copyGO.GetComponentsInChildren<WhileControl>(true))
 		{
-			foreach (BaseElement act in loopAct.GetComponentsInChildren<BaseElement>(true))
-			{
-				if (!act.Equals(loopAct))
-				{
-					loopAct.firstChild = act.gameObject;
-					break;
-				}
-			}
-		}
+            // On traduit la condition en string
+            whileAct.condition = new List<ConditionItem>();
+            conditionToStrings(whileAct.transform.Find("ConditionContainer").GetChild(0).gameObject, whileAct.condition);
+
+            initFirstChildInLoop(whileAct);
+        }
+        // Pour chaque block de boucle infini
+        foreach (ForeverControl loopAct in copyGO.GetComponentsInChildren<ForeverControl>(true))
+        {
+            initFirstChildInLoop(loopAct);
+        }
 		// Pour chaque block if
 		foreach (IfControl ifAct in copyGO.GetComponentsInChildren<IfControl>(true))
 		{
@@ -294,6 +281,19 @@ public static class UtilityGame
 
 		return copyGO;
 	}
+
+	private static void initFirstChildInLoop(ControlElement loop)
+    {
+        foreach (BaseElement act in loop.GetComponentsInChildren<BaseElement>(true))
+        {
+            // Si ce n'est pas un bloc action alors on le note comme premier élément puis on arrête le parcourt des éléments
+            if (!act.Equals(loop))
+            {
+                loop.firstChild = act.gameObject;
+                break;
+            }
+        }
+    }
 
 	/**
 	 * Nettoie le bloc de controle (On supprime les end-zones, on met les conditions sous forme d'un seul bloc)
@@ -433,7 +433,7 @@ public static class UtilityGame
 			// Pour la dernière instruction le next dépend du parent
 			Transform parent = container.transform.parent;
 			if (parent != null && parent.GetComponent<BaseElement>() != null) {
-				if (parent.GetComponent<ForControl>() != null || parent.GetComponent<ForeverControl>() != null)
+				if (parent.GetComponent<ForControl>() != null || parent.GetComponent<WhileControl>() != null || parent.GetComponent<ForeverControl>() != null)
 					lastChild.GetComponent<BaseElement>().next = parent.gameObject;
 				else
 					lastChild.GetComponent<BaseElement>().next = parent.GetComponent<BaseElement>().next;

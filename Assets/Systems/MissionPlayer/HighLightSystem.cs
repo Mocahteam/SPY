@@ -81,7 +81,7 @@ public class HighLightSystem : FSystem {
 			Transform parent = go.transform.parent;
 			while (parent != null)
             {
-				if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
+				if (parent.GetComponent<ForControl>() || parent.GetComponent<WhileControl>() || parent.GetComponent<ForeverControl>())
 				{
 					sel = parent.GetComponent<Selectable>();
 					cb = sel.colors;
@@ -127,7 +127,7 @@ public class HighLightSystem : FSystem {
 			Transform parent = go.transform.parent;
 			while (parent != null)
 			{
-				if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
+				if (parent.GetComponent<ForControl>() || parent.GetComponent<WhileControl>() || parent.GetComponent<ForeverControl>())
 				{
 					sel = parent.GetComponent<Selectable>();
 					cb = sel.colors;

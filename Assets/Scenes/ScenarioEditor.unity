@@ -9792,7 +9792,7 @@ PrefabInstance:
     - target: {fileID: 2598129547128785489, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000030517578
+      value: -0.000045776367
       objectReference: {fileID: 0}
     - target: {fileID: 2847899282829580067, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
@@ -10404,8 +10404,8 @@ MonoBehaviour:
   cameraZoomIn: {fileID: 0}
   cameraZoomOut: {fileID: 0}
   showBriefing: {fileID: 0}
-  showMapDesc: {fileID: 0}
-  closeMapDesc: {fileID: 0}
+  showLayoutDesc: {fileID: 0}
+  closeLayoutDesc: {fileID: 0}
   inventory: {fileID: 0}
   buttonCopyCode: {fileID: 0}
   showSettings: {fileID: 984423895}
@@ -10455,6 +10455,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BriefingEditor_wrapper
   editBriefingPanel: {fileID: 1156602034}
+  briefingContent: {fileID: 7230369713530439808}
   briefingItemPrefab: {fileID: 1087538614073686591, guid: 62432d114179c10478929b66552c5f53,
     type: 3}
 --- !u!1 &1649896675
@@ -16036,6 +16037,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &7230369713530439808 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5946414439320962020, guid: 7bbbe97cc022e164ea5b61e59011f321,
+    type: 3}
+  m_PrefabInstance: {fileID: 7230369713530439806}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7369373643405624982
 PrefabInstance:
   m_ObjectHideFlags: 0
