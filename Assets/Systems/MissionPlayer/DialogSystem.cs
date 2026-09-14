@@ -11,8 +11,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.Video;
-using static System.Net.WebRequestMethods;
-using static UnityEngine.UI.GridLayoutGroup;
 
 /// <summary>
 /// Manage dialogs at the begining and end of the level

@@ -101,8 +101,8 @@
 			</div>
 			<div id="unity-mobile-warning"></div>
 			<audio id="playback"></audio>
-			<div id="video-container" class="visually-hidden position-absolute overflow-hidden">
-				<video id="cinematic" controls="controls" class="position-absolute" style="object-fit:fill;"></video>
+			<div id="video-container" class="pe-none visually-hidden position-absolute overflow-hidden">
+				<video id="cinematic" controls="controls" class="pe-auto position-absolute" style="object-fit:fill;"></video>
 			</div>
 		</div>
 		<span id="TextToSpeechSpan" style="visibility:hidden;" ></span>
@@ -563,16 +563,29 @@
 		}
 		
 		function setVideoPosition(viewportX, viewportY, viewportWidth, viewportHeight, videoX, videoY, videoWidth, videoHeight) {
-			var viewport = document.getElementById("video-container");
-			viewport.style.left = viewportX + "px";
-			viewport.style.top = viewportY + "px";
-			viewport.style.width = viewportWidth + "px";
-			viewport.style.height = viewportHeight + "px";
-			var cinematic = document.getElementById("cinematic");
-			cinematic.style.left = videoX + "px";
-			cinematic.style.top = videoY + "px";
-			cinematic.style.width = videoWidth + "px";
-			cinematic.style.height = videoHeight + "px";
+			const canvasRect = canvas.getBoundingClientRect();
+
+			// Taille du rendu Unity
+			const unityWidth = canvas.width;
+			const unityHeight = canvas.height;
+
+			// Conversion Unity -> CSS
+			const scaleX = canvasRect.width / unityWidth;
+			const scaleY = canvasRect.height / unityHeight;
+
+			const viewport = document.getElementById("video-container");
+
+			viewport.style.left = (viewportX * scaleX) + "px";
+			viewport.style.top = (viewportY * scaleY) + "px";
+			viewport.style.width = (viewportWidth * scaleX) + "px";
+			viewport.style.height = (viewportHeight * scaleY) + "px";
+
+			const cinematic = document.getElementById("cinematic");
+
+			cinematic.style.left = (videoX * scaleX) + "px";
+			cinematic.style.top = (videoY * scaleY) + "px";
+			cinematic.style.width = (videoWidth * scaleX) + "px";
+			cinematic.style.height = (videoHeight * scaleY) + "px";
 		}
 
 		document.body.appendChild(script);
