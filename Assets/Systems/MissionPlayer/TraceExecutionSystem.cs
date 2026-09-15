@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -135,11 +134,34 @@ public class TraceExecutionSystem : FSystem {
                         MainLoop.instance.StartCoroutine(delayNewEnd());
                         GameObjectManager.setGameObjectState(enabledToggle.transform.Find("true").gameObject, false);
                         GameObjectManager.setGameObjectState(enabledToggle.transform.Find("false").gameObject, true);
+                        GameObjectManager.addComponent<ActionPerformedForLRS>(enabledToggle.gameObject, new
+                        {
+                            verb = "traced",
+                            objectType = "block",
+                            result = true,
+                            success = -1,
+                            activityExtensions = new Dictionary<string, string>() {
+
+                                { "value", ca == null ? "None" : ca.GetComponent<BasicAction>().actionType.ToString() },
+                                { "error", enabledToggle.GetComponent<BasicAction>().actionType.ToString() }
+
+                            }
+                        });
                     }
                     else
                     {
                         GameObjectManager.setGameObjectState(enabledToggle.transform.Find("true").gameObject, true);
                         GameObjectManager.setGameObjectState(enabledToggle.transform.Find("false").gameObject, false);
+                        GameObjectManager.addComponent<ActionPerformedForLRS>(enabledToggle.gameObject, new
+                        {
+                            verb = "traced",
+                            objectType = "block",
+                            result = true,
+                            success = 1,
+                            activityExtensions = new Dictionary<string, string>() {
+                                { "value", enabledToggle.GetComponent<BasicAction>().actionType.ToString() }
+                            }
+                        });
                     }
                 }
             }

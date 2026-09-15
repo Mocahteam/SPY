@@ -1749,6 +1749,20 @@
 						}
 					],
 					"rule": "OmniscientView = 0"
+				},
+				{
+					"key": "SPY_Tracing",
+					"parentKey": "",
+					"name": "[fr]F41 Tracer l'exécution d'un programme[/fr][en]F41 Trace the Execution of a Program[/en]",
+					"description": "[fr]Compte tenu un programme donné, le joueur doit anticiper, à chaque pas de simulation, la prochaine action à exécuter pour chaque robot. Il s'agit donc ici non pas de créer un programme mais de lire, comprendre et dérouler chaque étape d'un programme.[/fr][en]Given a specific program, the player must anticipate, at each step of the simulation, the next action to be performed by each robot. The goal is not to create a program but to read, understand, and execute each step of a program.[/en]",
+					"filters": [
+						{
+							"label": "UserExecutor",
+							"tag": "userExecutor",
+							"constraints": []
+						}
+					],
+					"rule": "UserExecutor >= 1"
 				}
 			]
 		},
@@ -1959,7 +1973,7 @@
 					"key": "C1.5",
 					"parentKey": "C1",
 					"name": "[fr]C1.5 Prédire le résultat d'une séquence d'actions[/fr][en]C1.5 Predict the outcome of a sequence of actions[/en]",
-					"description": "[fr]Être capable de dire, à partir d'une séquence d'actions, ce qui se passera si elle est exécutée. Contrairement à la compétence 1.4, cette compétence consiste à fournir une prédiction sans exécuter réellement la séquence d'actions.<br><br>Dans SPY :<br> - Présence d'un ennemi avec un programme associé (le joueur doit lire et comprendre le comportement d'un ennemi pour anticiper ces déplacements et proposer une solution en conséquence).[/fr][en]Being able to tell, from a sequence of actions, what will happen if it is executed. In contrast to competency 1.4, this competency is about providing a prediction without actually executing the sequence of actions.<br><br>In SPY:<br> - Presence of an enemy with an associated program (the player must read and understand the behavior of an enemy to anticipate their movements and propose a solution accordingly).[/en]",
+					"description": "[fr]Être capable de dire, à partir d'une séquence d'actions, ce qui se passera si elle est exécutée. Contrairement à la compétence 1.4, cette compétence consiste à fournir une prédiction sans exécuter réellement la séquence d'actions.<br><br>Dans SPY :<br> - Présence d'un ennemi avec un programme associé (le joueur doit lire et comprendre le comportement d'un ennemi pour anticiper ces déplacements et proposer une solution en conséquence).<br> - Mode traçage de code activé : le joueur doit prédire, à chaque pas de simulation, la prochaine action à exécuter pour chaque robot.[/fr][en]Being able to tell, from a sequence of actions, what will happen if it is executed. In contrast to competency 1.4, this competency is about providing a prediction without actually executing the sequence of actions.<br><br>In SPY:<br> - Presence of an enemy with an associated program (the player must read and understand the behavior of an enemy to anticipate their movements and propose a solution accordingly).<br> - Code tracing mode enabled: At each simulation step, the player must predict the next action to be performed by each robot.[/en]",
 					"filters": [
 						{
 							"label": "ScriptToEnemyWithContent",
@@ -1975,9 +1989,14 @@
 									"constraint": "hasChild"
 								}
 							]
+						},
+						{
+							"label": "UserExecutor",
+							"tag": "userExecutor",
+							"constraints": []
 						}
 					],
-					"rule": "ScriptToEnemyWithContent > 0"
+					"rule": "ScriptToEnemyWithContent > 0 or UserExecutor >= 1"
 				},
 				{
 					"key": "C1.6",
