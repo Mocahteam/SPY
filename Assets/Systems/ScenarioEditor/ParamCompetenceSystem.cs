@@ -311,24 +311,28 @@ public class ParamCompetenceSystem : FSystem
 		}
 
 		//create scenario buttons and filter field in loading panel
-		List<string> sortedScenarios = new List<string>();
+		List<Tuple<string, string>> sortedScenarios = new List<Tuple<string, string>>();
 		foreach (string key in gameData.scenarios.Keys)
 		{
 			if (key != UtilityLobby.testFromScenarioEditor && key != UtilityLobby.testFromLevelEditor && key != UtilityLobby.testFromUrl && key != UtilityLobby.editingScenario && key.ToLower().Contains(filter.ToLower())) // we don't add new line for tested levels
-				sortedScenarios.Add(key);
+            {
+                string scenarName = Utility.extractLocale(gameData.scenarios[key].name);
+                sortedScenarios.Add(new Tuple<string, string>(key, scenarName != "" ? scenarName : key));
+            }
 		}
-		sortedScenarios.Sort();
-		foreach (string key in sortedScenarios)
+		sortedScenarios.Sort((x,y) => string.Compare(x.Item2, y.Item2));
+		foreach (Tuple<string, string> item in sortedScenarios)
 		{
 			GameObject scenarioItem = GameObject.Instantiate<GameObject>(ScenarioAvailablePrefab, loadingScenarioContent.transform);
-			scenarioItem.GetComponentInChildren<TextMeshProUGUI>(true).text = key;
+			scenarioItem.GetComponent<GameKeys>().scenarioKey = item.Item1;
+            scenarioItem.GetComponentInChildren<TextMeshProUGUI>(true).text = item.Item2;
 			GameObjectManager.bind(scenarioItem);
 		}
 
 		UtilityEditor.buildLoadingPanelNavigation(loadingScenarioContent.transform.parent.parent.parent);
 	}
 
-	// see LoadButton in LoadingPanel in TitleScreen scene
+	// see LoadButton in LoadingPanel
 	public void loadScenario()
 	{
 		if (selectedScenarioGO != null)
@@ -337,7 +341,7 @@ public class ParamCompetenceSystem : FSystem
 			if (closeBriefing.gameObject.activeInHierarchy)
 				closeBriefing.onClick.Invoke();
 
-			loadScenario(selectedScenarioGO.GetComponentInChildren<TMP_Text>().text);
+			loadScenario(selectedScenarioGO.GetComponent<GameKeys>().scenarioKey);
 		}
 	}
 
@@ -345,7 +349,11 @@ public class ParamCompetenceSystem : FSystem
     {
 		if (gameData.scenarios.ContainsKey(scenarioKey))
 		{
-			savingPanel.GetComponentInChildren<TMP_InputField>(true).text = scenarioKey;
+			TMP_InputField savingInputField = savingPanel.GetComponentInChildren<TMP_InputField>(true);
+			savingInputField.text = Utility.extractLocale(gameData.scenarios[scenarioKey].name);
+			if (savingInputField.text == "")
+				savingInputField.text = scenarioKey;
+
 
 			//remove all old scenario
 			foreach (Transform child in contentScenario.transform)
@@ -614,9 +622,7 @@ public class ParamCompetenceSystem : FSystem
 	public void displaySavingPanel(TMP_InputField scenarName)
 	{
 		GameObjectManager.setGameObjectState(savingPanel, true);
-		// init savingPanel to the name of scenario if no name previously defined
-		if (savingPanel.GetComponentInChildren<TMP_InputField>(true).text == "")
-			savingPanel.GetComponentInChildren<TMP_InputField>(true).text = scenarName.text;
+		savingPanel.GetComponentInChildren<TMP_InputField>(true).text = Utility.extractLocale(scenarName.text);
 	}
 
     // See pen in hookedMission prefab

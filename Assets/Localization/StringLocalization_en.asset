@@ -88,25 +88,28 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 10341073604608
-    m_Localized: Start execution<br>(Shortcut Space)
+    m_Localized: Start execution<br>(Shortcut {shortcutPlayPause})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 10678513750016
     m_Localized: Execute next step<br>(Shortcut Ctrl+Space)
     m_Metadata:
       m_Items: []
   - m_Id: 10830947340288
-    m_Localized: Resume execution<br>(Shortcut Space)
+    m_Localized: Resume execution<br>(Shortcut {shortcutPlayPause})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 11345672327168
     m_Localized: Speed up execution
     m_Metadata:
       m_Items: []
   - m_Id: 11511670296576
-    m_Localized: Stop execution<br>(Shortcut Shift+Space)
+    m_Localized: Stop execution<br>(Shortcut {shortcutStop})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 11853489295360
     m_Localized: Relaunch the mission
     m_Metadata:
@@ -152,33 +155,40 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 16256510251008
-    m_Localized: Rotate camera to the right<br>(Shortcut Shift+D)
+    m_Localized: Rotate camera to the right<br>(Shortcut {shortcutCameraRotateRight})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 16356917694464
-    m_Localized: Center<br>(Shortcut C)
+    m_Localized: Center<br>(Shortcut {shortcutCameraFocusOnAgent})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 16399242416128
-    m_Localized: Move camera to the right<br>(Shortcut D)
+    m_Localized: Move camera to the right<br>(Shortcut {shortcutCameraMoveRight})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 16440837328896
-    m_Localized: Zoom in<br>(Shortcut R)
+    m_Localized: Zoom in<br>(Shortcut {shortcutCameraZoomIn})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 16481354305536
-    m_Localized: Move camera backward<br>(Shortcut S)
+    m_Localized: Move camera backward<br>(Shortcut {shortcutCameraMoveDown})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 16522613673984
-    m_Localized: Zoom out<br>(Shortcut F)
+    m_Localized: Zoom out<br>(Shortcut {shortcutCameraZoomOut})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 16648862224384
-    m_Localized: Switch to top view (2D) or perspective (3D)<br>(Shortcut V)
+    m_Localized: Switch to top view (2D) or perspective (3D)<br>(Shortcut {shortcutCameraSwitchView})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 16831830347776
     m_Localized: Back to the game
     m_Metadata:
@@ -610,23 +620,22 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 254277681330511872
-    m_Localized: (Shortcut H)
+    m_Localized: (Shortcut {shortcutShowBriefing})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 254280701426524160
-    m_Localized: Pause (Shortcut Space)
+    m_Localized: Pause (Shortcut {shortcutPlayPause})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 254288756369252352
-    m_Localized: Menu (Shortcut Escape)
+    m_Localized: Menu (Shortcut {shortcutCancel})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 255067209884491776
     m_Localized: Defines a replacement text for the image<br><i>(Used for Text-To-Speech)</i>
-    m_Metadata:
-      m_Items: []
-  - m_Id: 258245164706029568
-    m_Localized: (Shortcut H)
     m_Metadata:
       m_Items: []
   - m_Id: 258246124920627200
@@ -634,9 +643,10 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 258252421338488832
-    m_Localized: (Shortcut M)
+    m_Localized: (Shortcut {shortcutLayoutDesc})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 258362280310464514
     m_Localized: Broken
     m_Metadata:
@@ -1295,9 +1305,10 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 320319330258771968
-    m_Localized: Copy (Shortcut Ctrl+C)
+    m_Localized: Copy (Shortcut {shortcutCopy})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 320320032213295104
     m_Localized: Increase interface size by 25%
     m_Metadata:
@@ -1600,17 +1611,17 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 356461939389620224
-    m_Localized: Rotate camera to the left<br>(Shortcut {shortcut})
+    m_Localized: Rotate camera to the left<br>(Shortcut {shortcutCameraRotateLeft})
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 356462762786021376
-    m_Localized: Move camera forward<br>(Shortcut {shortcut})
+    m_Localized: Move camera forward<br>(Shortcut {shortcutCameraMoveUp})
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 356463558705537024
-    m_Localized: Move camera to the left<br>(Shortcut {shortcut})
+    m_Localized: Move camera to the left<br>(Shortcut {shortcutCameraMoveLeft})
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
@@ -1823,9 +1834,10 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 367059196674113536
-    m_Localized: (Shortcut T)
+    m_Localized: (Shortcut {shortcutSettings})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 373980666969346048
     m_Localized: Skills
     m_Metadata:
@@ -1880,14 +1892,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 393157898495414272
-    m_Localized: Pivot the camera forward<br>(Shortcut {shortcut})
+    m_Localized: Pivot the camera forward<br>(Shortcut {shortcutCameraRotateUp})
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 393160860907163648
-    m_Localized: Pivot the camera backward<br>(Shortcut Shift+S)
+    m_Localized: Pivot the camera backward<br>(Shortcut {shortcutCameraRotateDown})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 395347969042632704
     m_Localized: 'Animations:'
     m_Metadata:
@@ -1901,13 +1914,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 404393886565175296
-    m_Localized: Undo (Shortcut Ctrl+Z)
+    m_Localized: Undo (Shortcut {shortcutUndo})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 404393931997876224
-    m_Localized: Redo (Shortcut Ctrl+Y)
+    m_Localized: Redo (Shortcut {shortcutRedo})
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 410106971062960128
     m_Localized: Next Action?
     m_Metadata:
@@ -1948,6 +1963,20 @@ MonoBehaviour:
       in your inventory.<br>Try to find another solution to complete this mission!
     m_Metadata:
       m_Items: []
+  - m_Id: 417730526881677312
+    m_Localized: (Un)lock this item
+    m_Metadata:
+      m_Items: []
+  - m_Id: 419507521395539968
+    m_Localized: Settings (Shortcut {shortcutSettings})
+    m_Metadata:
+      m_Items:
+      - rid: 2254590404606296135
+  - m_Id: 420744507343159296
+    m_Localized: (Shortcut {shortcutSave})
+    m_Metadata:
+      m_Items:
+      - rid: 2254590404606296135
   references:
     version: 2
     RefIds:
@@ -1960,3 +1989,24 @@ MonoBehaviour:
         - id: 356463558705537024
         - id: 356461939389620224
         - id: 393157898495414272
+        - id: 10341073604608
+        - id: 10830947340288
+        - id: 11511670296576
+        - id: 16256510251008
+        - id: 16356917694464
+        - id: 367059196674113536
+        - id: 404393931997876224
+        - id: 404393886565175296
+        - id: 393160860907163648
+        - id: 419507521395539968
+        - id: 320319330258771968
+        - id: 258252421338488832
+        - id: 254277681330511872
+        - id: 254288756369252352
+        - id: 254280701426524160
+        - id: 16648862224384
+        - id: 16522613673984
+        - id: 16481354305536
+        - id: 16440837328896
+        - id: 16399242416128
+        - id: 420744507343159296

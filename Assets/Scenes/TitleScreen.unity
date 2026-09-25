@@ -25169,6 +25169,7 @@ GameObject:
   - component: {fileID: 1645588004}
   - component: {fileID: 1645588005}
   - component: {fileID: 1645588006}
+  - component: {fileID: 1645588007}
   m_Layer: 0
   m_Name: Main_Loop
   m_TagString: Untagged
@@ -25502,16 +25503,47 @@ MonoBehaviour:
   cameraZoomIn: {fileID: 0}
   cameraZoomOut: {fileID: 0}
   showBriefing: {fileID: 0}
-  showMapDesc: {fileID: 0}
-  closeMapDesc: {fileID: 0}
+  showLayoutDesc: {fileID: 0}
+  closeLayoutDesc: {fileID: 0}
   inventory: {fileID: 0}
-  buttonCopyCode: {fileID: 0}
   showSettings: {fileID: 6083660582675876350}
+  buttonCopyCode: {fileID: 0}
   AddContainerButton: {fileID: 0}
   undo: {fileID: 0}
   redo: {fileID: 0}
   save: {fileID: 0}
-  cancelNextEscape: 0
+  hotKeys: {fileID: 1645588007}
+  cancelNextCancel_act: 0
+--- !u!114 &1645588007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645587984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40c7dabea03173245b67cfec6c7ef41d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HotKeysSpec
+  spec:
+  - inputActionName: Settings
+    UItriggers:
+    - interactableUI: {fileID: 3853248713400974768}
+      requireActiveInHierarchy: 1
+      requireInteractable: 1
+    - interactableUI: {fileID: 1833396500008464260}
+      requireActiveInHierarchy: 1
+      requireInteractable: 1
+    inputAction:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
 --- !u!1 &1649896675
 GameObject:
   m_ObjectHideFlags: 0
@@ -34752,8 +34784,20 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7475155380592886845, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6083660582675876358}
+      addedObject: {fileID: 6083660582675876360}
   m_SourcePrefab: {fileID: 100100000, guid: 12f582319fad22f499623361599a5dd3, type: 3}
+--- !u!114 &1833396500008464260 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5073669169370728753, guid: 12f582319fad22f499623361599a5dd3,
+    type: 3}
+  m_PrefabInstance: {fileID: 1833396500008464259}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881010547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &1964064363838581925
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -37845,6 +37889,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3853248713400974768 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8376611007692078557, guid: 3320765803d90cb49a7b33d18ba49e3c,
+    type: 3}
+  m_PrefabInstance: {fileID: 3853248713400974765}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3853248713400974770 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8600004175772077247, guid: 3320765803d90cb49a7b33d18ba49e3c,
@@ -39035,49 +39091,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1833396500008464259}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6083660582675876358
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1881010547}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 6783081951710937153
-  references:
-    version: 2
-    RefIds:
-    - rid: 6783081951710937153
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
-        asm: Unity.Localization}
-      data:
-        m_Target: {fileID: 6083660582675876359}
-        m_TrackedProperties:
-          items:
-          - rid: 6783081951710937154
-        m_UpdateType: 0
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 6783081951710937154
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 313870206617509888
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: text
 --- !u!114 &6083660582675876359 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 679754986216814376, guid: 12f582319fad22f499623361599a5dd3,
@@ -39090,6 +39103,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6083660582675876360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881010547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 419507521395539968
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables:
+    - name: shortcutSettings
+      variable:
+        rid: 8085998131299221628
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6083660582675876359}
+        m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
+        m_MethodName: setText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: 8085998131299221628
+      type: {class: StringVariable, ns: UnityEngine.Localization.SmartFormat.PersistentVariables,
+        asm: Unity.Localization}
+      data:
+        m_Value: '?'
 --- !u!1001 &6336599837689887436
 PrefabInstance:
   m_ObjectHideFlags: 0

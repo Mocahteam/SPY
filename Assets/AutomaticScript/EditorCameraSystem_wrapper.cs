@@ -6,16 +6,12 @@ public class EditorCameraSystem_wrapper : BaseWrapper
 	public UnityEngine.Camera mainCamera;
 	public System.Single cameraZoomMin;
 	public System.Single cameraZoomMax;
-	public UnityEngine.Localization.Components.LocalizeStringEvent lseMoveUp;
-	public UnityEngine.Localization.Components.LocalizeStringEvent lseMoveLeft;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "mainCamera", mainCamera);
 		MainLoop.initAppropriateSystemField (system, "cameraZoomMin", cameraZoomMin);
 		MainLoop.initAppropriateSystemField (system, "cameraZoomMax", cameraZoomMax);
-		MainLoop.initAppropriateSystemField (system, "lseMoveUp", lseMoveUp);
-		MainLoop.initAppropriateSystemField (system, "lseMoveLeft", lseMoveLeft);
 	}
 
 	public void set_UIFrontBack(System.Single value)

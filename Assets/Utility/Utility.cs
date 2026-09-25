@@ -101,9 +101,9 @@ public static class Utility
 		EventSystem.current.SetSelectedGameObject(go);
 	}
 
-	public static bool inputFieldNotSelected()
+	public static bool inputFieldSelected()
 	{
-		return EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null || !EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused;
+		return EventSystem.current.currentSelectedGameObject != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused;
 	}
 
 	public static IEnumerator GetTextureWebRequest(string miniViewUri, Image target)

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5212081326728937006}
   - component: {fileID: 1597894104735798380}
   - component: {fileID: 396324742669625168}
-  - component: {fileID: 2177679144013781179}
+  - component: {fileID: 198919641354437307}
   m_Layer: 5
   m_Name: FocusOn
   m_TagString: UI_Icon
@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: Centrer<br>(Raccourci C)
+  text: Centrer<br>(Raccourci ?)
 --- !u!114 &396324742669625168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,7 +178,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 7763415776643070515}
---- !u!114 &2177679144013781179
+--- !u!114 &198919641354437307
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -187,40 +187,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 232795106507496136}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 0
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 16356917694464
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables:
+    - name: shortcutCameraFocusOnAgent
+      variable:
+        rid: 8085998131299221621
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1597894104735798380}
+        m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
+        m_MethodName: setText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
   references:
     version: 2
     RefIds:
-    - rid: 0
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+    - rid: 8085998131299221621
+      type: {class: StringVariable, ns: UnityEngine.Localization.SmartFormat.PersistentVariables,
         asm: Unity.Localization}
       data:
-        m_Target: {fileID: 1597894104735798380}
-        m_TrackedProperties:
-          items:
-          - rid: 1
-        m_UpdateType: 0
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 1
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 16356917694464
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: text
+        m_Value: '?'
 --- !u!1 &642156867028964894
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,7 +240,7 @@ GameObject:
   - component: {fileID: 8211079235419494715}
   - component: {fileID: 4839436114331446691}
   - component: {fileID: 475937027204306397}
-  - component: {fileID: 7735166881896823990}
+  - component: {fileID: 9064551696314236071}
   m_Layer: 5
   m_Name: ZoomIn
   m_TagString: UI_Icon
@@ -373,7 +378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: Zoomer<br>(Raccourci R)
+  text: Zoomer<br>(Raccourci ?)
 --- !u!114 &475937027204306397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -415,7 +420,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 8514493961948399934}
---- !u!114 &7735166881896823990
+--- !u!114 &9064551696314236071
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -424,40 +429,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 642156867028964894}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 0
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 16440837328896
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables:
+    - name: shortcutCameraZoomIn
+      variable:
+        rid: 8085998131299221642
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4839436114331446691}
+        m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
+        m_MethodName: setText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
   references:
     version: 2
     RefIds:
-    - rid: 0
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+    - rid: 8085998131299221642
+      type: {class: StringVariable, ns: UnityEngine.Localization.SmartFormat.PersistentVariables,
         asm: Unity.Localization}
       data:
-        m_Target: {fileID: 4839436114331446691}
-        m_TrackedProperties:
-          items:
-          - rid: 1
-        m_UpdateType: 0
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 1
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 16440837328896
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: text
+        m_Value: '?'
 --- !u!1 &777640897700240861
 GameObject:
   m_ObjectHideFlags: 0
@@ -824,7 +834,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables:
-    - name: shortcut
+    - name: shortcutCameraRotateUp
       variable:
         rid: 338702439741128855
   m_FormatArguments: []
@@ -1090,7 +1100,7 @@ GameObject:
   - component: {fileID: 5410945427184248102}
   - component: {fileID: 591990878421734802}
   - component: {fileID: 3866342380755692591}
-  - component: {fileID: 2961635746523659633}
+  - component: {fileID: 7241385358434031156}
   m_Layer: 5
   m_Name: Down
   m_TagString: UI_Icon
@@ -1229,7 +1239,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Avancer la cam\xE9ra vers l'arri\xE8re<br>(Raccourci S)"
+  text: "Avancer la cam\xE9ra vers l'arri\xE8re<br>(Raccourci ?)"
 --- !u!114 &3866342380755692591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1271,7 +1281,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 433793438818497215}
---- !u!114 &2961635746523659633
+--- !u!114 &7241385358434031156
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1280,40 +1290,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 3560225002708932363}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 0
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 16481354305536
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables:
+    - name: shortcutCameraMoveDown
+      variable:
+        rid: 8085998131299221641
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 591990878421734802}
+        m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
+        m_MethodName: setText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
   references:
     version: 2
     RefIds:
-    - rid: 0
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+    - rid: 8085998131299221641
+      type: {class: StringVariable, ns: UnityEngine.Localization.SmartFormat.PersistentVariables,
         asm: Unity.Localization}
       data:
-        m_Target: {fileID: 591990878421734802}
-        m_TrackedProperties:
-          items:
-          - rid: 1
-        m_UpdateType: 0
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 1
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 16481354305536
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: text
+        m_Value: '?'
 --- !u!1 &4339848657336993978
 GameObject:
   m_ObjectHideFlags: 0
@@ -1422,7 +1437,7 @@ GameObject:
   - component: {fileID: 4670240175799662573}
   - component: {fileID: 5777474220688479206}
   - component: {fileID: 4591542008806704036}
-  - component: {fileID: 8868899853627889610}
+  - component: {fileID: 2277863926461064366}
   m_Layer: 5
   m_Name: ZoomOut
   m_TagString: UI_Icon
@@ -1560,7 +1575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "D\xE9zoomer<br>(Raccourci F)"
+  text: "D\xE9zoomer<br>(Raccourci ?)"
 --- !u!114 &4591542008806704036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1602,7 +1617,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 17686470946500850}
---- !u!114 &8868899853627889610
+--- !u!114 &2277863926461064366
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1611,40 +1626,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 4456152544610830081}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 0
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 16522613673984
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables:
+    - name: shortcutCameraZoomOut
+      variable:
+        rid: 8085998131299221640
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5777474220688479206}
+        m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
+        m_MethodName: setText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
   references:
     version: 2
     RefIds:
-    - rid: 0
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+    - rid: 8085998131299221640
+      type: {class: StringVariable, ns: UnityEngine.Localization.SmartFormat.PersistentVariables,
         asm: Unity.Localization}
       data:
-        m_Target: {fileID: 5777474220688479206}
-        m_TrackedProperties:
-          items:
-          - rid: 1
-        m_UpdateType: 0
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 1
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 16522613673984
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: text
+        m_Value: '?'
 --- !u!1 &4614075575113498108
 GameObject:
   m_ObjectHideFlags: 0
@@ -1659,7 +1679,7 @@ GameObject:
   - component: {fileID: 536018901565168527}
   - component: {fileID: 4649989512710070112}
   - component: {fileID: 4577734128498554675}
-  - component: {fileID: 2159483469457621254}
+  - component: {fileID: 1812052485868531920}
   m_Layer: 5
   m_Name: Right
   m_TagString: UI_Icon
@@ -1798,7 +1818,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Avancer la cam\xE9ra vers la droite<br>(Raccourci D)"
+  text: "Avancer la cam\xE9ra vers la droite<br>(Raccourci ?)"
 --- !u!114 &4577734128498554675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1840,7 +1860,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 3805683153148111794}
---- !u!114 &2159483469457621254
+--- !u!114 &1812052485868531920
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1849,40 +1869,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 4614075575113498108}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 0
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 16399242416128
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables:
+    - name: shortcutCameraMoveRight
+      variable:
+        rid: 8085998131299221643
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4649989512710070112}
+        m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
+        m_MethodName: setText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
   references:
     version: 2
     RefIds:
-    - rid: 0
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+    - rid: 8085998131299221643
+      type: {class: StringVariable, ns: UnityEngine.Localization.SmartFormat.PersistentVariables,
         asm: Unity.Localization}
       data:
-        m_Target: {fileID: 4649989512710070112}
-        m_TrackedProperties:
-          items:
-          - rid: 1
-        m_UpdateType: 0
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 1
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 16399242416128
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: text
+        m_Value: '?'
 --- !u!1 &5281880067689818361
 GameObject:
   m_ObjectHideFlags: 0
@@ -1932,7 +1957,7 @@ GameObject:
   - component: {fileID: 5923667168793600722}
   - component: {fileID: 627547851425861090}
   - component: {fileID: 5853814557817885972}
-  - component: {fileID: 8129981382680743515}
+  - component: {fileID: 7951275420360034468}
   m_Layer: 5
   m_Name: RotateRight
   m_TagString: UI_Icon
@@ -2071,7 +2096,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Pivoter la cam\xE9ra vers la droite<br>(Raccourci E)"
+  text: "Pivoter la cam\xE9ra vers la droite<br>(Raccourci ?)"
 --- !u!114 &5853814557817885972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2113,7 +2138,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 6985781792017004559}
---- !u!114 &8129981382680743515
+--- !u!114 &7951275420360034468
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2122,40 +2147,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 5907466927880710566}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 0
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 16256510251008
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables:
+    - name: shortcutCameraRotateRight
+      variable:
+        rid: 8085998131299221620
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 627547851425861090}
+        m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
+        m_MethodName: setText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
   references:
     version: 2
     RefIds:
-    - rid: 0
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+    - rid: 8085998131299221620
+      type: {class: StringVariable, ns: UnityEngine.Localization.SmartFormat.PersistentVariables,
         asm: Unity.Localization}
       data:
-        m_Target: {fileID: 627547851425861090}
-        m_TrackedProperties:
-          items:
-          - rid: 1
-        m_UpdateType: 0
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 1
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 16256510251008
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: text
+        m_Value: '?'
 --- !u!1 &5911421571990889025
 GameObject:
   m_ObjectHideFlags: 0
@@ -2371,7 +2401,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables:
-    - name: shortcut
+    - name: shortcutCameraMoveUp
       variable:
         rid: 338702439741128855
   m_FormatArguments: []
@@ -2689,7 +2719,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables:
-    - name: shortcut
+    - name: shortcutCameraMoveLeft
       variable:
         rid: 338702439741128858
   m_FormatArguments: []
@@ -2869,7 +2899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Pivoter la cam\xE9ra vers l'arri\xE8re<br>(Raccourci Shift+S)"
+  text: "Pivoter la cam\xE9ra vers l'arri\xE8re<br>(Raccourci ?)"
 --- !u!114 &3066654911067004534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2931,7 +2961,10 @@ MonoBehaviour:
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
-    m_LocalVariables: []
+    m_LocalVariables:
+    - name: shortcutCameraRotateDown
+      variable:
+        rid: 8085998131299221626
   m_FormatArguments: []
   m_UpdateString:
     m_PersistentCalls:
@@ -2950,7 +2983,12 @@ MonoBehaviour:
         m_CallState: 1
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 8085998131299221626
+      type: {class: StringVariable, ns: UnityEngine.Localization.SmartFormat.PersistentVariables,
+        asm: Unity.Localization}
+      data:
+        m_Value: '?'
 --- !u!1 &8575644667101725626
 GameObject:
   m_ObjectHideFlags: 0
@@ -3167,7 +3205,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables:
-    - name: shortcut
+    - name: shortcutCameraRotateLeft
       variable:
         rid: 338702439741128854
   m_FormatArguments: []
@@ -3662,7 +3700,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8390236102059498150, guid: bae527ae87f763c4eaf4bfcc24112fd8,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8035767753969980928}
+      addedObject: {fileID: 4967401079932620063}
   m_SourcePrefab: {fileID: 100100000, guid: bae527ae87f763c4eaf4bfcc24112fd8, type: 3}
 --- !u!224 &1846481404161474136 stripped
 RectTransform:
@@ -3708,8 +3746,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: Basculer en vue de dessus ou en perspective<br>(Raccourci V)
---- !u!114 &8035767753969980928
+  text: Basculer en vue de dessus (2D) ou en perspective (3D)<br>(Raccourci ?)
+--- !u!114 &4967401079932620063
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3718,40 +3756,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 6247479135774176008}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 0
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 16648862224384
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables:
+    - name: shortcutCameraSwitchView
+      variable:
+        rid: 8085998131299221639
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5258216851589949388}
+        m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
+        m_MethodName: setText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
   references:
     version: 2
     RefIds:
-    - rid: 0
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
+    - rid: 8085998131299221639
+      type: {class: StringVariable, ns: UnityEngine.Localization.SmartFormat.PersistentVariables,
         asm: Unity.Localization}
       data:
-        m_Target: {fileID: 5258216851589949388}
-        m_TrackedProperties:
-          items:
-          - rid: 1
-        m_UpdateType: 0
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 1
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 16648862224384
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: text
+        m_Value: '?'
 --- !u!1001 &4017069414167771654
 PrefabInstance:
   m_ObjectHideFlags: 0

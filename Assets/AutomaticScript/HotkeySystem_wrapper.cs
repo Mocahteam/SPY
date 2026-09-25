@@ -5,72 +5,20 @@ public class HotkeySystem_wrapper : BaseWrapper
 {
 	public UnityEngine.UI.Button mainMenu;
 	public UnityEngine.UI.Button closeMainMenu;
-	public UnityEngine.UI.Button buttonExecute;
-	public UnityEngine.UI.Button buttonPause;
-	public UnityEngine.UI.Button buttonNextStep;
-	public UnityEngine.UI.Button buttonContinue;
-	public UnityEngine.UI.Button buttonStop;
-	public UnityEngine.UI.Button cameraSwitchView;
-	public UnityEngine.EventSystems.EventTrigger cameraRotateTop;
-	public UnityEngine.EventSystems.EventTrigger cameraRotateDown;
-	public UnityEngine.EventSystems.EventTrigger cameraRotateLeft;
-	public UnityEngine.EventSystems.EventTrigger cameraRotateRight;
-	public UnityEngine.EventSystems.EventTrigger cameraTop;
-	public UnityEngine.EventSystems.EventTrigger cameraDown;
-	public UnityEngine.EventSystems.EventTrigger cameraLeft;
-	public UnityEngine.EventSystems.EventTrigger cameraRight;
-	public UnityEngine.EventSystems.EventTrigger cameraFocusOn;
-	public UnityEngine.EventSystems.EventTrigger cameraZoomIn;
-	public UnityEngine.EventSystems.EventTrigger cameraZoomOut;
-	public UnityEngine.UI.Button showBriefing;
-	public UnityEngine.UI.Button showLayoutDesc;
-	public UnityEngine.UI.Button closeLayoutDesc;
-	public UnityEngine.GameObject inventory;
-	public UnityEngine.UI.Button buttonCopyCode;
-	public UnityEngine.UI.Button showSettings;
-	public UnityEngine.UI.Button AddContainerButton;
-	public UnityEngine.UI.Button undo;
-	public UnityEngine.UI.Button redo;
-	public UnityEngine.UI.Button save;
-	public System.Boolean cancelNextEscape;
+	public HotKeysSpec hotKeys;
+	public System.Boolean cancelNextCancel_act;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "mainMenu", mainMenu);
 		MainLoop.initAppropriateSystemField (system, "closeMainMenu", closeMainMenu);
-		MainLoop.initAppropriateSystemField (system, "buttonExecute", buttonExecute);
-		MainLoop.initAppropriateSystemField (system, "buttonPause", buttonPause);
-		MainLoop.initAppropriateSystemField (system, "buttonNextStep", buttonNextStep);
-		MainLoop.initAppropriateSystemField (system, "buttonContinue", buttonContinue);
-		MainLoop.initAppropriateSystemField (system, "buttonStop", buttonStop);
-		MainLoop.initAppropriateSystemField (system, "cameraSwitchView", cameraSwitchView);
-		MainLoop.initAppropriateSystemField (system, "cameraRotateTop", cameraRotateTop);
-		MainLoop.initAppropriateSystemField (system, "cameraRotateDown", cameraRotateDown);
-		MainLoop.initAppropriateSystemField (system, "cameraRotateLeft", cameraRotateLeft);
-		MainLoop.initAppropriateSystemField (system, "cameraRotateRight", cameraRotateRight);
-		MainLoop.initAppropriateSystemField (system, "cameraTop", cameraTop);
-		MainLoop.initAppropriateSystemField (system, "cameraDown", cameraDown);
-		MainLoop.initAppropriateSystemField (system, "cameraLeft", cameraLeft);
-		MainLoop.initAppropriateSystemField (system, "cameraRight", cameraRight);
-		MainLoop.initAppropriateSystemField (system, "cameraFocusOn", cameraFocusOn);
-		MainLoop.initAppropriateSystemField (system, "cameraZoomIn", cameraZoomIn);
-		MainLoop.initAppropriateSystemField (system, "cameraZoomOut", cameraZoomOut);
-		MainLoop.initAppropriateSystemField (system, "showBriefing", showBriefing);
-		MainLoop.initAppropriateSystemField (system, "showLayoutDesc", showLayoutDesc);
-		MainLoop.initAppropriateSystemField (system, "closeLayoutDesc", closeLayoutDesc);
-		MainLoop.initAppropriateSystemField (system, "inventory", inventory);
-		MainLoop.initAppropriateSystemField (system, "buttonCopyCode", buttonCopyCode);
-		MainLoop.initAppropriateSystemField (system, "showSettings", showSettings);
-		MainLoop.initAppropriateSystemField (system, "AddContainerButton", AddContainerButton);
-		MainLoop.initAppropriateSystemField (system, "undo", undo);
-		MainLoop.initAppropriateSystemField (system, "redo", redo);
-		MainLoop.initAppropriateSystemField (system, "save", save);
-		MainLoop.initAppropriateSystemField (system, "cancelNextEscape", cancelNextEscape);
+		MainLoop.initAppropriateSystemField (system, "hotKeys", hotKeys);
+		MainLoop.initAppropriateSystemField (system, "cancelNextCancel_act", cancelNextCancel_act);
 	}
 
-	public void paste(System.String content)
+	public void OnKeyboardLayoutDefined(System.String data)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "paste", content);
+		MainLoop.callAppropriateSystemMethod (system, "OnKeyboardLayoutDefined", data);
 	}
 
 }

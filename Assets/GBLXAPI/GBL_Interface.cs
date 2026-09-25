@@ -47,7 +47,7 @@ public static class GBL_Interface {
 	Here is where you will put functions to be called whenever you want to send a GBLxAPI statement.
 	 */
 
-    public static void SendStatement(string verb, string activityType, Dictionary<string, string> activityExtensions = null)
+    public static void SendStatement(string verb, string activityType, Dictionary<string, string> activityExtensions = null, string experimentId = null)
     {
         ActivityBuilder.IOptional activityBuilder = GBLXAPI.Activity
             .WithID(activityType)
@@ -61,19 +61,24 @@ public static class GBL_Interface {
             activityBuilder.WithExtensions(extensions.Build());
         }
 
-        GBLXAPI.Statement
+        StatementBuilder.IOptional statementBuilder = GBLXAPI.Statement
             .WithActor(GBLXAPI.Agent
                 .WithAccount(userUUID, "https://www.lip6.fr/mocah/")
                 .WithName(playerName)
                 .Build())
             .WithVerb(verb)
-            .WithTargetActivity(activityBuilder.Build())
-            .Enqueue();
-        ;
+            .WithTargetActivity(activityBuilder.Build());
+
+        if (experimentId != null && experimentId != "") {
+            TinCan.Context context = new TinCan.Context();
+            context.instructor = GBLXAPI.Agent.WithAccount(experimentId, "https://www.lip6.fr/mocah/experimentid").Build();
+            statementBuilder.WithContext(context);
+        }
+
+        statementBuilder.Enqueue();
     }
 	
-	public static void SendStatementWithResult(string verb, string activityType, Dictionary<string, string> activityExtensions = null, Dictionary<string, string> resultExtensions = null, bool? completed = null, bool? success = null, string response = null, int? score = null,
-        float duration = 0)
+	public static void SendStatementWithResult(string verb, string activityType, Dictionary<string, string> activityExtensions = null, string experimentId = null, Dictionary<string, string> resultExtensions = null, bool? completed = null, bool? success = null, string response = null, int? score = null, float duration = 0)
     {
         ActivityBuilder.IOptional activityBuilder = GBLXAPI.Activity
             .WithID(activityType)
@@ -101,14 +106,22 @@ public static class GBL_Interface {
             resultBuilder.WithExtensions(extensions.Build());
         }
 
-        GBLXAPI.Statement
+        StatementBuilder.IOptional statementBuilder = GBLXAPI.Statement
             .WithActor(GBLXAPI.Agent
                 .WithAccount(userUUID, "https://www.lip6.fr/mocah/")
                 .WithName(playerName)
                 .Build())
             .WithVerb(verb)
             .WithTargetActivity(activityBuilder.Build())
-            .WithResult(resultBuilder)
-            .Enqueue();
+            .WithResult(resultBuilder);
+
+        if (experimentId != null && experimentId != "")
+        {
+            TinCan.Context context = new TinCan.Context();
+            context.instructor = GBLXAPI.Agent.WithAccount(experimentId, "https://www.lip6.fr/mocah/experimentid").Build();
+            statementBuilder.WithContext(context);
+        }
+
+        statementBuilder.Enqueue();
 	}
 }

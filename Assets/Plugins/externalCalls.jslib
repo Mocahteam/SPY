@@ -73,6 +73,21 @@ mergeInto(LibraryManager.library, {
 		const params = new URLSearchParams(window.location.search);
 		return params.get("clear") != null;
 	},
+	
+	GetExperimentationId: function(){
+		const params = new URLSearchParams(window.location.search);
+		var expeId = params.get("experimentationId");
+		if (expeId == null)
+			expeId = "";
+
+		//Get size of the string
+		var bufferSize = lengthBytesUTF8(expeId) + 1;
+		//Allocate memory space
+		var buffer = _malloc(bufferSize);
+		//Copy old data to the new one then return it
+		stringToUTF8(expeId, buffer, bufferSize);
+		return buffer;
+	},
 
 	UpdateHTMLLanguage: function(newLang){
 		var lang = UTF8ToString(newLang);
@@ -149,5 +164,20 @@ mergeInto(LibraryManager.library, {
 
 	SetVideoPosition: function(viewportX, viewportY, viewportWidth, viewportHeight, videoX, videoY, videoWidth, videoHeight){
 		return document.setVideoPosition(viewportX, viewportY, viewportWidth, viewportHeight, videoX, videoY, videoWidth, videoHeight);
+	},
+
+	KbLayout_Fetch: function () {
+		var us = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		if (!navigator.keyboard || !navigator.keyboard.getLayoutMap) {
+			SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', ""); return;
+		}
+		navigator.keyboard.getLayoutMap().then(function (map) {
+			var out = "";
+			for (var i = 0; i < 36; i++) {
+				var code = (i < 26 ? "Key" : "Digit") + us[i];
+				out += (map.get(code) || us[i]).toUpperCase().charAt(0);
+			}
+			SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', out);
+		}).catch(function () { SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', ""); });
 	}
 });

@@ -1204,7 +1204,7 @@ public class SettingsManager : FSystem
 
 	private void syncConditionNotif(GameObject go, Color? unused = null)
 	{
-		if (go.name == "true")
+		if (go.name == "true" || go.name == "Unlocked")
 			syncGraphicColor(go, cs.values.currentCaptorTrueColor);
 		else
 			syncGraphicColor(go, cs.values.currentCaptorFalseColor);

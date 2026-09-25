@@ -8,7 +8,7 @@
             "actions": [
                 {
                     "name": "Navigate",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "e4ea685b-e563-43d3-82be-c963616c8ecb",
                     "expectedControlType": "Vector2",
                     "processors": "",
@@ -44,9 +44,9 @@
                 },
                 {
                     "name": "Click",
-                    "type": "Button",
+                    "type": "PassThrough",
                     "id": "b0a4e137-bcd8-4fbc-88f4-d0fb0a3c7b4b",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -71,48 +71,30 @@
                 },
                 {
                     "name": "RightClick",
-                    "type": "Button",
+                    "type": "PassThrough",
                     "id": "7ccbd77d-1508-4ac3-acac-7adc38953dca",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
                     "name": "MiddleClick",
-                    "type": "Button",
+                    "type": "PassThrough",
                     "id": "151b02db-8f1f-4a1b-be31-f706a3680104",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
                     "name": "ScrollWheel",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "f4e28d60-15c6-43ef-b97c-5c7bbe3067e9",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
-                },
-                {
-                    "name": "TrackedDevicePosition",
-                    "type": "PassThrough",
-                    "id": "974c9695-5821-4a45-a7be-829f8f9df3e8",
-                    "expectedControlType": "Vector3",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "TrackedDeviceOrientation",
-                    "type": "PassThrough",
-                    "id": "cec340e4-711c-4033-90c9-36896577d50d",
-                    "expectedControlType": "Quaternion",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 },
                 {
                     "name": "ExitWebGL",
@@ -845,28 +827,6 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "671f253f-8f61-4e56-a734-9e4e05c5829a",
-                    "path": "<XRController>/devicePosition",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "XR",
-                    "action": "TrackedDevicePosition",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "43ef6d15-c01b-4fa8-bc18-43b7055134fb",
-                    "path": "<XRController>/deviceRotation",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "XR",
-                    "action": "TrackedDeviceOrientation",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
                     "name": "One Modifier",
                     "id": "69e716a5-9c6e-41dd-bf7e-26b99a7e2418",
                     "path": "OneModifier",
@@ -1316,39 +1276,6 @@
                     "action": "SelectNextProgrammingArea",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
-                {
-                    "name": "1D Axis",
-                    "id": "6b316295-ad22-4d89-87f7-6f7bd0ad8df7",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "SelectNextProgrammingArea",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "2ac707d8-95b8-40b4-af5d-162727f4b127",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "SelectNextProgrammingArea",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "5ce12111-9846-4002-8911-4855e1b43c75",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "SelectNextProgrammingArea",
-                    "isComposite": false,
-                    "isPartOfComposite": true
                 },
                 {
                     "name": "One Modifier",

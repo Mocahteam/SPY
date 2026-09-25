@@ -59,11 +59,6 @@ public class CameraSystem : FSystem {
 	// Déplacement avec la molette
 	public float dragSpeed;
 
-	public LocalizeStringEvent lseMoveUp;
-	public LocalizeStringEvent lseMoveLeft;
-    public LocalizeStringEvent lseTurnUp;
-    public LocalizeStringEvent lseTurnLeft;
-
     public CurrentSettingsValues currentSettingsValues;
 
 	public GameObject dialogPanel;
@@ -81,16 +76,6 @@ public class CameraSystem : FSystem {
 	{
 		middleClick = InputSystem.actions.FindAction("MiddleClick");
 		rightClick = InputSystem.actions.FindAction("RightClick");
-
-		// synchronise le contenu des tooltip en fonction du clavier utilisé (azerty vs qwerty)
-		(lseMoveUp.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraMoveUp").GetBindingDisplayString(0);
-		lseMoveUp.RefreshString();
-		(lseMoveLeft.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraMoveLeft").GetBindingDisplayString(0);
-		lseMoveLeft.RefreshString();
-        (lseTurnUp.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraRotateUp").GetBindingDisplayString(0);
-        lseTurnUp.RefreshString();
-        (lseTurnLeft.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0);
-        lseTurnLeft.RefreshString();
 
         mainCamera = Camera.main;
 		if (currentSettingsValues.values.currentGameView == 1)

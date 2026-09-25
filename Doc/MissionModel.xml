@@ -199,48 +199,59 @@
 			# Content description #
 			#######################
 			The content of the script can contain actions and control structures with the following tags:
-				action: this tag contains one attribute:
+				action: this tag contains two attributes:
 					type (mandatory): the name of the action in {"Forward", "TurnLeft", "TurnRight", "Wait", "Activate", "TurnBack"}.
-				Exemple: <action type="Forward" />
+					locked (optional):
+						True -> the player can't move this block
+						False -> the player can move this block (default)
+				Exemple: <action type="Forward" locked="False" />
 				
-				if: this tag has no attribute, it is composed by two mandatory tags: condition (see condition section) and container (see container section)
+				if: this tag contains one attribute (locked) and is composed by two mandatory tags: condition (see condition section) and container (see container section)
+					locked (optional): see locked attribute of action tag
 				Exemple:
-						<if>
-							<condition>
-							</condition>
-							<container>
-							</container>
-						</if>
+					<if locked="False">
+						<condition>
+						</condition>
+						<container>
+						</container>
+					</if>
 				
-				ifElse: this tag has no attribute, it is composed by three mandatory tags: condition (see condition section) and thenContainer (see container section) and elseContainer (see container section)
+				ifElse: this tag contains one attribute (locked) and is composed by three mandatory tags: condition (see condition section) and thenContainer (see container section) and elseContainer (see container section)
+					locked (optional): see locked attribute of action tag
 				Exemple:
-						<ifElse>
-							<condition>
-							</condition>
-							<thenContainer>
-							</thenContainer>
-							<elseContainer>
-							</elseContainer>
-						</ifElse>
+					<ifElse locked="False">
+						<condition>
+						</condition>
+						<thenContainer>
+						</thenContainer>
+						<elseContainer>
+						</elseContainer>
+					</ifElse>
 				
-				for: this tag contains one attribute (nbFor). The content of the for tag can contain same tags as main script (action, if, ifElse, for, while, forever)
-					nbFor (mandatorry): the number of iteration
+				for: this tag contains three attributes (nbFor, locked and inputLocked). The content of the for tag can contain same tags as main script (action, if, ifElse, for, while, forever)
+					nbFor (mandatorry): the number of iterations
+					locked (optional): see locked attribute of action tag
+					inputLocked (optional):
+						True -> the player can't change te number of iterations
+						False -> the player can change te number of iterations (default)
 				Exemple:
-					<for nbFor="15">
+					<for nbFor="15" locked="False" inputLocked="False">
 					</for>
 					
-				while: this tag has no attribute, it is composed by two mandatory tags: condition (see condition section) and container (see container section)
+				while: this tag contains one attribute (locked) and is composed by two mandatory tags: condition (see condition section) and container (see container section)
+					locked (optional): see locked attribute of action tag
 				Exemple:
-						<while>
-							<condition>
-							</condition>
-							<container>
-							</container>
-						</while>
+					<while locked="False">
+						<condition>
+						</condition>
+						<container>
+						</container>
+					</while>
 						
-				forever: this tag has no attribute. The content of the forever tag can contain same tags as main script (action, if, ifElse, for, while, forever)
+				forever: this tag contains one attribute (locked). The content of the forever tag can contain same tags as main script (action, if, ifElse, for, while, forever)
+					locked (optional): see locked attribute of action tag
 				Exemple:
-					<forever>
+					<forever locked="False">
 					</forever>
 			
 			#####################
@@ -248,31 +259,35 @@
 			#####################
 			Three condition tags exists: condition, thenCondition, elseCondition. The three follow the same rules.
 			Condition tags can contain only one child that can be a captor or an operator among the following tags:
-				captor: this tag contains one attribute:
-					type (mandatory): the name of the captor in {"WallFront", "WallLeft", "WallRight", "PathFront", "PathLeft", "PathRight", "Enemy", "RedArea", "Player", "Furniture", "FieldGate", "Terminal", "Exit"}.
-				Exemple: <captor type="Terminal" />
+				captor: this tag contains two attributes:
+					type (mandatory): the name of the captor in {"WallFront", "WallLeft", "WallRight", "PathFront", "PathLeft", "PathRight", "Enemy", "RedArea", "Player", "Furniture", "FieldGate", "Terminal", "Exit"}
+					locked (optional): see locked attribute of action tag
+				Exemple: <captor type="Terminal" locked="False" />
 				
-				and: this tag has no attributes, it is composed by two mandatory tags: conditionLeft and conditionRight (see Condition description).
+				and: this tag contains one attribute (locked) and is composed by two mandatory tags: conditionLeft and conditionRight (see Condition description).
+					locked (optional): see locked attribute of action tag
 				Exemple:
-					<and>
+					<and locked="False">
 						<conditionLeft>
 						</conditionLeft>
 						<conditionRight>
 						</conditionRight>
 					</and>
 				
-				or: this tag has no attributes, it is composed by two mandatory tags: conditionLeft and conditionRight (see Condition description).
+				or: this tag contains one attribute (locked) and is composed by two mandatory tags: conditionLeft and conditionRight (see Condition description).
+					locked (optional): see locked attribute of action tag
 				Exemple:
-					<or>
+					<or locked="False">
 						<conditionLeft>
 						</conditionLeft>
 						<conditionRight>
 						</conditionRight>
 					</or>
 				
-				not: this tag has no attributes, like condition tag it can contain only one child that can be a captor or an operator (and, or, not)
+				not: this contains one attribute (locked) and like condition tag it can contain only one child that can be a captor or an operator (and, or, not)
+					locked (optional): see locked attribute of action tag
 				Exemple:
-					<not>
+					<not locked="False">
 					</not>
 			
 			#####################
@@ -283,10 +298,10 @@
 			
 	-->
 	<script outputLine="Qwerty" editMode="0" type="3">
-		<action type="Forward"/>
-		<action type="TurnLeft"/>
-		<action type="TurnRight"/>
-		<action type="Forward"/>
+		<action type="Forward" locked="False"/>
+		<action type="TurnLeft" locked="True"/>
+		<action type="TurnRight" locked="False"/>
+		<action type="Forward" locked="False"/>
 	</script>
 
 	<script outputLine="Azerty" editMode="0" type="3">

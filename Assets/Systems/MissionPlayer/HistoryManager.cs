@@ -220,7 +220,7 @@ public class HistoryManager : FSystem
 				{
 					for (int i = 0; i < minNbOfInaction; i++)
 					{
-						GameObject newWait = UtilityGame.createEditableBlockFromLibrary(libraryWait, canvas);
+						GameObject newWait = UtilityGame.createEditableBlockFromLibrary(libraryWait, canvas, true);
 						newWait.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
 						newWait.transform.SetAsLastSibling();
 						gameData.totalActionBlocUsed++;
@@ -229,14 +229,14 @@ public class HistoryManager : FSystem
 				else if (minNbOfInaction > 1)
 				{
 					// Create for control
-					ForControl forCont = UtilityGame.createEditableBlockFromLibrary(libraryFor, canvas).GetComponent<ForControl>();
+					ForControl forCont = UtilityGame.createEditableBlockFromLibrary(libraryFor, canvas, true).GetComponent<ForControl>();
 					forCont.currentFor = 0;
 					forCont.nbFor = minNbOfInaction;
 					forCont.transform.GetComponentInChildren<TMP_InputField>(true).text = forCont.nbFor.ToString();
 					forCont.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
 					// Create Wait action
 					Transform forContainer = forCont.transform.Find("Container");
-					GameObject newWait = UtilityGame.createEditableBlockFromLibrary(libraryWait, canvas);
+					GameObject newWait = UtilityGame.createEditableBlockFromLibrary(libraryWait, canvas, true);
 					newWait.transform.SetParent(forContainer, false);
 					newWait.transform.SetAsFirstSibling();
 					// Set drop/empty zone
@@ -315,6 +315,9 @@ public class HistoryManager : FSystem
         // suppression des ActionPerformedForLRS
         foreach (ActionPerformedForLRS a in copy.GetComponentsInChildren<ActionPerformedForLRS>(true))
             Object.Destroy(a);
+        // restauration des scale à 1 au cas où la copie aurait copié en plein milieu d'un pulseItem
+        foreach (Transform tr in copy.GetComponentsInChildren<Transform>(true))
+            tr.localScale = Vector3.one;
         // We don't bind the history to FYFY
     }
 

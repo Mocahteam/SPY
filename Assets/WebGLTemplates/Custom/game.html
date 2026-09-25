@@ -140,7 +140,6 @@
 		// Ajout au document de fonctions pour pouvoir les appeler dans le plugin Unity
 		document.updateLang = updateLang;
 		document.tryToCopy = tryToCopy;
-		document.tryToPaste = tryToPaste;
 		document.sendToScreenReader = sendToScreenReader;
 		document.quitFullScreen = quitFullScreen;
 		document.resetFullScreen = resetFullScreen;
@@ -491,24 +490,6 @@
 				// L'API moderne n'est pas disponible, utiliser directement le fallback
 				console.log("Clipboard API non disponible, utilisation du fallback");
 				fallbackCopyTextToClipboard(text);
-			}
-		}
-		
-		// Fonction principale du collage
-		async function tryToPaste() {
-			// Vérifier si l'API Clipboard moderne est disponible
-			if (navigator.clipboard && navigator.clipboard.readText) {
-				try {
-					text = await navigator.clipboard.readText();
-					console.log("lecture presse-papiers: " + text);
-					// see HotkeySystem
-					window.unityInstance.SendMessage('Main_Loop', 'paste', text);
-				} catch (err) {
-					alert("Clipboard API failed, paste canceled: " + err);
-				}
-			} else {
-				// L'API moderne n'est pas disponible, utiliser directement le fallback
-				alert("Clipboard API not available, paste cancel");
 			}
 		}
 		

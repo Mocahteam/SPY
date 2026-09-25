@@ -102,7 +102,6 @@ public class ScriptGenerator : FSystem {
 	// Transforme le noeud d'action XML en gameObject élément/opérator
 	private GameObject readXMLCondition(XmlNode conditionNode)
 	{
-		GameObject obj = null;
 		ReplacementSlot[] slots;
 
 		string libraryId = conditionNode.Name switch
@@ -114,14 +113,9 @@ public class ScriptGenerator : FSystem {
 			_ => "Undef"
 		};
 
-		// Vérifier que ce node est connu pour la gestion des blocs disponibles, si non le définir
-		if (!gameData.actionBlockLimit.ContainsKey(libraryId))
-			gameData.actionBlockLimit[libraryId] = 0;
+		GameObject obj = preprocessXML(libraryId, conditionNode);
 
-		if (libraryId != "Undef")
-			obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(libraryId), mainCanvas);
-		
-		switch (conditionNode.Name)
+        switch (conditionNode.Name)
 		{
 			case "and":
 			case "or":
@@ -158,22 +152,7 @@ public class ScriptGenerator : FSystem {
 					UtilityGame.addItemOnDropArea(child, emptyZone);
 				}
 				break;
-		}
-
-		if (!gameData.dragDropEnabled && SceneManager.GetActiveScene().name != "MissionEditor")
-		{
-			Selectable sel = obj.GetComponent<Selectable>();
-			sel.interactable = false;
-			Color disabledColor = sel.colors.disabledColor;
-
-			if (obj.GetComponent<BaseOperator>())
-				foreach (Transform child in obj.gameObject.transform)
-				{
-					Image childImg = child.GetComponent<Image>();
-					if (child.name != "3DEffect" && childImg != null)
-						childImg.color = disabledColor;
-				}
-		}
+        }
 
 		return obj;
 	}
@@ -181,7 +160,6 @@ public class ScriptGenerator : FSystem {
 	// Transforme le noeud d'action XML en gameObject
 	private GameObject readXMLInstruction(XmlNode actionNode)
 	{
-		GameObject obj = null;
 		Transform conditionContainer;
 		Transform firstContainerBloc;
 		Transform secondContainerBloc;
@@ -196,14 +174,9 @@ public class ScriptGenerator : FSystem {
 			_ => "Undef"
 		};
 
-		// Vérifier que ce node est connu pour la gestion des blocs disponibles, si non le définir
-		if (!gameData.actionBlockLimit.ContainsKey(libraryId))
-			gameData.actionBlockLimit[libraryId] = 0;
+        GameObject obj = preprocessXML(libraryId, actionNode);
 
-		if (libraryId != "Undef")
-			obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(libraryId), mainCanvas);
-
-		switch (actionNode.Name)
+        switch (actionNode.Name)
 		{
 			case "if":
 				conditionContainer = obj.transform.Find("ConditionContainer");
@@ -272,9 +245,15 @@ public class ScriptGenerator : FSystem {
 				BaseElement action = obj.GetComponent<ForControl>();
 
 				((ForControl)action).nbFor = int.Parse(actionNode.Attributes.GetNamedItem("nbFor").Value);
-				obj.GetComponentInChildren<TMP_InputField>(true).text = ((ForControl)action).nbFor.ToString();
+				TMP_InputField input = obj.GetComponentInChildren<TMP_InputField>(true);
+				input.text = ((ForControl)action).nbFor.ToString();
 
-				if (actionNode.HasChildNodes)
+                Locker inputLocker = input.GetComponent<Locker>();
+                inputLocker.locked = actionNode.Attributes.GetNamedItem("inputLocked") != null && actionNode.Attributes.GetNamedItem("inputLocked").Value == "True";
+				UtilityGame.syncLockerUI(inputLocker);
+				input.interactable = !inputLocker.locked;
+
+                if (actionNode.HasChildNodes)
 					processXMLInstruction(firstContainerBloc, actionNode);
 				break;
 
@@ -314,21 +293,23 @@ public class ScriptGenerator : FSystem {
 				break;
 		}
 
-		if (!gameData.dragDropEnabled && SceneManager.GetActiveScene().name != "MissionEditor")
-		{
-			Selectable sel = obj.GetComponent<Selectable>();
-			sel.interactable = false;
-			Color disabledColor = sel.colors.disabledColor;
-
-			if (obj.GetComponent<ControlElement>())
-				foreach (Transform child in obj.gameObject.transform)
-				{
-					Image childImg = child.GetComponent<Image>();
-					if (child.name != "3DEffect" && childImg != null)
-						childImg.color = disabledColor;
-				}
-		}
-
 		return obj;
 	}
+
+	private GameObject preprocessXML(string libraryId, XmlNode node)
+	{
+		GameObject obj = null;
+        // Vérifier que ce node est connu pour la gestion des blocs disponibles, si non le définir
+        if (!gameData.actionBlockLimit.ContainsKey(libraryId))
+            gameData.actionBlockLimit[libraryId] = 0;
+
+		if (libraryId != "Undef")
+		{
+			// créer le bloc et définir s'il est interactable
+			bool isInteractable = (node.Attributes.GetNamedItem("locked") == null || node.Attributes.GetNamedItem("locked").Value == "False") && (gameData.dragDropEnabled || SceneManager.GetActiveScene().name == "MissionEditor");
+            obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(libraryId), mainCanvas, isInteractable);
+		}
+
+        return obj;
+    }
 }

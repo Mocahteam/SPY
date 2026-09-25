@@ -41,7 +41,7 @@ public class DragDropSystemBridge : MonoBehaviour
     {
         DragDropSystem.instance.beginDragElementFromLibrary(e);
     }
-    
+
     public void dragElement(BaseEventData e)
     {
         DragDropSystem.instance.dragElement();
@@ -60,5 +60,15 @@ public class DragDropSystemBridge : MonoBehaviour
     public void setNextFocusedGameObject(GameObject go)
     {
         EventSystem.current.SetSelectedGameObject(go);
+    }
+
+    public void lockItem()
+    {
+        DragDropSystem.instance.lockItem(transform.parent);
+    }
+
+    public void unlockItem()
+    {
+        DragDropSystem.instance.unlockItem(transform.parent);
     }
 }

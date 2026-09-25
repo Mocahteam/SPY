@@ -61,4 +61,14 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "setDefaultDropZone", refObject);
 	}
 
+	public void lockItem(UnityEngine.Transform transform)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "lockItem", transform);
+	}
+
+	public void unlockItem(UnityEngine.Transform transform)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "unlockItem", transform);
+	}
+
 }
