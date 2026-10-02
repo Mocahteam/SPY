@@ -24,7 +24,7 @@ public static class UtilityLobby
 		else if (doc.GetElementsByTagName("scenario").Count == 1)
 			updateScenarioContent(gameData, uri, doc);
 		else
-			throw new Exception("\"" + uri + "\"" + gameData.GetComponent<Localization>().localization[21]);
+			throw new Exception("\"" + uri + "\"" + Utility.GetLocalizedString("XmlNotValid"));
 	}
 
 	public static void updateScenarioContent(GameData gameData, string uri, XmlDocument doc)
@@ -48,8 +48,7 @@ public static class UtilityLobby
 				// get src
 				if (Application.platform == RuntimePlatform.WebGLPlayer)
 					dl.filePath = new Uri(Application.streamingAssetsPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsoluteUri;
-                else
-                {
+				else {
 					if (File.Exists(new Uri(Application.persistentDataPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsolutePath))
 						dl.filePath = new Uri(Application.persistentDataPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsoluteUri;
 					else if (File.Exists(new Uri(Application.streamingAssetsPath + "/" + (child.Attributes.GetNamedItem("src").Value)).AbsolutePath))

@@ -40,16 +40,19 @@ public class SyncLocalization : FSystem {
         // Now, we can switch to appropriate language
         if (PlayerPrefs.HasKey("localization"))
             currentSettingsValues.values.currentLanguage = PlayerPrefs.GetInt("localization");
-        else if (Application.platform == RuntimePlatform.WebGLPlayer)
-        {
-            string locale = GetBrowserLanguage();
-            if (locale == "fr")
-                currentSettingsValues.values.currentLanguage = 0;
-            else
-                currentSettingsValues.values.currentLanguage = 1;
-        }
         else
-            currentSettingsValues.values.currentLanguage = currentSettingsValues.GetComponent<DefaultSettingsValues>().defaultLanguage;
+        {
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            {
+                string locale = GetBrowserLanguage();
+                if (locale == "fr")
+                    currentSettingsValues.values.currentLanguage = 0;
+                else
+                    currentSettingsValues.values.currentLanguage = 1;
+            }
+            else
+                currentSettingsValues.values.currentLanguage = currentSettingsValues.GetComponent<DefaultSettingsValues>().defaultLanguage;
+        }
         syncLocale();
         PlayerPrefs.SetInt("localization", currentSettingsValues.values.currentLanguage);
         PlayerPrefs.Save();

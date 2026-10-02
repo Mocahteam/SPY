@@ -27,7 +27,6 @@ public class MapDesc : FSystem
     public GameObject panel;
     private Transform lineModel;
 
-    private Localization gameDataLoc;
     private GameData gameData;
 
     public static DetectorManager instance;
@@ -37,7 +36,6 @@ public class MapDesc : FSystem
         GameObject go = GameObject.Find("GameData");
         if (go != null)
         {
-            gameDataLoc = go.GetComponent<Localization>();
             gameData = go.GetComponent<GameData>();
         }
 
@@ -80,21 +78,21 @@ public class MapDesc : FSystem
             int y = -(int)(ground.transform.localPosition.z / 3); // c'est bien l'opposé du z à mettre dans le y
             if (!staticMap.ContainsKey(x))
                 staticMap[x] = new Dictionary<int, string>();
-            staticMap[x][y] = gameDataLoc.localization[35];
+            staticMap[x][y] = Utility.GetLocalizedString("GroundCode");
         }
         foreach (GameObject wall in f_walls)
         {
             Position pos = wall.GetComponent<Position>();
             if (!staticMap.ContainsKey(pos.x))
                 staticMap[pos.x] = new Dictionary<int, string>();
-            staticMap[pos.x][pos.y] = gameDataLoc.localization[36];
+            staticMap[pos.x][pos.y] = Utility.GetLocalizedString("WallCode");
         }
         foreach (GameObject furniture in f_furnitures)
         {
             Position pos = furniture.GetComponent<Position>();
             if (!staticMap.ContainsKey(pos.x))
                 staticMap[pos.x] = new Dictionary<int, string>();
-            staticMap[pos.x][pos.y] = gameDataLoc.localization[48];
+            staticMap[pos.x][pos.y] = Utility.GetLocalizedString("FurnitureCode");
         }
         if (!gameData.hideExit && !gameData.fogEnabled)
         {
@@ -102,7 +100,7 @@ public class MapDesc : FSystem
             {
                 Position pos = teleport.GetComponent<Position>();
                 // On ignore les "Spawn" pas utile pour la description de la carte, juste de la déco
-                staticMap[pos.x][pos.y] = teleport.CompareTag("Exit") ? gameDataLoc.localization[37] : staticMap[pos.x][pos.y];
+                staticMap[pos.x][pos.y] = teleport.CompareTag("Exit") ? Utility.GetLocalizedString("ExitCode") : staticMap[pos.x][pos.y];
             }
         }
 
@@ -127,13 +125,13 @@ public class MapDesc : FSystem
             foreach (GameObject coin in f_coins)
             {
                 Position pos = coin.GetComponent<Position>();
-                exportMap[pos.x, pos.y] += "+" + gameDataLoc.localization[38];
+                exportMap[pos.x, pos.y] += "+" + Utility.GetLocalizedString("CoinCode");
             }
 
             foreach (GameObject player in f_players)
             {
                 Position pos = player.GetComponent<Position>();
-                exportMap[pos.x, pos.y] += "+(" + gameDataLoc.localization[39] + ": " + player.GetComponent<AgentEdit>().associatedScriptName + " " + (player.GetComponent<ScriptRef>().isBroken ? gameDataLoc.localization[6] : player.GetComponent<Direction>().direction) + ")";
+                exportMap[pos.x, pos.y] += "+(" + Utility.GetLocalizedString("RobotCode") + ": " + player.GetComponent<AgentEdit>().associatedScriptName + " " + (player.GetComponent<ScriptRef>().isBroken ? Utility.GetLocalizedString("Broken") : player.GetComponent<Direction>().direction) + ")";
             }
 
             foreach (GameObject drone in f_drone)
@@ -142,32 +140,32 @@ public class MapDesc : FSystem
                 // récupération du nom du drone
                 ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
                 string droneName = scriptRef.executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().text;
-                exportMap[pos.x, pos.y] += "+(" + gameDataLoc.localization[40] + ": " + droneName + " " + (scriptRef.isBroken ? gameDataLoc.localization[6] : drone.GetComponent<Direction>().direction) + ")";
+                exportMap[pos.x, pos.y] += "+(" + Utility.GetLocalizedString("GuardCode") + ": " + droneName + " " + (scriptRef.isBroken ? Utility.GetLocalizedString("Broken") : drone.GetComponent<Direction>().direction) + ")";
             }
 
             foreach (GameObject redArea in f_redDetector)
             {
                 Position pos = redArea.GetComponent<Position>();
                 // Ajouter l'observation si ce n'est pas déjà présent sur cette case
-                if (pos.x != -1 && pos.y != -1 && !exportMap[pos.x, pos.y].Contains("+" + gameDataLoc.localization[41]))
-                    exportMap[pos.x, pos.y] += "+" + gameDataLoc.localization[41];
+                if (pos.x != -1 && pos.y != -1 && !exportMap[pos.x, pos.y].Contains("+" + Utility.GetLocalizedString("ObservedCode")))
+                    exportMap[pos.x, pos.y] += "+" + Utility.GetLocalizedString("ObservedCode");
             }
 
             foreach (GameObject door in f_doors)
             {
                 Position pos = door.GetComponent<Position>();
                 ActivationSlot act = door.GetComponent<ActivationSlot>();
-                exportMap[pos.x, pos.y] += "+(" + gameDataLoc.localization[42] + act.slotID + " " + (act.state ? gameDataLoc.localization[44] : gameDataLoc.localization[43]) + ")";
+                exportMap[pos.x, pos.y] += "+(" + Utility.GetLocalizedString("DoorCode") + act.slotID + " " + (act.state ? Utility.GetLocalizedString("Opened") : Utility.GetLocalizedString("Closed")) + ")";
             }
 
             foreach (GameObject console in f_consoles)
             {
                 Position pos = console.GetComponent<Position>();
-                exportMap[pos.x, pos.y] += "+(" + gameDataLoc.localization[45] + " " + String.Join(",", console.GetComponent<Activable>().slotID) + ")";
+                exportMap[pos.x, pos.y] += "+(" + Utility.GetLocalizedString("TerminalCode") + " " + String.Join(",", console.GetComponent<Activable>().slotID) + ")";
             }
 
             // Affichage de la taille de la carte
-            panel.transform.Find("MapSize").GetComponent<TMP_Text>().text = Utility.getFormatedText(gameDataLoc.localization[46], exportMap.GetLength(1), exportMap.GetLength(0)); // Taille carte
+            panel.transform.Find("MapSize").GetComponent<TMP_Text>().text = Utility.getFormatedText(Utility.GetLocalizedString("MapSize"), exportMap.GetLength(1), exportMap.GetLength(0)); // Taille carte
 
             // Vérifier si l'UI avec le focus ne serait pas un des éléments de la liste
             int childSelectedPos = -1;
@@ -185,7 +183,7 @@ public class MapDesc : FSystem
             // Ajout de la nouvelle description
             for (int j = 0; j < exportMap.GetLength(1); j++)
             {
-                string line = gameDataLoc.localization[47] + " " + (j + 1) + ": "; // Ligne X:
+                string line = Utility.GetLocalizedString("Line") + " " + (j + 1) + ": "; // Ligne X:
                 for (int i = 0; i < exportMap.GetLength(0); i++)
                     line += exportMap[i, j] + " "; // export de la ligne X
                                                    // Création d'une nouvelle ligne à partir du modèle

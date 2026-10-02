@@ -1,10 +1,13 @@
-using UnityEngine;
 using FYFY;
-using TMPro;
-using System.Collections.Generic;
 using System.Collections;
-using UnityEngine.UI;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Localization.Components;
+using UnityEngine.Localization.Settings;
+using UnityEngine.Localization.SmartFormat.PersistentVariables;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// Ce systéme gére tous les éléments d'édition des agents par l'utilisateur.
 /// Il gére entre autre:
@@ -110,7 +113,7 @@ public class EditableContainerSystem : FSystem
 						{
 							Transform containerName = header.Find("ContainerName");
 							containerName.GetComponent<TMP_InputField>().interactable = true;
-							containerName.GetComponent<TooltipContent>().text = containerName.GetComponentInParent<Localization>(true).localization[2];
+							containerName.GetComponent<TooltipContent>().text = Utility.GetLocalizedString("EnterTheNameOfRobot");
 							if (gameData.dragDropEnabled)
 								header.Find("RemoveButton").GetComponent<Button>().interactable = true;
 						}
@@ -231,11 +234,14 @@ public class EditableContainerSystem : FSystem
 				if (editState == UIRootContainer.EditMode.Locked)
 				{
 					header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-					containerName.GetComponent<TooltipContent>().text = Utility.getFormatedText(containerName.GetComponentInParent<Localization>(true).localization[3], name);
-					containerName.GetComponent<TMP_InputField>().interactable = false;
+                    TMP_InputField name_input = containerName.GetComponent<TMP_InputField>();
+                    name_input.interactable = false;
+                    LocalizeStringEvent lse = name_input.GetComponent<LocalizeStringEvent>();
+                    lse.StringReference.TableEntryReference = "CalledBy";
+                    (lse.StringReference["robotName"] as StringVariable).Value = name_input.text;
 				}
 				else
-					containerName.GetComponent<TooltipContent>().text = containerName.GetComponentInParent<Localization>(true).localization[2];
+					containerName.GetComponent<TooltipContent>().text = Utility.GetLocalizedString("EnterTheNameOfRobot");
 				// si le drag&drop n'est pas activé on bloque la balayette et la suppression du script
 				if (!gameData.dragDropEnabled)
 				{

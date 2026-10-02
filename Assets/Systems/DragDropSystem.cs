@@ -248,8 +248,7 @@ public class DragDropSystem : FSystem
 						if (submit.WasPressedThisFrame())
 							cancelNextSubmit = true;
 					};
-					Localization loc = gameData.GetComponent<Localization>();
-					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[50], OkButton = loc.localization[1], CancelButton = loc.localization[0], call = localCallback });
+					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.GetLocalizedString("NoBlocksAvailableInInventory"), OkButton = Utility.GetLocalizedString("Ok"), CancelButton = "", call = localCallback });
 				}
 			}
 			if (submit.WasPressedThisFrame() && !cancelNextSubmit && dragDropState == DragDropState.InsertKeyboard)

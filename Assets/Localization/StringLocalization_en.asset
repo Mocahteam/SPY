@@ -88,16 +88,17 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 10341073604608
-    m_Localized: Start execution<br>(Shortcut {shortcutPlayPause})
+    m_Localized: Start execution<br>{shortcutPlayPause}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 10678513750016
-    m_Localized: Execute next step<br>(Shortcut Ctrl+Space)
+    m_Localized: Execute next step<br>{shortcutNextStep}
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 10830947340288
-    m_Localized: Resume execution<br>(Shortcut {shortcutPlayPause})
+    m_Localized: Resume execution<br>{shortcutPlayPause}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
@@ -106,7 +107,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11511670296576
-    m_Localized: Stop execution<br>(Shortcut {shortcutStop})
+    m_Localized: Stop execution<br>{shortcutStop}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
@@ -155,37 +156,37 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 16256510251008
-    m_Localized: Rotate camera to the right<br>(Shortcut {shortcutCameraRotateRight})
+    m_Localized: Rotate camera to the right<br>{shortcutCameraRotateRight}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 16356917694464
-    m_Localized: Center<br>(Shortcut {shortcutCameraFocusOnAgent})
+    m_Localized: Center {shortcutCameraFocusOnAgent}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 16399242416128
-    m_Localized: Move camera to the right<br>(Shortcut {shortcutCameraMoveRight})
+    m_Localized: Move camera to the right<br>{shortcutCameraMoveRight}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 16440837328896
-    m_Localized: Zoom in<br>(Shortcut {shortcutCameraZoomIn})
+    m_Localized: Zoom in {shortcutCameraZoomIn}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 16481354305536
-    m_Localized: Move camera backward<br>(Shortcut {shortcutCameraMoveDown})
+    m_Localized: Move camera backward<br>{shortcutCameraMoveDown}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 16522613673984
-    m_Localized: Zoom out<br>(Shortcut {shortcutCameraZoomOut})
+    m_Localized: Zoom out {shortcutCameraZoomOut}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 16648862224384
-    m_Localized: Switch to top view (2D) or perspective (3D)<br>(Shortcut {shortcutCameraSwitchView})
+    m_Localized: Switch to top view (2D) or perspective (3D)<br>{shortcutCameraSwitchView}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
@@ -620,17 +621,17 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 254277681330511872
-    m_Localized: (Shortcut {shortcutShowBriefing})
+    m_Localized: '{shortcutShowBriefing}'
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 254280701426524160
-    m_Localized: Pause (Shortcut {shortcutPlayPause})
+    m_Localized: Pause {shortcutPlayPause}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 254288756369252352
-    m_Localized: Menu (Shortcut {shortcutCancel})
+    m_Localized: Menu {shortcutCancel}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
@@ -643,7 +644,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 258252421338488832
-    m_Localized: (Shortcut {shortcutLayoutDesc})
+    m_Localized: '{shortcutLayoutDesc}'
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
@@ -895,10 +896,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 260863778193924096
-    m_Localized: This program will be called by #0#.<br><i>You cannot change this
-      name</i>.
+    m_Localized: This program will be called by {robotName}.<br><i>You cannot change
+      this name</i>.
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 2254590404606296135
   - m_Id: 276020132806123520
     m_Localized: 'Legend : C=Coin, D=Door, E=Exit, F=Furniture, Gr=Ground, Gu=Guard,
       O=Observed, R=Robot, T=Terminal, W=Wall.'
@@ -1305,7 +1307,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 320319330258771968
-    m_Localized: Copy (Shortcut {shortcutCopy})
+    m_Localized: Copy {shortcutCopy}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
@@ -1611,17 +1613,17 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 356461939389620224
-    m_Localized: Rotate camera to the left<br>(Shortcut {shortcutCameraRotateLeft})
+    m_Localized: Rotate camera to the left<br>{shortcutCameraRotateLeft}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 356462762786021376
-    m_Localized: Move camera forward<br>(Shortcut {shortcutCameraMoveUp})
+    m_Localized: Move camera forward<br>{shortcutCameraMoveUp}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 356463558705537024
-    m_Localized: Move camera to the left<br>(Shortcut {shortcutCameraMoveLeft})
+    m_Localized: Move camera to the left<br>{shortcutCameraMoveLeft}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
@@ -1834,7 +1836,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 367059196674113536
-    m_Localized: (Shortcut {shortcutSettings})
+    m_Localized: '{shortcutSettings}'
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
@@ -1892,12 +1894,12 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 393157898495414272
-    m_Localized: Pivot the camera forward<br>(Shortcut {shortcutCameraRotateUp})
+    m_Localized: Pivot the camera forward<br>{shortcutCameraRotateUp}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 393160860907163648
-    m_Localized: Pivot the camera backward<br>(Shortcut {shortcutCameraRotateDown})
+    m_Localized: Pivot the camera backward<br>{shortcutCameraRotateDown}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
@@ -1914,12 +1916,12 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 404393886565175296
-    m_Localized: Undo (Shortcut {shortcutUndo})
+    m_Localized: Undo {shortcutUndo}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 404393931997876224
-    m_Localized: Redo (Shortcut {shortcutRedo})
+    m_Localized: Redo {shortcutRedo}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
@@ -1968,15 +1970,35 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 419507521395539968
-    m_Localized: Settings (Shortcut {shortcutSettings})
+    m_Localized: Settings {shortcutSettings}
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
   - m_Id: 420744507343159296
-    m_Localized: (Shortcut {shortcutSave})
+    m_Localized: '{shortcutSave}'
     m_Metadata:
       m_Items:
       - rid: 2254590404606296135
+  - m_Id: 421490650507296768
+    m_Localized: Intro cutscene (Touch to skip)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422456106240098304
+    m_Localized: Shortcut
+    m_Metadata:
+      m_Items: []
+  - m_Id: 423147297784905728
+    m_Localized: IMAGE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 423147353074221056
+    m_Localized: VIDEO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 423150152956690432
+    m_Localized: Ok
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
@@ -2010,3 +2032,5 @@ MonoBehaviour:
         - id: 16440837328896
         - id: 16399242416128
         - id: 420744507343159296
+        - id: 10678513750016
+        - id: 260863778193924096

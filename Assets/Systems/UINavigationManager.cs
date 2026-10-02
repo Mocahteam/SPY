@@ -1,4 +1,7 @@
+using DIG.GBLXAPI;
 using FYFY;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TMPro;
@@ -24,42 +27,62 @@ public class UINavigationManager : FSystem
 	public EventSystem eventSystem;
 
 	private InputAction navigateAction;
-	private InputAction rightClick;
+    private InputAction rightClick;
 	private InputAction middleClick;
 
-	[DllImport("__Internal")]
-	private static extern void QuitFullScreen(); // call javascript
+    private UserData userData;
 
+    [DllImport("__Internal")]
+	private static extern void QuitFullScreen(); // call javascript
 	[DllImport("__Internal")]
 	private static extern void ResetFullScreen(); // call javascript
+	[DllImport("__Internal")]
+	private static extern bool IsUnityCanvasFocused(); // call javascript
 
-	protected override void onStart()
+
+    // L'instance
+    public static UINavigationManager instance;
+
+    public UINavigationManager()
     {
-		foreach (GameObject text in f_textsUnselectable)
+        instance = this;
+    }
+    protected override void onStart()
+    {
+        GameObject go = GameObject.Find("GameData");
+        if (go != null)
+            userData = go.GetComponent<UserData>();
+
+        foreach (GameObject text in f_textsUnselectable)
 			onNewUnselectableText(text);
 		f_textsUnselectable.addEntryCallback(onNewUnselectableText);
 		if (eventSystem == null)
 			eventSystem = EventSystem.current;
 
 		navigateAction = InputSystem.actions.FindAction("Navigate");
-		rightClick = InputSystem.actions.FindAction("RightClick");
+        rightClick = InputSystem.actions.FindAction("RightClick");
 		middleClick = InputSystem.actions.FindAction("MiddleClick");
 
 		EnhancedTouchSupport.Enable();
 
 		// Add callback in all inputField
-		foreach (GameObject go in f_InputFields)
-			onNewInputField(go);
+		foreach (GameObject input in f_InputFields)
+			onNewInputField(input);
 		f_InputFields.addEntryCallback(onNewInputField);
-	}
+
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+			MainLoop.instance.StartCoroutine(catchApplicationState(IsUnityCanvasFocused()));
+		else
+            MainLoop.instance.StartCoroutine(catchApplicationState(Application.isFocused));
+    }
 
     protected override void onProcess(int familiesUpdateCount)
 	{
 		// Récupérer la valeur Vector2 de Navigate
 		Vector2 navigateValue = navigateAction.ReadValue<Vector2>();
 
-		// Get the currently selected UI element from the event system.
-		GameObject selected = eventSystem.currentSelectedGameObject;
+        // Get the currently selected UI element from the event system.
+        GameObject selected = eventSystem.currentSelectedGameObject;
 
 		// Par défaut un clic-droit ou un clic-molette déclenche un PointerDown. A chaque PointerDown l'EventSystem regarde s'il doit sélectionner un objet, sur un clic droit il considère que non et donc rend le currentSelectedGameObject à null. Comme on utilise le clic-droit pour supprimer des blocs, si le currentSelectedGameObject devient null à chaque suppression, le UINavigationManager sélectionne alors automatiquement le prochain gameObject ce qui nous fait sortir de la zone d'édition. On annule donc se comportement en maintenant le currentSelectedGameObject au précédent connu.
 		if (selected == null && lastSelected != null && (rightClick.WasPressedThisFrame() || middleClick.WasPressedThisFrame()))
@@ -224,15 +247,58 @@ public class UINavigationManager : FSystem
 	{
 		// Pour le tactile si on est en mode plein écran on force la sortie du plein écran quand on entre dans un InputField et on le restaure quand on en ressort
 		go.GetComponent<TMP_InputField>().onSelect.AddListener(delegate (string content)
-		{
-			if (Touch.activeTouches.Count > 0 && Application.platform == RuntimePlatform.WebGLPlayer)
+        {
+            if (Application.platform == RuntimePlatform.WebGLPlayer && Touch.activeTouches.Count > 0)
                 QuitFullScreen();
-		});
+        });
 
 		go.GetComponent<TMP_InputField>().onEndEdit.AddListener(delegate (string content)
 		{
-			if (Application.platform == RuntimePlatform.WebGLPlayer)
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
 				ResetFullScreen();
-		});
-	}
+        });
+    }
+
+    public IEnumerator catchApplicationState(bool hasFocus)
+    {
+        if (!hasFocus)
+        {
+            // player click outside the game
+            userData.lastFocusOut = DateTime.Now.ToUniversalTime().Ticks;
+
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+				// disable WebGLInput.captureAllKeyboardInput so elements in web page can handle keyboard inputs (usefull for Tab navigation)
+				WebGLInput.captureAllKeyboardInput = false;
+        }
+        else // player come back in the game
+        {
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
+				// disable WebGLInput.captureAllKeyboardInput so elements in web page can handle keyboard inputs (usefull for Tab navigation)
+				WebGLInput.captureAllKeyboardInput = true;
+
+            if (userData.lastFocusOut != -1 && new TimeSpan(DateTime.Now.ToUniversalTime().Ticks - userData.lastFocusOut).Minutes >= 10)
+            {
+                GameObject xAPI = GameObject.Find("GBLXAPI");
+                if (xAPI != null)
+                {
+                    GameObject.Destroy(xAPI);
+                    GBLXAPI.IsInit = false;
+                }
+                GameData gd = GameObject.Find("GameData").GetComponent<GameData>();
+                gd.selectedScenario = "";
+                gd.actionsHistory = null;
+                yield return null;
+                yield return null;
+                GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "ConnexionScene" });
+            }
+            userData.lastFocusOut = -1;
+
+        }
+    }
+
+    // Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
+    public void HTMLcanvasFocus(int hasFocus)
+	{
+        MainLoop.instance.StartCoroutine(UINavigationManager.instance.catchApplicationState(hasFocus == 1));
+    }
 }

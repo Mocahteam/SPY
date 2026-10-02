@@ -10,6 +10,7 @@ public class ConnexionManager_wrapper : BaseWrapper
 	public TMPro.TMP_Text progress;
 	public TMPro.TMP_Text SPYVersion;
 	public UnityEngine.GameObject RightPanel;
+	public UnityEngine.GameObject MainPanel;
 	public UnityEngine.GameObject TouchToContinue;
 	public UnityEngine.Transform CinematicPanel;
 	public CurrentSettingsValues currentSettingsValues;
@@ -23,14 +24,10 @@ public class ConnexionManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "progress", progress);
 		MainLoop.initAppropriateSystemField (system, "SPYVersion", SPYVersion);
 		MainLoop.initAppropriateSystemField (system, "RightPanel", RightPanel);
+		MainLoop.initAppropriateSystemField (system, "MainPanel", MainPanel);
 		MainLoop.initAppropriateSystemField (system, "TouchToContinue", TouchToContinue);
 		MainLoop.initAppropriateSystemField (system, "CinematicPanel", CinematicPanel);
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
-	}
-
-	public void continueAfterTouch()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "continueAfterTouch", null);
 	}
 
 	public void forceLaunch()

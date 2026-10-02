@@ -41,10 +41,10 @@ public class InitLevelEditor : FSystem
 			GameObjectManager.setGameObjectState(scriptContent, false);
 			GameObjectManager.setGameObjectState(paramContent, false);
 
-			if (Application.platform == RuntimePlatform.WebGLPlayer)
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlLoadMissions();
 
-			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+            GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
 			{
 				verb = "opened",
 				objectType = "levelEditor"

@@ -4958,32 +4958,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenu: {fileID: 98806353}
   closeMainMenu: {fileID: 2055180763}
-  buttonExecute: {fileID: 0}
-  buttonPause: {fileID: 0}
-  buttonNextStep: {fileID: 0}
-  buttonContinue: {fileID: 0}
-  buttonStop: {fileID: 0}
-  cameraSwitchView: {fileID: 0}
-  cameraRotateTop: {fileID: 0}
-  cameraRotateDown: {fileID: 0}
-  cameraRotateLeft: {fileID: 0}
-  cameraRotateRight: {fileID: 0}
-  cameraTop: {fileID: 0}
-  cameraDown: {fileID: 0}
-  cameraLeft: {fileID: 0}
-  cameraRight: {fileID: 0}
-  cameraFocusOn: {fileID: 0}
-  cameraZoomIn: {fileID: 0}
-  cameraZoomOut: {fileID: 0}
-  showBriefing: {fileID: 0}
-  showLayoutDesc: {fileID: 0}
-  closeLayoutDesc: {fileID: 0}
-  inventory: {fileID: 0}
-  showSettings: {fileID: 0}
-  buttonCopyCode: {fileID: 0}
-  AddContainerButton: {fileID: 0}
-  undo: {fileID: 0}
-  redo: {fileID: 0}
   hotKeys: {fileID: 361349262}
   cancelNextCancel_act: 0
 --- !u!114 &361349252
@@ -5137,6 +5111,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: Stop
     UItriggers:
     - interactableUI: {fileID: 1684333880}
@@ -5151,6 +5126,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: PlayPause
     UItriggers:
     - interactableUI: {fileID: 768015850}
@@ -5171,6 +5147,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: CameraRotateUp
     UItriggers:
     - interactableUI: {fileID: 1553125692}
@@ -5185,6 +5162,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: CameraRotateDown
     UItriggers:
     - interactableUI: {fileID: 903907826}
@@ -5199,6 +5177,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: CameraRotateLeft
     UItriggers:
     - interactableUI: {fileID: 641440401}
@@ -5213,6 +5192,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: CameraRotateRight
     UItriggers:
     - interactableUI: {fileID: 7500572885513006126}
@@ -5227,6 +5207,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: CameraMoveUp
     UItriggers:
     - interactableUI: {fileID: 1107522974}
@@ -5241,6 +5222,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: CameraMoveDown
     UItriggers:
     - interactableUI: {fileID: 1387587477}
@@ -5255,6 +5237,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: CameraMoveLeft
     UItriggers:
     - interactableUI: {fileID: 1970404776}
@@ -5269,6 +5252,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: CameraMoveRight
     UItriggers:
     - interactableUI: {fileID: 1744914342}
@@ -5283,6 +5267,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: CameraFocusOnAgent
     UItriggers:
     - interactableUI: {fileID: 1257512670}
@@ -5297,6 +5282,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: CameraSwitchView
     UItriggers:
     - interactableUI: {fileID: 1845570992}
@@ -5311,6 +5297,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: CameraZoomIn
     UItriggers:
     - interactableUI: {fileID: 1981267246}
@@ -5325,6 +5312,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: CameraZoomOut
     UItriggers:
     - interactableUI: {fileID: 1829307636}
@@ -5339,6 +5327,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: ShowBriefing
     UItriggers:
     - interactableUI: {fileID: 1836532737}
@@ -5356,6 +5345,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: LayoutDesc
     UItriggers:
     - interactableUI: {fileID: 66302933}
@@ -5373,6 +5363,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: SelectInventory
     UItriggers:
     - interactableUI: {fileID: 1670566727}
@@ -5387,6 +5378,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: Settings
     UItriggers:
     - interactableUI: {fileID: 199626031}
@@ -5404,6 +5396,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: SelectNextProgrammingArea
     UItriggers:
     - interactableUI: {fileID: 1291964390}
@@ -5418,6 +5411,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: SelectPreviousProgrammingArea
     UItriggers:
     - interactableUI: {fileID: 1291964390}
@@ -5432,6 +5426,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: Undo
     UItriggers:
     - interactableUI: {fileID: 975821385}
@@ -5446,6 +5441,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: Redo
     UItriggers:
     - interactableUI: {fileID: 8507923395620949127}
@@ -5460,6 +5456,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: SelectNextMemoryArea
     UItriggers: []
     inputAction:
@@ -5471,6 +5468,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: SelectPreviousMemoryArea
     UItriggers: []
     inputAction:
@@ -5482,6 +5480,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: TracingAccess
     UItriggers: []
     inputAction:
@@ -5493,6 +5492,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
 --- !u!1 &369729339
 GameObject:
   m_ObjectHideFlags: 0
@@ -7934,7 +7934,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7475155380592886845, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 624363074}
+      addedObject: {fileID: 624363077}
   m_SourcePrefab: {fileID: 100100000, guid: 12f582319fad22f499623361599a5dd3, type: 3}
 --- !u!1 &604576074 stripped
 GameObject:
@@ -8150,49 +8150,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &624363074
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 624363071}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 0
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
-        asm: Unity.Localization}
-      data:
-        m_Target: {fileID: 624363073}
-        m_TrackedProperties:
-          items:
-          - rid: 1
-        m_UpdateType: 0
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 1
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 10678513750016
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: text
 --- !u!114 &624363075 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
@@ -8217,6 +8174,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &624363077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 624363071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
+    m_TableEntryReference:
+      m_KeyId: 10678513750016
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables:
+    - name: shortcutNextStep
+      variable:
+        rid: 8085998267306607437
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 624363073}
+        m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
+        m_MethodName: setText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: 8085998267306607437
+      type: {class: StringVariable, ns: UnityEngine.Localization.SmartFormat.PersistentVariables,
+        asm: Unity.Localization}
+      data:
+        m_Value: '?'
 --- !u!1 &636709732 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8390236102059498150, guid: bae527ae87f763c4eaf4bfcc24112fd8,
@@ -19977,7 +19982,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: (Raccourci ?)
+  text: '?'
 --- !u!114 &1836532734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28101,7 +28106,7 @@ PrefabInstance:
     - target: {fileID: 5132526943140614015, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: text
-      value: "R\xE9tablir (Raccourci ?)"
+      value: "R\xE9tablir ?"
       objectReference: {fileID: 0}
     - target: {fileID: 5236422657160317478, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
@@ -28511,7 +28516,7 @@ PrefabInstance:
     - target: {fileID: 6254074583931725155, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}
       propertyPath: text
-      value: Annuler (Raccourci ?)
+      value: Annuler ?
       objectReference: {fileID: 0}
     - target: {fileID: 6764033990563587226, guid: 3dce7a0df7989214ea5dbb548f234c1c,
         type: 3}

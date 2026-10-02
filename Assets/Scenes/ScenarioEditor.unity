@@ -6769,18 +6769,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 1
---- !u!114 &984423895 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1722671352924144637, guid: 9ef7830e7336b9d4180771c5994c2d2a,
-    type: 3}
-  m_PrefabInstance: {fileID: 984423890}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1002096254
 GameObject:
   m_ObjectHideFlags: 0
@@ -6914,6 +6902,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: AbstractTitle
+      objectReference: {fileID: 0}
+    - target: {fileID: 1848616423792054055, guid: 4fdcd5065fbff574d8a0a77b388b5583,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8944559683275527400, guid: 4fdcd5065fbff574d8a0a77b388b5583,
         type: 3}
@@ -9816,7 +9809,7 @@ PrefabInstance:
     - target: {fileID: 2598129547128785489, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -0.000015258789
       objectReference: {fileID: 0}
     - target: {fileID: 2847899282829580067, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
@@ -10411,33 +10404,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenu: {fileID: 1606543279}
   closeMainMenu: {fileID: 984423892}
-  buttonExecute: {fileID: 0}
-  buttonPause: {fileID: 0}
-  buttonNextStep: {fileID: 0}
-  buttonContinue: {fileID: 0}
-  buttonStop: {fileID: 0}
-  cameraSwitchView: {fileID: 0}
-  cameraRotateTop: {fileID: 0}
-  cameraRotateDown: {fileID: 0}
-  cameraRotateLeft: {fileID: 0}
-  cameraRotateRight: {fileID: 0}
-  cameraTop: {fileID: 0}
-  cameraDown: {fileID: 0}
-  cameraLeft: {fileID: 0}
-  cameraRight: {fileID: 0}
-  cameraFocusOn: {fileID: 0}
-  cameraZoomIn: {fileID: 0}
-  cameraZoomOut: {fileID: 0}
-  showBriefing: {fileID: 0}
-  showLayoutDesc: {fileID: 0}
-  closeLayoutDesc: {fileID: 0}
-  inventory: {fileID: 0}
-  showSettings: {fileID: 984423895}
-  buttonCopyCode: {fileID: 0}
-  AddContainerButton: {fileID: 0}
-  undo: {fileID: 0}
-  redo: {fileID: 0}
-  save: {fileID: 1947059453}
   hotKeys: {fileID: 1645588008}
   cancelNextCancel_act: 0
 --- !u!114 &1645588005
@@ -10514,6 +10480,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
   - inputActionName: Save
     UItriggers:
     - interactableUI: {fileID: 1380425880}
@@ -10528,6 +10495,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
+    hasModifier: 0
 --- !u!1 &1649896675
 GameObject:
   m_ObjectHideFlags: 0
@@ -11110,18 +11078,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
---- !u!114 &1947059453 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6583804416229182171, guid: 9ef7830e7336b9d4180771c5994c2d2a,
-    type: 3}
-  m_PrefabInstance: {fileID: 984423890}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1981489836
 GameObject:
   m_ObjectHideFlags: 0

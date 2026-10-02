@@ -16,16 +16,22 @@ mergeInto(LibraryManager.library, {
 	ShowHtmlLoadMissions: function () {
 		var element = document.getElementById("proxyLoadMissions");
 		element.classList.remove("visually-hidden");
+		var button = document.getElementById("files-selector-missions");
+		button.disabled = false;
 	},
 	
 	HideHtmlLoadMissions: function () {
 		var element = document.getElementById("proxyLoadMissions");
 		element.classList.add("visually-hidden");
+		var button = document.getElementById("files-selector-missions");
+		button.disabled = true;
 	},
 	
 	ShowHtmlImportSettings: function () {
 		var element = document.getElementById("proxyLoadSettings");
 		element.classList.remove("visually-hidden");
+		var button = document.getElementById("files-selector-settings");
+		button.disabled = false;
 	},
   
 	IsMobileBrowser: function () {
@@ -98,15 +104,25 @@ mergeInto(LibraryManager.library, {
 		var content = UTF8ToString(txt);
 		document.getElementById('TextToSpeechSpan').innerHTML = content;
 	},
-
-	SendToScreenReader: function(txt){
+	
+	SendToScreenReader: function (txt) {
 		var content = UTF8ToString(txt);
 		document.sendToScreenReader(content);
+	},
+	
+	EnableTTS: function () {
+		// Vérification de l'accès à la synthèse vocale
+		if (window != null && window.speechSynthesis != null)
+			document.getElementById('switchTTS').removeAttribute("disabled");
 	},
 
 	IsTTSEnabled: function(){
 		var switchTTS = document.getElementById("switchTTS");
 		return switchTTS.checked;
+	},
+
+	IsUnityCanvasFocused: function () {
+		return document.activeElement === document.getElementById("unity-canvas");
 	},
 
 	InstructionOnly: function(){
@@ -167,17 +183,6 @@ mergeInto(LibraryManager.library, {
 	},
 
 	KbLayout_Fetch: function () {
-		var us = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-		if (!navigator.keyboard || !navigator.keyboard.getLayoutMap) {
-			SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', ""); return;
-		}
-		navigator.keyboard.getLayoutMap().then(function (map) {
-			var out = "";
-			for (var i = 0; i < 36; i++) {
-				var code = (i < 26 ? "Key" : "Digit") + us[i];
-				out += (map.get(code) || us[i]).toUpperCase().charAt(0);
-			}
-			SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', out);
-		}).catch(function () { SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', ""); });
+		document.kbLayout_Fetch();
 	}
 });

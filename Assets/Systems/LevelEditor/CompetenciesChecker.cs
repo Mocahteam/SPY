@@ -80,7 +80,7 @@ public class CompetenciesChecker : FSystem
             GameObject skill = UnityEngine.Object.Instantiate(SkillPrefab, skillsInvolvedContent);
             skill.name = "NoSkills";
             Object.Destroy(skill.GetComponent<TooltipContent>());
-            skill.GetComponent<TMP_Text>().text = LocalizationSettings.StringDatabase.GetLocalizedString("StringLocalization", "NoSkillsIdentified");
+            skill.GetComponent<TMP_Text>().text = Utility.GetLocalizedString("NoSkillsIdentified");
             GameObjectManager.bind(skill);
         }
     }

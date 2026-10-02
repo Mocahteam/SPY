@@ -236,13 +236,12 @@ public class DialogSystem : FSystem
 				loadingImg = MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), localeDependent, dialog));
 			else
 			{
-				if (Application.platform == RuntimePlatform.WebGLPlayer)
-				{
+				if (Application.platform == RuntimePlatform.WebGLPlayer) { 
 					Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath);
-                    loadingImg = MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + localeDependent, dialog));
+					loadingImg = MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + localeDependent, dialog));
 				}
 				else
-                    loadingImg = MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Images/" + localeDependent, dialog));
+					loadingImg = MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Images/" + localeDependent, dialog));
 			}
 			dialogReturn += (dialogReturn != "" ? "\n" : "") + localeDependent;
 		}
@@ -263,69 +262,72 @@ public class DialogSystem : FSystem
 
 		// set sound
 		AudioSource audio = dialogPanel.GetComponent<AudioSource>();
+
         // Au cas où un son serait en cours de lecture, on le stoppe
         if (Application.platform == RuntimePlatform.WebGLPlayer)
-            StopSound();
+			StopSound();
 		else
             audio.Stop();
-        if (loadingSound != null)
+
+		if (loadingSound != null)
             MainLoop.instance.StopCoroutine(loadingSound);
         if (dialog.sound != null)
 		{
 			string path = Utility.extractLocale(dialog.sound);
 			if (path != "")
 			{
-				if (!path.ToLower().StartsWith("http"))
-				{
-					if (Application.platform == RuntimePlatform.WebGLPlayer)
+				if (Application.platform == RuntimePlatform.WebGLPlayer) {
+					if (!path.ToLower().StartsWith("http"))
 					{
 						Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath);
 						path = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Sounds/" + path;
 					}
-					else
-						path = Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Sounds/" + path;
-				}
-				// voir commentaire ci-dessous sur les vidéo à propos du CORS (même problème ici)
-				if (Application.platform == RuntimePlatform.WebGLPlayer)
+					// voir commentaire ci-dessous sur les vidéo à propos du CORS (même problème ici)
 					PlaySound(path);
+				}
 				else
-                    MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, path));
+				{
+					if (!path.ToLower().StartsWith("http"))
+						path = Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Sounds/" + path;
+					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, path));
+				}
+
 				dialogReturn += (dialogReturn != "" ? "\n" : "") + path;
 			}
 		}
 
 		// set video
-        // Au cas où une vidéo serait en cours de lecture, on la stoppe
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
-            StopCinematic();
-        else
-            videoPlayer.Stop();
-        if (dialog.video != null)
+		// Au cas où une vidéo serait en cours de lecture, on la stoppe
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+	        StopCinematic();
+		else
+			videoPlayer.Stop();
+
+		if (dialog.video != null)
 		{
 			string path = Utility.extractLocale(dialog.video);
 			if (path != "")
 			{
-                if (!path.ToLower().StartsWith("http"))
-                {
-                    if (Application.platform == RuntimePlatform.WebGLPlayer)
-                    {
-                        Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath);
-                        path = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Videos/" + path;
-                    }
-                    else
-                        path = Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Videos/" + path;
-                }
-				// En WebGL on délègue la lecture de la vidéo à la page html pour contourner les problèmes CORS et de CORB. En effet, demander à Unity hébergé sur spy.lip6.fr de charger avec une WebRequest une vidéo dans un autre domaine viole le principe de CORS car dans le cas d'Unity la vidéo pourrait être modifiée ce qui est bloqué par le navigateur. En déléguant la lecture de la vidéo au html via une balise <video> c'est tout à fait correct car là on garanti qu'on n'est qu'en mode lecture et qu'on ne va pas chercher à la modifier dans l'application. La limite de cette astuce est une perte d'accessibilité car pour le joueur il faut revenir au contexte html pour accéder aux boutons de contrôle de la vidéo (même si les boutons dans Unity (Play et Pause) restent actifs). C'est un compromis pour laisser la possibilité aux utilisateur de pouvoir pointer des ressources à l'extérieur de spy.lip6.fr.
-				if (Application.platform == RuntimePlatform.WebGLPlayer)
+				if (Application.platform == RuntimePlatform.WebGLPlayer) {
+					if (!path.ToLower().StartsWith("http"))
+					{
+						Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath);
+						path = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Videos/" + path;
+					}
+					// En WebGL on délègue la lecture de la vidéo à la page html pour contourner les problèmes CORS et de CORB. En effet, demander à Unity hébergé sur spy.lip6.fr de charger avec une WebRequest une vidéo dans un autre domaine viole le principe de CORS car dans le cas d'Unity la vidéo pourrait être modifiée ce qui est bloqué par le navigateur. En déléguant la lecture de la vidéo au html via une balise <video> c'est tout à fait correct car là on garanti qu'on n'est qu'en mode lecture et qu'on ne va pas chercher à la modifier dans l'application. La limite de cette astuce est une perte d'accessibilité car pour le joueur il faut revenir au contexte html pour accéder aux boutons de contrôle de la vidéo (même si les boutons dans Unity (Play et Pause) restent actifs). C'est un compromis pour laisser la possibilité aux utilisateur de pouvoir pointer des ressources à l'extérieur de spy.lip6.fr.
 					SetCinematic(path);
+				}
 				else
-                {
-                    videoPlayer.url = HttpUtility.UrlDecode(path);
-                    RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
-                    rawImage.enabled = false;
-                    MainLoop.instance.StartCoroutine(waitLoadingVideo(dialog));
-                }
-				// Que l'on soit en WebGL ou pas, on active le GO du videoPlayer pour s'en servir afin d'occuper la place dans le content du scrollview
+				{
+					if (!path.ToLower().StartsWith("http"))
+						path = Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Videos/" + path;
+					videoPlayer.url = HttpUtility.UrlDecode(path);
+					RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
+					rawImage.enabled = false;
+					MainLoop.instance.StartCoroutine(waitLoadingVideo(dialog));
+				}
+
+                // Que l'on soit en WebGL ou pas, on active le GO du videoPlayer pour s'en servir afin d'occuper la place dans le content du scrollview
                 GameObjectManager.setGameObjectState(videoPlayer.gameObject, true);
                 dialogReturn += (dialogReturn != "" ? "\n" : "") + path;
             }
@@ -429,11 +431,12 @@ public class DialogSystem : FSystem
 		nDebriefingWinDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs.Count : 0;
 		nDebriefingDefeatDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? overridedDebriefingDefeatDialogs.Count : 0;
 
-        // Au cas où un son ou une vidéo seraient en cours de lecture, on les stoppe, en effet pour le contexte WebGL on déporte la lecture du média à la page html, il faut donc l'informer qu'il doit stopper parceque le briefing est terminé
-        if (Application.platform == RuntimePlatform.WebGLPlayer) {
+		if (Application.platform == RuntimePlatform.WebGLPlayer) {
+			// Au cas où un son ou une vidéo seraient en cours de lecture, on les stoppe, en effet pour le contexte WebGL on déporte la lecture du média à la page html, il faut donc l'informer qu'il doit stopper parceque le briefing est terminé
 			StopSound();
 			StopCinematic();
 		}
+
 
         GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
@@ -444,19 +447,19 @@ public class DialogSystem : FSystem
 
 	public void playVideo()
 	{
-		if (Application.platform == RuntimePlatform.WebGLPlayer)
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
 			PlayCinematic();
 		else
-			videoPlayer.Play();
+            videoPlayer.Play();
 	}
 
 	public void pauseVideo()
-	{
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
-            PauseCinematic();
-        else
-            videoPlayer.Pause();
-	}
+    {
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+			PauseCinematic();
+		else
+			videoPlayer.Pause();
+    }
 
     private IEnumerator waitLoadingVideo(Dialog dialog)
     {
@@ -543,19 +546,19 @@ public class DialogSystem : FSystem
 
 	private int getVideoOriginalWidth()
 	{
-		if (Application.platform == RuntimePlatform.WebGLPlayer)
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
 			return GetVideoWidth();
 		else
-			return (int)videoPlayer.width;
+            return (int)videoPlayer.width;
 	}
 
     private int getVideoOriginalHeight()
     {
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
-            return GetVideoHeight();
-        else
-            return (int)videoPlayer.width;
-    }
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+	        return GetVideoHeight();
+		else
+			return (int)videoPlayer.width;
+	}
 
 
     private void updateDialogSize()
@@ -607,20 +610,20 @@ public class DialogSystem : FSystem
             newHeight = windowTransform.rect.height - dialogMargin;
         dialogPanelTransform.sizeDelta = new Vector2(newWidth, newHeight);
 
-		// envoyer les bonnes tailles et positions de la vidéo au html
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
-        {
-            Vector3[] corners = new Vector3[4];
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			// envoyer les bonnes tailles et positions de la vidéo au html
+			Vector3[] corners = new Vector3[4];
 
-            // Calcul de la position du viewport dans l'écran
+			// Calcul de la position du viewport dans l'écran
 			Rect viewportRect = GetScreenPos(viewportTransform);
-            // Calcul de la position de la vidéo dans l'écran
-            Rect videoRect = GetScreenPos(videoTransform);
-            // Comme dans le html la vidéo est positionnée comme enfant du viewport (pour avoir l'effet de clip sur le scroll), on doit recaler la position de la vidéo par rapport au viewport et non pas par rapport à l'écran. On va donc soustraire la position du viewport à celle de la vidéo.
-            videoRect.x = videoRect.x - viewportRect.x;
-            videoRect.y = videoRect.y - viewportRect.y;
+			// Calcul de la position de la vidéo dans l'écran
+			Rect videoRect = GetScreenPos(videoTransform);
+			// Comme dans le html la vidéo est positionnée comme enfant du viewport (pour avoir l'effet de clip sur le scroll), on doit recaler la position de la vidéo par rapport au viewport et non pas par rapport à l'écran. On va donc soustraire la position du viewport à celle de la vidéo.
+			videoRect.x = videoRect.x - viewportRect.x;
+			videoRect.y = videoRect.y - viewportRect.y;
 
-            SetVideoPosition((int)viewportRect.x, (int)viewportRect.y, (int)viewportRect.width, (int)viewportRect.height, (int)videoRect.x, (int)videoRect.y, (int)videoRect.width, (int)videoRect.height);
+			SetVideoPosition((int)viewportRect.x, (int)viewportRect.y, (int)viewportRect.width, (int)viewportRect.height, (int)videoRect.x, (int)videoRect.y, (int)videoRect.width, (int)videoRect.height);
 		}
     }
 

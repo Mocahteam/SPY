@@ -7,13 +7,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Web;
 using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Localization.Settings;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using System.Web;
 using UnityEngine.Video;
 
 /// <summary>
@@ -31,6 +32,8 @@ public class ConnexionManager : FSystem
 	public TMP_Text progress;
 	public TMP_Text SPYVersion;
 	public GameObject RightPanel;
+
+	public GameObject MainPanel;
 	public GameObject TouchToContinue;
 
 	public Transform CinematicPanel;
@@ -49,6 +52,9 @@ public class ConnexionManager : FSystem
 
 	[DllImport("__Internal")]
 	private static extern void ShowHtmlImportSettings(); // call javascript
+
+    [DllImport("__Internal")]
+    private static extern void EnableTTS(); // call javascript
 
     [Serializable]
 	public class WebGlScenarioList
@@ -92,9 +98,6 @@ public class ConnexionManager : FSystem
 			gameData.sendStatementEnabled = true;
 		GameObjectManager.dontDestroyOnLoadAndRebind(gameData.gameObject);
 
-		// Enable Loading screen
-		GameObjectManager.setGameObjectState(loadingScreen, true);
-
 		if (!GameObject.Find("GBLXAPI"))
 		{
 			if (!GBLXAPI.IsInit)
@@ -108,26 +111,24 @@ public class ConnexionManager : FSystem
 			GBL_Interface.userUUID = "";
 		}
 
+        // Désactivation du MainPanel le temps du chargement
+        GameObjectManager.setGameObjectState(RightPanel.transform.parent.gameObject, false);
+
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
 			ShowHtmlImportSettings();
+			EnableTTS();
+			// Ce mécanisme de touch est nécessaire en WebGL pour que les sons ou les vidéos puissent démarrer, sinon le navigateur bloque le son et la vidéo
+			GameObjectManager.setGameObjectState(TouchToContinue, true);
+		}
+
+        // Enable Loading screen
+        GameObjectManager.setGameObjectState(loadingScreen, true);
 
         MainLoop.instance.StartCoroutine(waitLocalizationLoadedAndContinue());
 
-        // Ce mécanisme de touch est nécessaire en WebGL pour que les sons ou les vidéos puissent démarrer, sinon le navigateur bloque le son et la vidéo
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
-			GameObjectManager.setGameObjectState(TouchToContinue, true);
-		else
-            // si on est pas en WebGL, on continue directement
-            continueAfterTouch();
-
         Pause = true;
 	}
-
-    // See TouchToContinue GO (TriggerEvent) in ConnexionScene scene
-    public void continueAfterTouch()
-    {
-        GameObjectManager.setGameObjectState(TouchToContinue, false);
-    }
 
     private IEnumerator waitLocalizationLoadedAndContinue()
 	{
@@ -140,24 +141,24 @@ public class ConnexionManager : FSystem
 
             logs.text = "";
             progress.text = "0%";
-            if (Application.platform == RuntimePlatform.WebGLPlayer)
-            {
-                // Load scenario and levels from server
-                webGL_fileToLoad += 2;
-                MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
-                MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
-            }
-            else
-            {
-                // Load scenario and levels from disk
+
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
+			{
+				// Load scenario and levels from server
+				webGL_fileToLoad += 2;
+				MainLoop.instance.StartCoroutine(GetScenarioWebRequest());
+				MainLoop.instance.StartCoroutine(GetLevelsWebRequest());
+			}
+			else {
+				// Load scenario and levels from disk
 				exploreDirectoryAndCount(Application.streamingAssetsPath);
 				exploreDirectoryAndCount(Application.persistentDataPath);
-                // explore streaming asstets path
-                yield return loadLevelsAndScenarios(Application.streamingAssetsPath);
-                // explore persistent data path
-                yield return loadLevelsAndScenarios(Application.persistentDataPath);
-            }
-        }
+				// explore streaming asstets path
+				yield return loadLevelsAndScenarios(Application.streamingAssetsPath);
+				// explore persistent data path
+				yield return loadLevelsAndScenarios(Application.persistentDataPath);
+			}
+		}
 		// check if we have to load competencies (required for level analysis)
 		if (gameData.rawReferentials.referentials.Count == 0)
 		{
@@ -167,19 +168,20 @@ public class ConnexionManager : FSystem
 		}
 		// wait level loading
 		yield return WaitLoadingData();
-		// affectation du loadingscreen au RightPanel
-		GameObjectManager.setGameObjectParent(loadingScreen, RightPanel, false);
+		// Activation du MainPanel
+        GameObjectManager.setGameObjectState(RightPanel.transform.parent.gameObject, true);
+        // affectation du loadingscreen au RightPanel
+        GameObjectManager.setGameObjectParent(loadingScreen, RightPanel, false);
 
-        if (Application.isEditor)
-        {
-            SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
-            SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
-        }
-    }
+#if UNITY_EDITOR
+        SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
+        SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
+#endif
+		}
 
 	private IEnumerator WaitLoadingData()
 	{
-		// Enable Loading screen
+		// A chaque nouveau chargement on active l'écran de loading
 		GameObjectManager.setGameObjectState(loadingScreen, true);
 
 		// Attendre une seconde pour laisser le temps à webGL_fileToLoad d'être initialisé par les différents scénarios de chargement
@@ -209,7 +211,7 @@ public class ConnexionManager : FSystem
 					}
 					catch (Exception e)
 					{
-						logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + loadLevelWithURL + " => " + e.Message + "</color>\n" + logs.text;
+						logs.text = "<color=\"red\">(" + Utility.GetLocalizedString("Fail") + ") " + loadLevelWithURL + " => " + e.Message + "</color>\n" + logs.text;
 						Debug.Log("Parsing error:" + www.downloadHandler.text);
 					}
 				}
@@ -256,7 +258,7 @@ public class ConnexionManager : FSystem
 				yield return new WaitWhile(() => cinematicVideoPlayer.isPlaying);
 				// Disable cinematic panel
 				GameObjectManager.setGameObjectState(CinematicPanel.gameObject, false);
-			}
+            }
             cinematicPlayed = true;
         }
 	}
@@ -271,17 +273,17 @@ public class ConnexionManager : FSystem
 
 			if (www.result != UnityWebRequest.Result.Success)
 			{
-				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
-				Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + uri);
+				logs.text = "<color=\"red\">(" + Utility.GetLocalizedString("Fail") + ") " + uri + "</color>\n" + logs.text;
+				Debug.Log("(" + Utility.GetLocalizedString("Fail") + ") " + uri);
                 yield return new WaitForSeconds(1f);
                 if (webGL_fileLoaded < webGL_fileToLoad)
-					logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
+					logs.text = "<color=\"orange\">(" + Utility.GetLocalizedString("NewAttempt") + ") " + uri + "</color>\n" + logs.text;
 				GameObjectManager.setGameObjectState(forceLaunchButton, true);
 			}
 			else
 			{
 				webGL_fileLoaded++;
-				logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n" + logs.text;
+				logs.text = "<color=\"green\">(" + Utility.GetLocalizedString("Ok") + ") " + uri + "</color>\n" + logs.text;
 				string scenarioJson = www.downloadHandler.text;
 				WebGlScenarioList scenarioListRaw = JsonConvert.DeserializeObject<WebGlScenarioList>(scenarioJson);
 				foreach (WebGlScenario scenarioRaw in scenarioListRaw.scenarios)
@@ -307,17 +309,17 @@ public class ConnexionManager : FSystem
 
 			if (www.result != UnityWebRequest.Result.Success)
 			{
-				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
-				Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + uri);
+				logs.text = "<color=\"red\">(" + Utility.GetLocalizedString("Fail") + ") " + uri + "</color>\n" + logs.text;
+				Debug.Log("(" + Utility.GetLocalizedString("Fail") + ") " + uri);
 				yield return new WaitForSeconds(1f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
-					logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
+					logs.text = "<color=\"orange\">(" + Utility.GetLocalizedString("NewAttempt") + ") " + uri + "</color>\n" + logs.text;
 				GameObjectManager.setGameObjectState(forceLaunchButton, true);
 			}
 			else
 			{
 				webGL_fileLoaded++;
-				logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n" + logs.text;
+				logs.text = "<color=\"green\">(" + Utility.GetLocalizedString("Ok") + ") " + uri + "</color>\n" + logs.text;
 				string levelsJson = www.downloadHandler.text;
 				WebGlScenario levelsListRaw = JsonUtility.FromJson<WebGlScenario>(levelsJson);
 				webGL_fileToLoad += levelsListRaw.levels.Count;
@@ -360,18 +362,18 @@ public class ConnexionManager : FSystem
 
 			if (www.result != UnityWebRequest.Result.Success)
 			{
-				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + "</color>\n" + logs.text;
-				Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + uri);
+				logs.text = "<color=\"red\">(" + Utility.GetLocalizedString("Fail") + ") " + uri + "</color>\n" + logs.text;
+				Debug.Log("(" + Utility.GetLocalizedString("Fail") + ") " + uri);
 				yield return new WaitForSeconds(1f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
-					logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + uri + "</color>\n" + logs.text;
+					logs.text = "<color=\"orange\">(" + Utility.GetLocalizedString("NewAttempt") + ") " + uri + "</color>\n" + logs.text;
 				GameObjectManager.setGameObjectState(forceLaunchButton, true);
 			}
 			else
 			{
 				webGL_fileLoaded++;
 				progress.text = Mathf.Floor(((float)webGL_fileLoaded / webGL_fileToLoad) * 100) + "%";
-				logs.text = "<color=\"green\">(" + gameData.GetComponent<Localization>().localization[1] + ") " + uri + "</color>\n" + logs.text;
+				logs.text = "<color=\"green\">(" + Utility.GetLocalizedString("Ok") + ") " + uri + "</color>\n" + logs.text;
 				string xmlContent = www.downloadHandler.text;
 				try
 				{
@@ -379,7 +381,7 @@ public class ConnexionManager : FSystem
 				}
 				catch (Exception e)
 				{
-					logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + uri + " => " + e.Message + "</color>\n" + logs.text;
+					logs.text = "<color=\"red\">(" + Utility.GetLocalizedString("Fail") + ") " + uri + " => " + e.Message + "</color>\n" + logs.text;
 				}
 				break; // exit the loop
             }
@@ -395,26 +397,25 @@ public class ConnexionManager : FSystem
 
 			if (www.result != UnityWebRequest.Result.Success)
 			{
-				logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath + "</color>\n" + logs.text;
-				Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath);
+				logs.text = "<color=\"red\">(" + Utility.GetLocalizedString("Fail") + ") " + referentialsPath + "</color>\n" + logs.text;
+				Debug.Log("(" + Utility.GetLocalizedString("Fail") + ") " + referentialsPath);
 				yield return new WaitForSeconds(1f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
-					logs.text = "<color=\"orange\">(" + logs.GetComponent<Localization>().localization[5] + ") " + referentialsPath + "</color>\n" + logs.text;
+					logs.text = "<color=\"orange\">(" + Utility.GetLocalizedString("NewAttempt") + ") " + referentialsPath + "</color>\n" + logs.text;
 				GameObjectManager.setGameObjectState(forceLaunchButton, true);
 			}
 			else
 			{
 				webGL_fileLoaded++;
-				Localization loc = gameData.GetComponent<Localization>();
-				logs.text = "<color=\"green\">(" + loc.localization[1] + ") " + referentialsPath + "</color>\n" + logs.text;
+				logs.text = "<color=\"green\">(" + Utility.GetLocalizedString("Ok") + ") " + referentialsPath + "</color>\n" + logs.text;
 				try
 				{
 					gameData.rawReferentials = JsonUtility.FromJson<RawListReferential>(www.downloadHandler.text);
 				}
 				catch (Exception e)
 				{
-					logs.text = "<color=\"red\">(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath + " => " + Utility.getFormatedText(loc.localization[7], e.Message) + "</color>\n" + logs.text;
-					Debug.Log("(" + logs.GetComponent<Localization>().localization[4] + ") " + referentialsPath);
+					logs.text = "<color=\"red\">(" + Utility.GetLocalizedString("Fail") + ") " + referentialsPath + " => " + Utility.getFormatedText(Utility.GetLocalizedString("RepositoryListBroken"), e.Message) + "</color>\n" + logs.text;
+					Debug.Log("(" + Utility.GetLocalizedString("Fail") + ") " + referentialsPath);
 				}
 				break;
 			}
@@ -443,11 +444,11 @@ public class ConnexionManager : FSystem
 
 			if (www.result != UnityWebRequest.Result.Success)
 			{
-				logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[0], formatedString) + "</color>\n" + logs.text;
-				Debug.Log(Utility.getFormatedText(logs.GetComponent<Localization>().localization[0], formatedString));
+				logs.text = "<color=\"red\">" + Utility.getFormatedText(Utility.GetLocalizedString("FailedToCheckSessionCode"), formatedString) + "</color>\n" + logs.text;
+				Debug.Log(Utility.getFormatedText(Utility.GetLocalizedString("FailedToCheckSessionCode"), formatedString));
 				yield return new WaitForSeconds(2f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
-					logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[1], formatedString) + "</color>\n" + logs.text;
+					logs.text = "<color=\"orange\">" + Utility.getFormatedText(Utility.GetLocalizedString("RetryToCheckSessionCode"), formatedString) + "</color>\n" + logs.text;
 				GameObjectManager.setGameObjectState(forceLaunchButton, true);
 			}
 			else
@@ -520,14 +521,13 @@ public class ConnexionManager : FSystem
         {
             UnityWebRequest www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php?idSession=" + idSession);
             yield return www.SendWebRequest();
-			Localization loc = gameData.GetComponent<Localization>();
 			if (www.result != UnityWebRequest.Result.Success)
 			{
-				logs.text = "<color=\"red\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession) + "</color>\n" + logs.text;
-				Debug.Log(Utility.getFormatedText(logs.GetComponent<Localization>().localization[2], idSession));
+				logs.text = "<color=\"red\">" + Utility.getFormatedText(Utility.GetLocalizedString("FailedToRetrieveSessionData"), idSession) + "</color>\n" + logs.text;
+				Debug.Log(Utility.getFormatedText(Utility.GetLocalizedString("FailedToRetrieveSessionData"), idSession));
 				yield return new WaitForSeconds(1f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
-					logs.text = "<color=\"orange\">" + Utility.getFormatedText(logs.GetComponent<Localization>().localization[3], idSession) + "</color>\n" + logs.text;
+					logs.text = "<color=\"orange\">" + Utility.getFormatedText(Utility.GetLocalizedString("NewAttemptToReceiveSessionData"), idSession) + "</color>\n" + logs.text;
 				GameObjectManager.setGameObjectState(forceLaunchButton, true);
 			}
 			else
@@ -537,7 +537,7 @@ public class ConnexionManager : FSystem
 				{
 					// Unable to retrieve progress data
 					localCallback = null;
-					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[16], idSession), OkButton = loc.localization[5], CancelButton = loc.localization[0], call = localCallback });
+					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("UnableRetrieveProgressData"), idSession), OkButton = Utility.GetLocalizedString("TryAgain"), CancelButton = "", call = localCallback });
 				}
 				else
 				{
@@ -547,7 +547,7 @@ public class ConnexionManager : FSystem
 					{
 						// Session corrupted, ask to enter a new session code.
 						localCallback = null;
-						GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[17], OkButton = loc.localization[5], CancelButton = loc.localization[0], call = localCallback });
+						GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.GetLocalizedString("SessionCorrupted"), OkButton = Utility.GetLocalizedString("TryAgain"), CancelButton = "", call = localCallback });
 					}
 					else
 					{

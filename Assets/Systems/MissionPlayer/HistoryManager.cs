@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Components;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Localization.SmartFormat.PersistentVariables;
 
 /// <summary>
 /// Manage history to accumulate player attempt when resolving the level in several steps.
@@ -250,7 +252,7 @@ public class HistoryManager : FSystem
 		// Disable add container button
 		buttonAddEditableContainer.GetComponent<Button>().interactable = false;
 
-		buttonAddEditableContainer.GetComponent<TooltipContent>().text = buttonAddEditableContainer.GetComponentInParent<Localization>(true).localization[1];
+        buttonAddEditableContainer.GetComponent<TooltipContent>().text = Utility.GetLocalizedString("CannotAddedAfterStarting");
 
 		//Disable remove container buttons and naming input field
 		foreach (GameObject trash in f_removeButton)
@@ -258,8 +260,10 @@ public class HistoryManager : FSystem
 			trash.GetComponent<Button>().interactable = false;
 			TMP_InputField name_input = trash.transform.parent.Find("ContainerName").GetComponent<TMP_InputField>();
 			name_input.interactable = false;
-			name_input.GetComponent<TooltipContent>().text = Utility.getFormatedText(name_input.GetComponentInParent<Localization>(true).localization[3], name_input.text);
-		}
+            LocalizeStringEvent lse = name_input.GetComponent<LocalizeStringEvent>();
+            lse.StringReference.TableEntryReference = "CalledBy";
+            (lse.StringReference["robotName"] as StringVariable).Value = name_input.text;
+        }
 	}
 
 

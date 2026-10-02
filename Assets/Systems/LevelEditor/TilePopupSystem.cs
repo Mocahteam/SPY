@@ -249,8 +249,7 @@ public class TilePopupSystem : FSystem
 		if (!moveDone)
 		{
 			localCallback = null;
-			Localization loc = gameData.GetComponent<Localization>();
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[49], newPosition), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("PositionNotValid"), newPosition), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 		}
 	}
 

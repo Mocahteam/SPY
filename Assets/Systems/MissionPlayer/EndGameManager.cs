@@ -73,7 +73,7 @@ public class EndGameManager : FSystem {
 		if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Detected)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
-			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[0];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = Utility.GetLocalizedString("EndYouHaveBeenSpotted");
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -99,7 +99,7 @@ public class EndGameManager : FSystem {
 		if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Collision)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
-			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[9];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = Utility.GetLocalizedString("EndWatchOutForCollision");
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -125,7 +125,7 @@ public class EndGameManager : FSystem {
         else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.WrongActionChosen)
         {
             GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
-            endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[10];
+            endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = Utility.GetLocalizedString("EndTracingError");
             Transform buttons = endPanel.transform.Find("Buttons");
             GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
             GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -170,7 +170,7 @@ public class EndGameManager : FSystem {
 			if (gameData.levelToLoad >= gameData.scenarios[gameData.selectedScenario].levels.Count - 1)
 			{
 				GameObjectManager.setGameObjectState(buttons.Find("NextLevel").gameObject, false);
-				endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[1];
+				endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = Utility.GetLocalizedString("EndCongratulationsScenario");
 				if (gameData.selectedScenario != UtilityLobby.testFromScenarioEditor && gameData.selectedScenario != UtilityLobby.testFromLevelEditor && gameData.selectedScenario != UtilityLobby.testFromUrl)
 				{
 					ud.currentScenario = "";
@@ -196,7 +196,7 @@ public class EndGameManager : FSystem {
 			}
 			else
 			{
-				endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[2];
+				endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = Utility.GetLocalizedString("EndCongratulationMission");
 				if (gameData.selectedScenario != UtilityLobby.testFromScenarioEditor && gameData.selectedScenario != UtilityLobby.testFromLevelEditor && gameData.selectedScenario != UtilityLobby.testFromUrl)
 					ud.levelToContinue++;
 			}
@@ -214,7 +214,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.BadCondition)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
-			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[3];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = Utility.GetLocalizedString("EndConditionIncorrect");
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -238,7 +238,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoMoreAttempt)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
-			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[4];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = Utility.GetLocalizedString("EndExecutionLimit");
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);
@@ -264,7 +264,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoActionAvailableForExecution)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
-			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[5];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = Utility.GetLocalizedString("EndNoActionExecuted");
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -288,7 +288,7 @@ public class EndGameManager : FSystem {
         else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NoMoreActionAvailableInInventory)
         {
             GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
-            endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[11];
+            endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = Utility.GetLocalizedString("EndNoMoreActionsAvailable");
             Transform buttons = endPanel.transform.Find("Buttons");
             GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, true);
             GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);
@@ -314,7 +314,7 @@ public class EndGameManager : FSystem {
         else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.NamingError)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
-			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[8];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = Utility.GetLocalizedString("EndNamingError");
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -338,7 +338,7 @@ public class EndGameManager : FSystem {
 		else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.InfiniteLoop)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
-			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[6];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = Utility.GetLocalizedString("EndWarningInfiniteLoop");
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, true);
@@ -362,7 +362,7 @@ public class EndGameManager : FSystem {
         else if (f_requireEndPanel.First().GetComponent<NewEnd>().endType == NewEnd.Error)
 		{
 			GameObjectManager.setGameObjectState(endPanel.transform.Find("StarsCanvas").gameObject, false);
-			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = endPanel.GetComponent<Localization>().localization[7];
+			endPanel.transform.Find("Content").GetComponent<TextMeshProUGUI>().text = Utility.GetLocalizedString("EndErrorLoadingMission");
 			Transform buttons = endPanel.transform.Find("Buttons");
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadLevel").gameObject, false);
 			GameObjectManager.setGameObjectState(buttons.Find("ReloadState").gameObject, false);

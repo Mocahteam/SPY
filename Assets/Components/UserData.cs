@@ -17,39 +17,5 @@ public class UserData : MonoBehaviour {
 	public int avatarSelected;
 	public int newAvatarAvailable;
 
-	private long lastFocusOut = -1;
-
-	private void OnApplicationFocus(bool hasFocus)
-	{
-		StartCoroutine(catchApplicationState(hasFocus));
-	}
-
-	private void OnApplicationPause(bool pauseStatus)
-	{
-		StartCoroutine(catchApplicationState(!pauseStatus));
-	}
-
-	private IEnumerator catchApplicationState(bool hasFocus)
-	{
-		if (!hasFocus) // player click outside the game
-			lastFocusOut = DateTime.Now.ToUniversalTime().Ticks;
-		else // player come back in the game
-		{
-			if (lastFocusOut != -1 && new TimeSpan(DateTime.Now.ToUniversalTime().Ticks - lastFocusOut).Minutes >= 10)
-			{
-				GameObject xAPI = GameObject.Find("GBLXAPI");
-				if (xAPI != null)
-				{
-					GameObject.Destroy(xAPI);
-					GBLXAPI.IsInit = false;
-				}
-				GameData gd = GameObject.Find("GameData").GetComponent<GameData>();
-				gd.selectedScenario = "";
-				gd.actionsHistory = null;
-				yield return null;
-				yield return null;
-				GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "ConnexionScene" });
-			}
-		}
-	}
+	public long lastFocusOut = -1;
 }

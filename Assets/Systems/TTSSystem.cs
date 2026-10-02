@@ -24,10 +24,8 @@ public class TTSSystem : FSystem
 
     [DllImport("__Internal")]
     private static extern string CallTTS(string txt); // call javascript => send txt to html to be read by TTS navigator
-
-
     [DllImport("__Internal")]
-    private static extern string SendToScreenReader(string txt); // call javascript => send txt to html to be accessible by screen readers
+    private static extern void SendToScreenReader(string label); // call javascript
 
     [DllImport("__Internal")]
     private static extern bool IsTTSEnabled(); // call javascript => return true if "TTS" is checked in html
@@ -129,16 +127,15 @@ public class TTSSystem : FSystem
 
     private void onNewAgentSelected(GameObject haloSelection)
     {
-        Localization loc = gameData.GetComponent<Localization>();
         string agentName = haloSelection.transform.parent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName;
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
-        {
+
+        if (Application.platform == RuntimePlatform.WebGLPlayer) { 
             if (!InstructionOnly())
-                CallTTS(loc.localization[18] + agentName);
-            SendToScreenReader(loc.localization[18] + agentName);
+                CallTTS(Utility.GetLocalizedString("FocusOn") + agentName);
+            SendToScreenReader(Utility.GetLocalizedString("FocusOn") + agentName);
         }
         else
-            Debug.Log(loc.localization[18] + agentName);
+            Debug.Log(Utility.GetLocalizedString("FocusOn") + agentName);
     }
 
     private void defTTS(GameObject focused)
@@ -150,7 +147,6 @@ public class TTSSystem : FSystem
 
         string suffix = "";
         string content = "";
-        Localization loc = gameData.GetComponent<Localization>();
         // Cas général : Boutton, TMP_Text, Toggle, DropDown => on va chercher le texte dans ses enfants
         if (focused.GetComponent<TMP_InputField>() == null && focused.GetComponent<LibraryItemRef>() == null)
         {
@@ -160,10 +156,10 @@ public class TTSSystem : FSystem
         }
 
         if (focused.GetComponent<Button>())
-            suffix = ", "+ loc.localization[22]; // "Boutton" : "Button"
+            suffix = ", "+ Utility.GetLocalizedString("Button"); // "Boutton" : "Button"
         else if (focused.GetComponent<TMP_InputField>())
         {
-            suffix = ", "+ loc.localization[23]; // "Champ de saisie" : "Input field"
+            suffix = ", "+ Utility.GetLocalizedString("Inputfield"); // "Champ de saisie" : "Input field"
             TMP_InputField inputfield = focused.GetComponent<TMP_InputField>();
             // S'il y a quelque chose dans le inputfield, utiliser cette valeur
             if (inputfield.text != "")
@@ -172,37 +168,37 @@ public class TTSSystem : FSystem
                 content = inputfield.GetComponentInChildren<TMP_Text>(true).text;
         }
         else if (focused.GetComponent<TMP_Dropdown>())
-            suffix = ", "+ loc.localization[24]; // "Liste déroulante" : "Dropdown"
+            suffix = ", "+ Utility.GetLocalizedString("Dropdown"); // "Liste déroulante" : "Dropdown"
         else if (focused.GetComponent<Toggle>())
         {
-            suffix = ", " + loc.localization[25]; // "Case à cocher" : "Toggle"
+            suffix = ", " + Utility.GetLocalizedString("Toggle"); // "Case à cocher" : "Toggle"
             Toggle toggle = focused.GetComponent<Toggle>();
             if (toggle.isOn)
-                suffix += ", "+ loc.localization[26]; // "cochée" : "checked"
+                suffix += ", "+ Utility.GetLocalizedString("Checked"); // "cochée" : "checked"
             else
-                suffix += ", "+ loc.localization[27]; // "non cochée" : "unchecked"
+                suffix += ", "+ Utility.GetLocalizedString("Unchecked"); // "non cochée" : "unchecked"
         }
         else if (focused.GetComponent<Scrollbar>())
         {
             Scrollbar scrollbar = focused.GetComponent<Scrollbar>();
-            content = loc.localization[28] + scrollbar.value; // "Barre de défilement, valeur : " : "Scrollbar, value: "
+            content = Utility.GetLocalizedString("ScrollbarValue") + scrollbar.value; // "Barre de défilement, valeur : " : "Scrollbar, value: "
         }
         else if (focused.GetComponent<CurrentAction>())
         {
-            suffix = ", " + loc.localization[29]; // "Action courrante" : "Current action"
+            suffix = ", " + Utility.GetLocalizedString("CurrentAction"); // "Action courrante" : "Current action"
         }
         else if (focused.GetComponent<Image>())
         {
-            content = loc.localization[33]; // "Image" : "Image"
+            content = Utility.GetLocalizedString("Image"); // "Image" : "Image"
         }
 
         if (select && !select.IsInteractable())
-            suffix += ", " + loc.localization[30]; // "désactivée" : "disabled";
+            suffix += ", " + Utility.GetLocalizedString("Disabled"); // "désactivée" : "disabled";
 
         // cas du texte de remplacement
         ImgReplacementText replacementText = focused.GetComponentInChildren<ImgReplacementText>();
         if (replacementText != null && replacementText.replacementText != "")
-            suffix += ", " + loc.localization[34] + " " + replacementText.replacementText; // "texte de remplacement :" : "replacement text:"
+            suffix += ", " + Utility.GetLocalizedString("ReplacementText") + " " + replacementText.replacementText; // "texte de remplacement :" : "replacement text:"
 
         // Try to get tooltip to complete description
         TooltipContent tooltip = focused.GetComponentInChildren<TooltipContent>();
@@ -212,10 +208,12 @@ public class TTSSystem : FSystem
         if (content == "")
             content = focused.name;
         else
-            content = content.Replace("<br>", " ");
-
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
         {
+            content = content.Replace("<br>", " ");
+            content = content.Replace("\\u00a0", " "); // remplacer le code des espaces insécables par des espaces simples
+        }
+
+        if (Application.platform == RuntimePlatform.WebGLPlayer) {
             if (!InstructionOnly() || focused.GetComponentInParent<DialogPanel>() != null)
                 CallTTS(content + suffix);
             SendToScreenReader(content + suffix);
@@ -239,20 +237,19 @@ public class TTSSystem : FSystem
     {
         yield return null;
         string actions = "";
-        Localization loc = gameData.GetComponent<Localization>();
         foreach (GameObject currentAction in f_currentAction)
         {
-            actions += currentAction.GetComponent<CurrentAction>().agent.GetComponent<ScriptRef>().executableScript.GetComponent<UIRootExecutor>().scriptName + " " + loc.localization[29] + " " + currentAction.GetComponentInChildren<TooltipContent>().text + ". ";
+            actions += currentAction.GetComponent<CurrentAction>().agent.GetComponent<ScriptRef>().executableScript.GetComponent<UIRootExecutor>().scriptName + " " + Utility.GetLocalizedString("CurrentAction") + " " + currentAction.GetComponentInChildren<TooltipContent>().text + ". ";
         }
 
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
-        {
+        if (Application.platform == RuntimePlatform.WebGLPlayer) {
             if (!InstructionOnly())
                 CallTTS(actions);
             SendToScreenReader(actions);
         }
         else
             Debug.Log(actions);
+
         currentActionBuilder = null;
     }
 
@@ -262,11 +259,10 @@ public class TTSSystem : FSystem
         TMP_InputField inputF = inputField_GO.GetComponent<TMP_InputField>();
         inputF.onTextSelection.AddListener(delegate (string input, int end, int start)
         {
-            Localization loc = gameData.GetComponent<Localization>();
-            string output = input.Substring(Mathf.Min(start, end), Mathf.Max(start, end) - Mathf.Min(start, end)) +", "+ loc.localization[23] + " " + loc.localization[32];
+            string output = input.Substring(Mathf.Min(start, end), Mathf.Max(start, end) - Mathf.Min(start, end)) +", "+ Utility.GetLocalizedString("Inputfield") + " " + Utility.GetLocalizedString("Selected");
+
             if (Application.platform == RuntimePlatform.WebGLPlayer)
             {
-                
                 if (!InstructionOnly())
                     CallTTS(output);
                 SendToScreenReader(output);
@@ -283,9 +279,9 @@ public class TTSSystem : FSystem
         Toggle toggle = toggle_GO.GetComponent<Toggle>();
         toggle.onValueChanged.AddListener(delegate (bool state)
         {
-            string output = toggle.isOn ? gameData.GetComponent<Localization>().localization[26] : gameData.GetComponent<Localization>().localization[27]; // "cochée" ou "non cochée"
-            if (Application.platform == RuntimePlatform.WebGLPlayer)
-            {
+            string output = toggle.isOn ? Utility.GetLocalizedString("Checked") : Utility.GetLocalizedString("Unchecked"); // "cochée" ou "non cochée"
+
+            if (Application.platform == RuntimePlatform.WebGLPlayer) {
                 if (!InstructionOnly())
                     CallTTS(output);
                 SendToScreenReader(output);
@@ -306,14 +302,14 @@ public class TTSSystem : FSystem
             // N'envoyer à la synthèse vocale que si elle a le focus ET que le delta de scroll dépasse le seuil
             if ((scrollbar_GO == previousFocusedGO || scrollbar_GO == eventSystem.currentSelectedGameObject) && Mathf.Abs(lastScrollbarNotif[scrollbar]-scrollbar.value) > 0.1f)
             {
-                if (Application.platform == RuntimePlatform.WebGLPlayer)
-                {
+                if (Application.platform == RuntimePlatform.WebGLPlayer) {
                     if (!InstructionOnly())
                         CallTTS(scrollbar.value + "");
                     SendToScreenReader(scrollbar.value + "");
                 }
                 else
                     Debug.Log(scrollbar.value);
+
                 lastScrollbarNotif[scrollbar] = scrollbar.value;
             }
         });

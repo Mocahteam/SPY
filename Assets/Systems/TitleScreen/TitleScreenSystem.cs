@@ -121,12 +121,11 @@ public class TitleScreenSystem : FSystem {
 				}
 			}
 
-			if (Application.platform == RuntimePlatform.WebGLPlayer)
-			{
+			if (Application.platform == RuntimePlatform.WebGLPlayer) {
 				ShowHtmlLoadMissions();
 				GameObjectManager.setGameObjectState(quitButton, false);
 			}
-		}
+        }
 
 		Pause = true;
 	}
@@ -190,18 +189,17 @@ public class TitleScreenSystem : FSystem {
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
 	public void importLevelOrScenario(string content)
 	{
-		Localization loc = gameData.GetComponent<Localization>();
 		Utility.JavaScriptData jsd = JsonUtility.FromJson<Utility.JavaScriptData>(content);
 		try
 		{
 			string fakeUri = Application.streamingAssetsPath + "/Levels/" + jsd.name; 
 			UtilityLobby.LoadLevelOrScenario(gameData, fakeUri, jsd.content);
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[19], OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.GetLocalizedString("FilesLoaded"), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 		}
 		catch (Exception e) {
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[20], jsd.name, e.Message), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("ErrorLoadingFile"), jsd.name, e.Message), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 		}
 	}
 
@@ -447,8 +445,7 @@ public class TitleScreenSystem : FSystem {
 		titleNav.selectOnUp = curTile;
 		titleSel.navigation = titleNav;
 
-		Localization loc = gameDetails.GetComponentInParent<Localization>(true);
-        detailsTitle.text = loc.localization[1]; // default show "Mission locked"
+        detailsTitle.text = Utility.GetLocalizedString("MissionLocked"); // default show "Mission locked"
 		GameObject gameDescription = gameDetails.Find("Scroll View").gameObject;
 		Image miniView = gameDetails.Find("MiniView").GetComponent<Image>();
 
@@ -481,7 +478,7 @@ public class TitleScreenSystem : FSystem {
 		// Show skills
 		if (descDetails.text != "")
             descDetails.text += "\n\n";
-        descDetails.text += "<b>"+loc.localization[3]+"</b>\n";
+        descDetails.text += "<b>"+ Utility.GetLocalizedString("IdentifiedSkills") + "</b>\n";
         if (gameData.scenarios.ContainsKey(keys.scenarioKey))
         {
             // Display competencies
@@ -505,7 +502,7 @@ public class TitleScreenSystem : FSystem {
             if (txt != "")
                 descDetails.text += txt;
             else
-                descDetails.text += " - "+loc.localization[0];
+                descDetails.text += " - "+ Utility.GetLocalizedString("NoSkillsIdentified");
         }
     }
 

@@ -17,22 +17,6 @@
 
 				<div class="d-flex flex-wrap align-items-center gap-3">
 
-					<!-- Import settings -->
-					<div class="d-flex align-items-center">
-					  <label id="proxyLoadSettings" for="files-selector-settings" class="btn btn-primary visually-hidden">
-						Importer des paramètres
-					  </label>
-					  <input id="files-selector-settings" type="file" accept=".json" multiple class="visually-hidden">
-					</div>
-					
-					<!-- Import missions/scenario -->
-					<div class="d-flex align-items-center">
-					  <label id="proxyLoadMissions" for="files-selector-missions" class="btn btn-success visually-hidden">
-						Importer des scénarios et des missions
-					  </label>
-					  <input id="files-selector-missions" type="file" accept=".xml" multiple class="visually-hidden">
-					</div>
-
 					<!-- TTS -->
 					<div class="d-flex flex-wrap align-items-center gap-3">
 						<div class="form-check form-switch">
@@ -72,6 +56,22 @@
 						</div>
 					</div>
 
+					<!-- Import settings -->
+					<div class="d-flex align-items-center">
+					  <label id="proxyLoadSettings" for="files-selector-settings" class="btn btn-primary visually-hidden">
+						Importer des paramètres
+					  </label>
+					  <input id="files-selector-settings" type="file" accept=".json" multiple class="visually-hidden" disabled>
+					</div>
+					
+					<!-- Import missions/scenario -->
+					<div class="d-flex align-items-center">
+					  <label id="proxyLoadMissions" for="files-selector-missions" class="btn btn-success visually-hidden">
+						Importer des scénarios et des missions
+					  </label>
+					  <input id="files-selector-missions" type="file" accept=".xml" multiple class="visually-hidden" disabled>
+					</div>
+
 					<!-- Lien accessibilité -->
 					<nav class="ms-auto">
 					  <a id="accessLink" href="accessibility_fr.html" target="_blank" class="link-primary fw-semibold">
@@ -92,7 +92,7 @@
 			</header>
 		</div>
 		<div id="fullscreen-container" class="position-relative">
-			<canvas id="unity-canvas" tabindex="0" aria-label="Zone interactive du jeu, appuyez sur Entrée pour entrer dans le jeu." aria-labelledby="ScreenReaderSpan" role="application"></canvas>
+			<canvas id="unity-canvas" tabindex="0" role="application" aria-label="SPY" aria-describedby="game-help"></canvas>
 			<div id="unity-loading-bar">
 				<div id="unity-logo"></div>
 				<div id="unity-progress-bar-empty">
@@ -104,11 +104,17 @@
 			<div id="video-container" class="pe-none visually-hidden position-absolute overflow-hidden">
 				<video id="cinematic" controls="controls" class="pe-auto position-absolute" style="object-fit:fill;"></video>
 			</div>
+			<!-- L'exposition de l'interface du jeu passe par ces deux balises et par l'attribut "aria-activedescendant" qui est injecté au canvas dynamiquement (voir la fonction sendToScreenReader ci-dessous). Le principe de ces deux slots et d'alterner via le aria-activedescendant entre les deux afin de forcer le lecteur d'écran à exposer son contenu. Le role "application" est important ici car il permet de maintenir le lecteur d'écran en mode formulaire et non navigation. En mode formulaire le lecteur d'écran délègue les inputs à l'application (c'est ce que l'on veut dans notre cas) en mode navigation Unity ne reçoit plus les évènements clavier de navigation. -->
+			<div id="screenReader-slot-a" role="application" class="visually-hidden"></div>
+			<div id="screenReader-slot-b" role="application" class="visually-hidden"></div>
+			<!-- Cette solution est "risquée" dans la mesure où le rôle "application" est réputé pour devoir être utilisé avec précaution. En effet ce rôle a pour effet que toute interprétation spéciale des structures HTML et des widgets sera suspendue, et le contrôle sera entièrement remis à l'application web pour gérer l'interaction par la souris, le clavier ou le toucher. Dans notre cas c'est exactement ce que l'on veut notemment sur le canvas, mais ici on définit aussi nos deux slots comme des applications liés au canevas via le aria-activedescendant. Pourquoi ce choix ? Une autre solution pourrait consister à utiliser le role "menuitem" qui maintient aussi le lecteur d'écran en mode formulaire tout en étant plus explicite sur l'objet pointé (en l'occurence l'item d'un menu). L'effet de bord de cette approche est que le navigateur expose à l'utilisateur le nombre d'item disponible dans le menu et la position de celui focalisé ce qui ajoute un "1 sur 2" ou "2 sur 2" à la fin de la description ce qui ne reflète pas la réalité de l'interface. L'avantage du role application est qu'il n'est pas un rôle d'élément d'ensemble et donc le navigateur ne cherche pas à calculer sa position et évite donc cet artefact dans la description. Le système ci-dessus a été testé avec Chrome/Firefox et NVDA et marche bien, à tester avec JAWS et VoiceOver pour vérfier s'ils arrivent aussi à retrouver leurs petits... Pour mémoire voici l'appriche avec les "menuitem" :
+			<div role="menu" aria-label="Interface du jeu (extrait)">
+				<div id="screenReader-slot-a" role="menuitem" class="visually-hidden"></div>
+				<div id="screenReader-slot-b" role="menuitem" class="visually-hidden"></div>
+			</div> -->
 		</div>
 		<span id="TextToSpeechSpan" style="visibility:hidden;" ></span>
-		<!-- Le "aria-live" permet d'indiquer au lecteur d'écran que cette balise peut changer en live et qu'il doit donc la vocaliser à chaque fois qu'elle change. Le "aria-atomic" indique que le lecteur d'écran doit relire le contenu de la balise et pas uniquement ce qui a changé. Le role "status" indique que cet élément contient des informations de statut qui sont importantes pour l'utilisateur -->
-		<span id="ScreenReaderSpan" aria-live="polite" aria-atomic="true" role="status" class="visually-hidden"></span>
-		<button id="after-canvas" class="visually-hidden">Continuer la navigation</button>
+		<p id="game-help" class="visually-hidden">Zone interactive du jeu, appuyez sur Shift+Échap pour en sortir.</p>
 	</div>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -152,6 +158,7 @@
 		document.getVideoWidth = getVideoWidth;
 		document.getVideoHeight = getVideoHeight;
 		document.setVideoPosition = setVideoPosition;
+		document.kbLayout_Fetch = kbLayout_Fetch;
 		
 		document.updateLang(lang);
 
@@ -178,15 +185,6 @@
 			}
 			updateBannerVisibility();
 		}
-
-		// TTS Config
-		window.onload=function(){
-			// Vérification de l'accès à la synthèse vocale
-			if (window != null && window.speechSynthesis != null)
-				document.getElementById('switchTTS').removeAttribute("disabled");
-			else
-				alert(lang == "fr" ? "Le module de synthèse vocale n'est pas disponible sur votre navigateur." : "The text-to-speech module is not available on your browser.");
-		};
 		
 		var alreadyNotified = false;
 		
@@ -324,7 +322,6 @@
 				loadingBar.style.display = "none";
 
 				fullscreenButton.onclick = () => {
-					//unityInstance.SetFullscreen(1);
 					var fullscreenContainer = document.getElementById("fullscreen-container");
 					fullscreenContainer.requestFullscreen();
 				};
@@ -391,7 +388,6 @@
 		function quitFullScreen(){
 			if (!!document.fullscreenElement || !!document.webkitFullscreenElement || !!document.mozFullScreenElement){
 				isPreviouslyInFullscreen = true;
-				//unityInstance.SetFullscreen(0);
 				if (document.exitFullscreen)
 					document.exitFullscreen();
 				else if (document.webkitExitFullscreen)
@@ -404,7 +400,6 @@
 		
 		function resetFullScreen(){
 			if (isPreviouslyInFullscreen){
-				//unityInstance.SetFullscreen(1);
 				var fullscreenContainer = document.getElementById("fullscreen-container");
 				fullscreenContainer.requestFullscreen();
 				isPreviouslyInFullscreen = false;
@@ -424,14 +419,11 @@
 			document.getElementById("labelSwitchTTS").innerHTML = lang == "fr" ? "Synthèse vocale" : "Text-to-speech";
 			document.getElementById("labelSpeed").innerHTML = lang == "fr" ? "Vitesse de la voix" : "Speech rate";
 			document.getElementById("TTS_all_label").innerHTML = lang == "fr" ? "Tout" : "All";
-			// ne changer le aria-label du canvas que si le canveas n'a pas le focus
-			if (document.activeElement !== canvas)
-				canvas.ariaLabel = lang == "fr" ? "Zone interactive du jeu, appuyez sur Entrée pour entrer dans le jeu." : "Interactive game zone, press Enter to enter the game";
+			document.getElementById("game-help").innerHTML = lang == "fr" ? "Zone interactive du jeu, appuyez sur Shift+Échap pour en sortir." : "Interactive game zone, press Shift+Escape to exit.";
 			document.getElementById("showHideBanner").ariaLabel = lang == "fr" ? "Afficher ou masquer le bandeau" : "Show or hide the banner";
 			document.getElementById("unity-fullscreen-button").ariaLabel = lang == "fr" ? "Passer en plein écran" : "Switch to full screen";
 			
 			document.getElementById("TTS_briefing_label").innerHTML = lang == "fr" ? "Consignes" : "Instructions";
-			document.getElementById("after-canvas").innerHTML = lang == "fr" ? "Continuer la navigation" : "Continue navigation";
 			document.getElementById("accessLink").innerHTML = lang == "fr" ? "Accessibilité du jeu" : "Game accessibility";
 			document.getElementById("accessLink").href = lang == "fr" ? "accessibility_fr.html" : "accessibility.html";
 			document.getElementById("legendTTS").innerHTML = lang == "fr" ? "Options de synthèse vocale" : "Text-to-speech options";
@@ -461,16 +453,6 @@
 				alert(errorMsg);
 			} finally {
 				document.body.removeChild(textArea);
-			}
-		}
-
-		function sendToScreenReader(text){
-			if (document.activeElement === canvas){
-				// force l'actualisation du contenu, même s'il est identique
-				document.getElementById('ScreenReaderSpan').innerHTML = "";
-				document.getElementById('ScreenReaderSpan').innerHTML = text;
-				// tromper le lecteur d'écran en modifiant l'aria-label du canvas
-				canvas.ariaLabel = text;
 			}
 		}
 
@@ -569,24 +551,61 @@
 			cinematic.style.height = (videoHeight * scaleY) + "px";
 		}
 
+		// Cette fonction vise à informer Unity de layout de clavier (AZERTY, QWERTY, QWERTZ...) utilisé
+		function kbLayout_Fetch () {
+			var us = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+			// Tous les navigateurs n'exposent pas le layout du clavier. Au moment de ce commentaire : Chrome, Edge et Opera le font, mais Firefox et Safari non. Pour ces deux derniers les raccourcis dans le jeu ne seront donc pas affichés.
+			if (!navigator.keyboard || !navigator.keyboard.getLayoutMap) {
+				// see HotKeySustem
+				SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', "undef"); return;
+			}
+			navigator.keyboard.getLayoutMap().then(function (map) {
+				var out = "";
+				for (var i = 0; i < 36; i++) {
+					var code = (i < 26 ? "Key" : "Digit") + us[i];
+					out += (map.get(code) || us[i]).toUpperCase().charAt(0);
+				}
+				// see HotKeySustem
+				SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', out);
+			}).catch(function () {
+				// see HotKeySustem
+				SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', "undef");
+			});
+		}
+		
+		function sendToScreenReader (text){
+			if (document.activeElement === canvas){
+				var current = canvas.getAttribute("aria-activedescendant");
+				var nextId = (current === "screenReader-slot-a") ? "screenReader-slot-b" : "screenReader-slot-a";
+				var el = document.getElementById(nextId);
+				el.textContent = text;
+				canvas.setAttribute("aria-activedescendant", nextId);
+			}
+		}
+
 		document.body.appendChild(script);
 		
 		// Détection lorsque le canvas prend le focus
 		canvas.addEventListener("focus", () => {
-			sendToScreenReader(lang == "fr" ? "Vous êtes entré dans l'application interactive. Appuyez sur Shift+Échap pour en sortir. Appuyez sur Home à tout moment pour mettre le focus sur le premier élément interactif." : "You have now entered the interactive application. Press Shift+Escape to exit. Press Home at any time to focus on the first interactive element.");
+			// see UINavigationManager
+			if (window.unityInstance != null)
+				window.unityInstance.SendMessage('Main_Loop', 'HTMLcanvasFocus', 1);
 		});
 		// Détection lorsque le canvas perd le focus
 		canvas.addEventListener("blur", () => {
-			document.getElementById("ScreenReaderSpan").innerHTML = "";
-			// remettre la description du canvas à sa valeur par défaut
-			updateLang(lang);
+			document.getElementById("screenReader-slot-a").textContent = "";
+			document.getElementById("screenReader-slot-b").textContent = "";
+			canvas.removeAttribute("aria-activedescendant");
+			// see UINavigationManager
+			if (window.unityInstance != null)
+				window.unityInstance.SendMessage('Main_Loop', 'HTMLcanvasFocus', 0);
 		});
 		// Détecter une touche spéciale pour quitter le canvas
-		canvas.addEventListener("keydown", (e) => {
+		canvas.addEventListener("keydown", (event) => {
 		  if (event.shiftKey && event.key === "Escape") {
-			event.preventDefault(); event.preventDefault(); // Tente d'empêcher l'action par défaut
+			event.preventDefault(); event.preventDefault(); // Tente d'empêcher l'action par défaut (on le fait volontairement deux fois en particulier pour Firefox qui ouvre le "Gestionnaire de processus" avec ce raccourci)
 			// Rediriger le focus vers un élément HTML extérieur
-			document.getElementById("after-canvas").focus();
+			document.getElementById("showHideBanner").focus();
 		  }
 		});
 		// Désactiver le Ctrl+s côté navigateur pour ne pas proposer la page de sauvegarde de la page

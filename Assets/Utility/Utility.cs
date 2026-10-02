@@ -10,6 +10,7 @@ using UnityEngine.Localization.Settings;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Web;
+using UnityEditor.PackageManager;
 
 public static class Utility
 {
@@ -155,4 +156,10 @@ public static class Utility
 		else
 			GameObjectManager.setGameObjectState(target.gameObject, false);
 	}
+
+	public static string GetLocalizedString(string key)
+	{
+		return LocalizationSettings.StringDatabase.GetLocalizedString("StringLocalization", key);
+
+    }
 }

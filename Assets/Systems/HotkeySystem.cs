@@ -6,7 +6,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Localization;
 using UnityEngine.Localization.Components;
+using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.SmartFormat.PersistentVariables;
 using UnityEngine.UI;
 
@@ -66,12 +68,24 @@ public class HotkeySystem : FSystem
 
 		eventSystem = EventSystem.current;
 
-		// En WebGL le layout du clavier est abstrait si bien que Unity renverra toujours la configuration QWERTY, pour régler ce problème on passe par le JS pour tenter de récupérer la bonne association touches/symboles
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
+			// En WebGL le layout du clavier est abstrait si bien que Unity renverra toujours la configuration QWERTY, pour régler ce problème on passe par le JS pour tenter de récupérer la bonne association touches/symboles
 			KbLayout_Fetch();
 		else
-			OnKeyboardLayoutDefined(""); // en éditeur le comportement par défaut fonctionne, on ne cherche donc pas à retrouver la bonne association touches/symboles
+            // en éditeur le comportement par défaut fonctionne, on ne cherche donc pas à retrouver la bonne association touches/symboles
+            OnKeyboardLayoutDefined("");
 
+		refreshShortcuts(LocalizationSettings.SelectedLocale);
+		LocalizationSettings.SelectedLocaleChanged += refreshShortcuts;
+    }
+
+    protected override void onDestroy()
+    {
+        LocalizationSettings.SelectedLocaleChanged -= refreshShortcuts;
+    }
+
+	private void refreshShortcuts(Locale newLocale)
+	{
         MainLoop.instance.StartCoroutine(waitLocalizationAndUpdateShortcuts());
     }
 
@@ -79,7 +93,7 @@ public class HotkeySystem : FSystem
 	// L'objectif ici est de récupérer dans Unity les caractères associés à chaque touche du clavier en prenant en compte les différents layout du clavier (QWERTY, AZERTY, QWERTZ...)
     public void OnKeyboardLayoutDefined(string data)
     {
-        s_Local = data != null && data.Length == 36 ? data : "";
+        s_Local = data != null ? data : "undef";
     }
 
     private IEnumerator waitLocalizationAndUpdateShortcuts()
@@ -109,24 +123,30 @@ public class HotkeySystem : FSystem
                         Debug.LogWarning($"No action \"{key.Substring(8)}\" for the key {key}", localizedGo);
                         continue;
                     }
-
-                    string s = action.GetBindingDisplayString(0);
-                    if (string.IsNullOrEmpty(s)) continue;
+                    string s = action.GetBindingDisplayString();
 
                     string value = "";
-                    // On découpe les [Modifier]+[letter] (ex: Shift+Z)
-                    foreach (string token in s.Split("+"))
+					if (s_Local != "undef" && !string.IsNullOrEmpty(s))
                     {
-                        if (value.Length > 0)
-                            value += "+";
-                        if (s_Local != null && s_Local != "" && token.Length == 1)
-                        {
-                            int i = Us.IndexOf(char.ToUpperInvariant(token[0]));
-                            value += i < 0 ? token : s_Local[i].ToString();
-                        }
-                        else
-                            value += token;
-                    }
+                        value = "(" + Utility.GetLocalizedString("shortcut") + " ";
+						string shortcut = "";
+                        // On découpe les [Modifier]+[letter] (ex: Shift+Z)
+                        foreach (string token in s.Split("+"))
+						{
+							if (shortcut.Length > 0)
+                                shortcut += "+";
+							if (s_Local != "" && token.Length == 1)
+							{
+								// On est dans le cas où on va vouloir retrouver l'association entre le layout du clavier WebGL et le layout US
+								int i = Us.IndexOf(char.ToUpperInvariant(token[0]));
+                                shortcut += i < 0 ? token : s_Local[i].ToString();
+							}
+							else
+								// Cas général
+                                shortcut += token;
+						}
+						value += shortcut+")";
+					}
 
                     if (sv.Value == value) continue;
 

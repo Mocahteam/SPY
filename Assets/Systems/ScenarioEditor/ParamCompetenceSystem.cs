@@ -94,9 +94,8 @@ public class ParamCompetenceSystem : FSystem
 
 		if (referentialId >= gameData.rawReferentials.referentials.Count || referentialId < 0)
 		{
-			Localization loc = gameData.GetComponent<Localization>();
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[8], referentialId), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("RepositoryNumberNotDefined"), referentialId), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			return;
 		}
 
@@ -164,8 +163,9 @@ public class ParamCompetenceSystem : FSystem
 
         filterCompatibleLevels(false);
 
-        if (Application.platform != RuntimePlatform.WebGLPlayer)
-            DebugLogLevelsCompetencies();
+#if UNITY_EDITOR
+        DebugLogLevelsCompetencies();
+#endif
     }
 
 	// see ShowAllLevels GameObject
@@ -225,8 +225,7 @@ public class ParamCompetenceSystem : FSystem
 		if (selectedLevels.Count == 0)
 		{
 			localCallback = null;
-			Localization loc = gameData.GetComponent<Localization>();
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[10], OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.GetLocalizedString("NoMissionCompatible"), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 		}
 		else
 		{
@@ -431,7 +430,6 @@ public class ParamCompetenceSystem : FSystem
 				Utility.readXMLDialogs(XMLDialogs[0], defaultDialogs);
 
 			TMP_Text contentInfo = contentInfoCompatibleLevel.transform.Find("levelTextInfo").GetComponent<TMP_Text>();
-			Localization contentLoc = contentInfo.GetComponent<Localization>();
 			contentInfo.text = "";
 			if (levelSelected != null)
 			{
@@ -449,23 +447,23 @@ public class ParamCompetenceSystem : FSystem
 					dlb.data.overridedDialogs = defaultDialogs;
 
 				// Display introTexts
-				contentInfo.text = "<b>"+ contentLoc.localization[0]+" " + (dlb.data.dialogsEqualsTo(defaultDialogs) ? "(" + contentLoc.localization[1] + ")" : "(" + contentLoc.localization[2] + ")") + " :</b>\n";
+				contentInfo.text = "<b>"+ Utility.GetLocalizedString("BriefingTexts") +" " + (dlb.data.dialogsEqualsTo(defaultDialogs) ? "(" + Utility.GetLocalizedString("Default") + ")" : "(" + Utility.GetLocalizedString("Personalized") + ")") + " :</b>\n";
 				string txt = "";
 				for (int i = 0; i < dlb.data.overridedDialogs.Count; i++)
 				{
 					Dialog item = dlb.data.overridedDialogs[i];
-					txt += "\n---"+ contentLoc.localization[7] + (i + 1) + "---\n";
+					txt += "\n---"+ Utility.GetLocalizedString("PAGE") + (i + 1) + "---\n";
 					if (item.text != null)
 						txt += Utility.extractLocale(item.text) + "\n";
 					if (Utility.extractLocale(item.img) != "" || Utility.extractLocale(item.sound) != "" || Utility.extractLocale(item.video) != "")
-						txt += "\n" + (Utility.extractLocale(item.img) != "" ? "<<"+ contentLoc.localization[8] + ">>" : "") + (Utility.extractLocale(item.sound) != "" ? "<<" + contentLoc.localization[9] + ">>" : "") + (Utility.extractLocale(item.video) != "" ? "<<" + contentLoc.localization[10] + ">>" : "") + "\n";
+						txt += "\n" + (Utility.extractLocale(item.img) != "" ? "<<"+ Utility.GetLocalizedString("IMAGE") + ">>" : "") + (Utility.extractLocale(item.sound) != "" ? "<<" + Utility.GetLocalizedString("SOUND") + ">>" : "") + (Utility.extractLocale(item.video) != "" ? "<<" + Utility.GetLocalizedString("VIDEO") + ">>" : "") + "\n";
 				}
 				if (txt != "")
 					contentInfo.text += txt;
 				else
-					contentInfo.text += "\t" + contentLoc.localization[3] + "\n";
+					contentInfo.text += "\t" + Utility.GetLocalizedString("NoTextDefined") + "\n";
 				// Display competencies
-				contentInfo.text += "\n<b>" + contentLoc.localization[4] + "</b>\n";
+				contentInfo.text += "\n<b>" + Utility.GetLocalizedString("IdentifiedSkills") + "</b>\n";
 				txt = "";
 				foreach (GameObject comp in f_UI_competencies)
 				{
@@ -475,18 +473,17 @@ public class ParamCompetenceSystem : FSystem
 				if (txt != "")
 					contentInfo.text += txt;
 				else
-					contentInfo.text += "\t" + contentLoc.localization[5] + "\n";
+					contentInfo.text += "\t" + Utility.GetLocalizedString("NoSkillsIdentified") + "\n";
 			}
 			else
-				contentInfo.text += contentLoc.localization[6];
+				contentInfo.text += Utility.GetLocalizedString("NoInformationOnThisMission");
 			testLevelBt.interactable = true;
 			addToScenario.interactable = true;
 		}
         else
 		{
-			Localization loc = gameData.GetComponent<Localization>();
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[11], path), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("MissionNotPresent"), path), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 		}
 	}
 
@@ -508,7 +505,6 @@ public class ParamCompetenceSystem : FSystem
 
 	public void saveScenario(TMP_InputField scenarioName)
 	{
-		Localization loc = gameData.GetComponent<Localization>();
 		if (!UtilityEditor.CheckSaveNameValidity(scenarioName.text))
 		{
 			localCallback = null;
@@ -516,7 +512,7 @@ public class ParamCompetenceSystem : FSystem
 			foreach (char someChar in Path.GetInvalidFileNameChars())
 				if (Char.IsPunctuation(someChar) || Char.IsSymbol(someChar))
 					invalidChars += someChar+" ";
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[12], invalidChars), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("NameInvalid"), invalidChars), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			// Be sure saving windows is enabled
 			GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
 		}
@@ -529,7 +525,7 @@ public class ParamCompetenceSystem : FSystem
 			{
 				localCallback = null;
 				localCallback += delegate { saveToFile(scenarioName); };
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[13], scenarioName.text), OkButton = loc.localization[3], CancelButton = loc.localization[4], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileNameAlreadyExists"), scenarioName.text), OkButton = Utility.GetLocalizedString("Yes"), CancelButton = Utility.GetLocalizedString("No"), call = localCallback });
 				// Be sure saving windows is enabled
 				GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
 			}
@@ -592,7 +588,6 @@ public class ParamCompetenceSystem : FSystem
 		}
 		else
 		{
-			Localization loc = gameData.GetComponent<Localization>();
 			try
 			{
 				// Create all necessary directories if they don't exist
@@ -604,14 +599,15 @@ public class ParamCompetenceSystem : FSystem
 				UtilityLobby.updateScenarioContent(gameData, path, doc);
 
 				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[14], Application.persistentDataPath, "Scenario", scenarioName.text), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileSaved"), Application.persistentDataPath, "Scenario", scenarioName.text), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			}
 			catch (Exception e)
 			{
 				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[15], e.Message), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileNotSaved"), e.Message), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			}
 		}
+
 		// Be sure saving windows is disabled
 		GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, false);
 
@@ -651,7 +647,8 @@ public class ParamCompetenceSystem : FSystem
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
 	}
 
-	private void DebugLogLevelsCompetencies()
+#if UNITY_EDITOR
+    private void DebugLogLevelsCompetencies()
     {
 		// select all levels
 		List<XmlNode> selectedLevels = new List<XmlNode>();
@@ -679,4 +676,5 @@ public class ParamCompetenceSystem : FSystem
 		if (csvExport != "")
 			File.WriteAllText("exportAssociationMissions"+ f_UI_competencies.First().GetComponent<Competency>().referentialName+"Ref.txt", csvExport);
 	}
+#endif
 }
