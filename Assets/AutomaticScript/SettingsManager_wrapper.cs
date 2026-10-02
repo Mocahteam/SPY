@@ -29,6 +29,11 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "exportSettings", null);
 	}
 
+	public void onPresetSelected(System.Int32 selectedIndex)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "onPresetSelected", selectedIndex);
+	}
+
 	public void importSettingsFromJS(System.String content)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "importSettingsFromJS", content);

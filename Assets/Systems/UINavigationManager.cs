@@ -50,8 +50,15 @@ public class UINavigationManager : FSystem
     protected override void onStart()
     {
         GameObject go = GameObject.Find("GameData");
-        if (go != null)
-            userData = go.GetComponent<UserData>();
+		if (go != null)
+		{
+			userData = go.GetComponent<UserData>();
+
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+                MainLoop.instance.StartCoroutine(catchApplicationState(IsUnityCanvasFocused()));
+            else
+                MainLoop.instance.StartCoroutine(catchApplicationState(Application.isFocused));
+        }
 
         foreach (GameObject text in f_textsUnselectable)
 			onNewUnselectableText(text);
@@ -70,10 +77,6 @@ public class UINavigationManager : FSystem
 			onNewInputField(input);
 		f_InputFields.addEntryCallback(onNewInputField);
 
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
-			MainLoop.instance.StartCoroutine(catchApplicationState(IsUnityCanvasFocused()));
-		else
-            MainLoop.instance.StartCoroutine(catchApplicationState(Application.isFocused));
     }
 
     protected override void onProcess(int familiesUpdateCount)

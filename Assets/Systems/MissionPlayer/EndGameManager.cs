@@ -426,7 +426,7 @@ public class EndGameManager : FSystem {
 		star1.color = scoredStars >= 1 ? colorModel.colors.highlightedColor : colorModel.colors.disabledColor;
 		star2.color = scoredStars >= 2 ? colorModel.colors.highlightedColor : colorModel.colors.disabledColor;
 		star3.color = scoredStars == 3 ? colorModel.colors.highlightedColor : colorModel.colors.disabledColor;
-		stars.GetComponent<TooltipContent>().text = stars.GetComponent<StringList>().texts[scoredStars];
+		stars.GetComponent<TooltipContent>().text = Utility.GetLocalizedString("StarWon" + scoredStars);
 
 		// Affichage du score
 		GameObject score_go = endPanel.transform.Find("Score").gameObject;

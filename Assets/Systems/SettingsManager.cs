@@ -68,6 +68,8 @@ public class SettingsManager : FSystem
 	private GameData gameData;
     private UserData userData;
 
+	//private PresetSettings presetSettings;
+
 
     private int lastWidth;
     private int lastHeight;
@@ -142,6 +144,8 @@ public class SettingsManager : FSystem
 			f_settingsOpened.addEntryCallback(delegate (GameObject unused) { syncSettingsUI(); });
 
 			MainLoop.instance.StartCoroutine(waitLocalizationLoaded());
+
+            //presetSettings = JsonUtility.FromJson<PresetSettings>(Resources.Load<TextAsset>("AccessPresets").text);
 		}
 	}
 
@@ -498,6 +502,16 @@ public class SettingsManager : FSystem
 			Save(export, "SPY_settings.json");
 		else
 			Debug.Log(export);
+	}
+
+	public void onPresetSelected(int selectedIndex) {
+		/*if (selectedIndex == 0)
+			resetParameters();
+		else
+		{
+			Debug.Log(JsonUtility.ToJson(presetSettings.preset[selectedIndex]));
+			importSettings(JsonUtility.ToJson(presetSettings.preset[selectedIndex]));
+		}*/
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système

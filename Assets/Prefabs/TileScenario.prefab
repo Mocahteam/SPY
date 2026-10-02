@@ -404,7 +404,7 @@ PrefabInstance:
     - target: {fileID: 8944559683275527400, guid: b15d69ed049747c4ebcd82d378c5bfeb,
         type: 3}
       propertyPath: m_fontSize
-      value: 10.95
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 8944559683275527400, guid: b15d69ed049747c4ebcd82d378c5bfeb,
         type: 3}
@@ -695,14 +695,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3570436189153307294, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3883198027770012256}
-    - targetCorrespondingSourceObject: {fileID: 3570436189153307294, guid: 26bc23b5216990641ac165a0942ed4cc,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 822370193658971668}
-    - targetCorrespondingSourceObject: {fileID: 3570436189153307294, guid: 26bc23b5216990641ac165a0942ed4cc,
-        type: 3}
-      insertIndex: -1
       addedObject: {fileID: 8783052144203522422}
   m_SourcePrefab: {fileID: 100100000, guid: 26bc23b5216990641ac165a0942ed4cc, type: 3}
 --- !u!1 &869810155920655909 stripped
@@ -883,79 +875,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: 
---- !u!114 &3883198027770012256
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 869810155920655909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 151f28988c4cf6e46b26eeed0448c3f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  texts:
-  - 'progression : '
-  - "\xE9toiles cumul\xE9es : "
---- !u!114 &822370193658971668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 869810155920655909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69beb381e244f92449b8c4cf954630e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjects:
-  - rid: 6783082017080475749
-  references:
-    version: 2
-    RefIds:
-    - rid: 6783082017080475749
-      type: {class: TrackedMonoBehaviourObject, ns: UnityEngine.Localization.PropertyVariants.TrackedObjects,
-        asm: Unity.Localization}
-      data:
-        m_Target: {fileID: 3883198027770012256}
-        m_TrackedProperties:
-          items:
-          - rid: 6783082017080475750
-          - rid: 6783082017080475751
-        m_UpdateType: 1
-        m_Changed:
-          m_PersistentCalls:
-            m_Calls: []
-    - rid: 6783082017080475750
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 315306386322874368
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: 'texts.Array.data[0]'
-    - rid: 6783082017080475751
-      type: {class: LocalizedStringProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties,
-        asm: Unity.Localization}
-      data:
-        m_Localized:
-          m_TableReference:
-            m_TableCollectionName: GUID:e8908b19f1057314e9d95e443e410429
-          m_TableEntryReference:
-            m_KeyId: 315306422943342592
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        m_PropertyPath: 'texts.Array.data[1]'
 --- !u!114 &8783052144203522422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1135,7 +1054,7 @@ PrefabInstance:
     - target: {fileID: 8944559683275527400, guid: b15d69ed049747c4ebcd82d378c5bfeb,
         type: 3}
       propertyPath: m_fontSize
-      value: 27.45
+      value: 42.65
       objectReference: {fileID: 0}
     - target: {fileID: 8944559683275527400, guid: b15d69ed049747c4ebcd82d378c5bfeb,
         type: 3}

@@ -23,6 +23,11 @@ public class SettingsManagerBridge : MonoBehaviour
 		SettingsManager.instance.exportSettings();
     }
 
+    public void onPresetSelected(int selectedIndex)
+	{
+        SettingsManager.instance.onPresetSelected(selectedIndex);
+    }
+
     public void setSkillsRepository(int value)
     {
         SettingsManager.instance.setSkillsRepository(value);

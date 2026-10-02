@@ -303,8 +303,7 @@ public class TitleScreenSystem : FSystem {
 	private IEnumerator delayScenarioTooltipContent(GameObject scenarioTile)
 	{
 		yield return null;
-		StringList sl = scenarioTile.GetComponent<StringList>();
-		scenarioTile.GetComponent<TooltipContent>().text = scenarioTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text + "<br>" + sl.texts[0] + scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text + "<br>" + sl.texts[1]+ scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text;
+		scenarioTile.GetComponent<TooltipContent>().text = scenarioTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text + "<br>" + Utility.GetLocalizedString("Progression:") + scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text + "<br>" + Utility.GetLocalizedString("StarsCount") + scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text;
 	}
 
 	public void setDraggingState(bool newState){
@@ -355,7 +354,7 @@ public class TitleScreenSystem : FSystem {
 
 			missionTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = Utility.extractLocale(levelData.missionName);
 
-			int tooltipText = scoredStars;
+			string tooltipKey = "StarWon"+scoredStars;
 			// lock/unlock levels
 			if ((userData.progression.ContainsKey(scenarioKey) && userData.progression[scenarioKey] >= i) || i == 0) //by default first level of directory is the only unlocked level of directory
 			{
@@ -368,12 +367,12 @@ public class TitleScreenSystem : FSystem {
             else
 			{
 				missionButton.interactable = false;
-				tooltipText = 4;
+                tooltipKey = "MissionLocked";
 			}
 
-			missionButton.StartCoroutine(delayMissionTooltipContent(missionTile, tooltipText));
+			missionTile.GetComponent<TooltipContent>().text = Utility.GetLocalizedString(tooltipKey);
 
-			missionTile.transform.Find("Finished").gameObject.SetActive(scoredStars > 0);
+            missionTile.transform.Find("Finished").gameObject.SetActive(scoredStars > 0);
 			missionTile.transform.Find("Locked").gameObject.SetActive(!missionButton.interactable);
 
 			GameObjectManager.bind(missionTile);
@@ -417,12 +416,6 @@ public class TitleScreenSystem : FSystem {
 		}
 		else
 			EventSystem.current.SetSelectedGameObject(backButton.gameObject);
-	}
-
-	private IEnumerator delayMissionTooltipContent(GameObject missionTile, int tooltipText)
-    {
-		yield return null;
-		missionTile.GetComponent<TooltipContent>().text = missionTile.GetComponent<StringList>().texts[tooltipText];
 	}
 
 	public void showDetails(GameKeys keys)

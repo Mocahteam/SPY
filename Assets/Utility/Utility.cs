@@ -10,7 +10,6 @@ using UnityEngine.Localization.Settings;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Web;
-using UnityEditor.PackageManager;
 
 public static class Utility
 {
