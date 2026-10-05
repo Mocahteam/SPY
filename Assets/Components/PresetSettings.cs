@@ -1,7 +1,8 @@
+using Newtonsoft.Json.Linq;
 using System;
 
 [Serializable]
 public class PresetSettings
 {
-    public RawSettingsValues[] preset;
+    public JObject[] preset;
 }

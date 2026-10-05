@@ -557,7 +557,7 @@
 			// Tous les navigateurs n'exposent pas le layout du clavier. Au moment de ce commentaire : Chrome, Edge et Opera le font, mais Firefox et Safari non. Pour ces deux derniers les raccourcis dans le jeu ne seront donc pas affichés.
 			if (!navigator.keyboard || !navigator.keyboard.getLayoutMap) {
 				// see HotKeySustem
-				SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', "undef"); return;
+				window.unityInstance.SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', "undef"); return;
 			}
 			navigator.keyboard.getLayoutMap().then(function (map) {
 				var out = "";
@@ -566,10 +566,10 @@
 					out += (map.get(code) || us[i]).toUpperCase().charAt(0);
 				}
 				// see HotKeySustem
-				SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', out);
+				window.unityInstance.SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', out);
 			}).catch(function () {
 				// see HotKeySustem
-				SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', "undef");
+				window.unityInstance.SendMessage('Main_Loop', 'OnKeyboardLayoutDefined', "undef");
 			});
 		}
 		

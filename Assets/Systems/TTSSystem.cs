@@ -20,6 +20,7 @@ public class TTSSystem : FSystem
     private Family f_toggles = FamilyManager.getFamily(new AllOfComponents(typeof(Toggle)));
     private Family f_scrollBars = FamilyManager.getFamily(new AllOfComponents(typeof(Scrollbar)));
     private Family f_agentSelection = FamilyManager.getFamily(new AnyOfTags("HaloSelection"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+    private Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
 
 
     [DllImport("__Internal")]
@@ -51,7 +52,10 @@ public class TTSSystem : FSystem
         if (go != null)
             gameData = go.GetComponent<GameData>();
         else
+        {
             Pause = true; // if no GameData we lock this system
+            return;
+        }
 
         foreach (GameObject selectable in f_selectableElements)
             onNewSelectable(selectable);
@@ -140,10 +144,10 @@ public class TTSSystem : FSystem
 
     private void defTTS(GameObject focused)
     {
-        Selectable select = focused.GetComponent<Selectable>();
-
-        if (gameData == null)
+        if (gameData == null || f_localizationLoaded.Count == 0)
             return;
+
+        Selectable select = focused.GetComponent<Selectable>();
 
         string suffix = "";
         string content = "";

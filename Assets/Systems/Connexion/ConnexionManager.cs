@@ -174,8 +174,8 @@ public class ConnexionManager : FSystem
         GameObjectManager.setGameObjectParent(loadingScreen, RightPanel, false);
 
 #if UNITY_EDITOR
-        SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
-        SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
+        /*SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
+        SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();*/
 #endif
 		}
 

@@ -269,15 +269,20 @@ public class UINavigationManager : FSystem
             // player click outside the game
             userData.lastFocusOut = DateTime.Now.ToUniversalTime().Ticks;
 
-            if (Application.platform == RuntimePlatform.WebGLPlayer)
-				// disable WebGLInput.captureAllKeyboardInput so elements in web page can handle keyboard inputs (usefull for Tab navigation)
-				WebGLInput.captureAllKeyboardInput = false;
+#if UNITY_WEBGL && !UNITY_EDITOR
+			// WebGLInput n'est inclus dans le using UnityEngine que si le profil de compilation est WebGL, donc on ne peut pas l'utiliser dans le code C# directement. On doit donc utiliser la directive de compilation pour l'utiliser uniquement dans le profil WebGL.
+			// disable WebGLInput.captureAllKeyboardInput so elements in web page can handle keyboard inputs (usefull for Tab navigation)
+			WebGLInput.captureAllKeyboardInput = false;
+#endif
         }
         else // player come back in the game
         {
-			if (Application.platform == RuntimePlatform.WebGLPlayer)
-				// disable WebGLInput.captureAllKeyboardInput so elements in web page can handle keyboard inputs (usefull for Tab navigation)
-				WebGLInput.captureAllKeyboardInput = true;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+			// WebGLInput n'est inclus dans le using UnityEngine que si le profil de compilation est WebGL, donc on ne peut pas l'utiliser dans le code C# directement. On doit donc utiliser la directive de compilation pour l'utiliser uniquement dans le profil WebGL.
+			// disable WebGLInput.captureAllKeyboardInput so elements in web page can handle keyboard inputs (usefull for Tab navigation)
+			WebGLInput.captureAllKeyboardInput = true;
+#endif
 
             if (userData.lastFocusOut != -1 && new TimeSpan(DateTime.Now.ToUniversalTime().Ticks - userData.lastFocusOut).Minutes >= 10)
             {
@@ -302,6 +307,6 @@ public class UINavigationManager : FSystem
     // Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
     public void HTMLcanvasFocus(int hasFocus)
 	{
-        MainLoop.instance.StartCoroutine(UINavigationManager.instance.catchApplicationState(hasFocus == 1));
+        MainLoop.instance.StartCoroutine(catchApplicationState(hasFocus == 1));
     }
 }

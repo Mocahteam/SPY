@@ -1,7 +1,9 @@
 ﻿using FYFY;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
@@ -68,7 +70,7 @@ public class SettingsManager : FSystem
 	private GameData gameData;
     private UserData userData;
 
-	//private PresetSettings presetSettings;
+	private JArray presetSettings;
 
 
     private int lastWidth;
@@ -142,11 +144,11 @@ public class SettingsManager : FSystem
 			f_conditionNotif.addEntryCallback(delegate (GameObject go) { syncConditionNotif(go); });
 
 			f_settingsOpened.addEntryCallback(delegate (GameObject unused) { syncSettingsUI(); });
-
+			
 			MainLoop.instance.StartCoroutine(waitLocalizationLoaded());
 
-            //presetSettings = JsonUtility.FromJson<PresetSettings>(Resources.Load<TextAsset>("AccessPresets").text);
-		}
+            presetSettings = JArray.Parse(Resources.Load<TextAsset>("AccessPresets").text);
+        }
 	}
 
 	protected override void onProcess(int familiesUpdateCount)
@@ -505,13 +507,12 @@ public class SettingsManager : FSystem
 	}
 
 	public void onPresetSelected(int selectedIndex) {
-		/*if (selectedIndex == 0)
-			resetParameters();
+		if (selectedIndex == 0)
+			return;
+		else if (selectedIndex == 1)
+            resetParameters();
 		else
-		{
-			Debug.Log(JsonUtility.ToJson(presetSettings.preset[selectedIndex]));
-			importSettings(JsonUtility.ToJson(presetSettings.preset[selectedIndex]));
-		}*/
+			MergeSettings(presetSettings[selectedIndex-1]); 
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
@@ -532,7 +533,49 @@ public class SettingsManager : FSystem
 		}
 	}
 
-	public void resetParameters()
+    public void MergeSettings(JToken jSetting)
+    {
+        // Par cours de l'objet json pour appliquer les settings
+        foreach (JToken jToken in jSetting)
+        {
+            // Récupération de la ième clé du json
+            JProperty property = (JProperty)jToken;
+            string key = property.Name;
+
+            // On tente de retrouver dans les paramètres courants la propriété correspondante pour appliquer la valeur
+            Type type = cs.values.GetType();
+            FieldInfo field = type.GetField(key, BindingFlags.Public | BindingFlags.Instance);
+			// si on le la trouve pas, on passe à la suivante
+            if (field == null)
+                continue;
+
+			// On accède à la valeur du json et on tente de l'appliquer dans les paramètres courants
+            try
+            {
+                if (key.Contains("Color"))
+                {
+                    Color color = property.Value.ToObject<Color>();
+                    field.SetValue(cs.values, color);
+                }
+                else
+                {
+                    int value = (int)(property.Value);
+                    field.SetValue(cs.values, value);	
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning(
+                    $"Merge Settings error '{key}' : {e.Message}"
+                );
+            }
+        }
+        saveParameters();
+        syncSettingsUI(); // synchronise les menus des settings avec les bons paramètres
+        applySettings();
+    }
+
+    public void resetParameters()
 	{
 		// Volontairement on ne reset pas la langue
 		cs.values.currentSkillsRepository = ds.defaultSkillsRepository;

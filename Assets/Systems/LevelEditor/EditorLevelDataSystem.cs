@@ -270,7 +270,7 @@ public class EditorLevelDataSystem : FSystem {
 	// see childs of executionLimit GO
 	public void preventMinusSign(TMP_InputField input)
 	{
-		if (input.text.StartsWith("-"))
+		if (input.text != null && input.text.StartsWith("-"))
 			input.text = input.text.Trim('-');
 	}
 
@@ -284,7 +284,7 @@ public class EditorLevelDataSystem : FSystem {
 	public void scoreTwoStarsExit(string newData)
 	{
 		if (string.IsNullOrEmpty(newData))
-			score2Input.text = "0";
+			score2Input.text = "";
 
 		int twoStarsScore = int.Parse(newData);
 		int threeStarsScore = int.TryParse(score3Input.text, out int x) ? x : 0;
@@ -295,7 +295,7 @@ public class EditorLevelDataSystem : FSystem {
 	public void scoreThreeStarsExit(string newData)
 	{
 		if (string.IsNullOrEmpty(newData))
-			score3Input.text = "0";
+			score3Input.text = "";
 
 		int threeStarsScore = int.Parse(newData);
 		int twoStarsScore = int.TryParse(score2Input.text, out int x) ? x : 0;
