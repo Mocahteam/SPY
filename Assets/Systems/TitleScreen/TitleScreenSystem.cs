@@ -293,8 +293,10 @@ public class TitleScreenSystem : FSystem {
 					}
 			}
 			else
-				// focus on the first scenario
-				MainLoop.instance.StartCoroutine(Utility.delayGOSelection(gameList.GetChild(0).gameObject));
+            {
+                // focus on the first scenario
+                MainLoop.instance.StartCoroutine(Utility.delayGOSelection(gameList.GetChild(0).gameObject));
+			}
 		}
 		else
 			EventSystem.current.SetSelectedGameObject(backButton.gameObject);
@@ -411,8 +413,10 @@ public class TitleScreenSystem : FSystem {
 					}
 			}
 			else
-				// focus on the first mission
-				MainLoop.instance.StartCoroutine(Utility.delayGOSelection(gameList.GetChild(0).gameObject));
+            {
+                // focus on the first mission
+                MainLoop.instance.StartCoroutine(Utility.delayGOSelection(gameList.GetChild(0).gameObject));
+			}
 		}
 		else
 			EventSystem.current.SetSelectedGameObject(backButton.gameObject);

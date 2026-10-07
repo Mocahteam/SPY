@@ -632,7 +632,7 @@ public static class UtilityGame
 
     public static string exportEditableScriptToString(Transform scriptContainer, GameObject focusedArea)
     {
-        string scriptsContent = scriptContainer.Find("Header").GetComponentInChildren<TMP_InputField>().text + " {";
+        string scriptsContent = scriptContainer.Find("Header/Naming/RobotName_static/RobotName").GetComponent<TMP_Text>().text + " {";
         // on ignore les fils sans Highlightable
         for (int i = 0; i < scriptContainer.childCount; i++)
         {

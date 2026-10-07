@@ -201,7 +201,9 @@ public class TilePopupSystem : FSystem
 			GameObjectManager.bind(tileSettings);
 		}
 		if (autoFocusLastPosition)
-			MainLoop.instance.StartCoroutine(Utility.delayGOSelection(tileSettingsParent.GetChild(tileSettingsParent.childCount - 1).GetComponentInChildren<TMP_InputField>(true).gameObject, 1));
+        {
+            MainLoop.instance.StartCoroutine(Utility.delayGOSelection(tileSettingsParent.GetChild(tileSettingsParent.childCount - 1).GetComponentInChildren<TMP_InputField>(true).gameObject, 1));
+		}
 	}
 
 	private void destroyAllPopups()

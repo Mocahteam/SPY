@@ -93,6 +93,12 @@ public class TTSSystem : FSystem
 
     protected override void onProcess(int familiesUpdateCount)
     {
+        if (eventSystem.currentSelectedGameObject == null)
+        {
+            previousSelectedGO = null;
+            return;
+        }
+
         if (previousSelectedGO != eventSystem.currentSelectedGameObject && eventSystem.currentSelectedGameObject != null)
         {
             previousSelectedGO = eventSystem.currentSelectedGameObject;
@@ -193,7 +199,12 @@ public class TTSSystem : FSystem
         }
         else if (focused.GetComponent<Image>())
         {
-            content = Utility.GetLocalizedString("Image"); // "Image" : "Image"
+            if (focused.GetComponent<LibraryItemRef>() != null || focused.GetComponent<ElementToDrag>() != null)
+                content = Utility.GetLocalizedString("ProgrammingBlock"); // "Bloc de programmation" : "Programming Block"
+            else if(focused.GetComponent<ReplacementSlot>() != null)
+                content = Utility.GetLocalizedString("DropArea"); // "Zone de dépôt" : "Drop area"
+            else
+                content = Utility.GetLocalizedString("Image"); // "Image" : "Image"
         }
 
         if (select && !select.IsInteractable())

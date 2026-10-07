@@ -27,6 +27,7 @@ public class UINavigationManager : FSystem
 	public EventSystem eventSystem;
 
 	private InputAction navigateAction;
+    private InputAction homeAction;
     private InputAction rightClick;
 	private InputAction middleClick;
 
@@ -67,6 +68,7 @@ public class UINavigationManager : FSystem
 			eventSystem = EventSystem.current;
 
 		navigateAction = InputSystem.actions.FindAction("Navigate");
+        homeAction = InputSystem.actions.FindAction("Home");
         rightClick = InputSystem.actions.FindAction("RightClick");
 		middleClick = InputSystem.actions.FindAction("MiddleClick");
 
@@ -81,6 +83,15 @@ public class UINavigationManager : FSystem
 
     protected override void onProcess(int familiesUpdateCount)
 	{
+		if (homeAction.WasPressedThisFrame())
+		{
+            // Définir le currentSelectedGameObject à null pour qu'au prochain update l'UI le plus prioritaire soit automatiquement sélectionnée. Permet ainsi même si on est sur l'objet le plus prioritaire de refaire vocaliser cet élément.
+            eventSystem.SetSelectedGameObject(null);
+			lastSelected = null;
+			return;
+        }
+
+
 		// Récupérer la valeur Vector2 de Navigate
 		Vector2 navigateValue = navigateAction.ReadValue<Vector2>();
 
@@ -118,8 +129,8 @@ public class UINavigationManager : FSystem
 		// no item dragged and last selection was an element in script
 		if (lastSelected != null && f_draggedItems.Count == 0 && (lastSelected.GetComponentInParent<UIRootContainer>() != null || lastSelected.GetComponentInParent<UIRootExecutor>() != null))
 		{
-			// press up or down
-			if (navigateAction.WasPressedThisFrame() && navigateValue.y != 0)
+            // press up or down
+            if (navigateAction.WasPressedThisFrame() && navigateValue.y != 0)
 			{
 				// do nothing if last selected object is a focused inputfield (case of for blocks)
 				TMP_InputField input = lastSelected.GetComponent<TMP_InputField>();
@@ -141,7 +152,9 @@ public class UINavigationManager : FSystem
 					// get id of last selected object
 					int id = selectables.IndexOf(lastSelected.GetComponent<Selectable>());
 
-					if ((navigateValue.y > 0 && id > 0) || (navigateValue.y < 0 && id < (selectables.Count - 1)))
+					Navigation nav = lastSelected.GetComponent<Selectable>().navigation;
+                    // si l'objet sélectionné a un navigation explicite en Up ou down, on ne fait rien, sinon on gère la navigation par script
+                    if ((navigateValue.y > 0 && id > 0 && nav.selectOnUp == null) || (navigateValue.y < 0 && id < (selectables.Count - 1) && nav.selectOnDown == null))
 					{
 						// get the next one
 						GameObject newSelected = selectables[id + (navigateValue.y > 0 ? -1 : 1)].gameObject;
@@ -152,9 +165,10 @@ public class UINavigationManager : FSystem
 				}
 			}
 		}
-		// ---- end ----
+        // ---- end ----
 
-		if (selected != null)
+        // ---- Manage SiblingNavigation and DynamicNavigation ----
+        if (selected != null)
 		{
 			// define next GameObject to focus for sibling navigation
 			SiblingNavigation sibNav = selected.GetComponent<SiblingNavigation>();
@@ -190,9 +204,10 @@ public class UINavigationManager : FSystem
 				}
 			}
 		}
+        // ---- end ----
 
-		// En tactile un bouton peut ne pas recevoir de onExit, dans ce cas, le bouton est toujours considéré comme le bouton actif et si on clique ailleurs l'évènement est envoyé à ce GameObject au lieu du nouveau. Pour contrer ça, si une nouvelle phase de touch commence (Began) et que l'objet actif n'est pas celui sous le doigt, on déselectionne l'objet
-		ReadOnlyArray<Touch> activeTouches = Touch.activeTouches;
+        // En tactile un bouton peut ne pas recevoir de onExit, dans ce cas, le bouton est toujours considéré comme le bouton actif et si on clique ailleurs l'évènement est envoyé à ce GameObject au lieu du nouveau. Pour contrer ça, si une nouvelle phase de touch commence (Began) et que l'objet actif n'est pas celui sous le doigt, on déselectionne l'objet
+        ReadOnlyArray<Touch> activeTouches = Touch.activeTouches;
 		for (int i = 0; i < activeTouches.Count; i++)
 		{
 			if (activeTouches[i].phase == TouchPhase.Began)

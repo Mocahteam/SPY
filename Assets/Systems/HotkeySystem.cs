@@ -204,7 +204,7 @@ public class HotkeySystem : FSystem
 			return;
 		}
 
-        // Gestion en priorité des actions avec modifier
+        // Gestion en priorité des actions avec modificateurs
         foreach (HotKeySpec hotKey in hotKeys.spec)
 		{
 			// Vérifier qu'on a un modifier
@@ -213,7 +213,7 @@ public class HotkeySystem : FSystem
 					return;
 		}
 
-        // Gestion dans un second temps des actions sans modifier
+        // Gestion dans un second temps des actions sans modificateurs
         foreach (HotKeySpec hotKey in hotKeys.spec)
         {
 			// Vérifier qu'il n'y a pas de modifier
@@ -286,25 +286,25 @@ public class HotkeySystem : FSystem
 											{
 												// Si une zone de programme nous précède, on la sélectionne
 												if (i > 0)
-													eventSystem.SetSelectedGameObject(f_programmingArea.getAt(i - 1).GetComponentInChildren<TMP_InputField>().gameObject);
+													eventSystem.SetSelectedGameObject(f_programmingArea.getAt(i - 1).transform.Find("Header/Naming/RobotName_static/RobotName").gameObject);
 												// si on est sur la première et que le bouton '+' est actif et visible, on le sélectionne
 												else if (addButtonAvailable)
 													eventSystem.SetSelectedGameObject(addNewProgramminArea.gameObject);
 												// sinon on revient à la dernière
 												else
-													eventSystem.SetSelectedGameObject(f_programmingArea.getAt(f_programmingArea.Count - 1).GetComponentInChildren<TMP_InputField>().gameObject);
+													eventSystem.SetSelectedGameObject(f_programmingArea.getAt(f_programmingArea.Count - 1).transform.Find("Header/Naming/RobotName_static/RobotName").gameObject);
 											}
 											else
 											{
 												// Si il y a encore une zone de programme, on la sélectionne
 												if (i < f_programmingArea.Count - 1)
-													eventSystem.SetSelectedGameObject(f_programmingArea.getAt(i + 1).GetComponentInChildren<TMP_InputField>().gameObject);
+													eventSystem.SetSelectedGameObject(f_programmingArea.getAt(i + 1).transform.Find("Header/Naming/RobotName_static/RobotName").gameObject);
 												// si on est sur la dernière et que le bouton '+' est actif et visible, on le sélectionne
 												else if (addButtonAvailable)
 													eventSystem.SetSelectedGameObject(addNewProgramminArea.gameObject);
 												// sinon on revient au premier
 												else
-													eventSystem.SetSelectedGameObject(f_programmingArea.First().GetComponentInChildren<TMP_InputField>().gameObject);
+													eventSystem.SetSelectedGameObject(f_programmingArea.First().transform.Find("Header/Naming/RobotName_static/RobotName").gameObject);
 											}
 										}
 
@@ -314,10 +314,10 @@ public class HotkeySystem : FSystem
 								{
 									if (hotKey.inputActionName == "SelectPreviousProgrammingArea")
 										// Sélectionner la dernière
-										eventSystem.SetSelectedGameObject(f_programmingArea.getAt(f_programmingArea.Count - 1).GetComponentInChildren<TMP_InputField>().gameObject);
+										eventSystem.SetSelectedGameObject(f_programmingArea.getAt(f_programmingArea.Count - 1).transform.Find("Header/Naming/RobotName_static/RobotName").gameObject);
 									else
 										// Sélectionner la première
-										eventSystem.SetSelectedGameObject(f_programmingArea.First().GetComponentInChildren<TMP_InputField>().gameObject);
+										eventSystem.SetSelectedGameObject(f_programmingArea.First().transform.Find("Header/Naming/RobotName_static/RobotName").gameObject);
 								}
 							}
 							else if (addButtonAvailable)

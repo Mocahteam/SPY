@@ -18,11 +18,6 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
 	}
 
-	public void selectContainer(UIRootContainer container)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "selectContainer", container);
-	}
-
 	public void addContainer()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "addContainer", null);
@@ -31,6 +26,16 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 	public void resetScriptContainer(UnityEngine.GameObject scriptContainer)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "resetScriptContainer", scriptContainer);
+	}
+
+	public void editRobotName(TMPro.TMP_Text name)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "editRobotName", name);
+	}
+
+	public void checkDoubleClick(UnityEngine.EventSystems.BaseEventData element)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "checkDoubleClick", element);
 	}
 
 	public void newNameContainer(System.String newName)

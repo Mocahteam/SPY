@@ -258,11 +258,13 @@ public class HistoryManager : FSystem
 		foreach (GameObject trash in f_removeButton)
 		{
 			trash.GetComponent<Button>().interactable = false;
-			TMP_InputField name_input = trash.transform.parent.Find("ContainerName").GetComponent<TMP_InputField>();
-			name_input.interactable = false;
-            LocalizeStringEvent lse = name_input.GetComponent<LocalizeStringEvent>();
+            Transform robotNameStatic = trash.transform.parent.Find("Naming/RobotName_static");
+            TMP_Text name = robotNameStatic.GetComponentInChildren<TMP_Text>(true);
+            Button editNameButton = robotNameStatic.GetComponentInChildren<Button>(true);
+			editNameButton.interactable = false;
+            LocalizeStringEvent lse = editNameButton.GetComponent<LocalizeStringEvent>();
             lse.StringReference.TableEntryReference = "CalledBy";
-            (lse.StringReference["robotName"] as StringVariable).Value = name_input.text;
+            (lse.StringReference["robotName"] as StringVariable).Value = name.text;
         }
 	}
 
@@ -298,9 +300,9 @@ public class HistoryManager : FSystem
 					// Disable trash button
 					brush.GetComponent<Button>().interactable = false;
 					// Disable reset button
-					brush.transform.parent.GetChild(brush.transform.GetSiblingIndex() - 1).GetComponent<Button>().interactable = false;
+					brush.transform.parent.Find("ResetButton").GetComponent<Button>().interactable = false;
 					// Disable naming TMP
-					brush.transform.parent.GetComponentInChildren<TMPro.TMP_InputField>().interactable = false;
+					brush.transform.parent.Find("Naming/RobotName_static/ButtonEditName").GetComponent<Button>().interactable = false;
 				}
 			}
 		}

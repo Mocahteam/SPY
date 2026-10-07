@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.Localization.Components;
-using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.SmartFormat.PersistentVariables;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -53,8 +54,9 @@ public class EditableContainerSystem : FSystem
 
 	private bool isEditorContext;
 	private bool newScriptContainer = false;
+    private InputAction doubleClick;
 
-	private GameData gameData;
+    private GameData gameData;
 
 	// L'instance
 	public static EditableContainerSystem instance;
@@ -74,7 +76,9 @@ public class EditableContainerSystem : FSystem
 		{
 			gameData = go.GetComponent<GameData>();
 
-			if (!isEditorContext)
+            doubleClick = InputSystem.actions.FindAction("DoubleClick");
+
+            if (!isEditorContext)
 			{
 				MainLoop.instance.StartCoroutine(tcheckLinkName());
 				f_gameLoaded.addEntryCallback(delegate
@@ -98,7 +102,8 @@ public class EditableContainerSystem : FSystem
 						Transform header = container.transform.Find("Header");
 						header.Find("ResetButton").GetComponent<Button>().interactable = false;
 						header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-						header.Find("ContainerName").GetComponent<TMP_InputField>().interactable = false;
+                        // Bloquer la possibilité de changer le nom du robot si on est en fin de partie
+                        header.Find("Naming/RobotName_static/ButtonEditName").GetComponent<Button>().interactable = false;
 					}
 					addContainerButton.interactable = false;
 				});
@@ -108,12 +113,12 @@ public class EditableContainerSystem : FSystem
 					{
 						Transform header = container.transform.Find("Header");
 						header.Find("ResetButton").GetComponent<Button>().interactable = true;
-
+						// Sur une sortie de fin de partie (ReloadState par exemple), si aucun historique n'est défini c'est qu'on est en début de partie donc on peut redonner la main sur l'édition du nom du robot
 						if (container.GetComponentInChildren<UIRootContainer>().editState != UIRootContainer.EditMode.Locked && gameData.actionsHistory == null)
 						{
-							Transform containerName = header.Find("ContainerName");
-							containerName.GetComponent<TMP_InputField>().interactable = true;
-							containerName.GetComponent<TooltipContent>().text = Utility.GetLocalizedString("EnterTheNameOfRobot");
+							Transform buttonEditName = header.Find("Naming/RobotName_static/ButtonEditName");
+							buttonEditName.GetComponent<Button>().interactable = true;
+							buttonEditName.GetComponent<TooltipContent>().text = Utility.GetLocalizedString("UpdateRobotNameHere");
 							if (gameData.dragDropEnabled)
 								header.Find("RemoveButton").GetComponent<Button>().interactable = true;
 						}
@@ -153,12 +158,6 @@ public class EditableContainerSystem : FSystem
 				GameObjectManager.removeComponent(asc);
 			}
     }
-
-	// utilisé sur le OnSelect du ContainerName dans le prefab ViewportScriptContainer
-    public void selectContainer(UIRootContainer container)
-	{
-		containerSelected = container;
-	}
 
 	// used on + button (see in Unity editor)
 	public void addContainer()
@@ -200,9 +199,11 @@ public class EditableContainerSystem : FSystem
 			{
 				// On définie son nom à celui de l'agent
 				cloneContainer.GetComponentInChildren<UIRootContainer>().scriptName = name;
-				// On affiche le bon nom sur le container
-				cloneContainer.GetComponentInChildren<TMP_InputField>().text = name;
-			}
+                // On affiche le bon nom sur le container
+                TMP_InputField inputName = cloneContainer.GetComponentInChildren<TMP_InputField>(true);
+                inputName.text = name;
+				inputName.transform.parent.Find("RobotName_static/RobotName").GetComponent<TMP_Text>().text = name;
+            }
 			else
 			{
 				bool nameOk = false;
@@ -210,12 +211,14 @@ public class EditableContainerSystem : FSystem
 				{
 					// Si le nom n'est pas déjà utilisé on nomme le nouveau container de cette façon
 					if (!nameContainerUsed("Script" + i))
-					{
-						cloneContainer.GetComponentInChildren<UIRootContainer>().scriptName = "Script" + i;
+                    {
+                        name = "Script" + i;
+                        cloneContainer.GetComponentInChildren<UIRootContainer>().scriptName = name;
 						// On affiche le bon nom sur le container
-						cloneContainer.GetComponentInChildren<TMP_InputField>().text = "Script" + i;
-						name = "Script" + i;
-						nameOk = true;
+						TMP_InputField inputName = cloneContainer.GetComponentInChildren<TMP_InputField>(true);
+						inputName.text = name;
+                        inputName.transform.parent.Find("RobotName_static/RobotName").GetComponent<TMP_Text>().text = name;
+                        nameOk = true;
 					}
 				}
 			}
@@ -229,19 +232,18 @@ public class EditableContainerSystem : FSystem
 				// si on est dans le player on cache l'UI permettant de configurer le mode et le type
 				panel.gameObject.SetActive(false);
 				Transform header = cloneContainer.transform.Find("ScriptContainer/Header");
-				Transform containerName = header.Find("ContainerName");
+				Transform buttonEditName = header.Find("Naming/RobotName_static/ButtonEditName");
 				// et si on est en mode Lock, on bloque l'édition et on interdit de supprimer le script
 				if (editState == UIRootContainer.EditMode.Locked)
 				{
 					header.Find("RemoveButton").GetComponent<Button>().interactable = false;
-                    TMP_InputField name_input = containerName.GetComponent<TMP_InputField>();
-                    name_input.interactable = false;
-                    LocalizeStringEvent lse = name_input.GetComponent<LocalizeStringEvent>();
+                    buttonEditName.GetComponent<Button>().interactable = false;
+                    LocalizeStringEvent lse = buttonEditName.GetComponent<LocalizeStringEvent>();
                     lse.StringReference.TableEntryReference = "CalledBy";
-                    (lse.StringReference["robotName"] as StringVariable).Value = name_input.text;
+                    (lse.StringReference["robotName"] as StringVariable).Value = buttonEditName.parent.Find("RobotName").GetComponent<TMP_Text>().text;
 				}
 				else
-					containerName.GetComponent<TooltipContent>().text = Utility.GetLocalizedString("EnterTheNameOfRobot");
+					buttonEditName.GetComponent<TooltipContent>().text = Utility.GetLocalizedString("UpdateRobotNameHere");
 				// si le drag&drop n'est pas activé on bloque la balayette et la suppression du script
 				if (!gameData.dragDropEnabled)
 				{
@@ -323,7 +325,7 @@ public class EditableContainerSystem : FSystem
 					verb = "cleaned",
 					objectType = "script",
 					activityExtensions = new Dictionary<string, string>() {
-					{ "value", scriptContainer.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text }
+					{ "value", scriptContainer.GetComponent<UIRootContainer>().scriptName }
 				}
 			});
 
@@ -348,7 +350,7 @@ public class EditableContainerSystem : FSystem
 					verb = "deleted",
 					objectType = "script",
 					activityExtensions = new Dictionary<string, string>() {
-					{ "value", scriptContainerPointer.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text }
+					{ "value", scriptContainerPointer.GetComponent<UIRootContainer>().scriptName }
 				}
 				});
 			}
@@ -378,22 +380,48 @@ public class EditableContainerSystem : FSystem
             GameObjectManager.addComponent<Undoable>(MainLoop.instance.gameObject);
     }
 
-	// Rename the script window
-	// See ContainerName in ViewportScriptContainer prefab in editor
-	public void newNameContainer(string newName)
+    // See ButtonEditName in ViewportScriptContainer prefab in editor
+    public void editRobotName(TMP_Text name)
+	{
+		// on vérifie que le bouton permettant d'éditer le nom du robot est bien actif (on peut arriver ici même s'il est désactivé sur un double clic ou un submit sur le TMP_Text)
+		if (name.transform.parent.Find("ButtonEditName").GetComponent<Button>().IsInteractable())
+		{
+            // On désactive le nom statique du robot et on active le champ de saisie
+            GameObjectManager.setGameObjectState(name.transform.parent.gameObject, false);
+            TMP_InputField input = name.transform.parent.parent.Find("RobotName_edit").GetComponent<TMP_InputField>();
+			GameObjectManager.setGameObjectState(input.gameObject, true);
+            MainLoop.instance.StartCoroutine(Utility.delayGOSelection(input.gameObject));
+			containerSelected = name.GetComponentInParent<UIRootContainer>();
+		}
+    }
+
+	// Vérifie un (double click) sur le nom du robot dans la zone éditable pour éditer son nom
+	public void checkDoubleClick(BaseEventData element)
+	{
+		PointerEventData pointerData = element as PointerEventData;
+        if (doubleClick.WasPerformedThisFrame())
+			editRobotName(pointerData.pointerPress.GetComponent<TMP_Text>());
+	}
+
+    // Rename the script window
+    // See RobotName_edit in ViewportScriptContainer prefab in editor
+    public void newNameContainer(string newName)
 	{
 		string oldName = containerSelected.scriptName;
-		if (oldName != newName)
+        TMP_InputField input = containerSelected.transform.Find("Header/Naming/RobotName_edit").GetComponent<TMP_InputField>();
+		TMP_Text name = containerSelected.transform.Find("Header/Naming/RobotName_static/RobotName").GetComponent<TMP_Text>();
+        if (oldName != newName)
 		{
 			// Si le nom n'est pas utilisé et que le mode n'est pas locked (ignorer ça si on est dans l'éditeur de mission)
 			if (!nameContainerUsed(newName) && (containerSelected.editState != UIRootContainer.EditMode.Locked || isEditorContext))
 			{
 				// On change pour son nouveau nom
 				containerSelected.scriptName = newName;
-				containerSelected.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text = newName;
+                input.text = newName;
+                name.text = newName;
 
-				// générer une trace seulement sur la scene principale
-				if (!isEditorContext)
+                // générer une trace seulement sur la scene principale
+                if (!isEditorContext)
 					GameObjectManager.addComponent<ActionPerformedForLRS>(containerSelected.gameObject, new
 					{
 						verb = "renamed",
@@ -408,13 +436,20 @@ public class EditableContainerSystem : FSystem
             }
 			else
 			{ // Sinon on annule le changement
-				containerSelected.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>().text = oldName;
-			}
+                input.text = oldName;
+                name.text = oldName;
+
+            }
 		}
 		// On vérifie l'association du nom uniquement sur la scène principale
 		if (!isEditorContext)
 			MainLoop.instance.StartCoroutine(tcheckLinkName());
-	}
+
+		// on désactive le champ de saisie et on active le nom statique du robot
+		GameObjectManager.setGameObjectState(input.gameObject, false);
+        GameObjectManager.setGameObjectState(name.transform.parent.gameObject, true);
+        MainLoop.instance.StartCoroutine(Utility.delayGOSelection(name.transform.parent.Find("ButtonEditName").gameObject));
+    }
 
 	// Vérifie si le nom proposé existe déjà ou non pour un script container
 	private bool nameContainerUsed(string nameTested)
@@ -437,7 +472,7 @@ public class EditableContainerSystem : FSystem
 	{
 		yield return null;
 
-		// On parcourt les containers et si aucun nom ne correspond alors on met leur nom en gras rouge
+		// On parcourt les containers et si aucun nom ne correspond alors on met leur nom en rouge
 		foreach (GameObject container in f_scriptContainer)
 		{
 			bool nameSame = false;
@@ -445,14 +480,14 @@ public class EditableContainerSystem : FSystem
 				if (container.GetComponent<UIRootContainer>().scriptName.ToLower() == agent.GetComponent<AgentEdit>().associatedScriptName.ToLower())
 					nameSame = true;
 
-			TMP_InputField input = container.transform.Find("Header/ContainerName").GetComponent<TMP_InputField>();
-			ColorBlock inputColor = input.colors;
+            Selectable name = container.transform.Find("Header/Naming/RobotName_static/RobotName").GetComponent<Selectable>();
+			ColorBlock nameColor = name.colors;
 			// Si même nom trouvé on met la couleur par défaut
 			if (nameSame)
-				inputColor.normalColor = currentSettingsValues.values.currentNormalColor_Inputfield;
+				nameColor.normalColor = currentSettingsValues.values.currentNormalColor_Text;
 			else // sinon la couleur de mauvaise association 
-				inputColor.normalColor = currentSettingsValues.values.currentWrongAssociationColor;
-			input.colors = inputColor;
+				nameColor.normalColor = currentSettingsValues.values.currentWrongAssociationColor;
+			name.colors = nameColor;
 		}
 
 		// On fait la même chose pour les agents

@@ -367,9 +367,9 @@ public class DialogSystem : FSystem
 				setActivePrevButton(true);
 
 		if (dialog.text != null)
-		{
-			// On décalle la sélection du texte de briefing d'une frame pour laisser la prochaine phase de gestion des évènements passer (ce qui sélectionnerai certainement automatiquement le prochain bouton "suivant" ou "ok") afin d'être sûr de mettre le focus sur le texte de briefing
-			MainLoop.instance.StartCoroutine(Utility.delayGOSelection(textGO));
+        {
+            // On décalle la sélection du texte de briefing d'une frame pour laisser la prochaine phase de gestion des évènements passer (ce qui sélectionnerai certainement automatiquement le prochain bouton "suivant" ou "ok") afin d'être sûr de mettre le focus sur le texte de briefing
+            MainLoop.instance.StartCoroutine(Utility.delayGOSelection(textGO));
 		}
 
 		MainLoop.instance.StartCoroutine(forceScrollBarUp());
@@ -557,7 +557,7 @@ public class DialogSystem : FSystem
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 	        return GetVideoHeight();
 		else
-			return (int)videoPlayer.width;
+			return (int)videoPlayer.height;
 	}
 
 

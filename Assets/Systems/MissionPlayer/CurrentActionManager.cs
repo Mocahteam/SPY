@@ -85,7 +85,8 @@ public class CurrentActionManager : FSystem
         // Attendre que l'on ait atteint 90% d'un pas de simulation
         yield return new WaitUntil(() => Time.time - gameData.startStepTime >= 0.9f / gameData.gameSpeed_current);
 
-		if (f_ends.Count <= 0)
+		// S'il n'y a pas de fin demandée et qu'on est en mode play
+		if (f_ends.Count <= 0 && f_playingMode.Count > 0)
 		{
 			bool atLeastOneNextAction = false;
 			GameObject nextAction;
