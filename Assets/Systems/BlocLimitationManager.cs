@@ -37,7 +37,7 @@ public class BlocLimitationManager : FSystem
 			foreach (GameObject go in f_draggableElement)
 			{
 				// default => hide go
-				GameObjectManager.setGameObjectState(go, false);
+				go.SetActive(false);
 				// update counter and enable required blocks
 				updateBlocLimit(go);
 			}
@@ -99,31 +99,25 @@ public class BlocLimitationManager : FSystem
 		if (gameData.actionBlockLimit.ContainsKey(draggableGO.name))
 		{
 			bool isActive = gameData.actionBlockLimit[draggableGO.name] != 0; // negative means no limit
-			GameObjectManager.setGameObjectState(draggableGO, isActive);
+			draggableGO.SetActive(isActive);
 			if (isActive)
 			{
 				if (gameData.actionBlockLimit[draggableGO.name] < 0)
 					// unlimited action => hide counter
-					GameObjectManager.setGameObjectState(draggableGO.transform.GetChild(1).gameObject, false);
+					draggableGO.transform.GetChild(1).gameObject.SetActive(false);
 				else
 				{
 					// limited action => init and show counter
 					draggableGO.GetComponentInChildren<TextMeshProUGUI>(true).text = gameData.actionBlockLimit[draggableGO.name].ToString();
-					GameObjectManager.setGameObjectState(draggableGO.transform.GetChild(1).gameObject, true);
+					draggableGO.transform.GetChild(1).gameObject.SetActive(true);
 				}
 			}
-		}
-		MainLoop.instance.StartCoroutine(delayCategoryVisibility(draggableGO.transform.parent));
-	}
-
-	private IEnumerator delayCategoryVisibility(Transform grid)
-    {
-		yield return null;
-		yield return null;
-		int childCount = 0;
-		foreach (Transform child in grid)
-			childCount += child.gameObject.activeSelf ? 1 : 0;
-		GameObjectManager.setGameObjectState(grid.parent.parent.gameObject, childCount > 0);
+        }
+        Transform grid = draggableGO.transform.parent;
+        int childCount = 0;
+        foreach (Transform child in grid)
+            childCount += child.gameObject.activeSelf ? 1 : 0;
+        grid.parent.parent.gameObject.SetActive(childCount > 0);
 	}
 
 	// Remove one item from library

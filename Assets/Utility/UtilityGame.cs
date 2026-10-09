@@ -77,10 +77,7 @@ public static class UtilityGame
 				{
 					// disable empty slot
 					repSlot.GetComponentInChildren<Outline>().enabled = false;
-
-					// Because this function can be call for binded GO or not
-					if (GameObjectManager.isBound(repSlot.gameObject)) GameObjectManager.setGameObjectState(repSlot.transform.gameObject, false);
-					else repSlot.transform.gameObject.SetActive(false);
+					repSlot.transform.gameObject.SetActive(false);
 				}
 				else
 				{
@@ -128,7 +125,7 @@ public static class UtilityGame
         // Si suppression d'une condition, on active la zone vide du container pour pouvoir en mettre une autre à la place
         if (elementToDelete.GetComponent<BaseCondition>())
 			// enable the next last child of the container
-			GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.GetSiblingIndex() + 1).gameObject, true);
+			elementToDelete.transform.parent.GetChild(elementToDelete.transform.GetSiblingIndex() + 1).gameObject.SetActive(true);
 	}
 
 	// Copy an editable script to the container of an agent

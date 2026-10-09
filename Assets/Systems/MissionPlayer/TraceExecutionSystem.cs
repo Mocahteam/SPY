@@ -11,7 +11,7 @@ using UnityEngine.UI;
 public class TraceExecutionSystem : FSystem {
 
     private Family f_userExecutor = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)));
-    private Family f_enabledUserExecutor = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+    private Family f_enabledUserExecutor = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
     private Family f_executablePanels = FamilyManager.getFamily(new AllOfComponents(typeof(ExecutablePanel)));
     private Family f_playMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
@@ -29,26 +29,32 @@ public class TraceExecutionSystem : FSystem {
     {
         GameObject go = GameObject.Find("GameData");
         if (go != null)
+        {
             gameData = go.GetComponent<GameData>();
-        f_playMode.addEntryCallback(delegate {
-            setToggleState(true);
-            resetTogglesNotifications();
-            unselectAllToggles();
-            // en mode Play, définir si on doit afficher ou pas le panneau de sélection de la prochaine action à exécuter selon si l'utilisateur est autorisé à le faire
-            foreach (GameObject exec_go in f_executablePanels)
+
+            f_playMode.addEntryCallback(delegate
             {
-                // Définir si on doit afficher ou pas le panneau de sélection de la prochaine action à exécuter selon si l'utilisateur est autorisé à le faire et si l'agent est un robot contrôlé par le joueur ou un drone (ennemi)
-                if (gameData.userExecutor && exec_go.GetComponentInChildren<LinkedWith>(true).target.tag == "Player")
-                    GameObjectManager.setGameObjectState(exec_go.GetComponentInChildren<ToggleGroup>(true).gameObject, true);
-                else
-                    GameObjectManager.setGameObjectState(exec_go.GetComponentInChildren<ToggleGroup>(true).gameObject, false);
-            }
-        });
-        f_editMode.addEntryCallback(delegate {
-            // en mode Edit, toujours cacher les panneau de sélection de la prochaine action à exécuter
-            foreach (GameObject exec_go in f_executablePanels)
-                GameObjectManager.setGameObjectState(exec_go.GetComponentInChildren<ToggleGroup>(true).gameObject, false);
-        });
+                setToggleState(true);
+                resetTogglesNotifications();
+                unselectAllToggles();
+                foreach (GameObject exec_go in f_executablePanels)
+                {
+                    // Définir si on doit afficher ou pas le panneau de sélection de la prochaine action à exécuter selon si l'utilisateur est autorisé à le faire et si l'agent est un robot contrôlé par le joueur
+                    if (gameData.userExecutor && exec_go.GetComponentInChildren<LinkedWith>(true).target.tag == "Player")
+                        exec_go.GetComponentInChildren<ToggleGroup>(true).gameObject.SetActive(true);
+                    else
+                        exec_go.GetComponentInChildren<ToggleGroup>(true).gameObject.SetActive(false);
+                }
+            });
+
+            f_editMode.addEntryCallback(delegate
+            {
+                // en mode Edit, toujours cacher les panneau de sélection de la prochaine action à exécuter
+                foreach (GameObject exec_go in f_executablePanels)
+                    exec_go.GetComponentInChildren<ToggleGroup>(true).gameObject.SetActive(false);
+            });
+        }
+
         Pause = true;
     }
 
@@ -60,6 +66,7 @@ public class TraceExecutionSystem : FSystem {
             foreach (Toggle action in executor.GetComponentsInChildren<Toggle>())
                 if (action.isOn)
                     selectedActions.Add(action);
+        
         // si on a au moins une action sélectionnée pour chaque robot contrôlé par le joueur, on peut passer à l'étape suivante
         if (selectedActions.Count >= f_enabledUserExecutor.Count && f_enabledUserExecutor.Count > 0)
         {
@@ -104,8 +111,8 @@ public class TraceExecutionSystem : FSystem {
         foreach (GameObject executor in f_userExecutor)
             foreach (Toggle action in executor.GetComponentsInChildren<Toggle>())
             {
-                GameObjectManager.setGameObjectState(action.transform.Find("true").gameObject, false);
-                GameObjectManager.setGameObjectState(action.transform.Find("false").gameObject, false);
+                action.transform.Find("true").gameObject.SetActive(false);
+                action.transform.Find("false").gameObject.SetActive(false);
             }
     }
 
@@ -132,8 +139,8 @@ public class TraceExecutionSystem : FSystem {
                     if ((ca == null && enabledToggle.GetComponent<BasicAction>().actionType != BasicAction.ActionType.Wait) || (ca.GetComponent<BasicAction>().actionType != enabledToggle.GetComponent<BasicAction>().actionType))
                     {
                         MainLoop.instance.StartCoroutine(delayNewEnd());
-                        GameObjectManager.setGameObjectState(enabledToggle.transform.Find("true").gameObject, false);
-                        GameObjectManager.setGameObjectState(enabledToggle.transform.Find("false").gameObject, true);
+                        enabledToggle.transform.Find("true").gameObject.SetActive(false);
+                        enabledToggle.transform.Find("false").gameObject.SetActive(true);
                         GameObjectManager.addComponent<ActionPerformedForLRS>(enabledToggle.gameObject, new
                         {
                             verb = "traced",
@@ -150,8 +157,8 @@ public class TraceExecutionSystem : FSystem {
                     }
                     else
                     {
-                        GameObjectManager.setGameObjectState(enabledToggle.transform.Find("true").gameObject, true);
-                        GameObjectManager.setGameObjectState(enabledToggle.transform.Find("false").gameObject, false);
+                        enabledToggle.transform.Find("true").gameObject.SetActive(true);
+                        enabledToggle.transform.Find("false").gameObject.SetActive(false);
                         GameObjectManager.addComponent<ActionPerformedForLRS>(enabledToggle.gameObject, new
                         {
                             verb = "traced",

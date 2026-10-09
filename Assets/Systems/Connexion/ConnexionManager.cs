@@ -111,19 +111,19 @@ public class ConnexionManager : FSystem
 			GBL_Interface.userUUID = "";
 		}
 
-        // Désactivation du MainPanel le temps du chargement
-        GameObjectManager.setGameObjectState(RightPanel.transform.parent.gameObject, false);
+		// Désactivation du MainPanel le temps du chargement
+		RightPanel.transform.parent.gameObject.SetActive(false);
 
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
 			ShowHtmlImportSettings();
 			EnableTTS();
 			// Ce mécanisme de touch est nécessaire en WebGL pour que les sons ou les vidéos puissent démarrer, sinon le navigateur bloque le son et la vidéo
-			GameObjectManager.setGameObjectState(TouchToContinue, true);
+			TouchToContinue.SetActive(true);
 		}
 
         // Enable Loading screen
-        GameObjectManager.setGameObjectState(loadingScreen, true);
+		loadingScreen.SetActive(true);
 
         MainLoop.instance.StartCoroutine(waitLocalizationLoadedAndContinue());
 
@@ -168,10 +168,10 @@ public class ConnexionManager : FSystem
 		}
 		// wait level loading
 		yield return WaitLoadingData();
-		// Activation du MainPanel
-        GameObjectManager.setGameObjectState(RightPanel.transform.parent.gameObject, true);
+        // Activation du MainPanel
+        RightPanel.transform.parent.gameObject.SetActive(true);
         // affectation du loadingscreen au RightPanel
-        GameObjectManager.setGameObjectParent(loadingScreen, RightPanel, false);
+		loadingScreen.transform.SetParent(RightPanel.transform, false); // pas besoin de passer par GameObjectManager.setGameObjectParent(...) car avec le SetActive précédent, le FyfyBridge demandera automatiquement un Refresh du RightPanel
 
 #if UNITY_EDITOR
         SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
@@ -182,7 +182,7 @@ public class ConnexionManager : FSystem
 	private IEnumerator WaitLoadingData()
 	{
 		// A chaque nouveau chargement on active l'écran de loading
-		GameObjectManager.setGameObjectState(loadingScreen, true);
+		loadingScreen.SetActive(true);
 
 		// Attendre une seconde pour laisser le temps à webGL_fileToLoad d'être initialisé par les différents scénarios de chargement
 		yield return new WaitForSeconds(1f);
@@ -240,13 +240,13 @@ public class ConnexionManager : FSystem
 		else
 		{
 			// Disable Loading screen
-			GameObjectManager.setGameObjectState(loadingScreen, false);
+			loadingScreen.SetActive(false);
 			yield return new WaitWhile(() => TouchToContinue.activeInHierarchy);
             // skip cinematic in editor or if already played
             if (!Application.isEditor && !cinematicPlayed)
 			{
 				// Enable cinematic panel
-				GameObjectManager.setGameObjectState(CinematicPanel.gameObject, true);
+				CinematicPanel.gameObject.SetActive(true);
 				// Wait end of cinematic
 				VideoPlayer cinematicVideoPlayer = CinematicPanel.GetComponentInChildren<VideoPlayer>(true);
 				cinematicVideoPlayer.url = "https://spy.lip6.fr/StreamingAssets/Video/VideoIntro" + (currentSettingsValues.values.currentLanguage == 1 ? "_en" : "_fr") + ".mp4";
@@ -257,7 +257,7 @@ public class ConnexionManager : FSystem
 				cinematicVideoPlayer.Play();
 				yield return new WaitWhile(() => cinematicVideoPlayer.isPlaying);
 				// Disable cinematic panel
-				GameObjectManager.setGameObjectState(CinematicPanel.gameObject, false);
+				CinematicPanel.gameObject.SetActive(false);
             }
             cinematicPlayed = true;
         }
@@ -278,7 +278,7 @@ public class ConnexionManager : FSystem
                 yield return new WaitForSeconds(1f);
                 if (webGL_fileLoaded < webGL_fileToLoad)
 					logs.text = "<color=\"orange\">(" + Utility.GetLocalizedString("NewAttempt") + ") " + uri + "</color>\n" + logs.text;
-				GameObjectManager.setGameObjectState(forceLaunchButton, true);
+				forceLaunchButton.SetActive(true);
 			}
 			else
 			{
@@ -314,7 +314,7 @@ public class ConnexionManager : FSystem
 				yield return new WaitForSeconds(1f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
 					logs.text = "<color=\"orange\">(" + Utility.GetLocalizedString("NewAttempt") + ") " + uri + "</color>\n" + logs.text;
-				GameObjectManager.setGameObjectState(forceLaunchButton, true);
+				forceLaunchButton.SetActive(true);
 			}
 			else
 			{
@@ -367,7 +367,7 @@ public class ConnexionManager : FSystem
 				yield return new WaitForSeconds(1f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
 					logs.text = "<color=\"orange\">(" + Utility.GetLocalizedString("NewAttempt") + ") " + uri + "</color>\n" + logs.text;
-				GameObjectManager.setGameObjectState(forceLaunchButton, true);
+				forceLaunchButton.SetActive(true);
 			}
 			else
 			{
@@ -402,7 +402,7 @@ public class ConnexionManager : FSystem
 				yield return new WaitForSeconds(1f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
 					logs.text = "<color=\"orange\">(" + Utility.GetLocalizedString("NewAttempt") + ") " + referentialsPath + "</color>\n" + logs.text;
-				GameObjectManager.setGameObjectState(forceLaunchButton, true);
+				forceLaunchButton.SetActive(true);
 			}
 			else
 			{
@@ -449,7 +449,7 @@ public class ConnexionManager : FSystem
 				yield return new WaitForSeconds(2f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
 					logs.text = "<color=\"orange\">" + Utility.getFormatedText(Utility.GetLocalizedString("RetryToCheckSessionCode"), formatedString) + "</color>\n" + logs.text;
-				GameObjectManager.setGameObjectState(forceLaunchButton, true);
+				forceLaunchButton.SetActive(true);
 			}
 			else
 			{
@@ -503,7 +503,7 @@ public class ConnexionManager : FSystem
 
 	private IEnumerator AnimCameraAndLoadTitleScreen()
     {
-		GameObjectManager.setGameObjectState(RightPanel, false);
+		RightPanel.SetActive(false);
 		GameObjectManager.addComponent<ForceOpenDoor>(MainLoop.instance.gameObject);
         Animation anim = Camera.main.GetComponent<Animation>();
 		anim.Play();
@@ -528,7 +528,7 @@ public class ConnexionManager : FSystem
 				yield return new WaitForSeconds(1f);
 				if (webGL_fileLoaded < webGL_fileToLoad)
 					logs.text = "<color=\"orange\">" + Utility.getFormatedText(Utility.GetLocalizedString("NewAttemptToReceiveSessionData"), idSession) + "</color>\n" + logs.text;
-				GameObjectManager.setGameObjectState(forceLaunchButton, true);
+				forceLaunchButton.SetActive(true);
 			}
 			else
 			{

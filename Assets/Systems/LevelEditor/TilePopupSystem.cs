@@ -95,11 +95,11 @@ public class TilePopupSystem : FSystem
 		if (isContentOnLayer(selectedObjects))
 		{
 			FloorObject floorObject = selectedObjects[0] ?? selectedObjects[1] ?? selectedObjects[2];
-			GameObjectManager.setGameObjectState(selection, true);
+			selection.SetActive(true);
 			selection.transform.localPosition = new Vector3(-UtilityEditor.gridMaxSize/2 + floorObject.col + 0.5f, UtilityEditor.gridMaxSize / 2 - floorObject.line + 0.5f);
 		}
 		else
-			GameObjectManager.setGameObjectState(selection, false);
+			selection.SetActive(false);
 	}
 
 	private bool isContentOnLayer(FloorObject[] floorObjects)
@@ -214,14 +214,14 @@ public class TilePopupSystem : FSystem
 			popup.transform.SetParent(null);
 			UnityEngine.Object.Destroy(popup);
 		}
-		GameObjectManager.setGameObjectState(selection, false);
+		selection.SetActive(false);
 	}
 
 	// See trash gameObject
 	public void removeTileSettings(GameObject settings)
     {
 		if (settings.transform.parent.childCount == 1)
-			GameObjectManager.setGameObjectState(selection, false);
+			selection.SetActive(false);
 		EditorGridSystem.instance.removeTile(settings.GetComponent<Popup>().floorObject);
 		GameObjectManager.unbind(settings);
 		settings.transform.SetParent(null);

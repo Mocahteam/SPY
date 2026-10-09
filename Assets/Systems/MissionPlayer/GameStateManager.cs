@@ -94,7 +94,7 @@ public class GameStateManager : FSystem {
         for (int i = 0; i < f_coins.Count && i < save.rawSave.coinsState.Count ; i++)
         {
             GameObject coin_go = f_coins.getAt(i);
-            GameObjectManager.setGameObjectState(coin_go, save.rawSave.coinsState[i]);
+            coin_go.SetActive(save.rawSave.coinsState[i]);
             coin_go.GetComponent<Renderer>().enabled = save.rawSave.coinsState[i];
             coin_go.GetComponent<Collider>().enabled = save.rawSave.coinsState[i];
         }

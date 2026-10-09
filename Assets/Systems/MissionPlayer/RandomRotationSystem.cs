@@ -35,9 +35,9 @@ public class RandomRotationSystem : FSystem {
     // Use to process your families.
     protected override void onProcess(int familiesUpdateCount) {
         if (currentSettingsValues.values.currentAnimation == 0 && f_rotationGOs.First().transform.parent.gameObject.activeInHierarchy)
-            GameObjectManager.setGameObjectState(f_rotationGOs.First().transform.parent.gameObject, false);
+            f_rotationGOs.First().transform.parent.gameObject.SetActive(false);
         if (currentSettingsValues.values.currentAnimation == 1 && !f_rotationGOs.First().transform.parent.gameObject.activeInHierarchy)
-            GameObjectManager.setGameObjectState(f_rotationGOs.First().transform.parent.gameObject, true);
+            f_rotationGOs.First().transform.parent.gameObject.SetActive(true);
 
         if (f_rotationGOs.First().transform.parent.gameObject.activeInHierarchy)
         {

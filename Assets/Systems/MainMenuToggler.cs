@@ -16,7 +16,7 @@ public class MainMenuToggler : FSystem
     protected override void onStart()
     {
         if (menuCanvas != null)
-            GameObjectManager.setGameObjectState(menuCanvas, false);
+            menuCanvas.SetActive(false);
         Pause = true;
     }
 

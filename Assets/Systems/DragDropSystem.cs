@@ -305,7 +305,7 @@ public class DragDropSystem : FSystem
 			if (raycastEnabled && Math.Abs(itemPosInDropZone.x) < rectTrigger.rect.width / 2 && Math.Abs(itemPosInDropZone.y) < rectTrigger.rect.height / 2)
 				checkHighlightDropArea(dropZone);
 			else
-				GameObjectManager.setGameObjectState(dropZone.transform.Find("PositionBar").gameObject, false);
+				dropZone.transform.Find("PositionBar").gameObject.SetActive(false);
 		}
 		// check if we overlap replacement slot
 		foreach (GameObject replacementSlot in f_replacementSlot)
@@ -336,7 +336,7 @@ public class DragDropSystem : FSystem
         {
 			if (dropArea.GetComponent<DropZone>())
 			{
-				GameObjectManager.setGameObjectState(dropArea, value);
+				dropArea.SetActive(value);
 				// Etre sûr que les barres des dropzone sont invisibles sauf dans le cas où on fait une insertion au clavier
 				if (insertRef == null)
 					dropArea.transform.GetChild(0).gameObject.SetActive(false);
@@ -364,7 +364,7 @@ public class DragDropSystem : FSystem
 		if (itemDragged != null) {
 			// First case => the dropArea is a drop zone, we enable child bar of the drop zone
 			if (dropArea.GetComponent<DropZone>())
-				GameObjectManager.setGameObjectState(dropArea.transform.GetChild(0).gameObject, true);
+				dropArea.transform.GetChild(0).gameObject.SetActive(true);
 			else
 			{ // Second case => the drop area is a replacement slot (base element and condition element)
 				ReplacementSlot repSlot = dropArea.GetComponent<ReplacementSlot>();

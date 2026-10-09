@@ -93,7 +93,7 @@ public class TitleScreenSystem : FSystem {
 			updatePlayerProfile();
 
 			// gestion du bouton continue
-			GameObjectManager.setGameObjectState(continueButton.gameObject, gameData.scenarios.ContainsKey(userData.currentScenario) && userData.levelToContinue != -1 && userData.levelToContinue < gameData.scenarios[userData.currentScenario].levels.Count);
+			continueButton.gameObject.SetActive(gameData.scenarios.ContainsKey(userData.currentScenario) && userData.levelToContinue != -1 && userData.levelToContinue < gameData.scenarios[userData.currentScenario].levels.Count);
 
 			if (gameData.selectedScenario == UtilityLobby.testFromScenarioEditor) // reload scenario editor
 			{
@@ -123,7 +123,7 @@ public class TitleScreenSystem : FSystem {
 
 			if (Application.platform == RuntimePlatform.WebGLPlayer) {
 				ShowHtmlLoadMissions();
-				GameObjectManager.setGameObjectState(quitButton, false);
+				quitButton.SetActive(false);
 			}
         }
 
@@ -182,7 +182,7 @@ public class TitleScreenSystem : FSystem {
 		{
 			Transform avatar = profilPanel.Find("Scroll View/Viewport/Content").GetChild(avatarId);
 			avatar.GetComponent<Toggle>().interactable = true;
-			GameObjectManager.setGameObjectState(avatar.Find("Locked").gameObject, false);
+			avatar.Find("Locked").gameObject.SetActive(false);
 		}
 	}
 
@@ -221,9 +221,9 @@ public class TitleScreenSystem : FSystem {
 		removeAllOldTiles();
 
 		Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu");
-		GameObjectManager.setGameObjectState(backButton.gameObject, true);
-		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios").gameObject, false);
-		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/Title").gameObject, false);
+		backButton.gameObject.SetActive(true);
+		gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios").gameObject.SetActive(false);
+		gameSelector.transform.Find("Header/Title").gameObject.SetActive(false);
 		Selectable detailstitle = gameDetails.Find("Title").GetComponentInChildren<Selectable>(true);
 
 		//create scenarios' button
@@ -327,12 +327,12 @@ public class TitleScreenSystem : FSystem {
 		// delete all old tiles
 		removeAllOldTiles();
 
-		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu").gameObject, false);
+		gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu").gameObject.SetActive(false);
 		Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios");
-		GameObjectManager.setGameObjectState(backButton.gameObject, true);
+		backButton.gameObject.SetActive(true);
 		Transform headerTitle = gameSelector.transform.Find("Header/Title");
 		Selectable detailstitle = gameDetails.Find("Title").GetComponentInChildren<Selectable>(true);
-		GameObjectManager.setGameObjectState(headerTitle.gameObject, true);
+		headerTitle.gameObject.SetActive(true);
 
 		// set scenario name as Title
 		headerTitle.GetComponent<TMP_Text>().text = Utility.extractLocale(gameData.scenarios[scenarioKey].name);
@@ -452,24 +452,24 @@ public class TitleScreenSystem : FSystem {
 		{
 			detailsTitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].name);
             descDetails.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].description);
-			GameObjectManager.setGameObjectState(miniView.gameObject, false);
-            GameObjectManager.setGameObjectState(gameDescription, true);
+			miniView.gameObject.SetActive(false);
+            gameDescription.SetActive(true);
         }
 		// If the keys refer a scenario and a mission => show mission data
 		else if (keys.scenarioKey != "" && keys.missionNumber != -1 && gameData.scenarios.ContainsKey(keys.scenarioKey) && gameData.scenarios[keys.scenarioKey].levels.Count > keys.missionNumber)
         {
 			detailsTitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].missionName);
             descDetails.text = "";
-			GameObjectManager.setGameObjectState(miniView.gameObject, true);
-            GameObjectManager.setGameObjectState(gameDescription, true);
+			miniView.gameObject.SetActive(true);
+            gameDescription.SetActive(true);
             // try to load mini view
             MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].filePath.Replace(".xml", currentSettingsValues.values.currentLanguage == 1 ? "_en.png" : ".png"), miniView));
 		}
 		// Else locked mission
         else
 		{
-			GameObjectManager.setGameObjectState(gameDescription, false);
-			GameObjectManager.setGameObjectState(miniView.gameObject, false);
+			gameDescription.SetActive(false);
+			miniView.gameObject.SetActive(false);
 		}
 
 		// Show skills

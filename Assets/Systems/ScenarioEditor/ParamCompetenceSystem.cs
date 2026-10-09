@@ -232,8 +232,8 @@ public class ParamCompetenceSystem : FSystem
 			// get name filter
 			string namefilter = levelFilterByName.text.ToLower();
 			// hide competencies panel
-			GameObjectManager.setGameObjectState(competenciesPanel, false);
-			GameObjectManager.setGameObjectState(compatibleLevelsPanel, true);
+			competenciesPanel.SetActive(false);
+			compatibleLevelsPanel.SetActive(true);
 			// remove all old buttons
 			for (int i = contentListOfCompatibleLevel.transform.childCount - 1; i >=0; i--)
 			{
@@ -299,7 +299,7 @@ public class ParamCompetenceSystem : FSystem
 		}
 
 		selectedScenarioGO = null;
-		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("SafeArea/LoadingPanel").gameObject, true);
+		mainCanvas.transform.Find("SafeArea/LoadingPanel").gameObject.SetActive(true);
 		// remove all old scenario
 		for (int i = loadingScenarioContent.transform.childCount - 1; i >= 0; i--)
 		{
@@ -418,7 +418,7 @@ public class ParamCompetenceSystem : FSystem
 			contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text = path;
 			// erase previous miniView
 			Image miniView = contentInfoCompatibleLevel.transform.Find("LevelMiniView").GetComponent<Image>();
-			GameObjectManager.setGameObjectState(miniView.gameObject, false);
+			miniView.gameObject.SetActive(false);
 			// Display miniView
 			string imgPath = new Uri(mainPath + "/" + path.Replace(".xml", currentSettingsValues.values.currentLanguage == 1 ? "_en.png" : ".png")).AbsoluteUri;
 
@@ -514,7 +514,7 @@ public class ParamCompetenceSystem : FSystem
 					invalidChars += someChar+" ";
 			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("NameInvalid"), invalidChars), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			// Be sure saving windows is enabled
-			GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
+			scenarioName.transform.parent.parent.gameObject.SetActive(true);
 		}
 		else
 		{
@@ -527,7 +527,7 @@ public class ParamCompetenceSystem : FSystem
 				localCallback += delegate { saveToFile(scenarioName); };
 				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileNameAlreadyExists"), scenarioName.text), OkButton = Utility.GetLocalizedString("Yes"), CancelButton = Utility.GetLocalizedString("No"), call = localCallback });
 				// Be sure saving windows is enabled
-				GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
+				scenarioName.transform.parent.parent.gameObject.SetActive(true);
 			}
 			else
 				saveToFile(scenarioName);
@@ -610,7 +610,7 @@ public class ParamCompetenceSystem : FSystem
 		}
 
 		// Be sure saving windows is disabled
-		GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, false);
+		scenarioName.transform.parent.parent.gameObject.SetActive(false);
 
 		mainCanvas.GetComponent<CanvasGroup>().interactable = true;
 	}
@@ -618,15 +618,15 @@ public class ParamCompetenceSystem : FSystem
 	// See ButtonSaveScenario
 	public void displaySavingPanel(TMP_InputField scenarName)
 	{
-		GameObjectManager.setGameObjectState(savingPanel, true);
+		savingPanel.SetActive(true);
 		savingPanel.GetComponentInChildren<TMP_InputField>(true).text = Utility.extractLocale(scenarName.text);
 	}
 
     // See pen in hookedMission prefab
     public void showBriefingOverride()
 	{ 
-        GameObjectManager.setGameObjectState(compatibleLevelsPanel, false);
-		GameObjectManager.setGameObjectState(editBriefingPanel, true);
+        compatibleLevelsPanel.SetActive(false);
+		editBriefingPanel.SetActive(true);
     }
 
 	//Used on scenario editing window (see button ButtonTestLevel)

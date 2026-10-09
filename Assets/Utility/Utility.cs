@@ -153,7 +153,7 @@ public static class Utility
 				width = height * tex2D.width / tex2D.height;
 			}
 
-			GameObjectManager.setGameObjectState(target.gameObject, true);
+			target.gameObject.SetActive(true);
 			target.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
 			// On ajoute un LayoutElement que s'il n'y en a pas, sinon on laisse la config telle qu'elle a été configurée dans l'éditeur
 			LayoutElement layout = target.GetComponent<LayoutElement>();
@@ -162,7 +162,7 @@ public static class Utility
 			target.preserveAspect = true;
 		}
 		else
-			GameObjectManager.setGameObjectState(target.gameObject, false);
+			target.gameObject.SetActive(false);
 	}
 
 	public static string GetLocalizedString(string key)

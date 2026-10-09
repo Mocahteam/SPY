@@ -25,7 +25,6 @@ public class CurrentActionManager : FSystem
 	private Family f_redDetector = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
 	private Family f_activableConsole = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)));
 	private Family f_exit = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
-    private Family f_inventory = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_SELF)); // les éléments disponibles dans l'inventaire
 
     private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 
@@ -35,6 +34,8 @@ public class CurrentActionManager : FSystem
 	private Coroutine delayCheckEnd_cor;
 
     public Transform editableContainers;
+
+	public GameObject actionAvailable;
 
 	public static CurrentActionManager instance;
 
@@ -128,8 +129,8 @@ public class CurrentActionManager : FSystem
 					GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Win });
 				else
 				{
-					// on vérifie s'il reste des blocks dans l'inventaire des joueurs, si oui on redonne la main au joueur pour qu'il continue à programmer, si non on déclenche une fin de type "NoMoreActionAvailableInInventory"
-					if (f_inventory.Count > 0)
+					// on vérifie s'il reste des blocks d'action dans l'inventaire des joueurs, si oui on redonne la main au joueur pour qu'il continue à programmer, si non on déclenche une fin de type "NoMoreActionAvailableInInventory"
+					if (actionAvailable.activeSelf)
 					{
 						// Redonner la main au joueur pour continuer à programmer
 						GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
@@ -494,7 +495,7 @@ public class CurrentActionManager : FSystem
 		}
 		// notification de l'évaluation 
 		GameObject notif = ele.target.transform.Find(result ? "true" : "false").gameObject;
-		GameObjectManager.setGameObjectState(notif, true);
+		notif.SetActive(true);
 		MainLoop.instance.StartCoroutine(UtilityGame.pulseItem(notif));
 		return result;
 
@@ -505,7 +506,7 @@ public class CurrentActionManager : FSystem
 	{
 		// hide all conditions notifications
 		foreach (GameObject notif in f_conditionNotifs)
-			GameObjectManager.setGameObjectState(notif, false);
+			notif.SetActive(false);
 
 		GameObject nextAction;
 		foreach(GameObject currentActionGO in f_currentActions){

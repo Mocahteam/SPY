@@ -18,7 +18,7 @@ public class FadeSystem : FSystem {
     protected override void onStart()
     {
         logo = fade.transform.Find("SPYLogo").GetComponent<Image>();
-        GameObjectManager.setGameObjectState(fade, true);
+        fade.SetActive(true);
         logo.color = new Color(logo.color.r, logo.color.g, logo.color.b, 1);
         MainLoop.instance.StartCoroutine(fadeOut());
 
@@ -43,13 +43,13 @@ public class FadeSystem : FSystem {
         GameObjectManager.addComponent<FadeOutEnd>(fade);
         yield return null;
         yield return null;
-        GameObjectManager.setGameObjectState(fade, false);
+        fade.SetActive(false);
     }
 
     private IEnumerator fadeIn(string sceneName)
     {
         logo.color = new Color(logo.color.r, logo.color.g, logo.color.b, 1);
-        GameObjectManager.setGameObjectState(fade, true);
+        fade.SetActive(true);
         // Freeze all canvas groups
         foreach (GameObject canvas in f_canvasGroups)
             canvas.GetComponent<CanvasGroup>().interactable = false;

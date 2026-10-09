@@ -286,7 +286,7 @@ public class EditableContainerSystem : FSystem
 			if (!gameData.dragDropEnabled && !isEditorContext)
 				foreach (ReplacementSlot slot in cloneContainer.GetComponentsInChildren<ReplacementSlot>(true))
 					if (slot.slotType != ReplacementSlot.SlotType.BaseCondition)
-						GameObjectManager.setGameObjectState(slot.gameObject, false);
+						slot.gameObject.SetActive(false);
 
 			return name;
 		}
@@ -387,10 +387,10 @@ public class EditableContainerSystem : FSystem
 		if (name.transform.parent.Find("ButtonEditName").GetComponent<Button>().IsInteractable())
 		{
             // On désactive le nom statique du robot et on active le champ de saisie
-            GameObjectManager.setGameObjectState(name.transform.parent.gameObject, false);
+            name.transform.parent.gameObject.SetActive(false);
             TMP_InputField input = name.transform.parent.parent.Find("RobotName_edit").GetComponent<TMP_InputField>();
-			GameObjectManager.setGameObjectState(input.gameObject, true);
-            MainLoop.instance.StartCoroutine(Utility.delayGOSelection(input.gameObject));
+			input.gameObject.SetActive(true);
+            EventSystem.current.SetSelectedGameObject(input.gameObject);
 			containerSelected = name.GetComponentInParent<UIRootContainer>();
 		}
     }
@@ -446,8 +446,9 @@ public class EditableContainerSystem : FSystem
 			MainLoop.instance.StartCoroutine(tcheckLinkName());
 
 		// on désactive le champ de saisie et on active le nom statique du robot
-		GameObjectManager.setGameObjectState(input.gameObject, false);
-        GameObjectManager.setGameObjectState(name.transform.parent.gameObject, true);
+		input.gameObject.SetActive(false);
+        name.transform.parent.gameObject.SetActive(true);
+		// On laisse le UINavigation faire sa sélection par défaut avant de surcharegr la sélection ici
         MainLoop.instance.StartCoroutine(Utility.delayGOSelection(name.transform.parent.Find("ButtonEditName").gameObject));
     }
 

@@ -81,9 +81,9 @@ public class UISystem : FSystem {
 		setExecutionView(false);
 
 		// Hide library panel
-		GameObjectManager.setGameObjectState(libraryPanel.transform.parent.parent.parent.gameObject, !state);
+		libraryPanel.transform.parent.parent.parent.gameObject.SetActive(!state);
 		// Hide menu panel
-		GameObjectManager.setGameObjectState(buttonExecute.transform.parent.gameObject, !state);
+		buttonExecute.transform.parent.gameObject.SetActive(!state);
 	}
 
 	private bool isTouch()
@@ -135,32 +135,32 @@ public class UISystem : FSystem {
 	// On affiche ou non la partie librairie/programmation sequence en fonction de la valeur reçue
 	public void setExecutionView(bool value){
 		// Toggle library and editable panel
-		GameObjectManager.setGameObjectState(canvas.transform.Find("SafeArea/LeftPanel").gameObject, !value);
+		canvas.transform.Find("SafeArea/LeftPanel").gameObject.SetActive(!value);
 		// Show sentinel panels and toggle player panels
 		foreach (GameObject agent in f_agents)
 			if (agent.GetComponent<DetectRange>())
 				// always enable drone execution panel
-				GameObjectManager.setGameObjectState(agent.GetComponent<ScriptRef>().executablePanel, true);
+				agent.GetComponent<ScriptRef>().executablePanel.SetActive(true);
 			else
 			{
 				// toggle player execution panel
-				GameObjectManager.setGameObjectState(agent.GetComponent<ScriptRef>().executablePanel, value);
+				agent.GetComponent<ScriptRef>().executablePanel.SetActive(value);
 				if (!value)
 					freePlayerExecutablePanels();
 			}
 		// Define Menu button states
-		GameObjectManager.setGameObjectState(buttonExecute, !value);
+		buttonExecute.SetActive(!value);
 		if (!gameData.userExecutor)
 		{
-			GameObjectManager.setGameObjectState(buttonPause, value);
+			buttonPause.SetActive(value);
 			EventSystem.current.SetSelectedGameObject(value ? buttonPause : buttonExecute);
-			GameObjectManager.setGameObjectState(buttonNextStep, false);
-			GameObjectManager.setGameObjectState(buttonContinue, false);
-			GameObjectManager.setGameObjectState(buttonSpeed, value);
+			buttonNextStep.SetActive(false);
+			buttonContinue.SetActive(false);
+			buttonSpeed.SetActive(value);
 		}
         else
             EventSystem.current.SetSelectedGameObject(value ? buttonStop : buttonExecute);
-        GameObjectManager.setGameObjectState(buttonStop, value);
+        buttonStop.SetActive(value);
 		if (gameData.actionsHistory != null)
 			foreach (GameObject trash in f_removeButton)
 				trash.GetComponent<Button>().interactable = false;
@@ -290,7 +290,7 @@ public class UISystem : FSystem {
 		// On harmonise l'affichage de l'UI container des agents
 		foreach (GameObject go in f_agents){
 			if(go.CompareTag("Player")){				
-				GameObjectManager.setGameObjectState(go.GetComponent<ScriptRef>().executablePanel, true);				
+				go.GetComponent<ScriptRef>().executablePanel.SetActive(true);				
 			}
 		}
 	}

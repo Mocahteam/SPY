@@ -90,10 +90,12 @@ public class UINavigationManager : FSystem
 			lastSelected = null;
 			return;
         }
+		
+		if (eventSystem.alreadySelecting)
+            return;
 
-
-		// Récupérer la valeur Vector2 de Navigate
-		Vector2 navigateValue = navigateAction.ReadValue<Vector2>();
+        // Récupérer la valeur Vector2 de Navigate
+        Vector2 navigateValue = navigateAction.ReadValue<Vector2>();
 
         // Get the currently selected UI element from the event system.
         GameObject selected = eventSystem.currentSelectedGameObject;

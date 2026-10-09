@@ -82,7 +82,7 @@ public class DialogSystem : FSystem
 		{
 			gameData = go.GetComponent<GameData>();
 			// Always disable bottom button, it will be enabled at the end of the dialogs (see Ok button)
-			GameObjectManager.setGameObjectState(showDialogsBottom.transform.parent.gameObject, false);
+			showDialogsBottom.transform.parent.gameObject.SetActive(false);
 			// Count number of briefing and debriefing dialogs
 			List<Dialog> tmpList = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].overridedDialogs;
 			if (tmpList != null) {
@@ -111,14 +111,14 @@ public class DialogSystem : FSystem
         }
 
 		f_playingMode.addEntryCallback(delegate {
-			GameObjectManager.setGameObjectState(showDialogsBottom.transform.parent.gameObject, false);
+			showDialogsBottom.transform.parent.gameObject.SetActive(false);
             if (dialogPanel.activeInHierarchy)
                 closeDialogPanel();
         });
 
 		f_editingMode.addEntryCallback(delegate {
 			if (overridedBriefingDialogs.Count > 0)
-				GameObjectManager.setGameObjectState(showDialogsBottom.transform.parent.gameObject, true);
+				showDialogsBottom.transform.parent.gameObject.SetActive(true);
 		});
 
 		f_ends.addEntryCallback(delegate
@@ -130,7 +130,7 @@ public class DialogSystem : FSystem
 				showDialogPanel();
 		});
 
-		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
+		dialogPanel.transform.parent.gameObject.SetActive(false);
 	}
 
 	// Use to process your families.
@@ -151,8 +151,7 @@ public class DialogSystem : FSystem
 	// Affiche le panneau de dialogue
 	public void showDialogPanel()
 	{
-		Debug.Log("showDialogPanel");
-        GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
+        dialogPanel.transform.parent.gameObject.SetActive(true);
 		nBriefingDialog = f_ends.Count == 0 ? 0 : nBriefingDialog;
 		nDebriefingWinDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? 0 : nDebriefingWinDialog;
 		nDebriefingDefeatDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? 0 : nDebriefingDefeatDialog;
@@ -234,13 +233,13 @@ public class DialogSystem : FSystem
 		GameObject textGO = dialogPanel.transform.Find("Scroll View/Viewport/Content/Text").gameObject;
 		if (dialog.text != null)
 		{
-			GameObjectManager.setGameObjectState(textGO, true);
+			textGO.SetActive(true);
 			string localeDependent = Utility.extractLocale(dialog.text);
 			textGO.GetComponent<TextMeshProUGUI>().text = localeDependent;
 			dialogReturn = localeDependent;
 		}
 		else
-			GameObjectManager.setGameObjectState(textGO, false);
+			textGO.SetActive(false);
 
 		// set image
 		GameObject imageGO = dialogPanel.transform.Find("Scroll View/Viewport/Content/Image").gameObject;
@@ -248,7 +247,7 @@ public class DialogSystem : FSystem
             MainLoop.instance.StopCoroutine(loadingImg);
         if (dialog.img != null)
 		{
-            GameObjectManager.setGameObjectState(imageGO, true);
+            imageGO.SetActive(true);
 			string localeDependent = Utility.extractLocale(dialog.img);
 			if (localeDependent.ToLower().StartsWith("http"))
 				loadingImg = MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), localeDependent, dialog));
@@ -264,7 +263,7 @@ public class DialogSystem : FSystem
 			dialogReturn += (dialogReturn != "" ? "\n" : "") + localeDependent;
 		}
 		else
-			GameObjectManager.setGameObjectState(imageGO, false);
+			imageGO.SetActive(false);
 		// set imgDesc
 		if (dialog.imgDesc != null)
 		{
@@ -346,23 +345,23 @@ public class DialogSystem : FSystem
 				}
 
                 // Que l'on soit en WebGL ou pas, on active le GO du videoPlayer pour s'en servir afin d'occuper la place dans le content du scrollview
-                GameObjectManager.setGameObjectState(videoPlayer.gameObject, true);
+                videoPlayer.gameObject.SetActive(true);
                 dialogReturn += (dialogReturn != "" ? "\n" : "") + path;
             }
 			else
-				GameObjectManager.setGameObjectState(videoPlayer.gameObject, false);
+				videoPlayer.gameObject.SetActive(false);
 		}
 		else
-			GameObjectManager.setGameObjectState(videoPlayer.gameObject, false);
+			videoPlayer.gameObject.SetActive(false);
 
 		// show highlighted GameObjects
 		if (dialog.highlight != null)
         {
             foreach (string goName in dialog.highlight.Split("##"))
             {
-				Debug.Log("highlight " + goName);
                 GameObject go = GameObject.Find(goName);
-				if (go != null)
+                Debug.Log("highlight :" + goName + "_"+go+"_");
+                if (go != null)
 				{
                     GameObject glow = GameObject.Instantiate(highlightGOPrefab, go.transform);
                     glow.transform.localPosition = Vector3.zero;
@@ -418,7 +417,7 @@ public class DialogSystem : FSystem
 	public void setActiveOKButton(bool active)
 	{
 		GameObject okButton = dialogPanel.transform.Find("Buttons/OKButton").gameObject;
-		GameObjectManager.setGameObjectState(okButton, active);
+		okButton.SetActive(active);
 		if (active)
 		{
 			EventSystem.current.SetSelectedGameObject(okButton);
@@ -428,7 +427,6 @@ public class DialogSystem : FSystem
 			nav.selectOnRight = okButton.GetComponent<Button>();
 			prevButton.GetComponent<Button>().navigation = nav;
 		}
-
 	}
 
 
@@ -436,7 +434,7 @@ public class DialogSystem : FSystem
 	public void setActiveNextButton(bool active)
 	{
 		GameObject nextButton = dialogPanel.transform.Find("Buttons/NextButton").gameObject;
-		GameObjectManager.setGameObjectState(nextButton, active);
+		nextButton.SetActive(active);
 		if (active)
 		{
 			EventSystem.current.SetSelectedGameObject(nextButton);
@@ -465,7 +463,7 @@ public class DialogSystem : FSystem
 	{
 		clearHighlightedUI();
 
-        GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
+        dialogPanel.transform.parent.gameObject.SetActive(false);
 		nBriefingDialog = f_ends.Count == 0 ? overridedBriefingDialogs.Count : 0;
 		nDebriefingWinDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs.Count : 0;
 		nDebriefingDefeatDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? overridedDebriefingDefeatDialogs.Count : 0;
@@ -527,7 +525,7 @@ public class DialogSystem : FSystem
         layout.preferredWidth = 130;
 
         // activer l'animation de chargement (spinner) pour l'image
-        GameObjectManager.setGameObjectState(img.transform.GetChild(0).gameObject, true);
+        img.transform.GetChild(0).gameObject.SetActive(true);
         UnityWebRequest www;
 		// On passe par notre proxy pour charger une image commençant par http sauf si elle est chez nous (spy.lip6.fr)
         if (path.ToLower().StartsWith("http") && !path.ToLower().StartsWith("https://spy.lip6.fr"))
@@ -553,7 +551,7 @@ public class DialogSystem : FSystem
                 tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
 			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
             // désactiver l'animation de chargement (spinner) pour l'image
-            GameObjectManager.setGameObjectState(img.transform.GetChild(0).gameObject, false);
+            img.transform.GetChild(0).gameObject.SetActive(false);
             yield return forceScrollBarUp();
         }
 	}

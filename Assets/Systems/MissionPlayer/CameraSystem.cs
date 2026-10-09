@@ -463,7 +463,7 @@ public class CameraSystem : FSystem {
 		targetAgent = agent.transform;
 		lastAgentFocused = targetAgent;
 		GameObjectManager.setGameObjectParent(mainCamera.transform.parent.parent.gameObject, agent, true);
-		GameObjectManager.setGameObjectState(targetAgent.Find("HaloSelection").gameObject, true);
+		targetAgent.Find("HaloSelection").gameObject.SetActive(true);
 		MainLoop.instance.StartCoroutine(travelingOnAgent());
 
 		if (log)
@@ -522,7 +522,7 @@ public class CameraSystem : FSystem {
 		if (targetAgent != null)
         {
 			GameObjectManager.setGameObjectParent(mainCamera.transform.parent.parent.gameObject, targetAgent.parent.gameObject, true);
-			GameObjectManager.setGameObjectState(targetAgent.Find("HaloSelection").gameObject, false);
+			targetAgent.Find("HaloSelection").gameObject.SetActive(false);
 			targetAgent = null;
 		}
     }

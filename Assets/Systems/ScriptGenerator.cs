@@ -68,7 +68,7 @@ public class ScriptGenerator : FSystem {
 					// bind all child (except the first "header")
 					for (int i = 1; i < scriptRef.executableScript.transform.childCount; i++)
 						GameObjectManager.bind(scriptRef.executableScript.transform.GetChild(i).gameObject);
-					GameObjectManager.setGameObjectState(scriptRef.executablePanel, true);
+					scriptRef.executablePanel.SetActive(true);
 					GameObject.Destroy(tmpContainer);
 					droneFound = true;
 				}

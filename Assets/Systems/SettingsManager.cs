@@ -45,7 +45,7 @@ public class SettingsManager : FSystem
 	private Family f_conditionNotif = FamilyManager.getFamily(new AnyOfComponents(typeof(Image)), new AnyOfTags("ConditionNotif"));
 	private Family f_canvasScaler = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasScaler)));
 	private Family f_avatarTarget = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_AvatarTarget"));
-	private Family f_animationsUI = FamilyManager.getFamily(new AllOfComponents(typeof(Animation), typeof(CanvasGroup)));
+	private Family f_animations = FamilyManager.getFamily(new AllOfComponents(typeof(Animation)));
 
 
 	public static SettingsManager instance;
@@ -83,11 +83,11 @@ public class SettingsManager : FSystem
 
 	protected override void onStart()
 	{
-		GameObject go = GameObject.Find("GameData");
-		if (go != null)
+		GameObject gd = GameObject.Find("GameData");
+		if (gd != null)
 		{
-			gameData = go.GetComponent<GameData>();
-			userData = go.GetComponent<UserData>();
+			gameData = gd.GetComponent<GameData>();
+			userData = gd.GetComponent<UserData>();
 
 			settingsContent = settingsWindow.Find("BackgroundPanel/Scroll View/Viewport/Content");
 			flexibleColorPicker = settingsWindow.GetComponentInChildren<FlexibleColorPicker>(true);
@@ -144,8 +144,11 @@ public class SettingsManager : FSystem
 			f_conditionNotif.addEntryCallback(delegate (GameObject go) { syncConditionNotif(go); });
 
 			f_settingsOpened.addEntryCallback(delegate (GameObject unused) { syncSettingsUI(); });
-			
-			MainLoop.instance.StartCoroutine(waitLocalizationLoaded());
+
+            f_animations.addEntryCallback(delegate (GameObject go) { applyAnimation(go); });
+
+
+            MainLoop.instance.StartCoroutine(waitLocalizationLoaded());
 
             presetSettings = JArray.Parse(Resources.Load<TextAsset>("AccessPresets").text);
         }
@@ -935,16 +938,28 @@ public class SettingsManager : FSystem
 	}
 
 	public void setAnimation(int value)
+    {
+        cs.values.currentAnimation = value;
+        // (Dés)Activer les animations des panneaux UI
+        foreach (GameObject go in f_animations)
+			applyAnimation(go);
+	}
+
+	private void applyAnimation(GameObject go)
 	{
-		// (Dés)Activer les animations des panneaux UI
-		foreach (GameObject go in f_animationsUI)
-		{
-			go.GetComponent<Animation>().enabled = value == 1;
-			// si on désactive les animations, s'assurer que l'alpha des CanvasGroup est bien visible
-			if (value == 0)
-				go.GetComponent<CanvasGroup>().alpha = 1;
-		}
-		cs.values.currentAnimation = value;
+		// s'assurer qu'on est bien sur une animation d'UI
+		if (go.GetComponentInParent<Canvas>(true) != null)
+        {
+			Animation anim = go.GetComponent<Animation>();
+			if (cs.values.currentAnimation == 1 && !anim.isPlaying)
+                anim.Play();
+			if (cs.values.currentAnimation == 0 && anim.isPlaying)
+                anim.Stop();
+            anim.enabled = cs.values.currentAnimation == 1;
+            // si on désactive les animations, s'assurer que l'alpha des CanvasGroup est bien visible
+            if (go.GetComponent<CanvasGroup>() && cs.values.currentAnimation == 0)
+                go.GetComponent<CanvasGroup>().alpha = 1;
+        }
 	}
 
 	public void setTooltipView(int value)

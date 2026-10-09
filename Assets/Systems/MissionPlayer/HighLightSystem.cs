@@ -38,7 +38,7 @@ public class HighLightSystem : FSystem {
 		if(highLightedItem && click.WasPressedThisFrame() && highLightedItem.GetComponent<ScriptRef>() && dialogPanel.activeInHierarchy == false)
 		{
 			GameObject go = highLightedItem.GetComponent<ScriptRef>().executablePanel;
-			GameObjectManager.setGameObjectState(go,!go.activeInHierarchy);
+			go.SetActive(!go.activeInHierarchy);
 			dialogPanel.GetComponentInParent<AudioSource>().PlayOneShot(activationSound);
 		}
 	}

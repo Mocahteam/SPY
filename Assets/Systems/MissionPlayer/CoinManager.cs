@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using FYFY;
 using System.Collections;
+using System.Collections.Generic;
 using FYFY_plugins.TriggerManager;
 
 /// <summary>
@@ -14,8 +15,9 @@ public class CoinManager : FSystem {
 
 	private GameData gameData;
     private bool activeCoin;
+	private List<Coroutine> destroyCoroutines = new List<Coroutine>();
 
-	protected override void onStart()
+    protected override void onStart()
     {
 		activeCoin = false;
 		GameObject go = GameObject.Find("GameData");
@@ -38,16 +40,26 @@ public class CoinManager : FSystem {
                     gameData.totalCoin++;
                     target.GetComponent<AudioSource>().Play();
 					target.GetComponent<Collider>().enabled = false;
-                    MainLoop.instance.StartCoroutine(coinDestroy(target));					
+                    destroyCoroutines.Add(MainLoop.instance.StartCoroutine(coinDestroy(target)));					
 				}
 			}			
 		}
     }
 
-	private IEnumerator coinDestroy(GameObject go){
+	public void cancelAllDestroyCoroutines()
+    {
+        foreach (Coroutine coroutine in destroyCoroutines)
+        {
+			if (coroutine != null)
+                MainLoop.instance.StopCoroutine(coroutine);
+        }
+        destroyCoroutines.Clear();
+    }
+
+    private IEnumerator coinDestroy(GameObject go){
 		go.GetComponent<ParticleSystem>().Play();
 		go.GetComponent<Renderer>().enabled = false;
 		yield return new WaitForSeconds(1f); // let time for animation
-		GameObjectManager.setGameObjectState(go, false); // then disabling GameObject
+		go.SetActive(false); // then disabling GameObject
 	}
 }

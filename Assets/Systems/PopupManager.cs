@@ -3,6 +3,7 @@ using FYFY;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Manage popup windows to display messages to the user
@@ -49,7 +50,7 @@ public class PopupManager : FSystem {
 		MessageForUser mfu = go.GetComponent<MessageForUser>();
 		messageForUser.text = mfu.message;
 
-		GameObjectManager.setGameObjectState(buttonsTransform.GetChild(0).gameObject, mfu.OkButton != "");
+		buttonsTransform.GetChild(0).gameObject.SetActive(mfu.OkButton != "");
 		buttonsTransform.GetChild(0).GetComponentInChildren<TMP_Text>(true).text = mfu.OkButton;
 		if (mfu.call != null)
 		{
@@ -57,19 +58,19 @@ public class PopupManager : FSystem {
 			buttonsTransform.GetChild(0).GetComponent<Button>().onClick.AddListener(mfu.call);
 		}
 
-		GameObjectManager.setGameObjectState(buttonsTransform.GetChild(1).gameObject, mfu.CancelButton != "");
+		buttonsTransform.GetChild(1).gameObject.SetActive(mfu.CancelButton != "");
 		buttonsTransform.GetChild(1).GetComponentInChildren<TMP_Text>(true).text = mfu.CancelButton;
 
-		GameObjectManager.setGameObjectState(panelInfoUser, true);
+		panelInfoUser.SetActive(true);
         // Force le focus sur la popup. On ne passe pas part le UINavigationManager car dans le cas de la modalité d'insertion d'un bloc dans le DragDropSystem le focus est dans une zone d'édition qui même si elle est disable permet la navigation au clavier, donc s'il n'y a plus de blocs dans l'inventaire le focus reste dans la zone d'édition et ne passe pas dans la popup, donc on le force à la main.
-        MainLoop.instance.StartCoroutine(Utility.delayGOSelection(messageForUser.gameObject, 1));
+		EventSystem.current.SetSelectedGameObject(messageForUser.gameObject);
 
 		// in case of several messages pop in one frame
 		foreach (MessageForUser message in go.GetComponents<MessageForUser>())
 			GameObjectManager.removeComponent(message);
 
-		MainLoop.instance.StartCoroutine(forceScrollBarUp());
-	}
+        panelPopup.GetComponentInChildren<Scrollbar>(true).value = 1f;
+    }
 
 	private void updatePopupSize()
 	{
@@ -96,13 +97,6 @@ public class PopupManager : FSystem {
 
 		// force scroll bar up
 		if (rect.width != oldWidth || rect.height != oldHeight)
-			MainLoop.instance.StartCoroutine(forceScrollBarUp());
-	}
-
-	private IEnumerator forceScrollBarUp()
-	{
-		yield return null;
-		yield return null;
-		panelPopup.GetComponentInChildren<Scrollbar>(true).value = 1f;
+            panelPopup.GetComponentInChildren<Scrollbar>(true).value = 1f;
 	}
 }

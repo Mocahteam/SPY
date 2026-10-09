@@ -148,7 +148,7 @@ public class LevelGenerator : FSystem {
 					if (amount > 0)
 					{
 						GameObject amountGO = buttonExecute.transform.GetChild(0).gameObject;
-						GameObjectManager.setGameObjectState(amountGO, true);
+						amountGO.SetActive(true);
 						amountGO.GetComponentInChildren<TMP_Text>(true).text = "" + amount;
 					}
 					break;

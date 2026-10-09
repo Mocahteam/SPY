@@ -79,7 +79,7 @@ public class SaveFileSystem : FSystem
 	{
 		if (dataLevel.data.missionName != null && dataLevel.data.missionName != "" && dataLevel.data.missionName != UtilityLobby.testFromLevelEditor)
 			saveName.text = Path.GetFileNameWithoutExtension(dataLevel.data.missionName);
-		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
+		saveName.transform.parent.parent.gameObject.SetActive(true);
 	}
 
 	// see ValideMessageButton
@@ -94,7 +94,7 @@ public class SaveFileSystem : FSystem
 					invalidChars += someChar + " ";
 			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("NameInvalid"), invalidChars), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			// Be sure saving windows is enabled
-			GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
+			saveName.transform.parent.parent.gameObject.SetActive(true);
 		}
 		else
 		{
@@ -108,7 +108,7 @@ public class SaveFileSystem : FSystem
 				localCallback += delegate { saveToFile(); };
 				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileNameAlreadyExists"), saveName.text), OkButton = Utility.GetLocalizedString("Yes"), CancelButton = Utility.GetLocalizedString("No"), call = localCallback });
 				// Be sure saving windows is enabled
-				GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
+				saveName.transform.parent.parent.gameObject.SetActive(true);
 			}
 			else
 				saveToFile();
@@ -155,7 +155,7 @@ public class SaveFileSystem : FSystem
 		}
 
 		// Be sure saving windows is disabled
-		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, false);
+		saveName.transform.parent.parent.gameObject.SetActive(false);
 	}
 
 	public string buildLevelContent()
