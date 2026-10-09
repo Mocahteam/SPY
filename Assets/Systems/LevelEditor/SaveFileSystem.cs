@@ -218,8 +218,9 @@ public class SaveFileSystem : FSystem
 				levelExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + HttpUtility.UrlEncode(dialog.sound) + "\" " : "";
 				levelExport += dialog.video != null && dialog.video != "" ? "video=\"" + HttpUtility.UrlEncode(dialog.video) + "\" " : "";
 				levelExport += dialog.videoHeight != -1 ? "videoHeight=\"" + dialog.videoHeight + "\" " : "";
+                levelExport += dialog.highlight != null && dialog.highlight != "" ? "highlight=\"" + dialog.highlight + "\" " : "";
 				levelExport += "enableInteraction=\"" + (dialog.enableInteraction ? "1" : "0") + "\" ";
-				levelExport += "briefingType=\"" + dialog.briefingType + "\" />\n";
+                levelExport += "briefingType=\"" + dialog.briefingType + "\" />\n";
             }
 			levelExport += "\t</dialogs>\n";
 		}

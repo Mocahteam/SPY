@@ -559,8 +559,9 @@ public class ParamCompetenceSystem : FSystem
 					scenarioExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + HttpUtility.UrlEncode(dialog.sound) + "\" " : "";
 					scenarioExport += dialog.video != null && dialog.video != "" ? "video=\"" + HttpUtility.UrlEncode(dialog.video) + "\" " : "";
 					scenarioExport += dialog.videoHeight != -1 ? "videoHeight=\"" + dialog.videoHeight + "\" " : "";
-					scenarioExport += "enableInteraction=\"" + (dialog.enableInteraction ? "1" : "0") + "\" ";
-					scenarioExport += "briefingType=\"" + dialog.briefingType + "\" />\n";
+                    scenarioExport += dialog.highlight != null && dialog.highlight != "" ? "highlight=\"" + dialog.highlight + "\" " : "";
+                    scenarioExport += "enableInteraction=\"" + (dialog.enableInteraction ? "1" : "0") + "\" ";
+                    scenarioExport += "briefingType=\"" + dialog.briefingType + "\" />\n";
 				}
 				scenarioExport += "\t\t</dialogs>\n\t</level>\n";
 			}

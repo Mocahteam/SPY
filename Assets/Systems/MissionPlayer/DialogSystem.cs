@@ -21,12 +21,14 @@ public class DialogSystem : FSystem
 	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 	private Family f_ends = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 	private Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
+	private Family f_highlightedUI = FamilyManager.getFamily(new AllOfComponents(typeof(Highlighted)));
 
-	public GameObject LevelGO;
+    public GameObject LevelGO;
 	private GameData gameData;
 	public GameObject dialogPanel;
 	public GameObject showDialogsMenu;
 	public GameObject showDialogsBottom;
+	public GameObject highlightGOPrefab;
 	private int nBriefingDialog = 0; // the briefing currently view
 	private int nDebriefingWinDialog = 0; // the debriefing (win) currently view
 	private int nDebriefingDefeatDialog = 0; // the debriefing (defeat) currently view
@@ -110,7 +112,9 @@ public class DialogSystem : FSystem
 
 		f_playingMode.addEntryCallback(delegate {
 			GameObjectManager.setGameObjectState(showDialogsBottom.transform.parent.gameObject, false);
-		});
+            if (dialogPanel.activeInHierarchy)
+                closeDialogPanel();
+        });
 
 		f_editingMode.addEntryCallback(delegate {
 			if (overridedBriefingDialogs.Count > 0)
@@ -147,7 +151,8 @@ public class DialogSystem : FSystem
 	// Affiche le panneau de dialogue
 	public void showDialogPanel()
 	{
-		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
+		Debug.Log("showDialogPanel");
+        GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
 		nBriefingDialog = f_ends.Count == 0 ? 0 : nBriefingDialog;
 		nDebriefingWinDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? 0 : nDebriefingWinDialog;
 		nDebriefingDefeatDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? 0 : nDebriefingDefeatDialog;
@@ -207,9 +212,22 @@ public class DialogSystem : FSystem
 		});
 	}
 
-	private string configureDialog(int way)
+	private void clearHighlightedUI()
     {
-		string dialogReturn = "";
+        foreach (GameObject go in f_highlightedUI)
+        {
+            GameObjectManager.unbind(go);
+            go.transform.SetParent(null);
+            GameObject.Destroy(go);
+        }
+    }
+
+    private string configureDialog(int way)
+    {
+		// destruction des éventuels GO précédemment highlighted
+		clearHighlightedUI();
+
+        string dialogReturn = "";
 		// get Dialog
 		Dialog dialog = f_ends.Count == 0 ? overridedBriefingDialogs[nBriefingDialog] : (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs[nDebriefingWinDialog] : overridedDebriefingDefeatDialogs[nDebriefingDefeatDialog]);
 		// set text
@@ -337,6 +355,25 @@ public class DialogSystem : FSystem
 		else
 			GameObjectManager.setGameObjectState(videoPlayer.gameObject, false);
 
+		// show highlighted GameObjects
+		if (dialog.highlight != null)
+        {
+            foreach (string goName in dialog.highlight.Split("##"))
+            {
+				Debug.Log("highlight " + goName);
+                GameObject go = GameObject.Find(goName);
+				if (go != null)
+				{
+                    GameObject glow = GameObject.Instantiate(highlightGOPrefab, go.transform);
+                    glow.transform.localPosition = Vector3.zero;
+                    (glow.transform as RectTransform).offsetMin = Vector2.zero;
+                    (glow.transform as RectTransform).offsetMax = Vector2.zero;
+                    glow.transform.localScale = Vector3.one;
+					GameObjectManager.bind(glow);
+				}
+            }
+        }
+
 		// tag DEBRIEFING if it is the case
 		if (f_ends.Count > 0)
 			dialogReturn += (dialogReturn != "" ? "\nDEBRIEFING" : "");
@@ -426,7 +463,9 @@ public class DialogSystem : FSystem
 	// Désactive le panel de dialogue
 	public void closeDialogPanel()
 	{
-		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
+		clearHighlightedUI();
+
+        GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
 		nBriefingDialog = f_ends.Count == 0 ? overridedBriefingDialogs.Count : 0;
 		nDebriefingWinDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs.Count : 0;
 		nDebriefingDefeatDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? overridedDebriefingDefeatDialogs.Count : 0;

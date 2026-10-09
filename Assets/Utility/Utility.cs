@@ -54,7 +54,9 @@ public static class Utility
 				dialog.video = HttpUtility.UrlDecode(dialogXML.Attributes.GetNamedItem("video").Value); 
 			if (dialogXML.Attributes.GetNamedItem("videoHeight") != null)
 				dialog.videoHeight = float.Parse(dialogXML.Attributes.GetNamedItem("videoHeight").Value);
-			if (dialogXML.Attributes.GetNamedItem("enableInteraction") != null)
+            if (dialogXML.Attributes.GetNamedItem("highlight") != null)
+                dialog.highlight = dialogXML.Attributes.GetNamedItem("highlight").Value;
+            if (dialogXML.Attributes.GetNamedItem("enableInteraction") != null)
 				dialog.enableInteraction = int.Parse(dialogXML.Attributes.GetNamedItem("enableInteraction").Value) == 1;
 			if (dialogXML.Attributes.GetNamedItem("briefingType") != null)
 				dialog.briefingType = int.Parse(dialogXML.Attributes.GetNamedItem("briefingType").Value);

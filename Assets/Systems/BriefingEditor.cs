@@ -99,7 +99,9 @@ public class BriefingEditor : FSystem
 						input.text = dialog.video;
 					else if (input.name == "VideoSize_input" && dialog.videoHeight != -1)
 						input.text = "" + dialog.videoHeight;
-					else
+                    else if (input.name == "HighlightPath_input" && dialog.highlight != null)
+                        input.text = dialog.highlight;
+                    else
 						input.text = "";
 				}
 				newItem.GetComponentInChildren<Toggle>().isOn = dialog.enableInteraction;
@@ -146,7 +148,9 @@ public class BriefingEditor : FSystem
 						dialog.video = input.text.Replace('\"', '\'');
 					else if (input.name == "VideoSize_input" && input.text != "")
 						dialog.videoHeight = float.Parse(input.text);
-				}
+					else if (input.name == "HighlightPath_input" && input.text != "")
+                        dialog.highlight = input.text.Replace('\"', '\'');
+                }
 				dialog.enableInteraction = child.GetComponentInChildren<Toggle>().isOn;
 				dialog.briefingType = child.GetComponentInChildren<TMP_Dropdown>().value;
 				overridedBriefing.data.overridedDialogs.Add(dialog);
