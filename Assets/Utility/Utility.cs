@@ -100,14 +100,10 @@ public static class Utility
 	{
 		for (int i = 0; i < nbYield; i++)
 			yield return null;
-		// go peut être null notemment dans le titleScreen lorsqu'on revient d'une mission, on passe l'affichage des scénario puis immediatement les missions et là une coroutine lancée dans l'affichage des scénarios peut trainer
-		if (go != null)
-		{
-			if (go.GetComponent<TMP_InputField>() != null)
-				go.GetComponent<TMP_InputField>().ActivateInputField();
-			else
-				EventSystem.current.SetSelectedGameObject(go);
-		}
+		if (go.GetComponent<TMP_InputField>() != null)
+			go.GetComponent<TMP_InputField>().ActivateInputField();
+		else
+			EventSystem.current.SetSelectedGameObject(go);
 	}
 
 	public static bool inputFieldSelected()

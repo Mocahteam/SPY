@@ -35,13 +35,8 @@ public class EndGameManager : FSystem {
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
 
-		// Pour être sûr que le composant de Localization se synchronise bien avec la langue choisie, on active le end panel...
-		if (!endPanel.transform.parent.gameObject.activeInHierarchy)
-		{
-			endPanel.transform.parent.gameObject.SetActive(true);
-		}
-		// ... et on le désactive pour laisser le temps pour la synchronisation de la Localization et surtout pour être sûr que le panneau n'est pas visible au joueur
-		MainLoop.instance.StartCoroutine(delayDisableEndPanel());
+        // on s'assure que le end panel est bien désactivé au démarrage du jeu
+        endPanel.transform.parent.gameObject.SetActive(false);
 
 		f_requireEndPanel.addEntryCallback(displayEndPanel);
 
@@ -50,13 +45,6 @@ public class EndGameManager : FSystem {
 		});
 
 		Pause = true;
-	}
-
-	private IEnumerator delayDisableEndPanel()
-    {
-		yield return null;
-		if (f_requireEndPanel.Count == 0)
-			 endPanel.transform.parent.gameObject.SetActive(false);
 	}
 
 	// Display panel with appropriate content depending on end

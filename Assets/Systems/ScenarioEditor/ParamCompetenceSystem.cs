@@ -383,7 +383,6 @@ public class ParamCompetenceSystem : FSystem
     {
 		yield return null;
 		refreshLevelInfo();
-
 	}
 
 	public void refreshLevelInfo()

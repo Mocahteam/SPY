@@ -200,7 +200,7 @@ public class EditorLevelDataSystem : FSystem {
 						GameObjectManager.addComponent<ScriptToLoad>(MainLoop.instance.gameObject, new
 						{
 							scriptNode = child,
-							scriptName = Utility.extractLocale(name.Value),
+							scriptName = name.Value,
 							editMode = editModeByUser,
 							type = typeByUser
 						});
@@ -211,7 +211,7 @@ public class EditorLevelDataSystem : FSystem {
 						stl.scriptName = name.Value;
 						stl.editMode = editModeByUser;
 						stl.type = typeByUser;
-						MainLoop.instance.StartCoroutine(delayRefreshMainLoop());
+                        GameObjectManager.refresh(MainLoop.instance.gameObject); 
 					}
 					catch
 					{
@@ -220,12 +220,6 @@ public class EditorLevelDataSystem : FSystem {
 					break;
 			}
 		}
-	}
-
-	private IEnumerator delayRefreshMainLoop()
-    {
-		yield return null;
-		GameObjectManager.refresh(MainLoop.instance.gameObject);
 	}
 
 	// See editBlockPrefab

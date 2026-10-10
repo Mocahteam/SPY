@@ -288,14 +288,14 @@ public class TitleScreenSystem : FSystem {
 				foreach (Transform child in gameList)
 					if (child.GetComponent<GameKeys>().scenarioKey == lastScenarioSelected)
 					{
-						MainLoop.instance.StartCoroutine(Utility.delayGOSelection(child.gameObject));
+						EventSystem.current.SetSelectedGameObject(child.gameObject);
 						break;
 					}
 			}
 			else
             {
                 // focus on the first scenario
-                MainLoop.instance.StartCoroutine(Utility.delayGOSelection(gameList.GetChild(0).gameObject));
+                EventSystem.current.SetSelectedGameObject(gameList.GetChild(0).gameObject);
 			}
 		}
 		else
@@ -408,14 +408,14 @@ public class TitleScreenSystem : FSystem {
 				foreach (Transform child in gameList)
 					if (child.GetComponent<GameKeys>().missionNumber == lastMissionSelected)
 					{
-						MainLoop.instance.StartCoroutine(Utility.delayGOSelection(child.gameObject));
+						EventSystem.current.SetSelectedGameObject(child.gameObject);
 						break;
 					}
 			}
 			else
             {
                 // focus on the first mission
-                MainLoop.instance.StartCoroutine(Utility.delayGOSelection(gameList.GetChild(0).gameObject));
+                EventSystem.current.SetSelectedGameObject(gameList.GetChild(0).gameObject);
 			}
 		}
 		else

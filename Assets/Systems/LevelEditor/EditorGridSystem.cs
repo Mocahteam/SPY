@@ -109,21 +109,21 @@ public class EditorGridSystem : FSystem
 
 		if (f_UIfocused.Count == 0 && (click.WasPressedThisFrame() || clickHold.IsPressed()) && activeBrush.brush != Cell.Select)
 		{
-			setTile(pos.y, pos.x, activeBrush.brush);
+			setTile(pos.x, pos.y, activeBrush.brush);
 			EventSystem.current.SetSelectedGameObject(activeBrush.gameObject);
 		}
 	}
 
 	public void resetGrid()
 	{
-		paintableGrid.floorObjects = new Dictionary<Tuple<int, int>, FloorObject[]>();
+		paintableGrid.floorObjects = new Dictionary<Vector2Int, FloorObject[]>();
 		_gridSize = new Vector2Int(UtilityEditor.gridMaxSize, UtilityEditor.gridMaxSize);
 		paintableGrid.grid = new Cell[UtilityEditor.gridMaxSize, UtilityEditor.gridMaxSize];
 		for (var l = 0; l < UtilityEditor.gridMaxSize; ++l)
 		{
 			for (var c = 0; c < UtilityEditor.gridMaxSize; ++c)
 			{
-				setTile(l, c, Cell.Void);
+				setTile(c, l, Cell.Void);
 			}
 		}
 	}
@@ -144,7 +144,7 @@ public class EditorGridSystem : FSystem
 		Utility.removeComments(doc);
 		XmlNode root = doc.ChildNodes[1];
 
-		Tuple<int, int> position;
+		Vector2Int position;
 		Direction.Dir orientation;
 		string inputLine;
 		foreach (XmlNode child in root.ChildNodes)
@@ -162,7 +162,7 @@ public class EditorGridSystem : FSystem
 							try
 							{
 								int cellValue = int.Parse(cellNode.Attributes.GetNamedItem("value").Value);
-								setTile(l, c, (Cell)cellValue);
+								setTile(c, l, (Cell)cellValue);
                             }
                             catch
                             {
@@ -178,7 +178,7 @@ public class EditorGridSystem : FSystem
 					{
 						int posCol = int.Parse(child.Attributes.GetNamedItem("posX").Value);
 						int posLig = int.Parse(child.Attributes.GetNamedItem("posY").Value);
-						setTile(posLig, posCol, Cell.Coin);
+						setTile(posCol, posLig, Cell.Coin);
 					}
 					catch
 					{
@@ -191,7 +191,7 @@ public class EditorGridSystem : FSystem
 						position = getPositionFromXElement(child);
 						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
 
-						FloorObject newObj = setTile(position.Item1, position.Item2, Cell.Console, orientation);
+						FloorObject newObj = setTile(position.x, position.y, Cell.Console, orientation);
 						if (newObj != null)
 						{
 							List<string> slotsID = new List<string>();
@@ -212,7 +212,7 @@ public class EditorGridSystem : FSystem
 					{
 						position = getPositionFromXElement(child);
 						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
-						FloorObject newObj = setTile(position.Item1, position.Item2, Cell.Door, orientation);
+						FloorObject newObj = setTile(position.x, position.y, Cell.Door, orientation);
 						if (newObj != null)
 						{
 							string slotId = child.Attributes.GetNamedItem("slotId").Value;
@@ -237,7 +237,7 @@ public class EditorGridSystem : FSystem
 						XmlNode xmlSkin = child.Attributes.GetNamedItem("skin");
 						if (xmlSkin != null)
 							skin = int.Parse(xmlSkin.Value);
-						FloorObject newObj = setTile(position.Item1, position.Item2, UtilityEditor.IntToSkin(skin), orientation);
+						FloorObject newObj = setTile(position.x, position.y, UtilityEditor.IntToSkin(skin), orientation);
 						if (newObj != null)
 						{
 							inputLine = child.Attributes.GetNamedItem("inputLine").Value;
@@ -255,7 +255,7 @@ public class EditorGridSystem : FSystem
 					{
 						position = getPositionFromXElement(child);
 						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
-						FloorObject newObj = setTile(position.Item1, position.Item2, Cell.Enemy, orientation);
+						FloorObject newObj = setTile(position.x, position.y, Cell.Enemy, orientation);
 						if (newObj != null)
 						{
 							inputLine = child.Attributes.GetNamedItem("inputLine").Value;
@@ -278,7 +278,7 @@ public class EditorGridSystem : FSystem
 					{
 						position = getPositionFromXElement(child);
 						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
-						FloorObject newObj = setTile(position.Item1, position.Item2, Cell.Decoration, orientation);
+						FloorObject newObj = setTile(position.x, position.y, Cell.Decoration, orientation);
 						if (newObj != null)
 						{
 							string decoPath = child.Attributes.GetNamedItem("name").Value;
@@ -294,19 +294,19 @@ public class EditorGridSystem : FSystem
 		}
 	}
 
-	private Tuple<int, int> getPositionFromXElement(XmlNode element)
+	private Vector2Int getPositionFromXElement(XmlNode element)
 	{
 		if (element.Attributes.GetNamedItem("posX") == null || element.Attributes.GetNamedItem("posY") == null)
-			return null;
+			return new Vector2Int(-1, -1);
 
-		return new Tuple<int, int>(
-			int.Parse(element.Attributes.GetNamedItem("posY")?.Value ?? throw new InvalidOperationException()),
-			int.Parse(element.Attributes.GetNamedItem("posX")?.Value ?? throw new InvalidOperationException()));
+		return new Vector2Int(
+			int.Parse(element.Attributes.GetNamedItem("posX")?.Value ?? throw new InvalidOperationException()),
+			int.Parse(element.Attributes.GetNamedItem("posY")?.Value ?? throw new InvalidOperationException()));
 	}
 
-	public FloorObject setTile(int line, int col, Cell cell, Direction.Dir rotation = Direction.Dir.North)
+	public FloorObject setTile(int col, int line, Cell cell, Direction.Dir rotation = Direction.Dir.North)
 	{
-		var tuplePos = new Tuple<int, int>(line, col);
+		var tuplePos = new Vector2Int(col, line);
 		if (!paintableGrid.floorObjects.ContainsKey(tuplePos))
 			paintableGrid.floorObjects[tuplePos] = new FloorObject[3];
 		if ((int)cell < 10000) // non-configurable cell
@@ -355,7 +355,7 @@ public class EditorGridSystem : FSystem
 
 	public void removeTile(FloorObject floorObject)
     {
-		Tuple<int, int> tuplePos = new Tuple<int, int>(floorObject.line, floorObject.col);
+		Vector2Int tuplePos = new Vector2Int(floorObject.col, floorObject.line);
 		paintableGrid.floorObjects[tuplePos][-(floorObject.layer+1)] = null;
 		paintableGrid.GetComponent<Tilemap>().SetTile(new Vector3Int(floorObject.col - _gridSize.x / 2, _gridSize.y / 2 - floorObject.line, floorObject.layer), null);
 	}
@@ -364,7 +364,7 @@ public class EditorGridSystem : FSystem
 	{
 		if (canBePlaced(floorObject.type, newY, newX))
 		{
-			Tuple<int, int> tuplePos = new Tuple<int, int>(newX, newY);
+			Vector2Int tuplePos = new Vector2Int(newX, newY);
 			// si la position de destination est déjà occupée
 			if (paintableGrid.floorObjects.ContainsKey(tuplePos))
 				// on vérifie si on n'a pas un conflit de layer

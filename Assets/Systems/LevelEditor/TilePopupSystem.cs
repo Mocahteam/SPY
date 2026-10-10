@@ -9,6 +9,7 @@ using FYFY_plugins.PointerManager;
 using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class TilePopupSystem : FSystem
 {
@@ -70,11 +71,10 @@ public class TilePopupSystem : FSystem
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount)
 	{
-		Vector2Int pos = UtilityEditor.mousePosToGridPos(paintableGrid.GetComponent<Tilemap>());
-		Tuple<int, int> posTuple = new Tuple<int, int>(pos.y, pos.x);
+		Vector2Int posTuple = UtilityEditor.mousePosToGridPos(paintableGrid.GetComponent<Tilemap>());
 
-		// Condition de déselection
-		if (isContentOnLayer(selectedObjects) && (
+        // Condition de déselection
+        if (isContentOnLayer(selectedObjects) && (
 			rightClick.WasPressedThisFrame() || // on déselectionne sur un clic droit
 			click.WasPressedThisFrame() && (!paintableGrid.floorObjects.ContainsKey(posTuple) || !isContentOnLayer(paintableGrid.floorObjects[posTuple])) && tileSettingsParent.GetComponentInParent<PointerOver>() == null)) // on déselectionne sur un clic gauche dans le vide (qui n'est pas sur le container des popups sinon quand on intéragit avec la popup, ça déselectionne automatiquement)
 		{
@@ -90,7 +90,7 @@ public class TilePopupSystem : FSystem
 
 		// sur la frame ou le clic a eu lieu, on crée les nouvelles popups
 		if (click.WasPressedThisFrame() && isContentOnLayer(selectedObjects) && tileSettingsParent.GetComponentInParent<PointerOver>() == null)
-			refreshPopups(pos.x, pos.y, false);
+			refreshPopups(posTuple.x, posTuple.y, false);
 
 		if (isContentOnLayer(selectedObjects))
 		{
@@ -201,9 +201,7 @@ public class TilePopupSystem : FSystem
 			GameObjectManager.bind(tileSettings);
 		}
 		if (autoFocusLastPosition)
-        {
-            MainLoop.instance.StartCoroutine(Utility.delayGOSelection(tileSettingsParent.GetChild(tileSettingsParent.childCount - 1).GetComponentInChildren<TMP_InputField>(true).gameObject, 1));
-		}
+			EventSystem.current.SetSelectedGameObject(tileSettingsParent.GetChild(tileSettingsParent.childCount - 1).GetComponentInChildren<TMP_InputField>(true).gameObject);
 	}
 
 	private void destroyAllPopups()
@@ -232,16 +230,16 @@ public class TilePopupSystem : FSystem
 	public void moveTile(GameObject settings, string newPosition)
     {
 		FloorObject selectedObject = settings.GetComponent<Popup>().floorObject;
-		Tuple<int, int> newPos = UtilityEditor.LettersToInts(newPosition);
+		Vector2Int newPos = UtilityEditor.LettersToInts(newPosition);
 		bool moveDone = false;
-		if (newPos.Item1 != -1 && newPos.Item2 != -1)
+		if (newPos.x != -1 && newPos.y != -1)
 		{
-			if (newPos.Item1 != selectedObject.col || newPos.Item2 != selectedObject.line)
+			if (newPos.x != selectedObject.col || newPos.y != selectedObject.line)
 			{
-				if (EditorGridSystem.instance.moveTile(selectedObject, newPos.Item1, newPos.Item2))
+				if (EditorGridSystem.instance.moveTile(selectedObject, newPos.x, newPos.y))
 				{
 					selectedObjects = paintableGrid.floorObjects[newPos];
-					refreshPopups(newPos.Item1, newPos.Item2, true);
+					refreshPopups(newPos.x, newPos.y, true);
 					moveDone = true;
 				}
 			}
@@ -329,7 +327,7 @@ public class TilePopupSystem : FSystem
 		// sauvegarde de l'input line
 		string inputLine = (setting.floorObject as PlayerRobot).inputLine;
 		EditorGridSystem.instance.removeTile(setting.floorObject);
-		FloorObject newFloorObject = EditorGridSystem.instance.setTile(setting.floorObject.line, setting.floorObject.col, UtilityEditor.IntToSkin(newData), setting.floorObject.orientation);
+		FloorObject newFloorObject = EditorGridSystem.instance.setTile(setting.floorObject.col, setting.floorObject.line, UtilityEditor.IntToSkin(newData), setting.floorObject.orientation);
 		// restauration de l'inputLine
 		(newFloorObject as PlayerRobot).inputLine = inputLine;
 		// et réassociation du nouvel objet à sa fenêtre de config

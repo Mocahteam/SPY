@@ -256,7 +256,7 @@ public class SaveFileSystem : FSystem
 		}
 		levelExport += "\t</blockLimits>\n\n";
 
-		foreach (Tuple<int, int> foCoords in paintableGrid.floorObjects.Keys)
+		foreach (Vector2Int foCoords in paintableGrid.floorObjects.Keys)
 		{
 			foreach (FloorObject fo in paintableGrid.floorObjects[foCoords])
 			{

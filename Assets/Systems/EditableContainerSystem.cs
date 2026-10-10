@@ -448,7 +448,7 @@ public class EditableContainerSystem : FSystem
 		// on désactive le champ de saisie et on active le nom statique du robot
 		input.gameObject.SetActive(false);
         name.transform.parent.gameObject.SetActive(true);
-		// On laisse le UINavigation faire sa sélection par défaut avant de surcharegr la sélection ici
+		// On laisse le UINavigation faire sa sélection par défaut avant de surcharger la sélection ici
         MainLoop.instance.StartCoroutine(Utility.delayGOSelection(name.transform.parent.Find("ButtonEditName").gameObject));
     }
 
@@ -481,14 +481,12 @@ public class EditableContainerSystem : FSystem
 				if (container.GetComponent<UIRootContainer>().scriptName.ToLower() == agent.GetComponent<AgentEdit>().associatedScriptName.ToLower())
 					nameSame = true;
 
-            Selectable name = container.transform.Find("Header/Naming/RobotName_static/RobotName").GetComponent<Selectable>();
-			ColorBlock nameColor = name.colors;
+            Image bgName = container.transform.Find("Header/Naming/RobotName_static/BackgroundPanel").GetComponent<Image>();
 			// Si même nom trouvé on met la couleur par défaut
 			if (nameSame)
-				nameColor.normalColor = currentSettingsValues.values.currentNormalColor_Text;
+                bgName.color = currentSettingsValues.values.currentColor_Panel1;
 			else // sinon la couleur de mauvaise association 
-				nameColor.normalColor = currentSettingsValues.values.currentWrongAssociationColor;
-			name.colors = nameColor;
+                bgName.color = currentSettingsValues.values.currentWrongAssociationColor;
 		}
 
 		// On fait la même chose pour les agents

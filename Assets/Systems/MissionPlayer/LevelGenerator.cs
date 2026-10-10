@@ -216,7 +216,7 @@ public class LevelGenerator : FSystem {
 						GameObjectManager.addComponent<ScriptToLoad>(MainLoop.instance.gameObject, new
 						{
 							scriptNode = child,
-							scriptName = Utility.extractLocale(name.Value),
+							scriptName = name.Value,
 							editMode = editModeByUser,
 							type = typeByUser
 						});
@@ -227,7 +227,7 @@ public class LevelGenerator : FSystem {
 						stl.scriptName = Utility.extractLocale(name.Value);
 						stl.editMode = editModeByUser;
 						stl.type = typeByUser;
-						MainLoop.instance.StartCoroutine(delayRefreshMainLoop());
+                        GameObjectManager.refresh(MainLoop.instance.gameObject);
 					}
 					break;
 				case "score":
@@ -242,12 +242,6 @@ public class LevelGenerator : FSystem {
         // On n'affiche pas les Exits si le fog est activé
         generateMap(gameData.hideExit || gameData.fogEnabled);
 		MainLoop.instance.StartCoroutine(delayGameLoaded());
-	}
-
-	private IEnumerator delayRefreshMainLoop()
-	{
-		yield return null;
-		GameObjectManager.refresh(MainLoop.instance.gameObject);
 	}
 
 	private IEnumerator delayGameLoaded()

@@ -53,7 +53,7 @@ public static class UtilityEditor
 		return result;
 	}
 
-	public static Tuple<int, int> LettersToInts(string input)
+	public static Vector2Int LettersToInts(string input)
 	{
 		// Séparer les lettres des chiffres via Regex
 		var match = Regex.Match(input.ToUpper(), @"([A-Z]+)([0-9]+)");
@@ -61,7 +61,7 @@ public static class UtilityEditor
 		if (!match.Success)
 		{
 			Debug.LogWarning("LettersToInts -> Warning format must be composed with letters followed by digits (ex: AB34).");
-			return new Tuple<int, int>(-1, -1);
+			return new Vector2Int(-1, -1);
 		}
 
 		string columnPart = match.Groups[1].Value;
@@ -79,7 +79,7 @@ public static class UtilityEditor
 		// On soustrait 1 pour l'index 0 (ligne 1 = index 0)
 		y -= 1;
 
-		return new Tuple<int, int>(x, y);
+		return new Vector2Int(x, y);
 	}
 
 	/// <summary>
