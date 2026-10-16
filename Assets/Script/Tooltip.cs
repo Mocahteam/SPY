@@ -61,7 +61,7 @@ public class Tooltip : MonoBehaviour
         {
             Vector2 tooltipPos;
             if (pointActionUI.enabled || currentSelectedGO == null)
-                tooltipPos = new Vector2(Pointer.current.position.x.value, Pointer.current.position.y.value) / canvasScaler.scaleFactor;
+                tooltipPos = Pointer.current.position.ReadValue() / canvasScaler.scaleFactor;
             else
             {
                 Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(

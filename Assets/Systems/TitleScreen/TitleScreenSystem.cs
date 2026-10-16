@@ -24,7 +24,8 @@ public class TitleScreenSystem : FSystem {
 	private UserData userData;
 	public Button continueButton;
 	public GameObject playButton;
-	public GameObject gameSelector;
+    public GameObject trainingButton;
+    public GameObject gameSelector;
 	public GameObject TileScenarioPrefab;
 	public GameObject TileMissionPrefab;
 	public GameObject quitButton;
@@ -109,16 +110,17 @@ public class TitleScreenSystem : FSystem {
             }
             else if (gameData.selectedScenario != "")
 			{
-				// Show scenario list
 				lastScenarioSelected = gameData.selectedScenario;
-				playButton.GetComponent<Button>().onClick.Invoke();
-				// Si on n'est pas sur la dernière mission, afficher la liste des missions
+				// Afficher la liste des scénarios
+				trainingButton.GetComponent<Button>().onClick.Invoke();
+				// Si on n'est pas sur la dernière mission, afficher la liste des missions de ce scénario
 				if (gameData.levelToLoad < gameData.scenarios[gameData.selectedScenario].levels.Count - 1)
 				{
 					// reload last opened scenario
 					lastMissionSelected = gameData.levelToLoad;
 					showLevels(gameData.selectedScenario);
 				}
+				// Sinon rester sur la liste des scénarios
 			}
 
 			if (Application.platform == RuntimePlatform.WebGLPlayer) {
@@ -214,7 +216,7 @@ public class TitleScreenSystem : FSystem {
 		}
 	}
 
-	// see Play Button in TitleScreen scene
+	// see Training Button in TitleScreen scene
 	public void displayScenarioList()
 	{
 		// remove all old tiles
@@ -327,8 +329,8 @@ public class TitleScreenSystem : FSystem {
 		// delete all old tiles
 		removeAllOldTiles();
 
-		gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu").gameObject.SetActive(false);
-		Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios");
+        gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu").gameObject.SetActive(false);
+        Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios");
 		backButton.gameObject.SetActive(true);
 		Transform headerTitle = gameSelector.transform.Find("Header/Title");
 		Selectable detailstitle = gameDetails.Find("Title").GetComponentInChildren<Selectable>(true);

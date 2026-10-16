@@ -40,6 +40,7 @@
 				enableInteraction (optional):
 					0 -> Locked (default): the player can't interact with game while this dialog is shown
 					1 -> Unlocked: the player can interact with game while this dialog is shown
+				highlight (optional): Specify the name of the GameObject to be highlighted. If multiple GameObjects have the same name, specify their full path in the hierarchy, starting with /. Use the ## separator to target multiple GameObjects.
 				briefingType (optionnal):
 					0 -> Briefing (default): this dialog will be displayed at the beginning of the game
 					1 -> Debriefing (win): this dialog will be displayed at the end of the game if the player won

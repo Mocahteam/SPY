@@ -14,154 +14,174 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "settingsUpdated", settingsUpdated);
 	}
 
-	public void saveParameters()
+	public void SaveParameters()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "saveParameters", null);
+		MainLoop.callAppropriateSystemMethod (system, "SaveParameters", null);
 	}
 
-	public void sendUserData()
+	public void SendUserData()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "sendUserData", null);
+		MainLoop.callAppropriateSystemMethod (system, "SendUserData", null);
 	}
 
-	public void exportSettings()
+	public void ExportSettings()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "exportSettings", null);
+		MainLoop.callAppropriateSystemMethod (system, "ExportSettings", null);
 	}
 
-	public void onPresetSelected(System.Int32 selectedIndex)
+	public void OnPresetSelected(System.Int32 selectedIndex)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "onPresetSelected", selectedIndex);
+		MainLoop.callAppropriateSystemMethod (system, "OnPresetSelected", selectedIndex);
 	}
 
-	public void importSettingsFromJS(System.String content)
+	public void ImportSettingsFromJS(System.String content)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "importSettingsFromJS", content);
+		MainLoop.callAppropriateSystemMethod (system, "ImportSettingsFromJS", content);
 	}
 
-	public void importSettings(System.String content)
+	public void ImportSettings(System.String content)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "importSettings", content);
+		MainLoop.callAppropriateSystemMethod (system, "ImportSettings", content);
 	}
 
-	public void resetParameters()
+	public void ResetParameters()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "resetParameters", null);
+		MainLoop.callAppropriateSystemMethod (system, "ResetParameters", null);
 	}
 
-	public void hookListener(System.String key)
+	public void HookListener(System.String key)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "hookListener", key);
+		MainLoop.callAppropriateSystemMethod (system, "HookListener", key);
 	}
 
-	public void setSkillsRepository(System.Int32 value)
+	public void SetSkillsRepository(System.Int32 value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setSkillsRepository", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetSkillsRepository", value);
 	}
 
-	public void setQualitySetting(System.Int32 value)
+	public void SetQualitySetting(System.Int32 value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setQualitySetting", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetQualitySetting", value);
 	}
 
-	public void setInteraction(System.Int32 value)
+	public void SetAutoHideTooltip(System.Int32 value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setInteraction", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetAutoHideTooltip", value);
 	}
 
-	public void increaseUISize()
+	public void IncreaseUISize()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "increaseUISize", null);
+		MainLoop.callAppropriateSystemMethod (system, "IncreaseUISize", null);
 	}
 
-	public void decreaseUISize()
+	public void DecreaseUISize()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "decreaseUISize", null);
+		MainLoop.callAppropriateSystemMethod (system, "DecreaseUISize", null);
 	}
 
-	public void syncCanvasScaler()
+	public void SyncCanvasScaler()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "syncCanvasScaler", null);
+		MainLoop.callAppropriateSystemMethod (system, "SyncCanvasScaler", null);
 	}
 
-	public void setWallTransparency(System.Int32 value)
+	public void SetWallTransparency(System.Int32 value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setWallTransparency", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetWallTransparency", value);
 	}
 
-	public void setCameraTracking(System.Int32 value)
+	public void SetCameraTracking(System.Int32 value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setCameraTracking", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetCameraTracking", value);
 	}
 
-	public void setGameView(System.Int32 value)
+	public void SetGameView(System.Int32 value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setGameView", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetGameView", value);
 	}
 
-	public void setAnimation(System.Int32 value)
+	public void SetAnimation(System.Int32 value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setAnimation", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetAnimation", value);
 	}
 
-	public void setTooltipView(System.Int32 value)
+	public void SetTooltipView(System.Int32 value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setTooltipView", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetTooltipView", value);
 	}
 
-	public void syncFonts(System.Int32 value)
+	public void SyncFonts(System.Int32 value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "syncFonts", value);
+		MainLoop.callAppropriateSystemMethod (system, "SyncFonts", value);
 	}
 
-	public void setCaretWidth(System.Int32 value)
+	public void SetCaretWidth(System.String value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setCaretWidth", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetCaretWidth", value);
 	}
 
-	public void setCaretHeight(System.Int32 value)
+	public void SetCaretHeight(System.String value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setCaretHeight", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetCaretHeight", value);
 	}
 
-	public void setBorderTickness(System.Int32 value)
+	public void SetBorderThickness(System.String value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setBorderTickness", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetBorderThickness", value);
 	}
 
-	public void setCharSpacing(System.Int32 value)
+	public void SetCharSpacing(System.String value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setCharSpacing", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetCharSpacing", value);
 	}
 
-	public void setWordSpacing(System.Int32 value)
+	public void SetWordSpacing(System.String value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setWordSpacing", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetWordSpacing", value);
 	}
 
-	public void setLineSpacing(System.Int32 value)
+	public void SetLineSpacing(System.String value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setLineSpacing", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetLineSpacing", value);
 	}
 
-	public void setParagraphSpacing(System.Int32 value)
+	public void SetParagraphSpacing(System.String value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setParagraphSpacing", value);
+		MainLoop.callAppropriateSystemMethod (system, "SetParagraphSpacing", value);
 	}
 
-	public void selectAvatar(UnityEngine.UI.Image src)
+	public void SetDoubleClickDelay(System.String value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "selectAvatar", src);
+		MainLoop.callAppropriateSystemMethod (system, "SetDoubleClickDelay", value);
 	}
 
-	public void setBirthYear(System.String year)
+	public void SetLongClickDelay(System.String value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setBirthYear", year);
+		MainLoop.callAppropriateSystemMethod (system, "SetLongClickDelay", value);
 	}
 
-	public void setIsTeacher(System.Boolean state)
+	public void SetAutoClick(System.Int32 value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setIsTeacher", state);
+		MainLoop.callAppropriateSystemMethod (system, "SetAutoClick", value);
+	}
+
+	public void SetAutoClickDelay(System.String value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "SetAutoClickDelay", value);
+	}
+
+	public void SelectAvatar(UnityEngine.UI.Image src)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "SelectAvatar", src);
+	}
+
+	public void SetBirthYear(System.String year)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "SetBirthYear", year);
+	}
+
+	public void SetIsTeacher(System.Boolean state)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "SetIsTeacher", state);
 	}
 
 }

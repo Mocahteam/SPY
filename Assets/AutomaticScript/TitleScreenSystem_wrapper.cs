@@ -5,6 +5,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.UI.Button continueButton;
 	public UnityEngine.GameObject playButton;
+	public UnityEngine.GameObject trainingButton;
 	public UnityEngine.GameObject gameSelector;
 	public UnityEngine.GameObject TileScenarioPrefab;
 	public UnityEngine.GameObject TileMissionPrefab;
@@ -18,6 +19,7 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "continueButton", continueButton);
 		MainLoop.initAppropriateSystemField (system, "playButton", playButton);
+		MainLoop.initAppropriateSystemField (system, "trainingButton", trainingButton);
 		MainLoop.initAppropriateSystemField (system, "gameSelector", gameSelector);
 		MainLoop.initAppropriateSystemField (system, "TileScenarioPrefab", TileScenarioPrefab);
 		MainLoop.initAppropriateSystemField (system, "TileMissionPrefab", TileMissionPrefab);

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>
@@ -100,55 +101,55 @@ public class SettingsManager : FSystem
             lastWidth = Screen.width;
             lastHeight = Screen.height;
 
-            loadPlayerPrefs();
-			saveParameters();
+            LoadPlayerPrefs();
+			SaveParameters();
 
-            f_allTexts.addEntryCallback(delegate (GameObject go) { syncColor_Text(go); });
-			f_allTexts.addEntryCallback(syncSpacing_Text);
-			f_textsSelectable.addEntryCallback(delegate (GameObject go) { syncColor_Text(go); });
-			f_modifiableFonts.addEntryCallback(syncFont);
-			f_fixedFonts.addEntryCallback(fixFont);
-			f_dropdown.addEntryCallback(delegate (GameObject go) { syncColor_Dropdown(go); });
+            f_allTexts.addEntryCallback(delegate (GameObject go) { SyncColor_Text(go); });
+			f_allTexts.addEntryCallback(SyncSpacing_Text);
+			f_textsSelectable.addEntryCallback(delegate (GameObject go) { SyncColor_Text(go); });
+			f_modifiableFonts.addEntryCallback(SyncFont);
+			f_fixedFonts.addEntryCallback(FixFont);
+			f_dropdown.addEntryCallback(delegate (GameObject go) { SyncColor_Dropdown(go); });
 			f_inputfield.addEntryCallback(delegate (GameObject go) {
-				sync_Inputfield(go); // gère le normal, selected, placeholder, selection et carret
-				syncHighlightedColor(go);
-				syncPressedColor(go);
-				syncDisabledColor(go);
+				Sync_Inputfield(go); // gère le normal, selected, placeholder, selection et carret
+				SyncHighlightedColor(go);
+				SyncPressedColor(go);
+				SyncDisabledColor(go);
 			});
-			f_inputfieldCaret.addEntryCallback(sync_CaretHeight);
-			f_buttons.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentNormalColor_Button); });
-			f_icons.addEntryCallback(delegate (GameObject go) { syncIconColor(go, cs.values.currentColor_Icon); });
-			f_buttonsPlay.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentPlayButtonColor); });
-			f_buttonsPause.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentPauseButtonColor); });
-			f_buttonsStop.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentStopButtonColor); });
+			f_inputfieldCaret.addEntryCallback(Sync_CaretHeight);
+			f_buttons.addEntryCallback(delegate (GameObject go) { SyncNormalColor(go, cs.values.currentNormalColor_Button); });
+			f_icons.addEntryCallback(delegate (GameObject go) { SyncIconColor(go, cs.values.currentColor_Icon); });
+			f_buttonsPlay.addEntryCallback(delegate (GameObject go) { SyncNormalColor(go, cs.values.currentPlayButtonColor); });
+			f_buttonsPause.addEntryCallback(delegate (GameObject go) { SyncNormalColor(go, cs.values.currentPauseButtonColor); });
+			f_buttonsStop.addEntryCallback(delegate (GameObject go) { SyncNormalColor(go, cs.values.currentStopButtonColor); });
 			f_selectable.addEntryCallback(delegate (GameObject go) {
-				syncHighlightedColor(go);
-				syncPressedColor(go);
-				syncSelectedColor(go);
-				syncDisabledColor(go);
+				SyncHighlightedColor(go);
+				SyncPressedColor(go);
+				SyncSelectedColor(go);
+				SyncDisabledColor(go);
 			});
-			f_SyncSelectedColor.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentSelectedColor); });
-			f_panels1.addEntryCallback(delegate (GameObject go) { syncColor_Panel(go); });
-			f_panels2.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentColor_Panel2); });
-			f_panels3.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentColor_Panel3); });
-			f_borders.addEntryCallback(delegate (GameObject go) { syncBorderProperties(go); });
-			f_scrollbar.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentNormalColor_Scrollbar); });
-			f_scrollbar.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentBackgroundColor_Scrollbar); });
-			f_scrollview.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentBackgroundColor_Scrollview); });
-			f_toggle.addEntryCallback(delegate (GameObject go) { syncNormalColor(go, cs.values.currentNormalColor_Toggle); });
-			f_tooltip.addEntryCallback(delegate (GameObject go) { syncGraphicColor(go, cs.values.currentColor_Tooltip); });
-			f_blocks.addEntryCallback(delegate (GameObject go) { syncBlockColor(go); });
-			f_dropArea.addEntryCallback(delegate (GameObject go) { syncDropAreaColor(go); });
-			f_highlightable.addEntryCallback(delegate (GameObject go) { setHighlightingColor(go); });
-			f_tileSelection.addEntryCallback(delegate (GameObject go) { syncTileColor(go); });
-			f_conditionNotif.addEntryCallback(delegate (GameObject go) { syncConditionNotif(go); });
+			f_SyncSelectedColor.addEntryCallback(delegate (GameObject go) { SyncGraphicColor(go, cs.values.currentSelectedColor); });
+			f_panels1.addEntryCallback(delegate (GameObject go) { SyncColor_Panel(go); });
+			f_panels2.addEntryCallback(delegate (GameObject go) { SyncGraphicColor(go, cs.values.currentColor_Panel2); });
+			f_panels3.addEntryCallback(delegate (GameObject go) { SyncGraphicColor(go, cs.values.currentColor_Panel3); });
+			f_borders.addEntryCallback(delegate (GameObject go) { SyncBorderProperties(go); });
+			f_scrollbar.addEntryCallback(delegate (GameObject go) { SyncNormalColor(go, cs.values.currentNormalColor_Scrollbar); });
+			f_scrollbar.addEntryCallback(delegate (GameObject go) { SyncGraphicColor(go, cs.values.currentBackgroundColor_Scrollbar); });
+			f_scrollview.addEntryCallback(delegate (GameObject go) { SyncGraphicColor(go, cs.values.currentBackgroundColor_Scrollview); });
+			f_toggle.addEntryCallback(delegate (GameObject go) { SyncNormalColor(go, cs.values.currentNormalColor_Toggle); });
+			f_tooltip.addEntryCallback(delegate (GameObject go) { SyncGraphicColor(go, cs.values.currentColor_Tooltip); });
+			f_blocks.addEntryCallback(delegate (GameObject go) { SyncBlockColor(go); });
+			f_dropArea.addEntryCallback(delegate (GameObject go) { SyncDropAreaColor(go); });
+			f_highlightable.addEntryCallback(delegate (GameObject go) { SetHighlightingColor(go); });
+			f_tileSelection.addEntryCallback(delegate (GameObject go) { SyncTileColor(go); });
+			f_conditionNotif.addEntryCallback(delegate (GameObject go) { SyncConditionNotif(go); });
 
-			f_settingsOpened.addEntryCallback(delegate (GameObject unused) { syncSettingsUI(); });
+			f_settingsOpened.addEntryCallback(delegate (GameObject unused) { SyncSettingsUI(); });
 
-            f_animations.addEntryCallback(delegate (GameObject go) { applyAnimation(go); });
+            f_animations.addEntryCallback(delegate (GameObject go) { ApplyAnimation(go); });
 
 
-            MainLoop.instance.StartCoroutine(waitLocalizationLoaded());
+            MainLoop.instance.StartCoroutine(WaitLocalizationLoaded());
 
             presetSettings = JArray.Parse(Resources.Load<TextAsset>("AccessPresets").text);
         }
@@ -190,13 +191,13 @@ public class SettingsManager : FSystem
         }
     }
 
-    private IEnumerator waitLocalizationLoaded()
+    private IEnumerator WaitLocalizationLoaded()
 	{
 		yield return new WaitWhile (() => f_localizationLoaded.Count == 0);
-		applySettings();
+		ApplySettings();
 	}
 
-	private void initSkillsRepositories()
+	private void InitSkillsRepositories()
 	{
 		Transform skillsRepoDropdown = settingsContent.Find("SectionLang/GridContainer/Grid/SkillsDropdown");
 		if (skillsRepoDropdown != null)
@@ -216,90 +217,99 @@ public class SettingsManager : FSystem
 		}
     }
 
-    private void applySettings()
+    private void ApplySettings()
     {
-		syncColors();
-        setSkillsRepository(cs.values.currentSkillsRepository);
-        setQualitySetting(cs.values.currentQuality);
-		syncCanvasScaler();
-		setWallTransparency(cs.values.currentWallTransparency);
-		setGameView(cs.values.currentGameView);
-		setAnimation(cs.values.currentAnimation);
-		syncFonts(cs.values.currentFont);
-		setCaretWidth(cs.values.currentCaretWidth);
-		setCaretHeight(cs.values.currentCaretHeight);
-		setCharSpacing(cs.values.currentCharSpacing);
-		setWordSpacing(cs.values.currentWordSpacing);
-		setLineSpacing(cs.values.currentLineSpacing);
-		setParagraphSpacing(cs.values.currentParagraphSpacing);
-	}
+		SyncColors();
+        SetSkillsRepository(cs.values.currentSkillsRepository);
+        SetQualitySetting(cs.values.currentQuality);
+		SyncCanvasScaler();
+		SetWallTransparency(cs.values.currentWallTransparency);
+		SetGameView(cs.values.currentGameView);
+		SetAnimation(cs.values.currentAnimation);
+		SyncFonts(cs.values.currentFont);
+		SetCaretWidth(cs.values.currentCaretWidth);
+		SetCaretHeight(cs.values.currentCaretHeight);
+		SetCharSpacing(cs.values.currentCharSpacing);
+		SetWordSpacing(cs.values.currentWordSpacing);
+		SetLineSpacing(cs.values.currentLineSpacing);
+		SetParagraphSpacing(cs.values.currentParagraphSpacing);
+		SetDoubleClickDelay(cs.values.currentDoubleClickDelay.ToString());
+        SetLongClickDelay(cs.values.currentLongClickDelay.ToString());
+        SetAutoClick(cs.values.currentAutoClick);
+        SetAutoClickDelay(cs.values.currentAutoClickDelay.ToString());
+    }
 
-	private void syncColors()
+	private void SyncColors()
 	{
-		syncColor(f_allTexts, syncColor_Text);
+		SyncColor(f_allTexts, SyncColor_Text);
 		SyncLocalization.instance.syncLocale(); // because it change colors
-		syncColor(f_dropdown, syncColor_Dropdown);
-		syncColor(f_inputfield, sync_Inputfield);
-		syncColor(f_inputfield, syncHighlightedColor);
-		syncColor(f_inputfield, syncPressedColor);
-		syncColor(f_inputfield, syncDisabledColor);
-		syncColor(f_buttons, syncNormalColor, cs.values.currentNormalColor_Button);
-		syncColor(f_icons, syncIconColor, cs.values.currentColor_Icon);
-		syncColor(f_buttonsPlay, syncNormalColor, cs.values.currentPlayButtonColor);
-		syncColor(f_buttonsPause, syncNormalColor, cs.values.currentPauseButtonColor);
-		syncColor(f_buttonsStop, syncNormalColor, cs.values.currentStopButtonColor);
-		syncColor(f_selectable, syncHighlightedColor);
-		syncColor(f_selectable, syncPressedColor);
-		syncColor(f_selectable, syncSelectedColor);
-		syncColor(f_selectable, syncDisabledColor);
-		syncColor(f_SyncSelectedColor, syncGraphicColor, cs.values.currentSelectedColor);
-		syncColor(f_panels1, syncColor_Panel);
-		syncColor(f_panels2, syncGraphicColor, cs.values.currentColor_Panel2);
-		syncColor(f_panels3, syncGraphicColor, cs.values.currentColor_Panel3);
-		syncColor(f_borders, syncBorderProperties);
-		syncColor(f_scrollbar, syncNormalColor, cs.values.currentNormalColor_Scrollbar);
-		syncColor(f_scrollbar, syncGraphicColor, cs.values.currentBackgroundColor_Scrollbar);
-		syncColor(f_scrollview, syncGraphicColor, cs.values.currentBackgroundColor_Scrollview);
-		syncColor(f_toggle, syncNormalColor, cs.values.currentNormalColor_Toggle);
-		syncColor(f_tooltip, syncGraphicColor, cs.values.currentColor_Tooltip);
-		syncColor(f_blocks, syncBlockColor);
-		syncColor(f_dropArea, syncDropAreaColor);
-		syncColor(f_highlightable, setHighlightingColor);
-		syncColor(f_tileSelection, syncTileColor);
-		syncColor(f_conditionNotif, syncConditionNotif);
+		SyncColor(f_dropdown, SyncColor_Dropdown);
+		SyncColor(f_inputfield, Sync_Inputfield);
+		SyncColor(f_inputfield, SyncHighlightedColor);
+		SyncColor(f_inputfield, SyncPressedColor);
+		SyncColor(f_inputfield, SyncDisabledColor);
+		SyncColor(f_buttons, SyncNormalColor, cs.values.currentNormalColor_Button);
+		SyncColor(f_icons, SyncIconColor, cs.values.currentColor_Icon);
+		SyncColor(f_buttonsPlay, SyncNormalColor, cs.values.currentPlayButtonColor);
+		SyncColor(f_buttonsPause, SyncNormalColor, cs.values.currentPauseButtonColor);
+		SyncColor(f_buttonsStop, SyncNormalColor, cs.values.currentStopButtonColor);
+		SyncColor(f_selectable, SyncHighlightedColor);
+		SyncColor(f_selectable, SyncPressedColor);
+		SyncColor(f_selectable, SyncSelectedColor);
+		SyncColor(f_selectable, SyncDisabledColor);
+		SyncColor(f_SyncSelectedColor, SyncGraphicColor, cs.values.currentSelectedColor);
+		SyncColor(f_panels1, SyncColor_Panel);
+		SyncColor(f_panels2, SyncGraphicColor, cs.values.currentColor_Panel2);
+		SyncColor(f_panels3, SyncGraphicColor, cs.values.currentColor_Panel3);
+		SyncColor(f_borders, SyncBorderProperties);
+		SyncColor(f_scrollbar, SyncNormalColor, cs.values.currentNormalColor_Scrollbar);
+		SyncColor(f_scrollbar, SyncGraphicColor, cs.values.currentBackgroundColor_Scrollbar);
+		SyncColor(f_scrollview, SyncGraphicColor, cs.values.currentBackgroundColor_Scrollview);
+		SyncColor(f_toggle, SyncNormalColor, cs.values.currentNormalColor_Toggle);
+		SyncColor(f_tooltip, SyncGraphicColor, cs.values.currentColor_Tooltip);
+		SyncColor(f_blocks, SyncBlockColor);
+		SyncColor(f_dropArea, SyncDropAreaColor);
+		SyncColor(f_highlightable, SetHighlightingColor);
+		SyncColor(f_tileSelection, SyncTileColor);
+		SyncColor(f_conditionNotif, SyncConditionNotif);
 	}
 
-	private float computeUIScale()
+	private float ComputeUIScale()
 	{
         return (float)Math.Max(ds.defaultUIScale, Math.Round((float)Screen.width / 1280, 2)) * (Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 2 : 1); // do not reduce scale under defaultUIScale and multiply scale for definition higher than 1280. Sur mobile on multiplie l'echelle par deux
     }
 
 	// lit les PlayerPrefs et initialise les currentSettingsValues
-	private void loadPlayerPrefs()
+	private void LoadPlayerPrefs()
 	{
 		// Voir SyncLocalization pour la gestion de la langue
 		cs.values.currentSkillsRepository = PlayerPrefs.GetInt("skillsRepository", ds.defaultSkillsRepository);
         cs.values.currentQuality = PlayerPrefs.GetInt("quality", ds.defaultQuality);
-		cs.values.currentInteractionMode = PlayerPrefs.GetInt("interaction", Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 1 : ds.defaultInteractionMode);
 		// définition de la taille de l'interface
-		cs.values.currentUIScale = PlayerPrefs.GetFloat("UIScale", computeUIScale());
-		syncCanvasScaler();
+		cs.values.currentUIScale = PlayerPrefs.GetFloat("UIScale", ComputeUIScale());
+		SyncCanvasScaler();
 		cs.values.currentWallTransparency = PlayerPrefs.GetInt("wallTransparency", ds.defaultWallTransparency);
 		cs.values.currentCameraTracking = PlayerPrefs.GetInt("cameraTracking", ds.defaultCameraTracking);
 		cs.values.currentAnimation = PlayerPrefs.GetInt("animation", ds.defaultAnimation);
 		cs.values.currentGameView = PlayerPrefs.GetInt("orthographicView", ds.defaultGameView);
 		cs.values.currentTooltipView = PlayerPrefs.GetInt("tooltipView", ds.defaultTooltipView);
+        cs.values.currentAutoHideTooltip = PlayerPrefs.GetInt("autoHideTooltip", Application.platform == RuntimePlatform.WebGLPlayer && IsMobileBrowser() ? 1 : ds.defaultAutoHideTooltip);
 
-		cs.values.currentFont = PlayerPrefs.GetInt("font", ds.defaultFont);
+        cs.values.currentFont = PlayerPrefs.GetInt("font", ds.defaultFont);
 		cs.values.currentCaretWidth = PlayerPrefs.GetInt("caretWidth", ds.defaultCaretWidth);
-		cs.values.currentCaretHeight = PlayerPrefs.GetInt("caretHeight", ds.defaultCaretHeight);
-		cs.values.currentCharSpacing = PlayerPrefs.GetInt("charSpacing", ds.defaultCharSpacing);
-		cs.values.currentWordSpacing = PlayerPrefs.GetInt("wordSpacing", ds.defaultWordSpacing);
-		cs.values.currentLineSpacing = PlayerPrefs.GetInt("lineSpacing", ds.defaultLineSpacing);
-		cs.values.currentParagraphSpacing = PlayerPrefs.GetInt("paragraphSpacing", ds.defaultParagraphSpacing);
+		cs.values.currentCaretHeight = PlayerPrefs.GetFloat("caretHeight", ds.defaultCaretHeight);
+		cs.values.currentCharSpacing = PlayerPrefs.GetFloat("charSpacing", ds.defaultCharSpacing);
+		cs.values.currentWordSpacing = PlayerPrefs.GetFloat("wordSpacing", ds.defaultWordSpacing);
+		cs.values.currentLineSpacing = PlayerPrefs.GetFloat("lineSpacing", ds.defaultLineSpacing);
+		cs.values.currentParagraphSpacing = PlayerPrefs.GetFloat("paragraphSpacing", ds.defaultParagraphSpacing);
 
-		// Synchronisation de la couleur des textes
-		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("TextColorNormal", ColorUtility.ToHtmlStringRGBA(ds.defaultNormalColor_Text)), out cs.values.currentNormalColor_Text);
+		cs.values.currentDoubleClickDelay = PlayerPrefs.GetFloat("doubleClickDelay", ds.defaultDoubleClickDelay);
+        cs.values.currentLongClickDelay = PlayerPrefs.GetFloat("longClickDelay", ds.defaultLongClickDelay);
+        cs.values.currentAutoClick = PlayerPrefs.GetInt("autoClick", ds.defaultAutoClick);
+        cs.values.currentAutoClickDelay = PlayerPrefs.GetFloat("autoClickDelay", ds.defaultAutoClickDelay);
+
+        // Synchronisation de la couleur des textes
+        ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("TextColorNormal", ColorUtility.ToHtmlStringRGBA(ds.defaultNormalColor_Text)), out cs.values.currentNormalColor_Text);
 		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("TextColorSelected", ColorUtility.ToHtmlStringRGBA(ds.defaultSelectedColor_Text)), out cs.values.currentSelectedColor_Text);
 		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("PlaceholderColor", ColorUtility.ToHtmlStringRGBA(ds.defaultPlaceholderColor)), out cs.values.currentPlaceholderColor);
 		// Synchronisation de la couleur des dropdown
@@ -328,7 +338,7 @@ public class SettingsManager : FSystem
 		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("PanelColorTexture", ColorUtility.ToHtmlStringRGBA(ds.defaultColor_PanelTexture)), out cs.values.currentColor_PanelTexture);
 		// Synchronisation des propriétés de bordure
 		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("BorderColor", ColorUtility.ToHtmlStringRGBA(ds.defaultColor_Border)), out cs.values.currentColor_Border);
-		cs.values.currentBorderThickness = PlayerPrefs.GetInt("BorderThickness", ds.defaultBorderThickness);
+		cs.values.currentBorderThickness = PlayerPrefs.GetFloat("BorderThickness", ds.defaultBorderThickness);
 		// Synchronisation de la couleur des scrollbars
 		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("ScrollbarColorNormal", ColorUtility.ToHtmlStringRGBA(ds.defaultNormalColor_Scrollbar)), out cs.values.currentNormalColor_Scrollbar);
 		ColorUtility.TryParseHtmlString("#" + PlayerPrefs.GetString("ScrollbarColorBackground", ColorUtility.ToHtmlStringRGBA(ds.defaultBackgroundColor_Scrollbar)), out cs.values.currentBackgroundColor_Scrollbar);
@@ -354,30 +364,35 @@ public class SettingsManager : FSystem
 	}
 
 	// initialise l'UI des settings à partir des currentSettingsValues
-	private void syncSettingsUI()
+	private void SyncSettingsUI()
 	{
 		// Voir SyncLocalization pour la gestion de la langue
-		initSkillsRepositories();
+		InitSkillsRepositories();
         settingsContent.Find("SectionLang/GridContainer/Grid/SkillsDropdown").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentSkillsRepository;
         settingsContent.Find("SectionGraphic/GridContainer/Grid/Quality").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentQuality;
-		settingsContent.Find("SectionGraphic/GridContainer/Grid/InteractionMode").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentInteractionMode;
 		ds.UIScale.text = cs.values.currentUIScale + "";
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/WallTransparency").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentWallTransparency;
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/CameraTracking").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentCameraTracking;
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/GameView").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentGameView;
-		settingsContent.Find("SectionGraphic/GridContainer/Grid/Animation").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentAnimation;
 		settingsContent.Find("SectionGraphic/GridContainer/Grid/Tooltip").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentTooltipView;
+        settingsContent.Find("SectionGraphic/GridContainer/Grid/AutoHideTooltip").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentAutoHideTooltip;
+        settingsContent.Find("SectionGraphic/GridContainer/Grid/Animation").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentAnimation;
 
-		settingsContent.Find("SectionText/GridContainer/Grid/FontDropdown").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentFont;
-		settingsContent.Find("SectionText/GridContainer/Grid/CaretWidth").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentCaretWidth;
-		settingsContent.Find("SectionText/GridContainer/Grid/CaretHeight").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentCaretHeight;
-		settingsContent.Find("SectionText/GridContainer/Grid/CharSpacing").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentCharSpacing;
-		settingsContent.Find("SectionText/GridContainer/Grid/WordSpacing").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentWordSpacing;
-		settingsContent.Find("SectionText/GridContainer/Grid/LineSpacing").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentLineSpacing;
-		settingsContent.Find("SectionText/GridContainer/Grid/ParagraphSpacing").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentParagraphSpacing;
+        settingsContent.Find("SectionText/GridContainer/Grid/FontDropdown").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentFont;
+		settingsContent.Find("SectionText/GridContainer/Grid/CaretWidth").GetComponentInChildren<TMP_InputField>().text = cs.values.currentCaretWidth.ToString();
+		settingsContent.Find("SectionText/GridContainer/Grid/CaretHeight").GetComponentInChildren<TMP_InputField>().text = cs.values.currentCaretHeight.ToString();
+		settingsContent.Find("SectionText/GridContainer/Grid/CharSpacing").GetComponentInChildren<TMP_InputField>().text = cs.values.currentCharSpacing.ToString();
+		settingsContent.Find("SectionText/GridContainer/Grid/WordSpacing").GetComponentInChildren<TMP_InputField>().text = cs.values.currentWordSpacing.ToString();
+		settingsContent.Find("SectionText/GridContainer/Grid/LineSpacing").GetComponentInChildren<TMP_InputField>().text = cs.values.currentLineSpacing.ToString();
+		settingsContent.Find("SectionText/GridContainer/Grid/ParagraphSpacing").GetComponentInChildren<TMP_InputField>().text = cs.values.currentParagraphSpacing.ToString();
 
-		// Synchronisation de la couleur des textes
-		settingsContent.Find("SectionColor/GridContainer/Grid/ColorTextNormal/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentNormalColor_Text;
+        settingsContent.Find("SectionInteraction/GridContainer/Grid/DoubleClickDelay").GetComponentInChildren<TMP_InputField>().text = cs.values.currentDoubleClickDelay.ToString();
+        settingsContent.Find("SectionInteraction/GridContainer/Grid/LongClickDelay").GetComponentInChildren<TMP_InputField>().text = cs.values.currentLongClickDelay.ToString();
+        settingsContent.Find("SectionInteraction/GridContainer/Grid/AutoClick").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentAutoClick;
+        settingsContent.Find("SectionInteraction/GridContainer/Grid/AutoClickDelay").GetComponentInChildren<TMP_InputField>().text = cs.values.currentAutoClickDelay.ToString();
+
+        // Synchronisation de la couleur des textes
+        settingsContent.Find("SectionColor/GridContainer/Grid/ColorTextNormal/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentNormalColor_Text;
 		settingsContent.Find("SectionColor/GridContainer/Grid/ColorTextSelected/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentSelectedColor_Text;
 		settingsContent.Find("SectionColor/GridContainer/Grid/ColorPlaceholder/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentPlaceholderColor;
 		// Synchronisation de la couleur des dropdown
@@ -406,7 +421,7 @@ public class SettingsManager : FSystem
 		settingsContent.Find("SectionColor/GridContainer/Grid/ColorPanelTexture/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentColor_PanelTexture;
 		// Synchronisation des propriétés de bordure
 		settingsContent.Find("SectionColor/GridContainer/Grid/ColorBorder/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentColor_Border;
-		settingsContent.Find("SectionColor/GridContainer/Grid/ThicknessBorder").GetComponentInChildren<TMP_Dropdown>().value = cs.values.currentBorderThickness - 1;
+		settingsContent.Find("SectionColor/GridContainer/Grid/ThicknessBorder").GetComponentInChildren<TMP_InputField>().text = cs.values.currentBorderThickness.ToString();
 		// Synchronisation de la couleur des scrollbars
 		settingsContent.Find("SectionColor/GridContainer/Grid/ColorScrollbarNormal/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentNormalColor_Scrollbar;
 		settingsContent.Find("SectionColor/GridContainer/Grid/ColorScrollbarBackground/ButtonWithBorder").GetComponent<Image>().color = cs.values.currentBackgroundColor_Scrollbar;
@@ -432,26 +447,30 @@ public class SettingsManager : FSystem
 	}
 
 	// See CloseSettings button in SettingsWindows prefab
-	public void saveParameters()
+	public void SaveParameters()
 	{
 		// Voir SyncLocalization pour la gestion de la langue
 		PlayerPrefs.SetInt("skillsRepository", cs.values.currentSkillsRepository);
         PlayerPrefs.SetInt("quality", cs.values.currentQuality);
-		PlayerPrefs.SetInt("interaction", cs.values.currentInteractionMode);
 		PlayerPrefs.SetFloat("UIScale", cs.values.currentUIScale);
 		PlayerPrefs.SetInt("wallTransparency", cs.values.currentWallTransparency);
 		PlayerPrefs.SetInt("cameraTracking", cs.values.currentCameraTracking);
 		PlayerPrefs.SetInt("animation", cs.values.currentAnimation);
 		PlayerPrefs.SetInt("orthographicView", cs.values.currentGameView);
 		PlayerPrefs.SetInt("tooltipView", cs.values.currentTooltipView);
-		PlayerPrefs.SetInt("font", cs.values.currentFont);
-		PlayerPrefs.SetInt("caretWidth", cs.values.currentCaretWidth);
-		PlayerPrefs.SetInt("caretHeight", cs.values.currentCaretHeight);
-		PlayerPrefs.SetInt("charSpacing", cs.values.currentCharSpacing);
-		PlayerPrefs.SetInt("wordSpacing", cs.values.currentWordSpacing);
-		PlayerPrefs.SetInt("lineSpacing", cs.values.currentLineSpacing);
-		PlayerPrefs.SetInt("paragraphSpacing", cs.values.currentParagraphSpacing);
-		PlayerPrefs.SetString("TextColorNormal", ColorUtility.ToHtmlStringRGBA(cs.values.currentNormalColor_Text));
+        PlayerPrefs.SetInt("autoHideTooltip", cs.values.currentAutoHideTooltip);
+        PlayerPrefs.SetInt("font", cs.values.currentFont);
+		PlayerPrefs.SetFloat("caretWidth", cs.values.currentCaretWidth);
+		PlayerPrefs.SetFloat("caretHeight", cs.values.currentCaretHeight);
+		PlayerPrefs.SetFloat("charSpacing", cs.values.currentCharSpacing);
+		PlayerPrefs.SetFloat("wordSpacing", cs.values.currentWordSpacing);
+		PlayerPrefs.SetFloat("lineSpacing", cs.values.currentLineSpacing);
+		PlayerPrefs.SetFloat("paragraphSpacing", cs.values.currentParagraphSpacing);
+		PlayerPrefs.SetFloat("doubleClickDelay", cs.values.currentDoubleClickDelay);
+        PlayerPrefs.SetFloat("longClickDelay", cs.values.currentLongClickDelay);
+        PlayerPrefs.SetInt("autoClick", cs.values.currentAutoClick);
+        PlayerPrefs.SetFloat("autoClickDelay", cs.values.currentAutoClickDelay);
+        PlayerPrefs.SetString("TextColorNormal", ColorUtility.ToHtmlStringRGBA(cs.values.currentNormalColor_Text));
 		PlayerPrefs.SetString("TextColorSelected", ColorUtility.ToHtmlStringRGBA(cs.values.currentSelectedColor_Text));
 		PlayerPrefs.SetString("PlaceholderColor", ColorUtility.ToHtmlStringRGBA(cs.values.currentPlaceholderColor));
 		PlayerPrefs.SetString("DropdownColorNormal", ColorUtility.ToHtmlStringRGBA(cs.values.currentNormalColor_Dropdown));
@@ -470,7 +489,7 @@ public class SettingsManager : FSystem
 		PlayerPrefs.SetString("Panel3Color", ColorUtility.ToHtmlStringRGBA(cs.values.currentColor_Panel3));
 		PlayerPrefs.SetString("PanelColorTexture", ColorUtility.ToHtmlStringRGBA(cs.values.currentColor_PanelTexture));
 		PlayerPrefs.SetString("BorderColor", ColorUtility.ToHtmlStringRGBA(cs.values.currentColor_Border));
-		PlayerPrefs.SetInt("BorderThickness", cs.values.currentBorderThickness);
+		PlayerPrefs.SetFloat("BorderThickness", cs.values.currentBorderThickness);
 		PlayerPrefs.SetString("ScrollbarColorNormal", ColorUtility.ToHtmlStringRGBA(cs.values.currentNormalColor_Scrollbar));
 		PlayerPrefs.SetString("ScrollbarColorBackground", ColorUtility.ToHtmlStringRGBA(cs.values.currentBackgroundColor_Scrollbar));
 		PlayerPrefs.SetString("ScrollviewColor", ColorUtility.ToHtmlStringRGBA(cs.values.currentBackgroundColor_Scrollview));
@@ -492,7 +511,7 @@ public class SettingsManager : FSystem
 	}
 
 	// See CloseSettings button in SettingsWindows prefab
-	public void sendUserData()
+	public void SendUserData()
 	{
 		settingsUpdated = true;
 		if (GBL_Interface.playerName != "") // Au cas où le joueur serait en train de jouer avec les paramètres avant de s'être identifié
@@ -500,7 +519,7 @@ public class SettingsManager : FSystem
 	}
 
 	// See ExportSettings button in SettingsWindows prefab
-	public void exportSettings()
+	public void ExportSettings()
 	{
 		string export = JsonUtility.ToJson(cs.values);
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
@@ -509,30 +528,30 @@ public class SettingsManager : FSystem
 			Debug.Log(export);
 	}
 
-	public void onPresetSelected(int selectedIndex) {
+	public void OnPresetSelected(int selectedIndex) {
 		if (selectedIndex == 0)
 			return;
 		else if (selectedIndex == 1)
-            resetParameters();
+            ResetParameters();
 		else
 			MergeSettings(presetSettings[selectedIndex-1]); 
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
-	public void importSettingsFromJS(string content)
+	public void ImportSettingsFromJS(string content)
 	{
-		importSettings(JsonUtility.FromJson<Utility.JavaScriptData>(content).content);
+		ImportSettings(JsonUtility.FromJson<Utility.JavaScriptData>(content).content);
 	}
 
-	public void importSettings(string content)
+	public void ImportSettings(string content)
     {
 		RawSettingsValues newSettings = JsonUtility.FromJson<RawSettingsValues>(content);
 		if (newSettings != null)
 		{
 			settingsUpdated = true;
 			cs.values = newSettings;
-			saveParameters();
-			applySettings();
+			SaveParameters();
+			ApplySettings();
 		}
 	}
 
@@ -573,31 +592,36 @@ public class SettingsManager : FSystem
                 );
             }
         }
-        saveParameters();
-        syncSettingsUI(); // synchronise les menus des settings avec les bons paramètres
-        applySettings();
+        SaveParameters();
+        SyncSettingsUI(); // synchronise les menus des settings avec les bons paramètres
+        ApplySettings();
     }
 
-    public void resetParameters()
+    public void ResetParameters()
 	{
 		// Volontairement on ne reset pas la langue
 		cs.values.currentSkillsRepository = ds.defaultSkillsRepository;
         cs.values.currentQuality = ds.defaultQuality;
-		cs.values.currentInteractionMode = ds.defaultInteractionMode;
-        cs.values.currentUIScale = computeUIScale();
+        cs.values.currentUIScale = ComputeUIScale();
 		cs.values.currentWallTransparency = ds.defaultWallTransparency;
 		cs.values.currentCameraTracking = ds.defaultCameraTracking;
 		cs.values.currentGameView = ds.defaultGameView;
 		cs.values.currentAnimation = ds.defaultAnimation;
 		cs.values.currentTooltipView = ds.defaultTooltipView;
-		cs.values.currentFont = ds.defaultFont;
+        cs.values.currentAutoHideTooltip = ds.defaultAutoHideTooltip;
+        cs.values.currentFont = ds.defaultFont;
 		cs.values.currentCaretWidth = ds.defaultCaretWidth;
 		cs.values.currentCaretHeight = ds.defaultCaretHeight;
 		cs.values.currentCharSpacing = ds.defaultCharSpacing;
 		cs.values.currentWordSpacing = ds.defaultWordSpacing;
 		cs.values.currentLineSpacing = ds.defaultLineSpacing;
 		cs.values.currentParagraphSpacing = ds.defaultParagraphSpacing;
-		cs.values.currentNormalColor_Text = ds.defaultNormalColor_Text;
+		cs.values.currentDoubleClickDelay = ds.defaultDoubleClickDelay;
+        cs.values.currentLongClickDelay = ds.defaultLongClickDelay;
+        cs.values.currentAutoClick = ds.defaultAutoClick;
+        cs.values.currentAutoClickDelay = ds.defaultAutoClickDelay;
+
+        cs.values.currentNormalColor_Text = ds.defaultNormalColor_Text;
 		cs.values.currentSelectedColor_Text = ds.defaultSelectedColor_Text;
 		cs.values.currentPlaceholderColor = ds.defaultPlaceholderColor;
 		cs.values.currentNormalColor_Dropdown = ds.defaultNormalColor_Dropdown;
@@ -635,12 +659,12 @@ public class SettingsManager : FSystem
 		cs.values.currentCaptorFalseColor = ds.defaultCaptorFalseColor; 
 		cs.values.currentWrongAssociationColor = ds.defaultWrongAssociationColor;
 
-		saveParameters();
-		syncSettingsUI(); // synchronise les menus des settings avec les bons paramètres
-		applySettings(); // applique les paramètres à tout le jeu
+		SaveParameters();
+		SyncSettingsUI(); // synchronise les menus des settings avec les bons paramètres
+		ApplySettings(); // applique les paramètres à tout le jeu
 	}
 
-	public void hookListener(string key)
+	public void HookListener(string key)
 	{
 		flexibleColorPicker.onColorChange.RemoveAllListeners();
 		switch (key)
@@ -648,219 +672,219 @@ public class SettingsManager : FSystem
 			case "TextColorNormal":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentNormalColor_Text = c;
-					syncColor(f_allTexts, syncColor_Text);
+					SyncColor(f_allTexts, SyncColor_Text);
 					SyncLocalization.instance.syncLocale();
 				});
 				break;
 			case "TextColorSelected":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentSelectedColor_Text = c;
-					syncColor(f_allTexts, syncColor_Text);
+					SyncColor(f_allTexts, SyncColor_Text);
 					SyncLocalization.instance.syncLocale();
 				});
 				break;
 			case "PlaceholderColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentPlaceholderColor = c;
-					syncColor(f_inputfield, sync_Inputfield);
+					SyncColor(f_inputfield, Sync_Inputfield);
 				});
 				break;
 			case "DropdownColorNormal":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentNormalColor_Dropdown = c;
-					syncColor(f_dropdown, syncColor_Dropdown);
+					SyncColor(f_dropdown, SyncColor_Dropdown);
 				});
 				break;
 			case "InputfieldColorNormal":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentNormalColor_Inputfield = c;
-					syncColor(f_inputfield, sync_Inputfield);
+					SyncColor(f_inputfield, Sync_Inputfield);
 				});
 				break;
 			case "InputfieldColorSelected":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentSelectedColor_Inputfield = c;
-					syncColor(f_inputfield, sync_Inputfield);
+					SyncColor(f_inputfield, Sync_Inputfield);
 				});
 				break;
 			case "InputfieldColorSelection":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentSelectionColor_Inputfield = c;
-					syncColor(f_inputfield, sync_Inputfield);
+					SyncColor(f_inputfield, Sync_Inputfield);
 				});
 				break;
 			case "InputfieldColorCaret":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentCaretColor_Inputfield = c;
-					syncColor(f_inputfield, sync_Inputfield);
+					SyncColor(f_inputfield, Sync_Inputfield);
 				});
 				break;
 			case "ButtonColorNormal":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentNormalColor_Button = c;
-					syncColor(f_buttons, syncNormalColor, cs.values.currentNormalColor_Button);
+					SyncColor(f_buttons, SyncNormalColor, cs.values.currentNormalColor_Button);
 				});
 				break;
 			case "HighlightedColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentHighlightedColor = c;
-					syncColor(f_selectable, syncHighlightedColor);
-					syncColor(f_inputfield, syncHighlightedColor);
+					SyncColor(f_selectable, SyncHighlightedColor);
+					SyncColor(f_inputfield, SyncHighlightedColor);
 				});
 				break;
 			case "PressedColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentPressedColor = c;
-					syncColor(f_selectable, syncPressedColor);
-					syncColor(f_inputfield, syncPressedColor);
+					SyncColor(f_selectable, SyncPressedColor);
+					SyncColor(f_inputfield, SyncPressedColor);
 				});
 				break;
 			case "SelectedColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentSelectedColor = c;
-					syncColor(f_selectable, syncSelectedColor);
-					syncColor(f_SyncSelectedColor, syncGraphicColor, cs.values.currentSelectedColor);
+					SyncColor(f_selectable, SyncSelectedColor);
+					SyncColor(f_SyncSelectedColor, SyncGraphicColor, cs.values.currentSelectedColor);
 				});
 				break;
 			case "DisabledColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentDisabledColor = c;
-					syncColor(f_allTexts, syncColor_Text);
-					syncColor(f_selectable, syncDisabledColor);
-					syncColor(f_inputfield, syncDisabledColor);
+					SyncColor(f_allTexts, SyncColor_Text);
+					SyncColor(f_selectable, SyncDisabledColor);
+					SyncColor(f_inputfield, SyncDisabledColor);
 				});
 				break;
 			case "IconColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentColor_Icon = c;
-					syncColor(f_icons, syncIconColor, cs.values.currentColor_Icon);
+					SyncColor(f_icons, SyncIconColor, cs.values.currentColor_Icon);
 				});
 				break;
 			case "Panel1Color":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentColor_Panel1 = c;
-					syncColor(f_panels1, syncColor_Panel);
+					SyncColor(f_panels1, SyncColor_Panel);
 				});
 				break;
 			case "Panel2Color":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentColor_Panel2 = c;
-					syncColor(f_panels2, syncGraphicColor, cs.values.currentColor_Panel2);
+					SyncColor(f_panels2, SyncGraphicColor, cs.values.currentColor_Panel2);
 				});
 				break;
 			case "Panel3Color":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentColor_Panel3 = c;
-					syncColor(f_panels3, syncGraphicColor, cs.values.currentColor_Panel3);
+					SyncColor(f_panels3, SyncGraphicColor, cs.values.currentColor_Panel3);
 				});
 				break;
 			case "PanelColorTexture":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentColor_PanelTexture = c;
-					syncColor(f_panels1, syncColor_Panel);
+					SyncColor(f_panels1, SyncColor_Panel);
 				});
 				break;
 			case "BorderColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentColor_Border = c;
-					syncColor(f_borders, syncBorderProperties, cs.values.currentColor_Border);
+					SyncColor(f_borders, SyncBorderProperties, cs.values.currentColor_Border);
 				});
 				break;
 			case "ScrollbarColorNormal":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentNormalColor_Scrollbar = c;
-					syncColor(f_scrollbar, syncNormalColor, cs.values.currentNormalColor_Scrollbar);
+					SyncColor(f_scrollbar, SyncNormalColor, cs.values.currentNormalColor_Scrollbar);
 				});
 				break;
 			case "ScrollbarColorBackground":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentBackgroundColor_Scrollbar = c;
-					syncColor(f_scrollbar, syncGraphicColor, cs.values.currentBackgroundColor_Scrollbar);
+					SyncColor(f_scrollbar, SyncGraphicColor, cs.values.currentBackgroundColor_Scrollbar);
 				});
 				break;
 			case "ScrollviewColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentBackgroundColor_Scrollview = c;
-					syncColor(f_scrollview, syncGraphicColor, cs.values.currentBackgroundColor_Scrollview);
+					SyncColor(f_scrollview, SyncGraphicColor, cs.values.currentBackgroundColor_Scrollview);
 				});
 				break;
 			case "ToggleColorNormal":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentNormalColor_Toggle = c;
-					syncColor(f_toggle, syncNormalColor, cs.values.currentNormalColor_Toggle);
+					SyncColor(f_toggle, SyncNormalColor, cs.values.currentNormalColor_Toggle);
 				});
 				break;
 			case "TooltipColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentColor_Tooltip = c;
-					syncColor(f_tooltip, syncGraphicColor, cs.values.currentColor_Tooltip);
+					SyncColor(f_tooltip, SyncGraphicColor, cs.values.currentColor_Tooltip);
 				});
 				break;
 			case "PlayColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentPlayButtonColor = c;
-					syncColor(f_buttonsPlay, syncNormalColor, cs.values.currentPlayButtonColor);
+					SyncColor(f_buttonsPlay, SyncNormalColor, cs.values.currentPlayButtonColor);
 				});
 				break;
 			case "PauseColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentPauseButtonColor = c;
-					syncColor(f_buttonsPause, syncNormalColor, cs.values.currentPauseButtonColor);
+					SyncColor(f_buttonsPause, SyncNormalColor, cs.values.currentPauseButtonColor);
 				});
 				break;
 			case "StopColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentStopButtonColor = c;
-					syncColor(f_buttonsStop, syncNormalColor, cs.values.currentStopButtonColor);
+					SyncColor(f_buttonsStop, SyncNormalColor, cs.values.currentStopButtonColor);
 				});
 				break;
 			case "ActionBlockColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentActionBlockColor = c;
-					syncColor(f_blocks, syncBlockColor);
+					SyncColor(f_blocks, SyncBlockColor);
 				});
 				break;
 			case "ControlBlockColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentControlBlockColor = c;
-					syncColor(f_blocks, syncBlockColor);
+					SyncColor(f_blocks, SyncBlockColor);
 				});
 				break;
 			case "OperatorBlockColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentOperatorBlockColor = c;
-					syncColor(f_blocks, syncBlockColor);
+					SyncColor(f_blocks, SyncBlockColor);
 				});
 				break;
 			case "CaptorBlockColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentCaptorBlockColor = c;
-					syncColor(f_blocks, syncBlockColor);
+					SyncColor(f_blocks, SyncBlockColor);
 				});
 				break;
 			case "DropAreaColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentDropAreaColor = c;
-					syncColor(f_dropArea, syncDropAreaColor);
+					SyncColor(f_dropArea, SyncDropAreaColor);
 				});
 				break; 
 			case "HighlightingColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentHighlightingColor = c;
-					syncColor(f_highlightable, setHighlightingColor);
-					syncColor(f_tileSelection, syncTileColor);
+					SyncColor(f_highlightable, SetHighlightingColor);
+					SyncColor(f_tileSelection, SyncTileColor);
 				});
 				break;
 			case "CaptorTrueColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentCaptorTrueColor = c;
-					syncColor(f_conditionNotif, syncConditionNotif);
+					SyncColor(f_conditionNotif, SyncConditionNotif);
 				});
 				break; 
 			case "CaptorFalseColor":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentCaptorFalseColor = c;
-					syncColor(f_conditionNotif, syncConditionNotif);
+					SyncColor(f_conditionNotif, SyncConditionNotif);
 				});
 				break;
 			case "WrongAssociation":
@@ -873,7 +897,7 @@ public class SettingsManager : FSystem
 		}
 	}
 
-	private void syncColor(Family family, Action<GameObject, Color?> call, Color? color = null)
+	private void SyncColor(Family family, Action<GameObject, Color?> call, Color? color = null)
 	{
 		foreach (GameObject text in family)
 		{
@@ -881,71 +905,71 @@ public class SettingsManager : FSystem
 		}
 	}
 
-	public void setSkillsRepository(int value)
+	public void SetSkillsRepository(int value)
 	{
 		cs.values.currentSkillsRepository = value;
     }
 
-    public void setQualitySetting(int value)
+    public void SetQualitySetting(int value)
 	{
 		QualitySettings.SetQualityLevel(value);
 		cs.values.currentQuality = value;
 	}
 
-	public void setInteraction(int value)
+	public void SetAutoHideTooltip(int value)
 	{
-		cs.values.currentInteractionMode = value;
+		cs.values.currentAutoHideTooltip = value;
 	}
 
-	public void increaseUISize()
+	public void IncreaseUISize()
 	{
 		cs.values.currentUIScale += 0.25f;
-		syncCanvasScaler();
+		SyncCanvasScaler();
 		ds.UIScale.text = cs.values.currentUIScale + "";
 	}
-	public void decreaseUISize()
+	public void DecreaseUISize()
 	{
 		if (cs.values.currentUIScale >= 0.5f)
 			cs.values.currentUIScale -= 0.25f;
-		syncCanvasScaler();
+		SyncCanvasScaler();
 		ds.UIScale.text = cs.values.currentUIScale + "";
 	}
 	
-	public void syncCanvasScaler()
+	public void SyncCanvasScaler()
     {
         foreach (GameObject scalerGo in f_canvasScaler)
 			scalerGo.GetComponent<CanvasScaler>().scaleFactor = cs.values.currentUIScale;
         UpdateSafeArea();
     }
 
-	public void setWallTransparency(int value)
+	public void SetWallTransparency(int value)
 	{
 		if (ObstableTransparencySystem.instance != null)
 			ObstableTransparencySystem.instance.Pause = value == 0;
 		cs.values.currentWallTransparency = value;
 	}
 
-	public void setCameraTracking(int value)
+	public void SetCameraTracking(int value)
 	{
 		cs.values.currentCameraTracking = value;
 	}
 
-	public void setGameView(int value)
+	public void SetGameView(int value)
 	{
 		if (CameraSystem.instance != null)
 			CameraSystem.instance.setOrthographicView(value == 1);
 		cs.values.currentGameView = value;
 	}
 
-	public void setAnimation(int value)
+	public void SetAnimation(int value)
     {
         cs.values.currentAnimation = value;
         // (Dés)Activer les animations des panneaux UI
         foreach (GameObject go in f_animations)
-			applyAnimation(go);
+			ApplyAnimation(go);
 	}
 
-	private void applyAnimation(GameObject go)
+	private void ApplyAnimation(GameObject go)
 	{
 		// s'assurer qu'on est bien sur une animation d'UI
 		if (go.GetComponentInParent<Canvas>(true) != null)
@@ -962,19 +986,19 @@ public class SettingsManager : FSystem
         }
 	}
 
-	public void setTooltipView(int value)
+	public void SetTooltipView(int value)
 	{
 		cs.values.currentTooltipView = value;
 	}
 
-	public void syncFonts(int value)
+	public void SyncFonts(int value)
 	{
 		cs.values.currentFont = value;
 		foreach (GameObject go in f_modifiableFonts)
-			syncFont(go);
+			SyncFont(go);
 	}
 
-	private void syncFont(GameObject go)
+	private void SyncFont(GameObject go)
 	{
 		TMP_InputField inputField = go.GetComponent<TMP_InputField>();
 		if (inputField != null)
@@ -984,7 +1008,7 @@ public class SettingsManager : FSystem
 	}
 
 	// Fonction utilisée pour définir la font dans la liste déroulante de sélection de la font dans les paramètres
-	private void fixFont(GameObject go)
+	private void FixFont(GameObject go)
 	{
 		TextMeshProUGUI option = go.GetComponent<TextMeshProUGUI>();
 		switch (option.text)
@@ -1018,21 +1042,45 @@ public class SettingsManager : FSystem
 		}
 	}
 
-	public void setCaretWidth(int value)
-	{
-		cs.values.currentCaretWidth = value;
-		foreach (GameObject inputGO in f_inputfield)
-			sync_Inputfield(inputGO);
-	}
+	private void SetCaretWidth(int value)
+    {
+        value = Mathf.Clamp(value, 1, 10);
+        cs.values.currentCaretWidth = value;
+        foreach (GameObject inputGO in f_inputfield)
+            Sync_Inputfield(inputGO);
+        // être sûr que l'input field est bien synchro
+        settingsContent.Find("SectionText/GridContainer/Grid/CaretWidth").GetComponentInChildren<TMP_InputField>().text = value.ToString();
+    }
 
-	public void setCaretHeight(int value)
+	public void SetCaretWidth(string value)
 	{
-		cs.values.currentCaretHeight = value;
+        if (int.TryParse(value, out int iValue))
+            SetCaretWidth(iValue);
+        else
+            // si problème de parsing, on met la valeur par défaut
+            SetCaretWidth(ds.defaultCaretWidth);
+    }
+
+	private void SetCaretHeight(float value)
+    {
+        value = Mathf.Clamp(value, 1, 2);
+        cs.values.currentCaretHeight = value;
 		foreach (GameObject caretGO in f_inputfieldCaret)
-			sync_CaretHeight(caretGO);
-	}
+			Sync_CaretHeight(caretGO);
+        // être sûr que l'input field est bien synchro
+        settingsContent.Find("SectionText/GridContainer/Grid/CaretHeight").GetComponentInChildren<TMP_InputField>().text = value.ToString();
+    }
 
-	private void syncColor_Text(GameObject text, Color? unused = null)
+    public void SetCaretHeight(string value)
+    {
+        if (float.TryParse(value, out float fValue))
+            SetCaretHeight(fValue);
+        else
+            // si problème de parsing, on met la valeur par défaut
+            SetCaretHeight(ds.defaultCaretHeight);
+    }
+
+    private void SyncColor_Text(GameObject text, Color? unused = null)
 	{
 		Selectable textSel = text.GetComponent<Selectable>();
 
@@ -1044,7 +1092,7 @@ public class SettingsManager : FSystem
 		if (textSel != null && textSel.targetGraphic == text.GetComponent<Graphic>())
 		{
 			// forcer la couleur du texte à blanc pour être sûr que la couleur du selectable soit bien celle prise en compte
-			syncGraphicColor(text, Color.white);
+			SyncGraphicColor(text, Color.white);
 			// définir les couleurs du selectable
 			ColorBlock currentColor = textSel.colors;
 			currentColor.normalColor = cs.values.currentNormalColor_Text;
@@ -1081,18 +1129,18 @@ public class SettingsManager : FSystem
 			{
 				TMP_InputField inputField = text.GetComponentInParent<TMP_InputField>(true);
 				if (inputField == null || inputField.placeholder != text.GetComponent<Graphic>())
-					syncGraphicColor(text, cs.values.currentNormalColor_Text);
+					SyncGraphicColor(text, cs.values.currentNormalColor_Text);
 			}
 		}
 	}
 
-	private void syncColor_Dropdown(GameObject go, Color? unused = null)
+	private void SyncColor_Dropdown(GameObject go, Color? unused = null)
 	{
-		syncNormalColor(go, cs.values.currentNormalColor_Dropdown);
-        syncGraphicColor(go.GetComponent<TMP_Dropdown>().template.gameObject, cs.values.currentNormalColor_Dropdown);
+		SyncNormalColor(go, cs.values.currentNormalColor_Dropdown);
+        SyncGraphicColor(go.GetComponent<TMP_Dropdown>().template.gameObject, cs.values.currentNormalColor_Dropdown);
 	}
 
-	private void sync_Inputfield(GameObject go, Color? unused = null)
+	private void Sync_Inputfield(GameObject go, Color? unused = null)
 	{
 		TMP_InputField input = go.GetComponent<TMP_InputField>();
 		ColorBlock currentColor = input.colors;
@@ -1103,15 +1151,15 @@ public class SettingsManager : FSystem
 		input.placeholder.color = cs.values.currentPlaceholderColor;
 		input.selectionColor = cs.values.currentSelectionColor_Inputfield;
 		input.caretColor = cs.values.currentCaretColor_Inputfield;
-		input.caretWidth = (cs.values.currentCaretWidth + 1) * 2;
+		input.caretWidth = cs.values.currentCaretWidth;
 	}
 
-	private void sync_CaretHeight(GameObject go)
+	private void Sync_CaretHeight(GameObject go)
 	{
-		go.transform.localScale = new Vector3(1f, cs.values.currentCaretHeight + 1, 1f);
+		go.transform.localScale = new Vector3(1f, cs.values.currentCaretHeight, 1f);
 	}
 
-	private void syncNormalColor(GameObject go, Color? color)
+	private void SyncNormalColor(GameObject go, Color? color)
 	{
 		Selectable selectable = go.GetComponent<Selectable>();
 		if (selectable != null)
@@ -1121,10 +1169,10 @@ public class SettingsManager : FSystem
 			selectable.colors = currentColor;
         }
         else
-            syncGraphicColor(go, color);
+            SyncGraphicColor(go, color);
     }
 
-	private void syncHighlightedColor(GameObject go, Color? unused = null)
+	private void SyncHighlightedColor(GameObject go, Color? unused = null)
 	{
 		Selectable select = go.GetComponent<Selectable>();
 		ColorBlock currentColor = select.colors;
@@ -1132,7 +1180,7 @@ public class SettingsManager : FSystem
 		select.colors = currentColor;
 	}
 
-	private void syncPressedColor(GameObject go, Color? unused = null)
+	private void SyncPressedColor(GameObject go, Color? unused = null)
 	{
 		Selectable select = go.GetComponent<Selectable>();
 		ColorBlock currentColor = select.colors;
@@ -1140,7 +1188,7 @@ public class SettingsManager : FSystem
 		select.colors = currentColor;
 	}
 
-	private void syncSelectedColor(GameObject go, Color? unused = null)
+	private void SyncSelectedColor(GameObject go, Color? unused = null)
 	{
 		Selectable select = go.GetComponent<Selectable>();
 		ColorBlock currentColor = select.colors;
@@ -1148,7 +1196,7 @@ public class SettingsManager : FSystem
 		select.colors = currentColor;
 	}
 
-	private void syncDisabledColor(GameObject go, Color? unused = null)
+	private void SyncDisabledColor(GameObject go, Color? unused = null)
 	{
 		Selectable select = go.GetComponent<Selectable>();
 		ColorBlock currentColor = select.colors;
@@ -1156,105 +1204,218 @@ public class SettingsManager : FSystem
 		select.colors = currentColor;
 	}
 
-	private void syncColor_Panel(GameObject go, Color? unused = null)
+	private void SyncColor_Panel(GameObject go, Color? unused = null)
 	{
-		syncGraphicColor(go, cs.values.currentColor_Panel1);
+		SyncGraphicColor(go, cs.values.currentColor_Panel1);
 		Transform texture = go.transform.Find("Texture");
 		if (texture != null)
-			syncGraphicColor(texture.gameObject, cs.values.currentColor_PanelTexture);
+			SyncGraphicColor(texture.gameObject, cs.values.currentColor_PanelTexture);
 	}
 
-	public void setBorderTickness(int value)
-	{
-		cs.values.currentBorderThickness = value + 1;
-		syncColor(f_borders, syncBorderProperties);
-	}
+	private void SetBorderThickness(float value)
+    {
+        value = Mathf.Clamp(value, 1, 10);
+        cs.values.currentBorderThickness = value;
+        SyncColor(f_borders, SyncBorderProperties);
+        // être sûr que l'input field est bien synchro
+		settingsContent.Find("SectionColor/GridContainer/Grid/ThicknessBorder").GetComponentInChildren<TMP_InputField>().text = cs.values.currentBorderThickness.ToString();
+    }
 
-	private void syncBorderProperties(GameObject go, Color? unused = null)
+    public void SetBorderThickness(string value)
+    {
+        if (float.TryParse(value, out float fValue))
+            SetBorderThickness(fValue);
+        else
+            // si problème de parsing, on met la valeur par défaut
+            SetBorderThickness(ds.defaultBorderThickness);
+    }
+
+	private void SyncBorderProperties(GameObject go, Color? unused = null)
 	{
-		syncGraphicColor(go, cs.values.currentColor_Border);
+		SyncGraphicColor(go, cs.values.currentColor_Border);
 		go.GetComponent<Image>().pixelsPerUnitMultiplier = 1f / cs.values.currentBorderThickness;
 	}
 
-	private void syncGraphicColor(GameObject go, Color? color)
+	private void SyncGraphicColor(GameObject go, Color? color)
 	{
 		go.GetComponent<Graphic>().color = color ?? Color.magenta;
 	}
 
-	private void syncIconColor(GameObject go, Color? color)
+	private void SyncIconColor(GameObject go, Color? color)
 	{
 		if (go.GetComponent<Selectable>() != null)
-			syncNormalColor(go, color);
+			SyncNormalColor(go, color);
 		else
-			syncGraphicColor(go, color);
+			SyncGraphicColor(go, color);
 	}
 
-	public void setCharSpacing(int value)
+	private void SetSpacing (float value, ref float settingsValue, string hierarchyPath)
 	{
-		cs.values.currentCharSpacing = value;
-		foreach (GameObject go in f_allTexts)
-			syncSpacing_Text(go);
-	}
+		if (settingsValue != value)
+		{
+			value = Mathf.Clamp(value, -2, 3);
+            settingsValue = value;
+			foreach (GameObject go in f_allTexts)
+				SyncSpacing_Text(go);
+            // être sûr que l'input field est bien synchro
+            settingsContent.Find(hierarchyPath).GetComponentInChildren<TMP_InputField>().text = settingsValue.ToString();
+        }
+    }
 
-	public void setWordSpacing(int value)
+	private void SetCharSpacing(float value)
 	{
-		cs.values.currentWordSpacing = value;
-		foreach (GameObject go in f_allTexts)
-			syncSpacing_Text(go);
-	}
+		SetSpacing(value, ref cs.values.currentCharSpacing, "SectionText/GridContainer/Grid/CharSpacing");
+    }
 
-	public void setLineSpacing(int value)
+	public void SetCharSpacing(string value)
 	{
-		cs.values.currentLineSpacing = value;
-		foreach (GameObject go in f_allTexts)
-			syncSpacing_Text(go);
-	}
+        if (float.TryParse(value, out float fValue))
+			SetCharSpacing(fValue);
+        else
+            // si problème de parsing, on met la valeur par défaut
+            SetCharSpacing(ds.defaultCharSpacing);
+    }
 
-	public void setParagraphSpacing(int value)
+	private void SetWordSpacing(float value)
 	{
-		cs.values.currentParagraphSpacing = value;
-		foreach (GameObject go in f_allTexts)
-			syncSpacing_Text(go);
-	}
+        SetSpacing(value, ref cs.values.currentWordSpacing, "SectionText/GridContainer/Grid/WordSpacing");
+    }
 
-	private void syncSpacing_Text(GameObject textGO)
+    public void SetWordSpacing(string value)
+    {
+        if (float.TryParse(value, out float fValue))
+			SetWordSpacing(fValue);
+        else
+            // si problème de parsing, on met la valeur par défaut
+            SetWordSpacing(ds.defaultWordSpacing);
+    }
+
+    private void SetLineSpacing(float value)
+    {
+        SetSpacing(value, ref cs.values.currentLineSpacing, "SectionText/GridContainer/Grid/LineSpacing");
+    }
+
+    public void SetLineSpacing(string value)
+    {
+        if (float.TryParse(value, out float fValue))
+            SetLineSpacing(fValue);
+        else
+            // si problème de parsing, on met la valeur par défaut
+            SetLineSpacing(ds.defaultLineSpacing);
+    }
+
+    private void SetParagraphSpacing(float value)
+    {
+        SetSpacing(value, ref cs.values.currentParagraphSpacing, "SectionText/GridContainer/Grid/ParagraphSpacing");
+    }
+
+    public void SetParagraphSpacing(string value)
+    {
+        if (float.TryParse(value, out float fValue))
+            SetParagraphSpacing(fValue);
+        else
+            // si problème de parsing, on met la valeur par défaut
+            SetParagraphSpacing(ds.defaultParagraphSpacing);
+    }
+
+	public void SetDoubleClickDelay(string value)
+	{
+		if (float.TryParse(value, out float fValue))
+		{
+			if (fValue < 0)
+				fValue = 0;
+			cs.values.currentDoubleClickDelay = fValue;
+		}
+		else
+			// si problème de parsing, on met la valeur par défaut
+			cs.values.currentDoubleClickDelay = ds.defaultDoubleClickDelay;
+		// On informe l'InputSystem avec la valeur déterminée
+        InputSystem.settings.multiTapDelayTime = cs.values.currentDoubleClickDelay;
+        // être sûr que l'input field est bien synchro au cas où on l'aurait surchargé ici
+        settingsContent.Find("SectionInteraction/GridContainer/Grid/DoubleClickDelay").GetComponentInChildren<TMP_InputField>().text = cs.values.currentDoubleClickDelay.ToString();
+    }
+
+    public void SetLongClickDelay(string value)
+    {
+        if (float.TryParse(value, out float fValue))
+        {
+            if (fValue < 0)
+                fValue = 0;
+            cs.values.currentLongClickDelay = fValue;
+        }
+        else
+            // si problème de parsing, on met la valeur par défaut
+            cs.values.currentLongClickDelay = ds.defaultLongClickDelay;
+        // On informe l'InputSystem avec la valeur déterminée
+        InputSystem.settings.defaultHoldTime = cs.values.currentLongClickDelay;
+        // être sûr que l'input field est bien synchro au cas où on l'aurait surchargé ici
+        settingsContent.Find("SectionInteraction/GridContainer/Grid/LongClickDelay").GetComponentInChildren<TMP_InputField>().text = cs.values.currentLongClickDelay.ToString();
+    }
+
+    public void SetAutoClick(int value)
+    {
+		cs.values.currentAutoClick = value;
+		// Si on active l'autoClick on passe automatiquement le longClickDelay à 0 pour que l'on puisse éditer les programmes, sinon on le remet à sa valeur par défaut
+		if (value == 0)
+			SetLongClickDelay(ds.defaultLongClickDelay.ToString());
+		else
+			SetLongClickDelay("0");
+		AutoClickSystem.instance.Pause = value == 0;
+    }
+
+    public void SetAutoClickDelay(string value)
+    {
+        if (float.TryParse(value, out float fValue))
+        {
+            if (fValue < 0)
+                fValue = 0;
+            cs.values.currentAutoClickDelay = fValue;
+        }
+        else
+            // si problème de parsing, on met la valeur par défaut
+            cs.values.currentAutoClickDelay = ds.defaultAutoClickDelay;
+        // être sûr que l'input field est bien synchro au cas où on l'aurait surchargé ici
+        settingsContent.Find("SectionInteraction/GridContainer/Grid/AutoClickDelay").GetComponentInChildren<TMP_InputField>().text = cs.values.currentAutoClickDelay.ToString();
+    }
+
+    private void SyncSpacing_Text(GameObject textGO)
 	{
 		TextMeshProUGUI text = textGO.GetComponent<TextMeshProUGUI>();
 		// Transformation des numéro d'item sélectionné en valeurs d'espacement
-		text.characterSpacing = (cs.values.currentCharSpacing - 2) * 10;
-		text.wordSpacing = (cs.values.currentWordSpacing - 2) * 10;
-		text.lineSpacing = (cs.values.currentLineSpacing - 2) * 10;
-		text.paragraphSpacing = (cs.values.currentParagraphSpacing - 2) * 10;
+		text.characterSpacing = cs.values.currentCharSpacing * 10;
+		text.wordSpacing = cs.values.currentWordSpacing * 10;
+		text.lineSpacing = cs.values.currentLineSpacing * 10;
+		text.paragraphSpacing = cs.values.currentParagraphSpacing * 10;
 	}
 	
-	private void syncBlockColor(GameObject go, Color? unused = null)
+	private void SyncBlockColor(GameObject go, Color? unused = null)
 	{
 		switch (go.tag)
 		{
 			case "UI_Action":
-				syncNormalColor(go, cs.values.currentActionBlockColor);
+				SyncNormalColor(go, cs.values.currentActionBlockColor);
 				break;
 			case "UI_Control":
-				syncNormalColor(go, cs.values.currentControlBlockColor);
+				SyncNormalColor(go, cs.values.currentControlBlockColor);
 				break;
 			case "UI_Operator":
-				syncNormalColor(go, cs.values.currentOperatorBlockColor);
+				SyncNormalColor(go, cs.values.currentOperatorBlockColor);
 				break;
 			case "UI_Captor":
-				syncNormalColor(go, cs.values.currentCaptorBlockColor);
+				SyncNormalColor(go, cs.values.currentCaptorBlockColor);
 				break;
 		}
 	}
 
-	private void syncDropAreaColor(GameObject go, Color? unused = null)
+	private void SyncDropAreaColor(GameObject go, Color? unused = null)
 	{
 		if (go.GetComponent<DropZone>())
-			syncGraphicColor(go.transform.Find("PositionBar").gameObject, cs.values.currentDropAreaColor);
+			SyncGraphicColor(go.transform.Find("PositionBar").gameObject, cs.values.currentDropAreaColor);
         else
 			go.GetComponentInChildren<Outline>().effectColor = cs.values.currentDropAreaColor;
 	}
 
-	private void setHighlightingColor(GameObject go, Color? unused = null)
+	private void SetHighlightingColor(GameObject go, Color? unused = null)
 	{
 		if (go.GetComponent<Highlightable>())
 		{
@@ -1269,21 +1430,21 @@ public class SettingsManager : FSystem
 			go.GetComponent<BasicAction>().highlightedColor = cs.values.currentHighlightingColor;
 	}
 
-	private void syncTileColor(GameObject go, Color? unused = null)
+	private void SyncTileColor(GameObject go, Color? unused = null)
 	{
 		go.GetComponent<SpriteRenderer>().color = new Color(cs.values.currentHighlightingColor.r, cs.values.currentHighlightingColor.g, cs.values.currentHighlightingColor.b, cs.values.currentHighlightingColor.a * 0.6f);
 	}
 
-	private void syncConditionNotif(GameObject go, Color? unused = null)
+	private void SyncConditionNotif(GameObject go, Color? unused = null)
 	{
 		if (go.name == "true" || go.name == "Unlocked")
-			syncGraphicColor(go, cs.values.currentCaptorTrueColor);
+			SyncGraphicColor(go, cs.values.currentCaptorTrueColor);
 		else
-			syncGraphicColor(go, cs.values.currentCaptorFalseColor);
+			SyncGraphicColor(go, cs.values.currentCaptorFalseColor);
 	}
 
 	// See avatar selector in ConnexionScene and TitleScreen
-	public void selectAvatar(Image src)
+	public void SelectAvatar(Image src)
     {
 		foreach (GameObject go in f_avatarTarget)
 			go.GetComponent<Image>().sprite = src.sprite;
@@ -1291,13 +1452,13 @@ public class SettingsManager : FSystem
 	}
 
 	// see InputField in MiddleSetYear un ConnexionScene
-	public void setBirthYear(string year)
+	public void SetBirthYear(string year)
     {
 		userData.birthYear = year;
     }
 
 	// see Toggle in MiddleSetYear un ConnexionScene
-	public void setIsTeacher(bool state)
+	public void SetIsTeacher(bool state)
 	{
 		userData.isTeacher = state;
 	}

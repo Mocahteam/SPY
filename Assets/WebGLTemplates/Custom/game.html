@@ -349,7 +349,7 @@
 						reader.onload = function(event){
 							const data = {name: file.name, content: event.target.result};
 							// see SettingsManager
-							unityInstance.SendMessage('Main_Loop', 'importSettingsFromJS', JSON.stringify(data));
+							unityInstance.SendMessage('Main_Loop', 'ImportSettingsFromJS', JSON.stringify(data));
 						};
 						reader.readAsText(file);
 					}

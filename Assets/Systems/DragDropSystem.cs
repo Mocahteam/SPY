@@ -48,6 +48,7 @@ public class DragDropSystem : FSystem
 
 	private Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private Family f_programmingArea = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	// Les variables
 	private GameData gameData;
@@ -130,7 +131,13 @@ public class DragDropSystem : FSystem
 			f_newEnd.addEntryCallback(delegate { levelFinished(true); });
 			f_newEnd.addExitCallback(delegate { levelFinished(false); });
 
-			insertRef = null;
+			f_programmingArea.addEntryCallback(delegate (GameObject go) {
+				ReplacementSlot[] replacementSlots = go.GetComponentsInChildren<ReplacementSlot>(true);
+                if (replacementSlots.Length > 0)
+                    lastDropZoneUsed = replacementSlots[replacementSlots.Length - 1].gameObject;
+			});
+
+            insertRef = null;
 			dragDropState = DragDropState.Idle;
 
 			// Dans l'éditeur de mission toujours autoriser le Drag&Drop
@@ -275,6 +282,8 @@ public class DragDropSystem : FSystem
 	private void initDraggedBlock()
     {
 		GameObject current = eventSystem.currentSelectedGameObject;
+		if (current == null)
+			return;
 		// source depuis l'inventaire
 		if (current.GetComponent<ElementToDrag>())
 		{

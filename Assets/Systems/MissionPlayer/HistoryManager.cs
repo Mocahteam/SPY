@@ -62,7 +62,8 @@ public class HistoryManager : FSystem
 
             f_newEnd.addEntryCallback(levelFinished);
 
-            MainLoop.instance.StartCoroutine(delayLoadHistory());
+            // Ici si l'historique est défini en début de niveau on veut attendre que les AddSpecificContainer soient créés pour pouvoir restaurer l'historique dans les zones d'édition, d'où le false en paramètre
+            MainLoop.instance.StartCoroutine(delayLoadHistory(false));
             UndoRedoStack = EditableContainers.parent.Find("UndoRedoStack");
             // suppression des événements Undoable qui pourraient rester dans la pile d'annulation
             removeLastsUndoable(UndoRedoStack.childCount);
@@ -142,8 +143,8 @@ public class HistoryManager : FSystem
         if (go.GetComponent<NewEnd>().endType == NewEnd.Win)
         {
             saveHistory();
-            // Affichage de l'historique de l'ensemble des actions exécutées
-            MainLoop.instance.StartCoroutine(delayLoadHistory());
+            // Affichage de l'historique de l'ensemble des actions exécutées, ici on n'a pas à attendre que les AddSpecificContainer soient créés car on est en fin de niveau on veut simplement remplacer leur contenu par les éléments de l'historique, d'où le true en paramètre
+            MainLoop.instance.StartCoroutine(delayLoadHistory(true));
 		}
 		// for other end type, nothing to do more
 	}
@@ -270,14 +271,17 @@ public class HistoryManager : FSystem
 
 
 	// Restore saved scripts in history inside editable script containers
-	private IEnumerator delayLoadHistory()
+	private IEnumerator delayLoadHistory(bool skipWaitingAddSpecificContainers)
 	{
 		if (gameData != null && gameData.actionsHistory != null)
 		{
-			// Wait that AddSpecificContainer was created
-			yield return new WaitUntil(() => f_addSpecificContainer.Count > 0);
-            // Wait that AddSpecificContainer was removed (ie default editable canvas are created)
-            yield return new WaitUntil(() => f_addSpecificContainer.Count == 0);
+            if (!skipWaitingAddSpecificContainers)
+            {
+                // Wait that AddSpecificContainer was created
+                yield return new WaitUntil(() => f_addSpecificContainer.Count > 0);
+                // Wait that AddSpecificContainer was removed (ie default editable canvas are created)
+                yield return new WaitUntil(() => f_addSpecificContainer.Count == 0);
+            }
 
             // Remove all default canvas and restore all blocs
             yield return removeEditableContainers();
@@ -351,23 +355,26 @@ public class HistoryManager : FSystem
             GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = uiRC.scriptName, editState = uiRC.editState, typeState = uiRC.type, script = script });
         }
 
-        // Wait that AddSpecificContainer was created
-        yield return new WaitUntil(() => f_addSpecificContainer.Count > 0);
-        // Wait that AddSpecificContainer was removed  (ie default editable canvas are created)
-        yield return new WaitUntil(() => f_addSpecificContainer.Count == 0);
-
-        // Count used elements
-        foreach (Transform viewportForEditableContainer in EditableContainers)
+        if (src.childCount > 0)
         {
-            foreach (BaseElement act in viewportForEditableContainer.GetComponentsInChildren<BaseElement>(true))
+            // Wait that AddSpecificContainer was created
+            yield return new WaitUntil(() => f_addSpecificContainer.Count > 0);
+            // Wait that AddSpecificContainer was removed  (ie default editable canvas are created)
+            yield return new WaitUntil(() => f_addSpecificContainer.Count == 0);
+
+            // Count used elements
+            foreach (Transform viewportForEditableContainer in EditableContainers)
             {
-                GameObjectManager.addComponent<Dropped>(act.gameObject);
-                gameData.totalActionBlocUsed--; // cancel this drop count, already count with AddSpecificContainer
-            }
-            foreach (BaseCondition act in viewportForEditableContainer.GetComponentsInChildren<BaseCondition>(true))
-            {
-                GameObjectManager.addComponent<Dropped>(act.gameObject);
-                gameData.totalActionBlocUsed--; // cancel this drop count, already count with AddSpecificContainer
+                foreach (BaseElement act in viewportForEditableContainer.GetComponentsInChildren<BaseElement>(true))
+                {
+                    GameObjectManager.addComponent<Dropped>(act.gameObject);
+                    gameData.totalActionBlocUsed--; // cancel this drop count, already count with AddSpecificContainer
+                }
+                foreach (BaseCondition act in viewportForEditableContainer.GetComponentsInChildren<BaseCondition>(true))
+                {
+                    GameObjectManager.addComponent<Dropped>(act.gameObject);
+                    gameData.totalActionBlocUsed--; // cancel this drop count, already count with AddSpecificContainer
+                }
             }
         }
     }

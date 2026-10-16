@@ -5,121 +5,141 @@ public class SettingsManagerBridge : MonoBehaviour
 {
 	public void resetParameters()
     {
-		SettingsManager.instance.resetParameters();
+		SettingsManager.instance.ResetParameters();
 	}
 
 	public void saveParameters()
     {
-		SettingsManager.instance.saveParameters();
+		SettingsManager.instance.SaveParameters();
 	}
 
 	public void sendUserData()
 	{
-		SettingsManager.instance.sendUserData();
+		SettingsManager.instance.SendUserData();
 	}
 
 	public void exportSettings()
     {
-		SettingsManager.instance.exportSettings();
+		SettingsManager.instance.ExportSettings();
     }
 
     public void onPresetSelected(int selectedIndex)
 	{
-        SettingsManager.instance.onPresetSelected(selectedIndex);
+        SettingsManager.instance.OnPresetSelected(selectedIndex);
     }
 
     public void setSkillsRepository(int value)
     {
-        SettingsManager.instance.setSkillsRepository(value);
+        SettingsManager.instance.SetSkillsRepository(value);
     }
 
     public void setQualitySetting(int value)
     {
-        SettingsManager.instance.setQualitySetting(value);
+        SettingsManager.instance.SetQualitySetting(value);
 	}
 
-	public void setInteraction(int value)
+	public void setAutoHideTooltip(int value)
 	{
-		SettingsManager.instance.setInteraction(value);
+		SettingsManager.instance.SetAutoHideTooltip(value);
 	}
 
 	public void increaseUISize()
 	{
-		SettingsManager.instance.increaseUISize();
+		SettingsManager.instance.IncreaseUISize();
 	}
 
 	public void decreaseUISize()
 	{
-		SettingsManager.instance.decreaseUISize();
+		SettingsManager.instance.DecreaseUISize();
 	}
 
 	public void setWallTransparency(int value)
     {
-		SettingsManager.instance.setWallTransparency(value);
+		SettingsManager.instance.SetWallTransparency(value);
 	}
 
 	public void setCameraTracking(int value)
 	{
-		SettingsManager.instance.setCameraTracking(value);
+		SettingsManager.instance.SetCameraTracking(value);
 	}
 
 	public void setGameView(int value)
     {
-		SettingsManager.instance.setGameView(value);
+		SettingsManager.instance.SetGameView(value);
 	}
 
 	public void setAnimation(int value)
     {
-		SettingsManager.instance.setAnimation(value);
+		SettingsManager.instance.SetAnimation(value);
 	}
 
 	public void setTooltipView(int value)
 	{
-		SettingsManager.instance.setTooltipView(value);
+		SettingsManager.instance.SetTooltipView(value);
 	}
 
 	public void hookListener(string key)
     {
-		SettingsManager.instance.hookListener(key);
+		SettingsManager.instance.HookListener(key);
 	}
 
-	public void setBorderTickness(int value)
+	public void setBorderThickness(string value)
 	{
-		SettingsManager.instance.setBorderTickness(value);
+		SettingsManager.instance.SetBorderThickness(value);
 	}
 
 	public void syncFonts(int value)
 	{
-		SettingsManager.instance.syncFonts(value);
+		SettingsManager.instance.SyncFonts(value);
 	}
 
-	public void setCaretWidth(int value)
+	public void setCaretWidth(string value)
 	{
-		SettingsManager.instance.setCaretWidth(value);
+		SettingsManager.instance.SetCaretWidth(value);
 	}
 
-	public void setCaretHeight(int value)
+	public void setCaretHeight(string value)
 	{
-		SettingsManager.instance.setCaretHeight(value);
+		SettingsManager.instance.SetCaretHeight(value);
 	}
 
-	public void setCharSpacing(int value)
+	public void setCharSpacing(string value)
 	{
-		SettingsManager.instance.setCharSpacing(value);
+		SettingsManager.instance.SetCharSpacing(value);
 	}
 
-	public void setWordSpacing(int value)
+	public void setWordSpacing(string value)
 	{
-		SettingsManager.instance.setWordSpacing(value);
+		SettingsManager.instance.SetWordSpacing(value);
 	}
 
-	public void setLineSpacing(int value)
+	public void setLineSpacing(string value)
 	{
-		SettingsManager.instance.setLineSpacing(value);
+		SettingsManager.instance.SetLineSpacing(value);
 	}
 
-	public void setParagraphSpacing(int value)
+	public void setParagraphSpacing(string value)
 	{
-		SettingsManager.instance.setParagraphSpacing(value);
+		SettingsManager.instance.SetParagraphSpacing(value);
 	}
+
+	public void setDoubleClickDelay(string value)
+	{
+		SettingsManager.instance.SetDoubleClickDelay(value);
+    }
+
+    public void setLongClickDelay(string value)
+    {
+        SettingsManager.instance.SetLongClickDelay(value);
+    }
+
+    public void setAutoClick(int value)
+    {
+        SettingsManager.instance.SetAutoClick(value);
+    }
+
+    public void setAutoClickDelay(string value)
+    {
+        SettingsManager.instance.SetAutoClickDelay(value);
+    }
 }

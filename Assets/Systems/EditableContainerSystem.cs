@@ -472,9 +472,10 @@ public class EditableContainerSystem : FSystem
 	private IEnumerator tcheckLinkName()
 	{
 		yield return null;
+        yield return null;
 
-		// On parcourt les containers et si aucun nom ne correspond alors on met leur nom en rouge
-		foreach (GameObject container in f_scriptContainer)
+        // On parcourt les containers et si aucun nom ne correspond alors on met leur nom en rouge
+        foreach (GameObject container in f_scriptContainer)
 		{
 			bool nameSame = false;
 			foreach (GameObject agent in f_agent)

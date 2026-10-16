@@ -105,7 +105,7 @@ public class UISystem : FSystem {
 				touchUp = 0;
 			else
 				touchUp += Time.deltaTime;
-			if (currentSettingsValues.values.currentInteractionMode == 1 // 0 means mouse/keyboard; 1 means touch-sensitive
+			if (currentSettingsValues.values.currentAutoHideTooltip == 1 // 0 means deactivated; 1 means activated
 				&& touchUp > 0.25f)
 			{
 				foreach (GameObject pointed in f_pointerOver)

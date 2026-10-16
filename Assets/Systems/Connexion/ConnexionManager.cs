@@ -569,7 +569,7 @@ public class ConnexionManager : FSystem
 						// Si le joueur n'a pas touché aux paramètres (pas d'import de settings et pas de modification via l'UI) on charge le jeu de paramètre de son profil, sinon on saute cette étape pour garder ces choix immédiats
 						if (tokens[6] != "{}" && !SettingsManager.instance.settingsUpdated)
 						{
-							SettingsManager.instance.importSettings(tokens[6]); // => permet de mettre à jour les PlayerPrefs à partir des nouvelles valeurs de manière à ce qu'au chargement de la scène, les bons settings soient pris en compte
+							SettingsManager.instance.ImportSettings(tokens[6]); // => permet de mettre à jour les PlayerPrefs à partir des nouvelles valeurs de manière à ce qu'au chargement de la scène, les bons settings soient pris en compte
 						}
 						userData.unlockedAvatars = JsonConvert.DeserializeObject<List<int>>(tokens[7]);
 						if (userData.unlockedAvatars == null)
