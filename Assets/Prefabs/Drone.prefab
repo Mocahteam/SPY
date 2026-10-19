@@ -266,7 +266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: Clique pour voir mon<br>comportement !
+  text: "Clique pour voir ma<br>m\xE9moire\\u00a0!"
 --- !u!54 &6657888278329921216
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -587,6 +587,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Billboard
+      objectReference: {fileID: 0}
+    - target: {fileID: 3509159912981634681, guid: efabf64bd0c8da24580243c6c11a754c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4141842404055122722, guid: efabf64bd0c8da24580243c6c11a754c,
         type: 3}

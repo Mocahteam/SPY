@@ -23,8 +23,4 @@ public class EditableContainerSystemBridge : MonoBehaviour
 	{
         EditableContainerSystem.instance.editRobotName(name);
     }
-    public void checkDoubleClick(BaseEventData e)
-    {
-        EditableContainerSystem.instance.checkDoubleClick(e);
-    }
 }

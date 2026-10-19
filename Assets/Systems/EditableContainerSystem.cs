@@ -395,14 +395,6 @@ public class EditableContainerSystem : FSystem
 		}
     }
 
-	// Vérifie un (double click) sur le nom du robot dans la zone éditable pour éditer son nom
-	public void checkDoubleClick(BaseEventData element)
-	{
-		PointerEventData pointerData = element as PointerEventData;
-        if (doubleClick.WasPerformedThisFrame())
-			editRobotName(pointerData.pointerPress.GetComponent<TMP_Text>());
-	}
-
     // Rename the script window
     // See RobotName_edit in ViewportScriptContainer prefab in editor
     public void newNameContainer(string newName)

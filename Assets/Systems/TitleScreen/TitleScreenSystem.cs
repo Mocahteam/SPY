@@ -23,7 +23,6 @@ public class TitleScreenSystem : FSystem {
 	private GameData gameData;
 	private UserData userData;
 	public Button continueButton;
-	public GameObject playButton;
     public GameObject trainingButton;
     public GameObject gameSelector;
 	public GameObject TileScenarioPrefab;
@@ -108,7 +107,8 @@ public class TitleScreenSystem : FSystem {
             {
                 launchConnexionScene();
             }
-            else if (gameData.selectedScenario != "")
+			// Si on revient d'un scénario, on se repositionne dans la liste des scénarios sauf pour le tuto on reste sur l'écran principal
+            else if (gameData.selectedScenario != "" && gameData.selectedScenario != "0 - Tutoriel")
 			{
 				lastScenarioSelected = gameData.selectedScenario;
 				// Afficher la liste des scénarios
