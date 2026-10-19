@@ -9,10 +9,10 @@ public class CameraSystem_wrapper : BaseWrapper
 	public System.Single cameraZoomMin;
 	public System.Single cameraZoomMax;
 	public System.Single dragSpeed;
-	public UnityEngine.Localization.Components.LocalizeStringEvent lseTurnLeft;
-	public UnityEngine.Localization.Components.LocalizeStringEvent lseMoveUp;
-	public UnityEngine.Localization.Components.LocalizeStringEvent lseMoveLeft;
 	public CurrentSettingsValues currentSettingsValues;
+	public UnityEngine.GameObject dialogPanel;
+	public UnityEngine.RectTransform LeftPanel;
+	public UnityEngine.RectTransform ExecutableCanvas;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -22,10 +22,10 @@ public class CameraSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "cameraZoomMin", cameraZoomMin);
 		MainLoop.initAppropriateSystemField (system, "cameraZoomMax", cameraZoomMax);
 		MainLoop.initAppropriateSystemField (system, "dragSpeed", dragSpeed);
-		MainLoop.initAppropriateSystemField (system, "lseTurnLeft", lseTurnLeft);
-		MainLoop.initAppropriateSystemField (system, "lseMoveUp", lseMoveUp);
-		MainLoop.initAppropriateSystemField (system, "lseMoveLeft", lseMoveLeft);
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
+		MainLoop.initAppropriateSystemField (system, "dialogPanel", dialogPanel);
+		MainLoop.initAppropriateSystemField (system, "LeftPanel", LeftPanel);
+		MainLoop.initAppropriateSystemField (system, "ExecutableCanvas", ExecutableCanvas);
 	}
 
 	public void ToggleOrthographicPerspective()
@@ -53,6 +53,11 @@ public class CameraSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "set_UIRotate", value);
 	}
 
+	public void set_UIPitching(System.Single value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "set_UIPitching", value);
+	}
+
 	public void set_UIZoom(System.Single value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "set_UIZoom", value);
@@ -61,6 +66,11 @@ public class CameraSystem_wrapper : BaseWrapper
 	public void submitRotate(System.Single value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "submitRotate", value);
+	}
+
+	public void submitPitching(System.Single value)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "submitPitching", value);
 	}
 
 	public void submitFrontBack(System.Single value)
@@ -76,11 +86,6 @@ public class CameraSystem_wrapper : BaseWrapper
 	public void submitZoom(System.Single value)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "submitZoom", value);
-	}
-
-	public void focusOnAgent(UnityEngine.GameObject agent)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "focusOnAgent", agent);
 	}
 
 	public void focusNextAgent()

@@ -7,6 +7,7 @@ public class DialogSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject dialogPanel;
 	public UnityEngine.GameObject showDialogsMenu;
 	public UnityEngine.GameObject showDialogsBottom;
+	public UnityEngine.GameObject highlightGOPrefab;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -14,6 +15,7 @@ public class DialogSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "dialogPanel", dialogPanel);
 		MainLoop.initAppropriateSystemField (system, "showDialogsMenu", showDialogsMenu);
 		MainLoop.initAppropriateSystemField (system, "showDialogsBottom", showDialogsBottom);
+		MainLoop.initAppropriateSystemField (system, "highlightGOPrefab", highlightGOPrefab);
 	}
 
 	public void showDialogPanel()
@@ -49,6 +51,16 @@ public class DialogSystem_wrapper : BaseWrapper
 	public void closeDialogPanel()
 	{
 		MainLoop.callAppropriateSystemMethod (system, "closeDialogPanel", null);
+	}
+
+	public void playVideo()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "playVideo", null);
+	}
+
+	public void pauseVideo()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "pauseVideo", null);
 	}
 
 }

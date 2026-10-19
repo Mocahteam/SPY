@@ -16,7 +16,9 @@ public class HighLightSystem : FSystem {
 
 	public GameObject dialogPanel;
 
-	private InputAction click;
+	public AudioClip activationSound;
+
+    private InputAction click;
 
 	protected override void onStart()
     {
@@ -36,8 +38,8 @@ public class HighLightSystem : FSystem {
 		if(highLightedItem && click.WasPressedThisFrame() && highLightedItem.GetComponent<ScriptRef>() && dialogPanel.activeInHierarchy == false)
 		{
 			GameObject go = highLightedItem.GetComponent<ScriptRef>().executablePanel;
-			GameObjectManager.setGameObjectState(go,!go.activeInHierarchy);
-			dialogPanel.GetComponentInParent<AudioSource>().PlayOneShot(Resources.Load("Sound/ActivationSound") as AudioClip);
+			go.SetActive(!go.activeInHierarchy);
+			dialogPanel.GetComponentInParent<AudioSource>().PlayOneShot(activationSound);
 		}
 	}
 
@@ -79,7 +81,7 @@ public class HighLightSystem : FSystem {
 			Transform parent = go.transform.parent;
 			while (parent != null)
             {
-				if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
+				if (parent.GetComponent<ForControl>() || parent.GetComponent<WhileControl>() || parent.GetComponent<ForeverControl>())
 				{
 					sel = parent.GetComponent<Selectable>();
 					cb = sel.colors;
@@ -125,7 +127,7 @@ public class HighLightSystem : FSystem {
 			Transform parent = go.transform.parent;
 			while (parent != null)
 			{
-				if (parent.GetComponent<ForControl>() || parent.GetComponent<ForeverControl>())
+				if (parent.GetComponent<ForControl>() || parent.GetComponent<WhileControl>() || parent.GetComponent<ForeverControl>())
 				{
 					sel = parent.GetComponent<Selectable>();
 					cb = sel.colors;

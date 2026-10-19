@@ -12,6 +12,8 @@ using System.Collections.Generic;
 
 using DIG.GBLXAPI.Builders;
 using UnityEngine;
+using System.Runtime.Versioning;
+using System.Linq;
 
 // --------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------
@@ -27,13 +29,17 @@ public static class GBL_Interface {
 
     // Fill in these fields for GBLxAPI setup.
     //Statements will be sent to all addresses in this list
-    public static List<GBLConfig> lrsAddresses = new List<GBLConfig>() {
-        // Root statement to Dev store in editor and Prod store else
-        Application.isEditor ? new GBLConfig("https://lrsels.lip6.fr/data/xAPI", "e6efcf3eac5c03e121af621dae0df3a50c8733f0", "ffda037ebf1368a89e5b8b59d30a1b77beebc27e") : new GBLConfig("https://lrsels.lip6.fr/data/xAPI", "dce1d359061aea8be2ca295cf8aa7825cd042137", "7d6370cd19fff1bedd79b919072622b0339365d0")
-    };
+    public static List<GBLConfig> gblConfigs = GetLrsConfigs().Select(config => new GBLConfig(config)).ToList();
 	public static string userUUID = ""; // Muratet : overrided in TitleScreenSystem system
     public static string playerName = ""; // Muratet : overrided in TitleScreenSystem system
 
+    private static List<LrsConfig> GetLrsConfigs()
+    {
+        LrsSettings settings = LrsSettings.GetOrCreate();
+        var lrsConfigs = settings.GetConfigs();
+        var lrsList = lrsConfigs.lrsBasicConfigs.Cast<LrsConfig>().Concat(lrsConfigs.lrsOAuth2Configs.Cast<LrsConfig>()).ToList();
+        return lrsList;
+    }
     // ------------------------------------------------------------------------
     // Sample Gameplay GBLxAPI Triggers
     // ------------------------------------------------------------------------
@@ -41,7 +47,7 @@ public static class GBL_Interface {
 	Here is where you will put functions to be called whenever you want to send a GBLxAPI statement.
 	 */
 
-    public static void SendStatement(string verb, string activityType, Dictionary<string, string> activityExtensions = null)
+    public static void SendStatement(string verb, string activityType, Dictionary<string, string> activityExtensions = null, string experimentId = null)
     {
         ActivityBuilder.IOptional activityBuilder = GBLXAPI.Activity
             .WithID(activityType)
@@ -55,19 +61,24 @@ public static class GBL_Interface {
             activityBuilder.WithExtensions(extensions.Build());
         }
 
-        GBLXAPI.Statement
+        StatementBuilder.IOptional statementBuilder = GBLXAPI.Statement
             .WithActor(GBLXAPI.Agent
                 .WithAccount(userUUID, "https://www.lip6.fr/mocah/")
                 .WithName(playerName)
                 .Build())
             .WithVerb(verb)
-            .WithTargetActivity(activityBuilder.Build())
-            .Enqueue();
-        ;
+            .WithTargetActivity(activityBuilder.Build());
+
+        if (experimentId != null && experimentId != "") {
+            TinCan.Context context = new TinCan.Context();
+            context.instructor = GBLXAPI.Agent.WithAccount(experimentId, "https://www.lip6.fr/mocah/experimentid").Build();
+            statementBuilder.WithContext(context);
+        }
+
+        statementBuilder.Enqueue();
     }
 	
-	public static void SendStatementWithResult(string verb, string activityType, Dictionary<string, string> activityExtensions = null, Dictionary<string, string> resultExtensions = null, bool? completed = null, bool? success = null, string response = null, int? score = null,
-        float duration = 0)
+	public static void SendStatementWithResult(string verb, string activityType, Dictionary<string, string> activityExtensions = null, string experimentId = null, Dictionary<string, string> resultExtensions = null, bool? completed = null, bool? success = null, string response = null, int? score = null, float duration = 0)
     {
         ActivityBuilder.IOptional activityBuilder = GBLXAPI.Activity
             .WithID(activityType)
@@ -95,14 +106,22 @@ public static class GBL_Interface {
             resultBuilder.WithExtensions(extensions.Build());
         }
 
-        GBLXAPI.Statement
+        StatementBuilder.IOptional statementBuilder = GBLXAPI.Statement
             .WithActor(GBLXAPI.Agent
                 .WithAccount(userUUID, "https://www.lip6.fr/mocah/")
                 .WithName(playerName)
                 .Build())
             .WithVerb(verb)
             .WithTargetActivity(activityBuilder.Build())
-            .WithResult(resultBuilder)
-            .Enqueue();
+            .WithResult(resultBuilder);
+
+        if (experimentId != null && experimentId != "")
+        {
+            TinCan.Context context = new TinCan.Context();
+            context.instructor = GBLXAPI.Agent.WithAccount(experimentId, "https://www.lip6.fr/mocah/experimentid").Build();
+            statementBuilder.WithContext(context);
+        }
+
+        statementBuilder.Enqueue();
 	}
 }

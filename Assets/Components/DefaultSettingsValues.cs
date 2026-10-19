@@ -8,26 +8,32 @@ public class DefaultSettingsValues : MonoBehaviour
 
 	[Header("Default Values")]
 	public int defaultLanguage = 0;
+	public int defaultSkillsRepository = 1;
 	public int defaultQuality = 2;
-	public int defaultInteractionMode = 0;
 	public float defaultUIScale = 1;
 	public int defaultWallTransparency = 1;
 	public int defaultCameraTracking = 1;
 	public int defaultGameView = 0;
+	public int defaultAnimation = 1;
 	public int defaultTooltipView = 1;
-	public int defaultFont = 6;
-	public int defaultCaretWidth = 0;
-	public int defaultCaretHeight = 0;
-	public int defaultCharSpacing = 2;
-	public int defaultWordSpacing = 2;
-	public int defaultLineSpacing = 2;
-	public int defaultParagraphSpacing = 2;
-	public Color defaultNormalColor_Text = Color.black; // black
+    public int defaultAutoHideTooltip = 0;
+    public int defaultFont = 6;
+	public int defaultCaretWidth = 1;
+	public float defaultCaretHeight = 1;
+	public float defaultCharSpacing = 0;
+	public float defaultWordSpacing = 0;
+	public float defaultLineSpacing = 0;
+	public float defaultParagraphSpacing = 0;
+    public float defaultDoubleClickDelay = 0.75f;
+    public float defaultLongClickDelay = 0.4f;
+    public int defaultAutoClick = 0;
+    public float defaultAutoClickDelay = 1f;
+    public Color defaultNormalColor_Text = Color.black; // black
 	public Color defaultSelectedColor_Text = new Color(131f / 255f, 71f / 255f, 2f / 255f, 1f); // brown dark
 	public Color defaultPlaceholderColor = new Color(50f / 255f, 50f / 255f, 50f / 255f, 128f / 255f); // grey dark transparent
 	public Color defaultNormalColor_Dropdown = Color.white;
 	public Color defaultNormalColor_Inputfield = Color.white;
-	public Color defaultSelectedColor_Inputfield = new Color(200f / 255f, 200f / 255f, 200f / 255f, 1f); // grey light
+	public Color defaultSelectedColor_Inputfield = new Color(1f, 1f, 1f, 1f); // white
 	public Color defaultSelectionColor_Inputfield = new Color(168f / 255f, 206f / 255f, 1f, 192f / 255f); // blue light transparent
 	public Color defaultCaretColor_Inputfield = new Color(50f / 255f, 50f / 255f, 50f / 255f, 1f); // frey dark
 	public Color defaultNormalColor_Button = new Color(1f, 1f, 1f, 0f); // transparent
@@ -41,7 +47,7 @@ public class DefaultSettingsValues : MonoBehaviour
 	public Color defaultColor_Panel3 = new Color(179f / 255f, 179f / 255f, 179f / 255f, 1f); // grey light
 	public Color defaultColor_PanelTexture = new Color(0f, 0f, 0f, 7f / 255f); // black transparent
 	public Color defaultColor_Border = new Color(77f / 255f, 77f / 255f, 77f / 255f, 1f); // grey dark
-	public int defaultBorderThickness = 1;
+	public float defaultBorderThickness = 1;
 	public Color defaultNormalColor_Scrollbar = new Color(223f / 255f, 127f / 255f, 2f / 255f, 1f); // orange
 	public Color defaultBackgroundColor_Scrollbar = new Color(1f, 178f / 255f, 56f / 255f, 1f); // orange light
 	public Color defaultBackgroundColor_Scrollview = new Color(1f, 1f, 1f, 0f); // transparent
@@ -58,4 +64,5 @@ public class DefaultSettingsValues : MonoBehaviour
 	public Color defaultHighlightingColor = new Color(1f, 1f, 0f, 1f); // yellow
 	public Color defaultCaptorTrueColor = new Color(0f, 1f, 12f / 255f, 1f); // green
 	public Color defaultCaptorFalseColor = new Color(1f, 0f, 5f / 255f, 1f); // red
+	public Color defaultWrongAssociationColor = new Color(1f, 0.28f, 0.4f / 255f, 1f); // redish
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Manage steps (automatic simulation or controled by player)
@@ -11,7 +12,7 @@ using UnityEngine;
  * Le StepSystem genère à temps constant le composant NewStep, soit la génération de ce composant à l'instant T
  * en T' (début du lateUpdate) dans le CurrentActionManager, le composant NewStep déclenche la suppression des currentActions et demande d'ajouter en T+1 des nouvelles currentActions (coroutines)
  * en T+1 (phase d'update) ajout des currentActions par les coroutines lancées par le CurrentActionManager
- * en T+1' (début du lateUpdate) le CurrentActionExecutor dépile les nouvelles CurrentActions et s'auto réveille pour corriger les déplacement en cas de prédiction de collisions
+ * en T+1' (début du lateUpdate) le CurrentActionExecutor dépile les nouvelles CurrentActions et s'auto réveille pour corriger les déplacements en cas de prédiction de collisions
  * en T+1'' (phase de lateUpdate) le CurrentActionExecutor corrige les positions à atteindre en fonction des collisions prédites et informe les systèmes dépendants que tout est ok avec le composant PositionCorrected
  *      A noter que l'exécution des actions Activate ajoutent des composant Triggered
  * en post T+2 sur l'écoute du composant PositionCorrected, les callback du MoveSystem et du DetectorManager activent leurs onProcess et le DoorAndConsoleManager dépile les Triggered et synchronise les portes => les portes sont donc à jour quand le DetectorManager va processer
@@ -25,7 +26,6 @@ public class StepSystem : FSystem {
 
     private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
     private Family f_newStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
-    private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
 
     private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
     private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
@@ -38,8 +38,6 @@ public class StepSystem : FSystem {
     private int nbStep;
     private bool newStepAskedByPlayer;
     private bool needPause;
-
-    public RectTransform editableContainers;
 
     protected override void onStart()
     {
@@ -57,9 +55,14 @@ public class StepSystem : FSystem {
             gameData.totalExecute++;
             setToDefaultTimeStep();
 
-            gameData.totalStep++;
             gameData.startStepTime = Time.time;
-            nbStep++;
+
+            // on compte un step de simulation que si on n'est pas en mode teaçage de code. En effet en mode traçage de code la première action exécutée sera comptabilisée sur le premier NewStep.
+            if (!gameData.userExecutor)
+            {
+                gameData.totalStep++;
+                nbStep++;
+            }
 
             Pause = false;
         });
@@ -107,15 +110,11 @@ public class StepSystem : FSystem {
                         }
                     });
                 }
-                // Si aucun robot n'a d'action suivante, revenir en mode éditeur
-                else if (!playerHasNextAction())
+                // Si on est en mode traçage de code, on se remet automatiquement en pause pour que le joueur puisse choisir les prochaines actions à exécuter
+                else if (gameData.userExecutor)
                 {
-                    GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
-                    GameObjectManager.addComponent<AskToSaveHistory>(MainLoop.instance.gameObject);
-                    needPause = false;
                     Pause = true;
                 }
-
                 // Cas général, on demande un nouveau pas de simulation
                 else
                 {
@@ -131,17 +130,6 @@ public class StepSystem : FSystem {
                 }
             }
         }
-    }
-
-    // Check if one of the robot programmed by the player has a next action to perform
-    private bool playerHasNextAction(){
-		CurrentAction act;
-		foreach(GameObject go in f_currentActions){
-			act = go.GetComponent<CurrentAction>();
-			if(act.agent != null && act.agent.CompareTag("Player") && act.GetComponent<BaseElement>().next != null)
-				return true;
-		}
-        return false;
     }
 
     // See PauseButton, ContinueButton in editor

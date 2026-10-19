@@ -6,11 +6,14 @@ using System.Collections;
 /// This system is in charge to play lobby animations
 /// </summary>
 public class LobbyAnimation : FSystem {
+    private Family f_forceOpenDoor = FamilyManager.getFamily(new AllOfComponents(typeof(ForceOpenDoor)));
     public GameObject Door;
     public GameObject Drone;
     public GameObject Kyle;
     public GameObject Destiny;
     public GameObject R102;
+
+    private Coroutine animDoor;
 
     private string[] anims = new string[] { "Action", "IntroNail", "ArmStretch" };
 
@@ -23,9 +26,17 @@ public class LobbyAnimation : FSystem {
 
     protected override void onStart()
     {
-        MainLoop.instance.StartCoroutine(AnimDoorAndR102());
-        MainLoop.instance.StartCoroutine(AnimKyleAndDestiny());
-        MainLoop.instance.StartCoroutine(AnimDrone());
+        if (R102 != null && Door != null) { 
+            animDoor = MainLoop.instance.StartCoroutine(AnimDoorAndR102());
+            f_forceOpenDoor.addEntryCallback(delegate (GameObject go){
+                PlayR102Anim();
+                GameObjectManager.removeComponent<ForceOpenDoor>(go);
+            });
+        }
+        if (Kyle != null && Destiny != null)
+            MainLoop.instance.StartCoroutine(AnimKyleAndDestiny());
+        if (Drone != null)
+            MainLoop.instance.StartCoroutine(AnimDrone());
 
         Pause = true;
     }
@@ -47,6 +58,18 @@ public class LobbyAnimation : FSystem {
                     Door.GetComponent<Animator>().SetTrigger("Close");
                 doorSlot.state = !doorSlot.state;
             }
+        }
+    }
+
+    public void PlayR102Anim()
+    {
+        MainLoop.instance.StopCoroutine(animDoor);
+        ActivationSlot doorSlot = Door.GetComponent<ActivationSlot>();
+        if (!doorSlot.state)
+        {
+            Animator R102Anim = R102.GetComponent<Animator>();
+            R102Anim.SetTrigger("Action");
+            Door.GetComponent<Animator>().SetTrigger("Open");
         }
     }
 

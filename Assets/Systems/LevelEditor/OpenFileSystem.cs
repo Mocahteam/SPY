@@ -19,7 +19,10 @@ public class OpenFileSystem : FSystem {
 	public Button closeBriefing;
 	public Button mapEditorTab;
 
-	private GameData gameData;
+	public GameObject LevelAvailablePrefab;
+
+
+    private GameData gameData;
 
 	public OpenFileSystem()
 	{
@@ -70,7 +73,7 @@ public class OpenFileSystem : FSystem {
 		buttonsName.Sort();
 		foreach (string key in buttonsName)
 		{
-			GameObject levelItem = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/LevelEditor/LevelAvailable") as GameObject, loadingLevelContent.transform);
+			GameObject levelItem = GameObject.Instantiate<GameObject>(LevelAvailablePrefab, loadingLevelContent.transform);
 			levelItem.GetComponentInChildren<TextMeshProUGUI>().text = key;
 			GameObjectManager.bind(levelItem);
 		}
@@ -82,14 +85,6 @@ public class OpenFileSystem : FSystem {
 	public void onLevelSelected(GameObject go)
 	{
 		selectedLevelGO = go;
-	}
-
-	// See New GO in MenuCanvas
-	public void resetFileData()
-    {
-		dataLevel.data.missionName = "";
-		dataLevel.data.filePath = "";
-		dataLevel.data.overridedDialogs = new List<Dialog>();
 	}
 
 	// See LoadButton GameObject

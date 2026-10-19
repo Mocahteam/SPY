@@ -46,7 +46,9 @@ public class RobotCollisionManager : FSystem
                 if (!target.CompareTag("Coin"))
                 {
                     if (agent.CompareTag("Player"))
+                    {
                         GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.Collision });
+                    }
                     agent.GetComponent<Animator>().SetTrigger("Death");
                     agent.GetComponent<Collider>().enabled = false;
                     agent.GetComponent<ScriptRef>().isBroken = true;

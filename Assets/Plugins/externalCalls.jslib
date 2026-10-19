@@ -16,16 +16,22 @@ mergeInto(LibraryManager.library, {
 	ShowHtmlLoadMissions: function () {
 		var element = document.getElementById("proxyLoadMissions");
 		element.classList.remove("visually-hidden");
+		var button = document.getElementById("files-selector-missions");
+		button.disabled = false;
 	},
 	
 	HideHtmlLoadMissions: function () {
 		var element = document.getElementById("proxyLoadMissions");
 		element.classList.add("visually-hidden");
+		var button = document.getElementById("files-selector-missions");
+		button.disabled = true;
 	},
 	
 	ShowHtmlImportSettings: function () {
 		var element = document.getElementById("proxyLoadSettings");
 		element.classList.remove("visually-hidden");
+		var button = document.getElementById("files-selector-settings");
+		button.disabled = false;
 	},
   
 	IsMobileBrowser: function () {
@@ -73,6 +79,21 @@ mergeInto(LibraryManager.library, {
 		const params = new URLSearchParams(window.location.search);
 		return params.get("clear") != null;
 	},
+	
+	GetExperimentationId: function(){
+		const params = new URLSearchParams(window.location.search);
+		var expeId = params.get("experimentationId");
+		if (expeId == null)
+			expeId = "";
+
+		//Get size of the string
+		var bufferSize = lengthBytesUTF8(expeId) + 1;
+		//Allocate memory space
+		var buffer = _malloc(bufferSize);
+		//Copy old data to the new one then return it
+		stringToUTF8(expeId, buffer, bufferSize);
+		return buffer;
+	},
 
 	UpdateHTMLLanguage: function(newLang){
 		var lang = UTF8ToString(newLang);
@@ -83,15 +104,25 @@ mergeInto(LibraryManager.library, {
 		var content = UTF8ToString(txt);
 		document.getElementById('TextToSpeechSpan').innerHTML = content;
 	},
-
-	SendToScreenReader: function(txt){
+	
+	SendToScreenReader: function (txt) {
 		var content = UTF8ToString(txt);
 		document.sendToScreenReader(content);
+	},
+	
+	EnableTTS: function () {
+		// Vérification de l'accès à la synthèse vocale
+		if (window != null && window.speechSynthesis != null)
+			document.getElementById('switchTTS').removeAttribute("disabled");
 	},
 
 	IsTTSEnabled: function(){
 		var switchTTS = document.getElementById("switchTTS");
 		return switchTTS.checked;
+	},
+
+	IsUnityCanvasFocused: function () {
+		return document.activeElement === document.getElementById("unity-canvas");
 	},
 
 	InstructionOnly: function(){
@@ -105,15 +136,53 @@ mergeInto(LibraryManager.library, {
 		document.tryToCopy(content);
 	},
 	
-	TryToPaste: function(){
-		document.tryToPaste();
-	},
-	
-	ExitFullScreen: function (){
-		document.exitFullScreen();
+	QuitFullScreen: function (){
+		document.quitFullScreen();
 	},
 	
 	ResetFullScreen: function (){
 		document.resetFullScreen();
+	},
+
+	PlaySound: function(url){
+		var content = UTF8ToString(url);
+		document.playSound(content);
+	},
+
+	StopSound: function(){
+		document.stopSound();
+	},
+
+	SetCinematic: function(url){
+		var content = UTF8ToString(url);
+		document.setCinematic(content);
+	},
+
+	PlayCinematic: function(){
+		document.playCinematic();
+	},
+
+	PauseCinematic: function(){
+		document.pauseCinematic();
+	},
+
+	StopCinematic: function(){
+		document.stopCinematic();
+	},
+
+	GetVideoWidth: function(){
+		return document.getVideoWidth();
+	},
+
+	GetVideoHeight: function(){
+		return document.getVideoHeight();
+	},
+
+	SetVideoPosition: function(viewportX, viewportY, viewportWidth, viewportHeight, videoX, videoY, videoWidth, videoHeight){
+		return document.setVideoPosition(viewportX, viewportY, viewportWidth, viewportHeight, videoX, videoY, videoWidth, videoHeight);
+	},
+
+	KbLayout_Fetch: function () {
+		document.kbLayout_Fetch();
 	}
 });

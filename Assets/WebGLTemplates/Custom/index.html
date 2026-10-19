@@ -24,19 +24,36 @@
 	<nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top">
 		<div class="container-fluid">
 			<a class="navbar-brand" href="#"><img src="TemplateData/LogoSPY.png" alt="SPY logo" style="height: 40px;"></a>
+			<!-- hamburger button -->
 			<button id="collapseButton" class="navbar-toggler m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<div class="collapse navbar-collapse m-2 justify-content-end" id="collapsibleNavbar">
-				<div class="nav-item"><a id="menu_#hero" class="nav-link scrollto active px-3 justify-content-end" href="game.html?lang=en">Play</a></div>
-				<div class="nav-item"><a id="menu_#inBrief" class="nav-link scrollto px-3 justify-content-end" href="#inBrief">In brief</a></div>
-				<div class="nav-item"><a id="menu_#carousel" class="nav-link scrollto px-3 justify-content-end" href="#carousel">Gallery</a></div>
-				<div class="nav-item"><a id="menu_#peda" class="nav-link scrollto px-3 justify-content-end" href="#peda">Teachers</a></div>
-				<div class="nav-item"><a id="menu_#share" class="nav-link scrollto px-3 justify-content-end" href="#share">Share</a></div>
-				<div class="nav-item"><a id="menu_#publication" class="nav-link scrollto px-3 justify-content-end" href="#publication">Publications</a></div>
-				<div class="nav-item"><a id="menu_#about" class="nav-link scrollto px-3 justify-content-end" href="#about">About</a></div>
-				<div class="nav-item"><a id="menu_#contact" class="nav-link scrollto px-3 justify-content-end" href="#contact">Contact</a></div>
-				<div class="nav-item"><a class="nav-link scrollto px-3 justify-content-end" href="index_fr.html">Français</a></div>
+			<!-- main menu -->
+			<div class="collapse navbar-collapse m-2" id="collapsibleNavbar">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item ms-auto"><a class="nav-link active px-3" href="game.html?lang=en">Play</a></li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#inBrief">In brief</a></li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#carousel">Gallery</a></li>
+					<li class="nav-item dropdown ms-auto">
+						<a class="nav-link dropdown-toggle px-3 text-end" href="#" id="TeachersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Teachers</a>
+						<ul class="dropdown-menu" aria-labelledby="TeachersDropdown">
+							<li><a class="dropdown-item px-3" href="#peda">Resources</a></li>
+							<li><a class="dropdown-item px-3" href="spy_progression.html">Track my students</a></li>
+							<li><a class="dropdown-item px-3" href="accessibility.html">Accessibility</a></li>
+							<li><a class="dropdown-item px-3" href="tipsAndTricks.html">Tips and Tricks</a></li>
+						</ul>
+					</li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#share">Share</a></li>
+					<li class="nav-item dropdown ms-auto">
+						<a class="nav-link dropdown-toggle px-3 text-end" href="#" id="AboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">About</a>
+						<ul class="dropdown-menu" aria-labelledby="AboutDropdown">
+							<li><a class="dropdown-item px-3" href="#publication">Scientific publications</a></li>
+							<li><a class="dropdown-item px-3" href="#about">About us</a></li>
+							<li><a class="dropdown-item px-3" href="#contact">Contact</a></li>
+						</ul>
+					</li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3 justify-content-end" href="index_fr.html">Français</a></li>
+				</ul>
 			</div>
 		</div>
 	</nav>
@@ -60,7 +77,7 @@
 			</div>
 			<div class="col-md-4">
 				<h1>Simple</h1>
-				<p>SPY offers an easy-to-use block-based language for programming robot actions.  SPY tries to limit handicap situations (see <a href="accessibility.html" target="_blank">accessibility of the game</a>).</p>
+				<p>SPY offers an easy-to-use block-based language for programming robot actions.  SPY tries to limit handicap situations (see <a href="accessibility.html">accessibility of the game</a>).</p>
 			</div>
 			<div class="col-md-4">
 				<h1>Free</h1>
@@ -84,19 +101,19 @@
 		  </div>
 		  <div class="carousel-inner">
 			<div class="carousel-item active">
-			  <img src="StreamingAssets/Levels/Tutoriel/NommerScript.png" alt="An image of the game showing a mission centered on the notion of naming." class="d-block w-70" style="margin: auto;">
+			  <img src="StreamingAssets/Levels/Tutoriel/NommerScript.png" alt="An image of the game showing a mission centered on the notion of naming." class="d-block img-fluid mx-auto">
 			</div>
 			<div class="carousel-item">
-			  <img src="StreamingAssets/Levels/Infiltration/Niveau14.png" alt="An image of the game showing a mission with fog activated." class="d-block w-70" style="margin: auto;">
+			  <img src="StreamingAssets/Levels/Infiltration/Niveau14.png" alt="An image of the game showing a mission with fog activated." class="d-block img-fluid mx-auto">
 			</div>
 			<div class="carousel-item">
-			  <img src="StreamingAssets/Levels/Infiltration/Niveau20.png" alt="An image of the game showing a mission where the player must program two robots with a single program." class="d-block w-70" style="margin: auto;">
+			  <img src="StreamingAssets/Levels/Infiltration/Niveau20.png" alt="An image of the game showing a mission where the player must program two robots with a single program." class="d-block img-fluid mx-auto">
 			</div>
 			<div class="carousel-item">
-			  <img src="StreamingAssets/Levels/Infiltration/Niveau16.png" alt="An image from the game showing a mission requiring the use of a while loop." class="d-block w-70" style="margin: auto;">
+			  <img src="StreamingAssets/Levels/Infiltration/Niveau16.png" alt="An image from the game showing a mission requiring the use of a while loop." class="d-block img-fluid mx-auto">
 			</div>
 			<div class="carousel-item">
-			  <img src="StreamingAssets/Levels/Infiltration/Niveau10.png" alt="An image from the game showing a mission whose main task is not to program, but to read existing code." class="d-block w-70" style="margin: auto;">
+			  <img src="StreamingAssets/Levels/Infiltration/Niveau10.png" alt="An image from the game showing a mission whose main task is not to program, but to read existing code." class="d-block img-fluid mx-auto">
 			</div>
 		  </div>
 		  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -115,6 +132,7 @@
     <section id="peda" class="about">
       <div class="container">
           <h1 class="text-center">A game designed for teachers</h1>
+		  <a href="spy_progression.html" class="btn-get-started text-center">Track my students' progress</a>
           <p>SPY contains several ready to use game scenarios that will enable you to get your students working on computational thinking skills: <b>observing and modeling</b> the simulation (abstraction); <b>breaking down</b> your strategy into sub-steps (decomposition); <b>determining</b> the best solution (evaluation); <b>planning</b> the actions to be carried out (algorithmic thinking); <b>designing</b> solutions to solve several problems (generalization).</p>
 		  <p>A typical teaching scenario has been described using the Scenoclasse tool. It is available at the following address (in french): <a href="https://scenoclasse.lip6.fr/editeur/scenario/643575d71d35e" target="_blank">https://scenoclasse.lip6.fr/editeur/scenario/643575d71d35e</a>. Don't hesitate to consult it, as it contains a wealth of information, including tips, points to watch out for, solutions, etc.</p>
 		  <p>In addition to these pre-built scenarios, SPY includes a <b>mission editor</b> that lets you create your own missions tailored to your students, and arrange them using the <b>scenario editor</b>.</p>
@@ -134,7 +152,7 @@
 			</div>
 			<div class="col-md-6">
 				<h2>Open Data</h2>
-				<p>For researchers wishing to analyze anonymized traces of game sessions: <a href="https://spy.lip6.fr/openTraces.html">https://spy.lip6.fr/openTraces.html</a></p>
+				<p>For researchers wishing to analyze anonymized traces of game sessions, see <a href="openTraces.html">openTraces.html</a> page.</p>
 				<p>A random code generated by the system is given to each new game session. Its purpose is to enable the person using the code to track his or her progress in the game. Data is collected on the player's interactions with the game. No identifying data is collected, and it is impossible for us to identify players from the code or the data. The data collected is therefore anonymous. They are used to keep track of progress in the game and for research, teaching and game improvement purposes.</p>
 			</div>
 		</div>
@@ -145,6 +163,8 @@
     <section id="publication" class="about">
       <div class="container">
           <h1>Scientific publications</h1>
+		  <p>R. El Mouhtani, M. Muratet, G. Murgia : “Supporting Dyslexic Learners in Computational Thinking Through a Serious Game with Text-to-Speech”, GALA 2026: Games and Learning Alliance Conference, L'Aquila, Italy (2026)</p>
+		  <p>M. Muratet, N. Ait Abbou, S. Jolivet : “Initiation à la programmation avec SPY : je joue, nous collaborons, nous créons”, Didapro 11 - Didastic, Grenoble, France (2026)</p>
 		  <p>M. Muratet, S. Jolivet : “GTC un formalisme permettant l’analyse automatique des compétences de la pensée informatique dans un jeu sérieux : application au jeu SPY”, Sticef, vol.31, n°1, 2024, p.10-44, DOI: 10.23709/sticef.31.1.1 (2025)</p>
 		  <p>A. Yessad, M. Muratet, Th. Carron : “Assister les enseignants du primaire dans l’enseignement de la pensée informatique. Une approche basée sur la scénarisation et vers les teaching analytics”, chapter in Enseigner, apprendre, former à l’informatique à l'école : regards croisés, pp. 211-231, (Université Paris Cité), (ISBN: 9782744202124) (2024)</p>
           <p>M. Muratet : “How to Characterize and Analyze the Computational Thinking Skills of a Learning Game?”, Lecture Notes in Computer Science, vol. 14200, Aveiro, Portugal, pp. 263-277, (Springer Nature Switzerland), (ISBN: 978-3-031-42681-0) (2023)</p>
@@ -191,6 +211,24 @@
 			contact.innerHTML = "mathieu.muratet<span style=\"display: none;\">cache</span> (at) lip6.fr";
 		} else
 			window.location.href = "index_fr.html";
+			
+		document.addEventListener('DOMContentLoaded', function () {
+			const collapsibleNavbar = document.getElementById('collapsibleNavbar');
+			const bsCollapse = new bootstrap.Collapse(collapsibleNavbar, { toggle: false });
+
+			// Cible les liens de premier niveau (hors toggles de dropdown) + les items des dropdowns
+			const navLinks = collapsibleNavbar.querySelectorAll(
+				'a.nav-link:not(.dropdown-toggle), a.dropdown-item'
+			);
+
+			navLinks.forEach(function (link) {
+				link.addEventListener('click', function () {
+					if (collapsibleNavbar.classList.contains('show')) {
+						bsCollapse.hide();
+					}
+				});
+			});
+		});
 	</script>
 
 	<!--Production version-->

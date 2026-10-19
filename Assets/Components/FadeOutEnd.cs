@@ -1,0 +1,2 @@
+public class FadeOutEnd : Highlightable {
+}

@@ -16,7 +16,9 @@ public class EditorLevelDataSystem : FSystem {
 	public Toggle dragAndDropToggle;
 	public Toggle fogToggle;
 	public Toggle hideExitsToggle;
-	public TMP_InputField score2Input;
+    public Toggle omniscientViewToggle;
+	public Toggle userExecutorToggle;
+    public TMP_InputField score2Input;
 	public TMP_InputField score3Input;
 	public Transform editableContainers;
 	public DataLevelBehaviour dataLevel;
@@ -59,7 +61,10 @@ public class EditorLevelDataSystem : FSystem {
 		dragAndDropToggle.isOn = true;
 		fogToggle.isOn = false;
 		hideExitsToggle.isOn = false;
-		score2Input.text = "";
+        omniscientViewToggle.isOn = false;
+        userExecutorToggle.isOn = false;
+
+        score2Input.text = "";
 		score3Input.text = "";
 
 		// Remove all existing editable area
@@ -104,8 +109,11 @@ public class EditorLevelDataSystem : FSystem {
 		dragAndDropToggle.isOn = doc.GetElementsByTagName("dragdropDisabled").Count == 0;
 		fogToggle.isOn = doc.GetElementsByTagName("fog").Count > 0;
 		hideExitsToggle.isOn = doc.GetElementsByTagName("hideExits").Count > 0;
+        omniscientViewToggle.isOn = doc.GetElementsByTagName("omniscientView").Count > 0;
+        userExecutorToggle.isOn = doc.GetElementsByTagName("userExecutor").Count > 0;
 
-		foreach (XmlNode child in root.ChildNodes)
+
+        foreach (XmlNode child in root.ChildNodes)
 		{
 			switch (child.Name)
 			{
@@ -192,7 +200,7 @@ public class EditorLevelDataSystem : FSystem {
 						GameObjectManager.addComponent<ScriptToLoad>(MainLoop.instance.gameObject, new
 						{
 							scriptNode = child,
-							scriptName = Utility.extractLocale(name.Value),
+							scriptName = name.Value,
 							editMode = editModeByUser,
 							type = typeByUser
 						});
@@ -203,7 +211,7 @@ public class EditorLevelDataSystem : FSystem {
 						stl.scriptName = name.Value;
 						stl.editMode = editModeByUser;
 						stl.type = typeByUser;
-						MainLoop.instance.StartCoroutine(delayRefreshMainLoop());
+                        GameObjectManager.refresh(MainLoop.instance.gameObject); 
 					}
 					catch
 					{
@@ -212,12 +220,6 @@ public class EditorLevelDataSystem : FSystem {
 					break;
 			}
 		}
-	}
-
-	private IEnumerator delayRefreshMainLoop()
-    {
-		yield return null;
-		GameObjectManager.refresh(MainLoop.instance.gameObject);
 	}
 
 	// See editBlockPrefab
@@ -262,7 +264,7 @@ public class EditorLevelDataSystem : FSystem {
 	// see childs of executionLimit GO
 	public void preventMinusSign(TMP_InputField input)
 	{
-		if (input.text.StartsWith("-"))
+		if (input.text != null && input.text.StartsWith("-"))
 			input.text = input.text.Trim('-');
 	}
 
@@ -276,7 +278,7 @@ public class EditorLevelDataSystem : FSystem {
 	public void scoreTwoStarsExit(string newData)
 	{
 		if (string.IsNullOrEmpty(newData))
-			score2Input.text = "0";
+			score2Input.text = "";
 
 		int twoStarsScore = int.Parse(newData);
 		int threeStarsScore = int.TryParse(score3Input.text, out int x) ? x : 0;
@@ -287,19 +289,11 @@ public class EditorLevelDataSystem : FSystem {
 	public void scoreThreeStarsExit(string newData)
 	{
 		if (string.IsNullOrEmpty(newData))
-			score3Input.text = "0";
+			score3Input.text = "";
 
 		int threeStarsScore = int.Parse(newData);
 		int twoStarsScore = int.TryParse(score2Input.text, out int x) ? x : 0;
 		if (twoStarsScore > threeStarsScore)
 			score2Input.text = newData;
 	}
-}
-
-public enum BlockCategory
-{
-	Action = 0,
-	Control = 1,
-	Operator = 2,
-	Sensor = 3
 }

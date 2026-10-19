@@ -7,6 +7,7 @@ public class DragDropSystemBridge : MonoBehaviour
     {
         DragDropSystem.instance.checkSpecialClick(e);
     }
+
     public void checkRightClickForDelete(BaseEventData e)
     {
         // On verifie si c'est bien un clic-droit
@@ -14,10 +15,18 @@ public class DragDropSystemBridge : MonoBehaviour
             DragDropSystem.instance.deleteElement(gameObject);
     }
 
+    public void setDefaultDropZone(BaseEventData e)
+    {
+        // On verifie si c'est bien un clic-gauche
+        if ((e as PointerEventData).button == PointerEventData.InputButton.Left)
+            DragDropSystem.instance.setDefaultDropZone(gameObject);
+    }
+
     public void checkHighlightDropArea()
     {
         DragDropSystem.instance.checkHighlightDropArea(gameObject);
     }
+
     public void unhighlightDropArea()
     {
         DragDropSystem.instance.unhighlightDropArea(gameObject);
@@ -32,7 +41,7 @@ public class DragDropSystemBridge : MonoBehaviour
     {
         DragDropSystem.instance.beginDragElementFromLibrary(e);
     }
-    
+
     public void dragElement(BaseEventData e)
     {
         DragDropSystem.instance.dragElement();
@@ -47,8 +56,19 @@ public class DragDropSystemBridge : MonoBehaviour
     {
         DragDropSystem.instance.onlyPositiveInteger(gameObject, newValue);
     }
+
     public void setNextFocusedGameObject(GameObject go)
     {
         EventSystem.current.SetSelectedGameObject(go);
+    }
+
+    public void lockItem()
+    {
+        DragDropSystem.instance.lockItem(transform.parent);
+    }
+
+    public void unlockItem()
+    {
+        DragDropSystem.instance.unlockItem(transform.parent);
     }
 }

@@ -17,7 +17,7 @@
 		<dialog text="[fr]Tu disposes aussi d'un nouveau capteur qui te permet de tester si le robot se trouve sur la case du téléporteur.[/fr][en]You also have a new sensor to test whether the robot is on the teleporter square.[/en]" img="exit.png" imgDesc="[fr]Illustration du bloc 'Sortie détectée sur ma position' disponible dans l'inventaire.[/fr][en]Illustration of an 'Exit detected on my position' block available in the inventory.[/en]" imgHeight="45" enableInteraction="0" briefingType="0" />
 		<dialog text="[fr]Tu disposes aussi du bloc 'Non' qui permet de savoir si une condition est fausse.[/fr][en]You also have a 'Not' block, which lets you know if a condition is false.[/en]" img="notOperator.png" imgDesc="[fr]Illustration du bloc 'Non' disponible dans l'inventaire.[/fr][en]Illustration of a 'Not' block available in the inventory.[/en]" imgHeight="100" enableInteraction="0" briefingType="0" />
 	</dialogs>
-	<score twoStars="3033" threeStars="4109"/>
+	<score twoStars="3033" threeStars="4117"/>
 
 	<blockLimits>
 		<blockLimit blockType="Forward" limit="4" />
@@ -54,7 +54,7 @@
 	<script outputLine="Plok" editMode="0" type="3">
 	</script>
 
-	<script outputLine="Plok_Sol" editMode="2" type="4">
+	<script outputLine="Plok_Sol" editMode="0" type="4">
 		<while>
 			<condition>
 				<not>

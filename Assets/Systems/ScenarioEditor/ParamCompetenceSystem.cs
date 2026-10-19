@@ -1,14 +1,15 @@
-using UnityEngine;
-using UnityEngine.UI;
 using FYFY;
-using TMPro;
-using System.IO;
-using System.Xml;
-using System.Collections.Generic;
 using System;
-using UnityEngine.Events;
-using System.Runtime.InteropServices;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Xml;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
+using System.Web;
 
 public class ParamCompetenceSystem : FSystem
 {
@@ -16,8 +17,6 @@ public class ParamCompetenceSystem : FSystem
 
 	// Familles
 	private Family f_UI_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency)), new AnyOfProperties(PropertyMatcher.PROPERTY.HAS_CHILD)); // Les compétences qui ont des enfants, donc les éléments d'UI pour le référentiel sélectionné
-	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
-	private Family f_askToTestLevel = FamilyManager.getFamily(new AllOfComponents(typeof(AskToTestLevel)));
 	private UnityAction localCallback;
 	private GameObject selectedScenarioGO;
 	private bool competenciesLoadedAndReady;
@@ -37,7 +36,6 @@ public class ParamCompetenceSystem : FSystem
 	public Button addToScenario;
 	public GameObject savingPanel;
 	public GameObject editBriefingPanel;
-	public GameObject briefingItemPrefab;
 	public TMP_InputField scenarioAbstract;
 	public TMP_InputField scenarioName;
 	public GameObject loadingScenarioContent;
@@ -46,12 +44,14 @@ public class ParamCompetenceSystem : FSystem
 	public Button closeBriefing;
 	public CurrentSettingsValues currentSettingsValues;
 
-	[DllImport("__Internal")]
+    public GameObject ScenarioAvailablePrefab;
+
+    [DllImport("__Internal")]
 	private static extern void Save(string content, string defaultName); // call javascript
 
 	private GameData gameData;
 
-	public ParamCompetenceSystem()
+    public ParamCompetenceSystem()
 	{
 		instance = this;
 	}
@@ -63,43 +63,25 @@ public class ParamCompetenceSystem : FSystem
 		{
 			gameData = go.GetComponent<GameData>();
 
-			f_askToTestLevel.addEntryCallback(delegate (GameObject go)
-			{
-				foreach (AskToTestLevel test in go.GetComponents<AskToTestLevel>())
-					GameObjectManager.removeComponent(test);
-				testLevelPath(go.GetComponent<AskToTestLevel>().url);
-			});
-
 			selectedScenarioGO = null;
 
 			competenciesLoadedAndReady = false;
-			createCompetencies(); // important le système "ReferentialLoader" doit être positionner AVANT ce système pour que les DropDown utilisé dans cette fonction soient correctement renseignés
+			updateCompetencies();
 			MainLoop.instance.StartCoroutine(delayshowCompatibleLevels());
-		}
+        }
 
 		Pause = true;
-	}
+    }
 
-	// used in DropdownReferential dropdown 
-	public void selectCompetencies(int referentialId)
+    // see CompetenciesFilter and SkillsDropdown in the settingsWindows of the ScenarioEditor scene
+    public void updateCompetencies()
 	{
-		if (gameData != null && gameData.lastReferentialSelected != referentialId)
-			createCompetencies();
-	}
-
-	// see CompetenciesFilter
-	public void createCompetencies()
-	{
-		int referentialId = f_compSelector.First().GetComponent<TMP_Dropdown>().value;
+		int referentialId = currentSettingsValues.values.currentSkillsRepository;
 		// save previous competencies selected
 		List<string> competenciesEnabled = new List<string>();
 		foreach (GameObject comp in f_UI_competencies)
 			if (comp.GetComponentInChildren<Toggle>().isOn)
 				competenciesEnabled.Add(comp.GetComponent<Competency>().id);
-
-		// set all competency selectors with the same value
-		foreach (GameObject selector in f_compSelector)
-			selector.GetComponent<TMP_Dropdown>().value = referentialId;
 
 		// remove all old competencies
 		for (int i = ContentCompMenu.transform.childCount - 1; i >= 0; i--)
@@ -112,22 +94,23 @@ public class ParamCompetenceSystem : FSystem
 
 		if (referentialId >= gameData.rawReferentials.referentials.Count || referentialId < 0)
 		{
-			Localization loc = gameData.GetComponent<Localization>();
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[8], referentialId), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("RepositoryNumberNotDefined"), referentialId), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			return;
 		}
 
 		// create all competencies
-		foreach (RawComp rawComp in gameData.rawReferentials.referentials[referentialId].list)
+		List<RawListComp> referentials = gameData.rawReferentials.referentials;
+        foreach (RawComp rawComp in referentials[referentialId].list)
 		{
 			// On instancie la compétence
 			GameObject competency = UnityEngine.Object.Instantiate(CompetencyToggle);
 			competency.SetActive(false);
 			competency.name = rawComp.key;
 			Competency comp = competency.GetComponent<Competency>();
-			comp.referential = gameData.rawReferentials.referentials[referentialId].name;
-			comp.parentKey = rawComp.parentKey;
+			comp.referentialName = referentials[referentialId].name;
+			comp.referentialId = referentialId;
+            comp.parentKey = rawComp.parentKey;
 			comp.id = rawComp.name;
 			comp.description = Utility.extractLocale(rawComp.description);
 			comp.filters = rawComp.filters;
@@ -169,19 +152,21 @@ public class ParamCompetenceSystem : FSystem
 
 		MainLoop.instance.StartCoroutine(delayRefreshLevelInfo());
 
-		if (Application.platform != RuntimePlatform.WebGLPlayer)
-			DebugLogLevelsCompetencies();
-
 		competenciesLoadedAndReady = true;
 	}
 
 	private IEnumerator delayshowCompatibleLevels()
 	{
-		while (!competenciesLoadedAndReady)
-			yield return null;
+		yield return new WaitWhile (() => !competenciesLoadedAndReady);
 
-		filterCompatibleLevels(false);
-	}
+        yield return null; // Il faut attendre la frame suivante pour être sûr que la famille contenant les Competency soit à jour
+
+        filterCompatibleLevels(false);
+
+#if UNITY_EDITOR
+        DebugLogLevelsCompetencies();
+#endif
+    }
 
 	// see ShowAllLevels GameObject
 	public void resetFilters()
@@ -224,16 +209,14 @@ public class ParamCompetenceSystem : FSystem
 			}
 		}
 
-		TMP_Dropdown selectComp = f_compSelector.First().GetComponent<TMP_Dropdown>();
-
-		if (!nameFiltering)
+		if (!nameFiltering && competenciesSelected != "")
 		{
-			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+            GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
 			{
 				verb = "filtered",
 				objectType = "competencies",
 				activityExtensions = new Dictionary<string, string>() {
-						{ "context", selectComp.options[selectComp.value].text },
+						{ "context", f_UI_competencies.First().GetComponent<Competency>().referentialName },
 						{ "content", competenciesSelected }
 					}
 			});
@@ -242,16 +225,15 @@ public class ParamCompetenceSystem : FSystem
 		if (selectedLevels.Count == 0)
 		{
 			localCallback = null;
-			Localization loc = gameData.GetComponent<Localization>();
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[10], OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.GetLocalizedString("NoMissionCompatible"), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 		}
 		else
 		{
 			// get name filter
 			string namefilter = levelFilterByName.text.ToLower();
 			// hide competencies panel
-			GameObjectManager.setGameObjectState(competenciesPanel, false);
-			GameObjectManager.setGameObjectState(compatibleLevelsPanel, true);
+			competenciesPanel.SetActive(false);
+			compatibleLevelsPanel.SetActive(true);
 			// remove all old buttons
 			for (int i = contentListOfCompatibleLevel.transform.childCount - 1; i >=0; i--)
 			{
@@ -310,14 +292,14 @@ public class ParamCompetenceSystem : FSystem
 	public void displayLoadingPanel(string filter)
 	{
 		// sync filter with the content of the input field (in the case of input field is not empty and loading panel is called from the menu)
-		TMP_InputField input = mainCanvas.transform.Find("LoadingPanel").GetComponentInChildren<TMP_InputField>();
+		TMP_InputField input = mainCanvas.transform.Find("SafeArea/LoadingPanel").GetComponentInChildren<TMP_InputField>();
 		if (input.text != filter) { 
 			input.text = filter;
 			return;
 		}
 
 		selectedScenarioGO = null;
-		GameObjectManager.setGameObjectState(mainCanvas.transform.Find("LoadingPanel").gameObject, true);
+		mainCanvas.transform.Find("SafeArea/LoadingPanel").gameObject.SetActive(true);
 		// remove all old scenario
 		for (int i = loadingScenarioContent.transform.childCount - 1; i >= 0; i--)
 		{
@@ -328,24 +310,28 @@ public class ParamCompetenceSystem : FSystem
 		}
 
 		//create scenario buttons and filter field in loading panel
-		List<string> sortedScenarios = new List<string>();
+		List<Tuple<string, string>> sortedScenarios = new List<Tuple<string, string>>();
 		foreach (string key in gameData.scenarios.Keys)
 		{
 			if (key != UtilityLobby.testFromScenarioEditor && key != UtilityLobby.testFromLevelEditor && key != UtilityLobby.testFromUrl && key != UtilityLobby.editingScenario && key.ToLower().Contains(filter.ToLower())) // we don't add new line for tested levels
-				sortedScenarios.Add(key);
+            {
+                string scenarName = Utility.extractLocale(gameData.scenarios[key].name);
+                sortedScenarios.Add(new Tuple<string, string>(key, scenarName != "" ? scenarName : key));
+            }
 		}
-		sortedScenarios.Sort();
-		foreach (string key in sortedScenarios)
+		sortedScenarios.Sort((x,y) => string.Compare(x.Item2, y.Item2));
+		foreach (Tuple<string, string> item in sortedScenarios)
 		{
-			GameObject scenarioItem = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/ScenarioEditor/ScenarioAvailable") as GameObject, loadingScenarioContent.transform);
-			scenarioItem.GetComponentInChildren<TextMeshProUGUI>(true).text = key;
+			GameObject scenarioItem = GameObject.Instantiate<GameObject>(ScenarioAvailablePrefab, loadingScenarioContent.transform);
+			scenarioItem.GetComponent<GameKeys>().scenarioKey = item.Item1;
+            scenarioItem.GetComponentInChildren<TextMeshProUGUI>(true).text = item.Item2;
 			GameObjectManager.bind(scenarioItem);
 		}
 
 		UtilityEditor.buildLoadingPanelNavigation(loadingScenarioContent.transform.parent.parent.parent);
 	}
 
-	// see LoadButton in LoadingPanel in TitleScreen scene
+	// see LoadButton in LoadingPanel
 	public void loadScenario()
 	{
 		if (selectedScenarioGO != null)
@@ -354,7 +340,7 @@ public class ParamCompetenceSystem : FSystem
 			if (closeBriefing.gameObject.activeInHierarchy)
 				closeBriefing.onClick.Invoke();
 
-			loadScenario(selectedScenarioGO.GetComponentInChildren<TMP_Text>().text);
+			loadScenario(selectedScenarioGO.GetComponent<GameKeys>().scenarioKey);
 		}
 	}
 
@@ -362,7 +348,11 @@ public class ParamCompetenceSystem : FSystem
     {
 		if (gameData.scenarios.ContainsKey(scenarioKey))
 		{
-			savingPanel.GetComponentInChildren<TMP_InputField>(true).text = scenarioKey;
+			TMP_InputField savingInputField = savingPanel.GetComponentInChildren<TMP_InputField>(true);
+			savingInputField.text = Utility.extractLocale(gameData.scenarios[scenarioKey].name);
+			if (savingInputField.text == "")
+				savingInputField.text = scenarioKey;
+
 
 			//remove all old scenario
 			foreach (Transform child in contentScenario.transform)
@@ -393,7 +383,6 @@ public class ParamCompetenceSystem : FSystem
     {
 		yield return null;
 		refreshLevelInfo();
-
 	}
 
 	public void refreshLevelInfo()
@@ -428,7 +417,7 @@ public class ParamCompetenceSystem : FSystem
 			contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text = path;
 			// erase previous miniView
 			Image miniView = contentInfoCompatibleLevel.transform.Find("LevelMiniView").GetComponent<Image>();
-			GameObjectManager.setGameObjectState(miniView.gameObject, false);
+			miniView.gameObject.SetActive(false);
 			// Display miniView
 			string imgPath = new Uri(mainPath + "/" + path.Replace(".xml", currentSettingsValues.values.currentLanguage == 1 ? "_en.png" : ".png")).AbsoluteUri;
 
@@ -440,7 +429,6 @@ public class ParamCompetenceSystem : FSystem
 				Utility.readXMLDialogs(XMLDialogs[0], defaultDialogs);
 
 			TMP_Text contentInfo = contentInfoCompatibleLevel.transform.Find("levelTextInfo").GetComponent<TMP_Text>();
-			Localization contentLoc = contentInfo.GetComponent<Localization>();
 			contentInfo.text = "";
 			if (levelSelected != null)
 			{
@@ -458,23 +446,23 @@ public class ParamCompetenceSystem : FSystem
 					dlb.data.overridedDialogs = defaultDialogs;
 
 				// Display introTexts
-				contentInfo.text = "<b>"+ contentLoc.localization[0]+" " + (dlb.data.dialogsEqualsTo(defaultDialogs) ? "(" + contentLoc.localization[1] + ")" : "(" + contentLoc.localization[2] + ")") + " :</b>\n";
+				contentInfo.text = "<b>"+ Utility.GetLocalizedString("BriefingTexts") +" " + (dlb.data.dialogsEqualsTo(defaultDialogs) ? "(" + Utility.GetLocalizedString("Default") + ")" : "(" + Utility.GetLocalizedString("Personalized") + ")") + " :</b>\n";
 				string txt = "";
 				for (int i = 0; i < dlb.data.overridedDialogs.Count; i++)
 				{
 					Dialog item = dlb.data.overridedDialogs[i];
-					txt += "\n---"+ contentLoc.localization[7] + (i + 1) + "---\n";
+					txt += "\n---"+ Utility.GetLocalizedString("PAGE") + (i + 1) + "---\n";
 					if (item.text != null)
 						txt += Utility.extractLocale(item.text) + "\n";
 					if (Utility.extractLocale(item.img) != "" || Utility.extractLocale(item.sound) != "" || Utility.extractLocale(item.video) != "")
-						txt += "\n" + (Utility.extractLocale(item.img) != "" ? "<<"+ contentLoc.localization[8] + ">>" : "") + (Utility.extractLocale(item.sound) != "" ? "<<" + contentLoc.localization[9] + ">>" : "") + (Utility.extractLocale(item.video) != "" ? "<<" + contentLoc.localization[10] + ">>" : "") + "\n";
+						txt += "\n" + (Utility.extractLocale(item.img) != "" ? "<<"+ Utility.GetLocalizedString("IMAGE") + ">>" : "") + (Utility.extractLocale(item.sound) != "" ? "<<" + Utility.GetLocalizedString("SOUND") + ">>" : "") + (Utility.extractLocale(item.video) != "" ? "<<" + Utility.GetLocalizedString("VIDEO") + ">>" : "") + "\n";
 				}
 				if (txt != "")
 					contentInfo.text += txt;
 				else
-					contentInfo.text += "\t" + contentLoc.localization[3] + "\n";
+					contentInfo.text += "\t" + Utility.GetLocalizedString("NoTextDefined") + "\n";
 				// Display competencies
-				contentInfo.text += "\n<b>" + contentLoc.localization[4] + "</b>\n";
+				contentInfo.text += "\n<b>" + Utility.GetLocalizedString("IdentifiedSkills") + "</b>\n";
 				txt = "";
 				foreach (GameObject comp in f_UI_competencies)
 				{
@@ -484,18 +472,17 @@ public class ParamCompetenceSystem : FSystem
 				if (txt != "")
 					contentInfo.text += txt;
 				else
-					contentInfo.text += "\t" + contentLoc.localization[5] + "\n";
+					contentInfo.text += "\t" + Utility.GetLocalizedString("NoSkillsIdentified") + "\n";
 			}
 			else
-				contentInfo.text += contentLoc.localization[6];
+				contentInfo.text += Utility.GetLocalizedString("NoInformationOnThisMission");
 			testLevelBt.interactable = true;
 			addToScenario.interactable = true;
 		}
         else
 		{
-			Localization loc = gameData.GetComponent<Localization>();
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[11], path), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("MissionNotPresent"), path), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 		}
 	}
 
@@ -517,7 +504,6 @@ public class ParamCompetenceSystem : FSystem
 
 	public void saveScenario(TMP_InputField scenarioName)
 	{
-		Localization loc = gameData.GetComponent<Localization>();
 		if (!UtilityEditor.CheckSaveNameValidity(scenarioName.text))
 		{
 			localCallback = null;
@@ -525,9 +511,9 @@ public class ParamCompetenceSystem : FSystem
 			foreach (char someChar in Path.GetInvalidFileNameChars())
 				if (Char.IsPunctuation(someChar) || Char.IsSymbol(someChar))
 					invalidChars += someChar+" ";
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[12], invalidChars), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("NameInvalid"), invalidChars), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			// Be sure saving windows is enabled
-			GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
+			scenarioName.transform.parent.parent.gameObject.SetActive(true);
 		}
 		else
 		{
@@ -538,19 +524,19 @@ public class ParamCompetenceSystem : FSystem
 			{
 				localCallback = null;
 				localCallback += delegate { saveToFile(scenarioName); };
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[13], scenarioName.text), OkButton = loc.localization[3], CancelButton = loc.localization[4], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileNameAlreadyExists"), scenarioName.text), OkButton = Utility.GetLocalizedString("Yes"), CancelButton = Utility.GetLocalizedString("No"), call = localCallback });
 				// Be sure saving windows is enabled
-				GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, true);
+				scenarioName.transform.parent.parent.gameObject.SetActive(true);
 			}
 			else
 				saveToFile(scenarioName);
 		}
 	}
 
-	private string buildScenarioContent()
+	private string buildScenarioContent(string defaultName)
     {
 		string scenarioExport = "<?xml version=\"1.0\"?>\n";
-		scenarioExport += "<scenario name=\""+ scenarioName.text.Replace('\"', '\'') + "\" desc=\""+ scenarioAbstract.text.Replace('\"', '\'') + "\">\n";
+		scenarioExport += "<scenario name=\""+ (scenarioName.text != "" ? scenarioName.text.Replace('\"', '\'') : defaultName) + "\" desc=\""+ scenarioAbstract.text.Replace('\"', '\'') + "\">\n";
 		foreach (Transform child in contentScenario.transform)
 		{
 			DataLevel dataLevel = child.GetComponent<DataLevelBehaviour>().data;
@@ -564,16 +550,17 @@ public class ParamCompetenceSystem : FSystem
 				{
 					scenarioExport += "\t\t\t<dialog ";
 					scenarioExport += dialog.text != null && dialog.text != "" ? "text=\"" + dialog.text + "\" " : "";
-					scenarioExport += dialog.img != null && dialog.img != "" ? "img=\"" + dialog.img + "\" " : "";
+					scenarioExport += dialog.img != null && dialog.img != "" ? "img=\"" + HttpUtility.UrlEncode(dialog.img) + "\" " : "";
 					scenarioExport += dialog.imgDesc != null && dialog.imgDesc != "" ? "imgDesc=\"" + dialog.imgDesc + "\" " : "";
 					scenarioExport += dialog.imgHeight != -1 ? "imgHeight=\"" + dialog.imgHeight + "\" " : "";
 					scenarioExport += dialog.camX != -1 ? "camX=\"" + dialog.camX + "\" " : "";
 					scenarioExport += dialog.camY != -1 ? "camY=\"" + dialog.camY + "\" " : "";
-					scenarioExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + dialog.sound + "\" " : "";
-					scenarioExport += dialog.video != null && dialog.video != "" ? "video=\"" + dialog.video + "\" " : "";
+					scenarioExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + HttpUtility.UrlEncode(dialog.sound) + "\" " : "";
+					scenarioExport += dialog.video != null && dialog.video != "" ? "video=\"" + HttpUtility.UrlEncode(dialog.video) + "\" " : "";
 					scenarioExport += dialog.videoHeight != -1 ? "videoHeight=\"" + dialog.videoHeight + "\" " : "";
-					scenarioExport += "enableInteraction=\"" + (dialog.enableInteraction ? "1" : "0") + "\" ";
-					scenarioExport += "briefingType=\"" + dialog.briefingType + "\" />\n";
+                    scenarioExport += dialog.highlight != null && dialog.highlight != "" ? "highlight=\"" + dialog.highlight + "\" " : "";
+                    scenarioExport += "enableInteraction=\"" + (dialog.enableInteraction ? "1" : "0") + "\" ";
+                    scenarioExport += "briefingType=\"" + dialog.briefingType + "\" />\n";
 				}
 				scenarioExport += "\t\t</dialogs>\n\t</level>\n";
 			}
@@ -585,7 +572,7 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	private void saveToFile(TMP_InputField scenarioName) {
-		string scenarioExport = buildScenarioContent();
+		string scenarioExport = buildScenarioContent(scenarioName.text);
 
 		// generate XML structure from string
 		XmlDocument doc = new XmlDocument();
@@ -594,14 +581,13 @@ public class ParamCompetenceSystem : FSystem
 
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 		{
-			Save(buildScenarioContent(), scenarioName.text);
+			Save(scenarioExport, scenarioName.text);
 			// Add/Replace scenario content in memory
-			string fakeUri = Application.streamingAssetsPath + "/Scenario/LocalFiles/" + scenarioName.text;
+			string fakeUri = Application.streamingAssetsPath + "/Scenario/" + scenarioName.text;
 			UtilityLobby.updateScenarioContent(gameData, new Uri(fakeUri).AbsoluteUri, doc);
 		}
 		else
 		{
-			Localization loc = gameData.GetComponent<Localization>();
 			try
 			{
 				// Create all necessary directories if they don't exist
@@ -613,16 +599,17 @@ public class ParamCompetenceSystem : FSystem
 				UtilityLobby.updateScenarioContent(gameData, path, doc);
 
 				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[14], Application.persistentDataPath, "Scenario", scenarioName.text), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileSaved"), Application.persistentDataPath, "Scenario", scenarioName.text), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			}
 			catch (Exception e)
 			{
 				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[15], e.Message), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileNotSaved"), e.Message), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			}
 		}
+
 		// Be sure saving windows is disabled
-		GameObjectManager.setGameObjectState(scenarioName.transform.parent.parent.gameObject, false);
+		scenarioName.transform.parent.parent.gameObject.SetActive(false);
 
 		mainCanvas.GetComponent<CanvasGroup>().interactable = true;
 	}
@@ -630,16 +617,15 @@ public class ParamCompetenceSystem : FSystem
 	// See ButtonSaveScenario
 	public void displaySavingPanel(TMP_InputField scenarName)
 	{
-		GameObjectManager.setGameObjectState(savingPanel, true);
-		// init savingPanel to the name of scenario if no name previously defined
-		if (savingPanel.GetComponentInChildren<TMP_InputField>(true).text == "")
-			savingPanel.GetComponentInChildren<TMP_InputField>(true).text = scenarName.text;
+		savingPanel.SetActive(true);
+		savingPanel.GetComponentInChildren<TMP_InputField>(true).text = Utility.extractLocale(scenarName.text);
 	}
 
-	public void showBriefingOverride()
-    {
-		GameObjectManager.setGameObjectState(compatibleLevelsPanel, false);
-		GameObjectManager.setGameObjectState(editBriefingPanel, true);
+    // See pen in hookedMission prefab
+    public void showBriefingOverride()
+	{ 
+        compatibleLevelsPanel.SetActive(false);
+		editBriefingPanel.SetActive(true);
     }
 
 	//Used on scenario editing window (see button ButtonTestLevel)
@@ -647,7 +633,7 @@ public class ParamCompetenceSystem : FSystem
 	{
 		// We save the scenario currently edited
 		// We can't use GameObjectManager because the update has to be done immediately due to scene loading in testLevel function
-		UtilityLobby.LoadLevelOrScenario(gameData, UtilityLobby.editingScenario, buildScenarioContent());
+		UtilityLobby.LoadLevelOrScenario(gameData, UtilityLobby.editingScenario, buildScenarioContent(""));
 		testLevel(dlb.data, UtilityLobby.testFromScenarioEditor);
 	}
 
@@ -655,24 +641,14 @@ public class ParamCompetenceSystem : FSystem
     {
 		gameData.selectedScenario = context;
 		WebGlScenario test = new WebGlScenario();
-		test.levels = new List<DataLevel>();
-		test.levels.Add(dl);
+        test.levels = new List<DataLevel>{dl};
 		gameData.scenarios[context] = test;
 		gameData.levelToLoad = 0;
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
 	}
 
-	private void testLevelPath(string levelToLoad)
-	{
-		DataLevel dl = new DataLevel();
-		dl.filePath = new Uri(Application.persistentDataPath + "/" + levelToLoad).AbsoluteUri;
-		if (!gameData.levels.ContainsKey(dl.filePath))
-			dl.filePath = new Uri(Application.streamingAssetsPath + "/" + levelToLoad).AbsoluteUri;
-		dl.missionName = Path.GetFileNameWithoutExtension(dl.filePath);
-		testLevel(dl, UtilityLobby.testFromUrl);
-	}
-
-	private void DebugLogLevelsCompetencies()
+#if UNITY_EDITOR
+    private void DebugLogLevelsCompetencies()
     {
 		// select all levels
 		List<XmlNode> selectedLevels = new List<XmlNode>();
@@ -697,6 +673,8 @@ public class ParamCompetenceSystem : FSystem
 			}
 			csvExport += "\n";
 		}
-		File.WriteAllText("exportAssociationMissions"+ f_compSelector.First().GetComponent<TMP_Dropdown>().options[f_compSelector.First().GetComponent<TMP_Dropdown>().value].text+"Ref.txt", csvExport);
+		if (csvExport != "")
+			File.WriteAllText("exportAssociationMissions"+ f_UI_competencies.First().GetComponent<Competency>().referentialName+"Ref.txt", csvExport);
 	}
+#endif
 }

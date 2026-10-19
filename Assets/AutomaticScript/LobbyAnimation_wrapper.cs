@@ -18,4 +18,9 @@ public class LobbyAnimation_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "R102", R102);
 	}
 
+	public void PlayR102Anim()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "PlayR102Anim", null);
+	}
+
 }

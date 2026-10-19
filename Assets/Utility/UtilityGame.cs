@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public static class UtilityGame
@@ -76,10 +77,7 @@ public static class UtilityGame
 				{
 					// disable empty slot
 					repSlot.GetComponentInChildren<Outline>().enabled = false;
-
-					// Because this function can be call for binded GO or not
-					if (GameObjectManager.isBound(repSlot.gameObject)) GameObjectManager.setGameObjectState(repSlot.transform.gameObject, false);
-					else repSlot.transform.gameObject.SetActive(false);
+					repSlot.transform.gameObject.SetActive(false);
 				}
 				else
 				{
@@ -100,7 +98,7 @@ public static class UtilityGame
 	}
 
 	// We create an editable block from a library item (without binded it to FYFY, depending on context the object has to be binded or not)
-	public static GameObject createEditableBlockFromLibrary(GameObject element, GameObject targetCanvas)
+	public static GameObject createEditableBlockFromLibrary(GameObject element, GameObject targetCanvas, bool interactable)
 	{
         Debug.Log($"[Debug] element: {element}, targetCanvas: {targetCanvas}");
 
@@ -113,15 +111,23 @@ public static class UtilityGame
 		// link with library
 		if (newItem.GetComponent<LibraryItemRef>())
 			newItem.GetComponent<LibraryItemRef>().linkedTo = element;
-		return newItem;
+
+		foreach (Locker locker in newItem.GetComponentsInChildren<Locker>(true))
+		{
+			locker.locked = !interactable;
+			setBlockInteractable(locker);
+		}
+
+        return newItem;
 	}
 
 	// elementToDelete will be deleted then manage empty zone accordingly
 	public static void manageEmptyZone(GameObject elementToDelete)
 	{
-		if (elementToDelete.GetComponent<BaseCondition>())
+        // Si suppression d'une condition, on active la zone vide du container pour pouvoir en mettre une autre à la place
+        if (elementToDelete.GetComponent<BaseCondition>())
 			// enable the next last child of the container
-			GameObjectManager.setGameObjectState(elementToDelete.transform.parent.GetChild(elementToDelete.transform.GetSiblingIndex() + 1).gameObject, true);
+			elementToDelete.transform.parent.GetChild(elementToDelete.transform.GetSiblingIndex() + 1).gameObject.SetActive(true);
 	}
 
 	// Copy an editable script to the container of an agent
@@ -146,7 +152,7 @@ public static class UtilityGame
 					dropZone.transform.SetParent(null);
 					GameObject.Destroy(dropZone.gameObject);
 				}
-				//remove empty zones for BaseElements
+				// remove empty zones for BaseElements
 				foreach (ReplacementSlot emptyZone in child.GetComponentsInChildren<ReplacementSlot>(true))
 				{
 					if (emptyZone.slotType == ReplacementSlot.SlotType.BaseElement) {
@@ -192,7 +198,7 @@ public static class UtilityGame
 		foreach (ForControl forAct in copyGO.GetComponentsInChildren<ForControl>(true))
 		{
 			// Si activé, on note le nombre de tour de boucle à faire
-			if (!isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
+			if (!isInteractable)
 			{
 				TMP_InputField counter = forAct.GetComponentInChildren<TMP_InputField>(true);
 				try
@@ -203,41 +209,28 @@ public static class UtilityGame
 				}
 				counter.text = (forAct.currentFor).ToString() + " / " + forAct.nbFor.ToString();
 			}// Sinon on met tout à 0
-			else if (isInteractable && !forAct.gameObject.GetComponent<WhileControl>())
+			else if (isInteractable)
 			{
 				forAct.currentFor = 0;
 				forAct.GetComponentInChildren<TMP_InputField>(true).text = forAct.nbFor.ToString();
 			}
-			else if (forAct is WhileControl)
-			{
-				// On traduit la condition en string
-				((WhileControl)forAct).condition = new List<ConditionItem>();
-				conditionToStrings(forAct.transform.Find("ConditionContainer").GetChild(0).gameObject, ((WhileControl)forAct).condition);
 
-			}
-			// On parcourt les éléments présent dans le block action
-			foreach (BaseElement act in forAct.GetComponentsInChildren<BaseElement>(true))
-			{
-				// Si ce n'est pas un bloc action alors on le note comme premier élément puis on arrête le parcourt des éléments
-				if (!act.Equals(forAct))
-				{
-					forAct.firstChild = act.gameObject;
-					break;
-				}
-			}
-		}
-		// Pour chaque block de boucle infini
-		foreach (ForeverControl loopAct in copyGO.GetComponentsInChildren<ForeverControl>(true))
+			initFirstChildInLoop(forAct);
+        }
+		// Pour chaque bloc while
+		foreach (WhileControl whileAct in copyGO.GetComponentsInChildren<WhileControl>(true))
 		{
-			foreach (BaseElement act in loopAct.GetComponentsInChildren<BaseElement>(true))
-			{
-				if (!act.Equals(loopAct))
-				{
-					loopAct.firstChild = act.gameObject;
-					break;
-				}
-			}
-		}
+            // On traduit la condition en string
+            whileAct.condition = new List<ConditionItem>();
+            conditionToStrings(whileAct.transform.Find("ConditionContainer").GetChild(0).gameObject, whileAct.condition);
+
+            initFirstChildInLoop(whileAct);
+        }
+        // Pour chaque block de boucle infini
+        foreach (ForeverControl loopAct in copyGO.GetComponentsInChildren<ForeverControl>(true))
+        {
+            initFirstChildInLoop(loopAct);
+        }
 		// Pour chaque block if
 		foreach (IfControl ifAct in copyGO.GetComponentsInChildren<IfControl>(true))
 		{
@@ -264,37 +257,44 @@ public static class UtilityGame
 
 		// On défini la couleur de l'action selon l'agent à qui appartiendra le script
 		if (agentTag == "Drone") {
-			foreach (BaseElement act in copyGO.GetComponentsInChildren<BaseElement>(true))
+			foreach (Locker locker in copyGO.GetComponentsInChildren<Locker>(true))
 			{
-				Selectable sel = act.GetComponent<Selectable>();
-				sel.interactable = false;
-				Color disabledColor = sel.colors.disabledColor;
-
-				if (act.GetComponent<ControlElement>())
-					foreach (Transform child in act.gameObject.transform)
-					{
-						Image childImg = child.GetComponent<Image>();
-						if (child.name != "3DEffect" && childImg != null)
-							childImg.color = disabledColor;
-					}
+				locker.locked = true;
+                setBlockInteractable(locker);
 			}
-			foreach (BaseCondition act in copyGO.GetComponentsInChildren<BaseCondition>(true))
-			{
-				Selectable sel = act.GetComponent<Selectable>();
-				sel.interactable = false;
-				Color disabledColor = sel.colors.disabledColor;
-				if (act.GetComponent<BaseOperator>())
-					foreach (Transform child in act.gameObject.transform)
-					{
-						Image childImg = child.GetComponent<Image>();
-						if (child.name != "3DEffect" && childImg != null)
-							childImg.color = disabledColor;
-					}
-			}
-		}
+        }
 
 		return copyGO;
 	}
+
+	public static void setBlockInteractable(Locker locker)
+	{
+        Selectable sel = locker.GetComponent<Selectable>();
+        sel.interactable = !locker.locked;
+
+        syncLockerUI(locker);
+    }
+
+    public static void syncLockerUI(Locker locker)
+    {
+        // On affiche l'UI des lockers que dans l'éditeur de mission
+        locker.UI.SetActive(SceneManager.GetActiveScene().name == "MissionEditor");
+        locker.UI.transform.Find("Locked").gameObject.SetActive(locker.locked);
+        locker.UI.transform.Find("Unlocked").gameObject.SetActive(!locker.locked);
+    }
+
+    private static void initFirstChildInLoop(ControlElement loop)
+    {
+        foreach (BaseElement act in loop.GetComponentsInChildren<BaseElement>(true))
+        {
+            // Si ce n'est pas un bloc action alors on le note comme premier élément puis on arrête le parcourt des éléments
+            if (!act.Equals(loop))
+            {
+                loop.firstChild = act.gameObject;
+                break;
+            }
+        }
+    }
 
 	/**
 	 * Nettoie le bloc de controle (On supprime les end-zones, on met les conditions sous forme d'un seul bloc)
@@ -412,8 +412,10 @@ public static class UtilityGame
 			}
 		}
 		else
+		{
 			GameObjectManager.addComponent<NewEnd>(MainLoop.instance.gameObject, new { endType = NewEnd.BadCondition });
-	}
+		}
+    }
 	
 	// link actions together => define next property
 	// Associe à chaque bloc le bloc qui sera executé aprés
@@ -432,7 +434,7 @@ public static class UtilityGame
 			// Pour la dernière instruction le next dépend du parent
 			Transform parent = container.transform.parent;
 			if (parent != null && parent.GetComponent<BaseElement>() != null) {
-				if (parent.GetComponent<ForControl>() != null || parent.GetComponent<ForeverControl>() != null)
+				if (parent.GetComponent<ForControl>() != null || parent.GetComponent<WhileControl>() != null || parent.GetComponent<ForeverControl>() != null)
 					lastChild.GetComponent<BaseElement>().next = parent.gameObject;
 				else
 					lastChild.GetComponent<BaseElement>().next = parent.GetComponent<BaseElement>().next;
@@ -476,6 +478,7 @@ public static class UtilityGame
 		else
 		{
 			string export = "";
+			Locker locker = script.GetComponent<Locker>();
 			// Cas d'une ACTION
 			if (script is BasicAction)
 			{
@@ -486,7 +489,7 @@ public static class UtilityGame
 				if (exportType == ExportType.PseudoCode)
 					export += (script.GetComponent<CurrentAction>() ? "* " : "") + (script as BasicAction).actionType.ToString() + ";";
 				else
-					export += indent(indentLevel) + "<action type=\"" + (script as BasicAction).actionType + "\"/>"+(script.GetComponent<CurrentAction>() ? "<!-- Current Action -->" : "") +"\n";
+					export += indent(indentLevel) + "<action type=\"" + (script as BasicAction).actionType + "\" locked=\""+(locker.locked ? "True" : "False")+"\"/>"+(script.GetComponent<CurrentAction>() ? "<!-- Current Action -->" : "") +"\n";
 			}
 			// Cas d'un CAPTOR
 			else if (script is BaseCaptor)
@@ -498,7 +501,7 @@ public static class UtilityGame
 				if (exportType == ExportType.PseudoCode)
 					export += (script as BaseCaptor).captorType.ToString();
 				else
-					export += indent(indentLevel) + "<captor type=\"" + (script as BaseCaptor).captorType + "\"/>\n";
+					export += indent(indentLevel) + "<captor type=\"" + (script as BaseCaptor).captorType + "\" locked=\""+(locker.locked ? "True" : "False")+"\"/>\n";
 
 				if (localRS.gameObject == focusedArea)
 					export += exportType == ExportType.PseudoCode ? "##" : indent(indentLevel) + "<!--##-->\n";
@@ -514,7 +517,7 @@ public static class UtilityGame
 				// Cas du NOT
 				if (ope.operatorType == BaseOperator.OperatorType.NotOperator)
 				{
-					export += exportType == ExportType.PseudoCode ? "NOT (" : indent(indentLevel) + "<not>\n";
+					export += exportType == ExportType.PseudoCode ? "NOT (" : indent(indentLevel) + "<not locked=\""+(locker.locked ? "True" : "False")+"\">\n";
 
 					if (container.Find("EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
 						export += exportType == ExportType.PseudoCode ? "####" : indent(indentLevel+1) + "<!--####-->\n";
@@ -526,7 +529,7 @@ public static class UtilityGame
 				// Cas du AND et du OR
 				else if (ope.operatorType == BaseOperator.OperatorType.AndOperator || ope.operatorType == BaseOperator.OperatorType.OrOperator)
 				{
-					export += exportType == ExportType.PseudoCode ? "(" : indent(indentLevel) + "<"+(ope.operatorType == BaseOperator.OperatorType.AndOperator ? "and" : "or") +">\n" + indent(indentLevel+1) + "<conditionLeft>\n" ;
+					export += exportType == ExportType.PseudoCode ? "(" : indent(indentLevel) + "<"+(ope.operatorType == BaseOperator.OperatorType.AndOperator ? "and" : "or") +" locked=\""+(locker.locked ? "True" : "False")+"\">\n" + indent(indentLevel+1) + "<conditionLeft>\n" ;
 
 					if (container.Find("EmptyConditionalSlot1").GetComponent<ReplacementSlot>().gameObject == focusedArea)
 						export += exportType == ExportType.PseudoCode ? "####" : indent(indentLevel + 2) + "<!--####-->\n";
@@ -554,7 +557,7 @@ public static class UtilityGame
 				// Cas du WHILE
 				if (script is WhileControl)
 				{
-					export += exportType == ExportType.PseudoCode ? "WHILE (" : indent(indentLevel) + "<while>\n" + indent(indentLevel+1) + "<condition>\n";
+					export += exportType == ExportType.PseudoCode ? "WHILE (" : indent(indentLevel) + "<while locked=\""+(locker.locked ? "True" : "False")+"\">\n" + indent(indentLevel+1) + "<condition>\n";
 
 					if (script.transform.Find("ConditionContainer/EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
 						export += exportType == ExportType.PseudoCode ? "####" : indent(indentLevel + 2) + "<!--####-->\n";
@@ -571,15 +574,15 @@ public static class UtilityGame
 
 					export += (script as ForControl).nbFor;
 
-					export += exportType == ExportType.PseudoCode ? (script.gameObject == focusedArea ? "##" : "") + ") {" : ("\">"+ (script.gameObject == focusedArea ? "<!--####-->" : "") + "\n");
+					export += exportType == ExportType.PseudoCode ? (script.gameObject == focusedArea ? "##" : "") + ") {" : ("\" locked=\""+(locker.locked ? "True" : "False")+"\" inputLocker=\""+(script.GetComponentInChildren<TMP_InputField>(true).GetComponent<Locker>().locked ? "True" : "False")+"\">"+ (script.gameObject == focusedArea ? "<!--####-->" : "") + "\n");
 				}
 				// Cas du FOREVER
 				else if (script is ForeverControl)
-					export += exportType == ExportType.PseudoCode ? "FOREVER {" : indent(indentLevel) + "<forever>\n";
+					export += exportType == ExportType.PseudoCode ? "FOREVER {" : indent(indentLevel) + "<forever locked=\""+(locker.locked ? "True" : "False")+"\">\n";
 				// Cas du IF et du IF/ELSE
 				else if (script is IfControl)
 				{
-					export += exportType == ExportType.PseudoCode ? "IF (" : indent(indentLevel) + (script is IfElseControl ? "<ifElse>\n" : "<if>\n") + indent(indentLevel+1) + "<condition>\n";
+					export += exportType == ExportType.PseudoCode ? "IF (" : indent(indentLevel) + (script is IfElseControl ? "<ifElse" : "<if") + " locked=\"" + (locker.locked ? "True" : "False") + "\">\n"+ indent(indentLevel+1) + " <condition>\n";
 
 					if (script.transform.Find("ConditionContainer/EmptyConditionalSlot").GetComponent<ReplacementSlot>().gameObject == focusedArea)
 						export += exportType == ExportType.PseudoCode ? "####" : indent(indentLevel + 2) + "<!--####-->\n";
@@ -624,9 +627,24 @@ public static class UtilityGame
 			}
 			return export;
 		}
-	}
+    }
 
-	public static IEnumerator pulseItem(GameObject newItem)
+    public static string exportEditableScriptToString(Transform scriptContainer, GameObject focusedArea)
+    {
+        string scriptsContent = scriptContainer.Find("Header/Naming/RobotName_static/RobotName").GetComponent<TMP_Text>().text + " {";
+        // on ignore les fils sans Highlightable
+        for (int i = 0; i < scriptContainer.childCount; i++)
+        {
+            if (scriptContainer.GetChild(i).GetComponent<Highlightable>())
+                scriptsContent += " " + exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>(), focusedArea);
+        }
+        if (scriptContainer.GetChild(scriptContainer.childCount - 1).gameObject == focusedArea)
+            scriptsContent += " ####";
+        scriptsContent += " }\n";
+        return scriptsContent;
+    }
+
+    public static IEnumerator pulseItem(GameObject newItem)
 	{
 		newItem.transform.localScale = new Vector3(1, 1, 1);
 		float initScaleX = newItem.transform.localScale.x;

@@ -13,10 +13,11 @@ public class Dialog
 	public string sound = null;
 	public string video = null;
 	public float videoHeight = -1;
-	public bool enableInteraction = false;
+    public string highlight = null;
+    public bool enableInteraction = false;
 	public int briefingType = 0;
 
-	public Dialog clone()
+    public Dialog clone()
     {
 		Dialog copy = new Dialog();
 		copy.text = text;
@@ -28,14 +29,15 @@ public class Dialog
 		copy.sound = sound;
 		copy.video = video;
 		copy.videoHeight = videoHeight;
-		copy.enableInteraction = enableInteraction;
+        copy.highlight = highlight;
+        copy.enableInteraction = enableInteraction;
 		copy.briefingType = briefingType;
-		return copy;
+        return copy;
     }
 
 	public bool isEqualTo(Dialog dialog)
     {
-		return dialog.text == text && dialog.img == img && dialog.imgDesc == imgDesc && dialog.imgHeight == imgHeight && dialog.camX == camX && dialog.camY == camY && dialog.sound == sound && dialog.video == video && dialog.videoHeight == videoHeight && dialog.enableInteraction == enableInteraction && dialog.briefingType == briefingType;
+		return dialog.text == text && dialog.img == img && dialog.imgDesc == imgDesc && dialog.imgHeight == imgHeight && dialog.camX == camX && dialog.camY == camY && dialog.sound == sound && dialog.video == video && dialog.videoHeight == videoHeight && dialog.highlight == highlight && dialog.enableInteraction == enableInteraction && dialog.briefingType == briefingType;
 
 	}
 }

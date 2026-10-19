@@ -1,14 +1,16 @@
-using UnityEngine;
 using FYFY;
-using TMPro;
-using UnityEngine.UI;
-using System.IO;
-using System.Collections;
-using UnityEngine.Networking;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.Video;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Web;
+using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
+using UnityEngine.UI;
+using UnityEngine.Video;
 
 /// <summary>
 /// Manage dialogs at the begining and end of the level
@@ -18,12 +20,15 @@ public class DialogSystem : FSystem
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 	private Family f_ends = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
+	private Family f_highlightedUI = FamilyManager.getFamily(new AllOfComponents(typeof(Highlighted)));
 
-	public GameObject LevelGO;
+    public GameObject LevelGO;
 	private GameData gameData;
 	public GameObject dialogPanel;
 	public GameObject showDialogsMenu;
 	public GameObject showDialogsBottom;
+	public GameObject highlightGOPrefab;
 	private int nBriefingDialog = 0; // the briefing currently view
 	private int nDebriefingWinDialog = 0; // the debriefing (win) currently view
 	private int nDebriefingDefeatDialog = 0; // the debriefing (defeat) currently view
@@ -31,14 +36,53 @@ public class DialogSystem : FSystem
 	private List<Dialog> overridedDebriefingWinDialogs = new List<Dialog>();
 	private List<Dialog> overridedDebriefingDefeatDialogs = new List<Dialog>();
 
-	protected override void onStart()
+    private RectTransform dialogPanelTransform;
+    private RectTransform windowTransform;
+    private RectTransform viewportTransform;
+    private RectTransform contentTransform;
+    private RectTransform imgTransform;
+    private RectTransform videoTransform;
+    private RectTransform buttonsTransform;
+	private VideoPlayer videoPlayer;
+
+	private Coroutine loadingImg;
+    private Coroutine loadingSound;
+
+    [DllImport("__Internal")]
+    private static extern void PlaySound(string url); // call javascript
+
+    [DllImport("__Internal")]
+    private static extern void StopSound(); // call javascript
+
+    [DllImport("__Internal")]
+    private static extern void SetCinematic(string url); // call javascript
+
+    [DllImport("__Internal")]
+    private static extern void PlayCinematic(); // call javascript
+
+    [DllImport("__Internal")]
+    private static extern void PauseCinematic(); // call javascript
+
+    [DllImport("__Internal")]
+    private static extern void StopCinematic(); // call javascript
+
+    [DllImport("__Internal")]
+    private static extern int GetVideoWidth(); // call javascript
+
+    [DllImport("__Internal")]
+    private static extern int GetVideoHeight(); // call javascript
+
+    [DllImport("__Internal")]
+    private static extern int SetVideoPosition(int viewportX, int viewportY, int viewportWidth, int viewportHeight, int videoX, int videoY, int videoWidth, int videoHeight); // call javascript
+
+    protected override void onStart()
 	{
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
 		{
 			gameData = go.GetComponent<GameData>();
 			// Always disable bottom button, it will be enabled at the end of the dialogs (see Ok button)
-			GameObjectManager.setGameObjectState(showDialogsBottom.transform.parent.gameObject, false);
+			showDialogsBottom.transform.parent.gameObject.SetActive(false);
 			// Count number of briefing and debriefing dialogs
 			List<Dialog> tmpList = gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].overridedDialogs;
 			if (tmpList != null) {
@@ -54,15 +98,27 @@ public class DialogSystem : FSystem
 			}
 			// Set interactable depending on briefing dialogs count
 			showDialogsMenu.GetComponent<Button>().interactable = overridedBriefingDialogs.Count != 0;
-		}
+
+            dialogPanelTransform = dialogPanel.transform as RectTransform;
+            windowTransform = dialogPanelTransform.parent as RectTransform;
+            viewportTransform = dialogPanelTransform.Find("Scroll View/Viewport") as RectTransform;
+            contentTransform = viewportTransform.Find("Content") as RectTransform;
+            imgTransform = contentTransform.Find("Image") as RectTransform;
+            videoTransform = contentTransform.Find("Video Player") as RectTransform;
+            buttonsTransform = dialogPanelTransform.Find("Buttons").transform as RectTransform;
+			
+			videoPlayer = dialogPanel.GetComponentInChildren<VideoPlayer>(true);
+        }
 
 		f_playingMode.addEntryCallback(delegate {
-			GameObjectManager.setGameObjectState(showDialogsBottom.transform.parent.gameObject, false);
-		});
+			showDialogsBottom.transform.parent.gameObject.SetActive(false);
+            if (dialogPanel.activeInHierarchy)
+                closeDialogPanel();
+        });
 
 		f_editingMode.addEntryCallback(delegate {
 			if (overridedBriefingDialogs.Count > 0)
-				GameObjectManager.setGameObjectState(showDialogsBottom.transform.parent.gameObject, true);
+				showDialogsBottom.transform.parent.gameObject.SetActive(true);
 		});
 
 		f_ends.addEntryCallback(delegate
@@ -74,7 +130,7 @@ public class DialogSystem : FSystem
 				showDialogPanel();
 		});
 
-		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
+		dialogPanel.transform.parent.gameObject.SetActive(false);
 	}
 
 	// Use to process your families.
@@ -82,7 +138,7 @@ public class DialogSystem : FSystem
 	{
 		//Activate DialogPanel if there is a message
 		if (gameData != null && !dialogPanel.transform.parent.gameObject.activeSelf && (
-				(f_ends.Count == 0 && overridedBriefingDialogs != null && nBriefingDialog < overridedBriefingDialogs.Count) ||
+				(f_ends.Count == 0 && overridedBriefingDialogs != null && nBriefingDialog < overridedBriefingDialogs.Count && f_fadeOutEnd.Count == 1) ||
 				(f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && overridedDebriefingWinDialogs != null && nDebriefingWinDialog < overridedDebriefingWinDialogs.Count) ||
 				(f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && overridedDebriefingDefeatDialogs != null && nDebriefingDefeatDialog < overridedDebriefingDefeatDialogs.Count)))
 			showDialogPanel();
@@ -92,10 +148,10 @@ public class DialogSystem : FSystem
 	}
 
 
-	// Affiche le panneau de dialoge au début de niveau (si besoin)
+	// Affiche le panneau de dialogue
 	public void showDialogPanel()
 	{
-		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, true);
+        dialogPanel.transform.parent.gameObject.SetActive(true);
 		nBriefingDialog = f_ends.Count == 0 ? 0 : nBriefingDialog;
 		nDebriefingWinDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? 0 : nDebriefingWinDialog;
 		nDebriefingDefeatDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? 0 : nDebriefingDefeatDialog;
@@ -155,97 +211,171 @@ public class DialogSystem : FSystem
 		});
 	}
 
-	private string configureDialog(int way)
+	private void clearHighlightedUI()
     {
-		string dialogReturn = "";
+        foreach (GameObject go in f_highlightedUI)
+        {
+            GameObjectManager.unbind(go);
+            go.transform.SetParent(null);
+            GameObject.Destroy(go);
+        }
+    }
+
+    private string configureDialog(int way)
+    {
+		// destruction des éventuels GO précédemment highlighted
+		clearHighlightedUI();
+
+        string dialogReturn = "";
 		// get Dialog
 		Dialog dialog = f_ends.Count == 0 ? overridedBriefingDialogs[nBriefingDialog] : (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs[nDebriefingWinDialog] : overridedDebriefingDefeatDialogs[nDebriefingDefeatDialog]);
 		// set text
 		GameObject textGO = dialogPanel.transform.Find("Scroll View/Viewport/Content/Text").gameObject;
 		if (dialog.text != null)
 		{
-			GameObjectManager.setGameObjectState(textGO, true);
+			textGO.SetActive(true);
 			string localeDependent = Utility.extractLocale(dialog.text);
 			textGO.GetComponent<TextMeshProUGUI>().text = localeDependent;
 			dialogReturn = localeDependent;
 		}
 		else
-			GameObjectManager.setGameObjectState(textGO, false);
+			textGO.SetActive(false);
+
 		// set image
 		GameObject imageGO = dialogPanel.transform.Find("Scroll View/Viewport/Content/Image").gameObject;
-		if (dialog.img != null)
+        if (loadingImg != null)
+            MainLoop.instance.StopCoroutine(loadingImg);
+        if (dialog.img != null)
 		{
-			GameObjectManager.setGameObjectState(imageGO, true);
+            imageGO.SetActive(true);
 			string localeDependent = Utility.extractLocale(dialog.img);
 			if (localeDependent.ToLower().StartsWith("http"))
-				MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), localeDependent, dialog));
+				loadingImg = MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), localeDependent, dialog));
 			else
 			{
-				if (Application.platform == RuntimePlatform.WebGLPlayer)
-				{
+				if (Application.platform == RuntimePlatform.WebGLPlayer) { 
 					Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath);
-					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + localeDependent, dialog));
+					loadingImg = MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Images/" + localeDependent, dialog));
 				}
 				else
-					MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Images/" + localeDependent, dialog));
+					loadingImg = MainLoop.instance.StartCoroutine(GetTextureWebRequest(imageGO.GetComponent<Image>(), Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Images/" + localeDependent, dialog));
 			}
 			dialogReturn += (dialogReturn != "" ? "\n" : "") + localeDependent;
 		}
 		else
-			GameObjectManager.setGameObjectState(imageGO, false);
+			imageGO.SetActive(false);
 		// set imgDesc
 		if (dialog.imgDesc != null)
 		{
 			GameObject imgDescGO = dialogPanel.transform.Find("Scroll View/Viewport/Content/Image").gameObject;
 			imgDescGO.GetComponent<ImgReplacementText>().replacementText = Utility.extractLocale(dialog.imgDesc);
 		}
+
 		// set camera pos
 		if (dialog.camX != -1 && dialog.camY != -1)
         {
 			GameObjectManager.addComponent<FocusCamOn>(MainLoop.instance.gameObject, new { camX = dialog.camX, camY = dialog.camY });
 		}
+
 		// set sound
 		AudioSource audio = dialogPanel.GetComponent<AudioSource>();
-		audio.Stop();
-		if (dialog.sound != null)
+
+        // Au cas où un son serait en cours de lecture, on le stoppe
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+			StopSound();
+		else
+            audio.Stop();
+
+		if (loadingSound != null)
+            MainLoop.instance.StopCoroutine(loadingSound);
+        if (dialog.sound != null)
 		{
-			string localeDependent = Utility.extractLocale(dialog.sound);
-			if (localeDependent.ToLower().StartsWith("http"))
-				MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, localeDependent));
-			else if (localeDependent != "")
+			string path = Utility.extractLocale(dialog.sound);
+			if (path != "")
 			{
-				if (Application.platform == RuntimePlatform.WebGLPlayer)
-				{
-					Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath);
-					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Sounds/" + localeDependent));
+				if (Application.platform == RuntimePlatform.WebGLPlayer) {
+					if (!path.ToLower().StartsWith("http"))
+					{
+						Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath);
+						path = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Sounds/" + path;
+					}
+					// voir commentaire ci-dessous sur les vidéo à propos du CORS (même problème ici)
+					PlaySound(path);
 				}
 				else
-					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Sounds/" + localeDependent));
+				{
+					if (!path.ToLower().StartsWith("http"))
+						path = Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Sounds/" + path;
+					MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, path));
+				}
+
+				dialogReturn += (dialogReturn != "" ? "\n" : "") + path;
 			}
-			dialogReturn += (dialogReturn != "" ? "\n" : "") + localeDependent;
 		}
+
 		// set video
-		VideoPlayer videoPlayer = dialogPanel.GetComponentInChildren<VideoPlayer>(true);
+		// Au cas où une vidéo serait en cours de lecture, on la stoppe
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+	        StopCinematic();
+		else
+			videoPlayer.Stop();
+
 		if (dialog.video != null)
 		{
-			string localeDependent = Utility.extractLocale(dialog.video);
-			if (localeDependent != "")
+			string path = Utility.extractLocale(dialog.video);
+			if (path != "")
 			{
-				GameObjectManager.setGameObjectState(videoPlayer.gameObject, true);
-				videoPlayer.url = localeDependent;
-				RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
-				rawImage.enabled = false;
-				MainLoop.instance.StartCoroutine(waitLoadingVideo(dialog));
-			}
+				if (Application.platform == RuntimePlatform.WebGLPlayer) {
+					if (!path.ToLower().StartsWith("http"))
+					{
+						Uri uri = new Uri(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath);
+						path = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments[uri.Segments.Length - 1].Length) + "Videos/" + path;
+					}
+					// En WebGL on délègue la lecture de la vidéo à la page html pour contourner les problèmes CORS et de CORB. En effet, demander à Unity hébergé sur spy.lip6.fr de charger avec une WebRequest une vidéo dans un autre domaine viole le principe de CORS car dans le cas d'Unity la vidéo pourrait être modifiée ce qui est bloqué par le navigateur. En déléguant la lecture de la vidéo au html via une balise <video> c'est tout à fait correct car là on garanti qu'on n'est qu'en mode lecture et qu'on ne va pas chercher à la modifier dans l'application. La limite de cette astuce est une perte d'accessibilité car pour le joueur il faut revenir au contexte html pour accéder aux boutons de contrôle de la vidéo (même si les boutons dans Unity (Play et Pause) restent actifs). C'est un compromis pour laisser la possibilité aux utilisateur de pouvoir pointer des ressources à l'extérieur de spy.lip6.fr.
+					SetCinematic(path);
+				}
+				else
+				{
+					if (!path.ToLower().StartsWith("http"))
+						path = Path.GetDirectoryName(gameData.scenarios[gameData.selectedScenario].levels[gameData.levelToLoad].filePath) + "/Videos/" + path;
+					videoPlayer.url = HttpUtility.UrlDecode(path);
+					RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
+					rawImage.enabled = false;
+					MainLoop.instance.StartCoroutine(waitLoadingVideo(dialog));
+				}
+
+                // Que l'on soit en WebGL ou pas, on active le GO du videoPlayer pour s'en servir afin d'occuper la place dans le content du scrollview
+                videoPlayer.gameObject.SetActive(true);
+                dialogReturn += (dialogReturn != "" ? "\n" : "") + path;
+            }
 			else
-				GameObjectManager.setGameObjectState(videoPlayer.gameObject, false);
-			dialogReturn += (dialogReturn != "" ? "\n" : "") + localeDependent;
+				videoPlayer.gameObject.SetActive(false);
 		}
 		else
-			GameObjectManager.setGameObjectState(videoPlayer.gameObject, false);
+			videoPlayer.gameObject.SetActive(false);
+
+		// show highlighted GameObjects
+		if (dialog.highlight != null)
+        {
+            foreach (string goName in dialog.highlight.Split("##"))
+            {
+                GameObject go = GameObject.Find(goName);
+                Debug.Log("highlight :" + goName + "_"+go+"_");
+                if (go != null)
+				{
+                    GameObject glow = GameObject.Instantiate(highlightGOPrefab, go.transform);
+                    glow.transform.localPosition = Vector3.zero;
+                    (glow.transform as RectTransform).offsetMin = Vector2.zero;
+                    (glow.transform as RectTransform).offsetMax = Vector2.zero;
+                    glow.transform.localScale = Vector3.one;
+					GameObjectManager.bind(glow);
+				}
+            }
+        }
+
 		// tag DEBRIEFING if it is the case
 		if (f_ends.Count > 0)
-			dialogReturn += (dialogReturn != "" ? "\nDEBRIEFING" : "DEBRIEFING");
+			dialogReturn += (dialogReturn != "" ? "\nDEBRIEFING" : "");
 
 
 		// set background
@@ -273,9 +403,9 @@ public class DialogSystem : FSystem
 				setActivePrevButton(true);
 
 		if (dialog.text != null)
-		{
-			// On décalle la sélection du texte de briefing d'une frame pour laisser la prochaine phase de gestion des évènements passer (ce qui sélectionnerai certainement automatiquement le prochain bouton "suivant" ou "ok") afin d'être sûr de mettre le focus sur le texte de briefing
-			MainLoop.instance.StartCoroutine(Utility.delayGOSelection(textGO));
+        {
+            // On décalle la sélection du texte de briefing d'une frame pour laisser la prochaine phase de gestion des évènements passer (ce qui sélectionnerai certainement automatiquement le prochain bouton "suivant" ou "ok") afin d'être sûr de mettre le focus sur le texte de briefing
+            MainLoop.instance.StartCoroutine(Utility.delayGOSelection(textGO));
 		}
 
 		MainLoop.instance.StartCoroutine(forceScrollBarUp());
@@ -283,33 +413,11 @@ public class DialogSystem : FSystem
 		return dialogReturn;
 	}
 
-	private IEnumerator waitLoadingVideo(Dialog dialog)
-    {
-		VideoPlayer videoPlayer = dialogPanel.GetComponentInChildren<VideoPlayer>(true);
-		while (!videoPlayer.isPrepared)
-			yield return null;
-		// set video size
-		RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
-		rawImage.enabled = true;
-		LayoutElement layout = videoPlayer.GetComponent<LayoutElement>();
-		if (dialog.videoHeight != -1)
-		{
-			layout.preferredHeight = dialog.videoHeight;
-			layout.preferredWidth = videoPlayer.width * (dialog.videoHeight / videoPlayer.height);
-		}
-		else
-		{
-			layout.preferredHeight = videoPlayer.height;
-			layout.preferredWidth = videoPlayer.width;
-		}
-		MainLoop.instance.StartCoroutine(forceScrollBarUp());
-	}
-
 	// Active ou non le bouton Ok du panel dialogue
 	public void setActiveOKButton(bool active)
 	{
 		GameObject okButton = dialogPanel.transform.Find("Buttons/OKButton").gameObject;
-		GameObjectManager.setGameObjectState(okButton, active);
+		okButton.SetActive(active);
 		if (active)
 		{
 			EventSystem.current.SetSelectedGameObject(okButton);
@@ -319,7 +427,6 @@ public class DialogSystem : FSystem
 			nav.selectOnRight = okButton.GetComponent<Button>();
 			prevButton.GetComponent<Button>().navigation = nav;
 		}
-
 	}
 
 
@@ -327,7 +434,7 @@ public class DialogSystem : FSystem
 	public void setActiveNextButton(bool active)
 	{
 		GameObject nextButton = dialogPanel.transform.Find("Buttons/NextButton").gameObject;
-		GameObjectManager.setGameObjectState(nextButton, active);
+		nextButton.SetActive(active);
 		if (active)
 		{
 			EventSystem.current.SetSelectedGameObject(nextButton);
@@ -354,95 +461,263 @@ public class DialogSystem : FSystem
 	// Désactive le panel de dialogue
 	public void closeDialogPanel()
 	{
-		GameObjectManager.setGameObjectState(dialogPanel.transform.parent.gameObject, false);
+		clearHighlightedUI();
+
+        dialogPanel.transform.parent.gameObject.SetActive(false);
 		nBriefingDialog = f_ends.Count == 0 ? overridedBriefingDialogs.Count : 0;
 		nDebriefingWinDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs.Count : 0;
 		nDebriefingDefeatDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? overridedDebriefingDefeatDialogs.Count : 0;
 
-		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
+		if (Application.platform == RuntimePlatform.WebGLPlayer) {
+			// Au cas où un son ou une vidéo seraient en cours de lecture, on les stoppe, en effet pour le contexte WebGL on déporte la lecture du média à la page html, il faut donc l'informer qu'il doit stopper parceque le briefing est terminé
+			StopSound();
+			StopCinematic();
+		}
+
+
+        GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
 			verb = "closed",
 			objectType = "briefing"
 		});
+    }
+
+	public void playVideo()
+	{
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+			PlayCinematic();
+		else
+            videoPlayer.Play();
 	}
 
-	private IEnumerator GetTextureWebRequest(Image img, string path, Dialog dialog)
+	public void pauseVideo()
+    {
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+			PauseCinematic();
+		else
+			videoPlayer.Pause();
+    }
+
+    private IEnumerator waitLoadingVideo(Dialog dialog)
+    {
+		yield return new WaitWhile(() => !videoPlayer.gameObject.activeInHierarchy);
+        videoPlayer.Prepare();
+
+        yield return new WaitWhile (() => !videoPlayer.isPrepared);
+
+		// On fait un Play/Pause pour se positionner sur la première image de la cinématique
+        videoPlayer.Play();
+		yield return new WaitWhile (() => videoPlayer.frame <= 0);
+		videoPlayer.Pause();
+
+        // show rawImage that render video
+        RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
+        rawImage.enabled = true;
+        yield return forceScrollBarUp();
+    }
+
+    private IEnumerator GetTextureWebRequest(Image img, string path, Dialog dialog)
 	{
-		UnityWebRequest www = UnityWebRequestTexture.GetTexture(path);
-		yield return www.SendWebRequest();
+        // réinitialiser l'image avant de charger la nouvelle
+        img.sprite = null;
+        LayoutElement layout = img.GetComponent<LayoutElement>();
+		layout.preferredHeight = 130;
+        layout.preferredWidth = 130;
+
+        // activer l'animation de chargement (spinner) pour l'image
+        img.transform.GetChild(0).gameObject.SetActive(true);
+        UnityWebRequest www;
+		// On passe par notre proxy pour charger une image commençant par http sauf si elle est chez nous (spy.lip6.fr)
+        if (path.ToLower().StartsWith("http") && !path.ToLower().StartsWith("https://spy.lip6.fr"))
+            www = UnityWebRequest.Get("https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php?file=" + HttpUtility.UrlEncode(path));
+        else
+            www = UnityWebRequestTexture.GetTexture(path);
+        yield return www.SendWebRequest();
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			Debug.Log(path+" "+www.error);
+			Debug.Log(path + " " + www.error);
 			yield return new WaitForSeconds(0.5f);
-			MainLoop.instance.StartCoroutine(GetTextureWebRequest(img, path, dialog));
 		}
 		else
 		{
-			Texture2D tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
+			Texture2D tex2D;
+            if (path.ToLower().StartsWith("http") && !path.ToLower().StartsWith("https://spy.lip6.fr")) { 
+                byte[] data = www.downloadHandler.data;
+				tex2D = new Texture2D(2, 2); // Taille arbitraire, sera redimensionnée par LoadImage
+                tex2D.LoadImage(data);
+            }
+			else
+                tex2D = ((DownloadHandlerTexture)www.downloadHandler).texture;
 			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
-			// Appliquer la bonne taille à l'image
-			LayoutElement layout = img.GetComponent<LayoutElement>();
-			if (dialog.imgHeight != -1) {
-				layout.preferredHeight = dialog.imgHeight;
-				layout.preferredWidth = tex2D.width * (dialog.imgHeight / tex2D.height);
-			} else
-			{
-				layout.preferredHeight = tex2D.height;
-				layout.preferredWidth = tex2D.width;
-			}
-			MainLoop.instance.StartCoroutine(forceScrollBarUp());
-		}
+            // désactiver l'animation de chargement (spinner) pour l'image
+            img.transform.GetChild(0).gameObject.SetActive(false);
+            yield return forceScrollBarUp();
+        }
 	}
 
 	private IEnumerator GetAudioWebRequest(AudioSource audio, string path)
 	{
-		UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.MPEG);
-		yield return www.SendWebRequest();
+        UnityWebRequest www;
+        // On passe par notre proxy pour charger un son commençant par http sauf s'il est chez nous (spy.lip6.fr)
+        if (path.ToLower().StartsWith("http") && !path.ToLower().StartsWith("https://spy.lip6.fr"))
+        {
+			string url = "https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php?file=" + HttpUtility.UrlEncode(path);
+			www = UnityWebRequest.Get(url);
+            www.downloadHandler = new DownloadHandlerAudioClip(url, AudioType.MPEG);
+        }
+		else
+			www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.MPEG);
+        yield return www.SendWebRequest();
 
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			Debug.Log(path+" "+www.error);
+			Debug.Log(path + " " + www.error);
 			yield return new WaitForSeconds(0.5f);
-			MainLoop.instance.StartCoroutine(GetAudioWebRequest(audio, path));
 		}
 		else
 		{
 			audio.PlayOneShot(DownloadHandlerAudioClip.GetContent(www));
-		}
+        }
 	}
 
-	private void updateDialogSize()
+	private int getVideoOriginalWidth()
 	{
-		Rect rect = (dialogPanel.transform as RectTransform).rect;
-		Rect currentWindowRect = (dialogPanel.transform.parent as RectTransform).rect;
-		Rect currentImgRect = (dialogPanel.transform.Find("Scroll View/Viewport/Content/Image") as RectTransform).rect;
-		Rect currentVideoRect = (dialogPanel.transform.Find("Scroll View/Viewport/Content/Video Player") as RectTransform).rect;
-		Rect currentButtonsRect = (dialogPanel.transform.Find("Buttons").transform as RectTransform).rect;
-
-		float oldWidth = rect.width;
-		float oldHeight = rect.height;
-
-		rect.width = Mathf.Max(currentImgRect.width, currentVideoRect.width, currentButtonsRect.width + 10);
-		if (rect.width > currentWindowRect.width - 10)
-			rect.width = currentWindowRect.width - 10;
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+			return GetVideoWidth();
 		else
-			rect.width += (currentWindowRect.width-rect.width)/2;
-
-		Rect currentContentRect = (dialogPanel.transform.Find("Scroll View/Viewport/Content") as RectTransform).rect;
-
-		rect.height = currentContentRect.height + currentButtonsRect.height + 40; // +40 pour les marges
-		if (rect.height > currentWindowRect.height - 20)
-			rect.height = currentWindowRect.height - 20;
-
-		(dialogPanel.transform as RectTransform).sizeDelta = new Vector2(rect.width, rect.height);
-
-		// force scroll bar up
-		if (rect.width != oldWidth || rect.height != oldHeight)
-			MainLoop.instance.StartCoroutine(forceScrollBarUp());
+            return (int)videoPlayer.width;
 	}
 
-	private IEnumerator forceScrollBarUp()
+    private int getVideoOriginalHeight()
+    {
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+	        return GetVideoHeight();
+		else
+			return (int)videoPlayer.height;
+	}
+
+
+    private void updateDialogSize()
+	{
+        // get Dialog
+		Dialog dialog = f_ends.Count == 0 ? overridedBriefingDialogs[nBriefingDialog] : (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs[nDebriefingWinDialog] : overridedDebriefingDefeatDialogs[nDebriefingDefeatDialog]);
+
+		// Appliquer la taille maximale à la vidéo
+		int videoOriginalWidth = getVideoOriginalWidth();
+		int videoOriginalHeight = getVideoOriginalHeight();
+		LayoutElement VideoLayout = videoTransform.GetComponent<LayoutElement>();
+		float videoRatio = 1;
+		if (videoOriginalHeight > 0)
+		{
+			videoRatio = (float)videoOriginalWidth / videoOriginalHeight;
+			SetMaxPreferedSize(VideoLayout, dialog.videoHeight, videoRatio, videoOriginalWidth, videoOriginalHeight);
+		}
+
+		// Appliquer la taille maximale à l'image
+		LayoutElement ImgLayout = imgTransform.GetComponent<LayoutElement>();
+		float imgRatio = 1;
+		Image img = imgTransform.GetComponent<Image>();
+		if (img.sprite != null)
+		{
+            Texture2D tex2D = img.sprite.texture;
+            imgRatio = (float)tex2D.width / tex2D.height;
+            SetMaxPreferedSize(ImgLayout, dialog.imgHeight, imgRatio, tex2D.width, tex2D.height);
+        }
+        // Calcul de la taille maximale en largeur en fonction des GO affichés
+        int scrollViewPadding = 2*10 + 2*15; // 2*10+2*15 respectivement pour les left et right du ScrollView et le padding left et right du verticalLayout du Content
+        float newWidth = scrollViewPadding + Mathf.Max(imgTransform.gameObject.activeInHierarchy ? ImgLayout.preferredWidth : 0, videoTransform.gameObject.activeInHierarchy ? VideoLayout.preferredWidth : 0, buttonsTransform.rect.width); 
+        // Si newWidth est plus grand que la taille de la fenêtre du jeu, on le réduit au maximum de la taille possible (tout en gardant une petite marge)
+        if (newWidth >= windowTransform.rect.width - 60)
+            newWidth = windowTransform.rect.width - 60;
+
+        int dialogPadding = 10 + 55 + 2*15; // 10 et 55 respectivement pour le top et le bottom du ScrollView et 2*15 pour le top/bottom du content
+        int dialogMargin = 18 + 40; // 18 de brodure du BackgroundChevron + 40 pour le Y du dialogPanel
+
+        float currentWidthSpaceInContent = newWidth - scrollViewPadding;
+        float maxHeightSpaceInPanel = windowTransform.rect.height - (dialogMargin + dialogPadding);
+        
+        // Pour éviter de déformer la vidéo et d'avoir à utiliser des scroll, on va limiter la taille de la vidéo à la taille de la fenêtre. On va donc vérifier si la vidéo est trop large ou trop haute pour la fenêtre et ajuster sa taille en conséquence.
+        setAdjustedPreferredSize(VideoLayout, videoRatio, currentWidthSpaceInContent, maxHeightSpaceInPanel);
+        // Pour l'image on veut juste la caler au pire sur la largeur du content, si elle est trop haute on laisse le scroll possible
+        setAdjustedPreferredSize(ImgLayout, imgRatio, currentWidthSpaceInContent, Mathf.Infinity);
+
+        float newHeight = dialogPadding + contentTransform.rect.height;
+        if (newHeight > windowTransform.rect.height - dialogMargin)
+            newHeight = windowTransform.rect.height - dialogMargin;
+        dialogPanelTransform.sizeDelta = new Vector2(newWidth, newHeight);
+
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			// envoyer les bonnes tailles et positions de la vidéo au html
+			Vector3[] corners = new Vector3[4];
+
+			// Calcul de la position du viewport dans l'écran
+			Rect viewportRect = GetScreenPos(viewportTransform);
+			// Calcul de la position de la vidéo dans l'écran
+			Rect videoRect = GetScreenPos(videoTransform);
+			// Comme dans le html la vidéo est positionnée comme enfant du viewport (pour avoir l'effet de clip sur le scroll), on doit recaler la position de la vidéo par rapport au viewport et non pas par rapport à l'écran. On va donc soustraire la position du viewport à celle de la vidéo.
+			videoRect.x = videoRect.x - viewportRect.x;
+			videoRect.y = videoRect.y - viewportRect.y;
+
+			SetVideoPosition((int)viewportRect.x, (int)viewportRect.y, (int)viewportRect.width, (int)viewportRect.height, (int)videoRect.x, (int)videoRect.y, (int)videoRect.width, (int)videoRect.height);
+		}
+    }
+
+	private Rect GetScreenPos(RectTransform transform)
+    {
+        Vector3[] corners = new Vector3[4];
+        // Remplit le tableau dans l'ordre : bas-gauche, haut-gauche, haut-droite, bas-droite
+        transform.GetWorldCorners(corners);
+        Vector2 bottomLeft = RectTransformUtility.WorldToScreenPoint(null, corners[0]);
+        Vector2 topRight = RectTransformUtility.WorldToScreenPoint(null, corners[2]);
+        return new Rect(
+            bottomLeft.x,
+            Screen.height - topRight.y, // pour passer du repère de Unity (x vers droite et y vers le haut) au répère de l'écran (x vers droite et y vers le bas)
+            topRight.x - bottomLeft.x,
+            topRight.y - bottomLeft.y
+        );
+
+    }
+
+    private void SetMaxPreferedSize(LayoutElement layout, float requestedHeight, float ratio, float defaultWidth, float defaultHeight)
+    {
+        if (layout.gameObject.activeInHierarchy)
+        {
+            if (requestedHeight != -1)
+            {
+                layout.preferredHeight = requestedHeight;
+                layout.preferredWidth = requestedHeight * ratio;
+            }
+            else
+            {
+                layout.preferredHeight = defaultHeight;
+                layout.preferredWidth = defaultWidth;
+            }
+        }
+    }
+
+	private void setAdjustedPreferredSize(LayoutElement layout, float ratio, float currentWidth, float maxHeight)
+	{
+        if (layout.gameObject.activeInHierarchy)
+        {
+            // Si le layout est trop large pour le content, on ajuste la taille du layout en fonction du ratio
+            if (layout.preferredWidth > currentWidth)
+            {
+                layout.preferredWidth = currentWidth;
+                layout.preferredHeight = currentWidth / ratio;
+            }
+
+            // Si le layout est trop haut pour le panel, on ajuste la taille du layout en fonction du ratio
+            if (layout.preferredHeight > maxHeight)
+            {
+                layout.preferredHeight = maxHeight;
+                layout.preferredWidth = maxHeight * ratio;
+            }
+        }
+    }
+
+    private IEnumerator forceScrollBarUp()
 	{
 		yield return null;
 		yield return null;

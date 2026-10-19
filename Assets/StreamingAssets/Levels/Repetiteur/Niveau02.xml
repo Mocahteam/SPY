@@ -15,11 +15,11 @@
 	</map>
 
 	<dialogs>
-		<dialog text="[fr]Evitons de saturer la ligne de communication en multipliant les ordres 'Avancer'. Tu vas utiliser une boucle, pour répeter plusieurs fois les actions ! Je t'en ai préparé une mais elle est peut être mal configurée...[/fr][en]Let's avoid saturating the communication line with multiple 'Move Forward' actions. We're going to use a loop, to repeat the actions several times! I have prepared one for you, but it may be badly configured...[/en]" img="forExample.png" imgDesc="[fr]Illustration du bloc 'Répéter plusieurs fois' déjà intégré au programme.[/fr][en]Illustration of the ‘Repeat several times’ block available in the editing area.[/en]" imgHeight="200" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Evitons de saturer la ligne de communication en multipliant les ordres 'Avancer'. Tu vas utiliser une boucle, pour répeter plusieurs fois les actions ! Je t'en ai préparé une mais elle est peut être mal configurée...[/fr][en]Let's avoid saturating the communication line with multiple 'Move Forward' actions. We're going to use a loop, to repeat the actions several times! I have prepared one for you, but it may be badly configured...[/en]" img="forExample.png" imgDesc="[fr]Illustration du bloc 'Répéter plusieurs fois' déjà intégré au programme.[/fr][en]Illustration of the ‘Repeat several times’ block available in the editing area.[/en]" imgHeight="200" enableInteraction="1" highlight="InputField_Counter" briefingType="0" />
 	</dialogs>
 	<executionLimit amount="1" />
 
-	<score twoStars="0" threeStars="11888"/>
+	<score twoStars="0" threeStars="11958"/>
 
 	<blockLimits>
 		<blockLimit blockType="Forward" limit="0" />
@@ -61,7 +61,7 @@
 		</for>
 	</script>
 
-	<script outputLine="Erty_Sol" editMode="2" type="4">
+	<script outputLine="Erty_Sol" editMode="0" type="4">
 		<for nbFor="7">
 			<action type="Forward"/>
 		</for>

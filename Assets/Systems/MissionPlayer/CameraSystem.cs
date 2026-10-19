@@ -1,15 +1,15 @@
-﻿using UnityEngine;
-using FYFY;
+﻿using FYFY;
 using FYFY_plugins.PointerManager;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Localization.Components;
 using UnityEngine.Localization.SmartFormat.PersistentVariables;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
-using UnityEngine.InputSystem.Utilities;
 
 /// <summary>
 /// This system manages main camera (movement, rotation, focus on/follow agent...)
@@ -22,8 +22,11 @@ public class CameraSystem : FSystem {
 	private Family f_focusOn = FamilyManager.getFamily(new AllOfComponents(typeof(FocusCamOn)));
 	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
+	private Family f_billboard = FamilyManager.getFamily(new AllOfComponents(typeof(BillboardOrientation)));
+    private Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
+    private Family f_omniscientFocus = FamilyManager.getFamily(new AnyOfTags("Player", "Drone", "Exit", "Door", "Terminal"));
 
-	private Transform targetAgent; // if defined camera follow this target
+    private Transform targetAgent; // if defined camera follow this target
 	private Transform lastAgentFocused = null;
 	private Vector3 targetPos; // if defined camera focus in this position (grid definition)
 	private Vector3 offset = new Vector3(0, 2f, 0);
@@ -33,12 +36,14 @@ public class CameraSystem : FSystem {
 	private float UI_frontBackValue = 0;
 	private float UI_leftRightValue = 0;
 	private float UI_rotateValue = 0;
-	private float UI_zoomValue = 0;
+    private float UI_pitchingValue = 0; // tangage
+    private float UI_zoomValue = 0;
 
-	private float last_action_time = Time.time;
-	private float logging_padding = 1f;
+	private float lastTimeCameraAction = Time.time;
+	private float logging_padding = 5f;
+	private string lastActionLogged = "";
 
-	private InputAction middleClick;
+    private InputAction middleClick;
 	private InputAction rightClick;
 
 	// Déplacement aux touches du clavier
@@ -54,11 +59,11 @@ public class CameraSystem : FSystem {
 	// Déplacement avec la molette
 	public float dragSpeed;
 
-	public LocalizeStringEvent lseTurnLeft;
-	public LocalizeStringEvent lseMoveUp;
-	public LocalizeStringEvent lseMoveLeft;
+    public CurrentSettingsValues currentSettingsValues;
 
-	public CurrentSettingsValues currentSettingsValues;
+	public GameObject dialogPanel;
+	public RectTransform LeftPanel;
+	public RectTransform ExecutableCanvas;
 
 	public static CameraSystem instance;
 
@@ -72,24 +77,12 @@ public class CameraSystem : FSystem {
 		middleClick = InputSystem.actions.FindAction("MiddleClick");
 		rightClick = InputSystem.actions.FindAction("RightClick");
 
-		// synchronise le contenu des tooltip en fonction du clavier utilisé (azerty vs qwerty)
-		lseTurnLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0) } };
-		//lseTurnLeft.StringReference.Arguments[0]["shortcut"] as StringVariable = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0);
-		(lseTurnLeft.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraRotateLeft").GetBindingDisplayString(0);
-		lseTurnLeft.RefreshString();
-		//lseMoveUp.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveUp").GetBindingDisplayString(0) } };
-		(lseMoveUp.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraMoveUp").GetBindingDisplayString(0);
-		lseMoveUp.RefreshString();
-		//lseMoveLeft.StringReference.Arguments = new[] { new { shortcut = InputSystem.actions.FindAction("CameraMoveLeft").GetBindingDisplayString(0) } };
-		(lseMoveLeft.StringReference["shortcut"] as StringVariable).Value = InputSystem.actions.FindAction("CameraMoveLeft").GetBindingDisplayString(0);
-		lseMoveLeft.RefreshString();
-
-		mainCamera = Camera.main;
+        mainCamera = Camera.main;
 		if (currentSettingsValues.values.currentGameView == 1)
 			ToggleOrthographicPerspective();
 
 		// set current camera target (the first player)
-		f_agent.addEntryCallback(delegate (GameObject go) { if (go.CompareTag("Player")) focusOnAgent(go); });
+		f_agent.addEntryCallback(delegate (GameObject go) { if (go.CompareTag("Player")) focusOnAgent(go, false); });
 
 		f_focusOn.addEntryCallback(delegate (GameObject go)
 		{
@@ -108,26 +101,84 @@ public class CameraSystem : FSystem {
 		});
 
 		EnhancedTouchSupport.Enable();
-	}
 
-	// Use to process your families.
-	protected override void onProcess(int familiesUpdateCount) {
-		// move camera front/back depending on Vertical axis
-		if (UI_frontBackValue != 0)
+		// Activer ou pas la vue omnisciente
+        GameObject go = GameObject.Find("GameData");
+		if (go != null)
+		{
+			GameData gameData = go.GetComponent<GameData>();
+			if (gameData != null && gameData.omniscientView)
+				MainLoop.instance.StartCoroutine(waitDialogAppearsToEnableOmniscientView());
+		}
+    }
+
+	private IEnumerator waitDialogAppearsToEnableOmniscientView()
+	{
+		// On attend que l'animation d'arrivée dans le jeu soit terminée
+		yield return new WaitWhile(() => f_fadeOutEnd.Count == 0);
+        // On attend 2 frames pour que le dialogue de début de niveau soit affiché s'il devait y en avoir un
+        yield return null;
+        yield return null;
+        // Attendre que le dialogue soit fermé avant de mettre la vue omnisciente
+        yield return new WaitWhile (() => dialogPanel.activeInHierarchy);
+		
+        unfocusAgent();
+        // calculer le barycentre des agents pour centrer la caméra
+		float sumX = 0;
+		float sumY = 0;
+        foreach (GameObject obj in f_omniscientFocus)
+		{
+			Position pos = obj.GetComponent<Position>();
+			sumX += pos.x;
+			sumY += pos.y;
+        }
+        targetPos = new Vector3(sumX / f_omniscientFocus.Count * 3, 3.5f, -sumY / f_omniscientFocus.Count * 3);
+        yield return travelingOnPos();
+		// Dézoomer la caméra jusqu'à ce que tous les agents soient visibles
+		while (!allImportantObjectsInview()) { 
+			zoomOut(0.1f, false);
+            yield return null;
+        }
+    }
+
+	private bool allImportantObjectsInview()
+	{
+		bool visible = true;
+        float leftPanelRatio = (LeftPanel.rect.width+25) / Screen.width * currentSettingsValues.values.currentUIScale;
+        float rightPanelRatio = (ExecutableCanvas.rect.width+25) / Screen.width * currentSettingsValues.values.currentUIScale;
+
+		//Debug.Log(LeftPanel.rect.width+" "+(LeftPanel.rect.width / Screen.width) + " " + leftPanelRatio);
+
+        foreach (GameObject obj in f_omniscientFocus)
+		{
+            Vector3 viewportPos = mainCamera.WorldToViewportPoint(obj.transform.position);
+            visible = visible && viewportPos.z > 0 && viewportPos.x >= leftPanelRatio && viewportPos.x <= 1f-rightPanelRatio && viewportPos.y >= 0.1 && viewportPos.y <= 0.9;
+        }
+		return visible;
+    }
+
+    // Use to process your families.
+    protected override void onProcess(int familiesUpdateCount) {
+        // move camera front/back depending on Vertical axis
+        if (UI_frontBackValue != 0)
 			moveFrontBack(UI_frontBackValue);
 
-		// move camera left/right de pending on Horizontal axis
+		// move camera left/right depending on Horizontal axis
 		if (UI_leftRightValue != 0)
 			moveLeftRight(UI_leftRightValue);
 
-		// rotate camera
+		// rotate camera (right/left)
 		if (UI_rotateValue != 0)
 			rotateCamera(UI_rotateValue, 0);
 
-		// Move camera with wheel click
-		if (middleClick.IsPressed())
+        // rotate camera (up/down) if not in orthographic mode
+        if (UI_pitchingValue != 0 && !mainCamera.orthographic)
+            rotateCamera(0, UI_pitchingValue);
+
+        // Move camera with wheel click
+        if (middleClick.IsPressed() && f_UIfocused.Count == 0)
 		{
-			Cursor.visible = false;
+			UnityEngine.Cursor.visible = false;
 
 			DeltaControl delta = Pointer.current.delta;
 
@@ -152,15 +203,15 @@ public class CameraSystem : FSystem {
 		}
 
 		// Orbit rotation
-		else if (rightClick.IsPressed())
-		{
-			Cursor.visible = false;
+		else if (rightClick.IsPressed() && f_UIfocused.Count == 0)
+        {
+            UnityEngine.Cursor.visible = false;
 			DeltaControl delta = Pointer.current.delta;
 			rotateCamera(delta.x.value/2, !mainCamera.orthographic ? delta.y.value/2 : 0);
 		}
 
 		if (middleClick.WasReleasedThisFrame() || rightClick.WasReleasedThisFrame())
-			Cursor.visible = true;
+            UnityEngine.Cursor.visible = true;
 
 		// Gestion du déplacement de la camera au tactile
 		if (f_UIfocused.Count == 0 && f_dragging.Count == 0)
@@ -213,16 +264,49 @@ public class CameraSystem : FSystem {
 				}
 			}
 		}
-	}
-	
-	private void moveFrontBack(float value)
+
+        // positionnement des billboards en fonction de la position de la caméra
+        foreach (GameObject go in f_billboard)
+		{
+			if (currentSettingsValues.values.currentGameView == 0)
+			{
+				// Rotation Y du parent
+				Vector3 dir = mainCamera.transform.position - go.transform.position;
+				dir.y = 0f;
+
+				if (dir.sqrMagnitude > 0.001f)
+					go.transform.rotation = Quaternion.LookRotation(-dir);
+			}
+			else
+			{
+                go.transform.rotation = Quaternion.Euler(0f, mainCamera.transform.eulerAngles.y-180f, 0f);
+            }
+
+            // Rotation X de l'enfant
+            float pitch = mainCamera.transform.eulerAngles.x;
+            if (pitch > 180f)
+                pitch -= 360f;
+
+            go.transform.GetChild(0).localRotation = Quaternion.Euler(pitch, 0f, 0f);
+        }
+
+        // cela fait plus de 5 secondes que la dernière action de caméra a été effectuée, on réinitialise le dernier type d'action de caméra loggé pour éventuellement permettre de logger à nouveau le même type d'action si l'utilisateur recommence la même action après un certain temps
+        if ((Time.time - lastTimeCameraAction) > logging_padding && lastActionLogged != "")
+			lastActionLogged = "";
+    }
+
+    private void moveFrontBack(float value)
     {
 		Transform cameraTarget = mainCamera.transform.parent.parent;
 		cameraTarget.Translate(-value * Time.deltaTime * cameraMovingSpeed, 0, 0);
 		unfocusAgent();
 
-		camera_logging("moveFrontBack", value.ToString());
-	}
+		if (lastActionLogged != "moving")
+			camera_logging("moving");
+        lastActionLogged = "moving";
+
+        lastTimeCameraAction = Time.time;
+    }
 
 	private void moveLeftRight(float value)
     {
@@ -230,10 +314,14 @@ public class CameraSystem : FSystem {
 		cameraTarget.Translate(0, 0, value * Time.deltaTime * cameraMovingSpeed);
 		unfocusAgent();
 
-		camera_logging("moveLeftRight", value.ToString());
-	}
+        if (lastActionLogged != "moving")
+            camera_logging("moving");
+        lastActionLogged = "moving";
 
-	private void zoomOut(float value)
+        lastTimeCameraAction = Time.time;
+    }
+
+	private void zoomOut(float value, bool log = true)
     {
 		// compute distance between camera position and camera target
 		Vector3 relativePos = mainCamera.transform.InverseTransformPoint(mainCamera.transform.parent.parent.position);
@@ -246,8 +334,12 @@ public class CameraSystem : FSystem {
 		if (mainCamera.orthographicSize > cameraZoomMax / 2)
 			mainCamera.orthographicSize = cameraZoomMax / 2;
 
-		camera_logging("zoomOut", value.ToString());
-	}
+        if (lastActionLogged != "zooming" && log)
+            camera_logging("zooming");
+        lastActionLogged = "zooming";
+
+        lastTimeCameraAction = Time.time;
+    }
 
 	private void zoomIn(float value)
     {
@@ -267,15 +359,21 @@ public class CameraSystem : FSystem {
 		if (mainCamera.orthographicSize < cameraZoomMin / 4)
 			mainCamera.orthographicSize = cameraZoomMin / 4;
 
-		camera_logging("zoomIn", value.ToString());
-	}
+        if (lastActionLogged != "zooming")
+            camera_logging("zooming");
+        lastActionLogged = "zooming";
+
+        lastTimeCameraAction = Time.time;
+    }
 
 	public void ToggleOrthographicPerspective()
     {
 		setOrthographicView(!mainCamera.orthographic);
 
 		camera_logging("ToggleOrthographicPerspective", mainCamera.orthographic.ToString());
-	}
+
+        lastTimeCameraAction = Time.time;
+    }
 
 	public void setOrthographicView(bool state)
 	{
@@ -302,9 +400,14 @@ public class CameraSystem : FSystem {
 	public void set_UIRotate(float value)
 	{
 		UI_rotateValue = value;
-	}
+    }
 
-	public void set_UIZoom(float value)
+    public void set_UIPitching(float value)
+    {
+        UI_pitchingValue = value;
+    }
+
+    public void set_UIZoom(float value)
 	{
 		UI_zoomValue = value;
 	}
@@ -312,8 +415,14 @@ public class CameraSystem : FSystem {
 	public void submitRotate(float value)
     {
 		rotateCamera(value, 0);
-	}
-	public void submitFrontBack(float value)
+    }
+
+    public void submitPitching(float value)
+    {
+        rotateCamera(0, value);
+    }
+
+    public void submitFrontBack(float value)
 	{
 		moveFrontBack(value);
 	}
@@ -336,24 +445,32 @@ public class CameraSystem : FSystem {
 		float angle = 90f * cameraRotationSpeed * Time.deltaTime;
 		mainCamera.transform.parent.parent.Rotate(Vector3.up, angle * x );
 		mainCamera.transform.parent.Rotate(Vector3.back, angle * y );
-		if (mainCamera.transform.position.y < 8f)
+		float verticalAngle = Mathf.DeltaAngle(0f, mainCamera.transform.parent.eulerAngles.z)+60; // +60 pour compenser l'angle par défaut de la caméra
+        if (verticalAngle < 0f || verticalAngle > 90f)
 			// cancel previous y rotation
 			mainCamera.transform.parent.Rotate(Vector3.back, angle * -y );
-		else
-			camera_logging("rotateCamera", angle.ToString());
-	}
 
-	public void focusOnAgent(GameObject agent)
+        if (lastActionLogged != "rotating")
+            camera_logging("rotating");
+		lastActionLogged = "rotating";
+
+        lastTimeCameraAction = Time.time;
+    }
+
+	public void focusOnAgent(GameObject agent, bool log=true)
     {
 		unfocusAgent();
 		targetAgent = agent.transform;
 		lastAgentFocused = targetAgent;
 		GameObjectManager.setGameObjectParent(mainCamera.transform.parent.parent.gameObject, agent, true);
-		GameObjectManager.setGameObjectState(targetAgent.Find("HaloSelection").gameObject, true);
+		targetAgent.Find("HaloSelection").gameObject.SetActive(true);
 		MainLoop.instance.StartCoroutine(travelingOnAgent());
 
-		camera_logging("focusOnAgent", agent.ToString());
-	}
+		if (log)
+			camera_logging("focusOnAgent", agent.ToString());
+
+        lastTimeCameraAction = Time.time;
+    }
 
 	private void focusOnNearestAgent()
     { 
@@ -371,10 +488,7 @@ public class CameraSystem : FSystem {
 			}
 		}
 		if (agentCandidate != null)
-		{
 			focusOnAgent(agentCandidate);
-			camera_logging("focusOnNearestAgent", agentCandidate.ToString());
-		}
 	}
 
 	public void focusNextAgent()
@@ -392,13 +506,11 @@ public class CameraSystem : FSystem {
 				if (i == f_agent.Count - 1)
 				{
 					focusOnAgent(f_agent.First());
-					camera_logging("focusNextAgent", f_agent.First().ToString());
 					break;
 				}
 				else
 				{
 					focusOnAgent(f_agent.getAt(i + 1));
-					camera_logging("focusNextAgent", f_agent.getAt(i + 1).ToString());
 					break;
 				}
 			}
@@ -410,7 +522,7 @@ public class CameraSystem : FSystem {
 		if (targetAgent != null)
         {
 			GameObjectManager.setGameObjectParent(mainCamera.transform.parent.parent.gameObject, targetAgent.parent.gameObject, true);
-			GameObjectManager.setGameObjectState(targetAgent.Find("HaloSelection").gameObject, false);
+			targetAgent.Find("HaloSelection").gameObject.SetActive(false);
 			targetAgent = null;
 		}
     }
@@ -439,20 +551,17 @@ public class CameraSystem : FSystem {
 		}
 	}
 
-	private void camera_logging(string camera_action, string param){
-		float cur_time = Time.time;
-		if( (cur_time - last_action_time) > logging_padding ){
+	private void camera_logging(string camera_action, string param = ""){
+        Dictionary<string, string> actExt = new Dictionary<string, string>();
+		actExt["value"] = camera_action;
+		if (param != "")
+			actExt["content"] = param;
 
-			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
-			{
-				verb = "interacted",
-				objectType = "camera",
-				activityExtensions = new Dictionary<string, string>() {
-					{ "value", camera_action },
-					{ "content", param }
-				}
-			});
-			last_action_time = cur_time;
-		}
+        GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+		{
+			verb = "interacted",
+			objectType = "camera",
+			activityExtensions = actExt
+        });
 	}
 }

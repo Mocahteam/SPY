@@ -23,20 +23,37 @@
   <body>
 	<nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#"><img src="TemplateData/LogoSPY.png" alt="Logo SPY" style="height: 40px;"></a>
+			<a class="navbar-brand" href="#"><img src="TemplateData/LogoSPY.png" alt="SPY logo" style="height: 40px;"></a>
+			<!-- hamburger button -->
 			<button id="collapseButton" class="navbar-toggler m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<div class="collapse navbar-collapse m-2 justify-content-end" id="collapsibleNavbar">
-				<div class="nav-item"><a id="menu_#hero" class="nav-link scrollto active px-3 justify-content-end" href="game.html?lang=fr">Jouer</a></div>
-				<div class="nav-item"><a id="menu_#inBrief" class="nav-link scrollto px-3 justify-content-end" href="#inBrief">En bref</a></div>
-				<div class="nav-item"><a id="menu_#carousel" class="nav-link scrollto px-3 justify-content-end" href="#carousel">Galerie</a></div>
-				<div class="nav-item"><a id="menu_#peda" class="nav-link scrollto px-3 justify-content-end" href="#peda">Enseignants</a></div>
-				<div class="nav-item"><a id="menu_#share" class="nav-link scrollto px-3 justify-content-end" href="#share">Partager</a></div>
-				<div class="nav-item"><a id="menu_#publication" class="nav-link scrollto px-3 justify-content-end" href="#publication">Publications</a></div>
-				<div class="nav-item"><a id="menu_#about" class="nav-link scrollto px-3 justify-content-end" href="#about">A propos</a></div>
-				<div class="nav-item"><a id="menu_#contact" class="nav-link scrollto px-3 justify-content-end" href="#contact">Contact</a></div>
-				<div class="nav-item"><a class="nav-link scrollto px-3 justify-content-end" href="index.html?lang=en">English</a></div>
+			<!-- main menu -->
+			<div class="collapse navbar-collapse m-2" id="collapsibleNavbar">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item ms-auto"><a class="nav-link active px-3" href="game.html?lang=fr">Jouer</a></li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#inBrief">En bref</a></li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#carousel">Galerie</a></li>
+					<li class="nav-item dropdown ms-auto">
+						<a class="nav-link dropdown-toggle px-3 text-end" href="#" id="TeachersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Enseignants</a>
+						<ul class="dropdown-menu" aria-labelledby="TeachersDropdown">
+							<li><a class="dropdown-item px-3" href="#peda">Ressources</a></li>
+							<li><a class="dropdown-item px-3" href="spy_progression_fr.html">Suivre mes élèves</a></li>
+							<li><a class="dropdown-item px-3" href="accessibility_fr.html">Accessibilité</a></li>
+							<li><a class="dropdown-item px-3" href="tipsAndTricks_fr.html">Trucs et Astuces</a></li>
+						</ul>
+					</li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3" href="#share">Partager</a></li>
+					<li class="nav-item dropdown ms-auto">
+						<a class="nav-link dropdown-toggle px-3 text-end" href="#" id="AboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">A propos</a>
+						<ul class="dropdown-menu" aria-labelledby="AboutDropdown">
+							<li><a class="dropdown-item px-3" href="#publication">Publications scientifiques</a></li>
+							<li><a class="dropdown-item px-3" href="#about">Qui sommes-nous ?</a></li>
+							<li><a class="dropdown-item px-3" href="#contact">Contact</a></li>
+						</ul>
+					</li>
+					<li class="nav-item ms-auto"><a class="nav-link px-3 justify-content-end" href="index.html?lang=en">English</a></li>
+				</ul>
 			</div>
 		</div>
 	</nav>
@@ -60,7 +77,7 @@
 			</div>
 			<div class="col-md-4">
 				<h1>Simple et Accessible</h1>
-				<p>SPY propose un langage à base de blocs facile à utiliser pour programmer les actions de robots. SPY tente de limiter les situations de handicap (voir la page sur l'<a href="accessibility_fr.html" target="_blank">accessibilité du jeu</a>).</p>
+				<p>SPY propose un langage à base de blocs facile à utiliser pour programmer les actions de robots. SPY tente de limiter les situations de handicap (voir la page sur l'<a href="accessibility_fr.html">accessibilité du jeu</a>).</p>
 			</div>
 			<div class="col-md-4">
 				<h1>Gratuit</h1>
@@ -84,19 +101,19 @@
 		  </div>
 		  <div class="carousel-inner">
 			<div class="carousel-item active">
-			  <img src="StreamingAssets/Levels/Tutoriel/NommerScript.png" alt="Une image du jeu montrant une mission centrée sur la notion de nommage." class="d-block w-70" style="margin: auto;">
+			  <img src="StreamingAssets/Levels/Tutoriel/NommerScript.png" alt="Une image du jeu montrant une mission centrée sur la notion de nommage." class="d-block img-fluid mx-auto">
 			</div>
 			<div class="carousel-item">
-			  <img src="StreamingAssets/Levels/Infiltration/Niveau14.png" alt="Une image du jeu montrant une mission avec le brouillard activé." class="d-block w-70" style="margin: auto;">
+			  <img src="StreamingAssets/Levels/Infiltration/Niveau14.png" alt="Une image du jeu montrant une mission avec le brouillard activé." class="d-block img-fluid mx-auto">
 			</div>
 			<div class="carousel-item">
-			  <img src="StreamingAssets/Levels/Infiltration/Niveau20.png" alt="Une image du jeu montrant une mission où le joueur doit programmer deux robots avec un seul programme." class="d-block w-70" style="margin: auto;">
+			  <img src="StreamingAssets/Levels/Infiltration/Niveau20.png" alt="Une image du jeu montrant une mission où le joueur doit programmer deux robots avec un seul programme." class="d-block img-fluid mx-auto">
 			</div>
 			<div class="carousel-item">
-			  <img src="StreamingAssets/Levels/Infiltration/Niveau16.png" alt="Une image du jeu montrant une mission nécessitant l'utilisation d'un boucle tant que." class="d-block w-70" style="margin: auto;">
+			  <img src="StreamingAssets/Levels/Infiltration/Niveau16.png" alt="Une image du jeu montrant une mission nécessitant l'utilisation d'un boucle tant que." class="d-block img-fluid mx-auto">
 			</div>
 			<div class="carousel-item">
-			  <img src="StreamingAssets/Levels/Infiltration/Niveau10.png" alt="Une image du jeu montrant une mission dont la tâche principale n'est pas de programmer mais de lire un code existant." class="d-block w-70" style="margin: auto;">
+			  <img src="StreamingAssets/Levels/Infiltration/Niveau10.png" alt="Une image du jeu montrant une mission dont la tâche principale n'est pas de programmer mais de lire un code existant." class="d-block img-fluid mx-auto">
 			</div>
 		  </div>
 		  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -115,9 +132,10 @@
     <section id="peda" class="about">
       <div class="container">
           <h1 class="text-center">Un jeu conçu pour les enseignants</h1>
+		  <a href="spy_progression_fr.html" class="btn-get-started text-center">Suivre la progression de mes élèves</a>
           <p>SPY contient plusieurs scénarios de jeu clés en main qui vous permettront de faire travailler vos élèves sur des compétences de la pensée informatique&nbsp;: <b>observer et modéliser</b> la simulation (abstraction)&nbsp;; <b>décomposer</b> sa stratégie en sous-étapes (décomposition)&nbsp;; <b>déterminer</b> la meilleure solution (évaluation)&nbsp;; <b>planifier</b> les actions à réaliser (pensée algorithmique)&nbsp;; <b>concevoir</b> des solutions permettant de résoudre plusieurs problèmes (généralisation).</p>
 		  <p>Une scénarisation pédagogique type a été décrite l'aide de l'outil Scenoclasse. Elle est disponible à l'adresse suivante : <a href="https://scenoclasse.lip6.fr/editeur/scenario/643575d71d35e" target="_blank">https://scenoclasse.lip6.fr/editeur/scenario/643575d71d35e</a>. N'hésitez pas à la consulter, elle contient plein d'informations comme des conseils, des points de vigilence, les solutions, etc.</p>
-		  <p>Outre ces scénarios pré-construits SPY contient un <b>éditeur de mission</b> qui vous permettra de créer vos propres missions adaptées à vos élèves et de les agencer à l'aide de l'<b>éditeur de scénario</b>.</p>
+		  <p>Outre ces scénarios pré-construits, SPY contient un <b>éditeur de mission</b> qui vous permettra de créer vos propres missions adaptées à vos élèves et de les agencer à l'aide de l'<b>éditeur de scénario</b>.</p>
 		  <p>N'hésitez pas aussi à proposer à vos élèves de créer leurs propres missions... Voici, à titre d'exemple, une scénarisation pédagogique conçue par une enseignante de CE2 mettant en oeuvre cette pédagogie&nbsp;: <a href="https://spy.lip6.fr/docs/ScenarisationPedagogique.pdf" target="_blank">https://spy.lip6.fr/docs/ScenarisationPedagogique.pdf</a></p>
       </div>
     </section>
@@ -134,7 +152,7 @@
 			</div>
 			<div class="col-md-6">
 				<h2>Open Data</h2>
-				<p>Pour les chercheurs qui souhaitent analyser les traces anonymisées des sessions de jeu&nbsp;: <a href="https://spy.lip6.fr/openTraces.html">https://spy.lip6.fr/openTraces.html</a></p>
+				<p>Pour les chercheurs qui souhaitent analyser les traces anonymisées des sessions de jeu, consultez la page <a href="openTraces.html">openTraces.html</a>.</p>
 				<p>Un code aléatoire généré par le système est donné à chaque nouvelle session de jeu. Il a pour utilité de permettre à la personne utilisant le code de retrouver sa progression dans le jeu. Des données sont collectées sur les interactions du joueur ou de la joueuse avec le jeu. Il n'est pas collecté de données identifiantes et il nous est impossible d'identifier les joueurs et joueuses à partir du code ou des données. Les données récoltées sont donc anonymes. Elles ont pour objectifs de conserver la progression dans le jeu et elles servent des fins de recherche, d'enseignement et d'amélioration du jeu.</p>
 			</div>
 		</div>
@@ -145,6 +163,8 @@
     <section id="publication" class="about">
       <div class="container">
           <h1>Publications scientifiques</h1>
+		  <p>R. El Mouhtani, M. Muratet, G. Murgia : “Supporting Dyslexic Learners in Computational Thinking Through a Serious Game with Text-to-Speech”, GALA 2026: Games and Learning Alliance Conference, L'Aquila, Italy (2026)</p>
+		  <p>M. Muratet, N. Ait Abbou, S. Jolivet : “Initiation à la programmation avec SPY : je joue, nous collaborons, nous créons”, Didapro 11 - Didastic, Grenoble, France (2026)</p>
 		  <p>M. Muratet, S. Jolivet : “GTC un formalisme permettant l’analyse automatique des compétences de la pensée informatique dans un jeu sérieux : application au jeu SPY”, Sticef, vol.31, n°1, 2024, p.10-44, DOI: 10.23709/sticef.31.1.1 (2025)</p>
 		  <p>A. Yessad, M. Muratet, Th. Carron : “Assister les enseignants du primaire dans l’enseignement de la pensée informatique. Une approche basée sur la scénarisation et vers les teaching analytics”, chapter in Enseigner, apprendre, former à l’informatique à l'école : regards croisés, pp. 211-231, (Université Paris Cité), (ISBN: 9782744202124) (2024)</p>
           <p>M. Muratet : “How to Characterize and Analyze the Computational Thinking Skills of a Learning Game?”, Lecture Notes in Computer Science, vol. 14200, Aveiro, Portugal, pp. 263-277, (Springer Nature Switzerland), (ISBN: 978-3-031-42681-0) (2023)</p>
@@ -187,6 +207,24 @@
 	<script>
 		var contact = document.getElementById("contactName");
 		contact.innerHTML = "mathieu.muratet<span style=\"display: none;\">cache</span> (at) lip6.fr";
+			
+		document.addEventListener('DOMContentLoaded', function () {
+			const collapsibleNavbar = document.getElementById('collapsibleNavbar');
+			const bsCollapse = new bootstrap.Collapse(collapsibleNavbar, { toggle: false });
+
+			// Cible les liens de premier niveau (hors toggles de dropdown) + les items des dropdowns
+			const navLinks = collapsibleNavbar.querySelectorAll(
+				'a.nav-link:not(.dropdown-toggle), a.dropdown-item'
+			);
+
+			navLinks.forEach(function (link) {
+				link.addEventListener('click', function () {
+					if (collapsibleNavbar.classList.contains('show')) {
+						bsCollapse.hide();
+					}
+				});
+			});
+		});
 	</script>
 
 	<!--Production version-->

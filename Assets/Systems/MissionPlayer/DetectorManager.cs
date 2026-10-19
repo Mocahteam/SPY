@@ -16,6 +16,8 @@ public class DetectorManager : FSystem {
 
     public GameObject LevelGO;
 
+    public GameObject RedDetectorPrefab;
+
     public static DetectorManager instance;
 
     public DetectorManager()
@@ -74,7 +76,7 @@ public class DetectorManager : FSystem {
             // Create detector under drone
             if (dr.selfRange)
             {
-                GameObject newRedArea = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, LevelGO.transform.position + new Vector3(drone_pos.x * 3, 1.5f, -drone_pos.y * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
+                GameObject newRedArea = Object.Instantiate(RedDetectorPrefab, LevelGO.transform.position + new Vector3(drone_pos.x * 3, 1.5f, -drone_pos.y * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
                 newRedArea.GetComponent<Position>().x = drone_pos.x;
                 newRedArea.GetComponent<Position>().y = drone_pos.y;
                 newRedArea.GetComponent<Detector>().owner = drone;
@@ -126,7 +128,7 @@ public class DetectorManager : FSystem {
                 break;
             else
             {
-                GameObject obj = Object.Instantiate(Resources.Load("Prefabs/RedDetector") as GameObject, LevelGO.transform.position + new Vector3(x * 3, 1.5f, -y * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
+                GameObject obj = Object.Instantiate(RedDetectorPrefab, LevelGO.transform.position + new Vector3(x * 3, 1.5f, -y * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
                 obj.GetComponent<Position>().x = x;
                 obj.GetComponent<Position>().y = y;
                 obj.GetComponent<Detector>().owner = drone;

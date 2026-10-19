@@ -16,7 +16,7 @@
 		<dialog text="[fr]Tiens ! Nous retrouvons Plok, c'est l'occasion de le sortir de là. Il semblerait que le terminal de ce couloir contrôle les deux portes.[/fr][en]Well, well! We find Plok again, and this is our chance to get him out of there. It seems that the terminal in this corridor controls both doors.[/en]" camX="4" camY="4" enableInteraction="0" briefingType="0" />
 		<dialog text="[fr]Nous t'avons envoyé tous les blocs de programmation développées par nos ingénieurs. Tu as un contrôle total des robots.[/fr][en]We've sent you all the programming blocks developed by our engineers. You have total control over the robots.[/en]" camX="2" camY="1" enableInteraction="0" briefingType="0" />
 	</dialogs>
-	<score twoStars="2883" threeStars="3860"/>
+	<score twoStars="2883" threeStars="3892"/>
 
 	<blockLimits>
 		<blockLimit blockType="Forward" limit="-1" />
@@ -66,7 +66,7 @@
 	<script outputLine="Erty" editMode="0" type="3">
 	</script>
 
-	<script outputLine="Plok_Sol" editMode="2" type="4">
+	<script outputLine="Plok_Sol" editMode="0" type="4">
 		<while>
 			<condition>
 				<captor type="FieldGate"/>
@@ -79,7 +79,7 @@
 		<action type="Forward"/>
 	</script>
 
-	<script outputLine="Erty_Sol" editMode="2" type="4">
+	<script outputLine="Erty_Sol" editMode="0" type="4">
 		<while>
 			<condition>
 				<not>

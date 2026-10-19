@@ -40,7 +40,7 @@ public class GridAutoHeight : MonoBehaviour
         // Calcul du pire nombre de colonne
         int cols = Mathf.Max(1, Mathf.FloorToInt((((RectTransform)grid.transform).rect.width - grid.padding.left - grid.padding.right) / (grid.cellSize.x + grid.spacing.x )));
         // On corrige le pire nombre de colonne pour être au plus juste, en effet avec le calcul précédent on a compté un spacing.x pour chaque cell hors en réalité on en a un de moins que le nombre de cellule( pour 3 colonnes on n'a que 2 espacements). Donc on teste si avec une colonne de plus et un espacement de moins ça ne passerait pas quand même
-        if (cols > 1 && grid.padding.left + grid.padding.right + (cols+1) * (grid.cellSize.x + grid.spacing.x) - grid.spacing.x <= ((RectTransform)grid.transform).rect.width)
+        if (grid.padding.left + grid.padding.right + (cols+1) * (grid.cellSize.x + grid.spacing.x) - grid.spacing.x <= ((RectTransform)grid.transform).rect.width)
             cols++;
         int rows = Mathf.CeilToInt((float)count / cols);
         float height =

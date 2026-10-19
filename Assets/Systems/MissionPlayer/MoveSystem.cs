@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using FYFY;
-using FYFY_plugins.CollisionManager;
 using System.Collections;
 
 /// <summary>
@@ -14,8 +13,6 @@ public class MoveSystem : FSystem {
 
 	public float turnSpeed;
 	public float moveSpeed;
-	public AudioClip footSlow;
-	public AudioClip footSpeed;
 	private GameData gameData;
 
 	public static MoveSystem instance;
@@ -161,8 +158,11 @@ public class MoveSystem : FSystem {
 		foreach (GameObject go in f_movable)
 			if (go.GetComponent<Animator>() && go.GetComponent<ScriptRef>() && !go.GetComponent<ScriptRef>().isBroken)
 			{
-				go.GetComponent<Animator>().SetFloat("Walk", -1f);
-				go.GetComponent<Animator>().SetFloat("Run", -1f);
+				if (go.CompareTag("Player"))
+				{
+					go.GetComponent<Animator>().SetFloat("Walk", -1f);
+					go.GetComponent<Animator>().SetFloat("Run", -1f);
+				}
 				go.GetComponent<Animator>().SetTrigger("Idle");
 				go.GetComponent<Collider>().enabled = true;
 			}

@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using System.Web;
 
 public static class Utility
 {
@@ -38,7 +39,7 @@ public static class Utility
 			if (dialogXML.Attributes.GetNamedItem("text") != null)
 				dialog.text = dialogXML.Attributes.GetNamedItem("text").Value;
 			if (dialogXML.Attributes.GetNamedItem("img") != null)
-				dialog.img = dialogXML.Attributes.GetNamedItem("img").Value;
+				dialog.img = HttpUtility.UrlDecode(dialogXML.Attributes.GetNamedItem("img").Value);
 			if (dialogXML.Attributes.GetNamedItem("imgDesc") != null)
 				dialog.imgDesc = dialogXML.Attributes.GetNamedItem("imgDesc").Value;
 			if (dialogXML.Attributes.GetNamedItem("imgHeight") != null)
@@ -48,12 +49,14 @@ public static class Utility
 			if (dialogXML.Attributes.GetNamedItem("camY") != null)
 				dialog.camY = int.Parse(dialogXML.Attributes.GetNamedItem("camY").Value);
 			if (dialogXML.Attributes.GetNamedItem("sound") != null)
-				dialog.sound = dialogXML.Attributes.GetNamedItem("sound").Value;
+				dialog.sound = HttpUtility.UrlDecode(dialogXML.Attributes.GetNamedItem("sound").Value);
 			if (dialogXML.Attributes.GetNamedItem("video") != null)
-				dialog.video = dialogXML.Attributes.GetNamedItem("video").Value; 
+				dialog.video = HttpUtility.UrlDecode(dialogXML.Attributes.GetNamedItem("video").Value); 
 			if (dialogXML.Attributes.GetNamedItem("videoHeight") != null)
 				dialog.videoHeight = float.Parse(dialogXML.Attributes.GetNamedItem("videoHeight").Value);
-			if (dialogXML.Attributes.GetNamedItem("enableInteraction") != null)
+            if (dialogXML.Attributes.GetNamedItem("highlight") != null)
+                dialog.highlight = dialogXML.Attributes.GetNamedItem("highlight").Value;
+            if (dialogXML.Attributes.GetNamedItem("enableInteraction") != null)
 				dialog.enableInteraction = int.Parse(dialogXML.Attributes.GetNamedItem("enableInteraction").Value) == 1;
 			if (dialogXML.Attributes.GetNamedItem("briefingType") != null)
 				dialog.briefingType = int.Parse(dialogXML.Attributes.GetNamedItem("briefingType").Value);
@@ -97,12 +100,15 @@ public static class Utility
 	{
 		for (int i = 0; i < nbYield; i++)
 			yield return null;
-		EventSystem.current.SetSelectedGameObject(go);
+		if (go.GetComponent<TMP_InputField>() != null)
+			go.GetComponent<TMP_InputField>().ActivateInputField();
+		else
+			EventSystem.current.SetSelectedGameObject(go);
 	}
 
-	public static bool inputFieldNotSelected()
+	public static bool inputFieldSelected()
 	{
-		return EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null || !EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused;
+		return EventSystem.current.currentSelectedGameObject != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null && EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>().isFocused;
 	}
 
 	public static IEnumerator GetTextureWebRequest(string miniViewUri, Image target)
@@ -143,7 +149,7 @@ public static class Utility
 				width = height * tex2D.width / tex2D.height;
 			}
 
-			GameObjectManager.setGameObjectState(target.gameObject, true);
+			target.gameObject.SetActive(true);
 			target.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
 			// On ajoute un LayoutElement que s'il n'y en a pas, sinon on laisse la config telle qu'elle a été configurée dans l'éditeur
 			LayoutElement layout = target.GetComponent<LayoutElement>();
@@ -152,6 +158,12 @@ public static class Utility
 			target.preserveAspect = true;
 		}
 		else
-			GameObjectManager.setGameObjectState(target.gameObject, false);
+			target.gameObject.SetActive(false);
 	}
+
+	public static string GetLocalizedString(string key)
+	{
+		return LocalizationSettings.StringDatabase.GetLocalizedString("StringLocalization", key);
+
+    }
 }

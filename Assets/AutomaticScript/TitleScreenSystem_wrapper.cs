@@ -5,25 +5,34 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 {
 	public UnityEngine.UI.Button continueButton;
 	public UnityEngine.GameObject playButton;
+	public UnityEngine.GameObject trainingButton;
 	public UnityEngine.GameObject gameSelector;
 	public UnityEngine.GameObject TileScenarioPrefab;
 	public UnityEngine.GameObject TileMissionPrefab;
 	public UnityEngine.GameObject quitButton;
 	public TMPro.TMP_Text SPYVersion;
 	public CurrentSettingsValues currentSettingsValues;
-	public UnityEngine.Transform avatarsLibrary;
+	public UnityEngine.Transform profilPanel;
+	public UnityEngine.GameObject newAvatarPanel;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "continueButton", continueButton);
 		MainLoop.initAppropriateSystemField (system, "playButton", playButton);
+		MainLoop.initAppropriateSystemField (system, "trainingButton", trainingButton);
 		MainLoop.initAppropriateSystemField (system, "gameSelector", gameSelector);
 		MainLoop.initAppropriateSystemField (system, "TileScenarioPrefab", TileScenarioPrefab);
 		MainLoop.initAppropriateSystemField (system, "TileMissionPrefab", TileMissionPrefab);
 		MainLoop.initAppropriateSystemField (system, "quitButton", quitButton);
 		MainLoop.initAppropriateSystemField (system, "SPYVersion", SPYVersion);
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
-		MainLoop.initAppropriateSystemField (system, "avatarsLibrary", avatarsLibrary);
+		MainLoop.initAppropriateSystemField (system, "profilPanel", profilPanel);
+		MainLoop.initAppropriateSystemField (system, "newAvatarPanel", newAvatarPanel);
+	}
+
+	public void updatePlayerProfile()
+	{
+		MainLoop.callAppropriateSystemMethod (system, "updatePlayerProfile", null);
 	}
 
 	public void importLevelOrScenario(System.String content)
@@ -49,11 +58,6 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 	public void showDetails(GameKeys keys)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "showDetails", keys);
-	}
-
-	public void refreshCompetencies()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "refreshCompetencies", null);
 	}
 
 	public void continueScenario()

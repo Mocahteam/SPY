@@ -1,4 +1,6 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class EditableContainerSystemBridge : MonoBehaviour
 {
@@ -17,8 +19,12 @@ public class EditableContainerSystemBridge : MonoBehaviour
 		EditableContainerSystem.instance.newNameContainer(name);
 	}
 
-	public void selectContainer(UIRootContainer container)
+    public void editRobotName(TMP_Text name)
 	{
-		EditableContainerSystem.instance.selectContainer(container);
-	}
+        EditableContainerSystem.instance.editRobotName(name);
+    }
+    public void checkDoubleClick(BaseEventData e)
+    {
+        EditableContainerSystem.instance.checkDoubleClick(e);
+    }
 }

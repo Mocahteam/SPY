@@ -12,4 +12,9 @@ public class UINavigationManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "eventSystem", eventSystem);
 	}
 
+	public void HTMLcanvasFocus(System.Int32 hasFocus)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "HTMLcanvasFocus", hasFocus);
+	}
+
 }

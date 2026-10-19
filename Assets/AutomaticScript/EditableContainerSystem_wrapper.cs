@@ -9,6 +9,7 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject ExampleScript;
 	public UnityEngine.UI.Button addContainerButton;
 	public System.Int32 maxWidth;
+	public CurrentSettingsValues currentSettingsValues;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -18,11 +19,7 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "ExampleScript", ExampleScript);
 		MainLoop.initAppropriateSystemField (system, "addContainerButton", addContainerButton);
 		MainLoop.initAppropriateSystemField (system, "maxWidth", maxWidth);
-	}
-
-	public void selectContainer(UIRootContainer container)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "selectContainer", container);
+		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
 	}
 
 	public void addContainer()
@@ -33,6 +30,16 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 	public void resetScriptContainer(UnityEngine.GameObject scriptContainer)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "resetScriptContainer", scriptContainer);
+	}
+
+	public void editRobotName(TMPro.TMP_Text name)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "editRobotName", name);
+	}
+
+	public void checkDoubleClick(UnityEngine.EventSystems.BaseEventData element)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "checkDoubleClick", element);
 	}
 
 	public void newNameContainer(System.String newName)

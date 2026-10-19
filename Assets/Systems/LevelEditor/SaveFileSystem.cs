@@ -1,14 +1,15 @@
-using System;
-using UnityEngine;
 using FYFY;
-using TMPro;
-using UnityEngine.UI;
-using UnityEngine.Events;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Web;
 using System.Xml;
-using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class SaveFileSystem : FSystem
 {
@@ -20,6 +21,8 @@ public class SaveFileSystem : FSystem
 	public Toggle Fog;
 	public Toggle ExecutionLimit;
 	public Toggle HideExits;
+	public Toggle OmniscientView;
+	public Toggle UserExecutor;
 	public TMP_InputField score2;
 	public TMP_InputField score3;
 
@@ -31,8 +34,6 @@ public class SaveFileSystem : FSystem
 
 	private GameData gameData;
 	private UnityAction localCallback;
-
-	private InputAction save;
 
 	[DllImport("__Internal")]
 	private static extern void Save(string content, string defaultName); // call javascript
@@ -49,20 +50,14 @@ public class SaveFileSystem : FSystem
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
 
-		save = InputSystem.actions.FindAction("Save");
-	}
-
-	// Use to process your families.
-	protected override void onProcess(int familiesUpdateCount) {
-		if(save.WasPressedThisFrame())
-			displaySavingPanel();
+		Pause = true;
 	}
 
 	// See TestLevel GO (Button)
 	public void testLevel()
     {
 		string exportXML = buildLevelContent();
-		XmlDocument doc = new XmlDocument();
+        XmlDocument doc = new XmlDocument();
 		doc.LoadXml(exportXML);
 		Utility.removeComments(doc);
 		if (dataLevel.data.filePath == null || dataLevel.data.filePath == "")
@@ -84,13 +79,12 @@ public class SaveFileSystem : FSystem
 	{
 		if (dataLevel.data.missionName != null && dataLevel.data.missionName != "" && dataLevel.data.missionName != UtilityLobby.testFromLevelEditor)
 			saveName.text = Path.GetFileNameWithoutExtension(dataLevel.data.missionName);
-		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
+		saveName.transform.parent.parent.gameObject.SetActive(true);
 	}
 
 	// see ValideMessageButton
 	public void saveXmlFile()
 	{
-		Localization loc = gameData.GetComponent<Localization>();
 		if (!UtilityEditor.CheckSaveNameValidity(saveName.text))
 		{
 			localCallback = null;
@@ -98,9 +92,9 @@ public class SaveFileSystem : FSystem
 			foreach (char someChar in Path.GetInvalidFileNameChars())
 				if (Char.IsPunctuation(someChar) || Char.IsSymbol(someChar))
 					invalidChars += someChar + " ";
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[12], invalidChars), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("NameInvalid"), invalidChars), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			// Be sure saving windows is enabled
-			GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
+			saveName.transform.parent.parent.gameObject.SetActive(true);
 		}
 		else
 		{
@@ -112,9 +106,9 @@ public class SaveFileSystem : FSystem
 			{
 				localCallback = null;
 				localCallback += delegate { saveToFile(); };
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[13], saveName.text), OkButton = loc.localization[3], CancelButton = loc.localization[4], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileNameAlreadyExists"), saveName.text), OkButton = Utility.GetLocalizedString("Yes"), CancelButton = Utility.GetLocalizedString("No"), call = localCallback });
 				// Be sure saving windows is enabled
-				GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, true);
+				saveName.transform.parent.parent.gameObject.SetActive(true);
 			}
 			else
 				saveToFile();
@@ -130,16 +124,14 @@ public class SaveFileSystem : FSystem
 		doc.LoadXml(levelExport);
 		Utility.removeComments(doc);
 
-		if (Application.platform == RuntimePlatform.WebGLPlayer)
-		{
+		if (Application.platform == RuntimePlatform.WebGLPlayer) {
 			Save(levelExport, saveName.text);
 			// Add/Replace level content in memory
-			string fakeUri = Application.streamingAssetsPath + "/Levels/LocalFiles/" + saveName.text;
+			string fakeUri = Application.streamingAssetsPath + "/Levels/" + saveName.text;
 			gameData.levels[new Uri(fakeUri).AbsoluteUri] = doc.GetElementsByTagName("level")[0];
 		}
 		else
 		{
-			Localization loc = gameData.GetComponent<Localization>();
 			try
 			{
 				// Create all necessary directories if they don't exist
@@ -153,19 +145,20 @@ public class SaveFileSystem : FSystem
 				gameData.levels[new Uri(path).AbsoluteUri] = doc.GetElementsByTagName("level")[0];
 
 				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[14], Application.persistentDataPath, "Levels", saveName.text), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileSaved"), Application.persistentDataPath, "Levels", saveName.text), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			}
 			catch (Exception e)
 			{
 				localCallback = null;
-				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[15], e.Message), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileNotSaved"), e.Message), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 			}
 		}
+
 		// Be sure saving windows is disabled
-		GameObjectManager.setGameObjectState(saveName.transform.parent.parent.gameObject, false);
+		saveName.transform.parent.parent.gameObject.SetActive(false);
 	}
 
-	private string buildLevelContent()
+	public string buildLevelContent()
 	{
 		string levelExport = "<?xml version=\"1.0\"?>\n";
 		levelExport += "<level>\n";
@@ -217,16 +210,17 @@ public class SaveFileSystem : FSystem
             {
 				levelExport += "\t\t<dialog ";
 				levelExport += dialog.text != null && dialog.text != "" ? "text=\"" + dialog.text + "\" " : "";
-				levelExport += dialog.img != null && dialog.img != "" ? "img=\"" + dialog.img + "\" " : "";
+				levelExport += dialog.img != null && dialog.img != "" ? "img=\"" + HttpUtility.UrlEncode(dialog.img) + "\" " : "";
 				levelExport += dialog.imgDesc != null && dialog.imgDesc != "" ? "imgDesc=\"" + dialog.imgDesc + "\" " : "";
 				levelExport += dialog.imgHeight != -1 ? "imgHeight=\"" + dialog.imgHeight + "\" " : "";
 				levelExport += dialog.camX != -1 ? "camX=\"" + dialog.camX + "\" " : "";
 				levelExport += dialog.camY != -1 ? "camY=\"" + dialog.camY + "\" " : "";
-				levelExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + dialog.sound + "\" " : "";
-				levelExport += dialog.video != null && dialog.video != "" ? "video=\"" + dialog.video + "\" " : "";
+				levelExport += dialog.sound != null && dialog.sound != "" ? "sound=\"" + HttpUtility.UrlEncode(dialog.sound) + "\" " : "";
+				levelExport += dialog.video != null && dialog.video != "" ? "video=\"" + HttpUtility.UrlEncode(dialog.video) + "\" " : "";
 				levelExport += dialog.videoHeight != -1 ? "videoHeight=\"" + dialog.videoHeight + "\" " : "";
+                levelExport += dialog.highlight != null && dialog.highlight != "" ? "highlight=\"" + dialog.highlight + "\" " : "";
 				levelExport += "enableInteraction=\"" + (dialog.enableInteraction ? "1" : "0") + "\" ";
-				levelExport += "briefingType=\"" + dialog.briefingType + "\" />\n";
+                levelExport += "briefingType=\"" + dialog.briefingType + "\" />\n";
             }
 			levelExport += "\t</dialogs>\n";
 		}
@@ -246,7 +240,13 @@ public class SaveFileSystem : FSystem
 		if (HideExits.isOn)
 			levelExport += "\t<hideExits />\n\n";
 
-		levelExport += "\t<score twoStars=\""+(score2.text == "" ? "0" : score2.text)+"\" threeStars=\""+ (score3.text == "" ? "0" : score3.text) + "\"/>\n\n";
+        if (OmniscientView.isOn)
+            levelExport += "\t<omniscientView />\n\n";
+
+		if (UserExecutor.isOn)
+			levelExport += "\t<userExecutor />\n\n";
+
+        levelExport += "\t<score twoStars=\""+(score2.text == "" ? "0" : score2.text)+"\" threeStars=\""+ (score3.text == "" ? "0" : score3.text) + "\"/>\n\n";
 
 		levelExport += "\t<blockLimits>\n";
 		foreach (GameObject blockLimit in f_editorblocks)
@@ -256,7 +256,7 @@ public class SaveFileSystem : FSystem
 		}
 		levelExport += "\t</blockLimits>\n\n";
 
-		foreach (Tuple<int, int> foCoords in paintableGrid.floorObjects.Keys)
+		foreach (Vector2Int foCoords in paintableGrid.floorObjects.Keys)
 		{
 			foreach (FloorObject fo in paintableGrid.floorObjects[foCoords])
 			{
@@ -299,7 +299,7 @@ public class SaveFileSystem : FSystem
 		for (int i = 0; i < editableContainer.transform.childCount; i++)
 		{
 			Transform editorViewportScriptContainer = editableContainer.transform.GetChild(i).Find("ScriptContainer");
-			string scriptName = editorViewportScriptContainer.Find("Header/ContainerName").GetComponent<TMP_InputField>().text;
+			string scriptName = editorViewportScriptContainer.Find("Header/Naming/RobotName_static/RobotName").GetComponent<TMP_Text>().text;
 			TMP_Dropdown editMode = editorViewportScriptContainer.Find("LevelEditorPanel/EditMode_Dropdown").GetComponentInChildren<TMP_Dropdown>(true);
 			TMP_Dropdown type = editorViewportScriptContainer.Find("LevelEditorPanel/ProgType_Dropdown").GetComponentInChildren<TMP_Dropdown>(true);
 			levelExport += "\t<script outputLine=\""+ scriptName + "\" editMode=\""+ editMode.value + "\" type=\""+ type.value + "\">\n";

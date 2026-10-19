@@ -8,6 +8,7 @@ using UnityEngine.Events;
 using System.Runtime.InteropServices;
 using UnityEngine.EventSystems;
 using System.Collections;
+using UnityEngine.Localization.Components;
 
 /// <summary>
 /// Manage main menu to launch a specific mission
@@ -15,24 +16,26 @@ using System.Collections;
 public class TitleScreenSystem : FSystem {
 	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
 	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
-	private Family f_compSelector = FamilyManager.getFamily(new AnyOfTags("CompetencySelector"), new AllOfComponents(typeof(TMP_Dropdown)));
 	private Family f_avatarTarget = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_AvatarTarget"));
+	private Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
+	private Family f_canvasGroup = FamilyManager.getFamily(new AllOfComponents(typeof(Canvas), typeof(CanvasGroup)));
 
 	private GameData gameData;
 	private UserData userData;
 	public Button continueButton;
 	public GameObject playButton;
-	public GameObject gameSelector;
+    public GameObject trainingButton;
+    public GameObject gameSelector;
 	public GameObject TileScenarioPrefab;
 	public GameObject TileMissionPrefab;
 	public GameObject quitButton;
 	public TMP_Text SPYVersion;
 	public CurrentSettingsValues currentSettingsValues;
-	public Transform avatarsLibrary;
+	public Transform profilPanel;
+	public GameObject newAvatarPanel;
 
 	private Transform gameList;
 	private Transform gameDetails;
-	private Transform competencyPanel;
 	private string lastScenarioSelected = "";
 	private int lastMissionSelected = -1;
 
@@ -63,26 +66,35 @@ public class TitleScreenSystem : FSystem {
 			gameData = gameDataGO.GetComponent<GameData>();
 			userData = gameDataGO.GetComponent<UserData>();
 
+			// après la fin de transition de l'animation du chargement de scène, afficher le panneau d'un nouvel avatar si un nouveau est disponible
+			f_fadeOutEnd.addEntryCallback(delegate
+			{
+				if (userData.newAvatarAvailable > 2) // > 2 car les trois premiers sont les avatars accessibles par défaut
+				{
+					foreach (GameObject canvas in f_canvasGroup)
+						canvas.GetComponent<CanvasGroup>().interactable = false;
+					newAvatarPanel.SetActive(true);
+					Transform avatarSrc = profilPanel.Find("Scroll View/Viewport/Content").GetChild(userData.newAvatarAvailable).Find("Photo");
+					Transform avatarTarget = newAvatarPanel.transform.Find("Panel/AvatarIcon");
+					EventSystem.current.SetSelectedGameObject(newAvatarPanel.transform.Find("Panel/Message").gameObject); // parce qu'on attend le fadeOut avant d'activer cette popup, on met à la main le focus sur son texte
+					avatarTarget.GetComponent<Image>().sprite = avatarSrc.GetComponent<Image>().sprite;
+					avatarTarget.GetComponent<ImgReplacementText>().replacementText = avatarSrc.GetComponent<LocalizeStringEvent>().StringReference.GetLocalizedString();
+					userData.newAvatarAvailable = -1;
+				}
+			});
+			
+
 			gameList = gameSelector.transform.Find("GamePanel/Viewport/GameList");
 			gameDetails = gameSelector.transform.Find("GameDetails");
-			competencyPanel = gameSelector.transform.Find("CompetencyPanel");
 
 			foreach (GameObject sID in f_sessionId)
 				sID.GetComponent<TMP_Text>().text = string.Join(" ", GBL_Interface.playerName.ToCharArray());
 
-			// Affichage du bon avatar come icône de profil
-			foreach (GameObject go in f_avatarTarget)
-				go.GetComponent<Image>().sprite = avatarsLibrary.GetChild(userData.avatarSelected).Find("Photo").GetComponent<Image>().sprite;
-			// Dévérouiller les bons avatars dans la bibliothèque des avatars
-			foreach (int avatarId in userData.unlockedAvatars)
-			{
-				Transform avatar = avatarsLibrary.GetChild(avatarId);
-				avatar.GetComponent<Toggle>().interactable = true;
-				GameObjectManager.setGameObjectState(avatar.Find("Locked").gameObject, false);
-			}
+			// Mise à jour du profil du joueur
+			updatePlayerProfile();
 
 			// gestion du bouton continue
-			GameObjectManager.setGameObjectState(continueButton.gameObject, gameData.scenarios.ContainsKey(userData.currentScenario) && userData.levelToContinue != -1 && userData.levelToContinue < gameData.scenarios[userData.currentScenario].levels.Count);
+			continueButton.gameObject.SetActive(gameData.scenarios.ContainsKey(userData.currentScenario) && userData.levelToContinue != -1 && userData.levelToContinue < gameData.scenarios[userData.currentScenario].levels.Count);
 
 			if (gameData.selectedScenario == UtilityLobby.testFromScenarioEditor) // reload scenario editor
 			{
@@ -92,45 +104,104 @@ public class TitleScreenSystem : FSystem {
 			{
 				launchLevelEditor();
 			}
-			else if (gameData.selectedScenario != "" && gameData.selectedScenario != UtilityLobby.testFromUrl)
+			else if (gameData.selectedScenario == UtilityLobby.testFromUrl) // go to connexion scene
+            {
+                launchConnexionScene();
+            }
+            else if (gameData.selectedScenario != "")
 			{
-				// Show scenario list
 				lastScenarioSelected = gameData.selectedScenario;
-				playButton.GetComponent<Button>().onClick.Invoke();
-				// Si on n'est pas sur la dernière mission, afficher la liste des missions
+				// Afficher la liste des scénarios
+				trainingButton.GetComponent<Button>().onClick.Invoke();
+				// Si on n'est pas sur la dernière mission, afficher la liste des missions de ce scénario
 				if (gameData.levelToLoad < gameData.scenarios[gameData.selectedScenario].levels.Count - 1)
 				{
 					// reload last opened scenario
 					lastMissionSelected = gameData.levelToLoad;
 					showLevels(gameData.selectedScenario);
 				}
+				// Sinon rester sur la liste des scénarios
 			}
 
-			if (Application.platform == RuntimePlatform.WebGLPlayer)
-			{
+			if (Application.platform == RuntimePlatform.WebGLPlayer) {
 				ShowHtmlLoadMissions();
-				GameObjectManager.setGameObjectState(quitButton, false);
+				quitButton.SetActive(false);
 			}
-		}
+        }
 
 		Pause = true;
+	}
+
+	public void updatePlayerProfile()
+	{
+		// Affichage du bon avatar come icône de profil
+		foreach (GameObject go in f_avatarTarget)
+			go.GetComponent<Image>().sprite = profilPanel.Find("Scroll View/Viewport/Content").GetChild(userData.avatarSelected).Find("Photo").GetComponent<Image>().sprite;
+
+		// Calcul du pourcentage de progression et du nombre d'étoiles obtenues
+		int nbMissions = 0;
+		int acquiredStars = 0;
+		int progression = 0;
+		foreach (string key in gameData.scenarios.Keys)
+		{
+			foreach (DataLevel dl in gameData.scenarios[key].levels)
+			{
+				string highScoreKey = Utility.extractFileName(dl.filePath);
+				acquiredStars += !userData.highScore.ContainsKey(highScoreKey) ? 0 : userData.highScore[highScoreKey]; //0 star by default
+			}
+			nbMissions += gameData.scenarios[key].levels.Count;
+			progression += userData.progression.ContainsKey(key) ? userData.progression[key] : 0;
+		}
+		int progress = 100 * progression / nbMissions;
+		// affichage de la progression numérique
+		profilPanel.Find("ProgressValue").GetComponent<TMP_Text>().text = progress + "%";
+		// ajustement de la barre de progression
+		RectTransform progressBar = profilPanel.Find("ProgressBar") as RectTransform;
+		RectTransform bar = profilPanel.Find("ProgressBar/Bar") as RectTransform;
+		bar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, progressBar.rect.width * ((float)progress / 100));
+		// affichage du nombre d'étoiles
+		profilPanel.Find("StarsWon/EarnedStars").GetComponent<TMP_Text>().text = "" + acquiredStars;
+		profilPanel.Find("StarsWon/StarsCount").GetComponent<TMP_Text>().text = "" + (nbMissions*3);
+
+		int newAvatarAvailable = 0;
+		if (acquiredStars >= 60 && !userData.unlockedAvatars.Contains(10))
+			newAvatarAvailable = 10;
+		else if (acquiredStars >= 120 && !userData.unlockedAvatars.Contains(11))
+			newAvatarAvailable = 11;
+		else if (acquiredStars >= 186 && !userData.unlockedAvatars.Contains(12))
+			newAvatarAvailable = 12;
+
+		if (newAvatarAvailable != 0)
+        {
+			userData.newAvatarAvailable = newAvatarAvailable;
+			userData.unlockedAvatars.Add(newAvatarAvailable);
+			sendUserData();
+		}
+
+
+		// Dévérouiller les bons avatars dans la bibliothèque des avatars
+		foreach (int avatarId in userData.unlockedAvatars)
+		{
+			Transform avatar = profilPanel.Find("Scroll View/Viewport/Content").GetChild(avatarId);
+			avatar.GetComponent<Toggle>().interactable = true;
+			avatar.Find("Locked").gameObject.SetActive(false);
+		}
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
 	public void importLevelOrScenario(string content)
 	{
-		Localization loc = gameData.GetComponent<Localization>();
 		Utility.JavaScriptData jsd = JsonUtility.FromJson<Utility.JavaScriptData>(content);
 		try
 		{
-			string fakeUri = Application.streamingAssetsPath + "/Levels/LocalFiles/" + jsd.name; 
+			string fakeUri = Application.streamingAssetsPath + "/Levels/" + jsd.name; 
 			UtilityLobby.LoadLevelOrScenario(gameData, fakeUri, jsd.content);
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[19], OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.GetLocalizedString("FilesLoaded"), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 		}
 		catch (Exception e) {
 			localCallback = null;
-			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(loc.localization[20], jsd.name, e.Message), OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+			GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("ErrorLoadingFile"), jsd.name, e.Message), OkButton = "", CancelButton = Utility.GetLocalizedString("Ok"), call = localCallback });
 		}
 	}
 
@@ -145,16 +216,16 @@ public class TitleScreenSystem : FSystem {
 		}
 	}
 
-	// see Play Button in TitleScreen scene
+	// see Training Button in TitleScreen scene
 	public void displayScenarioList()
 	{
 		// remove all old tiles
 		removeAllOldTiles();
 
 		Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu");
-		GameObjectManager.setGameObjectState(backButton.gameObject, true);
-		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios").gameObject, false);
-		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/Title").gameObject, false);
+		backButton.gameObject.SetActive(true);
+		gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios").gameObject.SetActive(false);
+		gameSelector.transform.Find("Header/Title").gameObject.SetActive(false);
 		Selectable detailstitle = gameDetails.Find("Title").GetComponentInChildren<Selectable>(true);
 
 		//create scenarios' button
@@ -167,17 +238,17 @@ public class TitleScreenSystem : FSystem {
 		{
 			GameObject scenarioTile = GameObject.Instantiate<GameObject>(TileScenarioPrefab, gameList);
 
-			scenarioTile.transform.Find("Finished").gameObject.SetActive(userData.progression != null && userData.progression.ContainsKey(key) && userData.progression[key] == gameData.scenarios[key].levels.Count);
+			scenarioTile.transform.Find("Finished").gameObject.SetActive(userData.progression.ContainsKey(key) && userData.progression[key] >= gameData.scenarios[key].levels.Count);
 			
 			int totalStars = 0;
 			foreach (DataLevel dl in gameData.scenarios[key].levels)
 			{
 				string highScoreKey = Utility.extractFileName(dl.filePath);
-				totalStars += (userData.highScore == null || !userData.highScore.ContainsKey(highScoreKey)) ? 0 : userData.highScore[highScoreKey]; //0 star by default
+				totalStars += !userData.highScore.ContainsKey(highScoreKey) ? 0 : userData.highScore[highScoreKey]; //0 star by default
 			}
 			scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text = totalStars + "/" + (gameData.scenarios[key].levels.Count * 3);
 
-			if (userData.progression != null && userData.progression.ContainsKey(key))
+			if (userData.progression.ContainsKey(key))
 				scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text = (100*userData.progression[key]/ gameData.scenarios[key].levels.Count) +"%";
 			else
 				scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text = "0%";
@@ -219,13 +290,15 @@ public class TitleScreenSystem : FSystem {
 				foreach (Transform child in gameList)
 					if (child.GetComponent<GameKeys>().scenarioKey == lastScenarioSelected)
 					{
-						MainLoop.instance.StartCoroutine(Utility.delayGOSelection(child.gameObject));
+						EventSystem.current.SetSelectedGameObject(child.gameObject);
 						break;
 					}
 			}
 			else
-				// focus on the first scenario
-				MainLoop.instance.StartCoroutine(Utility.delayGOSelection(gameList.GetChild(0).gameObject));
+            {
+                // focus on the first scenario
+                EventSystem.current.SetSelectedGameObject(gameList.GetChild(0).gameObject);
+			}
 		}
 		else
 			EventSystem.current.SetSelectedGameObject(backButton.gameObject);
@@ -234,8 +307,7 @@ public class TitleScreenSystem : FSystem {
 	private IEnumerator delayScenarioTooltipContent(GameObject scenarioTile)
 	{
 		yield return null;
-		StringList sl = scenarioTile.GetComponent<StringList>();
-		scenarioTile.GetComponent<TooltipContent>().text = scenarioTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text + "<br>" + sl.texts[0] + scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text + "<br>" + sl.texts[0]+ scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text;
+		scenarioTile.GetComponent<TooltipContent>().text = scenarioTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text + "<br>" + Utility.GetLocalizedString("Progression:") + scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text + "<br>" + Utility.GetLocalizedString("StarsCount") + scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text;
 	}
 
 	public void setDraggingState(bool newState){
@@ -257,12 +329,12 @@ public class TitleScreenSystem : FSystem {
 		// delete all old tiles
 		removeAllOldTiles();
 
-		GameObjectManager.setGameObjectState(gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu").gameObject, false);
-		Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios");
-		GameObjectManager.setGameObjectState(backButton.gameObject, true);
+        gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu").gameObject.SetActive(false);
+        Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios");
+		backButton.gameObject.SetActive(true);
 		Transform headerTitle = gameSelector.transform.Find("Header/Title");
 		Selectable detailstitle = gameDetails.Find("Title").GetComponentInChildren<Selectable>(true);
-		GameObjectManager.setGameObjectState(headerTitle.gameObject, true);
+		headerTitle.gameObject.SetActive(true);
 
 		// set scenario name as Title
 		headerTitle.GetComponent<TMP_Text>().text = Utility.extractLocale(gameData.scenarios[scenarioKey].name);
@@ -275,7 +347,7 @@ public class TitleScreenSystem : FSystem {
 			DataLevel levelData = gameData.scenarios[scenarioKey].levels[i];
 			//scores
 			string highScoreKey = Utility.extractFileName(levelData.filePath);
-			int scoredStars = userData.highScore == null || !userData.highScore.ContainsKey(highScoreKey) ? 0 : userData.highScore[highScoreKey]; //0 star by default
+			int scoredStars = !userData.highScore.ContainsKey(highScoreKey) ? 0 : userData.highScore[highScoreKey]; //0 star by default
 
 			Image star1 = missionTile.transform.Find("Star1").GetComponent<Image>();
 			Image star2 = missionTile.transform.Find("Star2").GetComponent<Image>();
@@ -286,9 +358,9 @@ public class TitleScreenSystem : FSystem {
 
 			missionTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = Utility.extractLocale(levelData.missionName);
 
-			int tooltipText = scoredStars;
+			string tooltipKey = "StarWon"+scoredStars;
 			// lock/unlock levels
-			if ((userData.progression != null && userData.progression.ContainsKey(scenarioKey) && userData.progression[scenarioKey] >= i) || i == 0) //by default first level of directory is the only unlocked level of directory
+			if ((userData.progression.ContainsKey(scenarioKey) && userData.progression[scenarioKey] >= i) || i == 0) //by default first level of directory is the only unlocked level of directory
 			{
 				missionButton.interactable = true;
 
@@ -299,12 +371,12 @@ public class TitleScreenSystem : FSystem {
             else
 			{
 				missionButton.interactable = false;
-				tooltipText = 4;
+                tooltipKey = "MissionLocked";
 			}
 
-			missionButton.StartCoroutine(delayMissionTooltipContent(missionTile, tooltipText));
+			missionTile.GetComponent<TooltipContent>().text = Utility.GetLocalizedString(tooltipKey);
 
-			missionTile.transform.Find("Finished").gameObject.SetActive(scoredStars > 0);
+            missionTile.transform.Find("Finished").gameObject.SetActive(scoredStars > 0);
 			missionTile.transform.Find("Locked").gameObject.SetActive(!missionButton.interactable);
 
 			GameObjectManager.bind(missionTile);
@@ -338,22 +410,18 @@ public class TitleScreenSystem : FSystem {
 				foreach (Transform child in gameList)
 					if (child.GetComponent<GameKeys>().missionNumber == lastMissionSelected)
 					{
-						MainLoop.instance.StartCoroutine(Utility.delayGOSelection(child.gameObject));
+						EventSystem.current.SetSelectedGameObject(child.gameObject);
 						break;
 					}
 			}
 			else
-				// focus on the first mission
-				MainLoop.instance.StartCoroutine(Utility.delayGOSelection(gameList.GetChild(0).gameObject));
+            {
+                // focus on the first mission
+                EventSystem.current.SetSelectedGameObject(gameList.GetChild(0).gameObject);
+			}
 		}
 		else
 			EventSystem.current.SetSelectedGameObject(backButton.gameObject);
-	}
-
-	private IEnumerator delayMissionTooltipContent(GameObject missionTile, int tooltipText)
-    {
-		yield return null;
-		missionTile.GetComponent<TooltipContent>().text = missionTile.GetComponent<StringList>().texts[tooltipText];
 	}
 
 	public void showDetails(GameKeys keys)
@@ -376,89 +444,66 @@ public class TitleScreenSystem : FSystem {
 		titleNav.selectOnUp = curTile;
 		titleSel.navigation = titleNav;
 
-		detailsTitle.text = detailsTitle.GetComponentInParent<Localization>().localization[1]; // default show "Mission locked"
+        detailsTitle.text = Utility.GetLocalizedString("MissionLocked"); // default show "Mission locked"
 		GameObject gameDescription = gameDetails.Find("Scroll View").gameObject;
 		Image miniView = gameDetails.Find("MiniView").GetComponent<Image>();
 
-		GameKeys comp_gk = competencyPanel.GetComponent<GameKeys>();
-		comp_gk.scenarioKey = keys.scenarioKey;
-		comp_gk.missionNumber = keys.missionNumber;
-
-		// If the keys refer a scenario without a mission defined => show scenario data
-		if (keys.scenarioKey != "" && keys.missionNumber == -1 && gameData.scenarios.ContainsKey(keys.scenarioKey))
+		TMP_Text descDetails = gameDescription.GetComponentInChildren<TMP_Text>(true);
+        // If the keys refer a scenario without a mission defined => show scenario data
+        if (keys.scenarioKey != "" && keys.missionNumber == -1 && gameData.scenarios.ContainsKey(keys.scenarioKey))
 		{
 			detailsTitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].name);
-			GameObjectManager.setGameObjectState(gameDescription, true);
-			gameDescription.GetComponentInChildren<TMP_Text>(true).text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].description);
-			GameObjectManager.setGameObjectState(miniView.gameObject, false);
-		}
+            descDetails.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].description);
+			miniView.gameObject.SetActive(false);
+            gameDescription.SetActive(true);
+        }
 		// If the keys refer a scenario and a mission => show mission data
 		else if (keys.scenarioKey != "" && keys.missionNumber != -1 && gameData.scenarios.ContainsKey(keys.scenarioKey) && gameData.scenarios[keys.scenarioKey].levels.Count > keys.missionNumber)
         {
 			detailsTitle.text = Utility.extractLocale(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].missionName);
-			GameObjectManager.setGameObjectState(gameDescription, false);
-			gameDescription.GetComponentInChildren<TMP_Text>(true).text = "";
-			GameObjectManager.setGameObjectState(miniView.gameObject, true);
-			// try to load mini view
-			MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].filePath.Replace(".xml", currentSettingsValues.values.currentLanguage == 1 ? "_en.png" : ".png"), miniView));
+            descDetails.text = "";
+			miniView.gameObject.SetActive(true);
+            gameDescription.SetActive(true);
+            // try to load mini view
+            MainLoop.instance.StartCoroutine(Utility.GetTextureWebRequest(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber].filePath.Replace(".xml", currentSettingsValues.values.currentLanguage == 1 ? "_en.png" : ".png"), miniView));
 		}
 		// Else locked mission
         else
 		{
-			GameObjectManager.setGameObjectState(gameDescription, false);
-			GameObjectManager.setGameObjectState(miniView.gameObject, false);
+			gameDescription.SetActive(false);
+			miniView.gameObject.SetActive(false);
 		}
-	}
 
-	// See competency selector in CompetencyPanel
-	public void refreshCompetencies()
-	{
-		GameKeys comp_gk = competencyPanel.GetComponent<GameKeys>();
+		// Show skills
+		if (descDetails.text != "")
+            descDetails.text += "\n\n";
+        descDetails.text += "<b>"+ Utility.GetLocalizedString("IdentifiedSkills") + "</b>\n";
+        if (gameData.scenarios.ContainsKey(keys.scenarioKey))
+        {
+            // Display competencies
+            string txt = "";
 
-		// Set title
-		TextMeshProUGUI title = competencyPanel.Find("Title").GetComponentInChildren<TextMeshProUGUI>(true);
-		title.text = "";
-		if (comp_gk.scenarioKey != "" && gameData.scenarios.ContainsKey(comp_gk.scenarioKey))
-		{
-			WebGlScenario scenar = gameData.scenarios[comp_gk.scenarioKey];
-			title.text = Utility.extractLocale(scenar.name);
-			if (comp_gk.missionNumber != -1 && scenar.levels.Count > comp_gk.missionNumber)
-				title.text += " / " + Utility.extractLocale(scenar.levels[comp_gk.missionNumber].missionName);
-			title.text += title.GetComponentInParent<Localization>().localization[2];
-		}
-		title.text += title.GetComponentInParent<Localization>().localization[3];
+            List<DataLevel> levelKeys = new List<DataLevel>();
+            if (keys.missionNumber == -1 || keys.missionNumber >= gameData.scenarios[keys.scenarioKey].levels.Count)
+                levelKeys = gameData.scenarios[keys.scenarioKey].levels;
+            else
+                levelKeys.Add(gameData.scenarios[keys.scenarioKey].levels[keys.missionNumber]);
 
-		TextMeshProUGUI details = competencyPanel.Find("Scroll View").GetComponentInChildren<TextMeshProUGUI>(true);
-		details.text = "";
-		if (gameData.scenarios.ContainsKey(comp_gk.scenarioKey))
-		{
-			// Get current referentiel selected
-			TMP_Dropdown compSelector = f_compSelector.First().GetComponent<TMP_Dropdown>();
-			string referentialName = compSelector.options[compSelector.value].text;
-			// Display competencies
-			string txt = "";
+            foreach (GameObject comp in f_competencies)
+                if (comp.GetComponent<Competency>().referentialId == currentSettingsValues.values.currentSkillsRepository)
+                    foreach (DataLevel levelKey in levelKeys)
+                        if (gameData.levels.ContainsKey(levelKey.filePath) && UtilityLobby.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.filePath].OwnerDocument))
+                        {
+                            txt += " - "+Utility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
+                            break;
+                        }
 
-			List<DataLevel> levelKeys = new List<DataLevel>();
-			if (comp_gk.missionNumber == -1 || comp_gk.missionNumber >= gameData.scenarios[comp_gk.scenarioKey].levels.Count)
-				levelKeys = gameData.scenarios[comp_gk.scenarioKey].levels;
-			else
-				levelKeys.Add(gameData.scenarios[comp_gk.scenarioKey].levels[comp_gk.missionNumber]);
-
-			foreach (GameObject comp in f_competencies)
-				if (comp.GetComponent<Competency>().referential == referentialName)
-					foreach (DataLevel levelKey in levelKeys)
-						if (gameData.levels.ContainsKey(levelKey.filePath) && UtilityLobby.isCompetencyMatchWithLevel(comp.GetComponent<Competency>(), gameData.levels[levelKey.filePath].OwnerDocument))
-						{
-							txt += Utility.extractLocale(comp.GetComponent<Competency>().id) + "\n";
-							break;
-						}
-            
-			if (txt != "")
-				details.text += txt;
-			else
-				details.text += competencyPanel.GetComponentInParent<Localization>().localization[0];
-		}
-	}
+            if (txt != "")
+                descDetails.text += txt;
+            else
+                descDetails.text += " - "+ Utility.GetLocalizedString("NoSkillsIdentified");
+        }
+    }
 
 	public void continueScenario()
     {

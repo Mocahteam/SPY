@@ -6,4 +6,9 @@ public class MainMenuTogglerBridge : MonoBehaviour
     {
         MainMenuToggler.instance.setCanvasInterractable(state);
     }
+
+    public void showMainMenu()
+    {
+        MainMenuToggler.instance.showMainMenu();
+    }
 }

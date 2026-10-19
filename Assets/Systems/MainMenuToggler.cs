@@ -16,24 +16,20 @@ public class MainMenuToggler : FSystem
     protected override void onStart()
     {
         if (menuCanvas != null)
-            GameObjectManager.setGameObjectState(menuCanvas, false);
+            menuCanvas.SetActive(false);
         Pause = true;
     }
 
-    public void toggleMainMenu()
+    public void showMainMenu()
     {
-        // si le menu n'est pas affiché, on l'affiche
-        if (!menuCanvas.activeInHierarchy)
-        {
-            menuCanvas.SetActive(true);
-            setCanvasInterractable(false);
-        }
-        // sinon faire l'inverse
-        else
-        {
-            menuCanvas.SetActive(false);
-            setCanvasInterractable(true);
-        }
+        menuCanvas.SetActive(true);
+        setCanvasInterractable(false);
+    }
+
+    public void hideMainMenu()
+    {
+        menuCanvas.SetActive(false);
+        setCanvasInterractable(true);
     }
 
     public void setCanvasInterractable(bool state)

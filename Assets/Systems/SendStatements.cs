@@ -1,9 +1,11 @@
-﻿using UnityEngine;
+﻿using DIG.GBLXAPI.Internal;
 using FYFY;
-using System.Collections;
 using Newtonsoft.Json;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using UnityEngine;
 using UnityEngine.Networking;
-using DIG.GBLXAPI.Internal;
 
 public class SendStatements : FSystem {
 
@@ -17,6 +19,10 @@ public class SendStatements : FSystem {
     private LrsRemoteQueue statementQueue;
     private GameData gameData;
     private UserData userData;
+    private string experimentationId = "";
+
+    [DllImport("__Internal")]
+    private static extern string GetExperimentationId(); // call javascript
 
     public SendStatements()
     {
@@ -41,6 +47,9 @@ public class SendStatements : FSystem {
             statementQueue = null;
 
         f_saveProgression.addEntryCallback(saveUserData);
+
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+            experimentationId = GetExperimentationId();
     }
 
     // Use to process your families.
@@ -58,10 +67,11 @@ public class SendStatements : FSystem {
                     for (int i = 0; i < nb; i++)
                     {
                         ap = listAP[i];
+
                         //If no result info filled
                         if (!ap.result)
                         {
-                            GBL_Interface.SendStatement(ap.verb, ap.objectType, ap.activityExtensions);
+                            GBL_Interface.SendStatement(ap.verb, ap.objectType, ap.activityExtensions, experimentationId);
                         }
                         else
                         {
@@ -77,7 +87,7 @@ public class SendStatements : FSystem {
                             else if (ap.success < 0)
                                 success = false;
 
-                            GBL_Interface.SendStatementWithResult(ap.verb, ap.objectType, ap.activityExtensions, ap.resultExtensions, completed, success, ap.response, ap.score, ap.duration);
+                            GBL_Interface.SendStatementWithResult(ap.verb, ap.objectType, ap.activityExtensions, experimentationId, ap.resultExtensions, completed, success, ap.response, ap.score, ap.duration);
                         }
                     }
                 }

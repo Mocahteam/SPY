@@ -48,6 +48,7 @@ public class DragDropSystem : FSystem
 
 	private Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private Family f_programmingArea = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	// Les variables
 	private GameData gameData;
@@ -70,12 +71,15 @@ public class DragDropSystem : FSystem
 
 	private enum DragDropState { Idle, DragPointer, DragKeyboard, InsertKeyboard, LongClick};
 	private DragDropState dragDropState;
+	private bool cancelNextSubmit = false;
 
 	private EventSystem eventSystem;
 	private UnityAction localCallback;
 
-	// L'instance
-	public static DragDropSystem instance;
+	public AudioClip AddActionSound;
+
+    // L'instance
+    public static DragDropSystem instance;
 
 	public DragDropSystem()
     {
@@ -106,7 +110,7 @@ public class DragDropSystem : FSystem
 				Pause = true;
 				string scriptsContent = "";
 				foreach (Transform viewportScriptContainer in editableContainers)
-					scriptsContent += exportEditableScriptToString(viewportScriptContainer.Find("ScriptContainer"), null);
+					scriptsContent += UtilityGame.exportEditableScriptToString(viewportScriptContainer.Find("ScriptContainer"), null);
 
 				// générer une trace seulement sur la scene principale
 				if (SceneManager.GetActiveScene().name == "MainScene")
@@ -115,8 +119,8 @@ public class DragDropSystem : FSystem
 						verb = "executed",
 						objectType = "program",
 						activityExtensions = new Dictionary<string, string>() {
-					{ "content", scriptsContent }
-				}
+							{ "content", scriptsContent }
+						}
 					});
 			});
 			f_editMode.addEntryCallback(delegate {
@@ -127,7 +131,13 @@ public class DragDropSystem : FSystem
 			f_newEnd.addEntryCallback(delegate { levelFinished(true); });
 			f_newEnd.addExitCallback(delegate { levelFinished(false); });
 
-			insertRef = null;
+			f_programmingArea.addEntryCallback(delegate (GameObject go) {
+				ReplacementSlot[] replacementSlots = go.GetComponentsInChildren<ReplacementSlot>(true);
+                if (replacementSlots.Length > 0)
+                    lastDropZoneUsed = replacementSlots[replacementSlots.Length - 1].gameObject;
+			});
+
+            insertRef = null;
 			dragDropState = DragDropState.Idle;
 
 			// Dans l'éditeur de mission toujours autoriser le Drag&Drop
@@ -143,12 +153,13 @@ public class DragDropSystem : FSystem
 		setDropZoneState(false);
 		if (itemDragged != null)
 		{
+			// remettre le focus sur la référence dans l'inventaire
+			eventSystem.SetSelectedGameObject(itemDragged.GetComponent<LibraryItemRef>().linkedTo);
 			// Suppression des familles de FYFY
 			GameObjectManager.unbind(itemDragged);
 			// Déstruction du bloc
 			GameObject.Destroy(itemDragged, 0.1f); // L'objet est réellement supprimé à la fin de l'update par Unity donc si l'appel est fait dans la phase de gestion des inputs c'est ok (itemDragged sera toujours vivant lors de la mise à jour de Fyfy avant la phase d'update et les éventuelles action empilées dans le GameObjectManager pourront être dépilées). Mais si l'appel est fait dans l'update alors à la fin de cette phase l'objet est réellement détruit donc à la prochaine mise à jour de Fyfy (au LateUpdate) les éventuelles actions empilées ne pourront pas être exécutées. Donc ont ajoute un délai à la suppression du gameobject.
 			itemDragged = null;
-			eventSystem.SetSelectedGameObject(eventSystem.firstSelectedGameObject);
 		}
 		insertRef = null;
 		// be sure all replacement outline are disabled
@@ -159,14 +170,14 @@ public class DragDropSystem : FSystem
 		MainLoop.instance.StartCoroutine(delayIdleState());
 	}
 
-	protected override void onProcess(int familiesUpdateCount)
+    protected override void onProcess(int familiesUpdateCount)
 	{
 		if (f_editMode.Count > 0 && gameData.dragDropEnabled)
 		{
 			// Shift + Echap est réservé pour sortir du contexte WebGL et revenir sur la page web (voir html)
 			if (cancel.WasPressedThisFrame() && !exitWebGL.WasPressedThisFrame() && dragDropState != DragDropState.Idle)
 			{
-				HotkeySystem.instance.cancelNextEscape = true;
+				HotkeySystem.instance.cancelNextCancel_act = true;
 				cancelDragging();
 			}
 
@@ -222,37 +233,42 @@ public class DragDropSystem : FSystem
 			// gestion de la modalité insertion au clavier
 			if (insert.WasPressedThisFrame() && dragDropState == DragDropState.Idle && eventSystem.currentSelectedGameObject != null && (eventSystem.currentSelectedGameObject.GetComponent<LibraryItemRef>() || eventSystem.currentSelectedGameObject.GetComponent<ReplacementSlot>()) && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>())
 			{
-				if (f_inventory.Count > 0)
+				insertRef = eventSystem.currentSelectedGameObject.GetComponent<ReplacementSlot>() ? eventSystem.currentSelectedGameObject : eventSystem.currentSelectedGameObject.GetComponentInChildren<DropZone>(true).gameObject;
+				if (insertRef.GetComponent<ReplacementSlot>())
 				{
-					insertRef = eventSystem.currentSelectedGameObject.GetComponent<ReplacementSlot>() ? eventSystem.currentSelectedGameObject : eventSystem.currentSelectedGameObject.GetComponentInChildren<DropZone>(true).gameObject;
-					if (insertRef.GetComponent<ReplacementSlot>())
-					{
-						insertRef.GetComponentInChildren<Outline>().enabled = true;
-					}
-					else
-					{
-						insertRef.gameObject.SetActive(true);
-						insertRef.transform.Find("PositionBar").gameObject.SetActive(true);
-					}
-					eventSystem.SetSelectedGameObject(f_inventory.First());
-					dragDropState = DragDropState.InsertKeyboard;
+					insertRef.GetComponentInChildren<Outline>().enabled = true;
 				}
 				else
 				{
+					insertRef.gameObject.SetActive(true);
+					insertRef.transform.Find("PositionBar").gameObject.SetActive(true);
+				}
+				dragDropState = DragDropState.InsertKeyboard;
+				if (f_inventory.Count > 0)
+					eventSystem.SetSelectedGameObject(f_inventory.First());
+				else
+				{
+					GameObject backupCurrentSelection = eventSystem.currentSelectedGameObject;
 					localCallback = null;
-					Localization loc = gameData.GetComponent<Localization>();
-					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = loc.localization[50], OkButton = loc.localization[0], CancelButton = loc.localization[1], call = localCallback });
+					localCallback += delegate {
+						eventSystem.SetSelectedGameObject(backupCurrentSelection); // en fermant la fenêtre on remet le focus sur le bloc depuis lequel on a initié l'insertion
+						if (submit.WasPressedThisFrame())
+							cancelNextSubmit = true;
+					};
+					GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.GetLocalizedString("NoBlocksAvailableInInventory"), OkButton = Utility.GetLocalizedString("Ok"), CancelButton = "", call = localCallback });
 				}
 			}
-			if (submit.WasPressedThisFrame() && dragDropState == DragDropState.InsertKeyboard)
+			if (submit.WasPressedThisFrame() && !cancelNextSubmit && dragDropState == DragDropState.InsertKeyboard)
 			{
 				initDraggedBlock();
-				// On a besoin de temporiser la fin du drag pour attendre les mises à jour Fyfy dû à l'init
-				MainLoop.instance.StartCoroutine(delayEndDrag());
-			}
+                if (itemDragged != null) // au cas où le long click aurait eu lieu sur un objet non compatible
+                    MainLoop.instance.StartCoroutine(delayEndDrag()); // On a besoin de temporiser la fin du drag pour attendre les mises à jour Fyfy dû à l'init
+            }
+			else
+				cancelNextSubmit = false;
 						
 			// Gestion de l'action de suppression au clavier
-			if (deleteKeyboard.WasPressedThisFrame() && dragDropState == DragDropState.Idle && eventSystem.currentSelectedGameObject.GetComponentInParent<LibraryItemRef>() && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() && Utility.inputFieldNotSelected())
+			if (deleteKeyboard.WasPressedThisFrame() && dragDropState == DragDropState.Idle && eventSystem.currentSelectedGameObject.GetComponentInParent<LibraryItemRef>() && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() && !Utility.inputFieldSelected())
 				deleteElement(eventSystem.currentSelectedGameObject.GetComponentInParent<LibraryItemRef>().gameObject); // On passe par le LibraryItemRef pour récupérer le gameObject pour gérer le cas par exemple où un enfant du bloc est sélectionné comme le texte "Then" dans un If
 		}
 	}
@@ -266,12 +282,16 @@ public class DragDropSystem : FSystem
 	private void initDraggedBlock()
     {
 		GameObject current = eventSystem.currentSelectedGameObject;
+		if (current == null)
+			return;
+		// source depuis l'inventaire
 		if (current.GetComponent<ElementToDrag>())
 		{
 			initBlockFromLibrary(current);
 			itemDragged.transform.position = new Vector3(itemDragged.transform.position.x + 20, itemDragged.transform.position.y - 20, itemDragged.transform.position.z);
 		}
-		else if (current.GetComponent<LibraryItemRef>())
+		// source depuis le code
+		else if (current.GetComponent<LibraryItemRef>() && !current.GetComponent<Locker>().locked)
 		{
 			initBlockFromEditableScript(current);
 			itemDragged.transform.position = new Vector3(itemDragged.transform.position.x + 20, itemDragged.transform.position.y - 20, itemDragged.transform.position.z);
@@ -294,7 +314,7 @@ public class DragDropSystem : FSystem
 			if (raycastEnabled && Math.Abs(itemPosInDropZone.x) < rectTrigger.rect.width / 2 && Math.Abs(itemPosInDropZone.y) < rectTrigger.rect.height / 2)
 				checkHighlightDropArea(dropZone);
 			else
-				GameObjectManager.setGameObjectState(dropZone.transform.Find("PositionBar").gameObject, false);
+				dropZone.transform.Find("PositionBar").gameObject.SetActive(false);
 		}
 		// check if we overlap replacement slot
 		foreach (GameObject replacementSlot in f_replacementSlot)
@@ -325,7 +345,7 @@ public class DragDropSystem : FSystem
         {
 			if (dropArea.GetComponent<DropZone>())
 			{
-				GameObjectManager.setGameObjectState(dropArea, value);
+				dropArea.SetActive(value);
 				// Etre sûr que les barres des dropzone sont invisibles sauf dans le cas où on fait une insertion au clavier
 				if (insertRef == null)
 					dropArea.transform.GetChild(0).gameObject.SetActive(false);
@@ -347,28 +367,13 @@ public class DragDropSystem : FSystem
         }
 	}
 
-	private string exportEditableScriptToString(Transform scriptContainer, GameObject focusedArea)
-	{
-		string scriptsContent = scriptContainer.Find("Header").GetComponentInChildren<TMP_InputField>().text + " {";
-		// on ignore les fils sans Highlightable
-		for (int i = 0; i < scriptContainer.childCount; i++)
-		{
-			if (scriptContainer.GetChild(i).GetComponent<Highlightable>())
-				scriptsContent += " " + UtilityGame.exportBlockToString(scriptContainer.GetChild(i).GetComponent<Highlightable>(), focusedArea);
-		}
-		if (scriptContainer.GetChild(scriptContainer.childCount - 1).gameObject == focusedArea)
-			scriptsContent += " ####";
-		scriptsContent += " }\n";
-		return scriptsContent;
-	}
-
 	// used by prefabs (Captors, boolean operators and drop areas)
 	public void checkHighlightDropArea(GameObject dropArea)
     {
 		if (itemDragged != null) {
 			// First case => the dropArea is a drop zone, we enable child bar of the drop zone
 			if (dropArea.GetComponent<DropZone>())
-				GameObjectManager.setGameObjectState(dropArea.transform.GetChild(0).gameObject, true);
+				dropArea.transform.GetChild(0).gameObject.SetActive(true);
 			else
 			{ // Second case => the drop area is a replacement slot (base element and condition element)
 				ReplacementSlot repSlot = dropArea.GetComponent<ReplacementSlot>();
@@ -424,11 +429,11 @@ public class DragDropSystem : FSystem
     {
 		// On active les dropzones
 		setDropZoneState(true);
-		// On crée le bloc action associé à l'élément
-		itemDragged = UtilityGame.createEditableBlockFromLibrary(model, mainCanvas);
+        // On crée le bloc action associé à l'élément
+        itemDragged = UtilityGame.createEditableBlockFromLibrary(model, mainCanvas, true);
+		itemDragged.AddComponent<Dragging>();
 		// On l'ajoute aux familles de FYFY
 		GameObjectManager.bind(itemDragged);
-		GameObjectManager.addComponent<Dragging>(itemDragged);
 		// exclude all UI elements that can disturb the drag from the EventSystem
 		foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
 			child.GetComponent<Image>().raycastTarget = false;
@@ -440,7 +445,7 @@ public class DragDropSystem : FSystem
 	{
 		PointerEventData pointerData = element as PointerEventData;
 		// On verifie si c'est un évènement généré par le bouton gauche de la souris
-		if (!Pause && gameData.dragDropEnabled && pointerData != null && pointerData.button == PointerEventData.InputButton.Left && pointerData.pointerPress.GetComponentInParent<Highlightable>() != null && dragDropState == DragDropState.Idle)
+		if (!Pause && gameData.dragDropEnabled && pointerData != null && pointerData.button == PointerEventData.InputButton.Left && pointerData.pointerPress.GetComponentInParent<Highlightable>() != null && !pointerData.pointerPress.GetComponentInParent<Locker>().locked && dragDropState == DragDropState.Idle)
 		{
 			dragDropState = DragDropState.DragPointer;
 			initBlockFromEditableScript(pointerData.pointerPress.GetComponentInParent<Highlightable>().gameObject);
@@ -450,7 +455,8 @@ public class DragDropSystem : FSystem
 	private void initBlockFromEditableScript(GameObject model)
     {
 		itemDragged = model;
-		GameObjectManager.addComponent<Dragging>(itemDragged);
+		itemDragged.AddComponent<Dragging>();
+		GameObjectManager.refresh(itemDragged);
 
 		string content = UtilityGame.exportBlockToString(itemDragged.GetComponent<Highlightable>());
 
@@ -473,7 +479,7 @@ public class DragDropSystem : FSystem
 		GameObjectManager.refresh(itemDragged);
 
 		// compute context after removing item dragged
-		string context = exportEditableScriptToString(nextBrother.GetComponentInParent<UIRootContainer>().transform, removedFromArea);
+		string context = UtilityGame.exportEditableScriptToString(nextBrother.GetComponentInParent<UIRootContainer>().transform, removedFromArea);
 
 		// exclude all UI elements that can disturb the drag from the EventSystem
 		foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
@@ -485,11 +491,13 @@ public class DragDropSystem : FSystem
 		foreach (BaseCondition condChild in itemDragged.GetComponentsInChildren<BaseCondition>(true))
 			GameObjectManager.addComponent<AddOne>(condChild.GetComponent<LibraryItemRef>().linkedTo);
 
-		// Rend le bouton d'execution actif (ou non)
-		GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
-		// générer une trace seulement sur la scene principale
+		// seulement sur la scene principale
 		if (SceneManager.GetActiveScene().name == "MainScene")
+		{
+			// Rend le bouton d'execution actif (ou non)
+			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+			// générer une trace
 			GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
 			{
 				verb = "deleted",
@@ -499,6 +507,8 @@ public class DragDropSystem : FSystem
 						{ "context", context }
 					}
 			});
+		}
+		GameObjectManager.addComponent<Undoable>(itemDragged);
 
 		eventSystem.SetSelectedGameObject(itemDragged);
 	}
@@ -565,17 +575,19 @@ public class DragDropSystem : FSystem
 				{
 					// tracer le fait que le joueur fait une erreur de compréhension de la grammaire du langage
 					string content = UtilityGame.exportBlockToString(itemDragged.GetComponent<Highlightable>());
-					string context = exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
+					string context = UtilityGame.exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
 					cancelDragging();
-					GameObjectManager.addComponent<ActionPerformedForLRS>(dropArea, new
-					{
-						verb = "tried",
-						objectType = "block",
-						activityExtensions = new Dictionary<string, string>() {
-							{ "content", content },
-							{ "context", context }
-						}
-					});
+					// seulement sur la scene principale
+                    if (SceneManager.GetActiveScene().name == "MainScene")
+                        GameObjectManager.addComponent<ActionPerformedForLRS>(dropArea, new
+						{
+							verb = "tried",
+							objectType = "block",
+							activityExtensions = new Dictionary<string, string>() {
+								{ "content", content },
+								{ "context", context }
+							}
+						});
 					return;
 				}
 
@@ -590,8 +602,6 @@ public class DragDropSystem : FSystem
 					MainLoop.instance.StartCoroutine(UtilityGame.pulseItem(itemDragged));
 					eventSystem.SetSelectedGameObject(itemDragged);
 				}
-				else
-					eventSystem.SetSelectedGameObject(eventSystem.firstSelectedGameObject);
 				
 				if (itemDragged.GetComponent<Dragging>())
 					GameObjectManager.removeComponent<Dragging>(itemDragged);
@@ -599,8 +609,10 @@ public class DragDropSystem : FSystem
 				// le processus de drag est terminé on se remet en Idle mais on ne le fait pas immediatement pour gérer le cas du drag&drop souris qui au moment du drop déclenche forcément un longClick donc on se remet en Idle une frame plus tard pour ne pas prendre en compte le prochain longClick
 				MainLoop.instance.StartCoroutine(delayIdleState());
 			}
-			// Rafraichissement de l'UI
-			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+            // seulement sur la scene principale
+            if (SceneManager.GetActiveScene().name == "MainScene")
+                // Rafraichissement de l'UI
+                GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
 			itemDragged = null;
 		}
@@ -616,7 +628,7 @@ public class DragDropSystem : FSystem
 	private bool addDraggedItemOnDropZone (GameObject dropArea)
     {
 		string content = UtilityGame.exportBlockToString(itemDragged.GetComponent<Highlightable>());
-		string context = exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
+		string context = UtilityGame.exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
 
 		if (!UtilityGame.addItemOnDropArea(itemDragged, dropArea))
 		{
@@ -637,8 +649,6 @@ public class DragDropSystem : FSystem
 				}
 		}
 
-		GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
-
 		// update limit bloc
 		foreach (BaseElement actChild in itemDragged.GetComponentsInChildren<BaseElement>(true))
 			GameObjectManager.addComponent<Dropped>(actChild.gameObject);
@@ -646,11 +656,15 @@ public class DragDropSystem : FSystem
 			GameObjectManager.addComponent<Dropped>(condChild.gameObject);
 
 		// Lance le son de dépôt du block d'action
-		audioSource.PlayOneShot(Resources.Load("Sound/AddActionSound") as AudioClip);
+		audioSource.PlayOneShot(AddActionSound);
 
-		// générer une trace seulement sur la scene principale
+		// seulement sur la scene principale
 		if (SceneManager.GetActiveScene().name == "MainScene")
-			GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
+        {
+            // Rend le bouton d'execution actif (ou non)
+            GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+            // générer une trace
+            GameObjectManager.addComponent<ActionPerformedForLRS>(itemDragged, new
 			{
 				verb = "inserted",
 				objectType = "block",
@@ -659,8 +673,11 @@ public class DragDropSystem : FSystem
 					{ "context", context }
 				}
 			});
+		}
 
-		return true;
+        GameObjectManager.addComponent<Undoable>(itemDragged);
+
+        return true;
 	}
 
 	private IEnumerator delaySlotSelection(ReplacementSlot rs)
@@ -673,7 +690,7 @@ public class DragDropSystem : FSystem
 	public void deleteElement(GameObject elementToDelete)
 	{
 		// On vérifie qu'il y a bien un objet pointé pour la suppression
-		if (!Pause && gameData.dragDropEnabled && elementToDelete != null && elementToDelete.GetComponentInParent<Highlightable>() != null)
+		if (!Pause && gameData.dragDropEnabled && elementToDelete != null && elementToDelete.GetComponentInParent<Highlightable>() != null && !elementToDelete.GetComponentInParent<Locker>().locked)
 		{
 			elementToDelete = elementToDelete.GetComponentInParent<Highlightable>().gameObject;  // On passe par le Highlightable pour récupérer le gameObject pour gérer le cas par exemple où un enfant du bloc est sélectionné comme le texte "Then" dans un If
 			string content = UtilityGame.exportBlockToString(elementToDelete.GetComponent<Highlightable>());
@@ -693,29 +710,39 @@ public class DragDropSystem : FSystem
 			elementToDelete.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 			GameObjectManager.refresh(elementToDelete);
 			// compute context after removing item dragged
-			string context = exportEditableScriptToString(nextBrother.gameObject.GetComponentInParent<UIRootContainer>(true).transform, removedFromArea);
+			string context = UtilityGame.exportEditableScriptToString(nextBrother.gameObject.GetComponentInParent<UIRootContainer>(true).transform, removedFromArea);
 
 			//On associe à l'élément le component ResetBlocLimit pour déclancher le script de destruction de l'élément
 			GameObjectManager.addComponent<ResetBlocLimit>(elementToDelete);
-			GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+            // Rend le bouton d'execution actif (ou non) seulement sur la scene principale
+            if (SceneManager.GetActiveScene().name == "MainScene")
+                GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 
 			NeedToDelete ntd = elementToDelete.GetComponent<NeedToDelete>();
-			// générer une trace seulement sur la scene principale
-			if ((ntd == null || !ntd.silent) && SceneManager.GetActiveScene().name == "MainScene")
-			{
-				GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+			if ((ntd == null || !ntd.silent))
+            {
+                // générer une trace seulement sur la scene principale
+                if (SceneManager.GetActiveScene().name == "MainScene")
 				{
-					verb = "deleted",
-					objectType = "block",
-					activityExtensions = new Dictionary<string, string>() {
+					GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+					{
+						verb = "deleted",
+						objectType = "block",
+						activityExtensions = new Dictionary<string, string>() {
 						{ "content", content },
 						{ "context", context }
 					}
-				});
-			}
+					});
+                }
+
+                GameObjectManager.addComponent<Undoable>(MainLoop.instance.gameObject);
+            }
 
 			eventSystem.SetSelectedGameObject(nextBrother.gameObject);
-		}
+            // Si le frère suivant l'objet supprimé contient une dropzone ou un replacementSlot de type BaseElement, on le définit comme la dropzone par défaut pour le double click
+            if (nextBrother.GetComponentInChildren<DropZone>(true) || (nextBrother.GetComponent<ReplacementSlot>() && nextBrother.GetComponent<ReplacementSlot>().slotType == ReplacementSlot.SlotType.BaseElement))
+                setDefaultDropZone(nextBrother.gameObject);
+        }
 	}
 
 	private void selectNewDefaultDropZone(GameObject newDropZone)
@@ -737,12 +764,20 @@ public class DragDropSystem : FSystem
 			{
 				// if no drop zone used, try to get the last
 				if (lastDropZoneUsed == null)
-					lastDropZoneUsed = f_dropArea.getAt(f_dropArea.Count - 1);
-				// be sure the lastDropZone is defined
-				if (lastDropZoneUsed != null)
+                {
+                    // Rechercher une zone de drop valide à savoir un replacementSlot qui n'est pas un BaseElement (exemple un ReplacementSlot de type BaseCondition) car dans ce cas on ne peut pas ajouter un bloc d'action dessus avec un double clicks
+                    foreach (GameObject dropZone in f_dropArea)
+						if (dropZone.GetComponent<DropZone>() || (dropZone.GetComponent<ReplacementSlot>() && dropZone.GetComponent<ReplacementSlot>().slotType == ReplacementSlot.SlotType.BaseElement))
+						{
+							lastDropZoneUsed = dropZone;
+							break;
+						}
+				}
+                // be sure the lastDropZone is defined
+                if (lastDropZoneUsed != null)
 				{
 					// On crée le bloc action
-					itemDragged = UtilityGame.createEditableBlockFromLibrary(pointerData.pointerPress, mainCanvas);
+					itemDragged = UtilityGame.createEditableBlockFromLibrary(pointerData.pointerPress, mainCanvas, true);
 					// On l'ajoute aux familles de FYFY
 					GameObjectManager.bind(itemDragged);
 					// On l'envoie sur la dernière dropzone utilisée
@@ -751,13 +786,27 @@ public class DragDropSystem : FSystem
 					GameObjectManager.addComponent<ScrollOn>(itemDragged);
 					MainLoop.instance.StartCoroutine(UtilityGame.pulseItem(itemDragged));
 
-					// Rafraichissement de l'UI
-					GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
+                    // Rafraichissement de l'UI uniquement sur la scene principale
+                    if (SceneManager.GetActiveScene().name == "MainScene")
+						GameObjectManager.addComponent<NeedRefreshPlayButton>(MainLoop.instance.gameObject);
 					itemDragged = null;
 				}
 			}
 		}
 	}
+
+	public void setDefaultDropZone(GameObject refObject)
+	{
+		if (!Pause && gameData.dragDropEnabled)
+		{
+			if (refObject.GetComponentInChildren<DropZone>(true) != null)
+				selectNewDefaultDropZone(refObject.GetComponentInChildren<DropZone>(true).gameObject);
+			else if (refObject.GetComponent<ReplacementSlot>() != null)
+				selectNewDefaultDropZone(refObject.GetComponent<ReplacementSlot>().gameObject);
+			else
+				Debug.Log("No drop zone found for this object: "+ refObject.name);
+        }
+    }
 
 	// see inputFiels in ForBloc prefab in inspector
 	public void onlyPositiveInteger(GameObject forBlock, string newValue)
@@ -772,21 +821,73 @@ public class DragDropSystem : FSystem
 		}
 		forBlock.GetComponent<ForControl>().nbFor = res;
 		// compute context
-		string context = exportEditableScriptToString(forBlock.GetComponentInParent<UIRootContainer>().transform, forBlock);
+		string context = UtilityGame.exportEditableScriptToString(forBlock.GetComponentInParent<UIRootContainer>().transform, forBlock);
 
-		// générer une trace seulement sur la scene principale
-		if (res != oldValue && SceneManager.GetActiveScene().name == "MainScene")
-		{
-			GameObjectManager.addComponent<ActionPerformedForLRS>(forBlock, new
+		if (res != oldValue)
+        {
+            // générer une trace seulement sur la scene principale
+            if (SceneManager.GetActiveScene().name == "MainScene")
 			{
-				verb = "modified",
-				objectType = "block",
-				activityExtensions = new Dictionary<string, string>() {
-				{ "context", context },
-				{ "oldValue", oldValue.ToString()},
-				{ "value", res.ToString()}
-			}
-			});
-		}
+				GameObjectManager.addComponent<ActionPerformedForLRS>(forBlock, new
+				{
+					verb = "modified",
+					objectType = "block",
+					activityExtensions = new Dictionary<string, string>() {
+						{ "context", context },
+						{ "oldValue", oldValue.ToString()},
+						{ "value", res.ToString()}
+					}
+				});
+            }
+
+            GameObjectManager.addComponent<Undoable>(forBlock);
+        }
 	}
+
+	public void lockItem(Transform transform)
+    {
+		// Vérouiller un block implique que tout ses parents soient également bloqués sinon on pourrait indirectement le supprimer en supprimant un parent
+		// Exception si on est sur le locker d'un inputField (cas de l'itération dans le for) pour lequel on n'a pas à propager le blocage sur les parents
+		if (transform.GetComponent<TMP_InputField>() != null)
+		{
+			transform.GetComponent<TMP_InputField>().interactable = false;
+			Locker locker = transform.GetComponent<Locker>();
+			locker.locked = true;
+            UtilityGame.syncLockerUI(locker);
+        }
+		else
+			foreach (Locker locker in transform.GetComponentsInParent<Locker>(true))
+			{
+				locker.locked = true;
+				UtilityGame.setBlockInteractable(locker);
+            }
+        GameObjectManager.addComponent<Undoable>(transform.gameObject);
+    }
+
+	public void unlockItem(Transform transform)
+    {
+		// Dévérouiller un block implique que tout ses enfants soient également dévérouillés sinon on pourrait indirectement supprimer un enfant en supprimant ce block
+		// Exception si on est sur le locker d'un inputField (cas de l'itération dans le for) pour lequel on n'a pas à propager le blocage sur les lui
+		foreach (Locker locker in transform.GetComponentsInChildren<Locker>(true))
+		{
+			if (locker.GetComponent<TMP_InputField>() != null)
+			{
+				// si on est sur le transform qui est la source de l'action on le traite, sinon on le saute
+				if (locker.transform == transform)
+				{
+					locker.locked = false;
+					locker.GetComponent<TMP_InputField>().interactable = true;
+                    UtilityGame.syncLockerUI(locker);
+                }
+				else
+					continue;
+			}
+			else
+			{
+				locker.locked = false;
+				UtilityGame.setBlockInteractable(locker);
+			}
+        }
+        GameObjectManager.addComponent<Undoable>(transform.gameObject);
+    }
 }

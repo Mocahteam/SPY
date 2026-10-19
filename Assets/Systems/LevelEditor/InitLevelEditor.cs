@@ -37,14 +37,13 @@ public class InitLevelEditor : FSystem
 			scriptTab.interactable = true;
 			paramTab.interactable = true;
 			mapContent.SetActive(true);
-			GameObjectManager.refresh(mapContent);
-			GameObjectManager.setGameObjectState(scriptContent, false);
-			GameObjectManager.setGameObjectState(paramContent, false);
+			scriptContent.SetActive(false);
+			paramContent.SetActive(false);
 
-			if (Application.platform == RuntimePlatform.WebGLPlayer)
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlLoadMissions();
 
-			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
+            GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
 			{
 				verb = "opened",
 				objectType = "levelEditor"

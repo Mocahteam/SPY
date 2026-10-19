@@ -6,12 +6,14 @@ public class DragDropSystem_wrapper : BaseWrapper
 	public UnityEngine.GameObject mainCanvas;
 	public UnityEngine.AudioSource audioSource;
 	public UnityEngine.RectTransform editableContainers;
+	public UnityEngine.AudioClip AddActionSound;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
 		MainLoop.initAppropriateSystemField (system, "mainCanvas", mainCanvas);
 		MainLoop.initAppropriateSystemField (system, "audioSource", audioSource);
 		MainLoop.initAppropriateSystemField (system, "editableContainers", editableContainers);
+		MainLoop.initAppropriateSystemField (system, "AddActionSound", AddActionSound);
 	}
 
 	public void checkHighlightDropArea(UnityEngine.GameObject dropArea)
@@ -52,6 +54,21 @@ public class DragDropSystem_wrapper : BaseWrapper
 	public void checkSpecialClick(UnityEngine.EventSystems.BaseEventData element)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "checkSpecialClick", element);
+	}
+
+	public void setDefaultDropZone(UnityEngine.GameObject refObject)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "setDefaultDropZone", refObject);
+	}
+
+	public void lockItem(UnityEngine.Transform transform)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "lockItem", transform);
+	}
+
+	public void unlockItem(UnityEngine.Transform transform)
+	{
+		MainLoop.callAppropriateSystemMethod (system, "unlockItem", transform);
 	}
 
 }

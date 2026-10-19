@@ -10,10 +10,12 @@
 	</map>
 
 	<dialogs>
-		<dialog text="[fr]Tu peux créer tes propres zones de programme à l'aide du bouton '+'.[/fr][en]You can create your own editing area using the '+' button.[/en]" img="[fr]CreateScript.png[/fr][en]CreateScript_en.png[/en]" imgDesc="[fr]Tu peux utiliser la touche 'p' de ton clavier pour sélectionner ce bouton.[/fr][en]You can use the 'p' key on your keyboard to select this button.[/en]" imgHeight="150" enableInteraction="0" briefingType="0" />
+		<dialog text="[fr]Tu peux créer tes propres zones de programme à l'aide du bouton '+'.[/fr][en]You can create your own editing area using the '+' button.[/en]" img="[fr]CreateScript.png[/fr][en]CreateScript_en.png[/en]" imgDesc="[fr]Tu peux utiliser la touche 'p' de ton clavier pour sélectionner ce bouton.[/fr][en]You can use the 'p' key on your keyboard to select this button.[/en]" imgHeight="150" enableInteraction="1" highlight="AddContainerButton" briefingType="0" />
 		<dialog text="[fr]Il ne te faudra pas oublier d'indiquer le nom du robot à qui tu souhaites envoyer ton programme.[/fr][en]Don't forget to indicate the name of the robot you want to send your program to.[/en]" enableInteraction="0" briefingType="0" />
 	</dialogs>
 	<score twoStars="0" threeStars="6750"/>
+
+	<omniscientView />
 
 	<blockLimits>
 		<blockLimit blockType="Forward" limit="3" />
@@ -47,7 +49,7 @@
 
 	<robot inputLine="Plok" posX="2" posY="1" direction="1" skin="0" />
 
-	<script outputLine="Plok_Sol" editMode="2" type="4">
+	<script outputLine="Plok_Sol" editMode="0" type="4">
 		<action type="Forward"/>
 		<action type="Forward"/>
 		<action type="Forward"/>

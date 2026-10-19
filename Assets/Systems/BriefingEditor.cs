@@ -4,14 +4,17 @@ using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Web;
 
 public class BriefingEditor : FSystem
 {
 	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	public Transform editBriefingPanel;
-	public GameObject briefingItemPrefab;
+	public Transform briefingContent;
+    public GameObject briefingItemPrefab;
 
 	private GameObject currentBriefingEdit;
 	private DataLevelBehaviour overridedBriefing;
@@ -46,10 +49,9 @@ public class BriefingEditor : FSystem
 
 			overridedBriefing = dataLevel;
 			// remove all old briefing items
-			Transform viewportContent = editBriefingPanel.Find("Scroll View").GetChild(0).GetChild(0);
-			while (viewportContent.childCount > 0)
+			while (briefingContent.childCount > 0)
 			{
-				Transform child = viewportContent.GetChild(viewportContent.childCount - 1);
+				Transform child = briefingContent.GetChild(briefingContent.childCount - 1);
 				GameObjectManager.unbind(child.gameObject);
 				child.SetParent(null);
 				GameObject.Destroy(child.gameObject);
@@ -75,7 +77,7 @@ public class BriefingEditor : FSystem
 			// add briefing items
 			foreach (Dialog dialog in dataLevel.data.overridedDialogs)
 			{
-				GameObject newItem = GameObject.Instantiate(briefingItemPrefab, viewportContent, false);
+				GameObject newItem = GameObject.Instantiate(briefingItemPrefab, briefingContent, false);
 				GameObjectManager.bind(newItem);
 				foreach (TMP_InputField input in newItem.GetComponentsInChildren<TMP_InputField>(true))
 				{
@@ -97,7 +99,9 @@ public class BriefingEditor : FSystem
 						input.text = dialog.video;
 					else if (input.name == "VideoSize_input" && dialog.videoHeight != -1)
 						input.text = "" + dialog.videoHeight;
-					else
+                    else if (input.name == "HighlightPath_input" && dialog.highlight != null)
+                        input.text = dialog.highlight;
+                    else
 						input.text = "";
 				}
 				newItem.GetComponentInChildren<Toggle>().isOn = dialog.enableInteraction;
@@ -120,10 +124,9 @@ public class BriefingEditor : FSystem
 
 			// save briefing items
 			overridedBriefing.data.overridedDialogs = new List<Dialog>();
-			Transform viewportContent = editBriefingPanel.Find("Scroll View").GetChild(0).GetChild(0);
-			for (int i = 3; i < viewportContent.childCount; i++)
+			for (int i = 0; i < briefingContent.childCount; i++)
 			{
-				Transform child = viewportContent.GetChild(i);
+				Transform child = briefingContent.GetChild(i);
 				Dialog dialog = new Dialog();
 				foreach (TMP_InputField input in child.GetComponentsInChildren<TMP_InputField>(true))
 				{
@@ -145,7 +148,9 @@ public class BriefingEditor : FSystem
 						dialog.video = input.text.Replace('\"', '\'');
 					else if (input.name == "VideoSize_input" && input.text != "")
 						dialog.videoHeight = float.Parse(input.text);
-				}
+					else if (input.name == "HighlightPath_input" && input.text != "")
+                        dialog.highlight = input.text.Replace('\"', '\'');
+                }
 				dialog.enableInteraction = child.GetComponentInChildren<Toggle>().isOn;
 				dialog.briefingType = child.GetComponentInChildren<TMP_Dropdown>().value;
 				overridedBriefing.data.overridedDialogs.Add(dialog);
@@ -153,7 +158,11 @@ public class BriefingEditor : FSystem
 
 			// remettre le focus sur le bouton qui a appelé la fenêtre
 			if (currentBriefingEdit != null)
+			{
 				EventSystem.current.SetSelectedGameObject(currentBriefingEdit);
+				if (SceneManager.GetActiveScene().name == "ScenarioEditor")
+                    currentBriefingEdit.transform.parent.parent.Find("MissionButton").GetComponent<Button>().onClick.Invoke(); // Dans l'éditeur de scénario, après avoir édité un briefing on simule un clic sur le bouton de la mission pour que les changements soient pris en compte et affichés dans le panneau central
+            }
 			currentBriefingEdit = null;
 		}
 	}

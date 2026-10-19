@@ -17,7 +17,6 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public UnityEngine.UI.Button addToScenario;
 	public UnityEngine.GameObject savingPanel;
 	public UnityEngine.GameObject editBriefingPanel;
-	public UnityEngine.GameObject briefingItemPrefab;
 	public TMPro.TMP_InputField scenarioAbstract;
 	public TMPro.TMP_InputField scenarioName;
 	public UnityEngine.GameObject loadingScenarioContent;
@@ -25,6 +24,7 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 	public TMPro.TMP_InputField levelFilterByName;
 	public UnityEngine.UI.Button closeBriefing;
 	public CurrentSettingsValues currentSettingsValues;
+	public UnityEngine.GameObject ScenarioAvailablePrefab;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
@@ -42,7 +42,6 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "addToScenario", addToScenario);
 		MainLoop.initAppropriateSystemField (system, "savingPanel", savingPanel);
 		MainLoop.initAppropriateSystemField (system, "editBriefingPanel", editBriefingPanel);
-		MainLoop.initAppropriateSystemField (system, "briefingItemPrefab", briefingItemPrefab);
 		MainLoop.initAppropriateSystemField (system, "scenarioAbstract", scenarioAbstract);
 		MainLoop.initAppropriateSystemField (system, "scenarioName", scenarioName);
 		MainLoop.initAppropriateSystemField (system, "loadingScenarioContent", loadingScenarioContent);
@@ -50,16 +49,12 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "levelFilterByName", levelFilterByName);
 		MainLoop.initAppropriateSystemField (system, "closeBriefing", closeBriefing);
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
+		MainLoop.initAppropriateSystemField (system, "ScenarioAvailablePrefab", ScenarioAvailablePrefab);
 	}
 
-	public void selectCompetencies(System.Int32 referentialId)
+	public void updateCompetencies()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "selectCompetencies", referentialId);
-	}
-
-	public void createCompetencies()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "createCompetencies", null);
+		MainLoop.callAppropriateSystemMethod (system, "updateCompetencies", null);
 	}
 
 	public void resetFilters()

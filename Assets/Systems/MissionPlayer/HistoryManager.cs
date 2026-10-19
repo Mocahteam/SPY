@@ -1,12 +1,16 @@
-using UnityEngine;
 using FYFY;
 using System.Collections;
-using TMPro;
-using UnityEngine.UI;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Localization.Components;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.Localization.SmartFormat.PersistentVariables;
 
 /// <summary>
 /// Manage history to accumulate player attempt when resolving the level in several steps.
+/// Manage undo/redo of the editable containers.
 /// History is displayed at the end of the level
 /// </summary>
 public class HistoryManager : FSystem
@@ -16,98 +20,188 @@ public class HistoryManager : FSystem
 	private Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édité
 	private Family f_removeButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton"));
 	private Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
+    private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
+    private Family f_editMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+    private Family f_undoable = FamilyManager.getFamily(new AllOfComponents(typeof(Undoable)));
 
-	private GameData gameData;
+    private GameData gameData;
+    private Transform UndoRedoStack;
+    private bool keepNextUndoRedoStack = false;
+    private int stackPos;
 
-	public GameObject EditableCanvas;
+    public RectTransform EditableContainers;
 	public GameObject libraryFor;
 	public GameObject libraryWait;
 	public GameObject canvas;
 	public GameObject buttonAddEditableContainer;
 	public GameObject buttonExecute;
+    public Button buttonUndo;
+    public Button buttonRedo;
 
-	protected override void onStart()
+    // L'instance
+    public static HistoryManager instance;
+
+    public HistoryManager()
+    {
+        instance = this;
+    }
+
+    protected override void onStart()
 	{
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
 
-		f_askToSaveHistory.addEntryCallback(delegate (GameObject go)
-			{
-				saveHistory();
-				GameObjectManager.removeComponent<AskToSaveHistory>(go);
-			});
+        if (EditableContainers != null)
+        {
+            f_askToSaveHistory.addEntryCallback(delegate (GameObject go)
+            {
+                saveHistory();
+                GameObjectManager.removeComponent<AskToSaveHistory>(go);
+            });
 
-		f_newEnd.addEntryCallback(levelFinished);
+            f_newEnd.addEntryCallback(levelFinished);
 
-		MainLoop.instance.StartCoroutine(delayLoadHistory());
+            // Ici si l'historique est défini en début de niveau on veut attendre que les AddSpecificContainer soient créés pour pouvoir restaurer l'historique dans les zones d'édition, d'où le false en paramètre
+            MainLoop.instance.StartCoroutine(delayLoadHistory(false));
+            UndoRedoStack = EditableContainers.parent.Find("UndoRedoStack");
+            // suppression des événements Undoable qui pourraient rester dans la pile d'annulation
+            removeLastsUndoable(UndoRedoStack.childCount);
+            // enregistrer l'état initial des zones d'édition
+            if (SceneManager.GetActiveScene().name == "MainScene")
+                // Pour la scène principale on attend que le jeu soit chargé pour empiler l'état initial des zones d'édition
+                f_gameLoaded.addEntryCallback(delegate {
+                    MainLoop.instance.StartCoroutine(delayStackEditableContainers());
+                });
+            else
+                // Pour l'éditeur de mission on empile l'état initial des zones d'édition dès le départ
+                MainLoop.instance.StartCoroutine(delayStackEditableContainers());
+            // vider la pile d'annulation si on recommence une phase d'édition
+            f_editMode.addEntryCallback(delegate {
+                if (!keepNextUndoRedoStack)
+                    MainLoop.instance.StartCoroutine(delayStackEditableContainers());
+                keepNextUndoRedoStack = false;
+            });
+        }
+    }
 
-		Pause = true;
-	}
+    protected override void onProcess(int familiesUpdateCount)
+    {
+        if (f_undoable.Count > 0)
+        {
+            // nettoyage des Undoable
+            foreach (GameObject go in f_undoable)
+                GameObjectManager.removeComponent<Undoable>(go);
+            // Si on est remonté dans la pile d'annulation, on supprime les éléments qui sont au dessus de la position courante
+            if (stackPos < UndoRedoStack.childCount - 1)
+                removeLastsUndoable(UndoRedoStack.childCount - 1 - stackPos);
+            // Stack de l'état actuel des zones d'édition
+            stackEditableContainers();
+            stackPos++;
+            buttonUndo.interactable = true;
+            buttonRedo.interactable = false;
+        }
+    }
 
-	// check if player win the game and if true, load history
-	private void levelFinished(GameObject go)
-	{
-		// En cas de fin de niveau
-		if (go.GetComponent<NewEnd>().endType == NewEnd.Win)
-		{
-			// Affichage de l'historique de l'ensemble des actions exécutées
-			saveHistory();
-			MainLoop.instance.StartCoroutine(delayLoadHistory());
+    // Used in StopButton and ReloadState buttons in editor
+    // Permet d'informer ce système qu'au prochain retour en mode édition, il ne faut pas vider la pile d'annulation, mais la conserver en effet quand le joueur appuit sur le bouton stop il faut qu'il puisse retrouver son histrorique d'édition pour pouvoir continuer à éditer son programme
+    public void keepUndoRedoStack()
+    {
+        keepNextUndoRedoStack = true;
+    }
+
+    private IEnumerator delayStackEditableContainers()
+    {
+        removeLastsUndoable(UndoRedoStack.childCount);
+        // pour attendre que les zones d'édition soient bien initialisées (cas par exemple d'un joueur qui recommence un niveau, son script de la tentative précédente est rechargé et il faut lui laisser le temps de finir de préremplir le script avant de sauvegarder le premier état)
+        yield return null;
+        yield return null;
+        yield return null;
+        yield return null;
+        stackEditableContainers();
+        stackPos = 0;
+        buttonUndo.interactable = false;
+        buttonRedo.interactable = false;
+    }
+
+    private void removeLastsUndoable(int count)
+    {
+        for (int i = 0; i < count && UndoRedoStack.childCount > 0; i++)
+        {
+            GameObject child = UndoRedoStack.GetChild(UndoRedoStack.childCount - 1).gameObject;
+            child.transform.SetParent(null);
+            GameObject.Destroy(child);
+        }
+        if (stackPos > UndoRedoStack.childCount - 1)
+            stackPos = UndoRedoStack.childCount - 1;
+    }
+
+    // check if player win the game and if true, load history
+    private void levelFinished(GameObject go)
+    {
+        // En cas de fin de niveau
+        if (go.GetComponent<NewEnd>().endType == NewEnd.Win)
+        {
+            saveHistory();
+            // Affichage de l'historique de l'ensemble des actions exécutées, ici on n'a pas à attendre que les AddSpecificContainer soient créés car on est en fin de niveau on veut simplement remplacer leur contenu par les éléments de l'historique, d'où le true en paramètre
+            MainLoop.instance.StartCoroutine(delayLoadHistory(true));
 		}
 		// for other end type, nothing to do more
 	}
 
 	// Add the executed scripts to the containers history
+	// See MainScene => EndPanel => ReloadLevel button
 	public void saveHistory()
 	{
-		if (gameData.actionsHistory == null)
-		{
-			// set history as a copy of editable canvas
-			gameData.actionsHistory = GameObject.Instantiate(EditableCanvas.transform.GetChild(0).transform).gameObject;
-			gameData.actionsHistory.SetActive(false); // keep this gameObject as a ghost
-			// We don't bind the history to FYFY
-		}
-		else
-		{
-			// parse all containers inside editable canvas
-			for (int containerCpt = 0; containerCpt < EditableCanvas.transform.GetChild(0).childCount; containerCpt++)
-			{
-				Transform viewportForEditableContainer = EditableCanvas.transform.GetChild(0).GetChild(containerCpt);
-				// the first child is the script container that contains script elements
-				foreach (Transform child in viewportForEditableContainer.GetChild(0))
-				{
-					if (child.GetComponent<BaseElement>())
-					{
-						// copy this child inside the appropriate history
-						GameObject.Instantiate(child, gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0));
-						// We don't bind the history to FYFY
-					}
-				}
-			}
-		}
-		// Erase all editable containers
-		foreach (Transform viewportForEditableContainer in EditableCanvas.transform.GetChild(0))
-		{
-			for (int i = viewportForEditableContainer.GetChild(0).childCount - 1; i >= 0; i--)
-			{
-				Transform child = viewportForEditableContainer.GetChild(0).GetChild(i);
-				if (child.GetComponent<BaseElement>())
-				{
-					UtilityGame.manageEmptyZone(child.gameObject);
-					GameObjectManager.unbind(child.gameObject);
-					child.SetParent(null); // because destroying is not immediate
-					GameObject.Destroy(child.gameObject);
-				}
-			}
-		}
-		(EditableCanvas.transform.GetChild(0).transform as RectTransform).anchoredPosition = new Vector2(0, 0);
+        if (gameData.actionsHistory == null)
+        {
+            // set history as a copy of editable canvas
+            gameData.actionsHistory = GameObject.Instantiate(EditableContainers).gameObject;
+            gameData.actionsHistory.SetActive(false); // keep this gameObject as a ghost
+            // We don't bind the history to FYFY
+        }
+        else
+        {
+            // parse all containers inside editable canvas
+            for (int containerCpt = 0; containerCpt < EditableContainers.childCount; containerCpt++)
+            {
+                Transform viewportForEditableContainer = EditableContainers.GetChild(containerCpt);
+                // the first child is the script container that contains script elements
+                foreach (Transform child in viewportForEditableContainer.GetChild(0))
+                {
+                    if (child.GetComponent<BaseElement>())
+                    {
+                        // copy this child inside the appropriate script
+                        GameObject.Instantiate(child, gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0));
+                        // We don't bind this copy to FYFY
+                    }
+                }
+            }
+        }
 
-		// Add Wait action for each inaction
-		for (int containerCpt = 0; containerCpt < EditableCanvas.transform.GetChild(0).childCount; containerCpt++)
+        // Suppression du contenu de chaque zone d'édition pour que la prochaine phase de programme commence sur des zones d'édition vides
+        // Ici on ne cherche pas à restaurer les blocs d'actions dans la bibliothèque car ils ont bien été consomés lors de la phase d'exécution du programme
+        foreach (Transform viewportForEditableContainer in EditableContainers)
+        {
+            for (int i = viewportForEditableContainer.GetChild(0).childCount - 1; i >= 0; i--)
+            {
+                Transform child = viewportForEditableContainer.GetChild(0).GetChild(i);
+                if (child.GetComponent<BaseElement>())
+                {
+                    UtilityGame.manageEmptyZone(child.gameObject);
+                    GameObjectManager.unbind(child.gameObject);
+                    child.SetParent(null); // because destroying is not immediate
+                    GameObject.Destroy(child.gameObject);
+                }
+            }
+        }
+        EditableContainers.anchoredPosition = new Vector2(0, 0);
+
+        // Add Wait action for each inaction
+        for (int containerCpt = 0; containerCpt < EditableContainers.childCount; containerCpt++)
 		{
 			// look for associated agent
-			string associatedAgent = EditableCanvas.transform.GetChild(0).GetChild(containerCpt).GetComponentInChildren<UIRootContainer>().scriptName;
+			string associatedAgent = EditableContainers.GetChild(containerCpt).GetComponentInChildren<UIRootContainer>().scriptName;
 			GameObject agentSelected = null;
 			int minNbOfInaction = int.MaxValue;
 			foreach (GameObject agent in f_agent)
@@ -129,7 +223,7 @@ public class HistoryManager : FSystem
 				{
 					for (int i = 0; i < minNbOfInaction; i++)
 					{
-						GameObject newWait = UtilityGame.createEditableBlockFromLibrary(libraryWait, canvas);
+						GameObject newWait = UtilityGame.createEditableBlockFromLibrary(libraryWait, canvas, true);
 						newWait.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
 						newWait.transform.SetAsLastSibling();
 						gameData.totalActionBlocUsed++;
@@ -138,14 +232,14 @@ public class HistoryManager : FSystem
 				else if (minNbOfInaction > 1)
 				{
 					// Create for control
-					ForControl forCont = UtilityGame.createEditableBlockFromLibrary(libraryFor, canvas).GetComponent<ForControl>();
+					ForControl forCont = UtilityGame.createEditableBlockFromLibrary(libraryFor, canvas, true).GetComponent<ForControl>();
 					forCont.currentFor = 0;
 					forCont.nbFor = minNbOfInaction;
 					forCont.transform.GetComponentInChildren<TMP_InputField>(true).text = forCont.nbFor.ToString();
 					forCont.transform.SetParent(gameData.actionsHistory.transform.GetChild(containerCpt).GetChild(0), false);
 					// Create Wait action
 					Transform forContainer = forCont.transform.Find("Container");
-					GameObject newWait = UtilityGame.createEditableBlockFromLibrary(libraryWait, canvas);
+					GameObject newWait = UtilityGame.createEditableBlockFromLibrary(libraryWait, canvas, true);
 					newWait.transform.SetParent(forContainer, false);
 					newWait.transform.SetAsFirstSibling();
 					// Set drop/empty zone
@@ -159,77 +253,46 @@ public class HistoryManager : FSystem
 		// Disable add container button
 		buttonAddEditableContainer.GetComponent<Button>().interactable = false;
 
-		buttonAddEditableContainer.GetComponent<TooltipContent>().text = buttonAddEditableContainer.GetComponentInParent<Localization>(true).localization[1];
+        buttonAddEditableContainer.GetComponent<TooltipContent>().text = Utility.GetLocalizedString("CannotAddedAfterStarting");
 
 		//Disable remove container buttons and naming input field
 		foreach (GameObject trash in f_removeButton)
 		{
 			trash.GetComponent<Button>().interactable = false;
-			TMP_InputField name_input = trash.transform.parent.Find("ContainerName").GetComponent<TMP_InputField>();
-			name_input.interactable = false;
-			name_input.GetComponent<TooltipContent>().text = Utility.getFormatedText(name_input.GetComponentInParent<Localization>(true).localization[3], name_input.text);
-		}
+            Transform robotNameStatic = trash.transform.parent.Find("Naming/RobotName_static");
+            TMP_Text name = robotNameStatic.GetComponentInChildren<TMP_Text>(true);
+            Button editNameButton = robotNameStatic.GetComponentInChildren<Button>(true);
+			editNameButton.interactable = false;
+            LocalizeStringEvent lse = editNameButton.GetComponent<LocalizeStringEvent>();
+            lse.StringReference.TableEntryReference = "CalledBy";
+            (lse.StringReference["robotName"] as StringVariable).Value = name.text;
+        }
 	}
 
 
 	// Restore saved scripts in history inside editable script containers
-	private IEnumerator delayLoadHistory()
+	private IEnumerator delayLoadHistory(bool skipWaitingAddSpecificContainers)
 	{
 		if (gameData != null && gameData.actionsHistory != null)
 		{
-			// Wait that AddSpecificContainer was created
-			yield return null;
-			yield return null;
-			yield return null;
+            if (!skipWaitingAddSpecificContainers)
+            {
+                // Wait that AddSpecificContainer was created
+                yield return new WaitUntil(() => f_addSpecificContainer.Count > 0);
+                // Wait that AddSpecificContainer was removed (ie default editable canvas are created)
+                yield return new WaitUntil(() => f_addSpecificContainer.Count == 0);
+            }
 
-			// Wait that default editable canvas are created
-			while (f_addSpecificContainer.Count > 0)
-				yield return null;
+            // Remove all default canvas and restore all blocs
+            yield return removeEditableContainers();
 
+            gameData.totalActionBlocUsed = 0;
 
-			// Remove all default canvas and restore all blocs
-			Transform editableContainers = EditableCanvas.transform.GetChild(0);
-			foreach (Transform viewportForEditableContainer in editableContainers)
-				GameObjectManager.addComponent<ForceRemoveContainer>(viewportForEditableContainer.gameObject);
+            // Restore history
+            yield return restoreEditableContainers(gameData.actionsHistory.transform, false);
 
-			while (editableContainers.childCount > 0)
-				yield return null;
-
-			gameData.totalActionBlocUsed = 0;
-			// Restore history
-			for (int i = 0; i < gameData.actionsHistory.transform.childCount; i++)
-			{
-				Transform history_EditableContainer = gameData.actionsHistory.transform.GetChild(i).GetChild(0);
-				UIRootContainer uiRC = history_EditableContainer.GetComponent<UIRootContainer>();
-				List<GameObject> script = new List<GameObject>();
-				foreach (Transform history_child in history_EditableContainer)
-					if (history_child.GetComponent<BaseElement>())
-						script.Add(history_child.gameObject);
-				GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = uiRC.scriptName, editState = uiRC.editState, typeState = uiRC.type, script = script });
-			}
-
-			// Wait that history AddSpecificContainer are created
-			yield return null;
-			yield return null;
-			// Wait that history canvas are created
-			while (f_addSpecificContainer.Count > 0)
-				yield return null;
-			// Count used elements
-			foreach (Transform viewportForEditableContainer in EditableCanvas.transform.GetChild(0))
-			{
-				foreach (BaseElement act in viewportForEditableContainer.GetComponentsInChildren<BaseElement>(true))
-				{
-					GameObjectManager.addComponent<Dropped>(act.gameObject);
-					gameData.totalActionBlocUsed--; // cancel this drop count, already count with AddSpecificContainer
-				}
-				foreach (BaseCondition act in viewportForEditableContainer.GetComponentsInChildren<BaseCondition>(true))
-				{
-					GameObjectManager.addComponent<Dropped>(act.gameObject);
-					gameData.totalActionBlocUsed--; // cancel this drop count, already count with AddSpecificContainer
-				}
-			}
-			//destroy history
-			GameObject.Destroy(gameData.actionsHistory);
+            //destroy history
+            GameObject.Destroy(gameData.actionsHistory);
 			//enable Play button
 			buttonExecute.GetComponent<Button>().interactable = true;
 			// disable editable container if won
@@ -241,11 +304,136 @@ public class HistoryManager : FSystem
 					// Disable trash button
 					brush.GetComponent<Button>().interactable = false;
 					// Disable reset button
-					brush.transform.parent.GetChild(brush.transform.GetSiblingIndex() - 1).GetComponent<Button>().interactable = false;
+					brush.transform.parent.Find("ResetButton").GetComponent<Button>().interactable = false;
 					// Disable naming TMP
-					brush.transform.parent.GetComponentInChildren<TMPro.TMP_InputField>().interactable = false;
+					brush.transform.parent.Find("Naming/RobotName_static/ButtonEditName").GetComponent<Button>().interactable = false;
 				}
 			}
 		}
-	}
+    }
+
+    private void stackEditableContainers()
+    {
+        GameObject copy = GameObject.Instantiate(EditableContainers.gameObject, UndoRedoStack);
+        // Il faut un peu nettoyer la copy de composants qui trainent car supprimés via le GameObjectManager, il seront réellement supprimés à la fin de la frame, donc il sont présents dans la copy, il faut donc nettoyer tout ça
+        // suppression des Undoable
+        foreach (Undoable u in copy.GetComponentsInChildren<Undoable>(true))
+            Object.Destroy(u);
+        // suppression des Dropped
+        foreach (Dropped d in copy.GetComponentsInChildren<Dropped>(true))
+            Object.Destroy(d);
+        // suppression des ActionPerformedForLRS
+        foreach (ActionPerformedForLRS a in copy.GetComponentsInChildren<ActionPerformedForLRS>(true))
+            Object.Destroy(a);
+        // restauration des scale à 1 au cas où la copie aurait copié en plein milieu d'un pulseItem
+        foreach (Transform tr in copy.GetComponentsInChildren<Transform>(true))
+            tr.localScale = Vector3.one;
+        // We don't bind the history to FYFY
+    }
+
+    private IEnumerator removeEditableContainers()
+	{
+        foreach (Transform viewportForEditableContainer in EditableContainers)
+            GameObjectManager.addComponent<ForceRemoveContainer>(viewportForEditableContainer.gameObject);
+
+        yield return new WaitWhile(() => EditableContainers.childCount > 0);
+    }
+
+    // Restore saved scripts in history inside editable script containers
+    // copy: if true, copy the saved scripts, else move them
+    private IEnumerator restoreEditableContainers(Transform src, bool copy)
+	{
+        // Restore src contents into editable containers
+        for (int i = 0; i < src.childCount; i++)
+        {
+            Transform saved_EditableContainer = src.GetChild(i).GetChild(0);
+            UIRootContainer uiRC = saved_EditableContainer.GetComponent<UIRootContainer>();
+            List<GameObject> script = new List<GameObject>();
+            foreach (Transform saved_child in saved_EditableContainer)
+                if (saved_child.GetComponent<BaseElement>())
+                    script.Add(copy ? GameObject.Instantiate(saved_child.gameObject) : saved_child.gameObject);
+            GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = uiRC.scriptName, editState = uiRC.editState, typeState = uiRC.type, script = script });
+        }
+
+        if (src.childCount > 0)
+        {
+            // Wait that AddSpecificContainer was created
+            yield return new WaitUntil(() => f_addSpecificContainer.Count > 0);
+            // Wait that AddSpecificContainer was removed  (ie default editable canvas are created)
+            yield return new WaitUntil(() => f_addSpecificContainer.Count == 0);
+
+            // Count used elements
+            foreach (Transform viewportForEditableContainer in EditableContainers)
+            {
+                foreach (BaseElement act in viewportForEditableContainer.GetComponentsInChildren<BaseElement>(true))
+                {
+                    GameObjectManager.addComponent<Dropped>(act.gameObject);
+                    gameData.totalActionBlocUsed--; // cancel this drop count, already count with AddSpecificContainer
+                }
+                foreach (BaseCondition act in viewportForEditableContainer.GetComponentsInChildren<BaseCondition>(true))
+                {
+                    GameObjectManager.addComponent<Dropped>(act.gameObject);
+                    gameData.totalActionBlocUsed--; // cancel this drop count, already count with AddSpecificContainer
+                }
+            }
+        }
+    }
+
+    public void undo()
+    {
+        if (stackPos > 0)
+            MainLoop.instance.StartCoroutine(processUndo());
+    }
+
+    private IEnumerator processUndo()
+    {
+        stackPos--;
+        if (stackPos <= 0)
+            buttonUndo.interactable = false;
+        buttonRedo.interactable = true;
+
+        yield return removeEditableContainers();
+        yield return restoreEditableContainers(UndoRedoStack.GetChild(stackPos), true);
+
+        string scriptsContent = "";
+        foreach (Transform viewportScriptContainer in EditableContainers)
+            scriptsContent += UtilityGame.exportEditableScriptToString(viewportScriptContainer.Find("ScriptContainer"), null);
+        GameObjectManager.addComponent<ActionPerformedForLRS>(EditableContainers.gameObject, new
+        {
+            verb = "undone",
+            objectType = "script",
+            activityExtensions = new Dictionary<string, string>() {
+                { "content", scriptsContent }
+            }
+        });
+    }
+
+    public void redo()
+    {
+        if (stackPos < UndoRedoStack.childCount - 1)
+            MainLoop.instance.StartCoroutine(processRedo());
+    }
+
+    private IEnumerator processRedo()
+    {
+        stackPos++;
+        if (stackPos >= UndoRedoStack.childCount - 1)
+            buttonRedo.interactable = false;
+        buttonUndo.interactable = true;
+
+        yield return removeEditableContainers();
+        yield return restoreEditableContainers(UndoRedoStack.GetChild(stackPos), true);
+
+        string scriptsContent = "";
+        foreach (Transform viewportScriptContainer in EditableContainers)
+            scriptsContent += UtilityGame.exportEditableScriptToString(viewportScriptContainer.Find("ScriptContainer"), null);
+        GameObjectManager.addComponent<ActionPerformedForLRS>(EditableContainers.gameObject, new
+        {
+            verb = "redone",
+            objectType = "script",
+            activityExtensions = new Dictionary<string, string>() {
+                { "content", scriptsContent }
+            }
+        });
+    }
 }

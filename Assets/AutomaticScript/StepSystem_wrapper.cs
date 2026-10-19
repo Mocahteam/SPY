@@ -3,11 +3,9 @@ using FYFY;
 
 public class StepSystem_wrapper : BaseWrapper
 {
-	public UnityEngine.RectTransform editableContainers;
 	private void Start()
 	{
 		this.hideFlags = HideFlags.NotEditable;
-		MainLoop.initAppropriateSystemField (system, "editableContainers", editableContainers);
 	}
 
 	public void autoExecuteStep(System.Boolean on)
