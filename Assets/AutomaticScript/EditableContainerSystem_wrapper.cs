@@ -33,11 +33,6 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "editRobotName", name);
 	}
 
-	public void checkDoubleClick(UnityEngine.EventSystems.BaseEventData element)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "checkDoubleClick", element);
-	}
-
 	public void newNameContainer(System.String newName)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "newNameContainer", newName);
