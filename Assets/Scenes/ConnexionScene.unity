@@ -12943,7 +12943,7 @@ PrefabInstance:
     - target: {fileID: 5823301115898488393, guid: 55250afd141154f47b617f620198eaa1,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: selectAvatar
+      value: SelectAvatar
       objectReference: {fileID: 0}
     - target: {fileID: 5823301115898488393, guid: 55250afd141154f47b617f620198eaa1,
         type: 3}
@@ -13046,7 +13046,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 447590370585122739}
         m_TargetAssemblyTypeName: ImgReplacementText, Assembly-CSharp
-        m_MethodName: setReplacementText
+        m_MethodName: SetReplacementText
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -14383,7 +14383,7 @@ PrefabInstance:
     - target: {fileID: 5823301115898488393, guid: 55250afd141154f47b617f620198eaa1,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: selectAvatar
+      value: SelectAvatar
       objectReference: {fileID: 0}
     - target: {fileID: 5823301115898488393, guid: 55250afd141154f47b617f620198eaa1,
         type: 3}
@@ -14486,7 +14486,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1837557784575138138}
         m_TargetAssemblyTypeName: ImgReplacementText, Assembly-CSharp
-        m_MethodName: setReplacementText
+        m_MethodName: SetReplacementText
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -18529,6 +18529,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1645587992}
@@ -18539,12 +18544,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: setBirthYear
+      value: SetBirthYear
       objectReference: {fileID: 0}
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SettingsManager_wrapper, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
+        type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
       value: SettingsManager_wrapper, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
@@ -19206,7 +19221,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4049216932857355090}
         m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
-        m_MethodName: setText
+        m_MethodName: SetText
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -22255,7 +22270,7 @@ PrefabInstance:
     - target: {fileID: 5823301115898488393, guid: 55250afd141154f47b617f620198eaa1,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: selectAvatar
+      value: SelectAvatar
       objectReference: {fileID: 0}
     - target: {fileID: 5823301115898488393, guid: 55250afd141154f47b617f620198eaa1,
         type: 3}
@@ -22358,7 +22373,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6434884392569035901}
         m_TargetAssemblyTypeName: ImgReplacementText, Assembly-CSharp
-        m_MethodName: setReplacementText
+        m_MethodName: SetReplacementText
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -25042,7 +25057,7 @@ PrefabInstance:
     - target: {fileID: 7044031515715825763, guid: 88903c9240318f34e94bc725deb4a76b,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: setIsTeacher
+      value: SetIsTeacher
       objectReference: {fileID: 0}
     - target: {fileID: 7044031515715825763, guid: 88903c9240318f34e94bc725deb4a76b,
         type: 3}
@@ -25417,7 +25432,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8796977734136769616}
         m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
-        m_MethodName: setText
+        m_MethodName: SetText
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

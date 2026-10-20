@@ -24,7 +24,7 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         pointActionUI = EventSystem.current.GetComponent<InputSystemUIInputModule>().point.action;
     }
 
-    private void showTooltip()
+    private void ShowTooltip()
     {
         if (tooltip != null)
             tooltip.ShowTooltip(text);
@@ -32,15 +32,15 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (pointActionUI.enabled)
-            showTooltip();
+            ShowTooltip();
     }
     public void OnSelect(BaseEventData eventData)
     {
         pointActionUI.Disable(); // Pour ne pas que l'objet sélectionné par code ait son tooltip qui continue à suivre le curseur de la souris
-        showTooltip();
+        ShowTooltip();
     }
     
-    private void hideTooltip()
+    private void HideTooltip()
     {
         if (tooltip != null)
             tooltip.HideTooltip();
@@ -48,19 +48,19 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnPointerExit(PointerEventData eventData)
     {
         if (pointActionUI.enabled)
-            hideTooltip();
+            HideTooltip();
     }
     public void OnDeselect(BaseEventData eventData)
     {
-        hideTooltip();
+        HideTooltip();
     }
 
     public void OnDisable()
     {
-        hideTooltip();
+        HideTooltip();
     }
 
-    public void setText(string newContent)
+    public void SetText(string newContent)
     {
         text = newContent;
     }

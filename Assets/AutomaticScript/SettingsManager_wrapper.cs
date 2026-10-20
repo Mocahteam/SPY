@@ -44,11 +44,6 @@ public class SettingsManager_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "ImportSettings", content);
 	}
 
-	public void ResetParameters()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "ResetParameters", null);
-	}
-
 	public void HookListener(System.String key)
 	{
 		MainLoop.callAppropriateSystemMethod (system, "HookListener", key);

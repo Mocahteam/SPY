@@ -3,142 +3,137 @@ using UnityEngine;
 // Used in ForBloc
 public class SettingsManagerBridge : MonoBehaviour
 {
-	public void resetParameters()
-    {
-		SettingsManager.instance.ResetParameters();
-	}
-
-	public void saveParameters()
+	public void SaveParameters()
     {
 		SettingsManager.instance.SaveParameters();
 	}
 
-	public void sendUserData()
+	public void SendUserData()
 	{
 		SettingsManager.instance.SendUserData();
 	}
 
-	public void exportSettings()
+	public void ExportSettings()
     {
 		SettingsManager.instance.ExportSettings();
     }
 
-    public void onPresetSelected(int selectedIndex)
+    public void OnPresetSelected(int selectedIndex)
 	{
         SettingsManager.instance.OnPresetSelected(selectedIndex);
     }
 
-    public void setSkillsRepository(int value)
+    public void SetSkillsRepository(int value)
     {
         SettingsManager.instance.SetSkillsRepository(value);
     }
 
-    public void setQualitySetting(int value)
+    public void SetQualitySetting(int value)
     {
         SettingsManager.instance.SetQualitySetting(value);
 	}
 
-	public void setAutoHideTooltip(int value)
+	public void SetAutoHideTooltip(int value)
 	{
 		SettingsManager.instance.SetAutoHideTooltip(value);
 	}
 
-	public void increaseUISize()
+	public void IncreaseUISize()
 	{
 		SettingsManager.instance.IncreaseUISize();
 	}
 
-	public void decreaseUISize()
+	public void DecreaseUISize()
 	{
 		SettingsManager.instance.DecreaseUISize();
 	}
 
-	public void setWallTransparency(int value)
+	public void SetWallTransparency(int value)
     {
 		SettingsManager.instance.SetWallTransparency(value);
 	}
 
-	public void setCameraTracking(int value)
+	public void SetCameraTracking(int value)
 	{
 		SettingsManager.instance.SetCameraTracking(value);
 	}
 
-	public void setGameView(int value)
+	public void SetGameView(int value)
     {
 		SettingsManager.instance.SetGameView(value);
 	}
 
-	public void setAnimation(int value)
+	public void SetAnimation(int value)
     {
 		SettingsManager.instance.SetAnimation(value);
 	}
 
-	public void setTooltipView(int value)
+	public void SetTooltipView(int value)
 	{
 		SettingsManager.instance.SetTooltipView(value);
 	}
 
-	public void hookListener(string key)
+	public void HookListener(string key)
     {
 		SettingsManager.instance.HookListener(key);
 	}
 
-	public void setBorderThickness(string value)
+	public void SetBorderThickness(string value)
 	{
 		SettingsManager.instance.SetBorderThickness(value);
 	}
 
-	public void syncFonts(int value)
+	public void SyncFonts(int value)
 	{
 		SettingsManager.instance.SyncFonts(value);
 	}
 
-	public void setCaretWidth(string value)
+	public void SetCaretWidth(string value)
 	{
 		SettingsManager.instance.SetCaretWidth(value);
 	}
 
-	public void setCaretHeight(string value)
+	public void SetCaretHeight(string value)
 	{
 		SettingsManager.instance.SetCaretHeight(value);
 	}
 
-	public void setCharSpacing(string value)
+	public void SetCharSpacing(string value)
 	{
 		SettingsManager.instance.SetCharSpacing(value);
 	}
 
-	public void setWordSpacing(string value)
+	public void SetWordSpacing(string value)
 	{
 		SettingsManager.instance.SetWordSpacing(value);
 	}
 
-	public void setLineSpacing(string value)
+	public void SetLineSpacing(string value)
 	{
 		SettingsManager.instance.SetLineSpacing(value);
 	}
 
-	public void setParagraphSpacing(string value)
+	public void SetParagraphSpacing(string value)
 	{
 		SettingsManager.instance.SetParagraphSpacing(value);
 	}
 
-	public void setDoubleClickDelay(string value)
+	public void SetDoubleClickDelay(string value)
 	{
 		SettingsManager.instance.SetDoubleClickDelay(value);
     }
 
-    public void setLongClickDelay(string value)
+    public void SetLongClickDelay(string value)
     {
         SettingsManager.instance.SetLongClickDelay(value);
     }
 
-    public void setAutoClick(int value)
+    public void SetAutoClick(int value)
     {
         SettingsManager.instance.SetAutoClick(value);
     }
 
-    public void setAutoClickDelay(string value)
+    public void SetAutoClickDelay(string value)
     {
         SettingsManager.instance.SetAutoClickDelay(value);
     }

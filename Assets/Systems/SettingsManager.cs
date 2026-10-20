@@ -555,7 +555,7 @@ public class SettingsManager : FSystem
 		}
 	}
 
-    public void MergeSettings(JToken jSetting)
+    private void MergeSettings(JToken jSetting)
     {
         // Par cours de l'objet json pour appliquer les settings
         foreach (JToken jToken in jSetting)
@@ -597,7 +597,7 @@ public class SettingsManager : FSystem
         ApplySettings();
     }
 
-    public void ResetParameters()
+    private void ResetParameters()
 	{
 		// Volontairement on ne reset pas la langue
 		cs.values.currentSkillsRepository = ds.defaultSkillsRepository;

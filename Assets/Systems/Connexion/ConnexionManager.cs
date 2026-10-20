@@ -84,7 +84,7 @@ public class ConnexionManager : FSystem
 		gameData.levelToLoad = -1;
 		userData = go.GetComponent<UserData>();
 		// Reset user data
-		userData.birthYear = "undef";
+		userData.birthYear = "-1";
 		userData.isTeacher = false;
 		userData.progression = new Dictionary<string, int>();
 		userData.highScore = new Dictionary<string, int>();
@@ -174,8 +174,8 @@ public class ConnexionManager : FSystem
 		loadingScreen.transform.SetParent(RightPanel.transform, false); // pas besoin de passer par GameObjectManager.setGameObjectParent(...) car avec le SetActive précédent, le FyfyBridge demandera automatiquement un Refresh du RightPanel
 
 #if UNITY_EDITOR
-        SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
-        SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();
+        /*SPYVersion.transform.parent.parent.GetComponentInChildren<TMP_InputField>().text = "Mathieu";
+        SPYVersion.transform.parent.parent.Find("MiddleBegin/ButtonConnexion").GetComponent<Button>().onClick.Invoke();*/
 #endif
 		}
 

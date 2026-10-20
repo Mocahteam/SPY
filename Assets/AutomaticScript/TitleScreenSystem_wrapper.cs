@@ -88,9 +88,9 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "quitGame", null);
 	}
 
-	public void sendUserData()
+	public void SendUserData()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "sendUserData", null);
+		MainLoop.callAppropriateSystemMethod (system, "SendUserData", null);
 	}
 
 }

@@ -2539,7 +2539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a851999ad524fd640a3b2ec45d400d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: "Clique pour voir ma m\xE9moire\_!"
+  text: "Clique pour voir ma m\xE9moire\\u00a0!"
 --- !u!114 &6525114111673091876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2692,7 +2692,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7138065594967680398}
         m_TargetAssemblyTypeName: TooltipContent, Assembly-CSharp
-        m_MethodName: setText
+        m_MethodName: SetText
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

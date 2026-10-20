@@ -175,7 +175,7 @@ public class TitleScreenSystem : FSystem {
         {
 			userData.newAvatarAvailable = newAvatarAvailable;
 			userData.unlockedAvatars.Add(newAvatarAvailable);
-			sendUserData();
+			SendUserData();
 		}
 
 
@@ -547,7 +547,7 @@ public class TitleScreenSystem : FSystem {
 	}
 
 	// See OkButton in ProfilPanel in ConnexionScene scene
-	public void sendUserData()
+	public void SendUserData()
 	{
 		GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
 	}

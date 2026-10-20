@@ -46,7 +46,7 @@ public class SendStatements : FSystem {
         else
             statementQueue = null;
 
-        f_saveProgression.addEntryCallback(saveUserData);
+        f_saveProgression.addEntryCallback(SaveUserData);
 
         if (Application.platform == RuntimePlatform.WebGLPlayer)
             experimentationId = GetExperimentationId();
@@ -99,7 +99,7 @@ public class SendStatements : FSystem {
         }
     }
 
-    private void saveUserData (GameObject go)
+    private void SaveUserData (GameObject go)
     {
         if (gameData.sendStatementEnabled && GBL_Interface.playerName != "") // save only if we know the player
         {
@@ -116,7 +116,7 @@ public class SendStatements : FSystem {
         progression = progression == "null" ? "{}" : progression;
         highScore = highScore == "null" ? "{}" : highScore;
         unlockedAvatars = unlockedAvatars == "null" ? "[]" : unlockedAvatars;
-        //Debug.Log("{\"idSession\":\"" + idSession + "\",\"birthYear\":\"" + year + "\",\"isTeacher\":"+(isTeacher ? 1 : 0)+",\"progression\":" + progression + ",\"highScore\":" + highScore + ",\"currentScenario\":\"" + currentScenario + "\",\"levelToContinue\":" + levelToContinue + ",\"settings\":"+settings+"}");
+        //Debug.Log("{\"idSession\":\"" + idSession + "\",\"birthYear\":\"" + year + "\",\"isTeacher\":" + (isTeacher ? 1 : 0) + ",\"progression\":" + progression + ",\"highScore\":" + highScore + ",\"currentScenario\":\"" + currentScenario + "\",\"levelToContinue\":" + levelToContinue + ",\"settings\":" + settings + ",\"unlockedAvatars\":" + unlockedAvatars + ",\"avatarSelected\":" + avatarSelected + "}");
         UnityWebRequest www = UnityWebRequest.PostWwwForm("https://spy.lip6.fr/ServerREST_LIP6/index_new_v2.php", "{\"idSession\":\"" + idSession + "\",\"birthYear\":\"" + year + "\",\"isTeacher\":"+(isTeacher ? 1 : 0)+",\"progression\":" + progression + ",\"highScore\":" + highScore + ",\"currentScenario\":\"" + currentScenario + "\",\"levelToContinue\":" + levelToContinue + ",\"settings\":"+settings+",\"unlockedAvatars\":"+unlockedAvatars+",\"avatarSelected\":"+avatarSelected+"}");
 
         yield return www.SendWebRequest();
