@@ -81,7 +81,7 @@ public class HotkeySystem : FSystem
         LocalizationSettings.SelectedLocaleChanged -= RefreshShortcuts;
     }
 
-	private void RefreshShortcuts(Locale newLocale)
+    private void RefreshShortcuts(Locale newLocale)
 	{
         MainLoop.instance.StartCoroutine(WaitLocalizationAndUpdateShortcuts());
     }
@@ -173,7 +173,7 @@ public class HotkeySystem : FSystem
         if (exitWebGL_act.WasPressedThisFrame())
 			return;
 
-		// Si on est dans un inputfield on ne traite pas d'actions cette frame sauf pour le Tab/Shift+Tab
+		// Si on est dans un inputfield on ne traite pas d'actions cette frame
 		if (Utility.inputFieldSelected())
 			return;
 

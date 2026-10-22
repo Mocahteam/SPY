@@ -100,8 +100,27 @@ public class UINavigationManager : FSystem
         // Get the currently selected UI element from the event system.
         GameObject selected = eventSystem.currentSelectedGameObject;
 
-		// Par défaut un clic-droit ou un clic-molette déclenche un PointerDown. A chaque PointerDown l'EventSystem regarde s'il doit sélectionner un objet, sur un clic droit il considère que non et donc rend le currentSelectedGameObject à null. Comme on utilise le clic-droit pour supprimer des blocs, si le currentSelectedGameObject devient null à chaque suppression, le UINavigationManager sélectionne alors automatiquement le prochain gameObject ce qui nous fait sortir de la zone d'édition. On annule donc se comportement en maintenant le currentSelectedGameObject au précédent connu.
-		if (selected == null && lastSelected != null && (rightClick.WasPressedThisFrame() || middleClick.WasPressedThisFrame()))
+        // Si on est dans un inputfield on autorise la navigation Tab/Shift+Tab pour pouvoir en sortir sans avoir à faire un Cancel ou Submit préalable
+        if (Utility.inputFieldSelected())
+        {
+            if (navigateAction.WasPerformedThisFrame() && IsFromComposite(navigateAction, "Tab Navigation"))
+            {
+				// PassThrough : ignorer le relâchement
+				if (navigateValue != Vector2.zero)
+				{
+					GameObject newSelection;
+					if (navigateValue.y < 0)
+						newSelection = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>().navigation.selectOnDown.gameObject;
+					else
+						newSelection = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>().navigation.selectOnUp.gameObject;
+					// On utilise une coroutine pour décaller la sélection d'une frame sinon on le bouge là pour sélectionner le suivant et la phase de gestion des inputs arrive interprète le tab et sélectionne à nouveau le suivant ce qui génère un saut de 2 UI. En décallant avec la coroutine on laisse passé la phase de gestion des inputs qui ne fera rien puisqu'on est dans le champs de saisie et on ne bouge le prochain GO qu'à la phase des coroutines et à ce moment là l'évènement de l'action ne sera plus performed, donc le prochain GO ne sera pas sauté.
+					MainLoop.instance.StartCoroutine(Utility.delayGOSelection(newSelection));
+				}
+            }
+        }
+
+        // Par défaut un clic-droit ou un clic-molette déclenche un PointerDown. A chaque PointerDown l'EventSystem regarde s'il doit sélectionner un objet, sur un clic droit il considère que non et donc rend le currentSelectedGameObject à null. Comme on utilise le clic-droit pour supprimer des blocs, si le currentSelectedGameObject devient null à chaque suppression, le UINavigationManager sélectionne alors automatiquement le prochain gameObject ce qui nous fait sortir de la zone de programmation. On annule donc se comportement en maintenant le currentSelectedGameObject au précédent connu.
+        if (selected == null && lastSelected != null && (rightClick.WasPressedThisFrame() || middleClick.WasPressedThisFrame()))
 		{
 			selected = lastSelected;
 			eventSystem.SetSelectedGameObject(selected);
@@ -227,9 +246,26 @@ public class UINavigationManager : FSystem
 		}
 
 		lastSelected = selected;
-	}
+    }
 
-	private bool IsReallyInteractable(GameObject obj)
+    private static bool IsFromComposite(InputAction action, string compositeName)
+    {
+        if (action.activeControl == null)
+            return false;
+
+        var bindings = action.bindings;
+        int index = action.GetBindingIndexForControl(action.activeControl);
+        if (index < 0)
+            return false;
+
+        // L'index pointe sur la partie (tab ou shift) : on remonte jusqu'au composite
+        while (index > 0 && bindings[index].isPartOfComposite)
+            index--;
+
+        return bindings[index].isComposite && bindings[index].name == compositeName;
+    }
+
+    private bool IsReallyInteractable(GameObject obj)
 	{
 		if (!obj.activeInHierarchy)
 			return false;
