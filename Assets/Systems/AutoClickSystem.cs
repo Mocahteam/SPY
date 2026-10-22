@@ -1,5 +1,4 @@
 ﻿using FYFY;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,9 +23,6 @@ public class AutoClickSystem : FSystem
 
     // Durée entre l'appui et le relâchement (laisse le temps à l'état visuel 'Pressed').
     private float pressDuration = 0.08f;
-
-    // 0 → 1 pendant l'attente, pratique pour une jauge radiale (Image.fillAmount).
-    private float Progress => armed && !clicking ? Mathf.Clamp01(timer / cs.values.currentAutoClickDelay) : 0f;
 
     private Vector2 lastPos;
     private float timer;

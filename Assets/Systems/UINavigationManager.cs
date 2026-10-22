@@ -16,11 +16,11 @@ using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 public class UINavigationManager : FSystem
 {
-	private Family f_textsUnselectable = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new NoneOfComponents(typeof(Selectable)));
-	private Family f_draggedItems = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
-	private Family f_InputFields = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
+	private readonly Family f_textsUnselectable = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new NoneOfComponents(typeof(Selectable)));
+	private readonly Family f_draggedItems = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
+	private readonly Family f_InputFields = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
 
-	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private readonly Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	public List<GameObject> autoFocusPrority;
 	private GameObject lastSelected;
@@ -56,14 +56,14 @@ public class UINavigationManager : FSystem
 			userData = go.GetComponent<UserData>();
 
             if (Application.platform == RuntimePlatform.WebGLPlayer)
-                MainLoop.instance.StartCoroutine(catchApplicationState(IsUnityCanvasFocused()));
+                MainLoop.instance.StartCoroutine(CatchApplicationState(IsUnityCanvasFocused()));
             else
-                MainLoop.instance.StartCoroutine(catchApplicationState(Application.isFocused));
+                MainLoop.instance.StartCoroutine(CatchApplicationState(Application.isFocused));
         }
 
         foreach (GameObject text in f_textsUnselectable)
-			onNewUnselectableText(text);
-		f_textsUnselectable.addEntryCallback(onNewUnselectableText);
+			OnNewUnselectableText(text);
+		f_textsUnselectable.addEntryCallback(OnNewUnselectableText);
 		if (eventSystem == null)
 			eventSystem = EventSystem.current;
 
@@ -76,8 +76,8 @@ public class UINavigationManager : FSystem
 
 		// Add callback in all inputField
 		foreach (GameObject input in f_InputFields)
-			onNewInputField(input);
-		f_InputFields.addEntryCallback(onNewInputField);
+			OnNewInputField(input);
+		f_InputFields.addEntryCallback(OnNewInputField);
 
     }
 
@@ -257,13 +257,13 @@ public class UINavigationManager : FSystem
 		return true;
 	}
 
-	private void onNewUnselectableText(GameObject text)
+	private void OnNewUnselectableText(GameObject text)
     {
 		if (text.transform.parent && !text.transform.parent.GetComponentInParent<ElementToDrag>(true) && !text.transform.parent.GetComponentInParent<Tooltip>(true) && !text.transform.parent.GetComponentInParent<Selectable>(true))
 			GameObjectManager.addComponent<Selectable>(text);
 	}
 
-	private void onNewInputField(GameObject go)
+	private void OnNewInputField(GameObject go)
 	{
 		// Pour le tactile si on est en mode plein écran on force la sortie du plein écran quand on entre dans un InputField et on le restaure quand on en ressort
 		go.GetComponent<TMP_InputField>().onSelect.AddListener(delegate (string content)
@@ -279,7 +279,7 @@ public class UINavigationManager : FSystem
         });
     }
 
-    public IEnumerator catchApplicationState(bool hasFocus)
+    private IEnumerator CatchApplicationState(bool hasFocus)
     {
         if (!hasFocus)
         {
@@ -324,6 +324,6 @@ public class UINavigationManager : FSystem
     // Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
     public void HTMLcanvasFocus(int hasFocus)
 	{
-        MainLoop.instance.StartCoroutine(catchApplicationState(hasFocus == 1));
+        MainLoop.instance.StartCoroutine(CatchApplicationState(hasFocus == 1));
     }
 }

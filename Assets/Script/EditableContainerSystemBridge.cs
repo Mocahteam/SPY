@@ -1,26 +1,25 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class EditableContainerSystemBridge : MonoBehaviour
 {
-	public void resetScriptContainer(GameObject scriptContainer)
+	public void ResetScriptContainer(GameObject scriptContainer)
 	{
-		EditableContainerSystem.instance.resetScriptContainer(scriptContainer);
+		EditableContainerSystem.instance.ResetScriptContainer(scriptContainer);
 	}
 
-	public void removeContainer()
+	public void RemoveContainer()
 	{
-		EditableContainerSystem.instance.removeContainer(gameObject, false);
+		EditableContainerSystem.instance.RemoveContainer(gameObject, false);
 	}
 
-	public void newNameContainer(string name)
+	public void NewNameContainer(string name)
 	{
-		EditableContainerSystem.instance.newNameContainer(name);
+		EditableContainerSystem.instance.NewNameContainer(name);
 	}
 
-    public void editRobotName(TMP_Text name)
+    public void EditRobotName(TMP_Text name)
 	{
-        EditableContainerSystem.instance.editRobotName(name);
+        EditableContainerSystem.instance.EditRobotName(name);
     }
 }

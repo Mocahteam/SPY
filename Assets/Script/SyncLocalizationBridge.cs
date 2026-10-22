@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class SyncLocalizationBridge : MonoBehaviour
 {
-    public void changeLang(LangOption opt)
+    public void ChangeLang(LangOption opt)
     {
-        SyncLocalization.instance.changeLang(opt.lang);
+        SyncLocalization.instance.ChangeLang(opt.lang);
     }
 }

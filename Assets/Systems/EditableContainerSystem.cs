@@ -33,15 +33,15 @@ using UnityEngine.UI;
 public class EditableContainerSystem : FSystem 
 {
 	// Les familles
-	private Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édités
-	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts editable
-	private Family f_activeScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Les containers de scripts editable actifs
-	private Family f_refreshSize = FamilyManager.getFamily(new AnyOfComponents(typeof(ResetBlocLimit), typeof(Dropped))); // A chaque fois qu'un objet est ajouté ou supprimé la largeur du script peut changer donc on met à jour la taille du conteneur
-	private Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
-	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
-	private Family f_forceRemoveContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ForceRemoveContainer)));
-	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd))); 
-	private Family f_checkLinkName = FamilyManager.getFamily(new AllOfComponents(typeof(CheckLinkName)));
+	private readonly Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(AgentEdit), typeof(ScriptRef))); // On récupére les agents pouvant être édités
+	private readonly Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts editable
+	private readonly Family f_activeScriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Les containers de scripts editable actifs
+	private readonly Family f_refreshSize = FamilyManager.getFamily(new AnyOfComponents(typeof(ResetBlocLimit), typeof(Dropped))); // A chaque fois qu'un objet est ajouté ou supprimé la largeur du script peut changer donc on met à jour la taille du conteneur
+	private readonly Family f_addSpecificContainer = FamilyManager.getFamily(new AllOfComponents(typeof(AddSpecificContainer)));
+	private readonly Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
+	private readonly Family f_forceRemoveContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ForceRemoveContainer)));
+	private readonly Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd))); 
+	private readonly Family f_checkLinkName = FamilyManager.getFamily(new AllOfComponents(typeof(CheckLinkName)));
 
     // Les variables
     private UIRootContainer containerSelected; // Le container selectionné
@@ -80,7 +80,7 @@ public class EditableContainerSystem : FSystem
 
             if (!isEditorContext)
 			{
-				MainLoop.instance.StartCoroutine(tcheckLinkName());
+				MainLoop.instance.StartCoroutine(CheckLinkName());
 				f_gameLoaded.addEntryCallback(delegate
 				{
 					if (!gameData.dragDropEnabled)
@@ -128,7 +128,7 @@ public class EditableContainerSystem : FSystem
 						addContainerButton.interactable = true;
 				});
 				f_checkLinkName.addEntryCallback(delegate (GameObject go){
-					MainLoop.instance.StartCoroutine(tcheckLinkName());
+					MainLoop.instance.StartCoroutine(CheckLinkName());
 					foreach(CheckLinkName cln in go.GetComponents<CheckLinkName>())
 						GameObjectManager.removeComponent(cln);
 				});
@@ -137,7 +137,7 @@ public class EditableContainerSystem : FSystem
 
 		f_forceRemoveContainer.addEntryCallback(delegate (GameObject go)
 		{
-			removeContainer(go, true);
+			RemoveContainer(go, true);
 		});
 
 		f_activeScriptContainer.addEntryCallback(delegate (GameObject go)
@@ -149,20 +149,20 @@ public class EditableContainerSystem : FSystem
     protected override void onProcess(int familiesUpdateCount)
     {
         if ((f_refreshSize.Count > 0 && f_activeScriptContainer.Count > 0) || newScriptContainer)
-			MainLoop.instance.StartCoroutine(setEditableSize(newScriptContainer));
+			MainLoop.instance.StartCoroutine(SetEditableSize(newScriptContainer));
 
 		foreach (GameObject go in f_addSpecificContainer)
 			foreach (AddSpecificContainer asc in go.GetComponents<AddSpecificContainer>())
 			{
-				addSpecificContainer(asc.title, asc.editState, asc.typeState, asc.script);
+				AddSpecificContainer(asc.title, asc.editState, asc.typeState, asc.script);
 				GameObjectManager.removeComponent(asc);
 			}
     }
 
 	// used on + button (see in Unity editor)
-	public void addContainer()
+	public void AddContainer()
 	{
-		string newName = addSpecificContainer();
+		string newName = AddSpecificContainer();
 		// générer une trace seulement sur la scene principale
 		if (SceneManager.GetActiveScene().name == "MainScene")
 			GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
@@ -178,9 +178,9 @@ public class EditableContainerSystem : FSystem
     }
 
 	// Ajouter un container à la scéne retourne son nom définitif
-	private string addSpecificContainer(string name = "", UIRootContainer.EditMode editState = UIRootContainer.EditMode.Editable, UIRootContainer.SolutionType typeState = UIRootContainer.SolutionType.Undefined, List<GameObject> script = null)
+	private string AddSpecificContainer(string name = "", UIRootContainer.EditMode editState = UIRootContainer.EditMode.Editable, UIRootContainer.SolutionType typeState = UIRootContainer.SolutionType.Undefined, List<GameObject> script = null)
 	{
-		if (!nameContainerUsed(name))
+		if (!NameContainerUsed(name))
 		{
 			// On clone le prefab
 			GameObject cloneContainer = Object.Instantiate(prefabViewportScriptContainer);
@@ -210,7 +210,7 @@ public class EditableContainerSystem : FSystem
 				for (int i = EditableCanvas.GetComponent<EditableCanvasComponent>().nbViewportContainer; !nameOk; i++)
 				{
 					// Si le nom n'est pas déjà utilisé on nomme le nouveau container de cette façon
-					if (!nameContainerUsed("Script" + i))
+					if (!NameContainerUsed("Script" + i))
                     {
                         name = "Script" + i;
                         cloneContainer.GetComponentInChildren<UIRootContainer>().scriptName = name;
@@ -223,7 +223,7 @@ public class EditableContainerSystem : FSystem
 				}
 			}
 			if (!isEditorContext)
-				MainLoop.instance.StartCoroutine(tcheckLinkName());
+				MainLoop.instance.StartCoroutine(CheckLinkName());
 
 			// on paramètre le mode et le type différemment si on est dans l'éditeur ou dans le player
 			Transform panel = cloneContainer.transform.Find("ScriptContainer/LevelEditorPanel");
@@ -294,7 +294,7 @@ public class EditableContainerSystem : FSystem
 			return "";
 	}
 
-	private IEnumerator setEditableSize(bool autoScroll)
+	private IEnumerator SetEditableSize(bool autoScroll)
 	{
 		yield return null;
 		yield return null;
@@ -316,7 +316,7 @@ public class EditableContainerSystem : FSystem
 
 	// Empty the script window
 	// See ResetButton in ViewportScriptContainer prefab in editor
-	public void resetScriptContainer(GameObject scriptContainer)
+	public void ResetScriptContainer(GameObject scriptContainer)
 	{
 		// générer une trace seulement sur la scene principale
 		if (SceneManager.GetActiveScene().name == "MainScene")
@@ -331,12 +331,12 @@ public class EditableContainerSystem : FSystem
 
         GameObjectManager.addComponent<Undoable>(MainLoop.instance.gameObject);
 
-        deleteContent(scriptContainer);
+        DeleteContent(scriptContainer);
 	}
 
 	// Remove the script window
 	// See RemoveButton in ViewportScriptContainer prefab in editor
-	public void removeContainer(GameObject container, bool silent)
+	public void RemoveContainer(GameObject container, bool silent)
 	{
 		GameObject scriptContainerPointer = container.transform.GetChild(0).gameObject;
 	
@@ -356,11 +356,11 @@ public class EditableContainerSystem : FSystem
 			}
 		}
 
-        deleteContent(scriptContainerPointer);
-		MainLoop.instance.StartCoroutine(realDelete(container, silent));
+        DeleteContent(scriptContainerPointer);
+		MainLoop.instance.StartCoroutine(RealDelete(container, silent));
 	}
 
-	private void deleteContent (GameObject container)
+	private void DeleteContent (GameObject container)
     {
 		// On parcourt le script container pour détruire toutes les instructions
 		for (int i = container.transform.childCount - 1; i >= 0; i--)
@@ -368,20 +368,20 @@ public class EditableContainerSystem : FSystem
 				GameObjectManager.addComponent<NeedToDelete>(container.transform.GetChild(i).gameObject, new { silent = true });
 	}
 
-	private IEnumerator realDelete(GameObject container, bool silent)
+	private IEnumerator RealDelete(GameObject container, bool silent)
 	{
 		yield return null;
 		GameObjectManager.unbind(container);
 		container.transform.SetParent(null);
 		Object.Destroy(container);
 		if (f_activeScriptContainer.Count > 0)
-			yield return setEditableSize(true);
+			yield return SetEditableSize(true);
 		if (!silent)
             GameObjectManager.addComponent<Undoable>(MainLoop.instance.gameObject);
     }
 
     // See ButtonEditName in ViewportScriptContainer prefab in editor
-    public void editRobotName(TMP_Text name)
+    public void EditRobotName(TMP_Text name)
 	{
 		// on vérifie que le bouton permettant d'éditer le nom du robot est bien actif (on peut arriver ici même s'il est désactivé sur un double clic ou un submit sur le TMP_Text)
 		if (name.transform.parent.Find("ButtonEditName").GetComponent<Button>().IsInteractable())
@@ -397,7 +397,7 @@ public class EditableContainerSystem : FSystem
 
     // Rename the script window
     // See RobotName_edit in ViewportScriptContainer prefab in editor
-    public void newNameContainer(string newName)
+    public void NewNameContainer(string newName)
 	{
 		string oldName = containerSelected.scriptName;
         TMP_InputField input = containerSelected.transform.Find("Header/Naming/RobotName_edit").GetComponent<TMP_InputField>();
@@ -405,7 +405,7 @@ public class EditableContainerSystem : FSystem
         if (oldName != newName)
 		{
 			// Si le nom n'est pas utilisé et que le mode n'est pas locked (ignorer ça si on est dans l'éditeur de mission)
-			if (!nameContainerUsed(newName) && (containerSelected.editState != UIRootContainer.EditMode.Locked || isEditorContext))
+			if (!NameContainerUsed(newName) && (containerSelected.editState != UIRootContainer.EditMode.Locked || isEditorContext))
 			{
 				// On change pour son nouveau nom
 				containerSelected.scriptName = newName;
@@ -435,7 +435,7 @@ public class EditableContainerSystem : FSystem
 		}
 		// On vérifie l'association du nom uniquement sur la scène principale
 		if (!isEditorContext)
-			MainLoop.instance.StartCoroutine(tcheckLinkName());
+			MainLoop.instance.StartCoroutine(CheckLinkName());
 
 		// on désactive le champ de saisie et on active le nom statique du robot
 		input.gameObject.SetActive(false);
@@ -445,7 +445,7 @@ public class EditableContainerSystem : FSystem
     }
 
 	// Vérifie si le nom proposé existe déjà ou non pour un script container
-	private bool nameContainerUsed(string nameTested)
+	private bool NameContainerUsed(string nameTested)
 	{
 		if (nameTested == "")
 			return false;
@@ -461,7 +461,7 @@ public class EditableContainerSystem : FSystem
 
 	// Vérifie si les noms des containers correspond à un agent et vice-versa
 	// Si non, fait apparaitre le nom en rouge
-	private IEnumerator tcheckLinkName()
+	private IEnumerator CheckLinkName()
 	{
 		yield return null;
         yield return null;

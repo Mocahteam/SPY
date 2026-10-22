@@ -16,9 +16,9 @@ public class EndGameManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "VictorySound", VictorySound);
 	}
 
-	public void cancelEnd()
+	public void CancelEnd()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "cancelEnd", null);
+		MainLoop.callAppropriateSystemMethod (system, "CancelEnd", null);
 	}
 
 }

@@ -16,11 +16,11 @@ public class LevelGenerator : FSystem {
 	public static LevelGenerator instance;
 
 	// Famille contenant les agents editables
-	private Family f_level = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
-	private Family f_draggableElement = FamilyManager.getFamily(new AnyOfComponents(typeof(ElementToDrag)));
-	private Family f_players = FamilyManager.getFamily(new AnyOfTags("Player"));
-	private Family f_lights = FamilyManager.getFamily(new AllOfComponents(typeof(Light)));
-	private Family f_executionPanels = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootExecutor)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private readonly Family f_level = FamilyManager.getFamily(new AnyOfComponents(typeof(Position), typeof(CurrentAction)));
+	private readonly Family f_draggableElement = FamilyManager.getFamily(new AnyOfComponents(typeof(ElementToDrag)));
+	private readonly Family f_players = FamilyManager.getFamily(new AnyOfTags("Player"));
+	private readonly Family f_lights = FamilyManager.getFamily(new AllOfComponents(typeof(Light)));
+	private readonly Family f_executionPanels = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootExecutor)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	public GameObject LevelGO;
 	private List<List<int>> map;
@@ -74,7 +74,7 @@ public class LevelGenerator : FSystem {
 			if (Application.platform == RuntimePlatform.WebGLPlayer)
 				HideHtmlLoadMissions();
 
-			f_executionPanels.addEntryCallback(computeExecutionPanelWidth);
+			f_executionPanels.addEntryCallback(ComputeExecutionPanelWidth);
             GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 			{
 				verb = "launched",
@@ -90,7 +90,7 @@ public class LevelGenerator : FSystem {
 		Pause = true;
 	}
 
-	private void computeExecutionPanelWidth(GameObject scriptContainer)
+	private void ComputeExecutionPanelWidth(GameObject scriptContainer)
     {
 		// Calcul de la largeur du panneau
 		RectTransform panel = scriptContainer.transform.parent.parent.parent as RectTransform;
@@ -137,7 +137,7 @@ public class LevelGenerator : FSystem {
 			switch (child.Name)
 			{
 				case "map":
-					readXMLMap(child);
+					ReadXMLMap(child);
 					break;
 				case "dialogs":
 					if (!dialogsOverrided)
@@ -155,19 +155,19 @@ public class LevelGenerator : FSystem {
 				case "fog":
 					// fog has to be enabled after agents
 					gameData.fogEnabled = true;
-					MainLoop.instance.StartCoroutine(delayEnableFog());
+					MainLoop.instance.StartCoroutine(DelayEnableFog());
 					break;
 				case "blockLimits":
-					readXMLLimits(child);
+					ReadXMLLimits(child);
 					break;
 				case "coin":
-					createCoin(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value));
+					CreateCoin(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value));
 					break;
 				case "console":
-					readXMLConsole(child);
+					ReadXMLConsole(child);
 					break;
 				case "door":
-					createDoor(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value),
+					CreateDoor(int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value),
 					(Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), int.Parse(child.Attributes.GetNamedItem("slotId").Value), int.Parse(child.Attributes.GetNamedItem("state").Value) != 0);
 					break;
 				case "robot":
@@ -184,7 +184,7 @@ public class LevelGenerator : FSystem {
 					int skinNum = 0;
 					if (skin != null)
 						skinNum = int.Parse(skin.Value);
-					GameObject agent = createEntity(Utility.extractLocale(nameAgentByUser), int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value), (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), child.Name, skinNum);
+					GameObject agent = CreateEntity(Utility.extractLocale(nameAgentByUser), int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value), (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value), child.Name, skinNum);
 					if (child.Name == "enemy" || child.Name == "guard")
 					{
 						agent.GetComponent<DetectRange>().range = int.Parse(child.Attributes.GetNamedItem("range").Value);
@@ -193,7 +193,7 @@ public class LevelGenerator : FSystem {
 					}
 					break;
 				case "decoration":
-					createDecoration(child.Attributes.GetNamedItem("name").Value, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value), (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value));
+					CreateDecoration(child.Attributes.GetNamedItem("name").Value, int.Parse(child.Attributes.GetNamedItem("posX").Value), int.Parse(child.Attributes.GetNamedItem("posY").Value), (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value));
 					break;
 				case "script":
 					int tmpValue;
@@ -236,15 +236,15 @@ public class LevelGenerator : FSystem {
 					break;
 			}
 		}
-		eraseMap();
+		EraseMap();
 		gameData.hideExit = doc.GetElementsByTagName("hideExits").Count > 0;
 		gameData.omniscientView = doc.GetElementsByTagName("omniscientView").Count > 0;
         // On n'affiche pas les Exits si le fog est activé
-        generateMap(gameData.hideExit || gameData.fogEnabled);
-		MainLoop.instance.StartCoroutine(delayGameLoaded());
+        GenerateMap(gameData.hideExit || gameData.fogEnabled);
+		MainLoop.instance.StartCoroutine(DelayGameLoaded());
 	}
 
-	private IEnumerator delayGameLoaded()
+	private IEnumerator DelayGameLoaded()
 	{
 		yield return null;
 		yield return null;
@@ -252,7 +252,7 @@ public class LevelGenerator : FSystem {
         GameObjectManager.addComponent<GameLoaded>(MainLoop.instance.gameObject);
 	}
 
-	private IEnumerator delayEnableFog()
+	private IEnumerator DelayEnableFog()
 	{
 		yield return null;
 		// Eteindre toutes les lumières de la scène
@@ -269,27 +269,27 @@ public class LevelGenerator : FSystem {
 	}
 
 	// read the map and create wall, ground, spawn and exit
-	private void generateMap(bool hideExits){
+	private void GenerateMap(bool hideExits){
 		for (int y = 0; y< map.Count; y++){
 			for(int x = 0; x < map[y].Count; x++){
 				switch (map[y][x]){
 					case -1: // void
-						createWall(x, y, false);
+						CreateWall(x, y, false);
 						break;
 					case 0: // Path
-						createCell(x, y);
+						CreateCell(x, y);
 						break;
 					case 1: // Wall
-						createCell(x, y);
-						createWall(x, y, true);
+						CreateCell(x, y);
+						CreateWall(x, y, true);
 						break;
 					case 2: // Spawn
-						createCell(x, y);
-						createSpawnExit(x, y,true);
+						CreateCell(x, y);
+						CreateSpawnExit(x, y,true);
 						break;
 					case 3: // Exit
-						createCell(x, y);
-						createSpawnExit(x, y,false, hideExits);
+						CreateCell(x, y);
+						CreateSpawnExit(x, y,false, hideExits);
 						break;
 				}
 			}
@@ -297,7 +297,7 @@ public class LevelGenerator : FSystem {
 	}
 
 	// Créer une entité agent ou robot et y associer un panel container
-	private GameObject createEntity(string nameAgent, int gridX, int gridY, Direction.Dir direction, string type, int skin){
+	private GameObject CreateEntity(string nameAgent, int gridX, int gridY, Direction.Dir direction, string type, int skin){
 		GameObject entity = null;
 		switch(type){
 			case "robot":
@@ -365,7 +365,7 @@ public class LevelGenerator : FSystem {
 		return entity;
 	}
 
-	private void createDoor(int gridX, int gridY, Direction.Dir orientation, int slotID, bool state)
+	private void CreateDoor(int gridX, int gridY, Direction.Dir orientation, int slotID, bool state)
 	{
 		GameObject door = GameObject.Instantiate<GameObject>(doorPrefab, LevelGO.transform.position + new Vector3(gridX*3,3,-gridY*3), Quaternion.Euler(0,0,0), LevelGO.transform);
 
@@ -378,7 +378,7 @@ public class LevelGenerator : FSystem {
 		GameObjectManager.bind(door);
 	}
 
-	private void createDecoration(string name, int gridX, int gridY, Direction.Dir orientation)
+	private void CreateDecoration(string name, int gridX, int gridY, Direction.Dir orientation)
 	{
 		GameObject decoration = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/"+name) as GameObject, LevelGO.transform.position + new Vector3(gridX * 3, 3, -gridY * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
 
@@ -388,7 +388,7 @@ public class LevelGenerator : FSystem {
 		GameObjectManager.bind(decoration);
 	}
 
-	private void createConsole(int gridX, int gridY, List<int> slotIDs, Direction.Dir orientation)
+	private void CreateConsole(int gridX, int gridY, List<int> slotIDs, Direction.Dir orientation)
 	{
 		GameObject activable = GameObject.Instantiate<GameObject>(activableConsolePrefab, LevelGO.transform.position + new Vector3(gridX * 3, 3, -gridY * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
 
@@ -399,7 +399,7 @@ public class LevelGenerator : FSystem {
 		GameObjectManager.bind(activable);
 	}
 
-	private void createSpawnExit(int gridX, int gridY, bool type, bool hideExit = false){
+	private void CreateSpawnExit(int gridX, int gridY, bool type, bool hideExit = false){
 		GameObject spawnExit;
 		if(type)
 			spawnExit = GameObject.Instantiate<GameObject>(teleporterSpawnPrefab, LevelGO.transform.position + new Vector3(gridX*3,1.5f,-gridY*3), Quaternion.Euler(-90,0,0), LevelGO.transform);
@@ -417,14 +417,14 @@ public class LevelGenerator : FSystem {
 		GameObjectManager.bind(spawnExit);
 	}
 
-	private void createCoin(int gridX, int gridY){
+	private void CreateCoin(int gridX, int gridY){
 		GameObject coin = GameObject.Instantiate<GameObject>(coinPrefab, LevelGO.transform.position + new Vector3(gridX*3,3,-gridY*3), Quaternion.Euler(90,0,0), LevelGO.transform);
 		coin.GetComponent<Position>().x = gridX;
 		coin.GetComponent<Position>().y = gridY;
 		GameObjectManager.bind(coin);
 	}
 
-	private void createCell(int gridX, int gridY){
+	private void CreateCell(int gridX, int gridY){
 		GameObject cell = GameObject.Instantiate<GameObject>(cubeGroundPrefab, LevelGO.transform.position + new Vector3(gridX*3,0,-gridY*3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
 		if (Random.Range(0f, 1f) > 0.9f)
 		{
@@ -436,7 +436,7 @@ public class LevelGenerator : FSystem {
 		GameObjectManager.bind(cell);
 	}
 
-	private void createWall(int gridX, int gridY, bool visible = true){
+	private void CreateWall(int gridX, int gridY, bool visible = true){
 		GameObject wall = GameObject.Instantiate<GameObject>(cubeWallPrefab, LevelGO.transform.position + new Vector3(gridX*3,3,-gridY*3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
 		wall.GetComponent<Position>().x = gridX;
 		wall.GetComponent<Position>().y = gridY;
@@ -460,7 +460,7 @@ public class LevelGenerator : FSystem {
 		GameObjectManager.bind(wall);
 	}
 
-	private void eraseMap(){
+	private void EraseMap(){
 		foreach( GameObject go in f_level){
 			GameObjectManager.unbind(go.gameObject);
 			GameObject.Destroy(go.gameObject);
@@ -468,7 +468,7 @@ public class LevelGenerator : FSystem {
 	}
 
 	// Load the data of the map from XML
-	private void readXMLMap(XmlNode mapNode){
+	private void ReadXMLMap(XmlNode mapNode){
 		foreach(XmlNode lineNode in mapNode.ChildNodes){
 			List<int> line = new List<int>();
 			foreach(XmlNode cellNode in lineNode.ChildNodes){
@@ -477,7 +477,7 @@ public class LevelGenerator : FSystem {
 			map.Add(line);
 		}
 	}
-	private GameObject getLibraryItemByName(string itemName)
+	private GameObject GetLibraryItemByName(string itemName)
 	{
 		foreach (GameObject item in f_draggableElement)
 			if (item.name == itemName)
@@ -485,26 +485,26 @@ public class LevelGenerator : FSystem {
 		return null;
 	}
 
-	private void readXMLLimits(XmlNode limitsNode){
+	private void ReadXMLLimits(XmlNode limitsNode){
 		string actionName;
 		foreach (XmlNode limitNode in limitsNode.ChildNodes)
 		{
 			actionName = limitNode.Attributes.GetNamedItem("blockType").Value;
 			// check if a GameObject exists with the same name
-			if (getLibraryItemByName(actionName) && !gameData.actionBlockLimit.ContainsKey(actionName)){
+			if (GetLibraryItemByName(actionName) && !gameData.actionBlockLimit.ContainsKey(actionName)){
 				gameData.actionBlockLimit[actionName] = int.Parse(limitNode.Attributes.GetNamedItem("limit").Value);
 			}
 		}
 	}
 
-	private void readXMLConsole(XmlNode activableNode){
+	private void ReadXMLConsole(XmlNode activableNode){
 		List<int> slotsID = new List<int>();
 
 		foreach(XmlNode child in activableNode.ChildNodes){
 			slotsID.Add(int.Parse(child.Attributes.GetNamedItem("slotId").Value));
 		}
 
-		createConsole(int.Parse(activableNode.Attributes.GetNamedItem("posX").Value), int.Parse(activableNode.Attributes.GetNamedItem("posY").Value),
+		CreateConsole(int.Parse(activableNode.Attributes.GetNamedItem("posX").Value), int.Parse(activableNode.Attributes.GetNamedItem("posY").Value),
 		 slotsID, (Direction.Dir)int.Parse(activableNode.Attributes.GetNamedItem("direction").Value));
 	}
 }

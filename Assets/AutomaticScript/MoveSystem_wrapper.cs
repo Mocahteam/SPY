@@ -12,9 +12,9 @@ public class MoveSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "moveSpeed", moveSpeed);
 	}
 
-	public void syncAnimations()
+	public void SyncAnimations()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "syncAnimations", null);
+		MainLoop.callAppropriateSystemMethod (system, "SyncAnimations", null);
 	}
 
 }

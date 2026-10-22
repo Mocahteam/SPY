@@ -7,13 +7,13 @@ public class TriggerCollisionSound : MonoBehaviour
     public AudioClip destructionSound;
 
     // See Events in death animations
-    public void playShock()
+    public void PlayShock()
     {
         audioSource.PlayOneShot(collisionSound);
     }
 
     // See Events in death animations
-    public void playDestruction()
+    public void PlayDestruction()
     {
         audioSource.PlayOneShot(destructionSound);
     }

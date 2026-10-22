@@ -4,9 +4,9 @@ using FYFY_plugins.TriggerManager;
 
 public class RobotCollisionManager : FSystem
 {
-    private Family f_agentCollision = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player", "Drone"));
-    private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-    private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+    private readonly Family f_agentCollision = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player", "Drone"));
+    private readonly Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private readonly Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
     private bool activeCollision;
 
@@ -21,12 +21,12 @@ public class RobotCollisionManager : FSystem
             activeCollision = false;
         });
 
-        f_agentCollision.addEntryCallback(onNewCollision);
+        f_agentCollision.addEntryCallback(OnNewCollision);
 
         Pause = true;
     }
 
-	private void onNewCollision(GameObject agent)
+	private void OnNewCollision(GameObject agent)
 	{
         if (activeCollision)
         {
@@ -53,7 +53,7 @@ public class RobotCollisionManager : FSystem
                     agent.GetComponent<Collider>().enabled = false;
                     agent.GetComponent<ScriptRef>().isBroken = true;
                     if (agent.CompareTag("Drone"))
-                        DetectorManager.instance.updateDetectors();
+                        DetectorManager.instance.UpdateDetectors();
                 }
             }
         }

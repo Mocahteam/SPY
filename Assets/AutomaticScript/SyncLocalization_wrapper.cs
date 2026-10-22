@@ -10,9 +10,9 @@ public class SyncLocalization_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
 	}
 
-	public void syncLocale()
+	public void SyncLocale()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "syncLocale", null);
+		MainLoop.callAppropriateSystemMethod (system, "SyncLocale", null);
 	}
 
 }

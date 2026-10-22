@@ -206,7 +206,7 @@
 				document.getElementById('TTSConfig').style.visibility = 'hidden';
 			}
 			// See TTSSystem
-			window.unityInstance.SendMessage('Main_Loop', 'toggleTTS');
+			window.unityInstance.SendMessage('Main_Loop', 'ToggleTTS');
 		}
 
         // Configuration du MutationObserver
@@ -334,7 +334,7 @@
 						reader.onload = function(event){
 							const data = {name: file.name, content: event.target.result};
 							// see TitleScreenSystem
-							unityInstance.SendMessage('Main_Loop', 'importLevelOrScenario', JSON.stringify(data));
+							unityInstance.SendMessage('Main_Loop', 'ImportLevelOrScenario', JSON.stringify(data));
 						};
 						reader.readAsText(file);
 					}
@@ -363,12 +363,12 @@
 				if (levelToLoad != null){
 					// see ConnexionManager
 					console.log("Ask to Load level from URL: "+levelToLoad);
-					unityInstance.SendMessage('Main_Loop', 'askToLoadLevel', levelToLoad);
+					unityInstance.SendMessage('Main_Loop', 'AskToLoadLevel', levelToLoad);
 				}
 				const silent = urlParams.get('silent');
 				if (silent == null)
 					// see ConnexionManager
-					unityInstance.SendMessage('Main_Loop', 'enableSendStatement');
+					unityInstance.SendMessage('Main_Loop', 'EnableSendStatement');
 				
 			}).catch((message) => {
 				var msg = lang == "fr" ? "Une erreur s'est produite lors du chargement du jeu (voir la console pour plus de détails)." : "Error occurs on loading (see console for details).";

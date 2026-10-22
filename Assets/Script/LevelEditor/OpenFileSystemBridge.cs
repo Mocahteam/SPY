@@ -3,12 +3,12 @@ using UnityEngine.UI;
 
 public class OpenFileSystemBridge : MonoBehaviour
 {
-    public void onLevelSelected()
+    public void OnLevelSelected()
     {
-        OpenFileSystem.instance.onLevelSelected(gameObject);
+        OpenFileSystem.instance.OnLevelSelected(gameObject);
     }
 
-    public void loadLevel()
+    public void LoadLevel()
     {
         gameObject.transform.parent.parent.parent.parent.Find("Buttons/LoadButton").GetComponent<Button>().onClick.Invoke();
     }

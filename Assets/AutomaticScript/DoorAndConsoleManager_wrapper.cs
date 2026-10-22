@@ -12,14 +12,14 @@ public class DoorAndConsoleManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "doorPathPrefab", doorPathPrefab);
 	}
 
-	public void startNextPathAnimation(UnityEngine.GameObject pathGO)
+	public void StartNextPathAnimation(UnityEngine.GameObject pathGO)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "startNextPathAnimation", pathGO);
+		MainLoop.callAppropriateSystemMethod (system, "StartNextPathAnimation", pathGO);
 	}
 
-	public void forceDoorSync()
+	public void ForceDoorSync()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "forceDoorSync", null);
+		MainLoop.callAppropriateSystemMethod (system, "ForceDoorSync", null);
 	}
 
 }

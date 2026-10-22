@@ -37,18 +37,18 @@ using UnityEngine.UI;
 public class DragDropSystem : FSystem
 {
 	// Les familles
-	private Family f_dropZoneEnabled = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Les drops zones visibles
-	private Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
-	private Family f_elementToDelete = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToDelete)));
-	private Family f_defaultDropZone = FamilyManager.getFamily(new AllOfComponents(typeof(Selected)));
-	private Family f_inventory = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // les éléments disponibles dans l'inventaire
+	private readonly Family f_dropZoneEnabled = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Les drops zones visibles
+	private readonly Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
+	private readonly Family f_elementToDelete = FamilyManager.getFamily(new AllOfComponents(typeof(NeedToDelete)));
+	private readonly Family f_defaultDropZone = FamilyManager.getFamily(new AllOfComponents(typeof(Selected)));
+	private readonly Family f_inventory = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // les éléments disponibles dans l'inventaire
 
-	private Family f_playMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-	private Family f_editMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+	private readonly Family f_playMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private readonly Family f_editMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
-	private Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
-	private Family f_programmingArea = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private readonly Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private readonly Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private readonly Family f_programmingArea = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	// Les variables
 	private GameData gameData;
@@ -104,8 +104,8 @@ public class DragDropSystem : FSystem
 			doubleClick = InputSystem.actions.FindAction("DoubleClick");
 			longClick = InputSystem.actions.FindAction("ClickHold");
 
-			f_elementToDelete.addEntryCallback(deleteElement);
-			f_defaultDropZone.addEntryCallback(selectNewDefaultDropZone);
+			f_elementToDelete.addEntryCallback(DeleteElement);
+			f_defaultDropZone.addEntryCallback(SelectNewDefaultDropZone);
 			f_playMode.addEntryCallback(delegate {
 				Pause = true;
 				string scriptsContent = "";
@@ -128,8 +128,8 @@ public class DragDropSystem : FSystem
 					Pause = false;
 			});
 
-			f_newEnd.addEntryCallback(delegate { levelFinished(true); });
-			f_newEnd.addExitCallback(delegate { levelFinished(false); });
+			f_newEnd.addEntryCallback(delegate { LevelFinished(true); });
+			f_newEnd.addExitCallback(delegate { LevelFinished(false); });
 
 			f_programmingArea.addEntryCallback(delegate (GameObject go) {
 				ReplacementSlot[] replacementSlots = go.GetComponentsInChildren<ReplacementSlot>(true);
@@ -148,9 +148,9 @@ public class DragDropSystem : FSystem
 			Pause = true; // if no GameData we lock this system
 	}
 
-	private void cancelDragging()
+	private void CancelDragging()
 	{
-		setDropZoneState(false);
+		SetDropZoneState(false);
 		if (itemDragged != null)
 		{
 			// remettre le focus sur la référence dans l'inventaire
@@ -167,7 +167,7 @@ public class DragDropSystem : FSystem
 			replacementSlot.GetComponentInChildren<Outline>().enabled = false;
 
 		// le processus de drag est annulé, on se remet en Idle mais on ne le fait pas immediatement pour gérer le cas du drag&drop souris qui au moment du drop dans une zone vide par exemple peut déclancher un longClick donc on se remet en Idle une frame plus tard pour ne pas prendre en compte le prochain longClick
-		MainLoop.instance.StartCoroutine(delayIdleState());
+		MainLoop.instance.StartCoroutine(DelayIdleState());
 	}
 
     protected override void onProcess(int familiesUpdateCount)
@@ -178,32 +178,32 @@ public class DragDropSystem : FSystem
 			if (cancel.WasPressedThisFrame() && !exitWebGL.WasPressedThisFrame() && dragDropState != DragDropState.Idle)
 			{
 				HotkeySystem.instance.cancelNextCancel_act = true;
-				cancelDragging();
+				CancelDragging();
 			}
 
 			// Gestion de la modalité longClick (voir checkSpecialClick)
 			if (longClick.WasPerformedThisFrame() && dragDropState == DragDropState.Idle)
 			{
-				initDraggedBlock();
+				InitDraggedBlock();
 				if (itemDragged != null) // au cas où le long click aurait eu lieu sur un objet non compatible
 					dragDropState = DragDropState.LongClick;
 			}
 			else if (dragDropState == DragDropState.LongClick)
 			{
-				dragElement(); // forcer à suivre le curseur de la souris
+				DragElement(); // forcer à suivre le curseur de la souris
 				if (click.WasPressedThisFrame())
-					endDragElement();
+					EndDragElement();
 			}
 			else
 				// Si un item est en train d'être dragged mais qu'il perd le focus, on annule se déplacement
 				// on ne gère ce cas là que si on n'est pas dans le mode longclick car dans ce cas l'utilisateur devra faire un clic pour déposer son bloc ce qui donnera le focus sur l'objet pointé, hors dans ce cas on a bien un itemDragged et il sera différent du eventSystem.currentSelectedGameObject mais pour autant on ne souhaite pas annuler de drag
 				if (itemDragged != null && itemDragged != eventSystem.currentSelectedGameObject)
-					cancelDragging();
+					CancelDragging();
 
 			// gestion de la modalité drag&drop au clavier
 			if (submit.WasPressedThisFrame() && dragDropState == DragDropState.Idle)
             {
-				initDraggedBlock();
+				InitDraggedBlock();
 				// vérifier sue l'initialisation s'est bien passée
 				if (itemDragged != null)
 					dragDropState = DragDropState.DragKeyboard;
@@ -214,20 +214,20 @@ public class DragDropSystem : FSystem
 				Vector2 navigateValue = navigateAction.ReadValue<Vector2>();
 				// left
 				if (navigateValue.x < 0 && itemDragged != null)
-					moveItemDragged(-Time.deltaTime * 100, 0);
+					MoveItemDragged(-Time.deltaTime * 100, 0);
 				// right
 				if (navigateValue.x > 0 && itemDragged != null)
-					moveItemDragged(Time.deltaTime * 100, 0);
+					MoveItemDragged(Time.deltaTime * 100, 0);
 				// up
 				if (navigateValue.y > 0 && itemDragged != null)
-					moveItemDragged(0, Time.deltaTime * 100);
+					MoveItemDragged(0, Time.deltaTime * 100);
 				// down
 				if (navigateValue.y < 0 && itemDragged != null)
-					moveItemDragged(0, -Time.deltaTime * 100);
+					MoveItemDragged(0, -Time.deltaTime * 100);
 
 				// cas où l'utilisateur souhaite déposer son bloc
 				if (submit.WasPressedThisFrame())
-					endDragElement();
+					EndDragElement();
 			}
 
 			// gestion de la modalité insertion au clavier
@@ -260,26 +260,26 @@ public class DragDropSystem : FSystem
 			}
 			if (submit.WasPressedThisFrame() && !cancelNextSubmit && dragDropState == DragDropState.InsertKeyboard)
 			{
-				initDraggedBlock();
+				InitDraggedBlock();
                 if (itemDragged != null) // au cas où le long click aurait eu lieu sur un objet non compatible
-                    MainLoop.instance.StartCoroutine(delayEndDrag()); // On a besoin de temporiser la fin du drag pour attendre les mises à jour Fyfy dû à l'init
+                    MainLoop.instance.StartCoroutine(DelayEndDrag()); // On a besoin de temporiser la fin du drag pour attendre les mises à jour Fyfy dû à l'init
             }
 			else
 				cancelNextSubmit = false;
 						
 			// Gestion de l'action de suppression au clavier
 			if (deleteKeyboard.WasPressedThisFrame() && dragDropState == DragDropState.Idle && eventSystem.currentSelectedGameObject.GetComponentInParent<LibraryItemRef>() && eventSystem.currentSelectedGameObject.GetComponentInParent<UIRootContainer>() && !Utility.inputFieldSelected())
-				deleteElement(eventSystem.currentSelectedGameObject.GetComponentInParent<LibraryItemRef>().gameObject); // On passe par le LibraryItemRef pour récupérer le gameObject pour gérer le cas par exemple où un enfant du bloc est sélectionné comme le texte "Then" dans un If
+				DeleteElement(eventSystem.currentSelectedGameObject.GetComponentInParent<LibraryItemRef>().gameObject); // On passe par le LibraryItemRef pour récupérer le gameObject pour gérer le cas par exemple où un enfant du bloc est sélectionné comme le texte "Then" dans un If
 		}
 	}
-	public IEnumerator delayEndDrag()
+	private IEnumerator DelayEndDrag()
 	{
 		yield return null;
 		yield return null;
-		endDragElement();
+		EndDragElement();
 	}
 
-	private void initDraggedBlock()
+	private void InitDraggedBlock()
     {
 		GameObject current = eventSystem.currentSelectedGameObject;
 		if (current == null)
@@ -287,18 +287,18 @@ public class DragDropSystem : FSystem
 		// source depuis l'inventaire
 		if (current.GetComponent<ElementToDrag>())
 		{
-			initBlockFromLibrary(current);
+			InitBlockFromLibrary(current);
 			itemDragged.transform.position = new Vector3(itemDragged.transform.position.x + 20, itemDragged.transform.position.y - 20, itemDragged.transform.position.z);
 		}
 		// source depuis le code
 		else if (current.GetComponent<LibraryItemRef>() && !current.GetComponent<Locker>().locked)
 		{
-			initBlockFromEditableScript(current);
+			InitBlockFromEditableScript(current);
 			itemDragged.transform.position = new Vector3(itemDragged.transform.position.x + 20, itemDragged.transform.position.y - 20, itemDragged.transform.position.z);
 		}
 	}
 
-	private void moveItemDragged(float x, float y)
+	private void MoveItemDragged(float x, float y)
     {
 		itemDragged.transform.position = new Vector3(itemDragged.transform.position.x + x, itemDragged.transform.position.y + y, itemDragged.transform.position.z);
 		eventSystem.SetSelectedGameObject(itemDragged);
@@ -312,7 +312,7 @@ public class DragDropSystem : FSystem
 			// check if raycast is enabled on this dropzone and dragged item overlap dropzone
 			bool raycastEnabled = dropZone.GetComponentInChildren<RaycastOnDrag>().GetComponent<Image>().raycastTarget;
 			if (raycastEnabled && Math.Abs(itemPosInDropZone.x) < rectTrigger.rect.width / 2 && Math.Abs(itemPosInDropZone.y) < rectTrigger.rect.height / 2)
-				checkHighlightDropArea(dropZone);
+				CheckHighlightDropArea(dropZone);
 			else
 				dropZone.transform.Find("PositionBar").gameObject.SetActive(false);
 		}
@@ -326,20 +326,20 @@ public class DragDropSystem : FSystem
 			// check if raycast is enabled on this dropzone and dragged item overlap dropzone
 			bool raycastEnabled = replacementSlot.GetComponentInChildren<RaycastOnDrag>().GetComponent<Image>().raycastTarget;
 			if (raycastEnabled && Math.Abs(itemPosInDropZone.x) < rectTrigger.rect.width / 2 && Math.Abs(itemPosInDropZone.y) < rectTrigger.rect.height / 2)
-				checkHighlightDropArea(replacementSlot);
+				CheckHighlightDropArea(replacementSlot);
 			else
 				replacementSlot.GetComponentInChildren<Outline>().enabled = false;
 		}
 	}
 
     // Si fin de niveau désactive le drag&drop
-    private void levelFinished(bool state)
+    private void LevelFinished(bool state)
 	{
 		Pause = state;
 	}
 
 	// toggle toutes les dropzones
-	private void setDropZoneState(bool value)
+	private void SetDropZoneState(bool value)
 	{
 		foreach (GameObject dropArea in f_dropArea)
         {
@@ -368,7 +368,7 @@ public class DragDropSystem : FSystem
 	}
 
 	// used by prefabs (Captors, boolean operators and drop areas)
-	public void checkHighlightDropArea(GameObject dropArea)
+	public void CheckHighlightDropArea(GameObject dropArea)
     {
 		if (itemDragged != null) {
 			// First case => the dropArea is a drop zone, we enable child bar of the drop zone
@@ -396,7 +396,7 @@ public class DragDropSystem : FSystem
     }
 
 	// used by prefabs on ReplacementSlot
-	public void unhighlightDropArea(GameObject dropArea)
+	public void UnhighlightDropArea(GameObject dropArea)
 	{
 		if (itemDragged != null && !dropArea.transform.IsChildOf(itemDragged.transform))
 		{
@@ -414,21 +414,21 @@ public class DragDropSystem : FSystem
 	}
 
 	// Lors de la selection (début d'un drag) d'un bloc de la librairie (voir inspector)
-	public void beginDragElementFromLibrary(BaseEventData element)
+	public void BeginDragElementFromLibrary(BaseEventData element)
 	{
 		PointerEventData pointerData = element as PointerEventData;
 		// On verifie si c'est un évènement généré par le bouton gauche de la souris
 		if (!Pause && gameData.dragDropEnabled && pointerData != null && pointerData.button == PointerEventData.InputButton.Left && dragDropState == DragDropState.Idle)
 		{
 			dragDropState = DragDropState.DragPointer;
-			initBlockFromLibrary(pointerData.pointerPress);
+			InitBlockFromLibrary(pointerData.pointerPress);
 		}
 	}
 
-	private void initBlockFromLibrary(GameObject model)
+	private void InitBlockFromLibrary(GameObject model)
     {
 		// On active les dropzones
-		setDropZoneState(true);
+		SetDropZoneState(true);
         // On crée le bloc action associé à l'élément
         itemDragged = UtilityGame.createEditableBlockFromLibrary(model, mainCanvas, true);
 		itemDragged.AddComponent<Dragging>();
@@ -441,18 +441,18 @@ public class DragDropSystem : FSystem
 	}
 
 	// Lors de la selection (début d'un drag) d'un bloc dans la zone d'édition
-	public void beginDragElementFromEditableScript(BaseEventData element)
+	public void BeginDragElementFromEditableScript(BaseEventData element)
 	{
 		PointerEventData pointerData = element as PointerEventData;
 		// On verifie si c'est un évènement généré par le bouton gauche de la souris
 		if (!Pause && gameData.dragDropEnabled && pointerData != null && pointerData.button == PointerEventData.InputButton.Left && pointerData.pointerPress.GetComponentInParent<Highlightable>() != null && !pointerData.pointerPress.GetComponentInParent<Locker>().locked && dragDropState == DragDropState.Idle)
 		{
 			dragDropState = DragDropState.DragPointer;
-			initBlockFromEditableScript(pointerData.pointerPress.GetComponentInParent<Highlightable>().gameObject);
+			InitBlockFromEditableScript(pointerData.pointerPress.GetComponentInParent<Highlightable>().gameObject);
 		}
 	}
 
-	private void initBlockFromEditableScript(GameObject model)
+	private void InitBlockFromEditableScript(GameObject model)
     {
 		itemDragged = model;
 		itemDragged.AddComponent<Dragging>();
@@ -468,7 +468,7 @@ public class DragDropSystem : FSystem
 			removedFromArea = nextBrother.GetComponentInChildren<ReplacementSlot>(true).gameObject;
 
 		// On active les dropzones 
-		setDropZoneState(true);
+		SetDropZoneState(true);
 
 		// Update empty zone if required
 		UtilityGame.manageEmptyZone(itemDragged);
@@ -516,7 +516,7 @@ public class DragDropSystem : FSystem
 
 
 	// Pendant le drag d'un bloc, permet de lui faire suivre le mouvement de la souris
-	public void dragElement()
+	public void DragElement()
 	{
 		if(!Pause && gameData.dragDropEnabled && itemDragged != null) {
 			Vector2Control pointerPos = Pointer.current.position;
@@ -524,7 +524,7 @@ public class DragDropSystem : FSystem
 		}
 	}
 
-	private GameObject getFocusedDropArea()
+	private GameObject GetFocusedDropArea()
     {
 		foreach (GameObject go in f_dropZoneEnabled)
 			if (go.transform.GetChild(0).gameObject.activeSelf)
@@ -537,15 +537,15 @@ public class DragDropSystem : FSystem
 
 	// Determine si l'element associé à l'événement EndDrag se trouve dans une zone de container ou non
 	// Détruire l'objet si lâché hors d'un container
-	public void endDragElement()
+	public void EndDragElement()
 	{
 		if (!Pause && gameData.dragDropEnabled && itemDragged != null)
 		{
 			// On commence par regarder s'il n'y a pas de container pointé, dans ce cas on supprime l'objet drag
-			GameObject dropArea = getFocusedDropArea();
+			GameObject dropArea = GetFocusedDropArea();
 
 			// On désactive les dropzones
-			setDropZoneState(false);
+			SetDropZoneState(false);
 			// Be sure all replacement outline are disabled
 			foreach (GameObject replacementSlot in f_replacementSlot)
 				replacementSlot.GetComponentInChildren<Outline>().enabled = false;
@@ -557,13 +557,13 @@ public class DragDropSystem : FSystem
 			insertRef = null;
 			if (dropArea == null)
 			{
-				cancelDragging();
+				CancelDragging();
 				return;
 			}
 			// sinon on s'assure qu'on n'ajoute pas item à lui même
 			else if (dropArea.transform.IsChildOf(itemDragged.transform))
 			{
-				cancelDragging();
+				CancelDragging();
 				return;
 			}
 			else
@@ -576,7 +576,7 @@ public class DragDropSystem : FSystem
 					// tracer le fait que le joueur fait une erreur de compréhension de la grammaire du langage
 					string content = UtilityGame.exportBlockToString(itemDragged.GetComponent<Highlightable>());
 					string context = UtilityGame.exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
-					cancelDragging();
+					CancelDragging();
 					// seulement sur la scene principale
                     if (SceneManager.GetActiveScene().name == "MainScene")
                         GameObjectManager.addComponent<ActionPerformedForLRS>(dropArea, new
@@ -593,7 +593,7 @@ public class DragDropSystem : FSystem
 
 				// Tout est ok, on souhaite ajouter un item dans une cible compatible
 				// ajout de l'élément au container pointé
-				if (addDraggedItemOnDropZone(dropArea))
+				if (AddDraggedItemOnDropZone(dropArea))
 				{
 					// We restore all UI elements inside the EventSystem
 					foreach (RaycastOnDrag child in itemDragged.GetComponentsInChildren<RaycastOnDrag>(true))
@@ -607,7 +607,7 @@ public class DragDropSystem : FSystem
 					GameObjectManager.removeComponent<Dragging>(itemDragged);
 
 				// le processus de drag est terminé on se remet en Idle mais on ne le fait pas immediatement pour gérer le cas du drag&drop souris qui au moment du drop déclenche forcément un longClick donc on se remet en Idle une frame plus tard pour ne pas prendre en compte le prochain longClick
-				MainLoop.instance.StartCoroutine(delayIdleState());
+				MainLoop.instance.StartCoroutine(DelayIdleState());
 			}
             // seulement sur la scene principale
             if (SceneManager.GetActiveScene().name == "MainScene")
@@ -618,21 +618,21 @@ public class DragDropSystem : FSystem
 		}
 	}
 
-	private IEnumerator delayIdleState()
+	private IEnumerator DelayIdleState()
     {
 		yield return null;
 		dragDropState = DragDropState.Idle;
 	}
 
 	// Add the dragged item on the drop area
-	private bool addDraggedItemOnDropZone (GameObject dropArea)
+	private bool AddDraggedItemOnDropZone (GameObject dropArea)
     {
 		string content = UtilityGame.exportBlockToString(itemDragged.GetComponent<Highlightable>());
 		string context = UtilityGame.exportEditableScriptToString(dropArea.GetComponentInParent<UIRootContainer>().transform, dropArea);
 
 		if (!UtilityGame.addItemOnDropArea(itemDragged, dropArea))
 		{
-			cancelDragging();
+			CancelDragging();
 			return false;
 		}
 
@@ -644,7 +644,7 @@ public class DragDropSystem : FSystem
 				if (rs.slotType == ReplacementSlot.SlotType.BaseElement)
 				{
 					// L'ajout de l'item dragged ajoutera un Selected sur le replacementSlot utilisé, il faut donc attendre une frame que le Selected par défaut soit défini pour ajouter celui là qui nous intéresse (Le ReplacementSlot de notre structure de contrôle)
-					rs.StartCoroutine(delaySlotSelection(rs));
+					rs.StartCoroutine(DelaySlotSelection(rs));
 					break;
 				}
 		}
@@ -680,14 +680,14 @@ public class DragDropSystem : FSystem
         return true;
 	}
 
-	private IEnumerator delaySlotSelection(ReplacementSlot rs)
+	private IEnumerator DelaySlotSelection(ReplacementSlot rs)
     {
 		yield return null;
 		GameObjectManager.addComponent<Selected>(rs.gameObject);
 	}
 
 	// Déclenche la suppression de l'élément
-	public void deleteElement(GameObject elementToDelete)
+	public void DeleteElement(GameObject elementToDelete)
 	{
 		// On vérifie qu'il y a bien un objet pointé pour la suppression
 		if (!Pause && gameData.dragDropEnabled && elementToDelete != null && elementToDelete.GetComponentInParent<Highlightable>() != null && !elementToDelete.GetComponentInParent<Locker>().locked)
@@ -741,11 +741,11 @@ public class DragDropSystem : FSystem
 			eventSystem.SetSelectedGameObject(nextBrother.gameObject);
             // Si le frère suivant l'objet supprimé contient une dropzone ou un replacementSlot de type BaseElement, on le définit comme la dropzone par défaut pour le double click
             if (nextBrother.GetComponentInChildren<DropZone>(true) || (nextBrother.GetComponent<ReplacementSlot>() && nextBrother.GetComponent<ReplacementSlot>().slotType == ReplacementSlot.SlotType.BaseElement))
-                setDefaultDropZone(nextBrother.gameObject);
+                SetDefaultDropZone(nextBrother.gameObject);
         }
 	}
 
-	private void selectNewDefaultDropZone(GameObject newDropZone)
+	private void SelectNewDefaultDropZone(GameObject newDropZone)
 	{
 		// define this new drop zone as the default
 		lastDropZoneUsed = newDropZone;
@@ -755,7 +755,7 @@ public class DragDropSystem : FSystem
 	}
 
 	// Vérifie un clic spécial (double click) sur l'élément de la bibliothèque (voir l'inspector)
-	public void checkSpecialClick(BaseEventData element)
+	public void CheckSpecialClick(BaseEventData element)
     {
 		PointerEventData pointerData = element as PointerEventData;
 		if (!Pause && gameData.dragDropEnabled && pointerData != null && dragDropState == DragDropState.Idle)
@@ -781,7 +781,7 @@ public class DragDropSystem : FSystem
 					// On l'ajoute aux familles de FYFY
 					GameObjectManager.bind(itemDragged);
 					// On l'envoie sur la dernière dropzone utilisée
-					addDraggedItemOnDropZone(lastDropZoneUsed);
+					AddDraggedItemOnDropZone(lastDropZoneUsed);
 
 					GameObjectManager.addComponent<ScrollOn>(itemDragged);
 					MainLoop.instance.StartCoroutine(UtilityGame.pulseItem(itemDragged));
@@ -795,21 +795,21 @@ public class DragDropSystem : FSystem
 		}
 	}
 
-	public void setDefaultDropZone(GameObject refObject)
+	public void SetDefaultDropZone(GameObject refObject)
 	{
 		if (!Pause && gameData.dragDropEnabled)
 		{
 			if (refObject.GetComponentInChildren<DropZone>(true) != null)
-				selectNewDefaultDropZone(refObject.GetComponentInChildren<DropZone>(true).gameObject);
+				SelectNewDefaultDropZone(refObject.GetComponentInChildren<DropZone>(true).gameObject);
 			else if (refObject.GetComponent<ReplacementSlot>() != null)
-				selectNewDefaultDropZone(refObject.GetComponent<ReplacementSlot>().gameObject);
+				SelectNewDefaultDropZone(refObject.GetComponent<ReplacementSlot>().gameObject);
 			else
 				Debug.Log("No drop zone found for this object: "+ refObject.name);
         }
     }
 
 	// see inputFiels in ForBloc prefab in inspector
-	public void onlyPositiveInteger(GameObject forBlock, string newValue)
+	public void OnlyPositiveInteger(GameObject forBlock, string newValue)
 	{
 		int oldValue = forBlock.GetComponent<ForControl>().nbFor;
 		int res;
@@ -844,7 +844,7 @@ public class DragDropSystem : FSystem
         }
 	}
 
-	public void lockItem(Transform transform)
+	public void LockItem(Transform transform)
     {
 		// Vérouiller un block implique que tout ses parents soient également bloqués sinon on pourrait indirectement le supprimer en supprimant un parent
 		// Exception si on est sur le locker d'un inputField (cas de l'itération dans le for) pour lequel on n'a pas à propager le blocage sur les parents
@@ -864,7 +864,7 @@ public class DragDropSystem : FSystem
         GameObjectManager.addComponent<Undoable>(transform.gameObject);
     }
 
-	public void unlockItem(Transform transform)
+	public void UnlockItem(Transform transform)
     {
 		// Dévérouiller un block implique que tout ses enfants soient également dévérouillés sinon on pourrait indirectement supprimer un enfant en supprimant ce block
 		// Exception si on est sur le locker d'un inputField (cas de l'itération dans le for) pour lequel on n'a pas à propager le blocage sur les lui

@@ -2,15 +2,14 @@
 using FYFY;
 using Newtonsoft.Json;
 using System.Collections;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class SendStatements : FSystem {
 
-    private Family f_actionForLRS = FamilyManager.getFamily(new AllOfComponents(typeof(ActionPerformedForLRS)));
-    private Family f_saveProgression = FamilyManager.getFamily(new AllOfComponents(typeof(SendUserData)));
+    private readonly Family f_actionForLRS = FamilyManager.getFamily(new AllOfComponents(typeof(ActionPerformedForLRS)));
+    private readonly Family f_saveProgression = FamilyManager.getFamily(new AllOfComponents(typeof(SendUserData)));
 
     public static SendStatements instance;
 

@@ -6,16 +6,16 @@ using System.Collections.Generic;
 /// This system executes new currentActions
 /// </summary>
 public class CurrentActionExecutor : FSystem {
-	private Family f_obstacles = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Furniture", "Door"));
-	private Family f_activableConsole = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
-    private Family f_newCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
-	private Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)));
-	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-	private Family f_positionCorrected = FamilyManager.getFamily(new AllOfComponents(typeof(PositionCorrected)));
+	private readonly Family f_obstacles = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Furniture", "Door"));
+	private readonly Family f_activableConsole = FamilyManager.getFamily(new AllOfComponents(typeof(Activable),typeof(Position),typeof(AudioSource)));
+    private readonly Family f_newCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction), typeof(BasicAction)));
+	private readonly Family f_agent = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)));
+	private readonly Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private readonly Family f_positionCorrected = FamilyManager.getFamily(new AllOfComponents(typeof(PositionCorrected)));
 
 	protected override void onStart()
 	{
-		f_newCurrentAction.addEntryCallback(onNewCurrentAction);
+		f_newCurrentAction.addEntryCallback(OnNewCurrentAction);
 		f_positionCorrected.addEntryCallback(delegate (GameObject go) { GameObjectManager.removeComponent<PositionCorrected>(go); });
 		Pause = true;
 	}
@@ -74,7 +74,7 @@ public class CurrentActionExecutor : FSystem {
 	}
 
 	// each time a new currentAction is added, 
-	private void onNewCurrentAction(GameObject currentAction) {
+	private void OnNewCurrentAction(GameObject currentAction) {
 		// On ne traite les CurrentAction qu'en mode play
 		if (f_playingMode.Count > 0)
 		{
@@ -128,18 +128,18 @@ public class CurrentActionExecutor : FSystem {
 		switch (go.GetComponent<Direction>().direction){
 			case Direction.Dir.North:
 				pos.targetX = pos.startX;
-				pos.targetY = pos.startY - checkObstacle(go, pos.startX, pos.startY - 1);
+				pos.targetY = pos.startY - CheckObstacle(go, pos.startX, pos.startY - 1);
 				break;
 			case Direction.Dir.South:
 				pos.targetX = pos.startX;
-				pos.targetY = pos.startY + checkObstacle(go, pos.startX, pos.startY + 1);
+				pos.targetY = pos.startY + CheckObstacle(go, pos.startX, pos.startY + 1);
 				break;
 			case Direction.Dir.East:
-				pos.targetX = pos.startX + checkObstacle(go, pos.startX + 1, pos.startY);
+				pos.targetX = pos.startX + CheckObstacle(go, pos.startX + 1, pos.startY);
 				pos.targetY = pos.startY;
 				break;
 			case Direction.Dir.West:
-				pos.targetX = pos.startX - checkObstacle(go, pos.startX - 1, pos.startY);
+				pos.targetX = pos.startX - CheckObstacle(go, pos.startX - 1, pos.startY);
 				pos.targetY = pos.startY;
 				break;
 		}
@@ -201,7 +201,7 @@ public class CurrentActionExecutor : FSystem {
 	// Wall => 0.49 (volontairement inférieur à 0.5 pour que l'arrondi nous donne la position de la case de départ)
 	// Furniture => player:0.8, drone:1
 	// Door closed => 1
-	private float checkObstacle(GameObject agent, int simTargetX, int simTargetY){
+	private float CheckObstacle(GameObject agent, int simTargetX, int simTargetY){
 		foreach( GameObject obstacle in f_obstacles){
 			if (obstacle.GetComponent<Position>().x == simTargetX && obstacle.GetComponent<Position>().y == simTargetY) {
 				if (obstacle.CompareTag("Wall"))

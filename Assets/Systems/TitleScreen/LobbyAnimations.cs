@@ -6,7 +6,7 @@ using System.Collections;
 /// This system is in charge to play lobby animations
 /// </summary>
 public class LobbyAnimation : FSystem {
-    private Family f_forceOpenDoor = FamilyManager.getFamily(new AllOfComponents(typeof(ForceOpenDoor)));
+    private readonly Family f_forceOpenDoor = FamilyManager.getFamily(new AllOfComponents(typeof(ForceOpenDoor)));
     public GameObject Door;
     public GameObject Drone;
     public GameObject Kyle;

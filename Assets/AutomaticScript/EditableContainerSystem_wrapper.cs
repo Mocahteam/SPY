@@ -18,24 +18,24 @@ public class EditableContainerSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
 	}
 
-	public void addContainer()
+	public void AddContainer()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "addContainer", null);
+		MainLoop.callAppropriateSystemMethod (system, "AddContainer", null);
 	}
 
-	public void resetScriptContainer(UnityEngine.GameObject scriptContainer)
+	public void ResetScriptContainer(UnityEngine.GameObject scriptContainer)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "resetScriptContainer", scriptContainer);
+		MainLoop.callAppropriateSystemMethod (system, "ResetScriptContainer", scriptContainer);
 	}
 
-	public void editRobotName(TMPro.TMP_Text name)
+	public void EditRobotName(TMPro.TMP_Text name)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "editRobotName", name);
+		MainLoop.callAppropriateSystemMethod (system, "EditRobotName", name);
 	}
 
-	public void newNameContainer(System.String newName)
+	public void NewNameContainer(System.String newName)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "newNameContainer", newName);
+		MainLoop.callAppropriateSystemMethod (system, "NewNameContainer", newName);
 	}
 
 }

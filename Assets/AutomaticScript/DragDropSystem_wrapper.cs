@@ -16,59 +16,59 @@ public class DragDropSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "AddActionSound", AddActionSound);
 	}
 
-	public void checkHighlightDropArea(UnityEngine.GameObject dropArea)
+	public void CheckHighlightDropArea(UnityEngine.GameObject dropArea)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "checkHighlightDropArea", dropArea);
+		MainLoop.callAppropriateSystemMethod (system, "CheckHighlightDropArea", dropArea);
 	}
 
-	public void unhighlightDropArea(UnityEngine.GameObject dropArea)
+	public void UnhighlightDropArea(UnityEngine.GameObject dropArea)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "unhighlightDropArea", dropArea);
+		MainLoop.callAppropriateSystemMethod (system, "UnhighlightDropArea", dropArea);
 	}
 
-	public void beginDragElementFromLibrary(UnityEngine.EventSystems.BaseEventData element)
+	public void BeginDragElementFromLibrary(UnityEngine.EventSystems.BaseEventData element)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "beginDragElementFromLibrary", element);
+		MainLoop.callAppropriateSystemMethod (system, "BeginDragElementFromLibrary", element);
 	}
 
-	public void beginDragElementFromEditableScript(UnityEngine.EventSystems.BaseEventData element)
+	public void BeginDragElementFromEditableScript(UnityEngine.EventSystems.BaseEventData element)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "beginDragElementFromEditableScript", element);
+		MainLoop.callAppropriateSystemMethod (system, "BeginDragElementFromEditableScript", element);
 	}
 
-	public void dragElement()
+	public void DragElement()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "dragElement", null);
+		MainLoop.callAppropriateSystemMethod (system, "DragElement", null);
 	}
 
-	public void endDragElement()
+	public void EndDragElement()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "endDragElement", null);
+		MainLoop.callAppropriateSystemMethod (system, "EndDragElement", null);
 	}
 
-	public void deleteElement(UnityEngine.GameObject elementToDelete)
+	public void DeleteElement(UnityEngine.GameObject elementToDelete)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "deleteElement", elementToDelete);
+		MainLoop.callAppropriateSystemMethod (system, "DeleteElement", elementToDelete);
 	}
 
-	public void checkSpecialClick(UnityEngine.EventSystems.BaseEventData element)
+	public void CheckSpecialClick(UnityEngine.EventSystems.BaseEventData element)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "checkSpecialClick", element);
+		MainLoop.callAppropriateSystemMethod (system, "CheckSpecialClick", element);
 	}
 
-	public void setDefaultDropZone(UnityEngine.GameObject refObject)
+	public void SetDefaultDropZone(UnityEngine.GameObject refObject)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setDefaultDropZone", refObject);
+		MainLoop.callAppropriateSystemMethod (system, "SetDefaultDropZone", refObject);
 	}
 
-	public void lockItem(UnityEngine.Transform transform)
+	public void LockItem(UnityEngine.Transform transform)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "lockItem", transform);
+		MainLoop.callAppropriateSystemMethod (system, "LockItem", transform);
 	}
 
-	public void unlockItem(UnityEngine.Transform transform)
+	public void UnlockItem(UnityEngine.Transform transform)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "unlockItem", transform);
+		MainLoop.callAppropriateSystemMethod (system, "UnlockItem", transform);
 	}
 
 }

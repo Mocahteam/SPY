@@ -18,19 +18,19 @@ public class OpenFileSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "LevelAvailablePrefab", LevelAvailablePrefab);
 	}
 
-	public void refreshListOfLevels(System.String filter)
+	public void RefreshListOfLevels(System.String filter)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "refreshListOfLevels", filter);
+		MainLoop.callAppropriateSystemMethod (system, "RefreshListOfLevels", filter);
 	}
 
-	public void onLevelSelected(UnityEngine.GameObject go)
+	public void OnLevelSelected(UnityEngine.GameObject go)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "onLevelSelected", go);
+		MainLoop.callAppropriateSystemMethod (system, "OnLevelSelected", go);
 	}
 
-	public void loadLevel()
+	public void LoadLevel()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "loadLevel", null);
+		MainLoop.callAppropriateSystemMethod (system, "LoadLevel", null);
 	}
 
 }

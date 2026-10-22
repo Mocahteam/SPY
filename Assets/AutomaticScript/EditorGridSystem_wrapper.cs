@@ -44,14 +44,9 @@ public class EditorGridSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "brushSelect", brushSelect);
 	}
 
-	public void resetGrid()
+	public void SetBrush(UnityEngine.GameObject go)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "resetGrid", null);
-	}
-
-	public void setBrush(UnityEngine.GameObject go)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "setBrush", go);
+		MainLoop.callAppropriateSystemMethod (system, "SetBrush", go);
 	}
 
 }

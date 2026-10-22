@@ -12,14 +12,4 @@ public class HighLightSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "activationSound", activationSound);
 	}
 
-	public void highLightItem(UnityEngine.GameObject go)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "highLightItem", go);
-	}
-
-	public void unHighLightItem(UnityEngine.GameObject go)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "unHighLightItem", go);
-	}
-
 }

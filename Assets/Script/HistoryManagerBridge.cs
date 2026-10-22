@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class HistoryManagerBridge : MonoBehaviour
 {
-    public void undo()
+    public void Undo()
     {
-        HistoryManager.instance.undo();
+        HistoryManager.instance.Undo();
     }
 
-    public void redo()
+    public void Redo()
     {
-        HistoryManager.instance.redo();
+        HistoryManager.instance.Redo();
     }
 }

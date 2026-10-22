@@ -10,7 +10,7 @@ public class OpenFileSystem : FSystem {
 
 	public static OpenFileSystem instance;
 
-	private Family f_newLoading = FamilyManager.getFamily(new AllOfComponents(typeof(NewLevelToLoad)));
+	private readonly Family f_newLoading = FamilyManager.getFamily(new AllOfComponents(typeof(NewLevelToLoad)));
 
 	public GameObject loadingLevelContent;
 	public DataLevelBehaviour dataLevel;
@@ -37,16 +37,16 @@ public class OpenFileSystem : FSystem {
 		{
 			gameData = go.GetComponent<GameData>();
 
-			refreshListOfLevels("");
+			RefreshListOfLevels("");
 		}
 
-		f_newLoading.addEntryCallback(levelLoaded);
+		f_newLoading.addEntryCallback(LevelLoaded);
 
 		Pause = true;
 	}
 
 	// see Load menu in MenuPanel and filter field in loading panel
-	public void refreshListOfLevels(string filter)
+	public void RefreshListOfLevels(string filter)
 	{
 		// sync filter with the content of the input field (in the case of input field is not empty and loading panel is called from the menu)
 		TMP_InputField input = loadingLevelContent.transform.parent.parent.parent.GetComponentInChildren<TMP_InputField>();
@@ -82,13 +82,13 @@ public class OpenFileSystem : FSystem {
 		UtilityEditor.buildLoadingPanelNavigation(loadingLevelContent.transform.parent.parent.parent);
 	}
 
-	public void onLevelSelected(GameObject go)
+	public void OnLevelSelected(GameObject go)
 	{
 		selectedLevelGO = go;
 	}
 
 	// See LoadButton GameObject
-	public void loadLevel()
+	public void LoadLevel()
     {
 		if (selectedLevelGO != null)
 		{
@@ -111,7 +111,7 @@ public class OpenFileSystem : FSystem {
 		}
 	}
 
-	private void levelLoaded(GameObject go)
+	private void LevelLoaded(GameObject go)
 	{
 		GameObjectManager.removeComponent<NewLevelToLoad>(go);
 	}

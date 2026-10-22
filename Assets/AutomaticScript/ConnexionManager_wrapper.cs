@@ -30,9 +30,9 @@ public class ConnexionManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
 	}
 
-	public void forceLaunch()
+	public void ForceLaunch()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "forceLaunch", null);
+		MainLoop.callAppropriateSystemMethod (system, "ForceLaunch", null);
 	}
 
 	public void GetProgression(TMPro.TMP_InputField idSession)
@@ -40,24 +40,24 @@ public class ConnexionManager_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "GetProgression", idSession);
 	}
 
-	public void newGame()
+	public void NewGame()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "newGame", null);
+		MainLoop.callAppropriateSystemMethod (system, "NewGame", null);
 	}
 
-	public void synchUserData()
+	public void SynchUserData()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "synchUserData", null);
+		MainLoop.callAppropriateSystemMethod (system, "SynchUserData", null);
 	}
 
-	public void askToLoadLevel(System.String levelToLoad)
+	public void AskToLoadLevel(System.String levelToLoad)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "askToLoadLevel", levelToLoad);
+		MainLoop.callAppropriateSystemMethod (system, "AskToLoadLevel", levelToLoad);
 	}
 
-	public void enableSendStatement()
+	public void EnableSendStatement()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "enableSendStatement", null);
+		MainLoop.callAppropriateSystemMethod (system, "EnableSendStatement", null);
 	}
 
 }

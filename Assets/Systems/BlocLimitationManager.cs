@@ -9,12 +9,12 @@ using System.Collections;
 /// </summary>
 public class BlocLimitationManager : FSystem
 {
-	private Family f_actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(LibraryItemRef)));
-	private Family f_droppedActions = FamilyManager.getFamily(new AllOfComponents(typeof(Dropped), typeof(LibraryItemRef)));
-	private Family f_deletedActions = FamilyManager.getFamily(new AllOfComponents(typeof(AddOne), typeof(ElementToDrag)));
-	private Family f_draggableElement = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)));
-	private Family f_resetBlocLimit = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
-	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
+	private readonly Family f_actions = FamilyManager.getFamily(new AllOfComponents(typeof(PointerSensitive), typeof(LibraryItemRef)));
+	private readonly Family f_droppedActions = FamilyManager.getFamily(new AllOfComponents(typeof(Dropped), typeof(LibraryItemRef)));
+	private readonly Family f_deletedActions = FamilyManager.getFamily(new AllOfComponents(typeof(AddOne), typeof(ElementToDrag)));
+	private readonly Family f_draggableElement = FamilyManager.getFamily(new AllOfComponents(typeof(ElementToDrag)));
+	private readonly Family f_resetBlocLimit = FamilyManager.getFamily(new AllOfComponents(typeof(ResetBlocLimit)));
+	private readonly Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded), typeof(MainLoop)));
 
 	private GameData gameData;
 
@@ -25,12 +25,12 @@ public class BlocLimitationManager : FSystem
 			gameData = gd.GetComponent<GameData>();
 
 		f_resetBlocLimit.addEntryCallback(delegate (GameObject go) {
-			destroyScript(go);
+			DestroyScript(go);
 			GameObjectManager.unbind(go);
 			UnityEngine.Object.Destroy(go);
 		});
 
-		f_actions.addEntryCallback(linkTo);
+		f_actions.addEntryCallback(LinkTo);
 
 		f_gameLoaded.addEntryCallback(delegate {
 			// init limitation counters for each draggable elements
@@ -39,51 +39,51 @@ public class BlocLimitationManager : FSystem
 				// default => hide go
 				go.SetActive(false);
 				// update counter and enable required blocks
-				updateBlocLimit(go);
+				UpdateBlocLimit(go);
 			}
 		});
 
-		f_droppedActions.addEntryCallback(useAction);
-		f_deletedActions.addEntryCallback(unuseAction);
+		f_droppedActions.addEntryCallback(UseAction);
+		f_deletedActions.addEntryCallback(UnuseAction);
 
 		Pause = true;
 	}
 
 	//Recursive script destroyer
-	private void destroyScript(GameObject go)
+	private void DestroyScript(GameObject go)
 	{
 		if (go.GetComponent<LibraryItemRef>())
 			GameObjectManager.addComponent<AddOne>(go.GetComponent<LibraryItemRef>().linkedTo);
 
 		foreach (Transform child in go.transform)
-			destroyScript(child.gameObject);
+			DestroyScript(child.gameObject);
 	}
 
 	// Find item in library to hook to this GameObject
-	private void linkTo(GameObject go)
+	private void LinkTo(GameObject go)
 	{
 		if (go.GetComponent<LibraryItemRef>().linkedTo == null)
 		{
 			if (go.GetComponent<BasicAction>())
-				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName(go.GetComponent<BasicAction>().actionType.ToString());
+				go.GetComponent<LibraryItemRef>().linkedTo = GetLibraryItemByName(go.GetComponent<BasicAction>().actionType.ToString());
 			else if (go.GetComponent<BaseCaptor>())
-				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName(go.GetComponent<BaseCaptor>().captorType.ToString());
+				go.GetComponent<LibraryItemRef>().linkedTo = GetLibraryItemByName(go.GetComponent<BaseCaptor>().captorType.ToString());
 			else if (go.GetComponent<BaseOperator>())
-				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName(go.GetComponent<BaseOperator>().operatorType.ToString());
+				go.GetComponent<LibraryItemRef>().linkedTo = GetLibraryItemByName(go.GetComponent<BaseOperator>().operatorType.ToString());
 			else if (go.GetComponent<WhileControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("While");
+				go.GetComponent<LibraryItemRef>().linkedTo = GetLibraryItemByName("While");
 			else if (go.GetComponent<ForeverControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("Forever");
+				go.GetComponent<LibraryItemRef>().linkedTo = GetLibraryItemByName("Forever");
 			else if (go.GetComponent<ForControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("ForLoop");
+				go.GetComponent<LibraryItemRef>().linkedTo = GetLibraryItemByName("ForLoop");
 			else if (go.GetComponent<IfElseControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("IfElse");
+				go.GetComponent<LibraryItemRef>().linkedTo = GetLibraryItemByName("IfElse");
 			else if (go.GetComponent<IfControl>())
-				go.GetComponent<LibraryItemRef>().linkedTo = getLibraryItemByName("IfThen");
+				go.GetComponent<LibraryItemRef>().linkedTo = GetLibraryItemByName("IfThen");
 		}
 	}
 
-	private GameObject getLibraryItemByName(string name)
+	private GameObject GetLibraryItemByName(string name)
 	{
 		foreach (GameObject item in f_draggableElement)
 			if (item.name == name)
@@ -94,7 +94,7 @@ public class BlocLimitationManager : FSystem
 	// Met à jour la limite du nombre de fois où l'on peut utiliser un bloc (si il y a une limite)
 	// Le désactive si la limite est atteinte
 	// Met à jour le compteur
-	private void updateBlocLimit(GameObject draggableGO)
+	private void UpdateBlocLimit(GameObject draggableGO)
 	{
 		if (gameData.actionBlockLimit.ContainsKey(draggableGO.name))
 		{
@@ -121,7 +121,7 @@ public class BlocLimitationManager : FSystem
 	}
 
 	// Remove one item from library
-	private void useAction(GameObject go){
+	private void UseAction(GameObject go){
 		LibraryItemRef lir = go.GetComponent<LibraryItemRef>();
 		string actionKey = lir.linkedTo.name;
 
@@ -129,19 +129,19 @@ public class BlocLimitationManager : FSystem
 		{
 			if (gameData.actionBlockLimit[actionKey] > 0)
 				gameData.actionBlockLimit[actionKey] -= 1;
-			updateBlocLimit(lir.linkedTo);		
+			UpdateBlocLimit(lir.linkedTo);		
 		}
 		GameObjectManager.removeComponent<Dropped>(go);
 		gameData.totalActionBlocUsed++;
 	}
 	
 	// Restore item in library
-	private void unuseAction(GameObject go){
+	private void UnuseAction(GameObject go){
 		AddOne[] addOnes =  go.GetComponents<AddOne>();
 		if(gameData.actionBlockLimit.ContainsKey(go.name)){
 			if (gameData.actionBlockLimit[go.name] >= 0)
 				gameData.actionBlockLimit[go.name] += addOnes.Length;
-			updateBlocLimit(go);
+			UpdateBlocLimit(go);
 			gameData.totalActionBlocUsed -= addOnes.Length;
 		}
 		foreach(AddOne a in addOnes){

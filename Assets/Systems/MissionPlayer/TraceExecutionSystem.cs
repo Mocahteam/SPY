@@ -10,12 +10,12 @@ using UnityEngine.UI;
 /// </summary>
 public class TraceExecutionSystem : FSystem {
 
-    private Family f_userExecutor = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)));
-    private Family f_enabledUserExecutor = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+    private readonly Family f_userExecutor = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)));
+    private readonly Family f_enabledUserExecutor = FamilyManager.getFamily(new AllOfComponents(typeof(ToggleGroup)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
-    private Family f_executablePanels = FamilyManager.getFamily(new AllOfComponents(typeof(ExecutablePanel)));
-    private Family f_playMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-    private Family f_editMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+    private readonly Family f_executablePanels = FamilyManager.getFamily(new AllOfComponents(typeof(ExecutablePanel)));
+    private readonly Family f_playMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private readonly Family f_editMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
     private GameData gameData;
 
     public static TraceExecutionSystem instance;
@@ -34,9 +34,9 @@ public class TraceExecutionSystem : FSystem {
 
             f_playMode.addEntryCallback(delegate
             {
-                setToggleState(true);
-                resetTogglesNotifications();
-                unselectAllToggles();
+                SetToggleState(true);
+                ResetTogglesNotifications();
+                UnselectAllToggles();
                 foreach (GameObject exec_go in f_executablePanels)
                 {
                     // Définir si on doit afficher ou pas le panneau de sélection de la prochaine action à exécuter selon si l'utilisateur est autorisé à le faire et si l'agent est un robot contrôlé par le joueur
@@ -58,7 +58,7 @@ public class TraceExecutionSystem : FSystem {
         Pause = true;
     }
 
-    public void onActionSelected()
+    public void OnActionSelected()
     {
         // identifier les actions sélectionnées par l'utilisateur
         List<Toggle> selectedActions = new List<Toggle>();
@@ -71,42 +71,42 @@ public class TraceExecutionSystem : FSystem {
         if (selectedActions.Count >= f_enabledUserExecutor.Count && f_enabledUserExecutor.Count > 0)
         {
             GameObjectManager.addComponent<NewStep>(f_enabledUserExecutor.First());
-            MainLoop.instance.StartCoroutine(waitAndClearUI());
+            MainLoop.instance.StartCoroutine(WaitAndClearUI());
         }
     }
 
-    private IEnumerator waitAndClearUI()
+    private IEnumerator WaitAndClearUI()
     {
         yield return null; // Pour attendre que le NewStep soit pris en compte par le StepSystem et que le startStepTime soit mis à jour
         // désactiver les boutons d'action pour éviter que l'utilisateur ne change d'avis pendant l'exécution
-        setToggleState(false);
+        SetToggleState(false);
 
         // Attendre 2 frame que les nouveau CurrentAction soient positionnés
         yield return null;
         yield return null;
         // Vérifier la validité des actions sélectionnées par l'utilisateur et affichage les notifications correspondantes (true/false) sur les boutons d'action
-        checkValidity();
+        CheckValidity();
 
 
         // Attendre que l'on ait atteint 90% d'un pas de simulation
         yield return new WaitUntil(() => Time.time - gameData.startStepTime >= 0.90f / gameData.gameSpeed_current);
 
         // réinitialiser les boutons d'action pour la prochaine étape
-        resetTogglesNotifications();
+        ResetTogglesNotifications();
         // désélectionner tous les boutons d'action pour la prochaine étape
-        unselectAllToggles();
+        UnselectAllToggles();
         // réactiver les boutons d'action pour permettre à l'utilisateur de choisir la prochaine action
-        setToggleState(true);
+        SetToggleState(true);
     }
 
-    private void setToggleState(bool state)
+    private void SetToggleState(bool state)
     {
         foreach (GameObject executor in f_userExecutor)
             foreach (Toggle action in executor.GetComponentsInChildren<Toggle>())
                 action.interactable = state;
     }
 
-    private void resetTogglesNotifications()
+    private void ResetTogglesNotifications()
     {
         foreach (GameObject executor in f_userExecutor)
             foreach (Toggle action in executor.GetComponentsInChildren<Toggle>())
@@ -116,14 +116,14 @@ public class TraceExecutionSystem : FSystem {
             }
     }
 
-    private void unselectAllToggles()
+    private void UnselectAllToggles()
     {
         foreach (GameObject executor in f_userExecutor)
             foreach (Toggle action in executor.GetComponentsInChildren<Toggle>())
                 action.isOn = false;
     }
 
-    private void checkValidity()
+    private void CheckValidity()
     {
         // On ne procède à la vérification qu'en mode play et que si l'utilisateur contrôle l'execution des robots
         if (f_playMode.Count > 0 && gameData.userExecutor)
@@ -138,7 +138,7 @@ public class TraceExecutionSystem : FSystem {
                     CurrentAction ca = executor.transform.parent.GetComponentInChildren<CurrentAction>(true);
                     if ((ca == null && enabledToggle.GetComponent<BasicAction>().actionType != BasicAction.ActionType.Wait) || (ca.GetComponent<BasicAction>().actionType != enabledToggle.GetComponent<BasicAction>().actionType))
                     {
-                        MainLoop.instance.StartCoroutine(delayNewEnd());
+                        MainLoop.instance.StartCoroutine(DelayNewEnd());
                         enabledToggle.transform.Find("true").gameObject.SetActive(false);
                         enabledToggle.transform.Find("false").gameObject.SetActive(true);
                         GameObjectManager.addComponent<ActionPerformedForLRS>(enabledToggle.gameObject, new
@@ -174,7 +174,7 @@ public class TraceExecutionSystem : FSystem {
             }
         }
     }
-    private IEnumerator delayNewEnd()
+    private IEnumerator DelayNewEnd()
     {
         // Attendre que l'on ait atteint 80% d'un pas de simulation
         yield return new WaitUntil(() => Time.time - gameData.startStepTime >= 0.8f / gameData.gameSpeed_current);

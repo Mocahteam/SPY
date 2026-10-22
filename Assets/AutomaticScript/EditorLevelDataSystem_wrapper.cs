@@ -34,39 +34,34 @@ public class EditorLevelDataSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "unlimitedColor", unlimitedColor);
 	}
 
-	public void resetMetaData(System.Boolean unlockAll)
+	public void UnlockAll()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "resetMetaData", unlockAll);
+		MainLoop.callAppropriateSystemMethod (system, "UnlockAll", null);
 	}
 
-	public void unlockAll()
+	public void HideAll()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "unlockAll", null);
+		MainLoop.callAppropriateSystemMethod (system, "HideAll", null);
 	}
 
-	public void hideAll()
+	public void PreventMinusSign(TMPro.TMP_InputField input)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "hideAll", null);
+		MainLoop.callAppropriateSystemMethod (system, "PreventMinusSign", input);
 	}
 
-	public void preventMinusSign(TMPro.TMP_InputField input)
+	public void ExecutionLimitChanged(System.Boolean newState)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "preventMinusSign", input);
+		MainLoop.callAppropriateSystemMethod (system, "ExecutionLimitChanged", newState);
 	}
 
-	public void executionLimitChanged(System.Boolean newState)
+	public void ScoreTwoStarsExit(System.String newData)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "executionLimitChanged", newState);
+		MainLoop.callAppropriateSystemMethod (system, "ScoreTwoStarsExit", newData);
 	}
 
-	public void scoreTwoStarsExit(System.String newData)
+	public void ScoreThreeStarsExit(System.String newData)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "scoreTwoStarsExit", newData);
-	}
-
-	public void scoreThreeStarsExit(System.String newData)
-	{
-		MainLoop.callAppropriateSystemMethod (system, "scoreThreeStarsExit", newData);
+		MainLoop.callAppropriateSystemMethod (system, "ScoreThreeStarsExit", newData);
 	}
 
 }

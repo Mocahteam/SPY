@@ -28,34 +28,19 @@ public class UISystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "currentSettingsValues", currentSettingsValues);
 	}
 
-	public void setExecutionView(System.Boolean value)
+	public void ReturnToTitleScreen()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setExecutionView", value);
+		MainLoop.callAppropriateSystemMethod (system, "ReturnToTitleScreen", null);
 	}
 
-	public void restartScene()
+	public void NextLevel()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "restartScene", null);
+		MainLoop.callAppropriateSystemMethod (system, "NextLevel", null);
 	}
 
-	public void returnToTitleScreen()
+	public void Retry()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "returnToTitleScreen", null);
-	}
-
-	public void initZeroVariableLevel()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "initZeroVariableLevel", null);
-	}
-
-	public void nextLevel()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "nextLevel", null);
-	}
-
-	public void retry()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "retry", null);
+		MainLoop.callAppropriateSystemMethod (system, "Retry", null);
 	}
 
 }

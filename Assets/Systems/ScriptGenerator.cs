@@ -2,7 +2,6 @@ using UnityEngine;
 using FYFY;
 using System.Collections.Generic;
 using System.Xml;
-using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 
@@ -13,9 +12,9 @@ public class ScriptGenerator : FSystem {
 
 	public static ScriptGenerator instance;
 
-	private Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)), new AnyOfTags("Drone")); // On récupére les agents pouvant être édités
-	private Family f_draggableElement = FamilyManager.getFamily(new AnyOfComponents(typeof(ElementToDrag)));
-	private Family f_decodeXMLScript = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptToLoad)));
+	private readonly Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)), new AnyOfTags("Drone")); // On récupére les agents pouvant être édités
+	private readonly Family f_draggableElement = FamilyManager.getFamily(new AnyOfComponents(typeof(ElementToDrag)));
+	private readonly Family f_decodeXMLScript = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptToLoad)));
 
 	private GameData gameData;
 
@@ -40,14 +39,14 @@ public class ScriptGenerator : FSystem {
 			ScriptToLoad [] scriptsToLoad = go.GetComponents<ScriptToLoad>();
 			foreach (ScriptToLoad stl in scriptsToLoad)
 			{
-				readXMLScript(stl.scriptNode, stl.scriptName, stl.editMode, stl.type);
+				ReadXMLScript(stl.scriptNode, stl.scriptName, stl.editMode, stl.type);
 				GameObjectManager.removeComponent(stl);
 			}
         }
     }
 
     // Lit le XML d'un script est génère les game objects des instructions
-    private void readXMLScript(XmlNode scriptNode, string name, UIRootContainer.EditMode editMode, UIRootContainer.SolutionType type)
+    private void ReadXMLScript(XmlNode scriptNode, string name, UIRootContainer.EditMode editMode, UIRootContainer.SolutionType type)
 	{
 		if (scriptNode != null)
 		{
@@ -60,7 +59,7 @@ public class ScriptGenerator : FSystem {
 				{
 					List<GameObject> script = new List<GameObject>();
 					foreach (XmlNode actionNode in scriptNode.ChildNodes)
-						script.Add(readXMLInstruction(actionNode));
+						script.Add(ReadXMLInstruction(actionNode));
 					GameObject tmpContainer = GameObject.Instantiate(scriptRef.executableScript);
 					foreach (GameObject go in script)
 						go.transform.SetParent(tmpContainer.transform, false); //add actions to container
@@ -77,13 +76,13 @@ public class ScriptGenerator : FSystem {
 			{
 				List<GameObject> script = new List<GameObject>();
 				foreach (XmlNode actionNode in scriptNode.ChildNodes)
-					script.Add(readXMLInstruction(actionNode));
+					script.Add(ReadXMLInstruction(actionNode));
 				GameObjectManager.addComponent<AddSpecificContainer>(MainLoop.instance.gameObject, new { title = name, editState = editMode, typeState = type, script = script });
 			}
 		}
 	}
 
-	private GameObject getLibraryItemByName(string itemName)
+	private GameObject GetLibraryItemByName(string itemName)
 	{
 		foreach (GameObject item in f_draggableElement)
 			if (item.name == itemName)
@@ -91,16 +90,16 @@ public class ScriptGenerator : FSystem {
 		return null;
 	}
 
-	private void processXMLInstruction(Transform gameContainer, XmlNode xmlContainer)
+	private void ProcessXMLInstruction(Transform gameContainer, XmlNode xmlContainer)
 	{
 		// The first child of a control container is an emptySolt
 		GameObject emptySlot = gameContainer.GetChild(0).gameObject;
 		foreach (XmlNode eleNode in xmlContainer.ChildNodes)
-			UtilityGame.addItemOnDropArea(readXMLInstruction(eleNode), emptySlot);
+			UtilityGame.addItemOnDropArea(ReadXMLInstruction(eleNode), emptySlot);
 	}
 
 	// Transforme le noeud d'action XML en gameObject élément/opérator
-	private GameObject readXMLCondition(XmlNode conditionNode)
+	private GameObject ReadXMLCondition(XmlNode conditionNode)
 	{
 		ReplacementSlot[] slots;
 
@@ -113,7 +112,7 @@ public class ScriptGenerator : FSystem {
 			_ => "Undef"
 		};
 
-		GameObject obj = preprocessXML(libraryId, conditionNode);
+		GameObject obj = PreprocessXML(libraryId, conditionNode);
 
         switch (conditionNode.Name)
 		{
@@ -134,7 +133,7 @@ public class ScriptGenerator : FSystem {
 						if (emptyZone != null && node.HasChildNodes)
 						{
 							// Parse xml condition
-							GameObject child = readXMLCondition(node.FirstChild);
+							GameObject child = ReadXMLCondition(node.FirstChild);
 							// Add child to empty zone
 							UtilityGame.addItemOnDropArea(child, emptyZone);
 						}
@@ -147,7 +146,7 @@ public class ScriptGenerator : FSystem {
 				if (conditionNode.HasChildNodes)
 				{
 					GameObject emptyZone = obj.transform.Find("Container").GetChild(1).gameObject;
-					GameObject child = readXMLCondition(conditionNode.FirstChild);
+					GameObject child = ReadXMLCondition(conditionNode.FirstChild);
 					// Add child to empty zone
 					UtilityGame.addItemOnDropArea(child, emptyZone);
 				}
@@ -158,7 +157,7 @@ public class ScriptGenerator : FSystem {
 	}
 
 	// Transforme le noeud d'action XML en gameObject
-	private GameObject readXMLInstruction(XmlNode actionNode)
+	private GameObject ReadXMLInstruction(XmlNode actionNode)
 	{
 		Transform conditionContainer;
 		Transform firstContainerBloc;
@@ -174,7 +173,7 @@ public class ScriptGenerator : FSystem {
 			_ => "Undef"
 		};
 
-        GameObject obj = preprocessXML(libraryId, actionNode);
+        GameObject obj = PreprocessXML(libraryId, actionNode);
 
         switch (actionNode.Name)
 		{
@@ -193,7 +192,7 @@ public class ScriptGenerator : FSystem {
 							// The first child of the conditional container of a If action contains the ReplacementSlot
 							GameObject emptyZone = conditionContainer.GetChild(0).gameObject;
 							// Parse xml condition
-							GameObject child = readXMLCondition(containerNode.FirstChild);
+							GameObject child = ReadXMLCondition(containerNode.FirstChild);
 							// Add child to empty zone
 							UtilityGame.addItemOnDropArea(child, emptyZone);
 						}
@@ -201,7 +200,7 @@ public class ScriptGenerator : FSystem {
 					else if (containerNode.Name == "container")
 					{
 						if (containerNode.HasChildNodes)
-							processXMLInstruction(firstContainerBloc, containerNode);
+							ProcessXMLInstruction(firstContainerBloc, containerNode);
 					}
 				}
 				break;
@@ -222,7 +221,7 @@ public class ScriptGenerator : FSystem {
 							// The first child of the conditional container of a IfElse action contains the ReplacementSlot
 							GameObject emptyZone = conditionContainer.GetChild(0).gameObject;
 							// Parse xml condition
-							GameObject child = readXMLCondition(containerNode.FirstChild);
+							GameObject child = ReadXMLCondition(containerNode.FirstChild);
 							// Add child to empty zone
 							UtilityGame.addItemOnDropArea(child, emptyZone);
 						}
@@ -230,12 +229,12 @@ public class ScriptGenerator : FSystem {
 					else if (containerNode.Name == "thenContainer")
 					{
 						if (containerNode.HasChildNodes)
-							processXMLInstruction(firstContainerBloc, containerNode);
+							ProcessXMLInstruction(firstContainerBloc, containerNode);
 					}
 					else if (containerNode.Name == "elseContainer")
 					{
 						if (containerNode.HasChildNodes)
-							processXMLInstruction(secondContainerBloc, containerNode);
+							ProcessXMLInstruction(secondContainerBloc, containerNode);
 					}
 				}
 				break;
@@ -254,7 +253,7 @@ public class ScriptGenerator : FSystem {
 				input.interactable = !inputLocker.locked;
 
                 if (actionNode.HasChildNodes)
-					processXMLInstruction(firstContainerBloc, actionNode);
+					ProcessXMLInstruction(firstContainerBloc, actionNode);
 				break;
 
 			case "while":
@@ -272,7 +271,7 @@ public class ScriptGenerator : FSystem {
 							// The first child of the conditional container of a While action contains the ReplacementSlot
 							GameObject emptyZone = conditionContainer.GetChild(0).gameObject;
 							// Parse xml condition
-							GameObject child = readXMLCondition(containerNode.FirstChild);
+							GameObject child = ReadXMLCondition(containerNode.FirstChild);
 							// Add child to empty zone
 							UtilityGame.addItemOnDropArea(child, emptyZone);
 						}
@@ -280,7 +279,7 @@ public class ScriptGenerator : FSystem {
 					else if (containerNode.Name == "container")
 					{
 						if (containerNode.HasChildNodes)
-							processXMLInstruction(firstContainerBloc, containerNode);
+							ProcessXMLInstruction(firstContainerBloc, containerNode);
 					}
 				}
 				break;
@@ -289,14 +288,14 @@ public class ScriptGenerator : FSystem {
 				firstContainerBloc = obj.transform.Find("Container");
 
 				if (actionNode.HasChildNodes)
-					processXMLInstruction(firstContainerBloc, actionNode);
+					ProcessXMLInstruction(firstContainerBloc, actionNode);
 				break;
 		}
 
 		return obj;
 	}
 
-	private GameObject preprocessXML(string libraryId, XmlNode node)
+	private GameObject PreprocessXML(string libraryId, XmlNode node)
 	{
 		GameObject obj = null;
         // Vérifier que ce node est connu pour la gestion des blocs disponibles, si non le définir
@@ -307,7 +306,7 @@ public class ScriptGenerator : FSystem {
 		{
 			// créer le bloc et définir s'il est interactable
 			bool isInteractable = (node.Attributes.GetNamedItem("locked") == null || node.Attributes.GetNamedItem("locked").Value == "False") && (gameData.dragDropEnabled || SceneManager.GetActiveScene().name == "MissionEditor");
-            obj = UtilityGame.createEditableBlockFromLibrary(getLibraryItemByName(libraryId), mainCanvas, isInteractable);
+            obj = UtilityGame.createEditableBlockFromLibrary(GetLibraryItemByName(libraryId), mainCanvas, isInteractable);
 		}
 
         return obj;

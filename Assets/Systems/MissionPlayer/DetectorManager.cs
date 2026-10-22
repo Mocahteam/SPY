@@ -6,13 +6,13 @@ using FYFY;
 /// </summary>
 public class DetectorManager : FSystem {
 
-	private Family f_enemy = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
-	private Family f_detector = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody)));
-	private Family f_viewBlocker = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Door"));
-    private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
-    private Family f_playMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-    private Family f_editMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
-    private Family f_positionCorrected = FamilyManager.getFamily(new AllOfComponents(typeof(PositionCorrected)));
+	private readonly Family f_enemy = FamilyManager.getFamily(new AllOfComponents(typeof(DetectRange), typeof(Direction), typeof(Position)), new AnyOfTags("Drone"));
+	private readonly Family f_detector = FamilyManager.getFamily(new AllOfComponents(typeof(Detector), typeof(Position), typeof(Rigidbody)));
+	private readonly Family f_viewBlocker = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall", "Door"));
+    private readonly Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
+    private readonly Family f_playMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private readonly Family f_editMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+    private readonly Family f_positionCorrected = FamilyManager.getFamily(new AllOfComponents(typeof(PositionCorrected)));
 
     public GameObject LevelGO;
 
@@ -28,16 +28,16 @@ public class DetectorManager : FSystem {
     protected override void onStart()
     {
         // On passe par 4 familles différentes et non une seule famille avec tous les composants car sinon si le GameObject a déjà un des composants et qu'on en ajoute un supplémentaire, la callback n'est pas appelé car le GO est déjà dans la famille
-        f_gameLoaded.addEntryCallback(delegate { updateDetectors(); });
-        f_playMode.addEntryCallback(delegate { updateDetectors(); });
-        f_editMode.addEntryCallback(delegate { updateDetectors(); });
-        f_positionCorrected.addEntryCallback(delegate { updateDetectors(); });
+        f_gameLoaded.addEntryCallback(delegate { UpdateDetectors(); });
+        f_playMode.addEntryCallback(delegate { UpdateDetectors(); });
+        f_editMode.addEntryCallback(delegate { UpdateDetectors(); });
+        f_positionCorrected.addEntryCallback(delegate { UpdateDetectors(); });
 
         Pause = true;
     }
 
     // Used by ReloadState and StopButton UIs
-    public void updateDetectors()
+    public void UpdateDetectors()
     {
         Pause = false; // Pour ne faire le traitement qu'une fois dans le cas où plusieurs sources déclenchent en même temps
     }
@@ -46,12 +46,12 @@ public class DetectorManager : FSystem {
     {
         // On fait le traitement ici et pas dans la callback pour ne faire le traitement qu'une fois dans le cas où plusieurs sources déclenchent en même temps, sinon chaque callback ferait le traitement
         foreach (GameObject detect in f_enemy)
-            updateDetector(detect);
+            UpdateDetector(detect);
         Pause = true;
     }
 
     // Reset detector positions depending on drone properties (position, orientation, range...)
-    private void updateDetector(GameObject drone)
+    private void UpdateDetector(GameObject drone)
     {
         //Destroy detection cells
         foreach (GameObject detector in f_detector)
@@ -71,7 +71,7 @@ public class DetectorManager : FSystem {
         DetectRange dr = drone.GetComponent<DetectRange>();
         Position drone_pos = drone.GetComponent<Position>();
         // Si la position que le drone cherche à atteindre est une porte fermée (par exemple) il va se planter dans ce cas on ne cherche même pas à générer les zones de détection
-        if (!drone.GetComponent<ScriptRef>().isBroken && !viewIsLocked(drone_pos.x, drone_pos.y))
+        if (!drone.GetComponent<ScriptRef>().isBroken && !ViewIsLocked(drone_pos.x, drone_pos.y))
         {
             // Create detector under drone
             if (dr.selfRange)
@@ -89,24 +89,24 @@ public class DetectorManager : FSystem {
                     switch (drone.GetComponent<Direction>().direction)
                     {
                         case Direction.Dir.North:
-                            generateDetector(drone, 0, -1);
+                            GenerateDetector(drone, 0, -1);
                             break;
                         case Direction.Dir.West:
-                            generateDetector(drone, -1, 0);
+                            GenerateDetector(drone, -1, 0);
                             break;
                         case Direction.Dir.South:
-                            generateDetector(drone, 0, 1);
+                            GenerateDetector(drone, 0, 1);
                             break;
                         case Direction.Dir.East:
-                            generateDetector(drone, 1, 0);
+                            GenerateDetector(drone, 1, 0);
                             break;
                     }
                     break;
                 case DetectRange.Type.Cross:
-                    generateDetector(drone, 0, -1);
-                    generateDetector(drone, -1, 0);
-                    generateDetector(drone, 0, 1);
-                    generateDetector(drone, 1, 0);
+                    GenerateDetector(drone, 0, -1);
+                    GenerateDetector(drone, -1, 0);
+                    GenerateDetector(drone, 0, 1);
+                    GenerateDetector(drone, 1, 0);
                     break;
                 case DetectRange.Type.Cone:
                     break;
@@ -116,7 +116,7 @@ public class DetectorManager : FSystem {
         }
     }
 
-    private void generateDetector(GameObject drone, int xStep, int yStep)
+    private void GenerateDetector(GameObject drone, int xStep, int yStep)
     {
         DetectRange dr = drone.GetComponent<DetectRange>();
         Position drone_pos = drone.GetComponent<Position>();
@@ -124,7 +124,7 @@ public class DetectorManager : FSystem {
         {
             int x = drone_pos.x + i*xStep + 1*xStep;
             int y = drone_pos.y + i*yStep + 1*yStep;
-            if (viewIsLocked(x, y))
+            if (ViewIsLocked(x, y))
                 break;
             else
             {
@@ -137,7 +137,7 @@ public class DetectorManager : FSystem {
         }
     }
 
-    private bool viewIsLocked(int x, int y)
+    private bool ViewIsLocked(int x, int y)
     {
         foreach (GameObject blocker in f_viewBlocker)
             if (blocker.GetComponent<Position>().x == x && blocker.GetComponent<Position>().y == y && (blocker.CompareTag("Wall") || (blocker.CompareTag("Door") && !blocker.GetComponent<ActivationSlot>().state)))

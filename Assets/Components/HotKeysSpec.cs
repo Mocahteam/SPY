@@ -14,11 +14,10 @@ public class UITrigger
 [Serializable]
 public class HotKeySpec
 {
+    public InputActionReference inputAction;
     public string inputActionName;
     public List<UITrigger> UItriggers;
 
-    [HideInInspector]
-    public InputAction inputAction;
     [HideInInspector]
     public bool hasModifier;
 }

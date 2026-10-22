@@ -20,19 +20,19 @@ public class MainMenuToggler : FSystem
         Pause = true;
     }
 
-    public void showMainMenu()
+    public void ShowMainMenu()
     {
         menuCanvas.SetActive(true);
-        setCanvasInterractable(false);
+        SetCanvasInterractable(false);
     }
 
-    public void hideMainMenu()
+    public void HideMainMenu()
     {
         menuCanvas.SetActive(false);
-        setCanvasInterractable(true);
+        SetCanvasInterractable(true);
     }
 
-    public void setCanvasInterractable(bool state)
+    public void SetCanvasInterractable(bool state)
     {
         foreach (CanvasGroup g in canvasGroups)
             g.interactable = state;

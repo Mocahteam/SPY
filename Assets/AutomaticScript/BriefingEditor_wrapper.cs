@@ -14,24 +14,24 @@ public class BriefingEditor_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "briefingItemPrefab", briefingItemPrefab);
 	}
 
-	public void saveBriefings()
+	public void SaveBriefings()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "saveBriefings", null);
+		MainLoop.callAppropriateSystemMethod (system, "SaveBriefings", null);
 	}
 
-	public void addNewBriefing(UnityEngine.GameObject parent)
+	public void AddNewBriefing(UnityEngine.GameObject parent)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "addNewBriefing", parent);
+		MainLoop.callAppropriateSystemMethod (system, "AddNewBriefing", parent);
 	}
 
-	public void removeItemFromParent(UnityEngine.GameObject go)
+	public void RemoveItemFromParent(UnityEngine.GameObject go)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "removeItemFromParent", go);
+		MainLoop.callAppropriateSystemMethod (system, "RemoveItemFromParent", go);
 	}
 
-	public void markLayoutForRebuild(UnityEngine.RectTransform transform)
+	public void MarkLayoutForRebuild(UnityEngine.RectTransform transform)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "markLayoutForRebuild", transform);
+		MainLoop.callAppropriateSystemMethod (system, "MarkLayoutForRebuild", transform);
 	}
 
 }

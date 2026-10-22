@@ -9,15 +9,15 @@ using System.Collections;
 /// </summary>
 public class GameStateManager : FSystem {
 
-    private Family f_coins = FamilyManager.getFamily(new AnyOfTags("Coin"));
-    private Family f_directions = FamilyManager.getFamily(new AllOfComponents(typeof(Direction)), new NoneOfComponents(typeof(Detector)));
-    private Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new NoneOfComponents(typeof(Detector)));
-    private Family f_doors = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot)));
-    private Family f_scriptRefs = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
-    private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
-    private Family f_forControls = FamilyManager.getFamily(new AllOfComponents(typeof(ForControl)));
+    private readonly Family f_coins = FamilyManager.getFamily(new AnyOfTags("Coin"));
+    private readonly Family f_directions = FamilyManager.getFamily(new AllOfComponents(typeof(Direction)), new NoneOfComponents(typeof(Detector)));
+    private readonly Family f_positions = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new NoneOfComponents(typeof(Detector)));
+    private readonly Family f_doors = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot)));
+    private readonly Family f_scriptRefs = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
+    private readonly Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
+    private readonly Family f_forControls = FamilyManager.getFamily(new AllOfComponents(typeof(ForControl)));
 
-    private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private readonly Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 
     private SaveContent save;
 
@@ -147,7 +147,7 @@ public class GameStateManager : FSystem {
                 GameObjectManager.removeComponent<CurrentAction>(go);
         foreach(SaveContent.RawCurrentAction act in save.rawSave.currentDroneActions)
             // on demande d'ajouter la CurrentAction à la prochaine frame => A cet frame on bascule en EditMode et pour ignorer l'exécution de la restauration de cette current action, il faut attendre que le basculement en EditMode soit acté
-            MainLoop.instance.StartCoroutine(delayAddCurrentAction(act.action, act.agent));
+            MainLoop.instance.StartCoroutine(DelayAddCurrentAction(act.action, act.agent));
         for (int i = 0; i < f_forControls.Count && i < save.rawSave.currentLoopParams.Count; i++)
         {
             ForControl fc = f_forControls.getAt(i).GetComponent<ForControl>();
@@ -172,7 +172,7 @@ public class GameStateManager : FSystem {
         }
     }
 
-    private IEnumerator delayAddCurrentAction(GameObject nextAction, GameObject agent)
+    private IEnumerator DelayAddCurrentAction(GameObject nextAction, GameObject agent)
     {
         yield return null; // on restaure une CurrentAction mais on ne veut pas l'exécuter car on bascule en EditMode, donc on attend d'être bien en EditMode avant d'ajouter les CurrentActions
         GameObjectManager.addComponent<CurrentAction>(nextAction, new { agent = agent });

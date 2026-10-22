@@ -13,14 +13,14 @@ using UnityEngine.UI;
 
 public class TTSSystem : FSystem
 {
-    private Family f_selectableElements = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(TMP_InputField), typeof(Selectable), typeof(TMP_Dropdown), typeof(Toggle), typeof(Scrollbar)), new NoneOfComponents(typeof(PointerSensitive)));
-    private Family f_focused = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(Button), typeof(TMP_InputField), typeof(Selectable), typeof(TMP_Dropdown), typeof(Toggle), typeof(Scrollbar)));
-    private Family f_currentAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
-    private Family f_inputFields = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
-    private Family f_toggles = FamilyManager.getFamily(new AllOfComponents(typeof(Toggle)));
-    private Family f_scrollBars = FamilyManager.getFamily(new AllOfComponents(typeof(Scrollbar)));
-    private Family f_agentSelection = FamilyManager.getFamily(new AnyOfTags("HaloSelection"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-    private Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
+    private readonly Family f_selectableElements = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(TMP_InputField), typeof(Selectable), typeof(TMP_Dropdown), typeof(Toggle), typeof(Scrollbar)), new NoneOfComponents(typeof(PointerSensitive)));
+    private readonly Family f_focused = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AnyOfComponents(typeof(Button), typeof(TMP_InputField), typeof(Selectable), typeof(TMP_Dropdown), typeof(Toggle), typeof(Scrollbar)));
+    private readonly Family f_currentAction = FamilyManager.getFamily(new AllOfComponents(typeof(CurrentAction)));
+    private readonly Family f_inputFields = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
+    private readonly Family f_toggles = FamilyManager.getFamily(new AllOfComponents(typeof(Toggle)));
+    private readonly Family f_scrollBars = FamilyManager.getFamily(new AllOfComponents(typeof(Scrollbar)));
+    private readonly Family f_agentSelection = FamilyManager.getFamily(new AnyOfTags("HaloSelection"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+    private readonly Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
 
 
     [DllImport("__Internal")]
@@ -58,27 +58,27 @@ public class TTSSystem : FSystem
         }
 
         foreach (GameObject selectable in f_selectableElements)
-            onNewSelectable(selectable);
-        f_selectableElements.addEntryCallback(onNewSelectable);
+            OnNewSelectable(selectable);
+        f_selectableElements.addEntryCallback(OnNewSelectable);
 
-        f_focused.addEntryCallback(onNewFocus);
-        f_currentAction.addEntryCallback(onNewCurrentAction);
+        f_focused.addEntryCallback(OnNewFocus);
+        f_currentAction.addEntryCallback(OnNewCurrentAction);
 
         foreach (GameObject inputField in f_inputFields)
-            onNewInputField(inputField);
-        f_inputFields.addEntryCallback(onNewInputField);
+            OnNewInputField(inputField);
+        f_inputFields.addEntryCallback(OnNewInputField);
 
         foreach (GameObject toggle in f_toggles)
-            onNewToggle(toggle);
-        f_toggles.addEntryCallback(onNewToggle);
+            OnNewToggle(toggle);
+        f_toggles.addEntryCallback(OnNewToggle);
 
         foreach (GameObject scrollbar in f_scrollBars)
-            onNewScrollbar(scrollbar);
-        f_scrollBars.addEntryCallback(onNewScrollbar);
+            OnNewScrollbar(scrollbar);
+        f_scrollBars.addEntryCallback(OnNewScrollbar);
 
         foreach (GameObject selection in f_agentSelection)
-            onNewAgentSelected(selection);
-        f_agentSelection.addEntryCallback(onNewAgentSelected);
+            OnNewAgentSelected(selection);
+        f_agentSelection.addEntryCallback(OnNewAgentSelected);
 
         if (Application.platform == RuntimePlatform.WebGLPlayer)
             // get current state 
@@ -86,7 +86,7 @@ public class TTSSystem : FSystem
     }
 
     // Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
-    public void toggleTTS()
+    public void ToggleTTS()
     {
         gameData.newTTS_state = IsTTSEnabled();
     }
@@ -102,7 +102,7 @@ public class TTSSystem : FSystem
         if (previousSelectedGO != eventSystem.currentSelectedGameObject && eventSystem.currentSelectedGameObject != null)
         {
             previousSelectedGO = eventSystem.currentSelectedGameObject;
-            defTTS(previousSelectedGO);
+            DefTTS(previousSelectedGO);
         }
 
         // send statement if TTS state change in all scenes except ConnexionScene because we don't know the user id
@@ -120,22 +120,22 @@ public class TTSSystem : FSystem
         }
     }
 
-    private void onNewSelectable(GameObject selectable)
+    private void OnNewSelectable(GameObject selectable)
     {
         // On exclue le tooltip du système de TTS
         if (!selectable.GetComponentInParent<Tooltip>())
             GameObjectManager.addComponent<PointerSensitive>(selectable);
     }
 
-    private void onNewFocus(GameObject focused)
+    private void OnNewFocus(GameObject focused)
     {
         // Ne définir le TTS que si la position de la souris a changé
         Vector2Control pointerPos = Pointer.current.position;
         if (previousMousePosition != new Vector2(pointerPos.x.value, pointerPos.y.value))
-            defTTS(focused);
+            DefTTS(focused);
     }
 
-    private void onNewAgentSelected(GameObject haloSelection)
+    private void OnNewAgentSelected(GameObject haloSelection)
     {
         string agentName = haloSelection.transform.parent.GetComponent<ScriptRef>().executablePanel.GetComponentInChildren<UIRootExecutor>(true).scriptName;
 
@@ -148,7 +148,7 @@ public class TTSSystem : FSystem
             Debug.Log(Utility.GetLocalizedString("FocusOn") + agentName);
     }
 
-    private void defTTS(GameObject focused)
+    private void DefTTS(GameObject focused)
     {
         if (gameData == null || f_localizationLoaded.Count == 0)
             return;
@@ -241,14 +241,14 @@ public class TTSSystem : FSystem
         previousFocusedGO = focused;
     }
 
-    private void onNewCurrentAction(GameObject unused)
+    private void OnNewCurrentAction(GameObject unused)
     {
         // Utilisation d'une coroutine parce qu'on ne veut faire se traitement qu'une seule fois pour toutes les CurrentActions
         if (currentActionBuilder == null)
-            currentActionBuilder = MainLoop.instance.StartCoroutine(buildTTSForCurrentActions());
+            currentActionBuilder = MainLoop.instance.StartCoroutine(BuildTTSForCurrentActions());
     }
 
-    private IEnumerator buildTTSForCurrentActions()
+    private IEnumerator BuildTTSForCurrentActions()
     {
         yield return null;
         string actions = "";
@@ -269,7 +269,7 @@ public class TTSSystem : FSystem
     }
 
     // Pour vocaliser le texte sélectionné à l'intérieur d'un inputField
-    private void onNewInputField(GameObject inputField_GO)
+    private void OnNewInputField(GameObject inputField_GO)
     {
         TMP_InputField inputF = inputField_GO.GetComponent<TMP_InputField>();
         inputF.onTextSelection.AddListener(delegate (string input, int end, int start)
@@ -289,7 +289,7 @@ public class TTSSystem : FSystem
     }
 
     // Pour vocaliser le changement d'état d'un Toggle
-    private void onNewToggle(GameObject toggle_GO)
+    private void OnNewToggle(GameObject toggle_GO)
     {
         Toggle toggle = toggle_GO.GetComponent<Toggle>();
         toggle.onValueChanged.AddListener(delegate (bool state)
@@ -307,7 +307,7 @@ public class TTSSystem : FSystem
     }
 
     // Pour vocaliser le scorll d'une scrollbar
-    private void onNewScrollbar(GameObject scrollbar_GO)
+    private void OnNewScrollbar(GameObject scrollbar_GO)
     {
         Scrollbar scrollbar = scrollbar_GO.GetComponent<Scrollbar>();
         if (!lastScrollbarNotif.ContainsKey(scrollbar))

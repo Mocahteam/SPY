@@ -12,9 +12,9 @@ public class DetectorManager_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "RedDetectorPrefab", RedDetectorPrefab);
 	}
 
-	public void updateDetectors()
+	public void UpdateDetectors()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "updateDetectors", null);
+		MainLoop.callAppropriateSystemMethod (system, "UpdateDetectors", null);
 	}
 
 }

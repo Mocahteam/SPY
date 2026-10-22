@@ -2,23 +2,23 @@ using UnityEngine;
 
 public class TitleScreenSystemBridge : MonoBehaviour
 {
-    public void showLevels(GameKeys key)
+    public void ShowLevels(GameKeys key)
     {
-        TitleScreenSystem.instance.showLevels(key);
+        TitleScreenSystem.instance.ShowLevels(key);
     }
 
-    public void showDetails(GameKeys key)
+    public void ShowDetails(GameKeys key)
     {
-        TitleScreenSystem.instance.showDetails(key);
+        TitleScreenSystem.instance.ShowDetails(key);
     }
 
-    public void launchLevel(GameKeys key)
+    public void LaunchLevel(GameKeys key)
     {
-        TitleScreenSystem.instance.launchLevel(key);
+        TitleScreenSystem.instance.LaunchLevel(key);
     }
 
-    public void setDraggingState(bool newSate)
+    public void SetDraggingState(bool newSate)
     {
-        TitleScreenSystem.instance.setDraggingState(newSate);
+        TitleScreenSystem.instance.SetDraggingState(newSate);
     }
 }

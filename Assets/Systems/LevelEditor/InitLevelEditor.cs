@@ -64,13 +64,13 @@ public class InitLevelEditor : FSystem
 		}
 	}
 
-	public void reloadEditor()
+	public void ReloadEditor()
 	{
 		gameData.selectedScenario = "";
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MissionEditor" });
 	}
 
-	public void returnToLobby()
+	public void ReturnToLobby()
 	{
 		gameData.selectedScenario = "";
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });

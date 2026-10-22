@@ -18,49 +18,34 @@ public class DialogSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "highlightGOPrefab", highlightGOPrefab);
 	}
 
-	public void showDialogPanel()
+	public void ShowDialogPanel()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "showDialogPanel", null);
+		MainLoop.callAppropriateSystemMethod (system, "ShowDialogPanel", null);
 	}
 
-	public void nextDialog()
+	public void NextDialog()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "nextDialog", null);
+		MainLoop.callAppropriateSystemMethod (system, "NextDialog", null);
 	}
 
-	public void prevDialog()
+	public void PrevDialog()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "prevDialog", null);
+		MainLoop.callAppropriateSystemMethod (system, "PrevDialog", null);
 	}
 
-	public void setActiveOKButton(System.Boolean active)
+	public void CloseDialogPanel()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setActiveOKButton", active);
+		MainLoop.callAppropriateSystemMethod (system, "CloseDialogPanel", null);
 	}
 
-	public void setActiveNextButton(System.Boolean active)
+	public void PlayVideo()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setActiveNextButton", active);
+		MainLoop.callAppropriateSystemMethod (system, "PlayVideo", null);
 	}
 
-	public void setActivePrevButton(System.Boolean active)
+	public void PauseVideo()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setActivePrevButton", active);
-	}
-
-	public void closeDialogPanel()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "closeDialogPanel", null);
-	}
-
-	public void playVideo()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "playVideo", null);
-	}
-
-	public void pauseVideo()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "pauseVideo", null);
+		MainLoop.callAppropriateSystemMethod (system, "PauseVideo", null);
 	}
 
 }

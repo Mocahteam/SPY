@@ -8,13 +8,13 @@ using System.Collections.Generic;
 /// </summary>
 public class DoorAndConsoleManager : FSystem {
 
-	private Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
-	private Family f_console = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position)));
-	private Family f_consoleTriggered = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(AudioSource), typeof(Triggered)));
+	private readonly Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
+	private readonly Family f_console = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position)));
+	private readonly Family f_consoleTriggered = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(AudioSource), typeof(Triggered)));
 
-	private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
+	private readonly Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
 
-	private Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private readonly Family f_wall = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	public GameObject LevelGO;
 	public GameObject doorPathPrefab;
@@ -29,15 +29,15 @@ public class DoorAndConsoleManager : FSystem {
 
 	protected override void onStart()
 	{
-		f_consoleTriggered.addEntryCallback(onNewConsoleTriggered); // Console will enter in this family when Triggered component will be added to console (see CurrentActionExecutor)
-		f_gameLoaded.addEntryCallback(connectDoorsAndConsoles);
-		forceDoorSync();
-		f_door.addEntryCallback(syncState);
+		f_consoleTriggered.addEntryCallback(OnNewConsoleTriggered); // Console will enter in this family when Triggered component will be added to console (see CurrentActionExecutor)
+		f_gameLoaded.addEntryCallback(ConnectDoorsAndConsoles);
+		ForceDoorSync();
+		f_door.addEntryCallback(SyncState);
 
 		Pause = true;
 	}
 
-	private IEnumerator animatePath(DoorPath path)
+	private IEnumerator AnimatePath(DoorPath path)
 	{
 		List<DoorPath> firstChilds = path.nexts;
 		if (firstChilds.Count > 0) {
@@ -55,7 +55,7 @@ public class DoorAndConsoleManager : FSystem {
 		}
 	}
 
-	public void startNextPathAnimation(GameObject pathGO)
+	public void StartNextPathAnimation(GameObject pathGO)
 	{
 		DoorPath path = pathGO.GetComponentInParent<DoorPath>();
 		foreach (DoorPath next in path.nexts)
@@ -64,13 +64,13 @@ public class DoorAndConsoleManager : FSystem {
 	}
 
 	// Used in StopButton and ReloadState buttons in editor
-	public void forceDoorSync()
+	public void ForceDoorSync()
     {
 		foreach (GameObject door in f_door)
-			syncState(door);
+			SyncState(door);
 	}
 
-	private void syncState(GameObject door)
+	private void SyncState(GameObject door)
     {
 		Animator anim = door.GetComponent<Animator>();
 		if (door.GetComponent<ActivationSlot>().state)
@@ -79,7 +79,7 @@ public class DoorAndConsoleManager : FSystem {
 			anim.SetTrigger("Close");
     }
 
-	private void onNewConsoleTriggered(GameObject consoleGO)
+	private void OnNewConsoleTriggered(GameObject consoleGO)
     {
 		Activable activable = consoleGO.GetComponent<Activable>();
 		consoleGO.GetComponent<AudioSource>().Play();
@@ -88,12 +88,12 @@ public class DoorAndConsoleManager : FSystem {
 		{
 			door.GetComponent<AudioSource>().Play();
 			door.state = !door.state;
-			syncState(door.gameObject);
+			SyncState(door.gameObject);
 		}
 		GameObjectManager.removeComponent<Triggered>(consoleGO);
 	}
 
-	private DoorPath connectPath(bool isWallInPos, bool isWallInStep, DoorPath previousPath, Transform begin, Transform end)
+	private DoorPath ConnectPath(bool isWallInPos, bool isWallInStep, DoorPath previousPath, Transform begin, Transform end)
     {
 		// Si on est entre deux murs
 		if (isWallInPos && isWallInStep)
@@ -145,7 +145,7 @@ public class DoorAndConsoleManager : FSystem {
 		return previousPath;
 	}
 
-	private void connectDoorsAndConsoles(GameObject unused)
+	private void ConnectDoorsAndConsoles(GameObject unused)
     {
 		// Hook doors to consoles
 		foreach (GameObject console in f_console) {
@@ -177,8 +177,8 @@ public class DoorAndConsoleManager : FSystem {
 				while (consolePos.x + x != doorPos.x)
 				{
 					GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, LevelGO.transform.position + new Vector3((consolePos.x + x + xStep / 2f) * 3, 3, -consolePos.y * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
-					bool isWallInPos = isWall(consolePos.x + x, consolePos.y);
-					bool isWallInStep = isWall(consolePos.x + x + xStep, consolePos.y);
+					bool isWallInPos = IsWall(consolePos.x + x, consolePos.y);
+					bool isWallInStep = IsWall(consolePos.x + x + xStep, consolePos.y);
 
 					Transform begin = null;
 					Transform end = null;
@@ -225,7 +225,7 @@ public class DoorAndConsoleManager : FSystem {
 					begin.gameObject.SetActive(true);
 					end.gameObject.SetActive(true);
 
-					previousPath = connectPath(isWallInPos, isWallInStep, previousPath, begin, end);
+					previousPath = ConnectPath(isWallInPos, isWallInStep, previousPath, begin, end);
 
 					foreach (SpriteRenderer sr in path.GetComponentsInChildren<SpriteRenderer>())
 						sr.color = randomColor;
@@ -238,8 +238,8 @@ public class DoorAndConsoleManager : FSystem {
 				while (consolePos.y + y != doorPos.y)
 				{
 					GameObject path = Object.Instantiate<GameObject>(doorPathPrefab, LevelGO.transform.position + new Vector3((consolePos.x + x) * 3, 3, -(consolePos.y + y + yStep / 2f) * 3), Quaternion.Euler(0, 0, 0), LevelGO.transform);
-					bool isWallInPos = isWall(consolePos.x + x, consolePos.y + y);
-					bool isWallInStep = isWall(consolePos.x + x, consolePos.y + y + yStep);
+					bool isWallInPos = IsWall(consolePos.x + x, consolePos.y + y);
+					bool isWallInStep = IsWall(consolePos.x + x, consolePos.y + y + yStep);
 
 					Transform begin = null;
 					Transform end = null;
@@ -286,7 +286,7 @@ public class DoorAndConsoleManager : FSystem {
 					begin.gameObject.SetActive(true);
 					end.gameObject.SetActive(true);
 
-					previousPath = connectPath(isWallInPos, isWallInStep, previousPath, begin, end);
+					previousPath = ConnectPath(isWallInPos, isWallInStep, previousPath, begin, end);
 
 					foreach (SpriteRenderer sr in path.GetComponentsInChildren<SpriteRenderer>())
 						sr.color = randomColor;
@@ -299,11 +299,11 @@ public class DoorAndConsoleManager : FSystem {
 		foreach (GameObject console in f_console)
 		{
 			DoorPath path = console.GetComponentInChildren<DoorPath>();
-			path.StartCoroutine(animatePath(path));
+			path.StartCoroutine(AnimatePath(path));
 		}
 	}
 
-	private bool isWall(int x, int y)
+	private bool IsWall(int x, int y)
     {
 		foreach(GameObject wall in f_wall)
         {

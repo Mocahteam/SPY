@@ -524,7 +524,7 @@ PrefabInstance:
     - target: {fileID: 3587892965843505043, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: showLevels
+      value: ShowLevels
       objectReference: {fileID: 0}
     - target: {fileID: 3587892965843505043, guid: 26bc23b5216990641ac165a0942ed4cc,
         type: 3}
@@ -722,7 +722,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 2174321719099952355}
           m_TargetAssemblyTypeName: TitleScreenSystemBridge, Assembly-CSharp
-          m_MethodName: showDetails
+          m_MethodName: ShowDetails
           m_Mode: 2
           m_Arguments:
             m_ObjectArgument: {fileID: 2024532641599222066}
@@ -738,7 +738,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 2174321719099952355}
           m_TargetAssemblyTypeName: TitleScreenSystemBridge, Assembly-CSharp
-          m_MethodName: showDetails
+          m_MethodName: ShowDetails
           m_Mode: 2
           m_Arguments:
             m_ObjectArgument: {fileID: 2024532641599222066}
@@ -754,7 +754,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 8783052144203522422}
           m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
-          m_MethodName: bubbleScroll
+          m_MethodName: BubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -770,7 +770,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 8783052144203522422}
           m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
-          m_MethodName: bubbleDrag
+          m_MethodName: BubbleDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -786,7 +786,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 8783052144203522422}
           m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
-          m_MethodName: bubbleBeginDrag
+          m_MethodName: BubbleBeginDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -798,7 +798,7 @@ MonoBehaviour:
           m_CallState: 2
         - m_Target: {fileID: 2174321719099952355}
           m_TargetAssemblyTypeName: TitleScreenSystemBridge, Assembly-CSharp
-          m_MethodName: setDraggingState
+          m_MethodName: SetDraggingState
           m_Mode: 6
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -814,7 +814,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 8783052144203522422}
           m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
-          m_MethodName: bubbleEndDrag
+          m_MethodName: BubbleEndDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -826,7 +826,7 @@ MonoBehaviour:
           m_CallState: 2
         - m_Target: {fileID: 2174321719099952355}
           m_TargetAssemblyTypeName: TitleScreenSystemBridge, Assembly-CSharp
-          m_MethodName: setDraggingState
+          m_MethodName: SetDraggingState
           m_Mode: 6
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

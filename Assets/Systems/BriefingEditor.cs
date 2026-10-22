@@ -6,11 +6,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Web;
 
 public class BriefingEditor : FSystem
 {
-	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private readonly Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	public Transform editBriefingPanel;
 	public Transform briefingContent;
@@ -38,7 +37,7 @@ public class BriefingEditor : FSystem
 	}
 
 	// see pen in hookedMission prefab and EditBriefing in MissionEditor
-	public void prepareBriefingsEditor(DataLevelBehaviour dataLevel, GameObject src)
+	public void PrepareBriefingsEditor(DataLevelBehaviour dataLevel, GameObject src)
 	{
 		if (dataLevel == null)
 			Debug.LogError("Missing DataLevelBehaviour component");
@@ -110,7 +109,7 @@ public class BriefingEditor : FSystem
 		}
 	}
 
-	public void saveBriefings()
+	public void SaveBriefings()
 	{
 		if (overridedBriefing != null)
 		{
@@ -167,13 +166,13 @@ public class BriefingEditor : FSystem
 		}
 	}
 
-	public void addNewBriefing(GameObject parent)
+	public void AddNewBriefing(GameObject parent)
 	{
 		GameObject newItem = GameObject.Instantiate(briefingItemPrefab, parent.transform, false);
 		GameObjectManager.bind(newItem);
 	}
 
-	public void removeItemFromParent(GameObject go)
+	public void RemoveItemFromParent(GameObject go)
 	{
 		if (EventSystem.current.currentSelectedGameObject.transform.IsChildOf(go.transform))
 		{
@@ -194,7 +193,7 @@ public class BriefingEditor : FSystem
 		GameObject.Destroy(go);
 	}
 
-	public void moveItemInParent(GameObject go, int step)
+	public void MoveItemInParent(GameObject go, int step)
 	{
 		if (go.transform.GetSiblingIndex() + step < 0 || go.transform.GetSiblingIndex() + step > go.transform.parent.childCount)
 			step = 0;
@@ -202,7 +201,7 @@ public class BriefingEditor : FSystem
 	}
 
 	// Used in briefing input fields (see BriefingItem prefab -> TextPanel -> Text_input) to force sync its height with its content
-	public void markLayoutForRebuild(RectTransform transform)
+	public void MarkLayoutForRebuild(RectTransform transform)
 	{
 		LayoutRebuilder.MarkLayoutForRebuild(transform);
 	}

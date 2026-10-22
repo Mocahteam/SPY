@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 /// <summary>
 /// Manage steps (automatic simulation or controled by player)
@@ -24,15 +23,15 @@ using UnityEngine.UI;
  */
 public class StepSystem : FSystem {
 
-    private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
-    private Family f_newStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+    private readonly Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+    private readonly Family f_newStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
 
-    private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-    private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+    private readonly Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+    private readonly Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
-    private Family f_executablePanels = FamilyManager.getFamily(new AnyOfTags("ScriptConstructor"), new AllOfComponents(typeof(UIRootExecutor)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+    private readonly Family f_executablePanels = FamilyManager.getFamily(new AnyOfTags("ScriptConstructor"), new AllOfComponents(typeof(UIRootExecutor)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
-    private Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position), typeof(Animator)), new AnyOfTags("Door"));
+    private readonly Family f_door = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position), typeof(Animator)), new AnyOfTags("Door"));
 
     private GameData gameData;
     private int nbStep;
@@ -47,13 +46,13 @@ public class StepSystem : FSystem {
         GameObject go = GameObject.Find("GameData");
         if (go != null)
             gameData = go.GetComponent<GameData>();
-        f_newStep.addEntryCallback(onNewStep);
+        f_newStep.addEntryCallback(OnNewStep);
 
         f_playingMode.addEntryCallback(delegate
         {
             // count a new execution
             gameData.totalExecute++;
-            setToDefaultTimeStep();
+            SetToDefaultTimeStep();
 
             gameData.startStepTime = Time.time;
 
@@ -75,7 +74,7 @@ public class StepSystem : FSystem {
         Pause = true;
     }
 
-    private void onNewStep(GameObject go)
+    private void OnNewStep(GameObject go)
     {
         GameObjectManager.removeComponent(go.GetComponent<NewStep>());
         gameData.startStepTime = Time.time;
@@ -99,7 +98,7 @@ public class StepSystem : FSystem {
 
                     string scriptsContent = "";
                     foreach (GameObject executablePanel in f_executablePanels)
-                        scriptsContent += exportExecutableScriptToString(executablePanel.transform);
+                        scriptsContent += ExportExecutableScriptToString(executablePanel.transform);
 
                     GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
                     {
@@ -123,7 +122,7 @@ public class StepSystem : FSystem {
 
                     if (newStepAskedByPlayer)
                     {
-                        MainLoop.instance.StartCoroutine(delaySteppedStatement());
+                        MainLoop.instance.StartCoroutine(DelaySteppedStatement());
                         newStepAskedByPlayer = false;
                         Pause = true;
                     }
@@ -133,7 +132,7 @@ public class StepSystem : FSystem {
     }
 
     // See PauseButton, ContinueButton in editor
-    public void autoExecuteStep(bool on){
+    public void AutoExecuteStep(bool on){
 
         if (on)
         {
@@ -150,7 +149,7 @@ public class StepSystem : FSystem {
         }
     }
 
-    private string exportExecutableScriptToString(Transform scriptContainer)
+    private string ExportExecutableScriptToString(Transform scriptContainer)
     {
         string scriptsContent = scriptContainer.GetComponentInChildren<UIRootExecutor>(true).scriptName + " {";
         for (int i = 0; i < scriptContainer.childCount; i++)
@@ -160,7 +159,7 @@ public class StepSystem : FSystem {
     }
 
     // See NextStepButton in editor
-    public void goToNextStep(){
+    public void GoToNextStep(){
         if (Time.time - gameData.startStepTime >= 1 / gameData.gameSpeed_current)
         {
             Pause = false;
@@ -168,13 +167,13 @@ public class StepSystem : FSystem {
         }
     }
 
-    private IEnumerator delaySteppedStatement()
+    private IEnumerator DelaySteppedStatement()
     {
         // On attend une frame que les nouvelles CurrentActions soient définies
         yield return null;
         string scriptsContent = "";
         foreach (GameObject executablePanel in f_executablePanels)
-            scriptsContent += exportExecutableScriptToString(executablePanel.transform);
+            scriptsContent += ExportExecutableScriptToString(executablePanel.transform);
         GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
         {
             verb = "stepped",
@@ -186,25 +185,25 @@ public class StepSystem : FSystem {
     }
 
     // See StopButton in editor
-    public void cancelTotalStep(){ //click on stop button
+    public void CancelTotalStep(){ //click on stop button
         gameData.totalStep -= nbStep;
         gameData.totalExecute--;
         nbStep = 0;
     }
 
     // See SpeedButton in editor
-    public void speedTimeStep(){
+    public void SpeedTimeStep(){
         gameData.gameSpeed_current = gameData.gameSpeed_default * 3f;
-        syncDoorSpeedAnimation();
+        SyncDoorSpeedAnimation();
     }
 
     // See ContinueButton in editor
-    public void setToDefaultTimeStep(){
+    public void SetToDefaultTimeStep(){
         gameData.gameSpeed_current = gameData.gameSpeed_default;
-        syncDoorSpeedAnimation();
+        SyncDoorSpeedAnimation();
     }
 
-    private void syncDoorSpeedAnimation()
+    private void SyncDoorSpeedAnimation()
     {
         foreach (GameObject door in f_door)
             door.GetComponent<Animator>().speed = gameData.gameSpeed_current;

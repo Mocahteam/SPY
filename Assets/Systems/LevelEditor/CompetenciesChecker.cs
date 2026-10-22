@@ -2,12 +2,10 @@ using FYFY;
 using System.Xml;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Localization.Settings;
-using static SaveContent;
 
 public class CompetenciesChecker : FSystem
 {
-    private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency)));
+    private readonly Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency)));
 
     public Transform skillsInvolvedContent;
     public Transform skillsIgnoredContent;
@@ -54,7 +52,7 @@ public class CompetenciesChecker : FSystem
             if (competency.referentialId == cs.values.currentSkillsRepository && competency.rule != "")
             {
                 // build mission xml for analysis
-                string exportXML = SaveFileSystem.instance.buildLevelContent();
+                string exportXML = SaveFileSystem.instance.BuildLevelContent();
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(exportXML);
                 Utility.removeComments(doc);

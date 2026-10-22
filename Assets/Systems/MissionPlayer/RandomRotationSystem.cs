@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class RandomRotationSystem : FSystem {
 
-    private Family f_rotationGOs = FamilyManager.getFamily(new AllOfComponents(typeof(RandomRotation)));
+    private readonly Family f_rotationGOs = FamilyManager.getFamily(new AllOfComponents(typeof(RandomRotation)));
 
     public CurrentSettingsValues currentSettingsValues;
 

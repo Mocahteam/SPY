@@ -8,12 +8,11 @@ using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class SaveFileSystem : FSystem
 {
-	private Family f_editorblocks = FamilyManager.getFamily(new AllOfComponents(typeof(EditorBlockData)));
+	private readonly Family f_editorblocks = FamilyManager.getFamily(new AllOfComponents(typeof(EditorBlockData)));
 
 	public TMP_InputField saveName;
 
@@ -54,9 +53,9 @@ public class SaveFileSystem : FSystem
 	}
 
 	// See TestLevel GO (Button)
-	public void testLevel()
+	public void TestLevel()
     {
-		string exportXML = buildLevelContent();
+		string exportXML = BuildLevelContent();
         XmlDocument doc = new XmlDocument();
 		doc.LoadXml(exportXML);
 		Utility.removeComments(doc);
@@ -75,7 +74,7 @@ public class SaveFileSystem : FSystem
 	}
 
 	// See Button Save
-	public void displaySavingPanel()
+	public void DisplaySavingPanel()
 	{
 		if (dataLevel.data.missionName != null && dataLevel.data.missionName != "" && dataLevel.data.missionName != UtilityLobby.testFromLevelEditor)
 			saveName.text = Path.GetFileNameWithoutExtension(dataLevel.data.missionName);
@@ -83,7 +82,7 @@ public class SaveFileSystem : FSystem
 	}
 
 	// see ValideMessageButton
-	public void saveXmlFile()
+	public void SaveXmlFile()
 	{
 		if (!UtilityEditor.CheckSaveNameValidity(saveName.text))
 		{
@@ -105,19 +104,19 @@ public class SaveFileSystem : FSystem
 			if (Application.platform != RuntimePlatform.WebGLPlayer && File.Exists(Application.persistentDataPath + "/Levels/" + saveName.text))
 			{
 				localCallback = null;
-				localCallback += delegate { saveToFile(); };
+				localCallback += delegate { SaveToFile(); };
 				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileNameAlreadyExists"), saveName.text), OkButton = Utility.GetLocalizedString("Yes"), CancelButton = Utility.GetLocalizedString("No"), call = localCallback });
 				// Be sure saving windows is enabled
 				saveName.transform.parent.parent.gameObject.SetActive(true);
 			}
 			else
-				saveToFile();
+				SaveToFile();
 		}
 	}
 
-	private void saveToFile()
+	private void SaveToFile()
 	{
-		string levelExport = buildLevelContent();
+		string levelExport = BuildLevelContent();
 
 		// generate XML structure from string
 		XmlDocument doc = new XmlDocument();
@@ -158,7 +157,7 @@ public class SaveFileSystem : FSystem
 		saveName.transform.parent.parent.gameObject.SetActive(false);
 	}
 
-	public string buildLevelContent()
+	public string BuildLevelContent()
 	{
 		string levelExport = "<?xml version=\"1.0\"?>\n";
 		levelExport += "<level>\n";

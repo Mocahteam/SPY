@@ -16,7 +16,7 @@ public class ParamCompetenceSystem : FSystem
 	public static ParamCompetenceSystem instance;
 
 	// Familles
-	private Family f_UI_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency)), new AnyOfProperties(PropertyMatcher.PROPERTY.HAS_CHILD)); // Les compétences qui ont des enfants, donc les éléments d'UI pour le référentiel sélectionné
+	private readonly Family f_UI_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency)), new AnyOfProperties(PropertyMatcher.PROPERTY.HAS_CHILD)); // Les compétences qui ont des enfants, donc les éléments d'UI pour le référentiel sélectionné
 	private UnityAction localCallback;
 	private GameObject selectedScenarioGO;
 	private bool competenciesLoadedAndReady;
@@ -66,15 +66,15 @@ public class ParamCompetenceSystem : FSystem
 			selectedScenarioGO = null;
 
 			competenciesLoadedAndReady = false;
-			updateCompetencies();
-			MainLoop.instance.StartCoroutine(delayshowCompatibleLevels());
+			UpdateCompetencies();
+			MainLoop.instance.StartCoroutine(DelayshowCompatibleLevels());
         }
 
 		Pause = true;
     }
 
     // see CompetenciesFilter and SkillsDropdown in the settingsWindows of the ScenarioEditor scene
-    public void updateCompetencies()
+    public void UpdateCompetencies()
 	{
 		int referentialId = currentSettingsValues.values.currentSkillsRepository;
 		// save previous competencies selected
@@ -150,18 +150,18 @@ public class ParamCompetenceSystem : FSystem
 			comp.gameObject.SetActive(true);
 		}
 
-		MainLoop.instance.StartCoroutine(delayRefreshLevelInfo());
+		MainLoop.instance.StartCoroutine(DelayRefreshLevelInfo());
 
 		competenciesLoadedAndReady = true;
 	}
 
-	private IEnumerator delayshowCompatibleLevels()
+	private IEnumerator DelayshowCompatibleLevels()
 	{
 		yield return new WaitWhile (() => !competenciesLoadedAndReady);
 
         yield return null; // Il faut attendre la frame suivante pour être sûr que la famille contenant les Competency soit à jour
 
-        filterCompatibleLevels(false);
+        FilterCompatibleLevels(false);
 
 #if UNITY_EDITOR
         DebugLogLevelsCompetencies();
@@ -169,18 +169,18 @@ public class ParamCompetenceSystem : FSystem
     }
 
 	// see ShowAllLevels GameObject
-	public void resetFilters()
+	public void ResetFilters()
     {
 		// unselect all competencies
 		foreach (GameObject comp in f_UI_competencies)
 			comp.GetComponentInChildren<Toggle>().isOn = false;
 		// reset name filtering
 		levelFilterByName.text = "";
-		filterCompatibleLevels(false);
+		FilterCompatibleLevels(false);
 	}
 
 	// see ButtonShowLevels in ParamCompPanel and Filter GameObject (to filter level by name)
-	public void filterCompatibleLevels(bool nameFiltering) { 
+	public void FilterCompatibleLevels(bool nameFiltering) { 
 		// default, select all levels
 		List<XmlNode> selectedLevels = new List<XmlNode>();
 		foreach (KeyValuePair<string, XmlNode> level in gameData.levels)
@@ -281,15 +281,15 @@ public class ParamCompetenceSystem : FSystem
 		}
 		if (gameData.selectedScenario == UtilityLobby.testFromScenarioEditor)
 		{
-			loadScenario(UtilityLobby.editingScenario);
+			LoadScenario(UtilityLobby.editingScenario);
 			DataLevel dl = gameData.scenarios[gameData.selectedScenario].levels[0];
-			showLevelInfo(Utility.extractFileName(dl.filePath), dl);
+			ShowLevelInfo(Utility.extractFileName(dl.filePath), dl);
 			gameData.selectedScenario = "";
 		}
 	}
 
 	// See ButtonLoadScenario
-	public void displayLoadingPanel(string filter)
+	public void DisplayLoadingPanel(string filter)
 	{
 		// sync filter with the content of the input field (in the case of input field is not empty and loading panel is called from the menu)
 		TMP_InputField input = mainCanvas.transform.Find("SafeArea/LoadingPanel").GetComponentInChildren<TMP_InputField>();
@@ -332,7 +332,7 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	// see LoadButton in LoadingPanel
-	public void loadScenario()
+	public void LoadScenario()
 	{
 		if (selectedScenarioGO != null)
 		{
@@ -340,11 +340,11 @@ public class ParamCompetenceSystem : FSystem
 			if (closeBriefing.gameObject.activeInHierarchy)
 				closeBriefing.onClick.Invoke();
 
-			loadScenario(selectedScenarioGO.GetComponent<GameKeys>().scenarioKey);
+			LoadScenario(selectedScenarioGO.GetComponent<GameKeys>().scenarioKey);
 		}
 	}
 
-	private void loadScenario(string scenarioKey)
+	private void LoadScenario(string scenarioKey)
     {
 		if (gameData.scenarios.ContainsKey(scenarioKey))
 		{
@@ -368,39 +368,39 @@ public class ParamCompetenceSystem : FSystem
 			{
 				GameObject newLevel = GameObject.Instantiate(hookedMission, contentScenario.transform);
 				newLevel.GetComponentInChildren<TMP_Text>().text = Utility.extractFileName(levelPath.filePath);
-				newLevel.GetComponent<DataLevelBehaviour>().data = levelPath.clone();
+				newLevel.GetComponent<DataLevelBehaviour>().data = levelPath.Clone();
 				GameObjectManager.bind(newLevel);
 			}
 		}
 	}
 
-	public void onScenarioSelected(GameObject go)
+	public void OnScenarioSelected(GameObject go)
 	{
 		selectedScenarioGO = go;
 	}
 
-	private IEnumerator delayRefreshLevelInfo()
+	private IEnumerator DelayRefreshLevelInfo()
     {
 		yield return null;
-		refreshLevelInfo();
+		RefreshLevelInfo();
 	}
 
-	public void refreshLevelInfo()
+	public void RefreshLevelInfo()
     {
 		string path = contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text;
 		if (path != "")
 		{
 			DataLevel dataLevel = contentInfoCompatibleLevel.GetComponent<DataLevelBehaviour>().data;
-			showLevelInfo(path, dataLevel);
+			ShowLevelInfo(path, dataLevel);
 		}
 	}
 
-	public void showLevelInfo(string path, DataLevelBehaviour overridedData = null)
+	public void ShowLevelInfo(string path, DataLevelBehaviour overridedData = null)
 	{
-		showLevelInfo(path, overridedData == null ? null : overridedData.data);
+		ShowLevelInfo(path, overridedData == null ? null : overridedData.data);
 	}
 
-	private void showLevelInfo(string path, DataLevel overridedData = null) { 
+	private void ShowLevelInfo(string path, DataLevel overridedData = null) { 
 		// try to find file in persistent directory
 		string absolutePath = new Uri(Application.persistentDataPath + "/" + path).AbsoluteUri;
 		string mainPath = Application.persistentDataPath;
@@ -440,13 +440,13 @@ public class ParamCompetenceSystem : FSystem
 					dlb.data.overridedDialogs = null; // to load default
 				}
 				else
-					dlb.data = overridedData.clone();
+					dlb.data = overridedData.Clone();
 				// if no overrided dialogs, load default
 				if (dlb.data.overridedDialogs == null)
 					dlb.data.overridedDialogs = defaultDialogs;
 
 				// Display introTexts
-				contentInfo.text = "<b>"+ Utility.GetLocalizedString("BriefingTexts") +" " + (dlb.data.dialogsEqualsTo(defaultDialogs) ? "(" + Utility.GetLocalizedString("Default") + ")" : "(" + Utility.GetLocalizedString("Personalized") + ")") + " :</b>\n";
+				contentInfo.text = "<b>"+ Utility.GetLocalizedString("BriefingTexts") +" " + (dlb.data.DialogsEqualsTo(defaultDialogs) ? "(" + Utility.GetLocalizedString("Default") + ")" : "(" + Utility.GetLocalizedString("Personalized") + ")") + " :</b>\n";
 				string txt = "";
 				for (int i = 0; i < dlb.data.overridedDialogs.Count; i++)
 				{
@@ -487,22 +487,22 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	// Used on ButtonAddToScenario
-	public void addCurrentLevelToScenario()
+	public void AddCurrentLevelToScenario()
 	{
 		GameObject newLevel = GameObject.Instantiate(hookedMission, contentScenario.transform);
 		newLevel.GetComponentInChildren<TMP_Text>().text = contentInfoCompatibleLevel.transform.Find("levelTitle").GetComponent<TMP_Text>().text;
-		newLevel.GetComponent<DataLevelBehaviour>().data = contentInfoCompatibleLevel.GetComponent<DataLevelBehaviour>().data.clone();
+		newLevel.GetComponent<DataLevelBehaviour>().data = contentInfoCompatibleLevel.GetComponent<DataLevelBehaviour>().data.Clone();
 		GameObjectManager.bind(newLevel);
 	}
 
 	// Used when PointerOver CategorizeCompetence prefab (see in editor)
-	public void infoCompetence(Competency comp)
+	public void InfoCompetence(Competency comp)
 	{
 		if (comp != null)
 			panelInfoComp.transform.Find("InfoText").GetComponent<TMP_Text>().text = comp.description;
 	}
 
-	public void saveScenario(TMP_InputField scenarioName)
+	public void SaveScenario(TMP_InputField scenarioName)
 	{
 		if (!UtilityEditor.CheckSaveNameValidity(scenarioName.text))
 		{
@@ -523,17 +523,17 @@ public class ParamCompetenceSystem : FSystem
 			if (Application.platform != RuntimePlatform.WebGLPlayer && File.Exists(Application.persistentDataPath + "/Scenario/" + scenarioName.text))
 			{
 				localCallback = null;
-				localCallback += delegate { saveToFile(scenarioName); };
+				localCallback += delegate { SaveToFile(scenarioName); };
 				GameObjectManager.addComponent<MessageForUser>(MainLoop.instance.gameObject, new { message = Utility.getFormatedText(Utility.GetLocalizedString("FileNameAlreadyExists"), scenarioName.text), OkButton = Utility.GetLocalizedString("Yes"), CancelButton = Utility.GetLocalizedString("No"), call = localCallback });
 				// Be sure saving windows is enabled
 				scenarioName.transform.parent.parent.gameObject.SetActive(true);
 			}
 			else
-				saveToFile(scenarioName);
+				SaveToFile(scenarioName);
 		}
 	}
 
-	private string buildScenarioContent(string defaultName)
+	private string BuildScenarioContent(string defaultName)
     {
 		string scenarioExport = "<?xml version=\"1.0\"?>\n";
 		scenarioExport += "<scenario name=\""+ (scenarioName.text != "" ? scenarioName.text.Replace('\"', '\'') : defaultName) + "\" desc=\""+ scenarioAbstract.text.Replace('\"', '\'') + "\">\n";
@@ -571,8 +571,8 @@ public class ParamCompetenceSystem : FSystem
 		return scenarioExport;
 	}
 
-	private void saveToFile(TMP_InputField scenarioName) {
-		string scenarioExport = buildScenarioContent(scenarioName.text);
+	private void SaveToFile(TMP_InputField scenarioName) {
+		string scenarioExport = BuildScenarioContent(scenarioName.text);
 
 		// generate XML structure from string
 		XmlDocument doc = new XmlDocument();
@@ -615,29 +615,29 @@ public class ParamCompetenceSystem : FSystem
 	}
 
 	// See ButtonSaveScenario
-	public void displaySavingPanel(TMP_InputField scenarName)
+	public void DisplaySavingPanel(TMP_InputField scenarName)
 	{
 		savingPanel.SetActive(true);
 		savingPanel.GetComponentInChildren<TMP_InputField>(true).text = Utility.extractLocale(scenarName.text);
 	}
 
     // See pen in hookedMission prefab
-    public void showBriefingOverride()
+    public void ShowBriefingOverride()
 	{ 
         compatibleLevelsPanel.SetActive(false);
 		editBriefingPanel.SetActive(true);
     }
 
 	//Used on scenario editing window (see button ButtonTestLevel)
-	public void testLevel(DataLevelBehaviour dlb)
+	public void TestLevel(DataLevelBehaviour dlb)
 	{
 		// We save the scenario currently edited
 		// We can't use GameObjectManager because the update has to be done immediately due to scene loading in testLevel function
-		UtilityLobby.LoadLevelOrScenario(gameData, UtilityLobby.editingScenario, buildScenarioContent(""));
-		testLevel(dlb.data, UtilityLobby.testFromScenarioEditor);
+		UtilityLobby.LoadLevelOrScenario(gameData, UtilityLobby.editingScenario, BuildScenarioContent(""));
+		TestLevel(dlb.data, UtilityLobby.testFromScenarioEditor);
 	}
 
-	private void testLevel(DataLevel dl, string context)
+	private void TestLevel(DataLevel dl, string context)
     {
 		gameData.selectedScenario = context;
 		WebGlScenario test = new WebGlScenario();

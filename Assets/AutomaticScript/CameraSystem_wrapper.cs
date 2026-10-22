@@ -33,64 +33,64 @@ public class CameraSystem_wrapper : BaseWrapper
 		MainLoop.callAppropriateSystemMethod (system, "ToggleOrthographicPerspective", null);
 	}
 
-	public void setOrthographicView(System.Boolean state)
+	public void SetOrthographicView(System.Boolean state)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setOrthographicView", state);
+		MainLoop.callAppropriateSystemMethod (system, "SetOrthographicView", state);
 	}
 
-	public void set_UIFrontBack(System.Single value)
+	public void Set_UIFrontBack(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "set_UIFrontBack", value);
+		MainLoop.callAppropriateSystemMethod (system, "Set_UIFrontBack", value);
 	}
 
-	public void set_UILeftRight(System.Single value)
+	public void Set_UILeftRight(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "set_UILeftRight", value);
+		MainLoop.callAppropriateSystemMethod (system, "Set_UILeftRight", value);
 	}
 
-	public void set_UIRotate(System.Single value)
+	public void Set_UIRotate(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "set_UIRotate", value);
+		MainLoop.callAppropriateSystemMethod (system, "Set_UIRotate", value);
 	}
 
-	public void set_UIPitching(System.Single value)
+	public void Set_UIPitching(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "set_UIPitching", value);
+		MainLoop.callAppropriateSystemMethod (system, "Set_UIPitching", value);
 	}
 
-	public void set_UIZoom(System.Single value)
+	public void Set_UIZoom(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "set_UIZoom", value);
+		MainLoop.callAppropriateSystemMethod (system, "Set_UIZoom", value);
 	}
 
-	public void submitRotate(System.Single value)
+	public void SubmitRotate(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "submitRotate", value);
+		MainLoop.callAppropriateSystemMethod (system, "SubmitRotate", value);
 	}
 
-	public void submitPitching(System.Single value)
+	public void SubmitPitching(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "submitPitching", value);
+		MainLoop.callAppropriateSystemMethod (system, "SubmitPitching", value);
 	}
 
-	public void submitFrontBack(System.Single value)
+	public void SubmitFrontBack(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "submitFrontBack", value);
+		MainLoop.callAppropriateSystemMethod (system, "SubmitFrontBack", value);
 	}
 
-	public void submitLeftRight(System.Single value)
+	public void SubmitLeftRight(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "submitLeftRight", value);
+		MainLoop.callAppropriateSystemMethod (system, "SubmitLeftRight", value);
 	}
 
-	public void submitZoom(System.Single value)
+	public void SubmitZoom(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "submitZoom", value);
+		MainLoop.callAppropriateSystemMethod (system, "SubmitZoom", value);
 	}
 
-	public void focusNextAgent()
+	public void FocusNextAgent()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "focusNextAgent", null);
+		MainLoop.callAppropriateSystemMethod (system, "FocusNextAgent", null);
 	}
 
 }

@@ -2,33 +2,33 @@ using UnityEngine;
 
 public class BriefingEditorBridge : MonoBehaviour
 {
-    public void prepareBriefingsEditor(GameObject src)
+    public void PrepareBriefingsEditor(GameObject src)
     {
-        BriefingEditor.instance.prepareBriefingsEditor(gameObject.GetComponent<DataLevelBehaviour>(), src);
+        BriefingEditor.instance.PrepareBriefingsEditor(gameObject.GetComponent<DataLevelBehaviour>(), src);
     }
 
-    public void saveBriefings()
+    public void SaveBriefings()
     {
-        BriefingEditor.instance.saveBriefings();
+        BriefingEditor.instance.SaveBriefings();
     }
 
-    public void addNewBriefing(GameObject parent)
+    public void AddNewBriefing(GameObject parent)
     {
-        BriefingEditor.instance.addNewBriefing(parent);
+        BriefingEditor.instance.AddNewBriefing(parent);
     }
 
-    public void removeItemFromParent()
+    public void RemoveItemFromParent()
     {
-        BriefingEditor.instance.removeItemFromParent(gameObject);
+        BriefingEditor.instance.RemoveItemFromParent(gameObject);
     }
 
-    public void moveItemInParent(int step)
+    public void MoveItemInParent(int step)
     {
-        BriefingEditor.instance.moveItemInParent(gameObject, step);
+        BriefingEditor.instance.MoveItemInParent(gameObject, step);
     }
 
-    public void markLayoutForRebuild(RectTransform transform)
+    public void MarkLayoutForRebuild(RectTransform transform)
     {
-        BriefingEditor.instance.markLayoutForRebuild(transform);
+        BriefingEditor.instance.MarkLayoutForRebuild(transform);
     }
 }

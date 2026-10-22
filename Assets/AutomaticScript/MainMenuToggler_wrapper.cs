@@ -12,19 +12,19 @@ public class MainMenuToggler_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "canvasGroups", canvasGroups);
 	}
 
-	public void showMainMenu()
+	public void ShowMainMenu()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "showMainMenu", null);
+		MainLoop.callAppropriateSystemMethod (system, "ShowMainMenu", null);
 	}
 
-	public void hideMainMenu()
+	public void HideMainMenu()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "hideMainMenu", null);
+		MainLoop.callAppropriateSystemMethod (system, "HideMainMenu", null);
 	}
 
-	public void setCanvasInterractable(System.Boolean state)
+	public void SetCanvasInterractable(System.Boolean state)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setCanvasInterractable", state);
+		MainLoop.callAppropriateSystemMethod (system, "SetCanvasInterractable", state);
 	}
 
 }

@@ -3,72 +3,72 @@ using UnityEngine.EventSystems;
 
 public class DragDropSystemBridge : MonoBehaviour
 {
-    public void checkSpecialClick(BaseEventData e)
+    public void CheckSpecialClick(BaseEventData e)
     {
-        DragDropSystem.instance.checkSpecialClick(e);
+        DragDropSystem.instance.CheckSpecialClick(e);
     }
 
-    public void checkRightClickForDelete(BaseEventData e)
+    public void CheckRightClickForDelete(BaseEventData e)
     {
         // On verifie si c'est bien un clic-droit
         if ((e as PointerEventData).button == PointerEventData.InputButton.Right)
-            DragDropSystem.instance.deleteElement(gameObject);
+            DragDropSystem.instance.DeleteElement(gameObject);
     }
 
-    public void setDefaultDropZone(BaseEventData e)
+    public void SetDefaultDropZone(BaseEventData e)
     {
         // On verifie si c'est bien un clic-gauche
         if ((e as PointerEventData).button == PointerEventData.InputButton.Left)
-            DragDropSystem.instance.setDefaultDropZone(gameObject);
+            DragDropSystem.instance.SetDefaultDropZone(gameObject);
     }
 
-    public void checkHighlightDropArea()
+    public void CheckHighlightDropArea()
     {
-        DragDropSystem.instance.checkHighlightDropArea(gameObject);
+        DragDropSystem.instance.CheckHighlightDropArea(gameObject);
     }
 
-    public void unhighlightDropArea()
+    public void UnhighlightDropArea()
     {
-        DragDropSystem.instance.unhighlightDropArea(gameObject);
+        DragDropSystem.instance.UnhighlightDropArea(gameObject);
     }
 
-    public void beginDragElement(BaseEventData e)
+    public void BeginDragElement(BaseEventData e)
     {
-        DragDropSystem.instance.beginDragElementFromEditableScript(e);
+        DragDropSystem.instance.BeginDragElementFromEditableScript(e);
     }
 
-    public void beginDragElementFromLibrary(BaseEventData e)
+    public void BeginDragElementFromLibrary(BaseEventData e)
     {
-        DragDropSystem.instance.beginDragElementFromLibrary(e);
+        DragDropSystem.instance.BeginDragElementFromLibrary(e);
     }
 
-    public void dragElement(BaseEventData e)
+    public void DragElement(BaseEventData e)
     {
-        DragDropSystem.instance.dragElement();
+        DragDropSystem.instance.DragElement();
     }
 
-    public void endDragElement(BaseEventData e)
+    public void EndDragElement(BaseEventData e)
     {
-        DragDropSystem.instance.endDragElement();
+        DragDropSystem.instance.EndDragElement();
     }
 
-    public void onlyPositiveInteger(string newValue)
+    public void OnlyPositiveInteger(string newValue)
     {
-        DragDropSystem.instance.onlyPositiveInteger(gameObject, newValue);
+        DragDropSystem.instance.OnlyPositiveInteger(gameObject, newValue);
     }
 
-    public void setNextFocusedGameObject(GameObject go)
+    public void SetNextFocusedGameObject(GameObject go)
     {
         EventSystem.current.SetSelectedGameObject(go);
     }
 
-    public void lockItem()
+    public void LockItem()
     {
-        DragDropSystem.instance.lockItem(transform.parent);
+        DragDropSystem.instance.LockItem(transform.parent);
     }
 
-    public void unlockItem()
+    public void UnlockItem()
     {
-        DragDropSystem.instance.unlockItem(transform.parent);
+        DragDropSystem.instance.UnlockItem(transform.parent);
     }
 }

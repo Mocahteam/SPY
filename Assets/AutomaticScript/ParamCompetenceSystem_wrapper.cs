@@ -52,69 +52,69 @@ public class ParamCompetenceSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "ScenarioAvailablePrefab", ScenarioAvailablePrefab);
 	}
 
-	public void updateCompetencies()
+	public void UpdateCompetencies()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "updateCompetencies", null);
+		MainLoop.callAppropriateSystemMethod (system, "UpdateCompetencies", null);
 	}
 
-	public void resetFilters()
+	public void ResetFilters()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "resetFilters", null);
+		MainLoop.callAppropriateSystemMethod (system, "ResetFilters", null);
 	}
 
-	public void filterCompatibleLevels(System.Boolean nameFiltering)
+	public void FilterCompatibleLevels(System.Boolean nameFiltering)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "filterCompatibleLevels", nameFiltering);
+		MainLoop.callAppropriateSystemMethod (system, "FilterCompatibleLevels", nameFiltering);
 	}
 
-	public void displayLoadingPanel(System.String filter)
+	public void DisplayLoadingPanel(System.String filter)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "displayLoadingPanel", filter);
+		MainLoop.callAppropriateSystemMethod (system, "DisplayLoadingPanel", filter);
 	}
 
-	public void loadScenario()
+	public void LoadScenario()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "loadScenario", null);
+		MainLoop.callAppropriateSystemMethod (system, "LoadScenario", null);
 	}
 
-	public void onScenarioSelected(UnityEngine.GameObject go)
+	public void OnScenarioSelected(UnityEngine.GameObject go)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "onScenarioSelected", go);
+		MainLoop.callAppropriateSystemMethod (system, "OnScenarioSelected", go);
 	}
 
-	public void refreshLevelInfo()
+	public void RefreshLevelInfo()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "refreshLevelInfo", null);
+		MainLoop.callAppropriateSystemMethod (system, "RefreshLevelInfo", null);
 	}
 
-	public void addCurrentLevelToScenario()
+	public void AddCurrentLevelToScenario()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "addCurrentLevelToScenario", null);
+		MainLoop.callAppropriateSystemMethod (system, "AddCurrentLevelToScenario", null);
 	}
 
-	public void infoCompetence(Competency comp)
+	public void InfoCompetence(Competency comp)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "infoCompetence", comp);
+		MainLoop.callAppropriateSystemMethod (system, "InfoCompetence", comp);
 	}
 
-	public void saveScenario(TMPro.TMP_InputField scenarioName)
+	public void SaveScenario(TMPro.TMP_InputField scenarioName)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "saveScenario", scenarioName);
+		MainLoop.callAppropriateSystemMethod (system, "SaveScenario", scenarioName);
 	}
 
-	public void displaySavingPanel(TMPro.TMP_InputField scenarName)
+	public void DisplaySavingPanel(TMPro.TMP_InputField scenarName)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "displaySavingPanel", scenarName);
+		MainLoop.callAppropriateSystemMethod (system, "DisplaySavingPanel", scenarName);
 	}
 
-	public void showBriefingOverride()
+	public void ShowBriefingOverride()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "showBriefingOverride", null);
+		MainLoop.callAppropriateSystemMethod (system, "ShowBriefingOverride", null);
 	}
 
-	public void testLevel(DataLevelBehaviour dlb)
+	public void TestLevel(DataLevelBehaviour dlb)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "testLevel", dlb);
+		MainLoop.callAppropriateSystemMethod (system, "TestLevel", dlb);
 	}
 
 }

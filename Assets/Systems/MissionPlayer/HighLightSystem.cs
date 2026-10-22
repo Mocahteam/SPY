@@ -8,11 +8,11 @@ using UnityEngine.InputSystem;
 /// Manage highlightable GameObjects (word object as robots, drones, ground and UI object as current action executed or library items
 /// </summary>
 public class HighLightSystem : FSystem {
-	private Family f_highlightable = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(LibraryItemRef))); //has to be defined before nonhighlightedGO because initBaseColor must be called before unHighLightItem
-	private Family f_highlighted = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(PointerOver)), new NoneOfComponents(typeof(LibraryItemRef)));
-	private Family f_nonhighlighted = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(LibraryItemRef)));
-	private Family f_highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new AnyOfComponents( typeof(CurrentAction), typeof(PointerOver)));
-	private Family f_nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new NoneOfComponents(typeof(CurrentAction), typeof(PointerOver), typeof(Dragging)));
+	private readonly Family f_highlightable = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(LibraryItemRef))); //has to be defined before nonhighlightedGO because initBaseColor must be called before unHighLightItem
+	private readonly Family f_highlighted = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable), typeof(PointerOver)), new NoneOfComponents(typeof(LibraryItemRef)));
+	private readonly Family f_nonhighlighted = FamilyManager.getFamily(new AllOfComponents(typeof(Highlightable)), new NoneOfComponents(typeof(PointerOver), typeof(LibraryItemRef)));
+	private readonly Family f_highlightedAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new AnyOfComponents( typeof(CurrentAction), typeof(PointerOver)));
+	private readonly Family f_nonCurrentAction = FamilyManager.getFamily(new AllOfComponents(typeof(LibraryItemRef)), new NoneOfComponents(typeof(CurrentAction), typeof(PointerOver), typeof(Dragging)));
 
 	public GameObject dialogPanel;
 
@@ -22,11 +22,11 @@ public class HighLightSystem : FSystem {
 
 	protected override void onStart()
     {
-		f_highlightable.addEntryCallback(initBaseColor);
-		f_highlighted.addEntryCallback(highLightItem);
-		f_nonhighlighted.addEntryCallback(unHighLightItem);
-		f_highlightedAction.addEntryCallback(highLightItem);
-		f_nonCurrentAction.addEntryCallback(unHighLightItem);
+		f_highlightable.addEntryCallback(InitBaseColor);
+		f_highlighted.addEntryCallback(HighLightItem);
+		f_nonhighlighted.addEntryCallback(UnHighLightItem);
+		f_highlightedAction.addEntryCallback(HighLightItem);
+		f_nonCurrentAction.addEntryCallback(UnHighLightItem);
 
 		click = InputSystem.actions.FindAction("Click");
 	}
@@ -43,7 +43,7 @@ public class HighLightSystem : FSystem {
 		}
 	}
 
-	private void initBaseColor(GameObject go)
+	private void InitBaseColor(GameObject go)
 	{
 		// check if it is a script instruction
 		if ((go.GetComponent<BaseElement>() || go.GetComponent<BaseCondition>()) && go.GetComponent<Selectable>())
@@ -66,7 +66,7 @@ public class HighLightSystem : FSystem {
 		}
 	}
 
-	public void highLightItem(GameObject go){
+	private void HighLightItem(GameObject go){
 		// first process currentAction in agents panels (execution mode)
 		Selectable sel = go.GetComponent<Selectable>();
 		if (go.GetComponent<CurrentAction>() || (sel && !sel.interactable))
@@ -112,7 +112,7 @@ public class HighLightSystem : FSystem {
 		}
 	}
 
-	public void unHighLightItem(GameObject go){
+	private void UnHighLightItem(GameObject go){
 		// manage the case of items in executable panels
 		ScrollRect parentScroll = go.GetComponentInParent<ScrollRect>();
 		Selectable sel = go.GetComponent<Selectable>();

@@ -32,19 +32,19 @@ public class SaveFileSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "paintableGrid", paintableGrid);
 	}
 
-	public void testLevel()
+	public void TestLevel()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "testLevel", null);
+		MainLoop.callAppropriateSystemMethod (system, "TestLevel", null);
 	}
 
-	public void displaySavingPanel()
+	public void DisplaySavingPanel()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "displaySavingPanel", null);
+		MainLoop.callAppropriateSystemMethod (system, "DisplaySavingPanel", null);
 	}
 
-	public void saveXmlFile()
+	public void SaveXmlFile()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "saveXmlFile", null);
+		MainLoop.callAppropriateSystemMethod (system, "SaveXmlFile", null);
 	}
 
 }

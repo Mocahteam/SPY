@@ -8,9 +8,9 @@ public class CoinManager_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void cancelAllDestroyCoroutines()
+	public void CancelAllDestroyCoroutines()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "cancelAllDestroyCoroutines", null);
+		MainLoop.callAppropriateSystemMethod (system, "CancelAllDestroyCoroutines", null);
 	}
 
 }

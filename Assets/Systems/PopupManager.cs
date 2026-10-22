@@ -2,7 +2,6 @@
 using FYFY;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections;
 using UnityEngine.EventSystems;
 
 /// <summary>
@@ -29,7 +28,7 @@ public class PopupManager : FSystem {
 
 	protected override void onStart()
 	{
-		f_newMessageForUser.addEntryCallback(displayMessageUser);
+		f_newMessageForUser.addEntryCallback(DisplayMessageUser);
 		panelPopup = panelInfoUser.transform.Find("Panel") as RectTransform;
 		messageForUser = panelPopup.Find("Scroll View/Viewport/Content/Message").GetComponent<TMP_Text>();
 		buttonsTransform = panelPopup.Find("Buttons") as RectTransform;
@@ -38,11 +37,11 @@ public class PopupManager : FSystem {
     protected override void onProcess(int familiesUpdateCount)
     {
 		if (panelInfoUser.activeInHierarchy)
-			updatePopupSize();
+			UpdatePopupSize();
 	}
 
     // Affiche le panel message avec le bon message
-    private void displayMessageUser(GameObject go)
+    private void DisplayMessageUser(GameObject go)
 	{
 		foreach (GameObject canvas in f_canvasGroup)
 			canvas.GetComponent<CanvasGroup>().interactable = false;
@@ -72,7 +71,7 @@ public class PopupManager : FSystem {
         panelPopup.GetComponentInChildren<Scrollbar>(true).value = 1f;
     }
 
-	private void updatePopupSize()
+	private void UpdatePopupSize()
 	{
 		Rect currentWindowRect = (panelInfoUser.transform as RectTransform).rect;
 		Rect rect = panelPopup.rect;

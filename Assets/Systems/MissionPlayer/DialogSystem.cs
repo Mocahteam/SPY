@@ -17,11 +17,11 @@ using UnityEngine.Video;
 /// </summary>
 public class DialogSystem : FSystem
 {
-	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
-	private Family f_ends = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
-	private Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
-	private Family f_highlightedUI = FamilyManager.getFamily(new AllOfComponents(typeof(Highlighted)));
+	private readonly Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private readonly Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+	private readonly Family f_ends = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private readonly Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
+	private readonly Family f_highlightedUI = FamilyManager.getFamily(new AllOfComponents(typeof(Highlighted)));
 
     public GameObject LevelGO;
 	private GameData gameData;
@@ -113,7 +113,7 @@ public class DialogSystem : FSystem
 		f_playingMode.addEntryCallback(delegate {
 			showDialogsBottom.transform.parent.gameObject.SetActive(false);
             if (dialogPanel.activeInHierarchy)
-                closeDialogPanel();
+                CloseDialogPanel();
         });
 
 		f_editingMode.addEntryCallback(delegate {
@@ -124,10 +124,10 @@ public class DialogSystem : FSystem
 		f_ends.addEntryCallback(delegate
 		{
 			if (dialogPanel.activeInHierarchy)
-				closeDialogPanel();
+				CloseDialogPanel();
 			// Afficher la fenêtre de fin s'il y a au moins un dialogue de fin de configuré
 			if (overridedDebriefingWinDialogs.Count > 0)
-				showDialogPanel();
+				ShowDialogPanel();
 		});
 
 		dialogPanel.transform.parent.gameObject.SetActive(false);
@@ -141,22 +141,22 @@ public class DialogSystem : FSystem
 				(f_ends.Count == 0 && overridedBriefingDialogs != null && nBriefingDialog < overridedBriefingDialogs.Count && f_fadeOutEnd.Count == 1) ||
 				(f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && overridedDebriefingWinDialogs != null && nDebriefingWinDialog < overridedDebriefingWinDialogs.Count) ||
 				(f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && overridedDebriefingDefeatDialogs != null && nDebriefingDefeatDialog < overridedDebriefingDefeatDialogs.Count)))
-			showDialogPanel();
+			ShowDialogPanel();
 
 		if (dialogPanel.activeInHierarchy)
-			updateDialogSize();
+			UpdateDialogSize();
 	}
 
 
 	// Affiche le panneau de dialogue
-	public void showDialogPanel()
+	public void ShowDialogPanel()
 	{
         dialogPanel.transform.parent.gameObject.SetActive(true);
 		nBriefingDialog = f_ends.Count == 0 ? 0 : nBriefingDialog;
 		nDebriefingWinDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? 0 : nDebriefingWinDialog;
 		nDebriefingDefeatDialog = f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? 0 : nDebriefingDefeatDialog;
 
-		string content = configureDialog(0);
+		string content = ConfigureDialog(0);
 		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
 			verb = "opened",
@@ -169,14 +169,14 @@ public class DialogSystem : FSystem
 
 	// See NextButton in editor
 	// Permet d'afficher la suite du dialogue
-	public void nextDialog()
+	public void NextDialog()
 	{
 		// On se positionne sur le prochain dialogue
 		nBriefingDialog += f_ends.Count == 0 ? 1 : 0;
 		nDebriefingWinDialog += f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? 1 : 0;
 		nDebriefingDefeatDialog += f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? 1 : 0;
 
-		string content = configureDialog(1);
+		string content = ConfigureDialog(1);
 
 		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
 		{
@@ -191,14 +191,14 @@ public class DialogSystem : FSystem
 
 	// See PreviousButton in editor
 	// Permet d'afficher le message précédent
-	public void prevDialog()
+	public void PrevDialog()
 	{
 		// On se positionne sur le prochain dialogue
 		nBriefingDialog -= f_ends.Count == 0 ? 1 : 0;
 		nDebriefingWinDialog -= f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? 1 : 0;
 		nDebriefingDefeatDialog -= f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win ? 1 : 0;
 
-		string content = configureDialog(-1);
+		string content = ConfigureDialog(-1);
 
 		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new
 		{
@@ -211,7 +211,7 @@ public class DialogSystem : FSystem
 		});
 	}
 
-	private void clearHighlightedUI()
+	private void ClearHighlightedUI()
     {
         foreach (GameObject go in f_highlightedUI)
         {
@@ -221,10 +221,10 @@ public class DialogSystem : FSystem
         }
     }
 
-    private string configureDialog(int way)
+    private string ConfigureDialog(int way)
     {
 		// destruction des éventuels GO précédemment highlighted
-		clearHighlightedUI();
+		ClearHighlightedUI();
 
         string dialogReturn = "";
 		// get Dialog
@@ -341,7 +341,7 @@ public class DialogSystem : FSystem
 					videoPlayer.url = HttpUtility.UrlDecode(path);
 					RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
 					rawImage.enabled = false;
-					MainLoop.instance.StartCoroutine(waitLoadingVideo(dialog));
+					MainLoop.instance.StartCoroutine(WaitLoadingVideo(dialog));
 				}
 
                 // Que l'on soit en WebGL ou pas, on active le GO du videoPlayer pour s'en servir afin d'occuper la place dans le content du scrollview
@@ -383,24 +383,24 @@ public class DialogSystem : FSystem
 		dialogPanel.transform.parent.parent.GetComponentInParent<CanvasGroup>().interactable = dialog.enableInteraction;
 
 		// Be sure all buttons are disabled
-		setActiveOKButton(false);
-		setActiveNextButton(false);
-		setActivePrevButton(false);
+		SetActiveOKButton(false);
+		SetActiveNextButton(false);
+		SetActivePrevButton(false);
 
 		// if way is > 0 means we pass to next dialog => process previous dialog first in order to put selected go on ok/next button
 		if (way > 0)
 			if ((f_ends.Count == 0 && nBriefingDialog > 0) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && nDebriefingWinDialog > 0) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && nDebriefingDefeatDialog > 0))
-				setActivePrevButton(true);
+				SetActivePrevButton(true);
 
 		if ((f_ends.Count == 0 && nBriefingDialog + 1 < overridedBriefingDialogs.Count) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && nDebriefingWinDialog + 1 < overridedDebriefingWinDialogs.Count) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && nDebriefingDefeatDialog + 1 < overridedDebriefingDefeatDialogs.Count))
-			setActiveNextButton(true);
+			SetActiveNextButton(true);
 		if ((f_ends.Count == 0 && nBriefingDialog + 1 >= overridedBriefingDialogs.Count) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && nDebriefingWinDialog + 1 >= overridedDebriefingWinDialogs.Count) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && nDebriefingDefeatDialog + 1 >= overridedDebriefingDefeatDialogs.Count))
-			setActiveOKButton(true);
+			SetActiveOKButton(true);
 
 		// if way is < 0 means we pass to previous dialog => process previous dialog in second to put selected go on previous button
 		if (way < 0)
 			if ((f_ends.Count == 0 && nBriefingDialog > 0) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win && nDebriefingWinDialog > 0) || (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win && nDebriefingDefeatDialog > 0))
-				setActivePrevButton(true);
+				SetActivePrevButton(true);
 
 		if (dialog.text != null)
         {
@@ -408,13 +408,13 @@ public class DialogSystem : FSystem
             MainLoop.instance.StartCoroutine(Utility.delayGOSelection(textGO));
 		}
 
-		MainLoop.instance.StartCoroutine(forceScrollBarUp());
+		MainLoop.instance.StartCoroutine(ForceScrollBarUp());
 
 		return dialogReturn;
 	}
 
 	// Active ou non le bouton Ok du panel dialogue
-	public void setActiveOKButton(bool active)
+	private void SetActiveOKButton(bool active)
 	{
 		GameObject okButton = dialogPanel.transform.Find("Buttons/OKButton").gameObject;
 		okButton.SetActive(active);
@@ -431,7 +431,7 @@ public class DialogSystem : FSystem
 
 
 	// Active ou non le bouton next du panel dialogue
-	public void setActiveNextButton(bool active)
+	private void SetActiveNextButton(bool active)
 	{
 		GameObject nextButton = dialogPanel.transform.Find("Buttons/NextButton").gameObject;
 		nextButton.SetActive(active);
@@ -448,7 +448,7 @@ public class DialogSystem : FSystem
 
 
 	// Active ou non le bouton next du panel dialogue
-	public void setActivePrevButton(bool active)
+	private void SetActivePrevButton(bool active)
 	{
 		GameObject prevButton = dialogPanel.transform.Find("Buttons/PrevButton").gameObject;
 		prevButton.GetComponent<Button>().interactable = active;
@@ -459,9 +459,9 @@ public class DialogSystem : FSystem
 
 	// See OKButton in editor
 	// Désactive le panel de dialogue
-	public void closeDialogPanel()
+	public void CloseDialogPanel()
 	{
-		clearHighlightedUI();
+		ClearHighlightedUI();
 
         dialogPanel.transform.parent.gameObject.SetActive(false);
 		nBriefingDialog = f_ends.Count == 0 ? overridedBriefingDialogs.Count : 0;
@@ -482,7 +482,7 @@ public class DialogSystem : FSystem
 		});
     }
 
-	public void playVideo()
+	public void PlayVideo()
 	{
         if (Application.platform == RuntimePlatform.WebGLPlayer)
 			PlayCinematic();
@@ -490,7 +490,7 @@ public class DialogSystem : FSystem
             videoPlayer.Play();
 	}
 
-	public void pauseVideo()
+	public void PauseVideo()
     {
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 			PauseCinematic();
@@ -498,7 +498,7 @@ public class DialogSystem : FSystem
 			videoPlayer.Pause();
     }
 
-    private IEnumerator waitLoadingVideo(Dialog dialog)
+    private IEnumerator WaitLoadingVideo(Dialog dialog)
     {
 		yield return new WaitWhile(() => !videoPlayer.gameObject.activeInHierarchy);
         videoPlayer.Prepare();
@@ -513,7 +513,7 @@ public class DialogSystem : FSystem
         // show rawImage that render video
         RawImage rawImage = dialogPanel.GetComponentInChildren<RawImage>(true);
         rawImage.enabled = true;
-        yield return forceScrollBarUp();
+        yield return ForceScrollBarUp();
     }
 
     private IEnumerator GetTextureWebRequest(Image img, string path, Dialog dialog)
@@ -552,7 +552,7 @@ public class DialogSystem : FSystem
 			img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0, 0), 100.0f);
             // désactiver l'animation de chargement (spinner) pour l'image
             img.transform.GetChild(0).gameObject.SetActive(false);
-            yield return forceScrollBarUp();
+            yield return ForceScrollBarUp();
         }
 	}
 
@@ -581,7 +581,7 @@ public class DialogSystem : FSystem
         }
 	}
 
-	private int getVideoOriginalWidth()
+	private int GetVideoOriginalWidth()
 	{
         if (Application.platform == RuntimePlatform.WebGLPlayer)
 			return GetVideoWidth();
@@ -589,7 +589,7 @@ public class DialogSystem : FSystem
             return (int)videoPlayer.width;
 	}
 
-    private int getVideoOriginalHeight()
+    private int GetVideoOriginalHeight()
     {
 		if (Application.platform == RuntimePlatform.WebGLPlayer)
 	        return GetVideoHeight();
@@ -598,14 +598,14 @@ public class DialogSystem : FSystem
 	}
 
 
-    private void updateDialogSize()
+    private void UpdateDialogSize()
 	{
         // get Dialog
 		Dialog dialog = f_ends.Count == 0 ? overridedBriefingDialogs[nBriefingDialog] : (f_ends.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win ? overridedDebriefingWinDialogs[nDebriefingWinDialog] : overridedDebriefingDefeatDialogs[nDebriefingDefeatDialog]);
 
 		// Appliquer la taille maximale à la vidéo
-		int videoOriginalWidth = getVideoOriginalWidth();
-		int videoOriginalHeight = getVideoOriginalHeight();
+		int videoOriginalWidth = GetVideoOriginalWidth();
+		int videoOriginalHeight = GetVideoOriginalHeight();
 		LayoutElement VideoLayout = videoTransform.GetComponent<LayoutElement>();
 		float videoRatio = 1;
 		if (videoOriginalHeight > 0)
@@ -638,9 +638,9 @@ public class DialogSystem : FSystem
         float maxHeightSpaceInPanel = windowTransform.rect.height - (dialogMargin + dialogPadding);
         
         // Pour éviter de déformer la vidéo et d'avoir à utiliser des scroll, on va limiter la taille de la vidéo à la taille de la fenêtre. On va donc vérifier si la vidéo est trop large ou trop haute pour la fenêtre et ajuster sa taille en conséquence.
-        setAdjustedPreferredSize(VideoLayout, videoRatio, currentWidthSpaceInContent, maxHeightSpaceInPanel);
+        SetAdjustedPreferredSize(VideoLayout, videoRatio, currentWidthSpaceInContent, maxHeightSpaceInPanel);
         // Pour l'image on veut juste la caler au pire sur la largeur du content, si elle est trop haute on laisse le scroll possible
-        setAdjustedPreferredSize(ImgLayout, imgRatio, currentWidthSpaceInContent, Mathf.Infinity);
+        SetAdjustedPreferredSize(ImgLayout, imgRatio, currentWidthSpaceInContent, Mathf.Infinity);
 
         float newHeight = dialogPadding + contentTransform.rect.height;
         if (newHeight > windowTransform.rect.height - dialogMargin)
@@ -697,7 +697,7 @@ public class DialogSystem : FSystem
         }
     }
 
-	private void setAdjustedPreferredSize(LayoutElement layout, float ratio, float currentWidth, float maxHeight)
+	private void SetAdjustedPreferredSize(LayoutElement layout, float ratio, float currentWidth, float maxHeight)
 	{
         if (layout.gameObject.activeInHierarchy)
         {
@@ -717,7 +717,7 @@ public class DialogSystem : FSystem
         }
     }
 
-    private IEnumerator forceScrollBarUp()
+    private IEnumerator ForceScrollBarUp()
 	{
 		yield return null;
 		yield return null;

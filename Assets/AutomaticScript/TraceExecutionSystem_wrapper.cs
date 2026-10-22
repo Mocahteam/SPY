@@ -8,9 +8,9 @@ public class TraceExecutionSystem_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void onActionSelected()
+	public void OnActionSelected()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "onActionSelected", null);
+		MainLoop.callAppropriateSystemMethod (system, "OnActionSelected", null);
 	}
 
 }

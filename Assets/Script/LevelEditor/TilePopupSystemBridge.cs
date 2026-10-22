@@ -2,63 +2,63 @@ using UnityEngine;
 
 public class TilePopupSystemBridge : MonoBehaviour
 {
-	public void removeTileSettings()
+	public void RemoveTileSettings()
     {
-        TilePopupSystem.instance.removeTileSettings(gameObject);
+        TilePopupSystem.instance.RemoveTileSettings(gameObject);
     }
 
-    public void moveTile(string position)
+    public void MoveTile(string position)
     {
-        TilePopupSystem.instance.moveTile(gameObject, position);
+        TilePopupSystem.instance.MoveTile(gameObject, position);
     }
 
-    public void rotateObject(int newOrientation)
+    public void RotateObject(int newOrientation)
     {
-        TilePopupSystem.instance.rotateObject(gameObject, newOrientation);
+        TilePopupSystem.instance.RotateObject(gameObject, newOrientation);
     }
 
-    public void popUpInputLine(string newData)
+    public void PopUpInputLine(string newData)
     {
-        TilePopupSystem.instance.popUpInputLine(gameObject, newData);
+        TilePopupSystem.instance.PopUpInputLine(gameObject, newData);
     }
 
-    public void popupRangeInputField(string newData)
+    public void PopupRangeInputField(string newData)
     {
-        TilePopupSystem.instance.popupRangeInputField(gameObject, newData);
+        TilePopupSystem.instance.PopupRangeInputField(gameObject, newData);
     }
 
-    public void popupRangeToggle(bool newData)
+    public void PopupRangeToggle(bool newData)
     {
-        TilePopupSystem.instance.popupRangeToggle(gameObject, newData);
+        TilePopupSystem.instance.PopupRangeToggle(gameObject, newData);
     }
 
-    public void popupRangeDropDown(int newData)
+    public void PopupRangeDropDown(int newData)
     {
-        TilePopupSystem.instance.popupRangeDropDown(gameObject, newData);
+        TilePopupSystem.instance.PopupRangeDropDown(gameObject, newData);
     }
 
-    public void popupConsoleSlots(string newData)
+    public void PopupConsoleSlots(string newData)
     {
-        TilePopupSystem.instance.popupConsoleSlots(gameObject, newData);
+        TilePopupSystem.instance.PopupConsoleSlots(gameObject, newData);
     }
 
-    public void popupDoorSlot(string newData)
+    public void PopupDoorSlot(string newData)
     {
-        TilePopupSystem.instance.popupDoorSlot(gameObject, newData);
+        TilePopupSystem.instance.PopupDoorSlot(gameObject, newData);
     }
 
-    public void popupDoorToggle(bool newData)
+    public void PopupDoorToggle(bool newData)
     {
-        TilePopupSystem.instance.popupDoorToggle(gameObject, newData);
+        TilePopupSystem.instance.PopupDoorToggle(gameObject, newData);
     }
 
-    public void popupFurnitureDropDown(int newData)
+    public void PopupFurnitureDropDown(int newData)
     {
-        TilePopupSystem.instance.popupFurnitureDropDown(gameObject, newData);
+        TilePopupSystem.instance.PopupFurnitureDropDown(gameObject, newData);
     }
 
-    public void popupSkinDropDown(int newData)
+    public void PopupSkinDropDown(int newData)
     {
-        TilePopupSystem.instance.popupSkinDropDown(gameObject, newData);
+        TilePopupSystem.instance.PopupSkinDropDown(gameObject, newData);
     }
 }

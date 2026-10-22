@@ -14,14 +14,14 @@ using UnityEngine.UI;
 
 public class HotkeySystem : FSystem
 {
-	private Family f_dropZoneEnabled = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Les drops zones visibles
-	private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
-	private Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-	private Family f_InputFields = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
-	private Family f_programmingArea = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-    private Family f_memoryArea = FamilyManager.getFamily(new AllOfComponents(typeof(ExecutablePanel)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-    private Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
-	private Family f_localizedStringEvents = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizeStringEvent)));
+	private readonly Family f_dropZoneEnabled = FamilyManager.getFamily(new AllOfComponents(typeof(DropZone)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Les drops zones visibles
+	private readonly Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
+	private readonly Family f_replacementSlot = FamilyManager.getFamily(new AllOfComponents(typeof(ReplacementSlot)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private readonly Family f_InputFields = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
+	private readonly Family f_programmingArea = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+    private readonly Family f_memoryArea = FamilyManager.getFamily(new AllOfComponents(typeof(ExecutablePanel)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+    private readonly Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
+	private readonly Family f_localizedStringEvents = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizeStringEvent)));
 
     public Button mainMenu;
 	public Button closeMainMenu;
@@ -34,7 +34,7 @@ public class HotkeySystem : FSystem
 
 	private InputAction cancel_act;
 	private InputAction exitWebGL_act;
-    
+
     const string Us = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private string s_Local = null; // null si non initialisée ou 36 libellés dans l'ordre du layout du clavier, ou "" si le js n'a pu identifier le layout (voir KbLayout_Fetch dans le jslib)
 
@@ -53,18 +53,15 @@ public class HotkeySystem : FSystem
 	{
 		// Récupération des inputActions à partir des clés définies dans l'inspector (voir composant HotKeysSpec)
 		foreach (HotKeySpec hotkey in hotKeys.spec)
-		{
-			hotkey.inputAction = InputSystem.actions.FindAction(hotkey.inputActionName);
-			hotkey.hasModifier = HasModifier(hotkey.inputAction);
-		}
+			hotkey.hasModifier = HasModifier(hotkey.inputAction.action);
 
 		cancel_act = InputSystem.actions.FindAction("Cancel");
 		exitWebGL_act = InputSystem.actions.FindAction("ExitWebGL");
 
         cancelNextCancel_act = false;
         foreach (GameObject go in f_InputFields)
-			onNewInputField(go);
-		f_InputFields.addEntryCallback(onNewInputField);
+			OnNewInputField(go);
+		f_InputFields.addEntryCallback(OnNewInputField);
 
 		eventSystem = EventSystem.current;
 
@@ -75,18 +72,18 @@ public class HotkeySystem : FSystem
             // en éditeur le comportement par défaut fonctionne, on ne cherche donc pas à retrouver la bonne association touches/symboles
             OnKeyboardLayoutDefined("");
 
-		refreshShortcuts(LocalizationSettings.SelectedLocale);
-		LocalizationSettings.SelectedLocaleChanged += refreshShortcuts;
+		RefreshShortcuts(LocalizationSettings.SelectedLocale);
+		LocalizationSettings.SelectedLocaleChanged += RefreshShortcuts;
     }
 
     protected override void onDestroy()
     {
-        LocalizationSettings.SelectedLocaleChanged -= refreshShortcuts;
+        LocalizationSettings.SelectedLocaleChanged -= RefreshShortcuts;
     }
 
-	private void refreshShortcuts(Locale newLocale)
+	private void RefreshShortcuts(Locale newLocale)
 	{
-        MainLoop.instance.StartCoroutine(waitLocalizationAndUpdateShortcuts());
+        MainLoop.instance.StartCoroutine(WaitLocalizationAndUpdateShortcuts());
     }
 
     // Fonction appelée depuis le javascript (voir Assets/Plugins/externalCalls.jslib) via le Wrapper du Système
@@ -96,7 +93,7 @@ public class HotkeySystem : FSystem
         s_Local = data != null ? data : "undef";
     }
 
-    private IEnumerator waitLocalizationAndUpdateShortcuts()
+    private IEnumerator WaitLocalizationAndUpdateShortcuts()
     {
 		// Attendre que le système de localization se soit initialisé
         yield return new WaitWhile(() => f_localizationLoaded.Count == 0);
@@ -159,7 +156,7 @@ public class HotkeySystem : FSystem
         }
     }
 
-    private void onNewInputField(GameObject go)
+    private void OnNewInputField(GameObject go)
     {
 		// Echap permet de sortir de champ de saisie, c'est traité à la phase "Input events" (cf Unity flowchart) du coup dans l'update le champ de saisie n'aura pas le focus et on affichera automatiquement le menu principal, ce qu'on ne veut pas on souhaite que l'Echap qui annule la saisie termine seulement la saisie sans afficher le menu. C'est le Echap suivant qui devra afficher le menu, d'où ce mécanisme pour annuler le prochaine Echap
 		go.GetComponent<TMP_InputField>().onEndEdit.AddListener(delegate (string content)
@@ -176,7 +173,7 @@ public class HotkeySystem : FSystem
         if (exitWebGL_act.WasPressedThisFrame())
 			return;
 
-		// Si on est dans un inputfield on ne traite pas d'actions cette frame
+		// Si on est dans un inputfield on ne traite pas d'actions cette frame sauf pour le Tab/Shift+Tab
 		if (Utility.inputFieldSelected())
 			return;
 
@@ -193,7 +190,7 @@ public class HotkeySystem : FSystem
 		else if (cancel_act.WasPressedThisFrame() && !cancelNextCancel_act)
 		{
 			// On s'assure qu'on n'est pas en train de drag un element
-			if (f_dragging.Count == 0 && f_dropZoneEnabled.Count == 0 && !replacementSlotEnabled())
+			if (f_dragging.Count == 0 && f_dropZoneEnabled.Count == 0 && !ReplacementSlotEnabled())
 			{
 				// afficher cacher le menu principal en fonction de l'état de l'UI
 				if (mainMenu != null && mainMenu.gameObject.activeInHierarchy && mainMenu.IsInteractable())
@@ -209,7 +206,7 @@ public class HotkeySystem : FSystem
 		{
 			// Vérifier qu'on a un modifier
 			if (hotKey.hasModifier)
-				if (processHotKeySpec(hotKey))
+				if (ProcessHotKeySpec(hotKey))
 					return;
 		}
 
@@ -218,12 +215,12 @@ public class HotkeySystem : FSystem
         {
 			// Vérifier qu'il n'y a pas de modifier
 			if (!hotKey.hasModifier)
-				if (processHotKeySpec(hotKey))
+				if (ProcessHotKeySpec(hotKey))
 					return;
         }
 	}
 
-	private bool processHotKeySpec(HotKeySpec hotKey)
+	private bool ProcessHotKeySpec(HotKeySpec hotKey)
 	{
 		if (hotKey.UItriggers.Count > 0)
 		{
@@ -235,7 +232,7 @@ public class HotkeySystem : FSystem
 					// Adapter le comportement en fonction de si on est sur un Button ou un EventTrigger
 					// Cas où on a un Button
 					trigger.interactableUI.TryGetComponent<Button>(out Button button);
-					if (button != null && hotKey.inputAction.WasPressedThisFrame())
+					if (button != null && hotKey.inputAction.action.WasPressedThisFrame())
 					{
 						button.onClick.Invoke();
 						return true;
@@ -244,20 +241,20 @@ public class HotkeySystem : FSystem
 					trigger.interactableUI.TryGetComponent<EventTrigger>(out EventTrigger eventTrigger);
 					if (eventTrigger != null)
 					{
-						if (hotKey.inputAction.WasPressedThisFrame())
+						if (hotKey.inputAction.action.WasPressedThisFrame())
 						{
-							callEntry(eventTrigger, EventTriggerType.PointerDown);
+							CallEntry(eventTrigger, EventTriggerType.PointerDown);
 							return true;
 						}
-						else if (hotKey.inputAction.WasReleasedThisFrame())
+						else if (hotKey.inputAction.action.WasReleasedThisFrame())
 						{
-							callEntry(eventTrigger, EventTriggerType.PointerUp);
+							CallEntry(eventTrigger, EventTriggerType.PointerUp);
 							return true;
 						}
 					}
 					// On est sur un GO qui n'a ni un bouton ni un EventTrigger, donc on va regarde si on n'est pas dans sur un cas particulier
 					// On commence par vérifier si l'action s'est bien déclenchée
-					if (hotKey.inputAction.WasPressedThisFrame())
+					if (hotKey.inputAction.action.WasPressedThisFrame())
 					{
 						// Cas de la sélection de l'inventaire
 						if (hotKey.inputActionName == "SelectInventory")
@@ -332,7 +329,7 @@ public class HotkeySystem : FSystem
 		else
 		{
 			// On est dans le cas où cette InputAction n'est associée à aucune UI
-			if (hotKey.inputAction.WasPressedThisFrame())
+			if (hotKey.inputAction.action.WasPressedThisFrame())
 			{
 				// Cas de la navigation dans les zones mémoires des robots
 				if (hotKey.inputActionName == "SelectNextMemoryArea" || hotKey.inputActionName == "SelectPreviousMemoryArea")
@@ -426,7 +423,7 @@ public class HotkeySystem : FSystem
         return false;
     }
 
-    private void callEntry(EventTrigger trigger, EventTriggerType type)
+    private void CallEntry(EventTrigger trigger, EventTriggerType type)
 	{
 		// Création d'un pointer Event par défaut
 		PointerEventData pointerData = new PointerEventData(eventSystem);
@@ -439,7 +436,7 @@ public class HotkeySystem : FSystem
 		}
 	}
 
-	private bool replacementSlotEnabled()
+	private bool ReplacementSlotEnabled()
 	{
 		foreach (GameObject replacementSlot in f_replacementSlot)
 			if (replacementSlot.GetComponentInChildren<Outline>().enabled)

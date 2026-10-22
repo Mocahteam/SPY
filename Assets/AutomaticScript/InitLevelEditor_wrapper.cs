@@ -22,14 +22,14 @@ public class InitLevelEditor_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "dataLevel", dataLevel);
 	}
 
-	public void reloadEditor()
+	public void ReloadEditor()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "reloadEditor", null);
+		MainLoop.callAppropriateSystemMethod (system, "ReloadEditor", null);
 	}
 
-	public void returnToLobby()
+	public void ReturnToLobby()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "returnToLobby", null);
+		MainLoop.callAppropriateSystemMethod (system, "ReturnToLobby", null);
 	}
 
 }

@@ -18,9 +18,9 @@ public class TilePopupSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "selection", selection);
 	}
 
-	public void removeTileSettings(UnityEngine.GameObject settings)
+	public void RemoveTileSettings(UnityEngine.GameObject settings)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "removeTileSettings", settings);
+		MainLoop.callAppropriateSystemMethod (system, "RemoveTileSettings", settings);
 	}
 
 }

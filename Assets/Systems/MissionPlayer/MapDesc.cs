@@ -8,20 +8,20 @@ using UnityEngine.EventSystems;
 
 public class MapDesc : FSystem
 {
-    private Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
-    private Family f_newStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
-    private Family f_editMode = FamilyManager.getFamily(new AnyOfComponents(typeof(EditMode)));
+    private readonly Family f_gameLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(GameLoaded)));
+    private readonly Family f_newStep = FamilyManager.getFamily(new AllOfComponents(typeof(NewStep)));
+    private readonly Family f_editMode = FamilyManager.getFamily(new AnyOfComponents(typeof(EditMode)));
 
-    private Family f_walls = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
-    private Family f_furnitures = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Furniture"));
-    private Family f_grounds = FamilyManager.getFamily(new AnyOfTags("Ground"));
-    private Family f_doors = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
-    private Family f_consoles = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)));
-    private Family f_coins = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Coin"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-    private Family f_players = FamilyManager.getFamily(new AnyOfTags("Player"));
-    private Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
-    private Family f_redDetector = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
-    private Family f_exit = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
+    private readonly Family f_walls = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Wall"));
+    private readonly Family f_furnitures = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Furniture"));
+    private readonly Family f_grounds = FamilyManager.getFamily(new AnyOfTags("Ground"));
+    private readonly Family f_doors = FamilyManager.getFamily(new AllOfComponents(typeof(ActivationSlot), typeof(Position)), new AnyOfTags("Door"));
+    private readonly Family f_consoles = FamilyManager.getFamily(new AllOfComponents(typeof(Activable), typeof(Position), typeof(AudioSource)));
+    private readonly Family f_coins = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Coin"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+    private readonly Family f_players = FamilyManager.getFamily(new AnyOfTags("Player"));
+    private readonly Family f_drone = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Drone"));
+    private readonly Family f_redDetector = FamilyManager.getFamily(new AllOfComponents(typeof(Rigidbody), typeof(Detector), typeof(Position)));
+    private readonly Family f_exit = FamilyManager.getFamily(new AllOfComponents(typeof(Position)), new AnyOfTags("Exit"));
     private Dictionary<int, Dictionary<int, string>> staticMap;
 
     public GameObject panel;
@@ -39,9 +39,9 @@ public class MapDesc : FSystem
             gameData = go.GetComponent<GameData>();
         }
 
-        f_gameLoaded.addEntryCallback(delegate { buildStaticMap(); });
-        f_editMode.addEntryCallback(delegate { askToRefreshMapDesc(); });
-        f_newStep.addEntryCallback(delegate { askToRefreshMapDesc(); });
+        f_gameLoaded.addEntryCallback(delegate { BuildStaticMap(); });
+        f_editMode.addEntryCallback(delegate { AskToRefreshMapDesc(); });
+        f_newStep.addEntryCallback(delegate { AskToRefreshMapDesc(); });
 
         lineModel = panel.transform.Find("Model");
 
@@ -49,27 +49,27 @@ public class MapDesc : FSystem
     }
 
     // Used by ReloadState and StopButton UIs
-    public void askToRefreshMapDesc()
+    public void AskToRefreshMapDesc()
     {
         Pause = false;
     }
 
     protected override void onProcess(int familiesUpdateCount)
     {
-        MainLoop.instance.StartCoroutine(delayUpdateMap());
+        MainLoop.instance.StartCoroutine(DelayUpdateMap());
         Pause = true;
     }
 
-    private IEnumerator delayUpdateMap()
+    private IEnumerator DelayUpdateMap()
     {
         // On attend quelques frames pour laisser le temps au DetectorManager de recalculer les zones observées, dans le cas général d'un NewStep la mis à jour des zones surveillées survient en T+2 d'où le fait de laisser passer ses 3 frames
         yield return null;
         yield return null;
         yield return null;
-        updateMap();
+        UpdateMap();
     }
 
-    private void buildStaticMap()
+    private void BuildStaticMap()
     {
         staticMap = new Dictionary<int, Dictionary<int, string>>();
         foreach (GameObject ground in f_grounds)
@@ -104,10 +104,10 @@ public class MapDesc : FSystem
             }
         }
 
-        askToRefreshMapDesc();
+        AskToRefreshMapDesc();
     }
 
-    private void updateMap()
+    private void UpdateMap()
     {
         if (staticMap != null)
         {

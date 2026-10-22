@@ -14,11 +14,11 @@ using UnityEngine.Localization.Components;
 /// Manage main menu to launch a specific mission
 /// </summary>
 public class TitleScreenSystem : FSystem {
-	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
-	private Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
-	private Family f_avatarTarget = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_AvatarTarget"));
-	private Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
-	private Family f_canvasGroup = FamilyManager.getFamily(new AllOfComponents(typeof(Canvas), typeof(CanvasGroup)));
+	private readonly Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
+	private readonly Family f_competencies = FamilyManager.getFamily(new AllOfComponents(typeof(Competency))); // Les compétences
+	private readonly Family f_avatarTarget = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_AvatarTarget"));
+	private readonly Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
+	private readonly Family f_canvasGroup = FamilyManager.getFamily(new AllOfComponents(typeof(Canvas), typeof(CanvasGroup)));
 
 	private GameData gameData;
 	private UserData userData;
@@ -90,22 +90,22 @@ public class TitleScreenSystem : FSystem {
 				sID.GetComponent<TMP_Text>().text = string.Join(" ", GBL_Interface.playerName.ToCharArray());
 
 			// Mise à jour du profil du joueur
-			updatePlayerProfile();
+			UpdatePlayerProfile();
 
 			// gestion du bouton continue
 			continueButton.gameObject.SetActive(gameData.scenarios.ContainsKey(userData.currentScenario) && userData.levelToContinue != -1 && userData.levelToContinue < gameData.scenarios[userData.currentScenario].levels.Count);
 
 			if (gameData.selectedScenario == UtilityLobby.testFromScenarioEditor) // reload scenario editor
 			{
-				launchScenarioEditor();
+				LaunchScenarioEditor();
 			}
 			else if (gameData.selectedScenario == UtilityLobby.testFromLevelEditor) // reload level editor
 			{
-				launchLevelEditor();
+				LaunchLevelEditor();
 			}
 			else if (gameData.selectedScenario == UtilityLobby.testFromUrl) // go to connexion scene
             {
-                launchConnexionScene();
+                LaunchConnexionScene();
             }
 			// Si on revient d'un scénario, on se repositionne dans la liste des scénarios sauf pour le tuto on reste sur l'écran principal
             else if (gameData.selectedScenario != "" && gameData.selectedScenario != "0 - Tutoriel")
@@ -118,7 +118,7 @@ public class TitleScreenSystem : FSystem {
 				{
 					// reload last opened scenario
 					lastMissionSelected = gameData.levelToLoad;
-					showLevels(gameData.selectedScenario);
+					ShowLevels(gameData.selectedScenario);
 				}
 				// Sinon rester sur la liste des scénarios
 			}
@@ -132,7 +132,7 @@ public class TitleScreenSystem : FSystem {
 		Pause = true;
 	}
 
-	public void updatePlayerProfile()
+	private void UpdatePlayerProfile()
 	{
 		// Affichage du bon avatar come icône de profil
 		foreach (GameObject go in f_avatarTarget)
@@ -189,7 +189,7 @@ public class TitleScreenSystem : FSystem {
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
-	public void importLevelOrScenario(string content)
+	public void ImportLevelOrScenario(string content)
 	{
 		Utility.JavaScriptData jsd = JsonUtility.FromJson<Utility.JavaScriptData>(content);
 		try
@@ -205,7 +205,7 @@ public class TitleScreenSystem : FSystem {
 		}
 	}
 
-	private void removeAllOldTiles()
+	private void RemoveAllOldTiles()
     {
 		for (int i = gameList.childCount-1; i >= 0; i--)
 		{
@@ -217,10 +217,10 @@ public class TitleScreenSystem : FSystem {
 	}
 
 	// see Training Button in TitleScreen scene
-	public void displayScenarioList()
+	public void DisplayScenarioList()
 	{
 		// remove all old tiles
-		removeAllOldTiles();
+		RemoveAllOldTiles();
 
 		Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu");
 		backButton.gameObject.SetActive(true);
@@ -258,7 +258,7 @@ public class TitleScreenSystem : FSystem {
 			gk.scenarioKey = key;
 			gk.missionNumber = -1;
 
-			scenarioTile.GetComponent<Button>().StartCoroutine(delayScenarioTooltipContent(scenarioTile));
+			scenarioTile.GetComponent<Button>().StartCoroutine(DelayScenarioTooltipContent(scenarioTile));
 
 			GameObjectManager.bind(scenarioTile);
 		}
@@ -304,22 +304,22 @@ public class TitleScreenSystem : FSystem {
 			EventSystem.current.SetSelectedGameObject(backButton.gameObject);
 	}
 
-	private IEnumerator delayScenarioTooltipContent(GameObject scenarioTile)
+	private IEnumerator DelayScenarioTooltipContent(GameObject scenarioTile)
 	{
 		yield return null;
 		scenarioTile.GetComponent<TooltipContent>().text = scenarioTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text + "<br>" + Utility.GetLocalizedString("Progression:") + scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text + "<br>" + Utility.GetLocalizedString("StarsCount") + scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text;
 	}
 
-	public void setDraggingState(bool newState){
+	public void SetDraggingState(bool newState){
 		isTileListDragged = newState;
 	}
 
-	public void showLevels(GameKeys keys)
+	public void ShowLevels(GameKeys keys)
     {
-		showLevels(keys.scenarioKey);
+		ShowLevels(keys.scenarioKey);
     }
 
-	private void showLevels(string scenarioKey)
+	private void ShowLevels(string scenarioKey)
 	{
 		if (isTileListDragged)
 			return;
@@ -327,7 +327,7 @@ public class TitleScreenSystem : FSystem {
 		lastScenarioSelected = scenarioKey;
 
 		// delete all old tiles
-		removeAllOldTiles();
+		RemoveAllOldTiles();
 
         gameSelector.transform.Find("Header/BackButtonsProxy/BackMainMenu").gameObject.SetActive(false);
         Transform backButton = gameSelector.transform.Find("Header/BackButtonsProxy/BackScenarios");
@@ -424,7 +424,7 @@ public class TitleScreenSystem : FSystem {
 			EventSystem.current.SetSelectedGameObject(backButton.gameObject);
 	}
 
-	public void showDetails(GameKeys keys)
+	public void ShowDetails(GameKeys keys)
 	{
 		Selectable curTile = keys.GetComponent<Selectable>();
 
@@ -505,20 +505,20 @@ public class TitleScreenSystem : FSystem {
         }
     }
 
-	public void continueScenario()
+	public void ContinueScenario()
     {
 		// garde pour être sûr que le niveau existe dans le scénario visé, mais normalement elle est déjà gérée par l'activation ou pas du bouton "Continue"
 		if (gameData.scenarios.ContainsKey(userData.currentScenario) && userData.levelToContinue != -1 && userData.levelToContinue < gameData.scenarios[userData.currentScenario].levels.Count)
-			launchLevel(userData.currentScenario, userData.levelToContinue);
+			LaunchLevel(userData.currentScenario, userData.levelToContinue);
 	}
 
-	public void launchLevel(GameKeys gk)
+	public void LaunchLevel(GameKeys gk)
 	{
 		if (!isTileListDragged)
-			launchLevel(gk.scenarioKey, gk.missionNumber);
+			LaunchLevel(gk.scenarioKey, gk.missionNumber);
 	}
 
-	public void launchLevel(string scenarioKey, int missionNumber) {
+	public void LaunchLevel(string scenarioKey, int missionNumber) {
 		gameData.selectedScenario = scenarioKey;
 		gameData.levelToLoad = missionNumber;
 		userData.currentScenario = scenarioKey;
@@ -526,23 +526,23 @@ public class TitleScreenSystem : FSystem {
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
 	}
 
-	public void launchLevelEditor()
+	public void LaunchLevelEditor()
 	{
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MissionEditor" });
 	}
 
-	public void launchScenarioEditor()
+	public void LaunchScenarioEditor()
 	{
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "ScenarioEditor" });
 	}
 
-	public void launchConnexionScene()
+	public void LaunchConnexionScene()
 	{
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "ConnexionScene" });
 	}
 
 	// See Quitter button in editor
-	public void quitGame(){
+	public void QuitGame(){
 		Application.Quit();
 	}
 

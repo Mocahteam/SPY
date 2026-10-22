@@ -1673,7 +1673,7 @@ PrefabInstance:
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: newNameContainer
+      value: NewNameContainer
       objectReference: {fileID: 0}
     - target: {fileID: 7345868859951160293, guid: 3917c69ad87079e4f9ed10b40955fced,
         type: 3}
@@ -2007,7 +2007,7 @@ PrefabInstance:
     - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
@@ -2023,7 +2023,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 8833105022985857975}
+      objectReference: {fileID: 4474756834210246689}
     - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
@@ -2037,12 +2037,7 @@ PrefabInstance:
     - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: editRobotName
-      objectReference: {fileID: 0}
-    - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: editRobotName
+      value: EditRobotName
       objectReference: {fileID: 0}
     - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
@@ -2057,7 +2052,7 @@ PrefabInstance:
     - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
-      value: EditableContainerSystemBridge, Assembly-CSharp
+      value: UnityEngine.AudioSource, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
@@ -2078,6 +2073,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: TMPro.TMP_Text, Unity.TextMeshPro
+      objectReference: {fileID: 0}
+    - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
@@ -2458,7 +2458,7 @@ PrefabInstance:
     - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: resetScriptContainer
+      value: ResetScriptContainer
       objectReference: {fileID: 0}
     - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
@@ -4102,7 +4102,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 8833105022985857975}
           m_TargetAssemblyTypeName: EditableContainerSystemBridge, Assembly-CSharp
-          m_MethodName: editRobotName
+          m_MethodName: EditRobotName
           m_Mode: 2
           m_Arguments:
             m_ObjectArgument: {fileID: 6905927324156896839}
@@ -4118,7 +4118,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 8833105022985857975}
           m_TargetAssemblyTypeName: EditableContainerSystemBridge, Assembly-CSharp
-          m_MethodName: editRobotName
+          m_MethodName: EditRobotName
           m_Mode: 2
           m_Arguments:
             m_ObjectArgument: {fileID: 6905927324156896839}
@@ -4151,7 +4151,7 @@ PrefabInstance:
     - target: {fileID: 679754986216814376, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
       propertyPath: text
-      value: "D\xE9truire le script"
+      value: "D\xE9truire la zone d'\xE9dition"
       objectReference: {fileID: 0}
     - target: {fileID: 2931441035400022381, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
@@ -4307,7 +4307,7 @@ PrefabInstance:
     - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: removeContainer
+      value: RemoveContainer
       objectReference: {fileID: 0}
     - target: {fileID: 7492700457597526320, guid: 12f582319fad22f499623361599a5dd3,
         type: 3}

@@ -11,9 +11,9 @@ using UnityEngine.Tilemaps;
 public class EditorGridSystem : FSystem
 {
 	// Contains current UI focused
-	private Family f_UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver)));
-	private Family f_newLoading = FamilyManager.getFamily(new AllOfComponents(typeof(NewLevelToLoad)));
-	private Family f_mapCanvasEnabled = FamilyManager.getFamily(new AnyOfTags("EditorMapCanvas"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private readonly Family f_UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver)));
+	private readonly Family f_newLoading = FamilyManager.getFamily(new AllOfComponents(typeof(NewLevelToLoad)));
+	private readonly Family f_mapCanvasEnabled = FamilyManager.getFamily(new AnyOfTags("EditorMapCanvas"), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
 
 	public static EditorGridSystem instance;
 	public Tile voidTile;
@@ -61,11 +61,11 @@ public class EditorGridSystem : FSystem
 		rightClick = InputSystem.actions.FindAction("RightClick");
 		clickHold = InputSystem.actions.FindAction("ClickHold");
 
-		resetGrid();
+		ResetGrid();
 		// Sélectionne par défaut la brush Select
-		setBrush(brushSelect);
+		SetBrush(brushSelect);
 
-		f_newLoading.addEntryCallback(loadLevel);
+		f_newLoading.addEntryCallback(LoadLevel);
 	}
 
 	// Use to process your families.
@@ -85,14 +85,14 @@ public class EditorGridSystem : FSystem
 		else
 			tooltip.ShowTooltip(UtilityEditor.IntToLetters(pos.x)+" "+(pos.y+1));
 
-		if ((click.WasPressedThisFrame() && !canBePlaced(activeBrush.brush, pos.y, pos.x)) || rightClick.WasPressedThisFrame())
+		if ((click.WasPressedThisFrame() && !CanBePlaced(activeBrush.brush, pos.y, pos.x)) || rightClick.WasPressedThisFrame())
 		{
-			setBrush(brushSelect);
+			SetBrush(brushSelect);
 			EventSystem.current.SetSelectedGameObject(brushSelect.gameObject);
 			return;
 		}
 
-		if (pos.x < 0 || pos.x >= _gridSize.x || pos.y < 0 || pos.y >= _gridSize.y || !canBePlaced(activeBrush.brush, pos.y, pos.x))
+		if (pos.x < 0 || pos.x >= _gridSize.x || pos.y < 0 || pos.y >= _gridSize.y || !CanBePlaced(activeBrush.brush, pos.y, pos.x))
 		{
 			Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 			return;
@@ -109,12 +109,12 @@ public class EditorGridSystem : FSystem
 
 		if (f_UIfocused.Count == 0 && (click.WasPressedThisFrame() || clickHold.IsPressed()) && activeBrush.brush != Cell.Select)
 		{
-			setTile(pos.x, pos.y, activeBrush.brush);
+			SetTile(pos.x, pos.y, activeBrush.brush);
 			EventSystem.current.SetSelectedGameObject(activeBrush.gameObject);
 		}
 	}
 
-	public void resetGrid()
+	private void ResetGrid()
 	{
 		paintableGrid.floorObjects = new Dictionary<Vector2Int, FloorObject[]>();
 		_gridSize = new Vector2Int(UtilityEditor.gridMaxSize, UtilityEditor.gridMaxSize);
@@ -123,19 +123,19 @@ public class EditorGridSystem : FSystem
 		{
 			for (var c = 0; c < UtilityEditor.gridMaxSize; ++c)
 			{
-				setTile(c, l, Cell.Void);
+				SetTile(c, l, Cell.Void);
 			}
 		}
 	}
 
-	public void setBrush(GameObject go)
+	public void SetBrush(GameObject go)
 	{
 		activeBrush = go.GetComponent<CellBrush>();
 	}
 
-	private void loadLevel(GameObject go)
+	private void LoadLevel(GameObject go)
 	{
-		resetGrid();
+		ResetGrid();
 
 		string levelKey = go.GetComponent<NewLevelToLoad>().levelKey;
 		XmlDocument doc = gameData.levels[levelKey].OwnerDocument;
@@ -162,7 +162,7 @@ public class EditorGridSystem : FSystem
 							try
 							{
 								int cellValue = int.Parse(cellNode.Attributes.GetNamedItem("value").Value);
-								setTile(c, l, (Cell)cellValue);
+								SetTile(c, l, (Cell)cellValue);
                             }
                             catch
                             {
@@ -178,7 +178,7 @@ public class EditorGridSystem : FSystem
 					{
 						int posCol = int.Parse(child.Attributes.GetNamedItem("posX").Value);
 						int posLig = int.Parse(child.Attributes.GetNamedItem("posY").Value);
-						setTile(posCol, posLig, Cell.Coin);
+						SetTile(posCol, posLig, Cell.Coin);
 					}
 					catch
 					{
@@ -188,10 +188,10 @@ public class EditorGridSystem : FSystem
 				case "console":
 					try
 					{
-						position = getPositionFromXElement(child);
+						position = GetPositionFromXElement(child);
 						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
 
-						FloorObject newObj = setTile(position.x, position.y, Cell.Console, orientation);
+						FloorObject newObj = SetTile(position.x, position.y, Cell.Console, orientation);
 						if (newObj != null)
 						{
 							List<string> slotsID = new List<string>();
@@ -210,9 +210,9 @@ public class EditorGridSystem : FSystem
 				case "door":
 					try
 					{
-						position = getPositionFromXElement(child);
+						position = GetPositionFromXElement(child);
 						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
-						FloorObject newObj = setTile(position.x, position.y, Cell.Door, orientation);
+						FloorObject newObj = SetTile(position.x, position.y, Cell.Door, orientation);
 						if (newObj != null)
 						{
 							string slotId = child.Attributes.GetNamedItem("slotId").Value;
@@ -231,13 +231,13 @@ public class EditorGridSystem : FSystem
 				case "player": // backward compatibility
 					try
 					{
-						position = getPositionFromXElement(child);
+						position = GetPositionFromXElement(child);
 						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
 						int skin = 0;
 						XmlNode xmlSkin = child.Attributes.GetNamedItem("skin");
 						if (xmlSkin != null)
 							skin = int.Parse(xmlSkin.Value);
-						FloorObject newObj = setTile(position.x, position.y, UtilityEditor.IntToSkin(skin), orientation);
+						FloorObject newObj = SetTile(position.x, position.y, UtilityEditor.IntToSkin(skin), orientation);
 						if (newObj != null)
 						{
 							inputLine = child.Attributes.GetNamedItem("inputLine").Value;
@@ -253,9 +253,9 @@ public class EditorGridSystem : FSystem
 				case "enemy": // backward compatibility
 					try
 					{
-						position = getPositionFromXElement(child);
+						position = GetPositionFromXElement(child);
 						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
-						FloorObject newObj = setTile(position.x, position.y, Cell.Enemy, orientation);
+						FloorObject newObj = SetTile(position.x, position.y, Cell.Enemy, orientation);
 						if (newObj != null)
 						{
 							inputLine = child.Attributes.GetNamedItem("inputLine").Value;
@@ -276,9 +276,9 @@ public class EditorGridSystem : FSystem
 				case "decoration":
 					try
 					{
-						position = getPositionFromXElement(child);
+						position = GetPositionFromXElement(child);
 						orientation = (Direction.Dir)int.Parse(child.Attributes.GetNamedItem("direction").Value);
-						FloorObject newObj = setTile(position.x, position.y, Cell.Decoration, orientation);
+						FloorObject newObj = SetTile(position.x, position.y, Cell.Decoration, orientation);
 						if (newObj != null)
 						{
 							string decoPath = child.Attributes.GetNamedItem("name").Value;
@@ -294,7 +294,7 @@ public class EditorGridSystem : FSystem
 		}
 	}
 
-	private Vector2Int getPositionFromXElement(XmlNode element)
+	private Vector2Int GetPositionFromXElement(XmlNode element)
 	{
 		if (element.Attributes.GetNamedItem("posX") == null || element.Attributes.GetNamedItem("posY") == null)
 			return new Vector2Int(-1, -1);
@@ -304,7 +304,7 @@ public class EditorGridSystem : FSystem
 			int.Parse(element.Attributes.GetNamedItem("posY")?.Value ?? throw new InvalidOperationException()));
 	}
 
-	public FloorObject setTile(int col, int line, Cell cell, Direction.Dir rotation = Direction.Dir.North)
+	public FloorObject SetTile(int col, int line, Cell cell, Direction.Dir rotation = Direction.Dir.North)
 	{
 		var tuplePos = new Vector2Int(col, line);
 		if (!paintableGrid.floorObjects.ContainsKey(tuplePos))
@@ -320,7 +320,7 @@ public class EditorGridSystem : FSystem
 				paintableGrid.GetComponent<Tilemap>().SetTile(new Vector3Int(col - _gridSize.x / 2, _gridSize.y / 2 - line, -2), null);
 				paintableGrid.GetComponent<Tilemap>().SetTile(new Vector3Int(col - _gridSize.x / 2, _gridSize.y / 2 - line, -3), null);
 			}
-			paintableGrid.GetComponent<Tilemap>().SetTile(new Vector3Int(col - _gridSize.x / 2, _gridSize.y / 2 - line, 0), cellToTile(cell));
+			paintableGrid.GetComponent<Tilemap>().SetTile(new Vector3Int(col - _gridSize.x / 2, _gridSize.y / 2 - line, 0), CellToTile(cell));
 		}
 		else
 		{
@@ -343,8 +343,8 @@ public class EditorGridSystem : FSystem
 			{
 				paintableGrid.floorObjects[tuplePos][-(newFloorObj.layer + 1)] = newFloorObj;
 
-				paintableGrid.GetComponent<Tilemap>().SetTile(new Vector3Int(col - _gridSize.x / 2, _gridSize.y / 2 - line, newFloorObj.layer), cellToTile(cell));
-				rotateObject(rotation, line, col, newFloorObj.layer);
+				paintableGrid.GetComponent<Tilemap>().SetTile(new Vector3Int(col - _gridSize.x / 2, _gridSize.y / 2 - line, newFloorObj.layer), CellToTile(cell));
+				RotateObject(rotation, line, col, newFloorObj.layer);
 				return newFloorObj;
 			}
 			else
@@ -353,16 +353,16 @@ public class EditorGridSystem : FSystem
 		return null;
 	}
 
-	public void removeTile(FloorObject floorObject)
+	public void RemoveTile(FloorObject floorObject)
     {
 		Vector2Int tuplePos = new Vector2Int(floorObject.col, floorObject.line);
 		paintableGrid.floorObjects[tuplePos][-(floorObject.layer+1)] = null;
 		paintableGrid.GetComponent<Tilemap>().SetTile(new Vector3Int(floorObject.col - _gridSize.x / 2, _gridSize.y / 2 - floorObject.line, floorObject.layer), null);
 	}
 
-	public bool moveTile(FloorObject floorObject, int newX, int newY)
+	public bool MoveTile(FloorObject floorObject, int newX, int newY)
 	{
-		if (canBePlaced(floorObject.type, newY, newX))
+		if (CanBePlaced(floorObject.type, newY, newX))
 		{
 			Vector2Int tuplePos = new Vector2Int(newX, newY);
 			// si la position de destination est déjà occupée
@@ -371,32 +371,32 @@ public class EditorGridSystem : FSystem
 				foreach (FloorObject f in paintableGrid.floorObjects[tuplePos])
 					if (f != null && f.layer == floorObject.layer)
 						// si tel est le cas, on supprime l'ancien objet
-						EditorGridSystem.instance.removeTile(f);
+						RemoveTile(f);
 			// Maintenant on peut supprimer l'objet de sa position
-			removeTile(floorObject);
+			RemoveTile(floorObject);
 			// et le déplacer à la nouvelle
 			floorObject.col = newX;
 			floorObject.line = newY;
 			if (!paintableGrid.floorObjects.ContainsKey(tuplePos))
 				paintableGrid.floorObjects[tuplePos] = new FloorObject[3];
 			paintableGrid.floorObjects[tuplePos][-(floorObject.layer + 1)] = floorObject;
-			paintableGrid.GetComponent<Tilemap>().SetTile(new Vector3Int(floorObject.col - _gridSize.x / 2, _gridSize.y / 2 - floorObject.line, floorObject.layer), cellToTile(floorObject.type));
-			rotateObject(floorObject.orientation, floorObject.line, floorObject.col, floorObject.layer);
+			paintableGrid.GetComponent<Tilemap>().SetTile(new Vector3Int(floorObject.col - _gridSize.x / 2, _gridSize.y / 2 - floorObject.line, floorObject.layer), CellToTile(floorObject.type));
+			RotateObject(floorObject.orientation, floorObject.line, floorObject.col, floorObject.layer);
 			return true;
 		}
 		return false;
 	}
 	
-	public void rotateObject(Direction.Dir newOrientation, int line, int col, int layer)
+	public void RotateObject(Direction.Dir newOrientation, int line, int col, int layer)
 	{
 		Vector3Int newpos = new Vector3Int(col - _gridSize.x / 2,
 			_gridSize.y / 2 - line, layer);
-		Quaternion quat = Quaternion.Euler(0, 0, orientationToInt(newOrientation));
+		Quaternion quat = Quaternion.Euler(0, 0, OrientationToInt(newOrientation));
 
 		paintableGrid.GetComponent<Tilemap>().SetTransformMatrix(newpos, Matrix4x4.Rotate(quat));
 	}
 
-	private int orientationToInt(Direction.Dir orientation)
+	private int OrientationToInt(Direction.Dir orientation)
 	{
 		return orientation switch
 		{
@@ -404,11 +404,11 @@ public class EditorGridSystem : FSystem
 			Direction.Dir.East => 270,
 			Direction.Dir.South => 180,
 			Direction.Dir.West => 90,
-			_ => orientationToInt((Direction.Dir) ((int) orientation % 4))
+			_ => OrientationToInt((Direction.Dir) ((int) orientation % 4))
 		};
 	}
 	
-	private Tile cellToTile(Cell cell)
+	private Tile CellToTile(Cell cell)
 	{
 		return cell switch
 		{
@@ -429,7 +429,7 @@ public class EditorGridSystem : FSystem
 		};
 	}
 
-	private bool canBePlaced(Cell newCell, int l, int c)
+	private bool CanBePlaced(Cell newCell, int l, int c)
 	{
 		if (l >= 0 && l < _gridSize.x && c >= 0 && c < _gridSize.y)
 		{

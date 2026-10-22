@@ -9,10 +9,10 @@ using UnityEngine.UI;
 // Scroll automatically editable panel when player drag an item on the borders of the editable panel
 public class ScrollSystem : FSystem
 {
-    private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
-    private Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction), typeof(LibraryItemRef), typeof(CurrentAction)));
-    private Family f_autoScroll = FamilyManager.getFamily(new AllOfComponents(typeof(AutoScroll), typeof(ScrollRect)));
-    private Family f_scrollOn = FamilyManager.getFamily(new AllOfComponents(typeof(ScrollOn)));
+    private readonly Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
+    private readonly Family f_currentActions = FamilyManager.getFamily(new AllOfComponents(typeof(BasicAction), typeof(LibraryItemRef), typeof(CurrentAction)));
+    private readonly Family f_autoScroll = FamilyManager.getFamily(new AllOfComponents(typeof(AutoScroll), typeof(ScrollRect)));
+    private readonly Family f_scrollOn = FamilyManager.getFamily(new AllOfComponents(typeof(ScrollOn)));
 
     private EventSystem eventSystem;
     private GameObject lastSelected = null;
@@ -28,14 +28,14 @@ public class ScrollSystem : FSystem
     {
         eventSystem = EventSystem.current;
 
-        f_currentActions.addEntryCallback(focusViewOn);
-        f_scrollOn.addEntryCallback(delegate (GameObject go) { MainLoop.instance.StartCoroutine(delayFocusOn(go)); });
+        f_currentActions.addEntryCallback(FocusViewOn);
+        f_scrollOn.addEntryCallback(delegate (GameObject go) { MainLoop.instance.StartCoroutine(DelayFocusOn(go)); });
     }
 
-    private IEnumerator delayFocusOn(GameObject go)
+    private IEnumerator DelayFocusOn(GameObject go)
     {
         yield return null;
-        focusViewOn(go);
+        FocusViewOn(go);
     }
 
     protected override void onProcess(int familiesUpdateCount)
@@ -54,25 +54,25 @@ public class ScrollSystem : FSystem
                 // check up
                 Vector3 draggedInAutoScroll = autoscroll.autoScrollUp.InverseTransformPoint(f_dragging.First().transform.position);
                 if (Math.Abs(draggedInAutoScroll.x) < autoscroll.autoScrollUp.rect.width / 2 && 0 < draggedInAutoScroll.y && draggedInAutoScroll.y < autoscroll.autoScrollUp.rect.height)
-                    setVerticalSpeed(autoscroll, 0.01f);
+                    SetVerticalSpeed(autoscroll, 0.01f);
                 // check down
                 draggedInAutoScroll = autoscroll.autoScrollDown.InverseTransformPoint(f_dragging.First().transform.position);
                 if (Math.Abs(draggedInAutoScroll.x) < autoscroll.autoScrollDown.rect.width / 2 && 0 < draggedInAutoScroll.y && draggedInAutoScroll.y < autoscroll.autoScrollDown.rect.height)
-                    setVerticalSpeed(autoscroll, -0.01f);
+                    SetVerticalSpeed(autoscroll, -0.01f);
                 // check left
                 draggedInAutoScroll = autoscroll.autoScrollLeft.InverseTransformPoint(f_dragging.First().transform.position);
                 if (0 < draggedInAutoScroll.x && draggedInAutoScroll.x < autoscroll.autoScrollLeft.rect.width && Math.Abs(draggedInAutoScroll.y) < autoscroll.autoScrollLeft.rect.height / 2)
-                    setHorizontalSpeed(autoscroll, -0.01f);
+                    SetHorizontalSpeed(autoscroll, -0.01f);
                 // check right
                 draggedInAutoScroll = autoscroll.autoScrollRight.InverseTransformPoint(f_dragging.First().transform.position);
                 if (0 < draggedInAutoScroll.x && draggedInAutoScroll.x < autoscroll.autoScrollRight.rect.width && Math.Abs(draggedInAutoScroll.y) < autoscroll.autoScrollRight.rect.height / 2)
-                    setHorizontalSpeed(autoscroll, 0.01f);
+                    SetHorizontalSpeed(autoscroll, 0.01f);
             }
 
             if (f_dragging.Count == 0 && !RectTransformUtility.RectangleContainsScreenPoint(scrollRect.transform as RectTransform, Pointer.current.position.value))
             {
-                setVerticalSpeed(autoscroll, 0);
-                setHorizontalSpeed(autoscroll, 0);
+                SetVerticalSpeed(autoscroll, 0);
+                SetHorizontalSpeed(autoscroll, 0);
             }
         }
 
@@ -82,13 +82,13 @@ public class ScrollSystem : FSystem
         // Do nothing if there are none OR if the selected game object is not a child of a scroll rect OR if the selected game object is the same as it was last frame,
         // meaning we haven't to move.
         if (selected != null && selected.GetComponentInParent<ScrollRect>() != null && selected != lastSelected)
-            focusViewOn(selected);
+            FocusViewOn(selected);
 
         lastSelected = selected;
         // ---- end ----
     }
 
-    private void focusViewOn(GameObject target)
+    private void FocusViewOn(GameObject target)
     {
         if (!target.activeInHierarchy)
             return;
@@ -150,12 +150,12 @@ public class ScrollSystem : FSystem
             GameObjectManager.removeComponent<ScrollOn>(target);
     }
 
-    public void setVerticalSpeed(AutoScroll autoScroll, float newSpeed)
+    public void SetVerticalSpeed(AutoScroll autoScroll, float newSpeed)
     {
         autoScroll.verticalSpeed = newSpeed;
     }
 
-    public void setHorizontalSpeed(AutoScroll autoScroll, float newSpeed)
+    public void SetHorizontalSpeed(AutoScroll autoScroll, float newSpeed)
     {
         autoScroll.horizontalSpeed = newSpeed;
     }

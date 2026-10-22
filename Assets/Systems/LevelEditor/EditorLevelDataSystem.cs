@@ -1,14 +1,13 @@
-using UnityEngine;
 using FYFY;
-using UnityEngine.UI;
-using System.Xml;
 using System.Collections.Generic;
+using System.Xml;
 using TMPro;
-using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class EditorLevelDataSystem : FSystem {
-	public Family f_editorblocks = FamilyManager.getFamily(new AllOfComponents(typeof(EditorBlockData)));
-	private Family f_newLoading = FamilyManager.getFamily(new AllOfComponents(typeof(NewLevelToLoad)));
+	private readonly Family f_editorblocks = FamilyManager.getFamily(new AllOfComponents(typeof(EditorBlockData)));
+	private readonly Family f_newLoading = FamilyManager.getFamily(new AllOfComponents(typeof(NewLevelToLoad)));
 
 	public static EditorLevelDataSystem instance;
 	
@@ -48,14 +47,14 @@ public class EditorLevelDataSystem : FSystem {
 				gameData.actionBlockLimit[block.GetComponent<EditorBlockData>().blockName] = -1;
 		}
 
-		resetMetaData(true);
+		ResetMetaData(true);
 
-		f_newLoading.addEntryCallback(loadLevel);
+		f_newLoading.addEntryCallback(LoadLevel);
 
 		Pause = true;
 	}
 
-	public void resetMetaData(bool unlockAll)
+	private void ResetMetaData(bool unlockAll)
 	{
 		executionLimitContainer.GetComponentInChildren<Toggle>(true).isOn = false;
 		dragAndDropToggle.isOn = true;
@@ -72,13 +71,13 @@ public class EditorLevelDataSystem : FSystem {
 			GameObjectManager.addComponent<ForceRemoveContainer>(viewportForEditableContainer.gameObject);
 
 		if (unlockAll)
-			this.unlockAll();
+			this.UnlockAll();
 		else
-			hideAll();
+			HideAll();
 	}
 
 	// See UnlimitedEverything button in MissionEditor
-	public void unlockAll()
+	public void UnlockAll()
     {
 		foreach (GameObject go in f_editorblocks)
 		{
@@ -88,15 +87,15 @@ public class EditorLevelDataSystem : FSystem {
 	}
 
 	// See HideAll button in MissionEditor
-	public void hideAll()
+	public void HideAll()
 	{
 		foreach (GameObject go in f_editorblocks)
 			go.transform.Find("HideToggle").GetComponent<Toggle>().isOn = true;
 	}
 
-	private void loadLevel(GameObject go)
+	private void LoadLevel(GameObject go)
 	{
-		resetMetaData(false);
+		ResetMetaData(false);
 
 		string levelKey = go.GetComponent<NewLevelToLoad>().levelKey;
 		XmlDocument doc = gameData.levels[levelKey].OwnerDocument;
@@ -223,7 +222,7 @@ public class EditorLevelDataSystem : FSystem {
 	}
 
 	// See editBlockPrefab
-	public void hideToggleChanged(GameObject source, bool newState)
+	public void HideToggleChanged(GameObject source, bool newState)
 	{
 		// control unlimited before input field
 		Toggle unlimitedToggle = source.transform.Find("LimitToggle").GetComponent<Toggle>();
@@ -245,7 +244,7 @@ public class EditorLevelDataSystem : FSystem {
 	}
 
 	// See editBlockPrefab => HideToggle
-	public void limitToggleChanged(GameObject source, bool newState)
+	public void LimitToggleChanged(GameObject source, bool newState)
 	{
 		TMP_InputField inputField = source.GetComponentInChildren<TMP_InputField>();
 		inputField.interactable = !newState;
@@ -262,20 +261,20 @@ public class EditorLevelDataSystem : FSystem {
 	}
 
 	// see childs of executionLimit GO
-	public void preventMinusSign(TMP_InputField input)
+	public void PreventMinusSign(TMP_InputField input)
 	{
 		if (input.text != null && input.text.StartsWith("-"))
 			input.text = input.text.Trim('-');
 	}
 
 	// see childs of executionLimit GO
-	public void executionLimitChanged(bool newState)
+	public void ExecutionLimitChanged(bool newState)
 	{
 		executionLimitContainer.GetComponentInChildren<TMP_InputField>(true).interactable = newState;
 	}
 
 	// see childs of score2Stars GO
-	public void scoreTwoStarsExit(string newData)
+	public void ScoreTwoStarsExit(string newData)
 	{
 		if (string.IsNullOrEmpty(newData))
 			score2Input.text = "";
@@ -286,7 +285,7 @@ public class EditorLevelDataSystem : FSystem {
 			score3Input.text = newData;
 	}
 
-	public void scoreThreeStarsExit(string newData)
+	public void ScoreThreeStarsExit(string newData)
 	{
 		if (string.IsNullOrEmpty(newData))
 			score3Input.text = "";

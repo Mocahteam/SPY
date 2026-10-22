@@ -12,9 +12,9 @@ public class EndGameManager : FSystem {
 
 	public static EndGameManager instance;
 
-	private Family f_requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private readonly Family f_requireEndPanel = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
 
-	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private readonly Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
 	
 	private GameData gameData;
 
@@ -38,17 +38,17 @@ public class EndGameManager : FSystem {
         // on s'assure que le end panel est bien désactivé au démarrage du jeu
         endPanel.transform.parent.gameObject.SetActive(false);
 
-		f_requireEndPanel.addEntryCallback(displayEndPanel);
+		f_requireEndPanel.addEntryCallback(DisplayEndPanel);
 
 		f_playingMode.addExitCallback(delegate {
-			MainLoop.instance.StartCoroutine(delayNoMoreAttemptDetection());
+			MainLoop.instance.StartCoroutine(DelayNoMoreAttemptDetection());
 		});
 
 		Pause = true;
 	}
 
 	// Display panel with appropriate content depending on end
-	private void displayEndPanel(GameObject unused)
+	private void DisplayEndPanel(GameObject unused)
 	{
 		// display end panel
 		endPanel.GetComponentInParent<Canvas>().GetComponent<CanvasGroup>().interactable = false;
@@ -73,7 +73,7 @@ public class EndGameManager : FSystem {
 			audio.loop = true;
 			audio.Play();
 
-			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			MainLoop.instance.StartCoroutine(DelaySendStatement(endPanel, new
 			{
 				verb = "completed",
 				objectType = "level",
@@ -99,7 +99,7 @@ public class EndGameManager : FSystem {
 			audio.loop = true;
 			audio.Play();
 
-			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			MainLoop.instance.StartCoroutine(DelaySendStatement(endPanel, new
 			{
 				verb = "completed",
 				objectType = "level",
@@ -125,7 +125,7 @@ public class EndGameManager : FSystem {
             audio.loop = true;
             audio.Play();
 
-            MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+            MainLoop.instance.StartCoroutine(DelaySendStatement(endPanel, new
             {
                 verb = "completed",
                 objectType = "level",
@@ -139,7 +139,7 @@ public class EndGameManager : FSystem {
             int _score = (10000 / (gameData.totalActionBlocUsed + 1) + 5000 / (gameData.totalStep + 1) + 6000 / (gameData.totalExecute + 1) + 5000 * gameData.totalCoin);
 			endPanel.transform.Find("StarsCanvas").gameObject.SetActive(true);
 			Debug.Log("Score: " + _score);
-			setScoreStars(_score);
+			SetScoreStars(_score);
 
 			endPanel.GetComponentInParent<AudioSource>().PlayOneShot(VictorySound);
 			
@@ -188,7 +188,7 @@ public class EndGameManager : FSystem {
 				if (gameData.selectedScenario != UtilityLobby.testFromScenarioEditor && gameData.selectedScenario != UtilityLobby.testFromLevelEditor && gameData.selectedScenario != UtilityLobby.testFromUrl)
 					ud.levelToContinue++;
 			}
-			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			MainLoop.instance.StartCoroutine(DelaySendStatement(endPanel, new
 			{
 				verb = "completed",
 				objectType = "level",
@@ -214,7 +214,7 @@ public class EndGameManager : FSystem {
 			audio.loop = true;
 			audio.Play();
 
-			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			MainLoop.instance.StartCoroutine(DelaySendStatement(endPanel, new
 			{
 				verb = "bugged",
 				objectType = "program",
@@ -238,7 +238,7 @@ public class EndGameManager : FSystem {
 			audio.loop = true;
 			audio.Play();
 
-			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			MainLoop.instance.StartCoroutine(DelaySendStatement(endPanel, new
 			{
 				verb = "completed",
 				objectType = "level",
@@ -264,7 +264,7 @@ public class EndGameManager : FSystem {
 			audio.loop = true;
 			audio.Play();
 
-			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			MainLoop.instance.StartCoroutine(DelaySendStatement(endPanel, new
 			{
 				verb = "bugged",
 				objectType = "program",
@@ -288,7 +288,7 @@ public class EndGameManager : FSystem {
             audio.loop = true;
             audio.Play();
 
-            MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+            MainLoop.instance.StartCoroutine(DelaySendStatement(endPanel, new
             {
                 verb = "completed",
                 objectType = "level",
@@ -314,7 +314,7 @@ public class EndGameManager : FSystem {
 			audio.loop = true;
 			audio.Play();
 
-			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			MainLoop.instance.StartCoroutine(DelaySendStatement(endPanel, new
 			{
 				verb = "bugged",
 				objectType = "program",
@@ -338,7 +338,7 @@ public class EndGameManager : FSystem {
 			audio.loop = true;
 			audio.Play();
 
-			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			MainLoop.instance.StartCoroutine(DelaySendStatement(endPanel, new
 			{
 				verb = "bugged",
 				objectType = "program",
@@ -362,7 +362,7 @@ public class EndGameManager : FSystem {
 			audio.loop = true;
 			audio.Play();
 
-			MainLoop.instance.StartCoroutine(delaySendStatement(endPanel, new
+			MainLoop.instance.StartCoroutine(DelaySendStatement(endPanel, new
 			{
 				verb = "bugged",
 				objectType = "level",
@@ -373,7 +373,7 @@ public class EndGameManager : FSystem {
 		}
 	}
 
-	private IEnumerator delaySendStatement(GameObject src, object componentValues)
+	private IEnumerator DelaySendStatement(GameObject src, object componentValues)
     {
 		yield return null;
 		GameObjectManager.addComponent<ActionPerformedForLRS>(src, componentValues);
@@ -383,7 +383,7 @@ public class EndGameManager : FSystem {
 	}
 
 	// Gére le nombre d'étoile à afficher selon le score obtenue
-	private void setScoreStars(int score)
+	private void SetScoreStars(int score)
 	{
 		// Détermine le nombre d'étoile à afficher
 		int scoredStars = 0;
@@ -436,7 +436,7 @@ public class EndGameManager : FSystem {
 	}
 
 	// Cancel End (see ReloadState button in editor)
-	public void cancelEnd()
+	public void CancelEnd()
 	{
 		foreach (GameObject endGO in f_requireEndPanel)
 			// in case of several ends pop in the same time (for instance exit reached and detected)
@@ -444,7 +444,7 @@ public class EndGameManager : FSystem {
 				GameObjectManager.removeComponent(end);
 	}
 
-	private IEnumerator delayNoMoreAttemptDetection()
+	private IEnumerator DelayNoMoreAttemptDetection()
 	{
 		// wait three frames in case win will be detected (win is priority with noMoreAttempt)
 		yield return null;

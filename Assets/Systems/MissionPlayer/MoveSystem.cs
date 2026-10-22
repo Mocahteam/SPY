@@ -7,9 +7,9 @@ using System.Collections;
 /// </summary>
 public class MoveSystem : FSystem {
 
-	private Family f_movable = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
-	private Family f_end = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
-	private Family f_positionCorrected = FamilyManager.getFamily(new AllOfComponents(typeof(PositionCorrected)));
+	private readonly Family f_movable = FamilyManager.getFamily(new AllOfComponents(typeof(Position),typeof(Direction)));
+	private readonly Family f_end = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private readonly Family f_positionCorrected = FamilyManager.getFamily(new AllOfComponents(typeof(PositionCorrected)));
 
 	public float turnSpeed;
 	public float moveSpeed;
@@ -28,9 +28,9 @@ public class MoveSystem : FSystem {
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
 		foreach (GameObject movable in f_movable)
-			initAgentDirection(movable);
-		f_movable.addEntryCallback(initAgentDirection);
-		f_end.addEntryCallback(onNewEnd);
+			InitAgentDirection(movable);
+		f_movable.addEntryCallback(InitAgentDirection);
+		f_end.addEntryCallback(OnNewEnd);
 
 		// Lorsqu'on reçoit du CurrentActionExecutor la notif comme quoi les positions ont été corrigées, on lance le onProcess pour lancer les animation
 		f_positionCorrected.addEntryCallback(delegate { Pause = false; });
@@ -38,7 +38,7 @@ public class MoveSystem : FSystem {
 		Pause = true;
 	}
 
-	private void onNewEnd(GameObject end)
+	private void OnNewEnd(GameObject end)
     {
 		// En cas de victoire
 		if (end.GetComponent<NewEnd>().endType == NewEnd.Win)
@@ -52,7 +52,7 @@ public class MoveSystem : FSystem {
 		// for other end type, nothing to do more
 	}
 
-	private void initAgentDirection(GameObject agent)
+	private void InitAgentDirection(GameObject agent)
     {
 		switch (agent.GetComponent<Direction>().direction)
 		{
@@ -113,7 +113,7 @@ public class MoveSystem : FSystem {
 					if (go.GetComponent<Animator>() && go.CompareTag("Player"))
 					{
 						// On stope l'animation dans une coroutine pour éviter de voir le robot faire une micro pause entre deux steps, ainsi le onProcess stoppera cette coroutine si l'animation doit continuer
-						go.GetComponent<ScriptRef>().StartCoroutine(delayStopAnim(go.GetComponent<Animator>()));
+						go.GetComponent<ScriptRef>().StartCoroutine(DelayStopAnim(go.GetComponent<Animator>()));
 					}
 				}
 			}
@@ -153,7 +153,7 @@ public class MoveSystem : FSystem {
 			Pause = true;
 	}
 
-	public  void syncAnimations()
+	public  void SyncAnimations()
 	{
 		foreach (GameObject go in f_movable)
 			if (go.GetComponent<Animator>() && go.GetComponent<ScriptRef>() && !go.GetComponent<ScriptRef>().isBroken)
@@ -168,7 +168,7 @@ public class MoveSystem : FSystem {
 			}
 	}
 
-	private IEnumerator delayStopAnim(Animator anim)
+	private IEnumerator DelayStopAnim(Animator anim)
     {
 		// On laisse passé quelques frames avant de stopper l'animation pour laisser le temps de stopper cette coroutine si l'animation doit continuer
 		yield return null;

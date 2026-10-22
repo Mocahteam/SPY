@@ -6,8 +6,8 @@ using FYFY;
 /// </summary>
 public class ModeManager : FSystem {
 
-	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+	private readonly Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private readonly Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 	public static ModeManager instance;
 
@@ -36,12 +36,12 @@ public class ModeManager : FSystem {
 	}
 
 	// Used in ExecuteButton in inspector
-	public void setPlayingMode(){
+	public void SetPlayingMode(){
 		GameObjectManager.addComponent<PlayMode>(MainLoop.instance.gameObject);
 	}
 	
 	// Used in StopButton and ReloadState in inspector
-	public void setEditMode()
+	public void SetEditMode()
 	{
 		GameObjectManager.addComponent<EditMode>(MainLoop.instance.gameObject);
 		GameObjectManager.addComponent<ActionPerformedForLRS>(MainLoop.instance.gameObject, new

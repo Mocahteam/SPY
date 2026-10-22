@@ -29,13 +29,13 @@ public class InitScenarioEditorManager : FSystem
 		Pause = true;
 	}
 
-	public void reloadEditor()
+	public void ReloadEditor()
     {
 		gameData.selectedScenario = "";
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "ScenarioEditor" });
 	}
 
-	public void returnToLobby()
+	public void ReturnToLobby()
 	{
 		gameData.selectedScenario = "";
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "TitleScreen" });

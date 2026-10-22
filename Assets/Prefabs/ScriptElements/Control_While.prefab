@@ -211,7 +211,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 6195889844468152799}
           m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
-          m_MethodName: beginDragElement
+          m_MethodName: BeginDragElement
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -227,7 +227,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 6195889844468152799}
           m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
-          m_MethodName: dragElement
+          m_MethodName: DragElement
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -243,7 +243,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 6195889844468152799}
           m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
-          m_MethodName: endDragElement
+          m_MethodName: EndDragElement
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -259,7 +259,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 4374891002452001400}
           m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
-          m_MethodName: bubbleScroll
+          m_MethodName: BubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -275,7 +275,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 6195889844468152799}
           m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
-          m_MethodName: checkRightClickForDelete
+          m_MethodName: CheckRightClickForDelete
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -287,7 +287,7 @@ MonoBehaviour:
           m_CallState: 2
         - m_Target: {fileID: 6195889844468152799}
           m_TargetAssemblyTypeName: DragDropSystemBridge, Assembly-CSharp
-          m_MethodName: setDefaultDropZone
+          m_MethodName: SetDefaultDropZone
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1056,7 +1056,7 @@ PrefabInstance:
     - target: {fileID: 5471410849989185586, guid: 0543562f7722dc7478737c19440312d1,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
-      value: setNextFocusedGameObject
+      value: SetNextFocusedGameObject
       objectReference: {fileID: 0}
     - target: {fileID: 8145470399989344572, guid: 0543562f7722dc7478737c19440312d1,
         type: 3}
@@ -1076,7 +1076,7 @@ PrefabInstance:
     - target: {fileID: 8527930415250757453, guid: 0543562f7722dc7478737c19440312d1,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
-      value: setNextFocusedGameObject
+      value: SetNextFocusedGameObject
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1240,7 +1240,7 @@ PrefabInstance:
     - target: {fileID: 5471410849989185586, guid: 0543562f7722dc7478737c19440312d1,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
-      value: setNextFocusedGameObject
+      value: SetNextFocusedGameObject
       objectReference: {fileID: 0}
     - target: {fileID: 8145470399989344572, guid: 0543562f7722dc7478737c19440312d1,
         type: 3}
@@ -1260,7 +1260,7 @@ PrefabInstance:
     - target: {fileID: 8527930415250757453, guid: 0543562f7722dc7478737c19440312d1,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
-      value: setNextFocusedGameObject
+      value: SetNextFocusedGameObject
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1765,7 +1765,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 4182301018274356949}
           m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
-          m_MethodName: bubbleScroll
+          m_MethodName: BubbleScroll
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1781,7 +1781,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 4182301018274356949}
           m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
-          m_MethodName: bubblePointerUp
+          m_MethodName: BubblePointerUp
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1797,7 +1797,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 4182301018274356949}
           m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
-          m_MethodName: bubbleBeginDrag
+          m_MethodName: BubbleBeginDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1813,7 +1813,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 4182301018274356949}
           m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
-          m_MethodName: bubbleDrag
+          m_MethodName: BubbleDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1829,7 +1829,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 4182301018274356949}
           m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
-          m_MethodName: bubbleEndDrag
+          m_MethodName: BubbleEndDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1845,7 +1845,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 4182301018274356949}
           m_TargetAssemblyTypeName: BubbleEvent, Assembly-CSharp
-          m_MethodName: bubblePointerDown
+          m_MethodName: BubblePointerDown
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

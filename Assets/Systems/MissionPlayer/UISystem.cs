@@ -13,19 +13,19 @@ using UnityEngine.InputSystem;
 /// Need to be binded after LevelGenerator
 /// </summary>
 public class UISystem : FSystem {
-	private Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Player"));
-	private Family f_agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
-	private Family f_viewportContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les containers viewport
-	private Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts editables
-	private Family f_removeButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton")); // Les petites poubelles de chaque panneau d'édition
-	private Family f_pointerOver = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Tous les objets pointés
-	private Family f_tooltipContent = FamilyManager.getFamily(new AllOfComponents(typeof(TooltipContent))); // Tous les tooltips
+	private readonly Family f_player = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef), typeof(Position)), new AnyOfTags("Player"));
+	private readonly Family f_agents = FamilyManager.getFamily(new AllOfComponents(typeof(ScriptRef)));
+	private readonly Family f_viewportContainer = FamilyManager.getFamily(new AllOfComponents(typeof(ViewportContainer))); // Les containers viewport
+	private readonly Family f_scriptContainer = FamilyManager.getFamily(new AllOfComponents(typeof(UIRootContainer)), new AnyOfTags("ScriptConstructor")); // Les containers de scripts editables
+	private readonly Family f_removeButton = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("RemoveButton")); // Les petites poubelles de chaque panneau d'édition
+	private readonly Family f_pointerOver = FamilyManager.getFamily(new AllOfComponents(typeof(PointerOver)), new AllOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY)); // Tous les objets pointés
+	private readonly Family f_tooltipContent = FamilyManager.getFamily(new AllOfComponents(typeof(TooltipContent))); // Tous les tooltips
 
-	private Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
-	private Family f_updateStartButton = FamilyManager.getFamily(new AllOfComponents(typeof(NeedRefreshPlayButton)));
+	private readonly Family f_newEnd = FamilyManager.getFamily(new AllOfComponents(typeof(NewEnd)));
+	private readonly Family f_updateStartButton = FamilyManager.getFamily(new AllOfComponents(typeof(NeedRefreshPlayButton)));
 
-	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+	private readonly Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private readonly Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 	private GameData gameData;
 
@@ -55,19 +55,19 @@ public class UISystem : FSystem {
 			gameData = go.GetComponent<GameData>();
 
 		f_playingMode.addEntryCallback(delegate {
-			copyEditableScriptsToExecutablePanels();
-			setExecutionView(true);
+			CopyEditableScriptsToExecutablePanels();
+			SetExecutionView(true);
 		});
 
 		f_editingMode.addEntryCallback(delegate {
-			setExecutionView(false);
+			SetExecutionView(false);
 		});
 
-		f_newEnd.addEntryCallback(delegate { levelFinished(true); });
-		f_newEnd.addExitCallback(delegate { levelFinished(false); });
+		f_newEnd.addEntryCallback(delegate { LevelFinished(true); });
+		f_newEnd.addExitCallback(delegate { LevelFinished(false); });
 
 		f_updateStartButton.addEntryCallback(delegate {
-			MainLoop.instance.StartCoroutine(updatePlayButton());
+			MainLoop.instance.StartCoroutine(UpdatePlayButton());
 			foreach (GameObject go in f_updateStartButton)
 				foreach (NeedRefreshPlayButton need in go.GetComponents<NeedRefreshPlayButton>())
 					GameObjectManager.removeComponent(need);
@@ -75,10 +75,10 @@ public class UISystem : FSystem {
 	}
 
 	// Lors d'une fin d'exécution de séquence, gére les différents éléments à ré-afficher ou si il faut sauvegarder la progression du joueur
-	private void levelFinished(bool state)
+	private void LevelFinished(bool state)
 	{
 		// On réaffiche les différents panels pour la création de séquence
-		setExecutionView(false);
+		SetExecutionView(false);
 
 		// Hide library panel
 		libraryPanel.transform.parent.parent.parent.gameObject.SetActive(!state);
@@ -86,7 +86,7 @@ public class UISystem : FSystem {
 		buttonExecute.transform.parent.gameObject.SetActive(!state);
 	}
 
-	private bool isTouch()
+	private bool IsTouch()
     {
 		foreach (var touch in Touchscreen.current.touches)
 			if (touch.isInProgress)
@@ -101,7 +101,7 @@ public class UISystem : FSystem {
 		{
 			// With touch device when the finger is up, pointerOver is not removed because OnPointerExit is not called
 			// then be sure to clear pointerOver and Tooltips
-			if (isTouch())
+			if (IsTouch())
 				touchUp = 0;
 			else
 				touchUp += Time.deltaTime;
@@ -119,7 +119,7 @@ public class UISystem : FSystem {
 
 
 	// Active ou désactive le bouton play si il y a ou non des actions dans un container script
-	private IEnumerator updatePlayButton()
+	private IEnumerator UpdatePlayButton()
 	{
 		yield return null;
 		buttonExecute.GetComponent<Button>().interactable = false;
@@ -133,7 +133,7 @@ public class UISystem : FSystem {
 	}
 
 	// On affiche ou non la partie librairie/programmation sequence en fonction de la valeur reçue
-	public void setExecutionView(bool value){
+	private void SetExecutionView(bool value){
 		// Toggle library and editable panel
 		canvas.transform.Find("SafeArea/LeftPanel").gameObject.SetActive(!value);
 		// Show sentinel panels and toggle player panels
@@ -146,7 +146,7 @@ public class UISystem : FSystem {
 				// toggle player execution panel
 				agent.GetComponent<ScriptRef>().executablePanel.SetActive(value);
 				if (!value)
-					freePlayerExecutablePanels();
+					FreePlayerExecutablePanels();
 			}
 		// Define Menu button states
 		buttonExecute.SetActive(!value);
@@ -167,16 +167,16 @@ public class UISystem : FSystem {
 	}
 
 	// Permet de relancer le niveau au début
-	public void restartScene(){
-		initZeroVariableLevel();
+	private void RestartScene(){
+		InitZeroVariableLevel();
 		GameObjectManager.addComponent<AskToLoadScene>(MainLoop.instance.gameObject, new { sceneName = "MainScene" });
 	}
 
 
 	// See TitleScreen and MainMenu buttons in editor
 	// Permet de revenir à la scéne titre
-	public void returnToTitleScreen(){
-		initZeroVariableLevel();
+	public void ReturnToTitleScreen(){
+		InitZeroVariableLevel();
 		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
 			verb = "exited",
@@ -191,7 +191,7 @@ public class UISystem : FSystem {
 
 
 	// Permet de réinitialiser les variables du niveau dans l'objet gameData
-	public void initZeroVariableLevel()
+	private void InitZeroVariableLevel()
     {
 		gameData.totalActionBlocUsed = 0;
 		gameData.totalStep = 0;
@@ -203,7 +203,7 @@ public class UISystem : FSystem {
 
 	// See NextLevel button in editor
 	// On charge la scéne suivante
-	public void nextLevel()
+	public void NextLevel()
 	{
 		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
@@ -218,13 +218,13 @@ public class UISystem : FSystem {
 		// On efface l'historique
 		gameData.actionsHistory = null;
 		// On recharge la scéne (mais avec le nouveau numéro de niveau)
-		restartScene();
+		RestartScene();
 	}
 
 
 	// See ReloadLevel and RestartLevel buttons in editor
 	// Fait recommencer la scéne mais en gardant l'historique des actions
-	public void retry()
+	public void Retry()
 	{
 		GameObjectManager.addComponent<ActionPerformedForLRS>(LevelGO, new
 		{
@@ -236,10 +236,10 @@ public class UISystem : FSystem {
 		});
 		if (gameData.actionsHistory != null)
 			UnityEngine.Object.DontDestroyOnLoad(gameData.actionsHistory);
-		restartScene();
+		RestartScene();
 	}
 
-	private void freePlayerExecutablePanels()
+	private void FreePlayerExecutablePanels()
 	{
 		foreach (GameObject robot in f_player)
 		{
@@ -256,10 +256,10 @@ public class UISystem : FSystem {
 	}
 
 	// Copie les blocs du panneau d'édition dans le panneau d'exécution
-	private void copyEditableScriptsToExecutablePanels()
+	private void CopyEditableScriptsToExecutablePanels()
 	{
 		// be sure executable panel is free
-		freePlayerExecutablePanels();
+		FreePlayerExecutablePanels();
 		// copy the new sequence
 		foreach (GameObject robot in f_player)
 		{

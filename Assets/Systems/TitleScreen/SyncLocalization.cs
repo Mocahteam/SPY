@@ -10,7 +10,7 @@ using UnityEngine.UI;
 /// </summary>
 public class SyncLocalization : FSystem {
 
-    private Family f_langOptions = FamilyManager.getFamily(new AllOfComponents(typeof(LangOption), typeof(Button)));
+    private readonly Family f_langOptions = FamilyManager.getFamily(new AllOfComponents(typeof(LangOption), typeof(Button)));
 
     public CurrentSettingsValues currentSettingsValues;
 
@@ -53,14 +53,14 @@ public class SyncLocalization : FSystem {
             else
                 currentSettingsValues.values.currentLanguage = currentSettingsValues.GetComponent<DefaultSettingsValues>().defaultLanguage;
         }
-        syncLocale();
+        SyncLocale();
         PlayerPrefs.SetInt("localization", currentSettingsValues.values.currentLanguage);
         PlayerPrefs.Save();
 
         GameObjectManager.addComponent<LocalizationLoaded>(MainLoop.instance.gameObject);
     }
 
-    public void syncLocale()
+    public void SyncLocale()
     {
         foreach (GameObject option in f_langOptions)
         {
@@ -77,10 +77,10 @@ public class SyncLocalization : FSystem {
             UpdateHTMLLanguage(currentSettingsValues.values.currentLanguage == 0 ? "fr" : "en");
     }
 
-    public void changeLang(LangOption.LangType lang)
+    public void ChangeLang(LangOption.LangType lang)
     {
         currentSettingsValues.values.currentLanguage = (int)lang;
-        syncLocale();
+        SyncLocale();
         PlayerPrefs.SetInt("localization", currentSettingsValues.values.currentLanguage);
         PlayerPrefs.Save();
     }

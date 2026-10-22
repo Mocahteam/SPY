@@ -7,8 +7,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.InputSystem.Utilities;
-using UnityEngine.Localization.Components;
-using UnityEngine.Localization.SmartFormat.PersistentVariables;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 /// <summary>
@@ -16,15 +14,15 @@ using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 /// </summary>
 public class CameraSystem : FSystem {
 	// In games agents 
-	private Family f_agent = FamilyManager.getFamily(new AnyOfTags("Player", "Drone"));
+	private readonly Family f_agent = FamilyManager.getFamily(new AnyOfTags("Player", "Drone"));
 	// Contains current UI focused
-	private Family f_UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver)));
-	private Family f_focusOn = FamilyManager.getFamily(new AllOfComponents(typeof(FocusCamOn)));
-	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-	private Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
-	private Family f_billboard = FamilyManager.getFamily(new AllOfComponents(typeof(BillboardOrientation)));
-    private Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
-    private Family f_omniscientFocus = FamilyManager.getFamily(new AnyOfTags("Player", "Drone", "Exit", "Door", "Terminal"));
+	private readonly Family f_UIfocused = FamilyManager.getFamily(new AllOfComponents(typeof(RectTransform), typeof(PointerOver)));
+	private readonly Family f_focusOn = FamilyManager.getFamily(new AllOfComponents(typeof(FocusCamOn)));
+	private readonly Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private readonly Family f_dragging = FamilyManager.getFamily(new AllOfComponents(typeof(Dragging)));
+	private readonly Family f_billboard = FamilyManager.getFamily(new AllOfComponents(typeof(BillboardOrientation)));
+    private readonly Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
+    private readonly Family f_omniscientFocus = FamilyManager.getFamily(new AnyOfTags("Player", "Drone", "Exit", "Door", "Terminal"));
 
     private Transform targetAgent; // if defined camera follow this target
 	private Transform lastAgentFocused = null;
@@ -82,22 +80,22 @@ public class CameraSystem : FSystem {
 			ToggleOrthographicPerspective();
 
 		// set current camera target (the first player)
-		f_agent.addEntryCallback(delegate (GameObject go) { if (go.CompareTag("Player")) focusOnAgent(go, false); });
+		f_agent.addEntryCallback(delegate (GameObject go) { if (go.CompareTag("Player")) FocusOnAgent(go, false); });
 
 		f_focusOn.addEntryCallback(delegate (GameObject go)
 		{
 			FocusCamOn newTarget = go.GetComponent<FocusCamOn>();
-			unfocusAgent();
+			UnfocusAgent();
 			targetPos = new Vector3(newTarget.camX * 3, 3.5f, -newTarget.camY * 3);
-			MainLoop.instance.StartCoroutine(travelingOnPos());
+			MainLoop.instance.StartCoroutine(TravelingOnPos());
 			GameObjectManager.removeComponent(newTarget);
 		});
 
 		f_playingMode.addEntryCallback(delegate (GameObject go) {
 			if (currentSettingsValues.values.currentCameraTracking == 1)
-				focusOnNearestAgent();
+				FocusOnNearestAgent();
 			else
-				unfocusAgent();
+				UnfocusAgent();
 		});
 
 		EnhancedTouchSupport.Enable();
@@ -108,11 +106,11 @@ public class CameraSystem : FSystem {
 		{
 			GameData gameData = go.GetComponent<GameData>();
 			if (gameData != null && gameData.omniscientView)
-				MainLoop.instance.StartCoroutine(waitDialogAppearsToEnableOmniscientView());
+				MainLoop.instance.StartCoroutine(WaitDialogAppearsToEnableOmniscientView());
 		}
     }
 
-	private IEnumerator waitDialogAppearsToEnableOmniscientView()
+	private IEnumerator WaitDialogAppearsToEnableOmniscientView()
 	{
 		// On attend que l'animation d'arrivée dans le jeu soit terminée
 		yield return new WaitWhile(() => f_fadeOutEnd.Count == 0);
@@ -122,7 +120,7 @@ public class CameraSystem : FSystem {
         // Attendre que le dialogue soit fermé avant de mettre la vue omnisciente
         yield return new WaitWhile (() => dialogPanel.activeInHierarchy);
 		
-        unfocusAgent();
+        UnfocusAgent();
         // calculer le barycentre des agents pour centrer la caméra
 		float sumX = 0;
 		float sumY = 0;
@@ -133,15 +131,15 @@ public class CameraSystem : FSystem {
 			sumY += pos.y;
         }
         targetPos = new Vector3(sumX / f_omniscientFocus.Count * 3, 3.5f, -sumY / f_omniscientFocus.Count * 3);
-        yield return travelingOnPos();
+        yield return TravelingOnPos();
 		// Dézoomer la caméra jusqu'à ce que tous les agents soient visibles
-		while (!allImportantObjectsInview()) { 
-			zoomOut(0.1f, false);
+		while (!AllImportantObjectsInview()) { 
+			ZoomOut(0.1f, false);
             yield return null;
         }
     }
 
-	private bool allImportantObjectsInview()
+	private bool AllImportantObjectsInview()
 	{
 		bool visible = true;
         float leftPanelRatio = (LeftPanel.rect.width+25) / Screen.width * currentSettingsValues.values.currentUIScale;
@@ -161,19 +159,19 @@ public class CameraSystem : FSystem {
     protected override void onProcess(int familiesUpdateCount) {
         // move camera front/back depending on Vertical axis
         if (UI_frontBackValue != 0)
-			moveFrontBack(UI_frontBackValue);
+			MoveFrontBack(UI_frontBackValue);
 
 		// move camera left/right depending on Horizontal axis
 		if (UI_leftRightValue != 0)
-			moveLeftRight(UI_leftRightValue);
+			MoveLeftRight(UI_leftRightValue);
 
 		// rotate camera (right/left)
 		if (UI_rotateValue != 0)
-			rotateCamera(UI_rotateValue, 0);
+			RotateCamera(UI_rotateValue, 0);
 
         // rotate camera (up/down) if not in orthographic mode
         if (UI_pitchingValue != 0 && !mainCamera.orthographic)
-            rotateCamera(0, UI_pitchingValue);
+            RotateCamera(0, UI_pitchingValue);
 
         // Move camera with wheel click
         if (middleClick.IsPressed() && f_UIfocused.Count == 0)
@@ -182,24 +180,24 @@ public class CameraSystem : FSystem {
 
 			DeltaControl delta = Pointer.current.delta;
 
-			moveFrontBack(-delta.y.value * dragSpeed);
-			moveLeftRight(-delta.x.value * dragSpeed);
-			unfocusAgent();
+			MoveFrontBack(-delta.y.value * dragSpeed);
+			MoveLeftRight(-delta.x.value * dragSpeed);
+			UnfocusAgent();
 		}
 		// Zoom with scroll wheel only if UI element is not focused
 		else if ((Mouse.current.scroll.y.value < 0 && f_UIfocused.Count == 0) || UI_zoomValue > 0) // Zoom out
 		{
 			if (UI_zoomValue > 0)
-				zoomOut(UI_zoomValue);
+				ZoomOut(UI_zoomValue);
 			else
-				zoomOut(2);
+				ZoomOut(2);
 		}
 		else if ((Mouse.current.scroll.y.value > 0 && f_UIfocused.Count == 0) || UI_zoomValue < 0) // Zoom in
 		{
 			if (UI_zoomValue < 0)
-				zoomIn(-UI_zoomValue);
+				ZoomIn(-UI_zoomValue);
 			else
-				zoomIn(2);
+				ZoomIn(2);
 		}
 
 		// Orbit rotation
@@ -207,7 +205,7 @@ public class CameraSystem : FSystem {
         {
             UnityEngine.Cursor.visible = false;
 			DeltaControl delta = Pointer.current.delta;
-			rotateCamera(delta.x.value/2, !mainCamera.orthographic ? delta.y.value/2 : 0);
+			RotateCamera(delta.x.value/2, !mainCamera.orthographic ? delta.y.value/2 : 0);
 		}
 
 		if (middleClick.WasReleasedThisFrame() || rightClick.WasReleasedThisFrame())
@@ -224,7 +222,7 @@ public class CameraSystem : FSystem {
 				if (touches[0].phase == UnityEngine.InputSystem.TouchPhase.Moved)
 				{
 					Vector2 delta = touches[0].delta;
-					rotateCamera(delta.x / 4, !mainCamera.orthographic ? delta.y / 4 : 0);
+					RotateCamera(delta.x / 4, !mainCamera.orthographic ? delta.y / 4 : 0);
 				}
 			}
 			else if (touches.Count == 2)
@@ -243,11 +241,11 @@ public class CameraSystem : FSystem {
 				{
 					if (distanceDelta > 0)
 					{
-						zoomIn(distanceDelta / 32);
+						ZoomIn(distanceDelta / 32);
 					}
 					else
 					{
-						zoomOut(-distanceDelta / 32);
+						ZoomOut(-distanceDelta / 32);
 					}
 				}
 
@@ -259,8 +257,8 @@ public class CameraSystem : FSystem {
 				if (Vector2.Dot(move1.normalized, move2.normalized) > 0.7f)
 				{
 					Vector2 averageMove = (move1 + move2) / 2f;
-					moveFrontBack(-averageMove.y / 4 * dragSpeed);
-					moveLeftRight(-averageMove.x / 4 * dragSpeed);
+					MoveFrontBack(-averageMove.y / 4 * dragSpeed);
+					MoveLeftRight(-averageMove.x / 4 * dragSpeed);
 				}
 			}
 		}
@@ -295,33 +293,33 @@ public class CameraSystem : FSystem {
 			lastActionLogged = "";
     }
 
-    private void moveFrontBack(float value)
+    private void MoveFrontBack(float value)
     {
 		Transform cameraTarget = mainCamera.transform.parent.parent;
 		cameraTarget.Translate(-value * Time.deltaTime * cameraMovingSpeed, 0, 0);
-		unfocusAgent();
+		UnfocusAgent();
 
 		if (lastActionLogged != "moving")
-			camera_logging("moving");
+			Camera_logging("moving");
         lastActionLogged = "moving";
 
         lastTimeCameraAction = Time.time;
     }
 
-	private void moveLeftRight(float value)
+	private void MoveLeftRight(float value)
     {
 		Transform cameraTarget = mainCamera.transform.parent.parent;
 		cameraTarget.Translate(0, 0, value * Time.deltaTime * cameraMovingSpeed);
-		unfocusAgent();
+		UnfocusAgent();
 
         if (lastActionLogged != "moving")
-            camera_logging("moving");
+            Camera_logging("moving");
         lastActionLogged = "moving";
 
         lastTimeCameraAction = Time.time;
     }
 
-	private void zoomOut(float value, bool log = true)
+	private void ZoomOut(float value, bool log = true)
     {
 		// compute distance between camera position and camera target
 		Vector3 relativePos = mainCamera.transform.InverseTransformPoint(mainCamera.transform.parent.parent.position);
@@ -335,13 +333,13 @@ public class CameraSystem : FSystem {
 			mainCamera.orthographicSize = cameraZoomMax / 2;
 
         if (lastActionLogged != "zooming" && log)
-            camera_logging("zooming");
+            Camera_logging("zooming");
         lastActionLogged = "zooming";
 
         lastTimeCameraAction = Time.time;
     }
 
-	private void zoomIn(float value)
+	private void ZoomIn(float value)
     {
 		// compute distance between camera position and camera target
 		Vector3 relativePos = mainCamera.transform.InverseTransformPoint(mainCamera.transform.parent.parent.position);
@@ -360,7 +358,7 @@ public class CameraSystem : FSystem {
 			mainCamera.orthographicSize = cameraZoomMin / 4;
 
         if (lastActionLogged != "zooming")
-            camera_logging("zooming");
+            Camera_logging("zooming");
         lastActionLogged = "zooming";
 
         lastTimeCameraAction = Time.time;
@@ -368,14 +366,14 @@ public class CameraSystem : FSystem {
 
 	public void ToggleOrthographicPerspective()
     {
-		setOrthographicView(!mainCamera.orthographic);
+		SetOrthographicView(!mainCamera.orthographic);
 
-		camera_logging("ToggleOrthographicPerspective", mainCamera.orthographic.ToString());
+		Camera_logging("ToggleOrthographicPerspective", mainCamera.orthographic.ToString());
 
         lastTimeCameraAction = Time.time;
     }
 
-	public void setOrthographicView(bool state)
+	public void SetOrthographicView(bool state)
 	{
 		if (mainCamera != null)
 		{
@@ -387,60 +385,60 @@ public class CameraSystem : FSystem {
 		}
 	}
 
-	public void set_UIFrontBack(float value)
+	public void Set_UIFrontBack(float value)
     {
 		UI_frontBackValue = value;
 	}
 
-	public void set_UILeftRight(float value)
+	public void Set_UILeftRight(float value)
 	{
 		UI_leftRightValue = value;
 	}
 
-	public void set_UIRotate(float value)
+	public void Set_UIRotate(float value)
 	{
 		UI_rotateValue = value;
     }
 
-    public void set_UIPitching(float value)
+    public void Set_UIPitching(float value)
     {
         UI_pitchingValue = value;
     }
 
-    public void set_UIZoom(float value)
+    public void Set_UIZoom(float value)
 	{
 		UI_zoomValue = value;
 	}
 
-	public void submitRotate(float value)
+	public void SubmitRotate(float value)
     {
-		rotateCamera(value, 0);
+		RotateCamera(value, 0);
     }
 
-    public void submitPitching(float value)
+    public void SubmitPitching(float value)
     {
-        rotateCamera(0, value);
+        RotateCamera(0, value);
     }
 
-    public void submitFrontBack(float value)
+    public void SubmitFrontBack(float value)
 	{
-		moveFrontBack(value);
+		MoveFrontBack(value);
 	}
 
-	public void submitLeftRight(float value)
+	public void SubmitLeftRight(float value)
     {
-		moveLeftRight(value);
+		MoveLeftRight(value);
 	}
 
-	public void submitZoom(float value)
+	public void SubmitZoom(float value)
     {
 		if (value > 0)
-			zoomOut(value);
+			ZoomOut(value);
 		else
-			zoomIn(-value);
+			ZoomIn(-value);
 	}
 
-	private void rotateCamera(float x, float y)
+	private void RotateCamera(float x, float y)
 	{
 		float angle = 90f * cameraRotationSpeed * Time.deltaTime;
 		mainCamera.transform.parent.parent.Rotate(Vector3.up, angle * x );
@@ -451,28 +449,28 @@ public class CameraSystem : FSystem {
 			mainCamera.transform.parent.Rotate(Vector3.back, angle * -y );
 
         if (lastActionLogged != "rotating")
-            camera_logging("rotating");
+            Camera_logging("rotating");
 		lastActionLogged = "rotating";
 
         lastTimeCameraAction = Time.time;
     }
 
-	public void focusOnAgent(GameObject agent, bool log=true)
+	public void FocusOnAgent(GameObject agent, bool log=true)
     {
-		unfocusAgent();
+		UnfocusAgent();
 		targetAgent = agent.transform;
 		lastAgentFocused = targetAgent;
 		GameObjectManager.setGameObjectParent(mainCamera.transform.parent.parent.gameObject, agent, true);
 		targetAgent.Find("HaloSelection").gameObject.SetActive(true);
-		MainLoop.instance.StartCoroutine(travelingOnAgent());
+		MainLoop.instance.StartCoroutine(TravelingOnAgent());
 
 		if (log)
-			camera_logging("focusOnAgent", agent.ToString());
+			Camera_logging("focusOnAgent", agent.ToString());
 
         lastTimeCameraAction = Time.time;
     }
 
-	private void focusOnNearestAgent()
+	private void FocusOnNearestAgent()
     { 
 		if (targetAgent != null)
 			return;
@@ -488,14 +486,14 @@ public class CameraSystem : FSystem {
 			}
 		}
 		if (agentCandidate != null)
-			focusOnAgent(agentCandidate);
+			FocusOnAgent(agentCandidate);
 	}
 
-	public void focusNextAgent()
+	public void FocusNextAgent()
     {
 		if (lastAgentFocused == null)
 		{
-			focusOnNearestAgent();
+			FocusOnNearestAgent();
 			return;
 		}
 
@@ -505,19 +503,19 @@ public class CameraSystem : FSystem {
 			{
 				if (i == f_agent.Count - 1)
 				{
-					focusOnAgent(f_agent.First());
+					FocusOnAgent(f_agent.First());
 					break;
 				}
 				else
 				{
-					focusOnAgent(f_agent.getAt(i + 1));
+					FocusOnAgent(f_agent.getAt(i + 1));
 					break;
 				}
 			}
         }
     }
 
-	private void unfocusAgent()
+	private void UnfocusAgent()
     {
 		if (targetAgent != null)
         {
@@ -527,7 +525,7 @@ public class CameraSystem : FSystem {
 		}
     }
 
-	private IEnumerator travelingOnAgent()
+	private IEnumerator TravelingOnAgent()
     {
 		float distance = 0;
 		if (targetAgent != null)
@@ -541,7 +539,7 @@ public class CameraSystem : FSystem {
 		}
 	}
 
-	private IEnumerator travelingOnPos()
+	private IEnumerator TravelingOnPos()
 	{
 		float distance = Vector3.Distance(mainCamera.transform.parent.parent.localPosition, targetPos);
 		while (targetAgent == null && mainCamera.transform.parent.parent.localPosition != targetPos)
@@ -551,7 +549,7 @@ public class CameraSystem : FSystem {
 		}
 	}
 
-	private void camera_logging(string camera_action, string param = ""){
+	private void Camera_logging(string camera_action, string param = ""){
         Dictionary<string, string> actExt = new Dictionary<string, string>();
 		actExt["value"] = camera_action;
 		if (param != "")

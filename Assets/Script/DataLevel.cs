@@ -17,7 +17,7 @@ public class Dialog
     public bool enableInteraction = false;
 	public int briefingType = 0;
 
-    public Dialog clone()
+    public Dialog Clone()
     {
 		Dialog copy = new Dialog();
 		copy.text = text;
@@ -35,7 +35,7 @@ public class Dialog
         return copy;
     }
 
-	public bool isEqualTo(Dialog dialog)
+	public bool IsEqualTo(Dialog dialog)
     {
 		return dialog.text == text && dialog.img == img && dialog.imgDesc == imgDesc && dialog.imgHeight == imgHeight && dialog.camX == camX && dialog.camY == camY && dialog.sound == sound && dialog.video == video && dialog.videoHeight == videoHeight && dialog.highlight == highlight && dialog.enableInteraction == enableInteraction && dialog.briefingType == briefingType;
 
@@ -49,7 +49,7 @@ public class DataLevel
 	public string missionName; // The name of the level without extension
 	public List<Dialog> overridedDialogs = null;
 
-	public DataLevel clone()
+	public DataLevel Clone()
 	{
 		DataLevel copy = new DataLevel();
 		copy.filePath = filePath;
@@ -58,19 +58,19 @@ public class DataLevel
 		{
 			copy.overridedDialogs = new List<Dialog>();
 			foreach (Dialog dialog in overridedDialogs)
-				copy.overridedDialogs.Add(dialog.clone());
+				copy.overridedDialogs.Add(dialog.Clone());
 		}
 		return copy;
 	}
 
-	public bool dialogsEqualsTo (List<Dialog> checkDialogs)
+	public bool DialogsEqualsTo (List<Dialog> checkDialogs)
     {
 		if (checkDialogs.Count != overridedDialogs.Count)
 			return false;
         else
         {
 			for (int i = 0; i < overridedDialogs.Count; i++)
-				if (!overridedDialogs[i].isEqualTo(checkDialogs[i]))
+				if (!overridedDialogs[i].IsEqualTo(checkDialogs[i]))
 					return false;
 			return true;
         }

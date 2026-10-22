@@ -28,64 +28,59 @@ public class TitleScreenSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "newAvatarPanel", newAvatarPanel);
 	}
 
-	public void updatePlayerProfile()
+	public void ImportLevelOrScenario(System.String content)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "updatePlayerProfile", null);
+		MainLoop.callAppropriateSystemMethod (system, "ImportLevelOrScenario", content);
 	}
 
-	public void importLevelOrScenario(System.String content)
+	public void DisplayScenarioList()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "importLevelOrScenario", content);
+		MainLoop.callAppropriateSystemMethod (system, "DisplayScenarioList", null);
 	}
 
-	public void displayScenarioList()
+	public void SetDraggingState(System.Boolean newState)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "displayScenarioList", null);
+		MainLoop.callAppropriateSystemMethod (system, "SetDraggingState", newState);
 	}
 
-	public void setDraggingState(System.Boolean newState)
+	public void ShowLevels(GameKeys keys)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setDraggingState", newState);
+		MainLoop.callAppropriateSystemMethod (system, "ShowLevels", keys);
 	}
 
-	public void showLevels(GameKeys keys)
+	public void ShowDetails(GameKeys keys)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "showLevels", keys);
+		MainLoop.callAppropriateSystemMethod (system, "ShowDetails", keys);
 	}
 
-	public void showDetails(GameKeys keys)
+	public void ContinueScenario()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "showDetails", keys);
+		MainLoop.callAppropriateSystemMethod (system, "ContinueScenario", null);
 	}
 
-	public void continueScenario()
+	public void LaunchLevel(GameKeys gk)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "continueScenario", null);
+		MainLoop.callAppropriateSystemMethod (system, "LaunchLevel", gk);
 	}
 
-	public void launchLevel(GameKeys gk)
+	public void LaunchLevelEditor()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "launchLevel", gk);
+		MainLoop.callAppropriateSystemMethod (system, "LaunchLevelEditor", null);
 	}
 
-	public void launchLevelEditor()
+	public void LaunchScenarioEditor()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "launchLevelEditor", null);
+		MainLoop.callAppropriateSystemMethod (system, "LaunchScenarioEditor", null);
 	}
 
-	public void launchScenarioEditor()
+	public void LaunchConnexionScene()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "launchScenarioEditor", null);
+		MainLoop.callAppropriateSystemMethod (system, "LaunchConnexionScene", null);
 	}
 
-	public void launchConnexionScene()
+	public void QuitGame()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "launchConnexionScene", null);
-	}
-
-	public void quitGame()
-	{
-		MainLoop.callAppropriateSystemMethod (system, "quitGame", null);
+		MainLoop.callAppropriateSystemMethod (system, "QuitGame", null);
 	}
 
 	public void SendUserData()

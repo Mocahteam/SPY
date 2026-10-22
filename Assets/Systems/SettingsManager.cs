@@ -15,38 +15,38 @@ using UnityEngine.UI;
 /// </summary>
 public class SettingsManager : FSystem
 {
-	private Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
-	private Family f_settingsOpened = FamilyManager.getFamily(new AllOfComponents(typeof(SettingsManagerBridge)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
-	private Family f_allTexts = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)));
-	private Family f_textsSelectable = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI), typeof(Selectable)));
-	private Family f_modifiableFonts = FamilyManager.getFamily(new AnyOfComponents(typeof(TextMeshProUGUI), typeof(TMP_InputField)), new NoneOfTags("UI_OverrideFont"));
-	private Family f_fixedFonts = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("UI_OverrideFont"));
-	private Family f_dropdown = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_Dropdown)));
-	private Family f_inputfield = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
-	private Family f_inputfieldCaret = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_SelectionCaret)));
-	private Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("DefaultButton"));
-	private Family f_icons = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(Selectable), typeof(Image)), new AnyOfTags("UI_Icon"));
-	private Family f_buttonsPlay = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("PlayButton"));
-	private Family f_buttonsPause = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("PauseButton"));
-	private Family f_buttonsStop = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("StopButton", "ResetButton", "RemoveButton"));
-	private Family f_selectable = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(TMP_Dropdown), typeof(Toggle), typeof(Scrollbar), typeof(Selectable)), new NoneOfComponents(typeof(TextMeshProUGUI), typeof(LibraryItemRef), typeof(ElementToDrag)));
-	private Family f_SyncSelectedColor = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_SyncSelectedColor"));
-	private Family f_panels1 = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel"));
-	private Family f_panels2 = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel2"));
-	private Family f_panels3 = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel3"));
-	private Family f_borders = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Border"));
-	private Family f_scrollbar = FamilyManager.getFamily(new AllOfComponents(typeof(Scrollbar), typeof(Image)));
-	private Family f_scrollview = FamilyManager.getFamily(new AllOfComponents(typeof(ScrollRect), typeof(Image)), new NoneOfComponents(typeof(AutoBind))); // Le Autobind permet d'exclure les scrollRect contenus dans des dropdown
-	private Family f_toggle = FamilyManager.getFamily(new AllOfComponents(typeof(Toggle)), new NoneOfTags("UI_Avatar"));
-	private Family f_tooltip = FamilyManager.getFamily(new AllOfComponents(typeof(Tooltip), typeof(Image)));
-	private Family f_blocks = FamilyManager.getFamily(new AnyOfComponents(typeof(Selectable), typeof(Image)), new AnyOfTags("UI_Action", "UI_Control", "UI_Operator", "UI_Captor"));
-	private Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
-	private Family f_highlightable = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(LibraryItemRef)));
-	private Family f_tileSelection = FamilyManager.getFamily(new AllOfComponents(typeof(SpriteRenderer)), new AnyOfTags("TileSelection"));
-	private Family f_conditionNotif = FamilyManager.getFamily(new AnyOfComponents(typeof(Image)), new AnyOfTags("ConditionNotif"));
-	private Family f_canvasScaler = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasScaler)));
-	private Family f_avatarTarget = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_AvatarTarget"));
-	private Family f_animations = FamilyManager.getFamily(new AllOfComponents(typeof(Animation)));
+	private readonly Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
+	private readonly Family f_settingsOpened = FamilyManager.getFamily(new AllOfComponents(typeof(SettingsManagerBridge)), new AnyOfProperties(PropertyMatcher.PROPERTY.ACTIVE_IN_HIERARCHY));
+	private readonly Family f_allTexts = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)));
+	private readonly Family f_textsSelectable = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI), typeof(Selectable)));
+	private readonly Family f_modifiableFonts = FamilyManager.getFamily(new AnyOfComponents(typeof(TextMeshProUGUI), typeof(TMP_InputField)), new NoneOfTags("UI_OverrideFont"));
+	private readonly Family f_fixedFonts = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("UI_OverrideFont"));
+	private readonly Family f_dropdown = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_Dropdown)));
+	private readonly Family f_inputfield = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_InputField)));
+	private readonly Family f_inputfieldCaret = FamilyManager.getFamily(new AllOfComponents(typeof(TMP_SelectionCaret)));
+	private readonly Family f_buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("DefaultButton"));
+	private readonly Family f_icons = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(Selectable), typeof(Image)), new AnyOfTags("UI_Icon"));
+	private readonly Family f_buttonsPlay = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("PlayButton"));
+	private readonly Family f_buttonsPause = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("PauseButton"));
+	private readonly Family f_buttonsStop = FamilyManager.getFamily(new AllOfComponents(typeof(Button)), new AnyOfTags("StopButton", "ResetButton", "RemoveButton"));
+	private readonly Family f_selectable = FamilyManager.getFamily(new AnyOfComponents(typeof(Button), typeof(TMP_Dropdown), typeof(Toggle), typeof(Scrollbar), typeof(Selectable)), new NoneOfComponents(typeof(TextMeshProUGUI), typeof(LibraryItemRef), typeof(ElementToDrag)));
+	private readonly Family f_SyncSelectedColor = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_SyncSelectedColor"));
+	private readonly Family f_panels1 = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel"));
+	private readonly Family f_panels2 = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel2"));
+	private readonly Family f_panels3 = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Panel3"));
+	private readonly Family f_borders = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_Border"));
+	private readonly Family f_scrollbar = FamilyManager.getFamily(new AllOfComponents(typeof(Scrollbar), typeof(Image)));
+	private readonly Family f_scrollview = FamilyManager.getFamily(new AllOfComponents(typeof(ScrollRect), typeof(Image)), new NoneOfComponents(typeof(AutoBind))); // Le Autobind permet d'exclure les scrollRect contenus dans des dropdown
+	private readonly Family f_toggle = FamilyManager.getFamily(new AllOfComponents(typeof(Toggle)), new NoneOfTags("UI_Avatar"));
+	private readonly Family f_tooltip = FamilyManager.getFamily(new AllOfComponents(typeof(Tooltip), typeof(Image)));
+	private readonly Family f_blocks = FamilyManager.getFamily(new AnyOfComponents(typeof(Selectable), typeof(Image)), new AnyOfTags("UI_Action", "UI_Control", "UI_Operator", "UI_Captor"));
+	private readonly Family f_dropArea = FamilyManager.getFamily(new AnyOfComponents(typeof(DropZone), typeof(ReplacementSlot))); // Les drops zones et les replacement slots
+	private readonly Family f_highlightable = FamilyManager.getFamily(new AnyOfComponents(typeof(Highlightable), typeof(LibraryItemRef)));
+	private readonly Family f_tileSelection = FamilyManager.getFamily(new AllOfComponents(typeof(SpriteRenderer)), new AnyOfTags("TileSelection"));
+	private readonly Family f_conditionNotif = FamilyManager.getFamily(new AnyOfComponents(typeof(Image)), new AnyOfTags("ConditionNotif"));
+	private readonly Family f_canvasScaler = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasScaler)));
+	private readonly Family f_avatarTarget = FamilyManager.getFamily(new AllOfComponents(typeof(Image)), new AnyOfTags("UI_AvatarTarget"));
+	private readonly Family f_animations = FamilyManager.getFamily(new AllOfComponents(typeof(Animation)));
 
 
 	public static SettingsManager instance;
@@ -242,7 +242,7 @@ public class SettingsManager : FSystem
 	private void SyncColors()
 	{
 		SyncColor(f_allTexts, SyncColor_Text);
-		SyncLocalization.instance.syncLocale(); // because it change colors
+		SyncLocalization.instance.SyncLocale(); // because it change colors
 		SyncColor(f_dropdown, SyncColor_Dropdown);
 		SyncColor(f_inputfield, Sync_Inputfield);
 		SyncColor(f_inputfield, SyncHighlightedColor);
@@ -673,14 +673,14 @@ public class SettingsManager : FSystem
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentNormalColor_Text = c;
 					SyncColor(f_allTexts, SyncColor_Text);
-					SyncLocalization.instance.syncLocale();
+					SyncLocalization.instance.SyncLocale();
 				});
 				break;
 			case "TextColorSelected":
 				flexibleColorPicker.onColorChange.AddListener(delegate (Color c) {
 					cs.values.currentSelectedColor_Text = c;
 					SyncColor(f_allTexts, SyncColor_Text);
-					SyncLocalization.instance.syncLocale();
+					SyncLocalization.instance.SyncLocale();
 				});
 				break;
 			case "PlaceholderColor":
@@ -957,7 +957,7 @@ public class SettingsManager : FSystem
 	public void SetGameView(int value)
 	{
 		if (CameraSystem.instance != null)
-			CameraSystem.instance.setOrthographicView(value == 1);
+			CameraSystem.instance.SetOrthographicView(value == 1);
 		cs.values.currentGameView = value;
 	}
 

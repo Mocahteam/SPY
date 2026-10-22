@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class MainMenuTogglerBridge : MonoBehaviour
 {
-    public void setCanvasInterractable(bool state)
+    public void SetCanvasInterractable(bool state)
     {
-        MainMenuToggler.instance.setCanvasInterractable(state);
+        MainMenuToggler.instance.SetCanvasInterractable(state);
     }
 
-    public void showMainMenu()
+    public void ShowMainMenu()
     {
-        MainMenuToggler.instance.showMainMenu();
+        MainMenuToggler.instance.ShowMainMenu();
     }
 }

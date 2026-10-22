@@ -2,25 +2,25 @@ using UnityEngine;
 
 public class CameraSystemBridge : MonoBehaviour
 {
-    public void locateAgent(LinkedWith agent)
+    public void LocateAgent(LinkedWith agent)
     {
 		if (CameraSystem.instance != null) // is null in level editor
-			CameraSystem.instance.focusOnAgent(agent.target);
+			CameraSystem.instance.FocusOnAgent(agent.target);
     }
 
 
-    public void focusNextAgent()
+    public void FocusNextAgent()
     {
 		if (CameraSystem.instance != null) // is null in level editor
-			CameraSystem.instance.focusNextAgent();
+			CameraSystem.instance.FocusNextAgent();
 
 	}
-    public void submitZoom(float value)
+    public void SubmitZoom(float value)
     {
 		if (CameraSystem.instance != null) // is null in level editor
-			CameraSystem.instance.submitZoom(value);
+			CameraSystem.instance.SubmitZoom(value);
 		if (EditorCameraSystem.instance != null) // is null in level player
-			EditorCameraSystem.instance.submitZoom(value);
+			EditorCameraSystem.instance.SubmitZoom(value);
 	}
 	public void ToggleOrthographicPerspective()
 	{
@@ -28,67 +28,67 @@ public class CameraSystemBridge : MonoBehaviour
 			CameraSystem.instance.ToggleOrthographicPerspective();
 	}
 
-	public void set_UIFrontBack(float value)
+	public void Set_UIFrontBack(float value)
 	{
 		if (CameraSystem.instance != null) // is null in level editor
-			CameraSystem.instance.set_UIFrontBack(value);
+			CameraSystem.instance.Set_UIFrontBack(value);
 		if (EditorCameraSystem.instance != null) // is null in level player
-			EditorCameraSystem.instance.set_UIFrontBack(value);
+			EditorCameraSystem.instance.Set_UIFrontBack(value);
 	}
 
-	public void set_UILeftRight(float value)
+	public void Set_UILeftRight(float value)
 	{
 		if (CameraSystem.instance != null) // is null in level editor
-			CameraSystem.instance.set_UILeftRight(value);
+			CameraSystem.instance.Set_UILeftRight(value);
 		if (EditorCameraSystem.instance != null) // is null in level player
-			EditorCameraSystem.instance.set_UILeftRight(value);
+			EditorCameraSystem.instance.Set_UILeftRight(value);
 	}
 
-	public void set_UIRotate(float value)
+	public void Set_UIRotate(float value)
 	{
 		if (CameraSystem.instance != null) // is null in level editor
-			CameraSystem.instance.set_UIRotate(value);
+			CameraSystem.instance.Set_UIRotate(value);
     }
 
-    public void set_UIPitching(float value)
+    public void Set_UIPitching(float value)
     {
         if (CameraSystem.instance != null) // is null in level editor
-            CameraSystem.instance.set_UIPitching(value);
+            CameraSystem.instance.Set_UIPitching(value);
     }
 
-    public void set_UIZoom(float value)
+    public void Set_UIZoom(float value)
 	{
 		if (CameraSystem.instance != null) // is null in level editor
-			CameraSystem.instance.set_UIZoom(value);
+			CameraSystem.instance.Set_UIZoom(value);
 		if (EditorCameraSystem.instance != null) // is null in level player
-			EditorCameraSystem.instance.set_UIZoom(value);
+			EditorCameraSystem.instance.Set_UIZoom(value);
 	}
 
-	public void submitRotate(float value)
+	public void SubmitRotate(float value)
 	{
 		if (CameraSystem.instance != null) // is null in level editor
-			CameraSystem.instance.submitRotate(value);
+			CameraSystem.instance.SubmitRotate(value);
     }
 
-    public void submitPitching(float value)
+    public void SubmitPitching(float value)
     {
         if (CameraSystem.instance != null) // is null in level editor
-            CameraSystem.instance.submitPitching(value);
+            CameraSystem.instance.SubmitPitching(value);
     }
 
-    public void submitFrontBack(float value)
+    public void SubmitFrontBack(float value)
 	{
 		if (CameraSystem.instance != null) // is null in level editor
-			CameraSystem.instance.submitFrontBack(value);
+			CameraSystem.instance.SubmitFrontBack(value);
 		if (EditorCameraSystem.instance != null) // is null in level player
-			EditorCameraSystem.instance.submitFrontBack(value);
+			EditorCameraSystem.instance.SubmitFrontBack(value);
 	}
 
-	public void submitLeftRight(float value)
+	public void SubmitLeftRight(float value)
 	{
 		if (CameraSystem.instance != null) // is null in level editor
-			CameraSystem.instance.submitLeftRight(value);
+			CameraSystem.instance.SubmitLeftRight(value);
 		if (EditorCameraSystem.instance != null) // is null in level player
-			EditorCameraSystem.instance.submitLeftRight(value);
+			EditorCameraSystem.instance.SubmitLeftRight(value);
 	}
 }

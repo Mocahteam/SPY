@@ -2,17 +2,17 @@ using UnityEngine;
 
 public class ScrollSystemBridge : MonoBehaviour
 {
-    public void setVerticalSpeed(float newSpeed)
+    public void SetVerticalSpeed(float newSpeed)
     {
         AutoScroll autoScroll = GetComponent<AutoScroll>();
         if (autoScroll != null)
-            ScrollSystem.instance.setVerticalSpeed(autoScroll, newSpeed);
+            ScrollSystem.instance.SetVerticalSpeed(autoScroll, newSpeed);
     }
 
-    public void setHorizontalSpeed(float newSpeed)
+    public void SetHorizontalSpeed(float newSpeed)
     {
         AutoScroll autoScroll = GetComponent<AutoScroll>();
         if (autoScroll != null)
-            ScrollSystem.instance.setHorizontalSpeed(autoScroll, newSpeed);
+            ScrollSystem.instance.SetHorizontalSpeed(autoScroll, newSpeed);
     }
 }

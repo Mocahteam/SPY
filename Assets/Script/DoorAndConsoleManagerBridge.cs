@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class DoorAndConsoleManagerBridge : MonoBehaviour
 {
-	public void startNextPathAnimation()
+	public void StartNextPathAnimation()
     {
-        DoorAndConsoleManager.instance.startNextPathAnimation(this.gameObject);
+        DoorAndConsoleManager.instance.StartNextPathAnimation(this.gameObject);
     }
 }

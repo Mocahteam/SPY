@@ -12,9 +12,7 @@ using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Localization.Settings;
 using UnityEngine.Networking;
-using UnityEngine.UI;
 using UnityEngine.Video;
 
 /// <summary>
@@ -22,8 +20,8 @@ using UnityEngine.Video;
 /// </summary>
 public class ConnexionManager : FSystem
 {
-	private Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
-	private Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
+	private readonly Family f_localizationLoaded = FamilyManager.getFamily(new AllOfComponents(typeof(LocalizationLoaded)));
+	private readonly Family f_sessionId = FamilyManager.getFamily(new AllOfComponents(typeof(TextMeshProUGUI)), new AnyOfTags("SessionId"));
 
 	public GameObject prefabGameData;
 	public GameObject loadingScreen;
@@ -125,12 +123,12 @@ public class ConnexionManager : FSystem
         // Enable Loading screen
 		loadingScreen.SetActive(true);
 
-        MainLoop.instance.StartCoroutine(waitLocalizationLoadedAndContinue());
+        MainLoop.instance.StartCoroutine(WaitLocalizationLoadedAndContinue());
 
         Pause = true;
 	}
 
-    private IEnumerator waitLocalizationLoadedAndContinue()
+    private IEnumerator WaitLocalizationLoadedAndContinue()
 	{
 		yield return new WaitWhile(() => f_localizationLoaded.Count == 0);
 		// check if we have to load streaming assets
@@ -151,12 +149,12 @@ public class ConnexionManager : FSystem
 			}
 			else {
 				// Load scenario and levels from disk
-				exploreDirectoryAndCount(Application.streamingAssetsPath);
-				exploreDirectoryAndCount(Application.persistentDataPath);
+				ExploreDirectoryAndCount(Application.streamingAssetsPath);
+				ExploreDirectoryAndCount(Application.persistentDataPath);
 				// explore streaming asstets path
-				yield return loadLevelsAndScenarios(Application.streamingAssetsPath);
+				yield return LoadLevelsAndScenarios(Application.streamingAssetsPath);
 				// explore persistent data path
-				yield return loadLevelsAndScenarios(Application.persistentDataPath);
+				yield return LoadLevelsAndScenarios(Application.persistentDataPath);
 			}
 		}
 		// check if we have to load competencies (required for level analysis)
@@ -331,17 +329,17 @@ public class ConnexionManager : FSystem
 		}
 	}
 
-	private void exploreDirectoryAndCount(string path)
+	private void ExploreDirectoryAndCount(string path)
     {
         // try to load all child files
         string[] files = Directory.GetFiles(path, "*.xml");
         webGL_fileToLoad += files.Length;
         // explore subdirectories
         foreach (string directory in Directory.GetDirectories(path))
-            exploreDirectoryAndCount(directory);
+            ExploreDirectoryAndCount(directory);
     }
 
-    private IEnumerator loadLevelsAndScenarios(string path)
+    private IEnumerator LoadLevelsAndScenarios(string path)
 	{
 		// try to load all child files
 		string[] files = Directory.GetFiles(path, "*.xml");
@@ -350,7 +348,7 @@ public class ConnexionManager : FSystem
 
         // explore subdirectories
         foreach (string directory in Directory.GetDirectories(path))
-			yield return loadLevelsAndScenarios(directory);
+			yield return LoadLevelsAndScenarios(directory);
 	}
 
 	private IEnumerator GetLevelOrScenario_WebRequest(string uri)
@@ -423,7 +421,7 @@ public class ConnexionManager : FSystem
 	}
 
 	// See ForceLaunch button
-	public void forceLaunch()
+	public void ForceLaunch()
 	{
 		webGL_fileLoaded = webGL_fileToLoad;
 	}
@@ -485,7 +483,7 @@ public class ConnexionManager : FSystem
 	}
 
 	// See ButtonNewGame button in ConnexionPanel panel in ConnexionScene scene
-	public void newGame()
+	public void NewGame()
 	{
 		webGL_fileToLoad = 1;
 		webGL_fileLoaded = 0;
@@ -495,7 +493,7 @@ public class ConnexionManager : FSystem
 	}
 
 	// See ButtonOkNoted button in ConnexionPanel panel in ConnexionScene scene
-	public void synchUserData()
+	public void SynchUserData()
 	{
 		GameObjectManager.addComponent<SendUserData>(MainLoop.instance.gameObject);
 		MainLoop.instance.StartCoroutine(AnimCameraAndLoadTitleScreen());
@@ -590,13 +588,13 @@ public class ConnexionManager : FSystem
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
-	public void askToLoadLevel(string levelToLoad)
+	public void AskToLoadLevel(string levelToLoad)
 	{
 		loadLevelWithURL = levelToLoad;
 	}
 
 	// Fonction appelée depuis le javascript (voir Assets/WebGLTemplates/Custom/game.html) via le Wrapper du Système
-	public void enableSendStatement()
+	public void EnableSendStatement()
 	{
 		if (gameData == null)
 			webGL_askToEnableSendSystem = true;

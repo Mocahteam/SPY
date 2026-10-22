@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class TraceExecutionSystemBridge : MonoBehaviour
 {
-    public void onActionSelected()
+    public void OnActionSelected()
     {
-        TraceExecutionSystem.instance.onActionSelected();
+        TraceExecutionSystem.instance.OnActionSelected();
     }
 }

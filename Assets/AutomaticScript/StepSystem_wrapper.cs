@@ -8,29 +8,29 @@ public class StepSystem_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void autoExecuteStep(System.Boolean on)
+	public void AutoExecuteStep(System.Boolean on)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "autoExecuteStep", on);
+		MainLoop.callAppropriateSystemMethod (system, "AutoExecuteStep", on);
 	}
 
-	public void goToNextStep()
+	public void GoToNextStep()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "goToNextStep", null);
+		MainLoop.callAppropriateSystemMethod (system, "GoToNextStep", null);
 	}
 
-	public void cancelTotalStep()
+	public void CancelTotalStep()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "cancelTotalStep", null);
+		MainLoop.callAppropriateSystemMethod (system, "CancelTotalStep", null);
 	}
 
-	public void speedTimeStep()
+	public void SpeedTimeStep()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "speedTimeStep", null);
+		MainLoop.callAppropriateSystemMethod (system, "SpeedTimeStep", null);
 	}
 
-	public void setToDefaultTimeStep()
+	public void SetToDefaultTimeStep()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setToDefaultTimeStep", null);
+		MainLoop.callAppropriateSystemMethod (system, "SetToDefaultTimeStep", null);
 	}
 
 }

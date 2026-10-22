@@ -8,14 +8,14 @@ public class InitScenarioEditorManager_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void reloadEditor()
+	public void ReloadEditor()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "reloadEditor", null);
+		MainLoop.callAppropriateSystemMethod (system, "ReloadEditor", null);
 	}
 
-	public void returnToLobby()
+	public void ReturnToLobby()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "returnToLobby", null);
+		MainLoop.callAppropriateSystemMethod (system, "ReturnToLobby", null);
 	}
 
 }

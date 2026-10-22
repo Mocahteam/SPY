@@ -7,9 +7,9 @@ using UnityEngine.UI;
 /// Fade transition between scene loading
 /// </summary>
 public class FadeSystem : FSystem {
-    private Family f_sceneLoader = FamilyManager.getFamily(new AllOfComponents(typeof(AskToLoadScene)));
-    private Family f_canvasGroups = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasGroup)));
-    private Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
+    private readonly Family f_sceneLoader = FamilyManager.getFamily(new AllOfComponents(typeof(AskToLoadScene)));
+    private readonly Family f_canvasGroups = FamilyManager.getFamily(new AllOfComponents(typeof(CanvasGroup)));
+    private readonly Family f_fadeOutEnd = FamilyManager.getFamily(new AllOfComponents(typeof(FadeOutEnd)));
 
     private Image logo;
 
@@ -20,10 +20,10 @@ public class FadeSystem : FSystem {
         logo = fade.transform.Find("SPYLogo").GetComponent<Image>();
         fade.SetActive(true);
         logo.color = new Color(logo.color.r, logo.color.g, logo.color.b, 1);
-        MainLoop.instance.StartCoroutine(fadeOut());
+        MainLoop.instance.StartCoroutine(FadeOut());
 
         f_sceneLoader.addEntryCallback(delegate (GameObject go) {
-            MainLoop.instance.StartCoroutine(fadeIn(go.GetComponent<AskToLoadScene>().sceneName));
+            MainLoop.instance.StartCoroutine(FadeIn(go.GetComponent<AskToLoadScene>().sceneName));
         });
     }
 
@@ -33,7 +33,7 @@ public class FadeSystem : FSystem {
             GameObjectManager.removeComponent<FadeOutEnd>(go); // On supprime dans le onProcess pour laisser la possibilité aux autres système de capter l'évènement
     }
 
-    private IEnumerator fadeOut()
+    private IEnumerator FadeOut()
     {
         while (logo.color.a > 0)
         {
@@ -46,7 +46,7 @@ public class FadeSystem : FSystem {
         fade.SetActive(false);
     }
 
-    private IEnumerator fadeIn(string sceneName)
+    private IEnumerator FadeIn(string sceneName)
     {
         logo.color = new Color(logo.color.r, logo.color.g, logo.color.b, 1);
         fade.SetActive(true);

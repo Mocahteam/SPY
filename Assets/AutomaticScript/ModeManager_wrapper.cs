@@ -8,14 +8,14 @@ public class ModeManager_wrapper : BaseWrapper
 		this.hideFlags = HideFlags.NotEditable;
 	}
 
-	public void setPlayingMode()
+	public void SetPlayingMode()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setPlayingMode", null);
+		MainLoop.callAppropriateSystemMethod (system, "SetPlayingMode", null);
 	}
 
-	public void setEditMode()
+	public void SetEditMode()
 	{
-		MainLoop.callAppropriateSystemMethod (system, "setEditMode", null);
+		MainLoop.callAppropriateSystemMethod (system, "SetEditMode", null);
 	}
 
 }

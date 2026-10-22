@@ -8,10 +8,10 @@ using FYFY_plugins.TriggerManager;
 /// Manage collision between player agents and Coins
 /// </summary>
 public class CoinManager : FSystem {
-    private Family f_robotcollision = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
+    private readonly Family f_robotcollision = FamilyManager.getFamily(new AllOfComponents(typeof(Triggered3D)), new AnyOfTags("Player"));
 
-	private Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
-	private Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
+	private readonly Family f_playingMode = FamilyManager.getFamily(new AllOfComponents(typeof(PlayMode)));
+	private readonly Family f_editingMode = FamilyManager.getFamily(new AllOfComponents(typeof(EditMode)));
 
 	private GameData gameData;
     private bool activeCoin;
@@ -23,7 +23,7 @@ public class CoinManager : FSystem {
 		GameObject go = GameObject.Find("GameData");
 		if (go != null)
 			gameData = go.GetComponent<GameData>();
-		f_robotcollision.addEntryCallback(onNewCollision);
+		f_robotcollision.addEntryCallback(OnNewCollision);
 
 		f_playingMode.addEntryCallback(delegate { activeCoin = true; });
 		f_editingMode.addEntryCallback(delegate { activeCoin = false; });
@@ -31,7 +31,7 @@ public class CoinManager : FSystem {
 		Pause = true;
 	}
 
-	private void onNewCollision(GameObject robot){
+	private void OnNewCollision(GameObject robot){
 		if(activeCoin){
 			Triggered3D trigger = robot.GetComponent<Triggered3D>();
 			foreach(GameObject target in trigger.Targets){
@@ -40,13 +40,13 @@ public class CoinManager : FSystem {
                     gameData.totalCoin++;
                     target.GetComponent<AudioSource>().Play();
 					target.GetComponent<Collider>().enabled = false;
-                    destroyCoroutines.Add(MainLoop.instance.StartCoroutine(coinDestroy(target)));					
+                    destroyCoroutines.Add(MainLoop.instance.StartCoroutine(CoinDestroy(target)));					
 				}
 			}			
 		}
     }
 
-	public void cancelAllDestroyCoroutines()
+	public void CancelAllDestroyCoroutines()
     {
         foreach (Coroutine coroutine in destroyCoroutines)
         {
@@ -56,7 +56,7 @@ public class CoinManager : FSystem {
         destroyCoroutines.Clear();
     }
 
-    private IEnumerator coinDestroy(GameObject go){
+    private IEnumerator CoinDestroy(GameObject go){
 		go.GetComponent<ParticleSystem>().Play();
 		go.GetComponent<Renderer>().enabled = false;
 		yield return new WaitForSeconds(1f); // let time for animation

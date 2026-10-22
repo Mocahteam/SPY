@@ -12,7 +12,7 @@ public class ObstableTransparencySystem : FSystem
     public float alphaRatio = 0.7f; // Niveau d'opacité (1 = invisible, 0 = opaque)
     public float fadeSpeed = 5f; // Vitesse de transition
 
-    private Family f_agents = FamilyManager.getFamily(new AnyOfTags("Drone", "Player"));
+    private readonly Family f_agents = FamilyManager.getFamily(new AnyOfTags("Drone", "Player"));
 
     private List<Renderer> currentTransparentWalls = new List<Renderer>();
 
@@ -32,7 +32,7 @@ public class ObstableTransparencySystem : FSystem
         CheckWallObstruction();
     }
 
-    void CheckWallObstruction()
+    private void CheckWallObstruction()
     {
         // Liste des obstacles qui doivent être transparents
         List<Renderer> wallsToMakeTransparent = new List<Renderer>();
@@ -68,7 +68,7 @@ public class ObstableTransparencySystem : FSystem
             RestoreWallOpacity(wall);
     }
 
-    void MakeWallTransparent(Renderer wallRenderer)
+    private void MakeWallTransparent(Renderer wallRenderer)
     {
         if (currentTransparentWalls.Contains(wallRenderer)) return;
 
@@ -80,7 +80,7 @@ public class ObstableTransparencySystem : FSystem
         wm.StartCoroutine(FadeToTransparent(wallRenderer));
     }
 
-    void RestoreWallOpacity(Renderer wallRenderer)
+    private void RestoreWallOpacity(Renderer wallRenderer)
     {
         if (!currentTransparentWalls.Contains(wallRenderer)) return;
 
@@ -92,7 +92,7 @@ public class ObstableTransparencySystem : FSystem
         wm.StartCoroutine(FadeToOpaque(wallRenderer));
     }
 
-    System.Collections.IEnumerator FadeToTransparent(Renderer wallRenderer)
+    private System.Collections.IEnumerator FadeToTransparent(Renderer wallRenderer)
     {
         // Get source materials
         WallMaterials srcMat = wallRenderer.GetComponent<WallMaterials>();
@@ -122,7 +122,7 @@ public class ObstableTransparencySystem : FSystem
             wallRenderer.materials[i].color = new Color(1f, 1f, 1f, 1f - alphaRatio);
     }
 
-    System.Collections.IEnumerator FadeToOpaque(Renderer wallRenderer)
+    private System.Collections.IEnumerator FadeToOpaque(Renderer wallRenderer)
     {
         // Get source materials
         WallMaterials srcMat = wallRenderer.GetComponent<WallMaterials>();

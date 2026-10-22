@@ -14,34 +14,34 @@ public class EditorCameraSystem_wrapper : BaseWrapper
 		MainLoop.initAppropriateSystemField (system, "cameraZoomMax", cameraZoomMax);
 	}
 
-	public void set_UIFrontBack(System.Single value)
+	public void Set_UIFrontBack(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "set_UIFrontBack", value);
+		MainLoop.callAppropriateSystemMethod (system, "Set_UIFrontBack", value);
 	}
 
-	public void set_UILeftRight(System.Single value)
+	public void Set_UILeftRight(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "set_UILeftRight", value);
+		MainLoop.callAppropriateSystemMethod (system, "Set_UILeftRight", value);
 	}
 
-	public void set_UIZoom(System.Single value)
+	public void Set_UIZoom(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "set_UIZoom", value);
+		MainLoop.callAppropriateSystemMethod (system, "Set_UIZoom", value);
 	}
 
-	public void submitFrontBack(System.Single value)
+	public void SubmitFrontBack(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "submitFrontBack", value);
+		MainLoop.callAppropriateSystemMethod (system, "SubmitFrontBack", value);
 	}
 
-	public void submitLeftRight(System.Single value)
+	public void SubmitLeftRight(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "submitLeftRight", value);
+		MainLoop.callAppropriateSystemMethod (system, "SubmitLeftRight", value);
 	}
 
-	public void submitZoom(System.Single value)
+	public void SubmitZoom(System.Single value)
 	{
-		MainLoop.callAppropriateSystemMethod (system, "submitZoom", value);
+		MainLoop.callAppropriateSystemMethod (system, "SubmitZoom", value);
 	}
 
 }

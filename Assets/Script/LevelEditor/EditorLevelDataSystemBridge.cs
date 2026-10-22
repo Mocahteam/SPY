@@ -2,13 +2,13 @@
 
 public class EditorLevelDataSystemBridge : MonoBehaviour
 {
-	public void hideToggleChanged(bool newState)
+	public void HideToggleChanged(bool newState)
 	{
-		EditorLevelDataSystem.instance.hideToggleChanged(gameObject, newState);
+		EditorLevelDataSystem.instance.HideToggleChanged(gameObject, newState);
 	}
 
-	public void limitToggleChanged(bool newState)
+	public void LimitToggleChanged(bool newState)
 	{
-		EditorLevelDataSystem.instance.limitToggleChanged(gameObject, newState);
+		EditorLevelDataSystem.instance.LimitToggleChanged(gameObject, newState);
 	}
 }
