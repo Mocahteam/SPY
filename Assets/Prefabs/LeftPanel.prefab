@@ -266,6 +266,7 @@ GameObject:
   - component: {fileID: 4217109475799488635}
   - component: {fileID: 7595391970213682172}
   - component: {fileID: 2484663682790554549}
+  - component: {fileID: 5519159779809019907}
   m_Layer: 5
   m_Name: LeftPanel
   m_TagString: Untagged
@@ -370,6 +371,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 126645068ca072a4a9a184ee2657cad0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HistoryManagerBridge
+--- !u!114 &5519159779809019907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8507923394507219351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6517dd926d9cc214fafc702e691c8880, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EditableContainerSystemBridge
 --- !u!1 &8507923394598325163
 GameObject:
   m_ObjectHideFlags: 0
@@ -2109,7 +2122,7 @@ PrefabInstance:
     - target: {fileID: 8974433823153072469, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_Size
-      value: 0.97029704
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8974433823153072469, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
@@ -6178,7 +6191,7 @@ PrefabInstance:
     - target: {fileID: 2598129547128785489, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 40.000008
+      value: -0.0000038146973
       objectReference: {fileID: 0}
     - target: {fileID: 2847899282829580067, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
@@ -6368,12 +6381,12 @@ PrefabInstance:
     - target: {fileID: 8974433823153072469, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_Size
-      value: 0.7117438
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8974433823153072469, guid: 7731713d015f9ea4dbc13df51100b025,
         type: 3}
       propertyPath: m_Value
-      value: 0.90123457
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -6696,7 +6709,7 @@ PrefabInstance:
     - target: {fileID: 8818066224008417391, guid: 3bf66f52ea5454f47a94c0566f05503b,
         type: 3}
       propertyPath: text
-      value: "R\xE9tablir ?"
+      value: Annuler ?
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7954,6 +7967,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Navigation.m_Mode
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7151807550004525402, guid: 3bf66f52ea5454f47a94c0566f05503b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5519159779809019907}
+    - target: {fileID: 7151807550004525402, guid: 3bf66f52ea5454f47a94c0566f05503b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: AddContainer
+      objectReference: {fileID: 0}
+    - target: {fileID: 7151807550004525402, guid: 3bf66f52ea5454f47a94c0566f05503b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: EditableContainerSystemBridge, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7151807550004525402, guid: 3bf66f52ea5454f47a94c0566f05503b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 8818066224008417391, guid: 3bf66f52ea5454f47a94c0566f05503b,
         type: 3}

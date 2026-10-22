@@ -22,4 +22,9 @@ public class EditableContainerSystemBridge : MonoBehaviour
 	{
         EditableContainerSystem.instance.EditRobotName(name);
     }
+
+    public void AddContainer()
+	{
+        EditableContainerSystem.instance.AddContainer();
+    }
 }

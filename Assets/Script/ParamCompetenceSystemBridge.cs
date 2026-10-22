@@ -21,10 +21,6 @@ public class ParamCompetenceSystemBridge : MonoBehaviour
         ParamCompetenceSystem.instance.ShowBriefingOverride();
     }
 
-    public void SetNextFocusedGameObject(GameObject go)
-    {
-        EventSystem.current.SetSelectedGameObject(go);
-    }
     public void OnScenarioSelected()
     {
         ParamCompetenceSystem.instance.OnScenarioSelected(gameObject);

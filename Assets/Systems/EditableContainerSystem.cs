@@ -159,7 +159,7 @@ public class EditableContainerSystem : FSystem
 			}
     }
 
-	// used on + button (see in Unity editor)
+	// used on + button (see LeftPanel)
 	public void AddContainer()
 	{
 		string newName = AddSpecificContainer();
