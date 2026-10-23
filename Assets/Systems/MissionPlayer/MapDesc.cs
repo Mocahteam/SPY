@@ -131,7 +131,7 @@ public class MapDesc : FSystem
             foreach (GameObject player in f_players)
             {
                 Position pos = player.GetComponent<Position>();
-                exportMap[pos.x, pos.y] += "+(" + Utility.GetLocalizedString("RobotCode") + ": " + player.GetComponent<AgentEdit>().associatedScriptName + " " + (player.GetComponent<ScriptRef>().isBroken ? Utility.GetLocalizedString("Broken") : player.GetComponent<Direction>().direction) + ")";
+                exportMap[pos.x, pos.y] += "+(" + Utility.GetLocalizedString("RobotCode") + ": " + player.GetComponent<AgentEdit>().associatedScriptName + " " + (player.GetComponent<ScriptRef>().isBroken ? Utility.GetLocalizedString("Broken") : Utility.GetLocalizedString(player.GetComponent<Direction>().direction.ToString())) + ")";
             }
 
             foreach (GameObject drone in f_drone)
@@ -140,7 +140,7 @@ public class MapDesc : FSystem
                 // récupération du nom du drone
                 ScriptRef scriptRef = drone.GetComponent<ScriptRef>();
                 string droneName = scriptRef.executablePanel.transform.Find("Header/agentName").GetComponent<TMP_Text>().text;
-                exportMap[pos.x, pos.y] += "+(" + Utility.GetLocalizedString("GuardCode") + ": " + droneName + " " + (scriptRef.isBroken ? Utility.GetLocalizedString("Broken") : drone.GetComponent<Direction>().direction) + ")";
+                exportMap[pos.x, pos.y] += "+(" + Utility.GetLocalizedString("GuardCode") + ": " + droneName + " " + (scriptRef.isBroken ? Utility.GetLocalizedString("Broken") : Utility.GetLocalizedString(drone.GetComponent<Direction>().direction.ToString())) + ")";
             }
 
             foreach (GameObject redArea in f_redDetector)
@@ -155,7 +155,7 @@ public class MapDesc : FSystem
             {
                 Position pos = door.GetComponent<Position>();
                 ActivationSlot act = door.GetComponent<ActivationSlot>();
-                exportMap[pos.x, pos.y] += "+(" + Utility.GetLocalizedString("DoorCode") + act.slotID + " " + (act.state ? Utility.GetLocalizedString("Opened") : Utility.GetLocalizedString("Closed")) + ")";
+                exportMap[pos.x, pos.y] += "+(" + Utility.GetLocalizedString("DoorCode") + " " + act.slotID + " " + (act.state ? Utility.GetLocalizedString("Opened") : Utility.GetLocalizedString("Closed")) + ")";
             }
 
             foreach (GameObject console in f_consoles)
@@ -185,9 +185,8 @@ public class MapDesc : FSystem
             {
                 string line = Utility.GetLocalizedString("Line") + " " + (j + 1) + ": "; // Ligne X:
                 for (int i = 0; i < exportMap.GetLength(0); i++)
-                    line += exportMap[i, j] + " "; // export de la ligne X
-                                                   // Création d'une nouvelle ligne à partir du modèle
-                GameObject newLine = GameObject.Instantiate<GameObject>(lineModel.gameObject, lineModel.parent);
+                    line += exportMap[i, j]; // export de la ligne X
+                GameObject newLine = GameObject.Instantiate<GameObject>(lineModel.gameObject, lineModel.parent); // Création d'une nouvelle ligne à partir du modèle
                 newLine.GetComponent<TMP_Text>().text = line;
                 // Insertion de la ligne juste après la ligne indiquant le début de la description (position 3) + les lignes précédemment insérées
                 newLine.transform.SetSiblingIndex(3 + j);

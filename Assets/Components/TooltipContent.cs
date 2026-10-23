@@ -31,12 +31,13 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (pointActionUI.enabled)
+        if (pointActionUI != null && pointActionUI.enabled)
             ShowTooltip();
     }
     public void OnSelect(BaseEventData eventData)
     {
-        pointActionUI.Disable(); // Pour ne pas que l'objet sélectionné par code ait son tooltip qui continue à suivre le curseur de la souris
+        if (pointActionUI != null)
+            pointActionUI.Disable(); // Pour ne pas que l'objet sélectionné par code ait son tooltip qui continue à suivre le curseur de la souris
         ShowTooltip();
     }
     
@@ -47,7 +48,7 @@ public class TooltipContent : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (pointActionUI.enabled)
+        if (pointActionUI != null && pointActionUI.enabled)
             HideTooltip();
     }
     public void OnDeselect(BaseEventData eventData)
