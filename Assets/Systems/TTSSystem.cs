@@ -222,11 +222,9 @@ public class TTSSystem : FSystem
 
         if (content == "")
             content = focused.name;
-        else
-        {
-            content = content.Replace("<br>", " ");
-            content = content.Replace("\\u00a0", " "); // remplacer le code des espaces insécables par des espaces simples
-        }
+        
+        content = normalizeString(content);
+        suffix = normalizeString(suffix);
 
         if (Application.platform == RuntimePlatform.WebGLPlayer) {
             if (!InstructionOnly() || focused.GetComponentInParent<DialogPanel>() != null)
@@ -239,6 +237,17 @@ public class TTSSystem : FSystem
         Vector2Control pointerPos = Pointer.current.position;
         previousMousePosition = new Vector2(pointerPos.x.value, pointerPos.y.value);
         previousFocusedGO = focused;
+    }
+
+    private string normalizeString(string str)
+    {
+        str = str.Replace("<i>", " ");
+        str = str.Replace("</i>", " ");
+        str = str.Replace("<b>", " ");
+        str = str.Replace("</b>", " ");
+        str = str.Replace("<br>", " ");
+        str = str.Replace("\\u00a0", " "); // remplacer le code des espaces insécables par des espaces simples
+        return str;
     }
 
     private void OnNewCurrentAction(GameObject unused)

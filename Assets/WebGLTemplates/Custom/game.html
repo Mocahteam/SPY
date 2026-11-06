@@ -92,7 +92,7 @@
 			</header>
 		</div>
 		<div id="fullscreen-container" class="position-relative">
-			<canvas id="unity-canvas" tabindex="0" role="application" aria-label="SPY" aria-describedby="game-help"></canvas>
+			<canvas id="unity-canvas" tabindex="0" role="application" aria-label="SPY" aria-describedby="game-help" aria-owns="screenReader-slot-a screenReader-slot-b"></canvas>
 			<div id="unity-loading-bar">
 				<div id="unity-logo"></div>
 				<div id="unity-progress-bar-empty">
@@ -578,6 +578,7 @@
 				var current = canvas.getAttribute("aria-activedescendant");
 				var nextId = (current === "screenReader-slot-a") ? "screenReader-slot-b" : "screenReader-slot-a";
 				var el = document.getElementById(nextId);
+				el.setAttribute("aria-label", text);
 				el.textContent = text;
 				canvas.setAttribute("aria-activedescendant", nextId);
 			}
