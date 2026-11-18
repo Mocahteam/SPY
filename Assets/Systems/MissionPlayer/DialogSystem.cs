@@ -126,7 +126,7 @@ public class DialogSystem : FSystem
 			if (dialogPanel.activeInHierarchy)
 				CloseDialogPanel();
 			// Afficher la fenêtre de fin s'il y a au moins un dialogue de fin de configuré
-			if (overridedDebriefingWinDialogs.Count > 0)
+			if ((overridedDebriefingWinDialogs.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType == NewEnd.Win) || (overridedDebriefingDefeatDialogs.Count > 0 && f_ends.First().GetComponent<NewEnd>().endType != NewEnd.Win))
 				ShowDialogPanel();
 		});
 
