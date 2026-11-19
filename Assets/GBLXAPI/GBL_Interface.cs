@@ -70,7 +70,7 @@ public static class GBL_Interface {
             .WithTargetActivity(activityBuilder.Build());
 
         if (experimentId != null && experimentId != "") {
-            TinCan.Context context = new TinCan.Context();
+            TinCan.Context context = GBLXAPI.Context.Build();
             context.instructor = GBLXAPI.Agent.WithAccount(experimentId, "https://www.lip6.fr/mocah/experimentid").Build();
             statementBuilder.WithContext(context);
         }

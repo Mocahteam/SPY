@@ -72,7 +72,7 @@ public class HotkeySystem : FSystem
             // en éditeur le comportement par défaut fonctionne, on ne cherche donc pas à retrouver la bonne association touches/symboles
             OnKeyboardLayoutDefined("");
 
-		RefreshShortcuts(LocalizationSettings.SelectedLocale);
+		RefreshShortcuts(null);
 		LocalizationSettings.SelectedLocaleChanged += RefreshShortcuts;
     }
 
@@ -81,7 +81,7 @@ public class HotkeySystem : FSystem
         LocalizationSettings.SelectedLocaleChanged -= RefreshShortcuts;
     }
 
-    private void RefreshShortcuts(Locale newLocale)
+    private void RefreshShortcuts(Locale unused)
 	{
         MainLoop.instance.StartCoroutine(WaitLocalizationAndUpdateShortcuts());
     }

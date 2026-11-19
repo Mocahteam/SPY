@@ -37,6 +37,7 @@ public class SyncLocalization : FSystem {
     {
         // wait for the Localization initialization operation to complete.
         yield return LocalizationSettings.InitializationOperation;
+
         // Now, we can switch to appropriate language
         if (PlayerPrefs.HasKey("localization"))
             currentSettingsValues.values.currentLanguage = PlayerPrefs.GetInt("localization");
@@ -54,6 +55,9 @@ public class SyncLocalization : FSystem {
                 currentSettingsValues.values.currentLanguage = currentSettingsValues.GetComponent<DefaultSettingsValues>().defaultLanguage;
         }
         SyncLocale();
+        // Attendre le préchargement des tables pour cette nouvelle langue
+        yield return LocalizationSettings.StringDatabase.PreloadOperation;
+
         PlayerPrefs.SetInt("localization", currentSettingsValues.values.currentLanguage);
         PlayerPrefs.Save();
 

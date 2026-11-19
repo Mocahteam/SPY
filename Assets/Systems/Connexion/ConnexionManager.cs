@@ -130,7 +130,7 @@ public class ConnexionManager : FSystem
 
     private IEnumerator WaitLocalizationLoadedAndContinue()
 	{
-		yield return new WaitWhile(() => f_localizationLoaded.Count == 0);
+        yield return new WaitWhile(() => f_localizationLoaded.Count == 0);
 		// check if we have to load streaming assets
 		if (gameData.levels == null)
 		{
@@ -185,7 +185,7 @@ public class ConnexionManager : FSystem
 		// Attendre une seconde pour laisser le temps à webGL_fileToLoad d'être initialisé par les différents scénarios de chargement
 		yield return new WaitForSeconds(1f);
 
-		yield return new WaitWhile(() => webGL_fileLoaded < webGL_fileToLoad);
+        yield return new WaitWhile(() => webGL_fileLoaded < webGL_fileToLoad);
 
 		// and, if require, we can load requested level by URL
 		if (loadLevelWithURL != "")
@@ -239,7 +239,7 @@ public class ConnexionManager : FSystem
 		{
 			// Disable Loading screen
 			loadingScreen.SetActive(false);
-			yield return new WaitWhile(() => TouchToContinue.activeInHierarchy);
+            yield return new WaitWhile(() => TouchToContinue.activeInHierarchy);
             // skip cinematic in editor or if already played
             if (!Application.isEditor && !cinematicPlayed)
 			{
@@ -295,7 +295,7 @@ public class ConnexionManager : FSystem
 				break; // exit the loop
             }
 		}
-	}
+    }
 
 	private IEnumerator GetLevelsWebRequest()
     {
@@ -326,8 +326,8 @@ public class ConnexionManager : FSystem
 					MainLoop.instance.StartCoroutine(GetLevelOrScenario_WebRequest(new Uri(Application.streamingAssetsPath + "/" + levelRaw.filePath).AbsoluteUri));
 				break; // exit the loop
             }
-		}
-	}
+        }
+    }
 
 	private void ExploreDirectoryAndCount(string path)
     {

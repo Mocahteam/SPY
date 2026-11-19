@@ -164,6 +164,5 @@ public static class Utility
 	public static string GetLocalizedString(string key)
 	{
 		return LocalizationSettings.StringDatabase.GetLocalizedString("StringLocalization", key);
-
     }
 }
