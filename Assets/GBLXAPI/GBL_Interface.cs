@@ -11,8 +11,6 @@ using DIG.GBLXAPI;
 using System.Collections.Generic;
 
 using DIG.GBLXAPI.Builders;
-using UnityEngine;
-using System.Runtime.Versioning;
 using System.Linq;
 
 // --------------------------------------------------------------------------------------
@@ -69,11 +67,8 @@ public static class GBL_Interface {
             .WithVerb(verb)
             .WithTargetActivity(activityBuilder.Build());
 
-        if (experimentId != null && experimentId != "") {
-            TinCan.Context context = GBLXAPI.Context.Build();
-            context.instructor = GBLXAPI.Agent.WithAccount(experimentId, "https://www.lip6.fr/mocah/experimentid").Build();
-            statementBuilder.WithContext(context);
-        }
+        if (experimentId != null && experimentId != "")
+            statementBuilder.WithContext(GBLXAPI.Context.WithExtensions(GBLXAPI.Extensions.WithStandard("experimentationid", experimentId).Build()).Build());
 
         statementBuilder.Enqueue();
     }

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SPY</title>
+    <meta content="Learning programming, Computational Thinking, SPY, Scratch, Python" name="description">
+    <meta content="Learning programming, Computational Thinking, SPY, Scratch, Python" name="keywords">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="TemplateData/favicon.png">
+
+    <!-- Bootstrap core CSS -->
+    <!--Production version-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!--local version-->
+    <!--<link href="./libs/bootstrap-5.1.3-dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">-->
+
+    <!-- Template Main CSS File -->
+    <link href="TemplateData/styleMain.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.html?lang=en"><img src="TemplateData/LogoSPY.png" alt="SPY logo" style="height: 40px;"></a>
+
+        <!-- hamburger button -->
+        <button id="collapseButton" class="navbar-toggler m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- main menu -->
+        <div class="collapse navbar-collapse m-2" id="collapsibleNavbar">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item ms-auto"><a class="nav-link active px-3" href="#params">URL Parameters</a></li>
+            <li class="nav-item ms-auto"><a class="nav-link px-3" href="#googleDrive">Google Drive Links</a></li>
+            <li class="nav-item ms-auto"><a class="nav-link px-3" href="#video">Videos</a></li>
+            <li class="nav-item ms-auto"><a class="nav-link px-3" href="#contact">Contact</a></li>
+            <li class="nav-item ms-auto"><a class="nav-link px-3 justify-content-end" href="tipsAndTricks_fr.html">Français</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ======= Hero Section ======= -->
+    <section id="hero" class="d-flex align-items-center justify-content-center">
+      <div class="container position-relative">
+        <h1>SPY Tips and Tricks</h1>
+        <h2>A collection of hidden features that aren't quite so hidden...</h2>
+      </div>
+    </section>
+
+    <!-- ======= Synthesis Section ======= -->
+    <section id="params" class="about">
+      <div class="container">
+        <h1 class="text-center">URL Parameters</h1>
+        <p>SPY supports several parameters that can be passed through the URL. The following is a list of these parameters and their documentation:</p>
+
+        <ul>
+          <li><b>lang</b>: This parameter allows you to force the game to use a specific language (for example: <code>https://spy.lip6.fr/game.html?lang=fr</code> forces the game to load in French).</li>
+
+          <li><b>silent</b>: This parameter disables the transmission of interaction traces to the server. When this parameter is enabled, the player's progress is therefore not saved.</li>
+
+          <li><b>clean</b>: SPY allows users to customize the game settings (change interface colors, change the font, zoom in on the interface, etc.). This parameter resets all customized settings and restores the default configuration.</li>
+
+          <li><b>experimentationId</b>: An experiment identifier that is added to the interaction traces. This parameter is useful when SPY is used as part of a research experiment and researchers want to easily retrieve all interaction data generated during that experiment (see <a href="openTraces.html">openTraces.html</a>). The experiment identifier is stored in the context extension.</li>
+
+          <li><b>level</b>: This parameter allows you to load a specific mission directly, without going through the game's main menu. The mission file can be:</li>
+
+          <ul>
+            <li>One of the missions listed in the SPY database. For example, the following URL directly loads the file Niveau02.xml from the Infiltration scenario: <code>https://spy.lip6.fr/game.html?level=Levels/Infiltration/Niveau02.xml</code>. A convenient way to retrieve the valid paths for each mission is to open the SPY scenario editor and look at the list of available missions (displayed on the left-hand side of the screen).</li>
+
+            <li>Hosted outside the SPY website, in which case the full URL must be provided. For example, with the following URL, <code>https://spy.lip6.fr/game.html?level=https://panbricks.com/test.xml</code>, the game will load the test.xml file hosted on panbricks.com. If you want to host a mission on a cloud storage service (such as Google Drive), see the following tip: <a href="#googleDrive">Google Drive Links</a>.</li>
+          </ul>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======= DragDrop options Section ======= -->
+    <section id="googleDrive" class="cta">
+      <div class="container">
+        <h1>Google Drive Links</h1>
+
+        <p>Have you created your own mission and would like your students to play it, but you don't have access to a server where you can host your file? You can use Google Drive for this purpose. The instructions below explain how to do it:</p>
+
+        <ul>
+          <li>Host a mission on your Google Drive:</li>
+          <ul>
+            <li>Upload your mission (XML file) to your Google Drive.</li>
+            <li>Change its file extension to ".txt".</li>
+            <li>Make the file publicly accessible.</li>
+            <li>Generating a public sharing link is not sufficient, because it points to a file preview page rather than directly to the file itself. You therefore need to retrieve the direct file access URL. Open your file using the public sharing link and retrieve its file ID from the sharing URL, which should have the following format: <code>https://drive.google.com/file/d/[ID_TO_COPY]/view</code>. Use this ID to construct the following URL: <code>https://drive.google.com/uc?export=download%26id=[ID_TO_INSERT]</code>. Then use this URL as the value of the <b>level</b> parameter.</li>
+          </ul>
+
+          <li>Embed an image hosted on your Google Drive in a briefing text:</li>
+          <ul>
+            <li>Upload your image to your Google Drive.</li>
+            <li>Make the image publicly accessible.</li>
+            <li>Generating a public sharing link is not sufficient, because it points to a file preview page rather than directly to the file itself. You therefore need to retrieve the direct file access URL. Open your file using the public sharing link and retrieve its file ID from the sharing URL, which should have the following format: <code>https://drive.google.com/file/d/[ID_TO_COPY]/view</code>. Use this ID to construct the following URL: <code>https://drive.google.com/uc?export=download&amp;id=[ID_TO_INSERT]</code>. Then use this URL in the briefing text editor.</li>
+          </ul>
+
+          <li>What if I want to embed a video or an audio file hosted on my Google Drive in my briefing? Unfortunately, this is not possible. The trick of converting the sharing URL only works for text files and images.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======= ScreenReader Section ======= -->
+    <section id="video" class="about">
+      <div class="container">
+        <h1>Videos</h1>
+      </div>
+    </section>
+
+    <!-- ======= Contact Section ======= -->
+    <section id="contact" class="cta">
+      <div class="container">
+        <div class="text-center">
+          <h1>Contact</h1>
+          <p id="contactName"></p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer fixed-bottom bg-dark ">
+      <div class="container">
+        <img src="TemplateData/LogoLIP6_white.png" alt="LIP6 logo" height="40">
+        ~
+        <img src="TemplateData/Logo_SU_white.png" alt="Sorbonne University logo" height="40">
+      </div>
+    </footer>
+
+    <script>
+      var contact = document.getElementById("contactName");
+      contact.innerHTML = "mathieu.muratet<span style=\"display: none;\">cache</span> (at) lip6.fr";
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const collapsibleNavbar = document.getElementById('collapsibleNavbar');
+        const bsCollapse = new bootstrap.Collapse(collapsibleNavbar, { toggle: false });
+
+        // Target top-level links (excluding dropdown toggles) and dropdown items
+        const navLinks = collapsibleNavbar.querySelectorAll(
+          'a.nav-link:not(.dropdown-toggle), a.dropdown-item'
+        );
+
+        navLinks.forEach(function (link) {
+          link.addEventListener('click', function () {
+            if (collapsibleNavbar.classList.contains('show')) {
+              bsCollapse.hide();
+            }
+          });
+        });
+      });
+    </script>
+
+    <!--Production version-->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script> <!-- For tooltips -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <!--Local version-->
+    <!--<script src="./libs/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js" type="text/javascript"></script>-->
+  </body>
+</html>

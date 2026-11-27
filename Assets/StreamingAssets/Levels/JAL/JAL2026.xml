@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<level>
+	<map>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="3" /><cell value="1" /><cell value="1" /><cell value="3" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="3" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="3" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="0" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="0" /><cell value="0" /><cell value="0" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="1" /><cell value="-1" /></line>
+		<line><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /><cell value="-1" /></line>
+	</map>
+
+	<dialogs>
+		<dialog text="Bienvenue cher membre du LIP6 ! " enableInteraction="0" briefingType="0" />
+		<dialog text="Dans cette démonstration vous allez devoir programmer ces quatre robots avec un seul programme.
+Vous disposez pour cela de blocs de programmation disponibles dans l'inventaire (partie gauche de l'écran). Vous devez glisser des blocs de l'inventaire dans la zone d'édition pour construire votre programme." img="https://spy.lip6.fr/v2/StreamingAssets/Levels/Tutoriel/Images/addBlock.png" imgHeight="150" enableInteraction="1" briefingType="0" />
+		<dialog text="Pour tester votre programme, il vous suffit de cliquer sur le bouton 'Executer'." img="https://spy.lip6.fr/v2/StreamingAssets/Levels/Tutoriel/Images/play.png" imgHeight="150" enableInteraction="1" briefingType="0" />
+	</dialogs>
+	<score twoStars="3000" threeStars="4527"/>
+
+	<blockLimits>
+		<blockLimit blockType="Forward" limit="-1" />
+		<blockLimit blockType="TurnLeft" limit="-1" />
+		<blockLimit blockType="TurnRight" limit="-1" />
+		<blockLimit blockType="TurnBack" limit="0" />
+		<blockLimit blockType="Activate" limit="0" />
+		<blockLimit blockType="Wait" limit="0" />
+		<blockLimit blockType="IfThen" limit="-1" />
+		<blockLimit blockType="IfElse" limit="0" />
+		<blockLimit blockType="ForLoop" limit="-1" />
+		<blockLimit blockType="While" limit="-1" />
+		<blockLimit blockType="Forever" limit="0" />
+		<blockLimit blockType="AndOperator" limit="0" />
+		<blockLimit blockType="OrOperator" limit="0" />
+		<blockLimit blockType="NotOperator" limit="-1" />
+		<blockLimit blockType="WallFront" limit="-1" />
+		<blockLimit blockType="WallLeft" limit="-1" />
+		<blockLimit blockType="WallRight" limit="-1" />
+		<blockLimit blockType="PathFront" limit="0" />
+		<blockLimit blockType="PathLeft" limit="0" />
+		<blockLimit blockType="PathRight" limit="0" />
+		<blockLimit blockType="Enemy" limit="0" />
+		<blockLimit blockType="RedArea" limit="0" />
+		<blockLimit blockType="Player" limit="0" />
+		<blockLimit blockType="Furniture" limit="0" />
+		<blockLimit blockType="FieldGate" limit="0" />
+		<blockLimit blockType="Terminal" limit="0" />
+		<blockLimit blockType="Exit" limit="-1" />
+	</blockLimits>
+
+	<robot inputLine="Azerty" posX="12" posY="4" direction="2" skin="0" />
+
+	<robot inputLine="Azerty" posX="3" posY="6" direction="3" skin="0" />
+
+	<robot inputLine="Azerty" posX="5" posY="6" direction="0" skin="0" />
+
+	<robot inputLine="Azerty" posX="7" posY="6" direction="0" skin="0" />
+
+	<script outputLine="Azerty" editMode="0" type="3">
+	</script>
+
+</level>
