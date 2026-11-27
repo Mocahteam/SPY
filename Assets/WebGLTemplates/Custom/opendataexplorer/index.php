@@ -99,7 +99,7 @@ send_security_headers();
         </fieldset>
 
         <fieldset>
-          <legend>When</legend>
+          <legend>When (UTC)</legend>
           <label>Since
             <input type="datetime-local" name="since">
           </label>

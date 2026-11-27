@@ -33,7 +33,7 @@ function readFilters() {
     const value = String(raw).trim();
     if (!value) continue;
     if (key === 'since' || key === 'until') {
-      params.set(key, new Date(value).toISOString());
+      params.set(key, new Date(`${value}:00Z`).toISOString());
     } else {
       params.set(key, value);
     }
@@ -59,7 +59,11 @@ function hueFrom(text) {
   return h;
 }
 
-const dateFmt = new Intl.DateTimeFormat(undefined, { dateStyle: 'short', timeStyle: 'medium' });
+const dateFmt = new Intl.DateTimeFormat(undefined, {
+	dateStyle: 'short',
+	timeStyle: 'medium',
+	timeZone: 'UTC'
+});
 
 function el(tag, props = {}, ...children) {
   const node = document.createElement(tag);
