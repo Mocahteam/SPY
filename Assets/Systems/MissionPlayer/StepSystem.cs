@@ -171,6 +171,8 @@ public class StepSystem : FSystem {
     {
         // On attend une frame que les nouvelles CurrentActions soient définies
         yield return null;
+        yield return null;
+        yield return null;
         string scriptsContent = "";
         foreach (GameObject executablePanel in f_executablePanels)
             scriptsContent += ExportExecutableScriptToString(executablePanel.transform);

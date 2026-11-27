@@ -239,7 +239,7 @@ public class TitleScreenSystem : FSystem {
 			GameObject scenarioTile = GameObject.Instantiate<GameObject>(TileScenarioPrefab, gameList);
 
 			scenarioTile.transform.Find("Finished").gameObject.SetActive(userData.progression.ContainsKey(key) && userData.progression[key] >= gameData.scenarios[key].levels.Count);
-			
+
 			int totalStars = 0;
 			foreach (DataLevel dl in gameData.scenarios[key].levels)
 			{
@@ -248,8 +248,10 @@ public class TitleScreenSystem : FSystem {
 			}
 			scenarioTile.transform.Find("TotalStars").GetComponent<TextMeshProUGUI>().text = totalStars + "/" + (gameData.scenarios[key].levels.Count * 3);
 
-			if (userData.progression.ContainsKey(key))
-				scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text = (100*userData.progression[key]/ gameData.scenarios[key].levels.Count) +"%";
+			if (userData.progression.ContainsKey(key)) {
+				Debug.Log(key+" "+gameData.scenarios[key].levels.Count);
+				scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text = (100 * userData.progression[key] / gameData.scenarios[key].levels.Count) + "%";
+			}
 			else
 				scenarioTile.transform.Find("Percentage").GetComponent<TextMeshProUGUI>().text = "0%";
 			scenarioTile.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = Utility.extractLocale(gameData.scenarios[key].name);

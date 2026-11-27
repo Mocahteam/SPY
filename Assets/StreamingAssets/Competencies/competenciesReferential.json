@@ -105,6 +105,11 @@
 									"attribute": "editMode",
 									"constraint": "=",
 									"value": "1"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
 								}
 							]
 						}
@@ -1791,6 +1796,11 @@
 									"attribute": "editMode",
 									"constraint": "=",
 									"value": "1"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
 								}
 							]
 						},
@@ -2174,7 +2184,7 @@
 							"constraints": []
 						}
 					],
-					"comment": "La règle ci-dessous permet d'identifier cette compétence uniquement pour les mission ne contenant qu'une seule solution. En effet pour les missions contenant plusieurs solutions la longueur des solutions est bien plus importante que le nombre de blocs disponible. Il faudrait s'assurer que le nombre de bloc disponible est égal à au moins l'une des solutions, mais c'est complexe car si on a aussi plusieurs robots il faudrait prendre en compte plusieurs solutions et on n'a pas de possibilité d'identifier celles qu'il faudrait vérifier. Donc plutôt que de prendre le risque d'identifier la compétence par erreur on préfère ne pas l'identifier pour les missions à solution multiples, d'où la règle actuelle qui est plus restrictive mais qui a le mérite de ne pas poser de problème d'identification incorrecte.",
+					"comment": "La règle ci-dessous permet d'identifier cette compétence uniquement pour les missions ne contenant qu'une seule solution par zone de programme. En effet pour les missions contenant plusieurs solutions par zone de programme, la longueur des solutions est bien plus importante que le nombre de blocs disponible. Il faudrait s'assurer que le nombre de bloc disponible est égal à au moins l'une des solutions, mais c'est complexe car si on a aussi plusieurs robots il faudrait prendre en compte plusieurs solutions et on n'a pas de possibilité d'identifier celles qu'il faudrait vérifier. Donc plutôt que de prendre le risque d'identifier la compétence par erreur on préfère ne pas l'identifier pour les missions à solution multiples, d'où la règle actuelle qui est plus restrictive mais qui a le mérite de ne pas poser de problème d'identification incorrecte.",
 					"rule": "AvailableBlocksInLib + AvailableBlocksInPlayerScript = SolutionsLength and AvailableBlocksInLib > 0 and DragDropDisabled = 0"
 				},
 				{
@@ -2591,6 +2601,11 @@
 									"attribute": "editMode",
 									"constraint": "=",
 									"value": "1"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
 								}
 							]
 						},
@@ -2794,7 +2809,7 @@
 					"key": "C6.4",
 					"parentKey": "C6",
 					"name": "[fr]C6.4 Étendre ou modifier une séquence d'actions pour atteindre un nouvel objectif[/fr][en]C6.4 Extend or modify a sequence of actions to reach a new goal[/en]",
-					"description": "[fr]A partir d'une séquence d'actions donnée dont le résultat est connu (la séquence est complète par rapport à un objectif précédent), pouvoir la réutiliser et l'adapter pour atteindre un autre (nouvel) objectif.<br><br>Dans SPY :<br> - Le joueur dispose de zones de programmation pré-complétées et doit les terminer.[/fr][en]From a given sequence of actions whose outcome is known (the sequence is complete with respect to a previous goal), being able to reuse and update it to reach another (new) goal.<br><br>In SPY:<br> - The player has access to pre-completed programming zones and must complete them.[/en]",
+					"description": "[fr]A partir d'une séquence d'actions donnée dont le résultat est connu (la séquence est complète par rapport à un objectif précédent), pouvoir la réutiliser et l'adapter pour atteindre un autre (nouvel) objectif.<br><br>Dans SPY :<br> - Le joueur doit construire un programme unique qui permet à plusieurs robots de résoudre un problème similaire.[/fr][en]From a given sequence of actions whose outcome is known (the sequence is complete with respect to a previous goal), being able to reuse and update it to reach another (new) goal.<br><br>In SPY:<br> - The player must create a single program that allows multiple robots to solve a similar problem.[/en]",
 					"filters": [
 						{
 							"label": "DragDropDisabled",
@@ -3143,6 +3158,443 @@
 					],
 					"comment": "Pas besoin de tester plus que la présence d'opérateurs dans la solution qui ne peuvent exister sans avoir aussi des structures de contrôle conditionnelles.",
 					"rule": "OperatorInSolution >= 1"
+				}
+			]
+		},
+		{
+			"name": "Harmony",
+			"list":[
+				{
+					"key": "H1",
+					"parentKey": "",
+					"name": "[fr]H1 Ordonner une séquence d'actions pour atteindre un objectif[/fr][en]H1 Order a sequence of actions to reach a goal[/en]",
+					"description": "[fr]Étant donné une liste non ordonnée d'actions et un but, être capable de combiner ces actions dans un ordre valide pour construire une séquence qui permet d'atteindre ce but. Tous les blocs disponibles dans l'inventaire sont utilisés dans la solution attendue.[/fr][en]Given an unordered list of actions and a goal, being able to combine these actions in a valid order to build a sequence that achieves the goal. All available blocks in the inventory are used in the expected solution.[/en]",
+					"filters": [
+						{
+							"label": "AvailableBlocksInLib",
+							"tag": "blockLimit",
+							"constraints": [
+								{
+									"attribute": "limit",
+									"constraint": "sum"
+								}
+							]
+						},
+						{
+							"label": "AvailableBlocksInPlayerScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action|captor|if|ifElse|for|while|forever|and|or|not"
+								}
+							]
+						},
+						{
+							"label": "SolutionsLength",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "action|captor|if|ifElse|for|while|forever|and|or|not"
+								}
+							]
+						},
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"constraints": []
+						}
+					],
+					"comment": "La règle ci-dessous permet d'identifier cette compétence uniquement pour les missions ne contenant qu'une seule solution par zone d'édition. En effet pour les missions contenant plusieurs solutions pour une même zone d'édition, la longueur des solutions est bien plus importante que le nombre de blocs disponible. Il faudrait s'assurer que le nombre de bloc disponible est égal à au moins l'une des solutions, mais c'est complexe car si on a aussi plusieurs robots il faudrait prendre en compte plusieurs solutions et on n'a pas de possibilité d'identifier celles qu'il faudrait vérifier. Donc plutôt que de prendre le risque d'identifier la compétence par erreur on préfère ne pas l'identifier pour les missions à solution multiples, d'où la règle actuelle qui est plus restrictive mais qui a le mérite de ne pas poser de problème d'identification incorrecte.",
+					"rule": "AvailableBlocksInLib + AvailableBlocksInPlayerScript = SolutionsLength and AvailableBlocksInLib > 0 and DragDropDisabled = 0"
+				},
+				{
+					"key": "H2",
+					"parentKey": "",
+					"name": "[fr]H2 Comprendre la nature du problème avant de commencer à programmer[/fr][en]H2 Understand the nature of the problem before starting programming[/en]",
+					"description": "[fr]La caméra reste à sa position initiale sans chercher à donner un point de vue global de toute la scène au joueur. Le joueur doit alors manipuler la caméra afin de comprendre la scène avant de commencer à programmer.[/fr][en]The camera remains in its initial position without attempting to provide the player with an overall view of the entire scene. The player must then manipulate the camera to understand the scene before beginning to program.[/en]",
+					"filters": [
+						{
+							"label": "OmniscientView",
+							"tag": "omniscientView",
+							"constraints": []
+						}
+					],
+					"rule": "OmniscientView = 0"
+				},
+				{
+					"key": "H3",
+					"parentKey": "",
+					"name": "[fr]H3 Traduire en langage informatique une consigne exprimée en langage naturel[/fr][en]H3 Translate a natural language instruction into computer language[/en]",
+					"description": "[fr]Active un filtre qui empêche le joueur de voir toute la scène et donc d'avoir une vision globale du problème. La consigne indique en langage naturel comment résoudre le problème et le joueur doit la traduire en langage formel compréhensible par le robot (utilisation des blocs de programmation du jeu).[/fr][en]Activates a filter that prevents the player from seeing the whole scene, and therefore from having an overall view of the problem. The instructions indicate in natural language how to solve the problem, and the player must translate them into a formal language that the robot can understand (using the game's programming blocks).[/en]",
+					"filters": [
+						{
+							"label": "Fog",
+							"tag": "fog",
+							"constraints": []
+						},
+						{
+							"label": "HideExits",
+							"tag": "hideExits",
+							"constraints": []
+						}
+					],
+					"rule": "Fog >= 1 or HideExits >= 1"
+				},
+				{
+					"key": "H4",
+					"parentKey": "",
+					"name": "[fr]H4 Créer une séquence composée d'actions simples[/fr][en]H4 Create a sequence consisting of simple actions[/en]",
+					"description": "[fr]Étant donné un objectif simple (c'est-à-dire ne s'appuyant pas sur des concepts avancés comme les conditions et les boucles), être capable d'utiliser des actions pour atteindre l'objectif.[/fr][en]Given a simple goal (i.e., one that does not rely on advanced concepts such as conditions and loops), be able to use actions to achieve the goal.[/en]",
+					"filters": [
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"constraints": []
+						},
+						{
+							"label": "AvailableActionInLib",
+							"tag": "blockLimit",
+							"constraints": [
+								{
+									"attribute": "blockType",
+									"constraint": "isIncludedIn",
+									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
+								},
+								{
+									"attribute": "limit",
+									"constraint": ">",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "ControlInScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"constraint": "countChilds",
+									"tag2": "if|ifElse|for|while|forever"
+								}
+							]
+						},
+						{
+							"label": "SolutionContainsBlocks",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "4"
+								},
+								{
+									"constraint": "hasChild"
+								}
+							]
+						}
+					],
+					"comment": "Pour cette règle on se contente de vérifier qu'il n'y a pas de structure de contrôle dans les scripts (incluant les solutions). Qu'il y en ait ou pas dans l'inventaire n'est pas un problème, en effet si il y en a dans l'inventaire mais pas dans les scripts c'est que le joueur n'en a pas besoin et donc qu'il peut compléter la séquence d'action sans utiliser de structure de contrôle, ce qui correspond à la compétence.",
+					"rule": "DragDropDisabled = 0 and AvailableActionInLib >= 1 and ControlInScript = 0 and SolutionContainsBlocks > 0"
+				},
+				{
+					"key": "H5",
+					"parentKey": "",
+					"name": "[fr]H5 Répéter une séquence d'actions un nombre donné de fois[/fr][en]C3.1 Repeat a sequence of actions a given number of times[/en]",
+					"description": "[fr]Être capable d'utiliser de manière appropriée les répétitions d'actions (ou de séquences d'actions) un certain nombre de fois, afin d'atteindre un objectif. La solution doit contenir au moins un bloc de type 'Répéter n fois'.[/fr][en]Being able to appropriately use repetitions of (sequences of) actions a given number of times in order to reach a goal. The solution must contain at least one block of type 'Repeat n times'.[/en]",
+					"filters": [
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"constraints": []
+						},
+						{
+							"label": "ForInSolution",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "for"
+								}
+							]
+						}
+					],
+					"rule": "DragDropDisabled = 0 and ForInSolution >= 1"
+				},
+				{
+					"key": "H6",
+					"parentKey": "",
+					"name": "[fr]H6 Répéter une séquence d'actions jusqu'à ce qu'un objectif soit atteint[/fr][en]H6 Repeat a sequence of actions until a goal has been reached[/en]",
+					"description": "[fr]Être capable de contrôler les répétitions d'actions (ou de séquences d'actions) jusqu'à ce qu'une condition soit remplie, afin d'atteindre un objectif. La solution doit contenir au moins un bloc de type 'Tant que'.[/fr][en]Being able to control repetitions of (sequences of) actions until a condition is met, in order to reach a goal. The solution must contain at least one block of type 'While'.[/en]",
+					"filters": [
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"constraints": []
+						},
+						{
+							"label": "WhileInSolution",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "while"
+								}
+							]
+						}
+					],
+					"rule": "DragDropDisabled = 0 and WhileInSolution >= 1"
+				},
+				{
+					"key": "H7",
+					"parentKey": "",
+					"name": "[fr]H7 Intégrer une condition simple dans une séquence d'actions[/fr][en]H7 Integrate a simple condition into a sequence of actions[/en]",
+					"description": "[fr]Être capable d'utiliser des conditions simples (reposant sur un critère) pour permettre (ou interdire) certaines séquences d'actions. La solution doit contenir au moins un bloc de type 'Si' ou 'Si/Sinon'.[/fr][en]Being able to use simple conditions (a simple condition can be expressed using a single criterion) to allow (or disallow) some (sequences of) actions. The solution must contain at least one block of type 'If' or 'If/Else'.[/en]",
+					"filters": [
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"constraints": []
+						},
+						{
+							"label": "IfOrIfElseInSolution",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "if|ifElse"
+								}
+							]
+						}
+					],
+					"rule": "DragDropDisabled = 0 and IfOrIfElseInSolution >= 1"
+				},
+				{
+					"key": "H8",
+					"parentKey": "",
+					"name": "[fr]H8 Intégrer une condition complexe dans une séquence d'actions[/fr][en]H8 Integrate a complex condition into a a sequence of actions[/en]",
+					"description": "[fr]Être capable d'utiliser des conditions complexes (c'est-à-dire reposant sur plusieurs critères, qui sont combinés au moyen des opérateurs logiques \"et\", \"ou\", \"ne pas\") pour permettre (ou interdire) certaines séquences d'actions.[/fr][en]Being able to combine conditions by means of logical operators (and, or, not) to allow (or disallow) some (sequences of) actions.[/en]",
+					"filters": [
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"constraints": []
+						},
+						{
+							"label": "OperatorInSolution",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "4"
+								},
+								{
+									"constraint": "countChilds",
+									"tag2": "and|or|not"
+								}
+							]
+						}
+					],
+					"rule": "DragDropDisabled = 0 and OperatorInSolution >= 1"
+				},
+				{
+					"key": "H9",
+					"parentKey": "",
+					"name": "[fr]H9 Identifier l'association programme/robot[/fr][en]H9 Identify the program/robot pairing[/en]",
+					"description": "[fr]Être capable d'identifier si l'association entre un programme et un robot est correcte.[/fr][en]Be able to determine whether the association between a program and a robot is correct.[/en]",
+					"filters": [
+						{
+							"label": "RobotCount",
+							"tag": "robot",
+							"constraints": []
+						},
+						{
+							"label": "ExitCount",
+							"tag": "cell",
+							"constraints": [
+								{
+									"attribute": "value",
+									"constraint": "=",
+									"value": "3"
+								}
+							]
+						},
+						{
+							"label": "RobotNotLinked",
+							"tag": "robot",
+							"constraints": [
+								{
+									"attribute": "inputLine",
+									"constraint": "differentFrom",
+									"tag2": "script",
+									"attribute2": "outputLine"
+								}
+							]
+						}
+					],
+					"comment": "Pour la première partie de la règle, on considère que cette compétence est en jeu si on a au moins 2 robots et 2 sorties, en effet dans ce cas même si le joueur n'a pas à indiquer le nom des robots il doit à minima identifier quelle zone de programme est associée à quel robot. Pour la deuxième partie de la règle (en considérant que la première est fausse), si on a au moins un robot qui n'est pas associé le joueur doit se poser la question si la zone est bien nommée.",
+					"rule": "(RobotCount >= 2 and ExitCount >= 2) or (RobotNotLinked >= 1)"
+				},
+				{
+					"key": "H10",
+					"parentKey": "",
+					"name": "[fr]H10 Comprendre et anticiper l'exécution d'un programme[/fr][en]H10 Understanding and anticipating program execution[/en]",
+					"description": "[fr]Être capable d'anticiper l'exécution d'une séquence d'actions.<br> - Présence d'un ennemi avec un programme associé (le joueur doit lire et comprendre le comportement d'un ennemi pour anticiper ces déplacements et proposer une solution en conséquence).<br> - Mode traçage de code activé : le joueur doit prédire, à chaque pas de simulation, la prochaine action à exécuter pour chaque robot.<br> - Drag&Drop désactive : qui invite le joueur à lire et comprendre des programmes pré-construits.[/fr][en]Being able to anticipate the execution of a sequence of actions.<br> - Presence of an enemy with an associated program (the player must read and understand the behavior of an enemy to anticipate their movements and propose a solution accordingly).<br> - Code tracing mode enabled: At each simulation step, the player must predict the next action to be performed by each robot.<br> - Drag&Drop disabled: This encourages the player to read and understand pre-built programs.[/en]",
+					"filters": [
+						{
+							"label": "ScriptToEnemyWithContent",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "sameValue",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"constraint": "hasChild"
+								}
+							]
+						},
+						{
+							"label": "UserExecutor",
+							"tag": "userExecutor",
+							"constraints": []
+						},
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"constraints": []
+						}
+					],
+					"comment": "Pour le dernier cas, on considère que si le Drag&Drop est désactivé la mission doit forcément proposer des programmes pré-construits que le joueur doit lire et comprendre.",
+					"rule": "ScriptToEnemyWithContent > 0 or UserExecutor >= 1 or DragDropDisabled >= 1"
+				},
+				{
+					"key": "H11",
+					"parentKey": "",
+					"name": "[fr]H11 Corriger une solution erronée[/fr][en]H11 Correct a erroneous solution[/en]",
+					"description": "[fr]Étant donné une solution erronée, être capable d'identifier le problème et de le corriger.[/fr][en]Given an erroneous solution, be able to identify the problem and correct it.[/en]",
+					"filters": [
+						{
+							"label": "DragDropDisabled",
+							"tag": "dragdropDisabled",
+							"constraints": []
+						},
+						{
+							"label": "AllPlayerScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "outputLine",
+									"constraint": "differentFrom",
+									"tag2": "guard",
+									"attribute2": "inputLine"
+								},
+								{
+									"attribute": "type",
+									"constraint": "<>",
+									"value": "4"
+								}
+							]
+						},
+						{
+							"label": "BuggedScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "2"
+								}
+							]
+						},
+						{
+							"label": "NonOptimalScript",
+							"tag": "script",
+							"constraints": [
+								{
+									"attribute": "type",
+									"constraint": "=",
+									"value": "1"
+								}
+							]
+						}
+					],
+					"rule": "DragDropDisabled = 0 and AllPlayerScript = (BuggedScript+NonOptimalScript) and (BuggedScript > 0 or NonOptimalScript > 0)"
+				},
+				{
+					"key": "H12",
+					"parentKey": "",
+					"name": "[fr]H12 Différencier instruction et expression[/fr][en]H12 Distinguishing Between Instruction and Expression[/en]",
+					"description": "[fr]Être capable de différencier les blocs faisant références à des instructions (actions) des blocs faisant référence à des expressions (capteurs)[/fr][en]Being able to distinguish between blocks referring to instructions (actions) and blocks referring to expressions (sensors)[/en]",
+					"filters": [
+						{
+							"label": "ActionInLib",
+							"tag": "blockLimit",
+							"constraints": [
+								{
+									"attribute": "blockType",
+									"constraint": "isIncludedIn",
+									"value": "Forward|TurnLeft|TurnRight|Wait|Activate|TurnBack"
+								},
+								{
+									"attribute": "limit",
+									"constraint": ">",
+									"value": "0"
+								}
+							]
+						},
+						{
+							"label": "CaptorInLib",
+							"tag": "blockLimit",
+							"constraints": [
+								{
+									"attribute": "blockType",
+									"constraint": "isIncludedIn",
+									"value": "WallFront|WallLeft|WallRight|PathFront|PathLeft|PathRight|Enemy|Player|Furniture|RedArea|FieldGate|Terminal|Exit"
+								},
+								{
+									"attribute": "limit",
+									"constraint": ">",
+									"value": "0"
+								}
+							]
+						}
+					],
+					"rule": "ActionInLib >= 1 and CaptorInLib >= 1"
 				}
 			]
 		}
